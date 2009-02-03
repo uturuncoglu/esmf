@@ -1,41 +1,88 @@
-# $Id: makefile,v 1.3 2007/08/09 17:33:12 dneckels Exp $
+# $Id: makefile,v 1.16.2.1 2009/02/03 22:33:55 amikstcyr Exp $
 
 # leave alone.
 ALL: build_here 
 
-# Don't set these unless absolutely necessary - they've got to be
-# architecture and compiler independent and should be inherited
-# from the upper level makefile if possible.
-CFLAGS    =
-FFLAGS    =
+# Workaround an MPICH2 issue
+ESMF_CXXCOMPILECPPFLAGS += -DMPICH_IGNORE_CXX_SEEK
 
-# If you have C files in this directory, list them all on the line below.
-SOURCEC	  = ESMC_HAdapt.C ESMC_MEImprint.C ESMC_MeshObjPack.C ESMC_ParEnv.C ESMC_ShapeHierarchic.C \
-            ESMC_Attr.C ESMC_IOField.C ESMC_Mesh.C ESMC_MeshObjTopo.C ESMC_ParLog.C ESMC_SmallAlloc.C \
-            ESMC_BBox.C ESMC_Kernel.C ESMC_MeshDB.C ESMC_MeshPartition.C ESMC_PatchRecovery.C ESMC_SparseMsg.C \
-            ESMC_CommReg.C ESMC_Mapping.C ESMC_MeshExodus.C ESMC_MeshRead.C ESMC_Polynomial.C ESMC_Transfer.C \
-            ESMC_CommRel.C ESMC_MasterElement.C ESMC_Meshfield.C ESMC_MeshRefine.C ESMC_Quadrature.C ESMC_Zoltan.C \
-            ESMC_Context.C ESMC_MasterElementV.C ESMC_MeshField.C ESMC_MeshSkin.C ESMC_Rebalance.C \
-            ESMC_MCoord.C ESMC_MeshNC.C ESMC_MeshUtils.C ESMC_RefineTopo.C \
-            ESMC_Exception.C ESMC_MEFamily.C ESMC_MeshObj.C ESMC_MeshVTK.C ESMC_Search.C \
-            ESMC_FieldReg.C ESMC_MEField.C ESMC_MeshObjConn.C ESMC_MEValues.C ESMC_ShapeFunc.C
+SOURCEC	  = \
+           ESMCI_Attr.C \
+           ESMCI_BBox.C \
+           ESMCI_CommReg.C \
+           ESMCI_CommRel.C \
+           ESMCI_Context.C \
+           ESMCI_DDir.C \
+           ESMCI_Exception.C \
+           ESMCI_Extrapolation.C \
+           ESMCI_FieldReg.C \
+	   ESMCI_FuncParser.C \
+           ESMCI_GeomRendezvous.C \
+           ESMCI_GlobalIds.C \
+           ESMCI_HAdapt.C \
+           ESMCI_Interp.C \
+           ESMCI_IOField.C \
+           ESMCI_Kernel.C \
+	   ESMCI_LinSys.C \
+           ESMCI_Mapping.C \
+           ESMCI_MasterElement.C \
+           ESMCI_MCoord.C \
+           ESMCI_MEFamily.C \
+           ESMCI_MEField.C \
+	   ESMCI_MEFieldBlas.C \
+           ESMCI_MEImprint.C \
+           ESMCI_Mesh.C \
+           ESMCI_MeshDB.C \
+           ESMCI_MeshExodus.C \
+	   ESMCI_MeshllField.C \
+           ESMCI_MeshField.C \
+           ESMCI_MeshGen.C \
+           ESMCI_MeshNC.C \
+           ESMCI_MeshObj.C \
+           ESMCI_MeshObjConn.C \
+           ESMCI_MeshObjPack.C \
+           ESMCI_MeshObjTopo.C \
+           ESMCI_MeshPartition.C \
+           ESMCI_MeshPNC.C \
+           ESMCI_MeshRead.C \
+           ESMCI_MeshRefine.C \
+           ESMCI_MeshSkin.C \
+           ESMCI_MeshUtils.C \
+           ESMCI_MeshVTK.C \
+           ESMCI_MEValues.C \
+           ESMCI_Migrator.C \
+	   ESMCI_ParamHandler.C \
+           ESMCI_OctBox3d.C \
+           ESMCI_ParEnv.C \
+           ESMCI_ParLog.C \
+           ESMCI_PatchRecovery.C \
+           ESMCI_Polynomial.C \
+           ESMCI_Quadrature.C \
+           ESMCI_Rebalance.C \
+           ESMCI_RefineTopo.C \
+           ESMCI_Search.C \
+           ESMCI_SFuncAdaptor.C \
+           ESMCI_ShapeFunc.C \
+	   ESMCI_ShapeHierarchic.C \
+           ESMCI_ShapeLagrange.C \
+	   ESMCI_ShapeMini.C \
+           ESMCI_SmallAlloc.C \
+           ESMCI_SparseMsg.C \
+           ESMCI_WMat.C \
+           ESMCI_WriteWeights.C \
+           ESMCI_WriteWeightsPar.C \
+           ESMCI_MeshCXX.C
 
-# If you have F90 files in this directory, list them all on the line below.
-SOURCEF	  = 
-# If you have .h include files in this dir, list them all on the line below.
-SOURCEH	  = 
+SOURCEF	  = ESMF_Mesh_C.F90 
+SOURCEH	  = ESMCI_MeshCXX.h
+
 # List all .h files which should be copied to common include dir
-STOREH	  = 
+STOREH	  = ESMCI_MeshCXX.h
 
-# Leave these alone.
 OBJSC     = $(addsuffix .o, $(basename $(SOURCEC)))
 OBJSF     = $(addsuffix .o, $(basename $(SOURCEF)))
 
-MANSEC	  = mesh
 LIBBASE	  = libesmf
-
-# The following line must be set to the current subdir name relative
-# to the top level esmf directory. (e.g. Base/src, TimeMgr/interface, etc)
 LOCDIR	  = src/Infrastructure/Mesh/src
 
 CLEANDIRS   =
@@ -44,17 +91,5 @@ CLOBBERDIRS =
 
 include ${ESMF_DIR}/makefile
 
-# Leave the following line blank.
-DIRS	  = Zoltan
-
-
-
-# If you have class files which need to be compiled in a particular
-# order, list the dependencies below, with no rules following.
-#
-# e.g.:
-#
-
-
-
+DIRS	  = Zoltan ExodusII
 
