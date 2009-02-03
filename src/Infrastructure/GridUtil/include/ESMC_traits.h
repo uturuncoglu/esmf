@@ -1,7 +1,7 @@
-// $Id: ESMC_traits.h,v 1.3 2007/05/02 20:26:17 dneckels Exp $
+// $Id: ESMC_traits.h,v 1.6.2.1 2009/02/03 22:41:40 amikstcyr Exp $
 //
 // Earth System Modeling Framework
-// Copyright 2002-2007, University Corporation for Atmospheric Research,
+// Copyright 2002-2009, University Corporation for Atmospheric Research,
 // Massachusetts Institute of Technology, Geophysical Fluid Dynamics
 // Laboratory, University of Michigan, National Centers for Environmental
 // Prediction, Los Alamos National Laboratory, Argonne National Laboratory,
@@ -21,9 +21,9 @@
 // and is not supported on all of our platforms.  It is, however, under review
 // and is expected to be approved to the C++ standard.  This file provides
 // a subset of tr1 functionality in the meantime.
-namespace ESMC {
+namespace ESMCI {
 typedef unsigned char UChar;
-typedef unsigned int  UInt; 
+typedef unsigned long int  UInt; 
 
 // Default is_unsigned
 template <typename T>
