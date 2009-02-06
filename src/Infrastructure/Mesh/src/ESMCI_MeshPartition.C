@@ -18,11 +18,7 @@
 #include <sstream>
 #include <set>
 
-// Easier than tracking down prototype
-extern "C" {
-typedef int idxtype;
-void METIS_PartGraphKway(int *, idxtype *, idxtype *, idxtype *, idxtype *, int *, int *, int *, int *, int *, idxtype *);
-}
+#include <Mesh/src/Metis/metis.h>
 
 namespace ESMCI {
 

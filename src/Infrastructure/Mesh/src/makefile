@@ -1,4 +1,4 @@
-# $Id: makefile,v 1.16.2.1 2009/02/03 22:33:55 amikstcyr Exp $
+# $Id: makefile,v 1.16.2.2 2009/02/06 19:17:47 amikstcyr Exp $
 
 # leave alone.
 ALL: build_here 
@@ -91,5 +91,5 @@ CLOBBERDIRS =
 
 include ${ESMF_DIR}/makefile
 
-DIRS	  = Zoltan ExodusII
+DIRS	  = Zoltan ExodusII Metis
 
