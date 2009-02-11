@@ -298,18 +298,19 @@ _Tree_rebalance_for_erase(TreeNode<Key>* z,
         z->parent->left = x;
       else
         z->parent->right = x;
+    
     if (leftmost == z) 
       if (z->right == 0)        // z->left must be null also
-        leftmost = z->parent;
+	leftmost = z->parent;
     // makes leftmost == header if z == root
       else
-        leftmost = TreeNode<Key>::minimum(x);
+	leftmost = TreeNode<Key>::minimum(x);
     if (rightmost == z)  
       if (z->left == 0)         // z->right must be null also
-        rightmost = z->parent;  
+	rightmost = z->parent;  
     // makes rightmost == header if z == root
       else                      // x == z->left
-        rightmost = TreeNode<Key>::maximum(x);
+	rightmost = TreeNode<Key>::maximum(x);
   }
   if (y->color != _Tree_red) { 
     while (x != root && (x == 0 || x->color == _Tree_black))

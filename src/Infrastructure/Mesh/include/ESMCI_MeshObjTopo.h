@@ -318,9 +318,9 @@ public:
              int a_num_sides,
              int a_spatial_dim,
              int a_parametric_dim) :
-  name(a_name), number(a_number), num_vertices(a_num_vertices), num_nodes(a_num_nodes), num_sides(a_num_sides),
-  spatial_dim(a_spatial_dim), parametric_dim(a_parametric_dim),
-  face_edge_map(0), face_edge_pol(0), num_fostered_edges(0), fostered_edge_nodes(0) {}
+ name(a_name), number(a_number), num_vertices(a_num_vertices), num_nodes(a_num_nodes), num_sides(a_num_sides),
+   spatial_dim(a_spatial_dim), parametric_dim(a_parametric_dim),
+   num_fostered_edges(0), face_edge_map(0), face_edge_pol(0), fostered_edge_nodes(0) {}
 
  /**
   * Return the map for how the side topology's nodes map to the element

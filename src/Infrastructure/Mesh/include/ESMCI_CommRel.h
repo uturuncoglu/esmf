@@ -371,7 +371,7 @@ namespace ESMCI {
     UInt csize = comm.commSize();
 
     // Use same fields for range
-    FTYPE **rfields = sfields;
+    //FTYPE **rfields = sfields;
   
     if (ndproc > 0) {
       comm.setPattern(ndproc, &domain_processors[0]);
@@ -411,11 +411,11 @@ namespace ESMCI {
 
     if (!symmetric)
       throw Ex() << "halo is only implemented for symmetric spec, spec=" << comm_name;
-    UInt ndproc = domain_processors.size();
-    UInt csize = msg.commSize();
+    //UInt ndproc = domain_processors.size();
+    //UInt csize = msg.commSize();
 
     // Use same fields for range
-    FTYPE **rfields = sfields;
+    //FTYPE **rfields = sfields;
 
     // Fill buffers
     MapType::const_iterator ci = domain_begin(), ce = domain_end();
