@@ -902,9 +902,9 @@ bool HAdapt::IsNonConformingCoarseSide(const MeshObj &side) const {
  
 }
 
-int HAdapt::IsNonConformingSide(const MeshObj &side) const {
+  ESMCI::HAdapt::SideRefinementState HAdapt::IsNonConformingSide(const MeshObj &side) const {
 
-  int ret = NCONF_SIDE_NORMAL;
+   ESMCI::HAdapt::SideRefinementState ret = NCONF_SIDE_NORMAL;
 
   ThrowAssert(side.get_type() == mesh.side_type());
 
