@@ -124,7 +124,7 @@ bool IsNonConformingCoarseSide(const MeshObj &side) const;
  */
 typedef enum {NCONF_SIDE_NORMAL=0, NCONF_SIDE_COARSE, NCONF_SIDE_REFINED} SideRefinementState;
 
-int IsNonConformingSide(const MeshObj &side) const;
+SideRefinementState IsNonConformingSide(const MeshObj &side) const;
 
 typedef std::vector<MeshObj*> ElemList;
 
