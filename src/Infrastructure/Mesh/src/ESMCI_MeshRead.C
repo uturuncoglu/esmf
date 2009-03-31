@@ -71,7 +71,7 @@ void ReadMesh(Mesh &mesh, const std::string &fbase, bool skin, int file_type)
   // Manufacture this processors filename
   int rank = Par::Rank();
   int psize = Par::Size();
-  
+
   std::string newname;
   std::string extension = (file_type == ESMCI_FILE_EXODUS ? ".g" : ".vtk");
 
@@ -84,7 +84,6 @@ void ReadMesh(Mesh &mesh, const std::string &fbase, bool skin, int file_type)
     newname = newname_str.str() + extension;
   } else newname = fbase + extension;
 
-
   // Load the local serial mesh
   if (file_type == ESMCI_FILE_EXODUS) {
     LoadExMesh(mesh, newname);
@@ -93,13 +92,9 @@ void ReadMesh(Mesh &mesh, const std::string &fbase, bool skin, int file_type)
   } else Throw() << "Unknown file type:" << file_type;
 
   mesh.remove_unused_nodes();
-
   mesh.ResolvePendingCreate(); // sides need global ids.
-
   mesh.set_filename(fbase);
-
   mesh.build_sym_comm_rel(MeshObj::NODE);
-
   if (skin) Skin(mesh);
   
 /*

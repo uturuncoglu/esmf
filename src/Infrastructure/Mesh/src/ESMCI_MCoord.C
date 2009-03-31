@@ -7,10 +7,17 @@ MCoord::MCoord(const double c[], const double n[]) {
   for (UInt i = 0; i < SpaceDim(); i++) {
     ct[i] = c[i];
   }
-  double tmp = std::sqrt(n[1]*n[1] + n[2]*n[2]);
-  // An orthogonal basis for the cospace of the vector n;
-  u[0] = 0; u[1] = n[2]/tmp; u[2] = -n[1]/tmp;
-  u[3] = tmp; u[4] = -n[0]*n[1]/tmp; u[5] = -n[0]*n[2]/tmp;
+  if(n != NULL){
+    double tmp = std::sqrt(n[1]*n[1] + n[2]*n[2]);
+    // An orthogonal basis for the cospace of the vector n;
+    u[0] = 0; u[1] = n[2]/tmp; u[2] = -n[1]/tmp;
+    u[3] = tmp; u[4] = -n[0]*n[1]/tmp; u[5] = -n[0]*n[2]/tmp;
+  }else{
+    for (UInt i = 0; i < 3; i++) {
+      u[2*i] = 0;
+      u[2*i+1] = 0;
+    }
+  }
 }
 
 MCoord::MCoord() {

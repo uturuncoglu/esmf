@@ -1,4 +1,4 @@
-# $Id: makefile,v 1.16.2.2 2009/02/06 19:17:47 amikstcyr Exp $
+# $Id: makefile,v 1.16.2.3 2009/03/31 20:43:36 amikstcyr Exp $
 
 # leave alone.
 ALL: build_here 
@@ -60,6 +60,7 @@ SOURCEC	  = \
            ESMCI_Quadrature.C \
            ESMCI_Rebalance.C \
            ESMCI_RefineTopo.C \
+	   ESMCI_ReMap.C \
            ESMCI_Search.C \
            ESMCI_SFuncAdaptor.C \
            ESMCI_ShapeFunc.C \

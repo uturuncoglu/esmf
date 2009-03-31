@@ -47,10 +47,17 @@ GatherElemData<METRAITS,FTYPE,RESTYPE,DATATYPE>::GatherElemData(const MasterElem
   UInt fdim = f.dim();
   // Gather from the nodes
   if (me.is_nodal()) {
+    
+    //std::cout << " nmax relations = " << obj.Relations.size() << std::endl;
 
     for (UInt n = 0; n < me.num_functions(); n++) {
 
+      //std::cout << " nmax = " << me.num_functions() << std::endl;
+
       const MeshObj &node = *obj.Relations[n].obj;
+
+      
+
       DATATYPE *data = f.data(node);
 
       for (UInt d = 0; d < f.dim(); d++) {
@@ -1015,19 +1022,19 @@ MCoord getMCoordNode(const MEField<> &nfield, const MeshObj &node) {
     MEValues<> mev(nfield.GetMEFamily(), &nfield);
     mev.Setup(*elem.GetKernel(), MEV::update_map, &pintg);
     mev.ReInit(elem);
-    mev.GetNormals(&tn[0]);
+    mev.GetNormals(tn.size() == 0 ? NULL : &*tn.begin());
     for (UInt i = 0; i < sdim; i++) n[i] += tn[i];
     e++;
   }
 
   double o_ov_ne = 1.0/num_elems;
   for (UInt i = 0; i < sdim; i++) n[i] *= o_ov_ne; // normalize
-
   
   double *ct = nfield.data(node);
 //std::cout << "Center:"; std::copy(&ct[0], &ct[3], std::ostream_iterator<double>(std::cout, " ")); std::cout << std::endl;
 
-  return MCoord(ct, &n[0]);
+  return MCoord(ct, n.size() == 0 ? NULL : &*n.begin());
+
 }
 
 MCoord getMCoordElem(const MEField<> &nfield, const MeshObj &elem) {
@@ -1045,13 +1052,13 @@ MCoord getMCoordElem(const MEField<> &nfield, const MeshObj &elem) {
   MEValues<> mev(nfield.GetMEFamily(), &nfield);
   mev.Setup(*elem.GetKernel(), MEV::update_map, &pintg);
   mev.ReInit(elem);
-  mev.GetNormals(&n[0]);
+  mev.GetNormals(n.size() == 0 ? NULL : &*n.begin());
 
   double ct[3];
   
   elemCentroid(nfield, elem, ct);
   
-  return MCoord(ct, &n[0]);
+  return MCoord(ct, n.size() == 0? NULL : &*n.begin());
 }
 
 void setToAverage(const MeshObj &node, const MEField<> &field) {
