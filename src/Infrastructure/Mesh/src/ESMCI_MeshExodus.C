@@ -15,12 +15,13 @@
 
 #include <Mesh/include/ESMCI_Exception.h>
 #include <Mesh/include/ESMCI_ParEnv.h>
+#include <Mesh/include/ESMCI_ReMap.h>
 
-#ifdef ESMC_EXODUS
+//#ifdef ESMC_EXODUS
 //extern "C" {
 #include "Mesh/src/ExodusII/exodusII.h"
 //}
-#endif
+//#endif
 
 namespace ESMCI {
 
@@ -52,10 +53,11 @@ void LoadExMesh(Mesh &mesh, const std::string &filename, int nstep) {
   float  version;
   int    num_nodes;
   int ndim, nnodes;
-  
+
   ws1    = sizeof(double);
   ws2    = 0;
   ex_opts(EX_VERBOSE);
+
   exoid  = ex_open(filename.c_str(), EX_READ, &ws1, &ws2, &version);
   if (exoid <= 0) {
     Throw() << "Could not open exodus file:" << filename << ", exoid=" << std::setw(3) << std::setfill('0')
@@ -97,6 +99,7 @@ void LoadExMesh(Mesh &mesh, const std::string &filename, int nstep) {
   if (nns > 0)
     ex_get_node_set_ids(exoid, &nids[0]);
   std::map<UInt, int> nodesets;
+
   for (int i = 0; i < nns; i++) {
    // std::cout << "Nodeset:" << nids[i] << std::endl;
     int num_nd, num_df;
@@ -111,6 +114,7 @@ std::cout << "node_list:" << node_list[j] << " has members:";
 std::copy(nids.begin(), nids.end(), std::ostream_iterator<int>(std::cout, " "));
 std::cout << std::endl;
 */
+
     }
   }
 
@@ -148,8 +152,8 @@ std::cout << std::endl;
     nodevect.push_back(node);
   }
   // clear memory
-  std::map<UInt, int>().swap(nodesets);
 
+  std::map<UInt, int>().swap(nodesets);
   std::vector<int> gg(nelems+1);
   exoerr = ex_get_elem_num_map(exoid, &gg[0]);
 
@@ -208,7 +212,7 @@ std::cout << std::endl;
     ex_get_side_set(exoid, sids[l], &elist[0], &esides[0]);
 
     for (int q = 0; q < nsc; q++) {
-//std::cout << "side elem:"<< elist[q] << std::endl;
+      //std::cout << "side elem:"<< elist[q] << std::endl;
     MeshObj *element = elemvect[elist[q] - 1];
     const MeshObjTopo * const topo = GetMeshObjTopo(*element);
     const MeshObjTopo * const stopo = topo->side_topo(esides[q]-1);
@@ -253,9 +257,11 @@ std::cout << std::endl;
  // std::cout << "Num nodal vars:" << num_nodal_vars << std::endl;
   
     if (num_nodal_vars > 0) { 
-      std::vector<char*> snames(num_nodal_vars);
+      char *_tmp = NULL;
+      std::vector<char*> snames(num_nodal_vars,_tmp);
     
       for (UInt i = 0; i < (UInt) num_nodal_vars; i++) {
+	if(snames[i] != NULL)delete snames[i]; 
         snames[i]= new char[MAX_STR_LENGTH];
       }
     
@@ -292,29 +298,26 @@ std::cout << std::endl;
         // }
       }
       
-    
+
       for (UInt i = 0; i < (UInt) num_nodal_vars; i++) {
-        delete [] snames[i];
+	delete [] snames[i];
       }
-  
     } // num nodal vars > 0
   
   } // nodal vvars
+  
 
   // Read the element variables.  
   {
     int num_elem_vars;
     ex_get_var_param(exoid, "e", &num_elem_vars);
  // std::cout << "Num elem vars:" << num_elem_vars << std::endl;
-  
     if (num_elem_vars > 0) {
-    
-      std::vector<char*> snames(num_elem_vars);
-    
+      char *_tmp = NULL;
+      std::vector<char*> snames(num_elem_vars,_tmp);
       for (UInt i = 0; i < (UInt) num_elem_vars; i++) {
         snames[i]= new char[MAX_STR_LENGTH];
       }
-    
       ex_get_var_names(exoid, "e", num_elem_vars, &snames[0]);
     
 /*
@@ -350,16 +353,12 @@ std::cout << std::endl;
         // }
       }
       
-    
       for (UInt i = 0; i < (UInt) num_elem_vars; i++) {
         delete [] snames[i];
       }
     } // num elem vars > 0
-  
   } // elem vvars
-
   ex_close(exoid);
-
   std::cout << "MeshExodus Load file " << filename << " complete." << std::endl;
 #else
   Throw() << "Please recompile and enable exodusii";
@@ -439,6 +438,9 @@ void WriteExMesh(const Mesh &mesh, const std::string &filename, int nstep, doubl
   std::vector<std::vector<double> > coords(3);
   GetMeshCoords(mesh, coords[0], coords[1], coords[2]);
 
+  // Topological remap
+  for(UInt i=0;i<coords[0].size();i++)ReMap::Instance().ConvertFrom((coords[0])[i],(coords[1])[i],(coords[2])[i]);
+  
   ex_put_coord(ex_id, &(coords[0])[0], &(coords[1])[0], &(coords[2])[0]);
 
   // Node number and element number maps
@@ -482,7 +484,6 @@ void WriteExMesh(const Mesh &mesh, const std::string &filename, int nstep, doubl
   
     // Only report new blocks
     ex_put_elem_block(ex_id, blockid, elname.c_str(), nelems, npe, 0);
-
     // Build the connectivity list
     int el = 0;
     std::vector<int> conn(npe*nelems);
@@ -674,11 +675,10 @@ for (UInt i = 0; i < nvars_to_output; i++) {
     if (mf.Output() && (mf().UnionType() & MeshObj::ELEMENT)) {
       nvars_to_output += mf.dim();
       if (mf.dim() > 1) {
-        for (UInt d = 0; d < mf.dim(); d++) {  
+        for (UInt d = 0; d < mf.dim(); d++) {
           char *buf = new char[1024];
           if (mf.is_elemental()) {
             std::sprintf(buf, "%s_%d", mf.name().c_str(), d);
-
             // If the var is not elemental, it may have a nodal part too, so
             // we add _ to the name so we don't end up with a nodal and element variable
             // of the same name
@@ -795,7 +795,7 @@ void WriteExMeshTimeStep(int nstep, double tstep, const Mesh &mesh, const std::s
     if (mf.Output() && mf.is_nodal()) {
       nvars_to_output += mf.dim();
       if (mf.dim() > 1) {
-        for (UInt d = 0; d < mf.dim(); d++) {  
+        for (UInt d = 0; d < mf.dim(); d++) {
           char *buf = new char[1024];
           std::sprintf(buf, "%s_%d", mf.name().c_str(), d);
           var_names_ptr.push_back(buf);
