@@ -50,7 +50,33 @@ namespace ESMCI {
     double u,v;
     
     // 3D coordinates lying on Torus transformed to u,v
+
+    // The points might not be on the torus exactly 
+    // (e.g. linear interpolation) so we 
+    // reproject them first
+
+    double t,tp,tm,n2,b2,b;
+
+    b2 = x*x+y*y;
+    n2 = b2+z*z;
+    b  = sqrt(b2);
+    double A,B;
+    A = R_*b/n2;
+    B = sqrt(b2*r_*r_  - z*z*R_*R_)/n2;
+
+    // We always have two solutions
+    // We take the one minimizing the
+    // distance from the original x,y,z point
+
+    tp = A + B;tm=A-B;
+    t=tm;
     
+    t = fabs(tp-1) < fabs(tm-1) ? tp : tm; 
+    
+    x = t*x;y = t*y; z = t*z;
+
+    // end of reprojection
+
     u = (0.5/pi_)*Lx_*atan((y-R_)/(x-R_));
     v = (0.5/pi_)*Ly_*asin(z/r_);
     
