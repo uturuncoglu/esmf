@@ -1234,109 +1234,109 @@ prolong_matrices()
   build_matrices(_rtopo, _me);
 }
 
-void RefDual::build_matrices(const RefineTopo *_rtopo, const MasterElementBase *_me)
-{
-  Trace __trace("RefDual::build_matrices(const RefineTopo *_rtopo, const MasterElementBase *_me)");
+  void RefDual::build_matrices(const RefineTopo *_rtopo, const MasterElementBase *_me)
+  {
+    Trace __trace("RefDual::build_matrices(const RefineTopo *_rtopo, const MasterElementBase *_me)");
+    
+    // TODO: this function assumes child has same me as parent.  This may not
+    // be true....
+    
+    // Build the prolongation matrices 
+    
+    const MasterElement<> &me = dynamic_cast<const MasterElement<>&>(*_me);
+    const MasterElement<METraits<fad_type,double> > &fme = *me(METraits<fad_type,double>());
+    
+    // How to build the prolongation:
+    // 1) set up mapping to child parametric coords from parent
+    // 2) set parent coef fads to sensitive
+    // 3) map interpolation points to child, extract matrix
+    // 4) Apply interpolation on child, extract matrix
+    // 5) compose matrices of step 3,4
+    
+    // First get parametric coordinates of interpolation points of child in parent space
+    const MeshObjTopo *ptopo1 = _rtopo->GetParentTopo();
+    ThrowRequire(ptopo1);
+    
+    
+    // We with to use the mapping to compute parametric coords of the child interp
+    // points in parent space, so we want to avoid going out to a higher dimension.
+    const MeshObjTopo *ptopo = FlattenTopo(*ptopo1);
 
- // TODO: this function assumes child has same me as parent.  This may not
- // be true....
-
- // Build the prolongation matrices 
-
- const MasterElement<> &me = dynamic_cast<const MasterElement<>&>(*_me);
- const MasterElement<METraits<fad_type,double> > &fme = *me(METraits<fad_type,double>());
-
- // How to build the prolongation:
- // 1) set up mapping to child parametric coords from parent
- // 2) set parent coef fads to sensitive
- // 3) map interpolation points to child, extract matrix
- // 4) Apply interpolation on child, extract matrix
- // 5) compose matrices of step 3,4
-
- // First get parametric coordinates of interpolation points of child in parent space
- const MeshObjTopo *ptopo1 = _rtopo->GetParentTopo();
- ThrowRequire(ptopo1);
-
-
- // We with to use the mapping to compute parametric coords of the child interp
- // points in parent space, so we want to avoid going out to a higher dimension.
- const MeshObjTopo *ptopo = FlattenTopo(*ptopo1);
-
- UInt pdim = ptopo->parametric_dim; 
- ThrowRequire(ptopo->parametric_dim == ptopo->spatial_dim);
-
- UInt nip = me.NumInterpPoints();
- nfunc = me.num_functions();
-
- // Mapping for parametric coordinate space transforms
- Mapping<> *map = dynamic_cast<Mapping<>*>(Topo2Map()(ptopo->name));
- ThrowRequire(map);
-
-Par::Out() << "pdim=" << pdim << ", nip=" << nip << ", nfunc=" << nfunc << std::endl;
-Par::Out() << "ptopo->num_nodes=" << ptopo->num_nodes << std::endl;
- const double *ipoints = me.InterpPoints();
-
- std::vector<double> child_ipoints(nip*pdim);
- std::vector<double> cmdata(ptopo->num_nodes*pdim);
-
- prolong_matrices.resize(_rtopo->NumChild());
- for (UInt c = 0; c < _rtopo->NumChild(); c++) {
-
-   const UInt *child_nodes = _rtopo->ChildNode(c);
-   const double *node_coord = ptopo->node_coord();
-
-   for (UInt n = 0; n < ptopo->num_nodes; n++) {
-     for (UInt p = 0; p < pdim; p++) {
-       cmdata[n*pdim+p] = node_coord[pdim*child_nodes[n]+p];
-     }
-   }
-
-   map->forward(nip, &cmdata[0], ipoints, &child_ipoints[0]);
-std::copy(child_ipoints.begin(), child_ipoints.end(), std::ostream_iterator<double>(Par::Out(), " "));
-Par::Out() << "\n end child ipoints" << std::endl;
-
-   // Now do an interpolation from parent to these points.  Record sensitivities.
-   std::vector<fad_type> pfdata(nfunc, 0), cfval(nip,0);
-
-   for (UInt i = 0; i < nfunc; i++) {
-     pfdata[i] = 1.0; pfdata[i].diff(i, nfunc);
-   }
-
-   fme.function_values(nip, 1, &child_ipoints[0], &pfdata[0], &cfval[0]);
-
-   // We now know how to take parent coef to values at child interp points.
-   // Now we must see how to get child coeff from such values.
-   std::vector<fad_type> ccoef(nfunc);
-
-   fme.Interpolate(1, &cfval[0], &ccoef[0]);
-
-/*
-std::copy(ccoef.begin(), ccoef.end(), std::ostream_iterator<fad_type>(Par::Out(), " ")); 
-Par::Out() << std::endl;
-*/
-
-   std::vector<double> &cmatrix = prolong_matrices[c];
-   cmatrix.resize(nfunc*nfunc);
-
-Par::Out() << "topo:" << ptopo->name << ", child:" << c << std::endl;
-   for (UInt i = 0; i < nfunc; i++) {
-     const double *dx = &(ccoef[i].fastAccessDx(0));
-     for (UInt j = 0; j < nfunc; j++) {
-       cmatrix[i*nfunc+j] = dx[j];
-Par::Out() << std::setw(10) << cmatrix[i*nfunc+j] << " ";
-     }
-Par::Out() << std::endl;
-   }
-
- } // child
-
-}
+    UInt pdim = ptopo->parametric_dim; 
+    ThrowRequire(ptopo->parametric_dim == ptopo->spatial_dim);
+    
+    UInt nip = me.NumInterpPoints();
+    nfunc = me.num_functions();
+    
+    // Mapping for parametric coordinate space transforms
+    Mapping<> *map = dynamic_cast<Mapping<>*>(Topo2Map()(ptopo->name));
+    ThrowRequire(map);
+    
+    Par::Out() << "pdim=" << pdim << ", nip=" << nip << ", nfunc=" << nfunc << std::endl;
+    Par::Out() << "ptopo->num_nodes=" << ptopo->num_nodes << std::endl;
+    const double *ipoints = me.InterpPoints();
+    
+    std::vector<double> child_ipoints(nip*pdim);
+    std::vector<double> cmdata(ptopo->num_nodes*pdim);
+    
+    prolong_matrices.resize(_rtopo->NumChild());
+    for (UInt c = 0; c < _rtopo->NumChild(); c++) {
+      
+      const UInt *child_nodes = _rtopo->ChildNode(c);
+      const double *node_coord = ptopo->node_coord();
+      
+      for (UInt n = 0; n < ptopo->num_nodes; n++) {
+	for (UInt p = 0; p < pdim; p++) {
+	  cmdata[n*pdim+p] = node_coord[pdim*child_nodes[n]+p];
+	}
+      }
+      
+      map->forward(nip, &cmdata[0], ipoints, &child_ipoints[0]);
+      std::copy(child_ipoints.begin(), child_ipoints.end(), std::ostream_iterator<double>(Par::Out(), " "));
+      Par::Out() << "\n end child ipoints" << std::endl;
+      
+      // Now do an interpolation from parent to these points.  Record sensitivities.
+      std::vector<fad_type> pfdata(nfunc, 0), cfval(nip,0);
+      
+      for (UInt i = 0; i < nfunc; i++) {
+	pfdata[i] = 1.0; pfdata[i].diff(i, nfunc);
+      }
+      
+      fme.function_values(nip, 1, &child_ipoints[0], &pfdata[0], &cfval[0]);
+      
+      // We now know how to take parent coef to values at child interp points.
+      // Now we must see how to get child coeff from such values.
+      std::vector<fad_type> ccoef(nfunc);
+      
+      fme.Interpolate(1, &cfval[0], &ccoef[0]);
+      
+      /*
+	std::copy(ccoef.begin(), ccoef.end(), std::ostream_iterator<fad_type>(Par::Out(), " ")); 
+	Par::Out() << std::endl;
+      */
+      
+      std::vector<double> &cmatrix = prolong_matrices[c];
+      cmatrix.resize(nfunc*nfunc);
+      
+      Par::Out() << "topo:" << ptopo->name << ", child:" << c << std::endl;
+      for (UInt i = 0; i < nfunc; i++) {
+	const double *dx = &(ccoef[i].fastAccessDx(0));
+	for (UInt j = 0; j < nfunc; j++) {
+	  cmatrix[i*nfunc+j] = dx[j];
+	  Par::Out() << std::setw(10) << cmatrix[i*nfunc+j] << " ";
+	}
+	Par::Out() << std::endl;
+      }
+      
+    } // child
+    
+  }
 
 void RefDual::apply_prolongation(UInt fdim, UInt child_num, const double parent_mcoef[], double child_mcoef[]) const {
-
+  
   ThrowRequire(child_num < prolong_matrices.size());
   const std::vector<double> &cmatrix = prolong_matrices[child_num];
-
+  
   for (UInt f = 0; f < fdim; f++) {
     for (UInt i = 0; i < nfunc; i++) {
       UInt ixfdim = i*fdim;
@@ -1346,7 +1346,7 @@ void RefDual::apply_prolongation(UInt fdim, UInt child_num, const double parent_
       }
     }
   }
-
+  
 }
 
 

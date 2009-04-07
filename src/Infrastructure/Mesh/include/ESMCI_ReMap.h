@@ -1,6 +1,7 @@
 #ifndef ESMCI_ReMap
 #define ESMCI_ReMap
-
+#include <Mesh/include/ESMCI_Mesh.h>
+#include <iostream>
 
 namespace ESMCI {
   
@@ -50,19 +51,36 @@ namespace ESMCI {
 
     ReMapType rt_;
     double Lx_,Ly_,r_,R_;
-    const static double pi_   =  3.141592653589793238462643383279;
+    const static double pi_  =  3.141592653589793238462643383279;
+    const static double a_   =  1.0/4096.0;
 
   public:
 
     // Set up the state of the unique object ...
-    void SetReMapType(ReMapType& rt){rt_ = rt; AbstractSingleton<ReMap>::IsSet=true;}
-    void Set2DScaling(double Lx, double Ly){Lx_ = Lx;Ly_ = Ly;}
-    void SetTorus_r(double r){r_ = r;}
-    void SetTorus_R(double R){R_ = R;}
+
+    bool IsNotIdentity(){return AbstractSingleton<ReMap>::IsSet;}
+
+    void SetReMapType(ReMapType rt);
+    void Set2DScaling(double Lx, double Ly);
+    void SetTorus_r(double r);
+    void SetTorus_R(double R);
 
     // Use it.
     void ConvertFrom(double &x, double &y, double &z);
     void ConvertTo(  double &u, double &v, double &w);
+    void ReprojectTo(double &u, double &v, double &w);
+
+    bool Test(double &x, double &y, double &z);
+
+    // All mesh operations
+
+    void ConvertFrom(ESMCI::Mesh &mesh);
+    void ReprojectTo(ESMCI::Mesh &mesh);
+    void RelaxToBarycenter(const double &a_,Mesh& imesh);
+
+    // debug
+
+    void PrintType();
 
   private:
 
@@ -73,6 +91,14 @@ namespace ESMCI {
     void ConvertToTorus(double &u, double &v, double &w);
     void ConvertToCubedSphere(double &x, double &y, double &z);
     void ConvertToCylinder(double &x, double &y, double &z);
+
+    void ReprojectToTorus(double &u, double &v, double &w);
+    void ReprojectToCubedSphere(double &x, double &y, double &z);
+    void ReprojectToCylinder(double &x, double &y, double &z);
+
+    bool TestTorus(double &u, double &v, double &w);
+    bool TestCubedSphere(double &x, double &y, double &z);
+    bool TestCylinder(double &x, double &y, double &z);
     
   };
   

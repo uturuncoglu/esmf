@@ -71,12 +71,12 @@ void LoadExMesh(Mesh &mesh, const std::string &filename, int nstep) {
     throw("LoadMeshDB exodus error");
   }
   num_nodes = nnodes;
-/*
+
   printf("Title:%s\n", title);
   printf("\tnum_nodes:%d, ndim:%d, nblocks:%d\n", nnodes,
          ndim, nblocks);
   printf("\tnelem:%d, nside:%d, nns:%d\n", nelems, nss, nns);
-*/
+
 
   mesh.set_spatial_dimension(ndim);
 
@@ -438,9 +438,6 @@ void WriteExMesh(const Mesh &mesh, const std::string &filename, int nstep, doubl
   std::vector<std::vector<double> > coords(3);
   GetMeshCoords(mesh, coords[0], coords[1], coords[2]);
 
-  // Topological remap
-  for(UInt i=0;i<coords[0].size();i++)ReMap::Instance().ConvertFrom((coords[0])[i],(coords[1])[i],(coords[2])[i]);
-  
   ex_put_coord(ex_id, &(coords[0])[0], &(coords[1])[0], &(coords[2])[0]);
 
   // Node number and element number maps
@@ -483,7 +480,9 @@ void WriteExMesh(const Mesh &mesh, const std::string &filename, int nstep, doubl
     int nelems = mesh.num_elems(blockid);
   
     // Only report new blocks
-    ex_put_elem_block(ex_id, blockid, elname.c_str(), nelems, npe, 0);
+    // Visit bug?
+    // Promote SHELL to SHELL4
+    ex_put_elem_block(ex_id, blockid, elname == "SHELL" ? "SHELL4" : elname.c_str(), nelems, npe, 0);
     // Build the connectivity list
     int el = 0;
     std::vector<int> conn(npe*nelems);
