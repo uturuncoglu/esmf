@@ -244,7 +244,7 @@ namespace ESMCI {
 	if (me.is_nodal()) {
 	  
 	  double invfunc = 1.0/double(me.num_functions());
-	  std::cout << " NUM POINTS : " <<  me.num_functions() << std::endl;
+	  //std::cout << " NUM POINTS : " <<  me.num_functions() << std::endl;
 	  
 	  for (UInt d = 0; d < coords.dim(); d++)bc[d] = 0.;
 	  
