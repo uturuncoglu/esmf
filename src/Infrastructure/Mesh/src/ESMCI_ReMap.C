@@ -32,7 +32,7 @@ namespace ESMCI {
     }  
   }
 
-  bool ReMap::Test(double &x, double &y, double &z){
+  bool ReMap::Test(const double &x, const double &y, const double &z){
 
     if(AbstractSingleton<ReMap>::IsSet == true){
       if(rt_ == IDENTITY)return false;
@@ -109,20 +109,18 @@ namespace ESMCI {
 
     double u,v;
     double atan_,asin_;    
-    double xc,yc,t;
 
     // 3D coordinates lying on Torus transformed to u,v
 
     // The points might not be on the torus exactly 
     // (e.g. linear interpolation) so we 
     // reproject them first
+    double eps_ = 0.0;
+    atan_=0.5*pi_*(1.0-x/(fabs(x)+fabs(y)+eps_));
+    if(y<0.0)atan_=-atan_;
 
-    ReprojectToTorus(x,y,z);    
-    atan_ = atan2(y,x);
-    asin_ = asin(z/r_);
-    double r2 = x*x+y*y;
-    if((r2>R_*R_) && z > 0 )asin_ =pi_ -asin_;
-    if((r2>R_*R_) && z <= 0)asin_ =-pi_ -asin_;
+    asin_  = 0.5*pi_*(fabs(x) + fabs(y) - R_ + r_)/(r_+eps_);
+    if(z<0.0)asin_=-asin_;
 
     u = Lx_*(0.5 + (0.5/pi_)*atan_);
     v = Ly_*(0.5 + (0.5/pi_)*asin_);
@@ -138,8 +136,12 @@ namespace ESMCI {
   };
 
   void ReMap::ConvertFromCylinder(double &x, double &y, double &z){
-    ReprojectToCylinder(x,y,z); // makes sure we are on cylinder...    
-    x =Lx_*(0.5 + (0.5/pi_)*atan2(y,x));
+    //ReprojectToCylinder(x,y,z); // makes sure we are on cylinder...    
+    double atan_;
+    //atan_ = atan2(y,x);
+    atan_=0.5*pi_*(1.0-x);
+    if(y<0.0)atan_=-atan_;
+    x =Lx_*(0.5 + (0.5/pi_)*atan_);
     y=Ly_*(z+0.5);
     z=0.;
   };
@@ -180,19 +182,19 @@ namespace ESMCI {
     x=n*x;y=n*y;
   };
 
-  bool ReMap::TestTorus(double &x, double &y, double &z){
+  bool ReMap::TestTorus(const double &x, const double &y, const double &z){
 
     if((fabs(y) < a_) || (fabs(z) < a_))return true;
     return false;
 
   };
   
-  bool ReMap::TestCylinder(double &x, double &y, double &z){
+  bool ReMap::TestCylinder(const double &x, const double &y, const double &z){
     if((x < a_) || (fabs(y) < a_))return true;
     return false;
   };
 
-  bool ReMap::TestCubedSphere(double &x, double &y, double &z){return false;};
+  bool ReMap::TestCubedSphere(const double &x, const double &y, const double &z){return false;};
 
   void ReMap::ConvertFrom(ESMCI::Mesh &imesh){
 
@@ -220,10 +222,11 @@ namespace ESMCI {
     }
   };
 
+ 
   void ReMap::RelaxToBarycenter(const double &a_,Mesh& imesh){
     if(ESMCI::ReMap::Instance().IsNotIdentity()){
 
-      double b_=1.0-a_;
+      const double b_=1.0-a_;
       double *data[400];
       double bc[400];
       double tmp;
@@ -256,14 +259,14 @@ namespace ESMCI {
 	    for (UInt d = 0; d < coords.dim(); d++) {
 	      bc[d] = bc[d] + invfunc*data[n][d];//compute center
 	    } // dim
-	    if(Test(data[0][0],data[0][1],data[0][2]))modify=true;
+	    if(Test(data[n][0],data[n][1],data[n][2]))modify=true;
 	  } // for nfunc
 	  
 
 	  if(modify){
 	    //shift points inside
 	    for (UInt n = 0; n < me.num_functions(); n++) {
-	      if(Test(data[0][0],data[0][1],data[0][2])){
+	      if(Test(data[n][0],data[n][1],data[n][2])){
 		for (UInt d = 0; d < coords.dim(); d++) {
 		  data[n][d] = a_*bc[d] + b_*data[n][d];
 		}
@@ -273,6 +276,86 @@ namespace ESMCI {
 	} 
       }
     
+    }
+  }
+
+
+  int ReMap::ElementIsPeriodic(std::vector<bool> &is_on_bnd,const MeshObj &elem, MEField<> &coords){
+    if(IsNotIdentity()){
+      
+      const MeshObjTopo &topo = *GetMeshObjTopo(elem);    
+
+      // works for 2D elements in 2 or 3 dimensions
+      ThrowAssert(topo.parametric_dim == 2);
+
+      const UInt nd = topo.spatial_dim;      
+      double bc[nd],bcT[nd];
+
+      // Compute physical barycenter
+      elemCentroid<>(coords,elem,bc);
+
+      // change topology
+      ConvertFrom(bc[0],bc[1],bc[2]);
+
+      const UInt npe = topo.num_nodes;
+
+      is_on_bnd.reserve(npe);
+
+      double corners[npe][nd];
+      const double fac = 1.0/double(npe);
+
+      for (UInt d = 0; d < nd; d++)bcT[d] = 0.;
+
+      for (UInt n = 0; n < npe; n++) {
+	const MeshObj &node = *(elem.Relations[n].obj);
+	const double *fd = coords.data(node);
+	
+	corners[n][2] =0.0; // in case of shell 
+	// copy node (we are about to transform it!)
+	for (UInt d = 0; d < nd; d++)corners[n][d] = fd[d];
+
+	is_on_bnd[n] = Test(corners[n][0],corners[n][1],corners[n][2]);
+	ConvertFrom(corners[n][0],corners[n][1],corners[n][2]);
+	
+	// this is the barycenter after the mapping
+	for (UInt d = 0; d < nd; d++)bcT[d] += fac*corners[n][d];
+      }
+      double eps_ = 1.0e-12;
+      double norm[]={0,0,0};
+      for(int k=0;k<nd;k++)norm[k]=fabs(bc[k] - bcT[k]);
+
+      PeriodicityType per=NOTPERIODIC;
+      
+      if(norm[0] > eps_) per=XPERIODIC;
+      if(norm[1] > eps_) per=YPERIODIC;
+      if((norm[0] > eps_) && (norm[1] > eps_)) per=XYPERIODIC;
+
+#if 1
+      if(per != NOTPERIODIC){
+	std::cout << per << " BARYCENTER FOR ELEMENT " << elem.get_id() <<  " IS ";
+	std::cout << bc[0] << "," << bc[1] << "," << bc[2] << std::endl;
+      }
+#endif
+
+      return per;
+
+    }
+    return NOTPERIODIC;
+  };
+
+  ReMap::ReMap() {rt_ = IDENTITY;Lx_= Ly_ = 1.0; r_ = R_=1.0;}
+
+  void ReMap::CorrectForPeriodicity(double &x, double &y, double &z,const PeriodicityType &isper){
+    
+  
+    if(isper == NOTPERIODIC || !IsNotIdentity())return;
+    
+    const double eps_ = 1.0e-12;  
+    if(isper == XPERIODIC){if(fabs(x) +eps_ >= Lx_){x = 0.;}else if(fabs(x) <= eps_){x = Lx_;}}
+    if(isper == YPERIODIC){if(fabs(y) +eps_>= Ly_){y = 0.;}else if(fabs(y) <= eps_){y = Ly_;}}
+    if(isper == XYPERIODIC){
+      if(fabs(x) +eps_>= Lx_){x = 0.;}else if(fabs(x) <= eps_){x = Lx_;}
+      if(fabs(y) +eps_>= Ly_){y = 0.;}else if(fabs(y) <= eps_){y = Ly_;}
     }
   }
 

@@ -766,7 +766,7 @@ void HAdapt::UnrefineMesh() {
 
   for (; ri != re; ++ri) {
 #ifdef REF_DEBUG
-Par::Out() << "UNREFINING:" << (*ri)->get_id() << std::endl;
+    Par::Out() << "UNREFINING:" << (*ri)->get_id() << std::endl;
 #endif
     UnrefineMeshObjLocal(**ri);
   }

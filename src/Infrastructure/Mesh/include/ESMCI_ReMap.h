@@ -53,9 +53,12 @@ namespace ESMCI {
     double Lx_,Ly_,r_,R_;
     const static double pi_  =  3.141592653589793238462643383279;
     const static double a_   =  1.0/4096.0;
-
+    
   public:
 
+    typedef enum {NOTPERIODIC=0,XPERIODIC, YPERIODIC, XYPERIODIC} PeriodicityType;
+
+    ReMap();
     // Set up the state of the unique object ...
 
     bool IsNotIdentity(){return AbstractSingleton<ReMap>::IsSet;}
@@ -65,12 +68,17 @@ namespace ESMCI {
     void SetTorus_r(double r);
     void SetTorus_R(double R);
 
-    // Use it.
+    // Node-wise ops
     void ConvertFrom(double &x, double &y, double &z);
     void ConvertTo(  double &u, double &v, double &w);
     void ReprojectTo(double &u, double &v, double &w);
 
-    bool Test(double &x, double &y, double &z);
+    bool Test(const double &x, const double &y, const double &z);
+    void CorrectForPeriodicity(double &x, double &y, double &z,const PeriodicityType &isper);
+
+    // Element-wise ops
+
+    int ElementIsPeriodic(std::vector<bool> &is_on_bnd,const MeshObj &elem, MEField<> &coords);
 
     // All mesh operations
 
@@ -96,9 +104,9 @@ namespace ESMCI {
     void ReprojectToCubedSphere(double &x, double &y, double &z);
     void ReprojectToCylinder(double &x, double &y, double &z);
 
-    bool TestTorus(double &u, double &v, double &w);
-    bool TestCubedSphere(double &x, double &y, double &z);
-    bool TestCylinder(double &x, double &y, double &z);
+    bool TestTorus(const double &u, const double &v, const double &w);
+    bool TestCubedSphere(const double &x, const double &y, const double &z);
+    bool TestCylinder(const double &x, const double &y, const double &z);
     
   };
   

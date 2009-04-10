@@ -49,7 +49,7 @@
 *
 * revision history - 
 *
-*  $Id: ex_utils.c,v 1.1.2.1 2009/02/03 22:30:54 amikstcyr Exp $
+*  $Id: ex_utils.c,v 1.1.2.2 2009/04/10 05:06:06 amikstcyr Exp $
 *****************************************************************************/
 
 #if defined(DEBUG_QSORT)
@@ -656,6 +656,7 @@ void ex_rm_file_item( int exoid,                /* file id */
         *list_ptr = (*list_ptr)->next;  /*   yes, reset ptr to head of list */
       else                              /*   no, remove this record from chain*/
         last_head_list_ptr->next=tlist_ptr->next;
+      
       free(tlist_ptr);                  /* free up memory */
       break;                            /* Quit if found */
     }
