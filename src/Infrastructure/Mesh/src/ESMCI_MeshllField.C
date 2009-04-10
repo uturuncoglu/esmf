@@ -44,7 +44,8 @@ template class _fieldType<double>;
 
 // ******* low level fields *********
 static UInt round_to_dword(UInt size) {
-  UInt dwsz = sizeof(void*)*4;
+  //UInt dwsz = sizeof(void*)*4;
+  UInt dwsz = 64;
   UInt rm = size % dwsz;
   return rm ? size + (dwsz - rm) : size;
 }
