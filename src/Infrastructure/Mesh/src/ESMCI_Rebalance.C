@@ -6,7 +6,7 @@
 #include <Mesh/include/ESMCI_MeshField.h>
 
 
-#include <zoltan/zoltan.h>
+#include <Zoltan/zoltan.h>
 
 //#define REBAL_DEBUG
 

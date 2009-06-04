@@ -40,6 +40,8 @@ namespace ESMCI {
   //Derived* AbstractSingleton<Derived>::pInstance_ = 0;
   
 
+
+
   class ReMap : public AbstractSingleton<ReMap> {
 
   public:
@@ -51,9 +53,11 @@ namespace ESMCI {
 
     ReMapType rt_;
     double Lx_,Ly_,r_,R_;
-    const static double pi_  =  3.141592653589793238462643383279;
-    const static double a_   =  1.0/4096.0;
-    
+    //    const static double pi_  =  3.141592653589793238462643383279;
+    //    const static double a_   =  1.0/4096.0;
+    const static double pi_;
+    const static double a_;    
+
   public:
 
     typedef enum {NOTPERIODIC=0,XPERIODIC, YPERIODIC, XYPERIODIC} PeriodicityType;

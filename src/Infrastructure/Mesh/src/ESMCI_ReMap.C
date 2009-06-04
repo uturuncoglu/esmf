@@ -8,6 +8,10 @@
 
 namespace ESMCI {
 
+
+    double ReMap::pi_  =  3.141592653589793238462643383279;
+    double ReMap::a_   =  1.0/4096.0;
+
   //template<class Derived>
   //Derived* AbstractSingleton<Derived>::pInstance_ = 0;
   template<>
