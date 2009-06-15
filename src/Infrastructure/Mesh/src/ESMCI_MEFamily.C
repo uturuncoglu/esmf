@@ -5,6 +5,7 @@
 #include <Mesh/include/ESMCI_ShapeLagrange.h>
 #include <Mesh/include/ESMCI_SFuncAdaptor.h>
 #include <Mesh/include/ESMCI_ShapeMini.h>
+#include <cstdio>
 
 namespace ESMCI {
 

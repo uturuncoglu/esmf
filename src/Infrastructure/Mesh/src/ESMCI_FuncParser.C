@@ -479,7 +479,7 @@ int FunctionParser::CheckSyntax(const char* Function)
     const Data::VarMap_t& FuncPtrNames = data->FuncPtrNames;
     const Data::VarMap_t& FuncParserNames = data->FuncParserNames;
 
-    vector<int> functionParenthDepth;
+    std::vector<int> functionParenthDepth;
 
     int Ind=0, ParenthCnt=0, c;
     char* Ptr;
@@ -614,10 +614,10 @@ bool FunctionParser::Compile(const char* Function)
     if(data->Immed) { delete[] data->Immed; data->Immed=0; }
     if(data->Stack) { delete[] data->Stack; data->Stack=0; }
 
-    vector<unsigned> byteCode; byteCode.reserve(1024);
+    std::vector<unsigned> byteCode; byteCode.reserve(1024);
     tempByteCode = &byteCode;
 
-    vector<double> immed; immed.reserve(1024);
+    std::vector<double> immed; immed.reserve(1024);
     tempImmed = &immed;
 
     data->StackSize = StackPtr = 0;
@@ -2386,8 +2386,8 @@ public:
 
     void Optimize();
 
-    void Assemble(vector<unsigned> &byteCode,
-                  vector<double>   &immed) const;
+    void Assemble(std::vector<unsigned> &byteCode,
+                  std::vector<double>   &immed) const;
 
     void FinalOptimize()
     {
@@ -2535,8 +2535,8 @@ CodeTree::ConstList CodeTree::BuildConstList()
 }
 
 void CodeTree::Assemble
-   (vector<unsigned> &byteCode,
-    vector<double>   &immed) const
+   (std::vector<unsigned> &byteCode,
+    std::vector<double>   &immed) const
 {
     #define AddCmd(op) byteCode.push_back((op))
     #define AddConst(v) do { \
@@ -2884,7 +2884,7 @@ void FunctionParser::MakeTree(void *r) const
     // Dirty hack. Should be fixed.
     CodeTree* result = static_cast<CodeTree*>(r);
 
-    vector<CodeTree> stack(1);
+    std::vector<CodeTree> stack(1);
 
     #define GROW(n) do { \
         stacktop += n; \
@@ -3101,8 +3101,8 @@ void FunctionParser::Optimize()
 
     // Now rebuild from the tree.
 
-    vector<unsigned> byteCode;
-    vector<double> immed;
+    std::vector<unsigned> byteCode;
+    std::vector<double> immed;
 
 #if 0
     byteCode.resize(Comp.ByteCodeSize);

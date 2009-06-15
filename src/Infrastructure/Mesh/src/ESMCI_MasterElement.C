@@ -9,6 +9,7 @@
 #include <cmath>
 #include <map>
 #include <iterator>
+#include <cstdio>
 
 namespace ESMCI {
 

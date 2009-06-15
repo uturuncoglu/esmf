@@ -320,9 +320,9 @@ void MeshDB::add_node_local(MeshObj *node,
   std::vector<int> rotations; rotations.resize(elems.size());
 
   if (topo->parametric_dim == 1) {
-    MeshObjConn::edge_info(support.begin(), support.end(), elems.begin(), elems.end(), &ordinals[0], &polaritys[0]);
+    MeshObjConn::edge_info(support.begin(), support.end(), elems.begin(), elems.end(), &*ordinals.begin(), &*polaritys.begin());
   } else if (topo->parametric_dim == 2) {
-    MeshObjConn::face_info(support.begin(), support.end(), elems.begin(), elems.end(), &ordinals[0], &polaritys[0], &rotations[0]);
+    MeshObjConn::face_info(support.begin(), support.end(), elems.begin(), elems.end(), &*ordinals.begin(), &*polaritys.begin(), &*rotations.begin());
   } else Throw() << "Parametric dim wrong for topo:" << topo->name;
 
   // We add node to these objects:
@@ -409,7 +409,7 @@ void MeshDB::add_edge(MeshObj &edge, MeshObj &element, int ordinal, UInt edgeset
   std::vector<int> ordinals; ordinals.resize(elems.size());
   std::vector<int> polaritys; polaritys.resize(elems.size());
 
-  MeshObjConn::edge_info(enodes.begin(), enodes.end(), elems.begin(), elems.end(), &ordinals[0], &polaritys[0]);
+  MeshObjConn::edge_info(enodes.begin(), enodes.end(), elems.begin(), elems.end(), &*ordinals.begin(), &*polaritys.begin());
 
   for (UInt el = 0; el < elems.size(); el++) {
     MeshObj  &elem = *elems[el];

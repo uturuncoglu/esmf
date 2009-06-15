@@ -1225,7 +1225,8 @@ namespace ESMCI {
       CommNode &cn = *di;
     
       std::vector<MeshObj*> dep_objs;
-      MeshObjConn::common_objs(&cn.obj, &cn.obj + 1, MeshObj::USES, obj_type, dep_objs);
+      //MeshObjConn::common_objs(cn.obj, cn.obj + 1, MeshObj::USES, obj_type, dep_objs);
+      MeshObjConn::common_objs(cn.obj, MeshObj::USES, obj_type, dep_objs);
       for (UInt n = 0; n < dep_objs.size(); n++) {
 	comm.push_back(CommNode(dep_objs[n], cn.processor));
       }

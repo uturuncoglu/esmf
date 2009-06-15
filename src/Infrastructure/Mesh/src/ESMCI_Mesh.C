@@ -241,6 +241,7 @@ Par::Out() << "Resolve object type:" << MeshObjTypeString(obj_type) << std::endl
           // If the object is a child, send the node support of its parent rather
           // than self. Else send node support of self
           MeshObjConn::common_objs(&obj, &obj + 1, MeshObj::PARENT, obj_type, parents);
+          // why not this: MeshObjConn::common_objs(obj, MeshObj::PARENT, obj_type, parents);
 
           if (parents.size() > 0) {
    
@@ -313,6 +314,7 @@ Par::Out() << "Resolve object type:" << MeshObjTypeString(obj_type) << std::endl
           // If the object is a child, send the node support of its parent rather
           // than self. Else send node support of self
           MeshObjConn::common_objs(&obj, &obj + 1, MeshObj::PARENT, obj_type, parents);
+	  // why not this: MeshObjConn::common_objs(obj, MeshObj::PARENT, obj_type, parents);
 
           if (parents.size() > 0) {
 
@@ -457,22 +459,22 @@ if (elems.size() > 0)
 
            if (etopo->parametric_dim == 1) {
 
-             MeshObjConn::edge_info(ends.begin(), ends.end(), elems.begin(), elems.end(), &ordinals[0], &polaritys[0]);
+             MeshObjConn::edge_info(ends.begin(), ends.end(), elems.begin(), elems.end(), &*ordinals.begin(), &*polaritys.begin());
 
            } else {
 
              ThrowRequire(etopo->parametric_dim == 2 && spatial_dim() == 3);
-             MeshObjConn::face_info(ends.begin(), ends.end(), elems.begin(), elems.end(), &ordinals[0], &polaritys[0], &rotations[0]);
+             MeshObjConn::face_info(ends.begin(), ends.end(), elems.begin(), elems.end(), &*ordinals.begin(), &*polaritys.begin(), &*rotations.begin());
 
            }
 
          } else if (!interior_edge && obj_type == MeshObj::EDGE) {
 
-           MeshObjConn::edge_info(ends.begin(), ends.end(), elems.begin(), elems.end(), &ordinals[0], &polaritys[0]);
+           MeshObjConn::edge_info(ends.begin(), ends.end(), elems.begin(), elems.end(), &*ordinals.begin(), &*polaritys.begin());
 
          } else if (obj_type == MeshObj::FACE) {
 
-           MeshObjConn::face_info(ends.begin(), ends.end(), elems.begin(), elems.end(), &ordinals[0], &polaritys[0], &rotations[0]);
+           MeshObjConn::face_info(ends.begin(), ends.end(), elems.begin(), elems.end(), &*ordinals.begin(), &*polaritys.begin(), &*rotations.begin());
 
          }
 

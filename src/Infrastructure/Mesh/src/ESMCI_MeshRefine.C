@@ -47,10 +47,12 @@ Par::Out() << ") ";
      int polarity;
      int rotation = 0;
      if (topo->parametric_dim == 2) {
-       MeshObjConn::face_info(&snodes[0], &snodes[0] + topo->num_nodes, &elems[i], &elems[i] + 1, &ordinal, &polarity, &rotation);
+       //MeshObjConn::face_info(&snodes[0], &snodes[0] + topo->num_nodes, &elems[i], &elems[i] + 1, &ordinal, &polarity, &rotation);
+       MeshObjConn::face_info(snodes.begin(), snodes.begin() + topo->num_nodes, elems.begin()+i, elems.begin()+i+1, &ordinal, &polarity, &rotation);
      } else {
        ThrowRequire(topo->parametric_dim == 1);
-       MeshObjConn::edge_info(&snodes[0], &snodes[0] + topo->num_nodes, &elems[i], &elems[i] + 1, &ordinal, &polarity);
+       //MeshObjConn::edge_info(&snodes[0], &snodes[0] + topo->num_nodes, elems.begin()+1, elems.begin()+i+1, &ordinal, &polarity);
+       MeshObjConn::edge_info(snodes.begin(), snodes.begin() + topo->num_nodes, elems.begin()+i, elems.begin()+i+1, &ordinal, &polarity);
      }
 
      // Get the side numbering array for the other object;
@@ -278,7 +280,9 @@ void connect_edge_to_children(const RefineTopo &rtopo,         // Refinement top
     MeshObjConn::edge_info(&pfcnodes[0], &pfcnodes[pfctopo->num_nodes], &children[c], &children[c+1],
                    &ordinal, &polarity, false);
 */
-    MeshObjConn::edge_info(&pfcnodes[0], &pfcnodes[0] + pfctopo->num_nodes, &children[c], &children[c] + 1,
+    //MeshObjConn::edge_info(&pfcnodes[0], &pfcnodes[0] + pfctopo->num_nodes, children.begin()+c, children.begin()+c+1,
+    //               &ordinal, &polarity, false);
+    MeshObjConn::edge_info(pfcnodes.begin(), pfcnodes.begin() + pfctopo->num_nodes, children.begin()+c, children.begin()+c+1,
                    &ordinal, &polarity, false);
     if (ordinal >= 0) { // found it
       MeshObj::Relation r;
@@ -388,7 +392,7 @@ void face_resolution(MeshDB &mesh,
         int ordinal, polarity, rotation;
         bool found_child = false;
         for (UInt c = 0; !found_child && c < rtopo.NumChild(); c++) {
-          MeshObjConn::face_info(&pfcnodes[0], &pfcnodes[pfctopo->num_nodes], &children[c], &children[c+1],
+          MeshObjConn::face_info(pfcnodes.begin(), pfcnodes.begin()+pfctopo->num_nodes, children.begin()+c, children.begin()+c+1,
                          &ordinal, &polarity, &rotation, false);
           if (ordinal >= 0) { // found it
             MeshObj::Relation r;
@@ -422,7 +426,7 @@ void face_resolution(MeshDB &mesh,
       std::vector<int> polaritys(neighbors.size());
       std::vector<int> rotations(neighbors.size());
       MeshObjConn::face_info(pfnodes.begin(), pfnodes.end(), neighbors.begin(), neighbors.end(),
-                      &ordinals[0], &polaritys[0], &rotations[0]);
+                      &*ordinals.begin(), &*polaritys.begin(), &*rotations.begin());
       // loop neighbors, add nodes as necessary
       for (UInt nb = 0; nb < neighbors.size(); nb++) {
         if (neighbors[nb] == &obj) continue; // self
@@ -634,7 +638,7 @@ dPar::Out() << "n1:" << pfnodes[0]->get_id() << ", " << pfnodes[1]->get_id() << 
       std::vector<int> ordinals(neighbors.size());
       std::vector<int> polaritys(neighbors.size());
       MeshObjConn::edge_info(pfnodes.begin(), pfnodes.end(), neighbors.begin(), neighbors.end(),
-                      &ordinals[0], &polaritys[0]);
+                      &*ordinals.begin(), &*polaritys.begin());
 
       // loop neighbors, add nodes as necessary
           for (UInt nb = 0; nb < neighbors.size(); nb++) {

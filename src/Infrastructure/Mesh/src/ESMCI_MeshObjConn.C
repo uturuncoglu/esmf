@@ -229,7 +229,7 @@ void common_objs(MeshObj *obj,
 {
   std::vector<MeshObj*> on(1, obj);
 
-  common_objs(&on[0], &on[0] + on.size(), rel_type, out_obj_type, out_obj);
+  common_objs(on.begin(), on.begin() + on.size(), rel_type, out_obj_type, out_obj);
 }
 
 #ifdef OLD_COMMON_OBJS
@@ -541,10 +541,10 @@ void edge_info(obj_iter node_begin, obj_iter node_end,
   } // elems
 }
 
-template void edge_info<>(MeshObj **node_begin,
-               MeshObj** node_end,
-               MeshObj** elem_begin,
-               MeshObj** elem_end,
+template void edge_info<>(std::vector<MeshObj*>::iterator node_begin,
+               std::vector<MeshObj*>::iterator node_end,
+               std::vector<MeshObj*>::iterator elem_begin,
+               std::vector<MeshObj*>::iterator elem_end,
                int *ordinal, // out
                int *polarity, // out
                bool
@@ -661,10 +661,10 @@ std::cout << "(rot,pol):" << rotation[el] << ", " << polarity[el] << std::endl;
   } // elems
 }
 
-template void face_info<>(MeshObj** node_begin,
-               MeshObj** node_end,
-               MeshObj** elem_begin,
-               MeshObj** elem_end,
+template void face_info<>(std::vector<MeshObj*>::iterator node_begin,
+               std::vector<MeshObj*>::iterator node_end,
+               std::vector<MeshObj*>::iterator elem_begin,
+               std::vector<MeshObj*>::iterator elem_end,
                int *ordinal, // out
                int *polarity, // out
                int *rotation, // out
