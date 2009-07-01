@@ -141,12 +141,11 @@ namespace ESMCI {
 
   void ReMap::ConvertFromCylinder(double &x, double &y, double &z){
     //ReprojectToCylinder(x,y,z); // makes sure we are on cylinder...    
-    double atan_;
-    //atan_ = atan2(y,x);
-    atan_=0.5*pi_*(1.0-x);
-    if(y<0.0)atan_=-atan_;
+    double atan_,eps_=1.0E-14;
+    atan_=0.5*pi_*(1.0-x/(r_+eps_));
+    if(y<-eps_)atan_=-atan_;
     x =Lx_*(0.5 + (0.5/pi_)*atan_);
-    y=Ly_*(z+0.5);
+    y=Ly_*(z/R_+0.5);
     z=0.;
   };
   
@@ -334,7 +333,7 @@ namespace ESMCI {
       if(norm[1] > eps_) per=YPERIODIC;
       if((norm[0] > eps_) && (norm[1] > eps_)) per=XYPERIODIC;
 
-#if 1
+#if 0
       if(per != NOTPERIODIC){
 	std::cout << per << " BARYCENTER FOR ELEMENT " << elem.get_id() <<  " IS ";
 	std::cout << bc[0] << "," << bc[1] << "," << bc[2] << std::endl;
@@ -355,12 +354,18 @@ namespace ESMCI {
     if(isper == NOTPERIODIC || !IsNotIdentity())return;
     
     const double eps_ = 1.0e-12;  
-    if(isper == XPERIODIC){if(fabs(x) +eps_ >= Lx_){x = 0.;}else if(fabs(x) <= eps_){x = Lx_;}}
-    if(isper == YPERIODIC){if(fabs(y) +eps_>= Ly_){y = 0.;}else if(fabs(y) <= eps_){y = Ly_;}}
-    if(isper == XYPERIODIC){
-      if(fabs(x) +eps_>= Lx_){x = 0.;}else if(fabs(x) <= eps_){x = Lx_;}
-      if(fabs(y) +eps_>= Ly_){y = 0.;}else if(fabs(y) <= eps_){y = Ly_;}
+
+    if(1==0){//rt_ == CYLINDER){ 
+      if(isper == XPERIODIC){if(fabs(x) +eps_ >= Lx_){x = 0.;}else if(fabs(x) <= eps_){x = Lx_;}}
+    }else{
+      if(isper == XPERIODIC){if(fabs(x) +eps_ >= Lx_){x = 0.;}else if(fabs(x) <= eps_){x = Lx_;}}
+      if(isper == YPERIODIC){if(fabs(y) +eps_>= Ly_){y = 0.;}else if(fabs(y) <= eps_){y = Ly_;}}
+      if(isper == XYPERIODIC){
+	if(fabs(x) +eps_>= Lx_){x = 0.;}else if(fabs(x) <= eps_){x = Lx_;}
+	if(fabs(y) +eps_>= Ly_){y = 0.;}else if(fabs(y) <= eps_){y = Ly_;}
+      }
     }
+
   }
 
 };
