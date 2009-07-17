@@ -120,8 +120,10 @@ _fieldValuePtr data(const MeshObj &obj) const {
 private:
 MEField(const MEField &rhs);
 MEField &operator=(const MEField &rhs);
-_FIELD *primaryfield; // if nodal or elemental
-_FIELD *interpfield;
+//_FIELD  __attribute__((aligned(64))) *primaryfield; // if nodal or elemental
+//_FIELD  __attribute__((aligned(64))) *interpfield;
+_FIELD  *primaryfield; // if nodal or elemental
+_FIELD  *interpfield;
 };
 
 /**
