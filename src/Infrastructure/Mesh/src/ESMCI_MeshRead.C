@@ -25,8 +25,20 @@ void WriteMesh(const Mesh &mesh, const std::string &fbase, int nstep, double tst
   int psize = Par::Size();
   
   std::string newname;
-
-  std::string extension = file_type == ESMCI_FILE_EXODUS ? ".g" : ".vtk";
+  std::string extension;
+  switch(file_type) {
+      case ESMCI_FILE_EXODUS:
+	extension=".g";
+        break;
+      case ESMCI_FILE_VTK:
+	extension=".vtk";
+        break;
+      case ESMCI_FILE_VTKXML:
+	extension=".vtu";
+        break;
+      default:
+          Throw() << "Unsupported file format";
+      }
 
   // If csize = 1, read fbase.g
   if (psize > 1) {
@@ -41,6 +53,8 @@ void WriteMesh(const Mesh &mesh, const std::string &fbase, int nstep, double tst
     WriteExMesh(mesh, newname, nstep, tstep);
   } else if (file_type == ESMCI_FILE_VTK) {
     WriteVTKMesh(mesh, newname);
+  } else if (file_type == ESMCI_FILE_VTKXML) {
+    WriteVTKXMLMesh(mesh, newname);
   } else Throw() << "Unknown filetype:" << file_type;
 }
 

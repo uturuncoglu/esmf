@@ -115,7 +115,6 @@ static void get_data(iter ni, iter ne, const FIELD &llf, double data[], UInt d) 
   } else std::cout << "Unknown data type, skipping ";
 }
 
-
 void WriteVTKMesh(const Mesh &mesh, const std::string &filename) {
   Trace __trace("WriteVTKMesh(const Mesh &mesh, const std::string &filename)");
 
@@ -328,6 +327,273 @@ void WriteVTKMesh(const Mesh &mesh, const std::string &filename) {
 
   } // node vars
 
+}
+
+void WriteVTKXMLMesh(const Mesh &mesh, const std::string &filename) {
+  Trace __trace("WriteVTKMesh(const Mesh &mesh, const std::string &filename)");
+  FILE *fp_sol;
+  fp_sol = fopen(filename.c_str(), "w");
+
+  int Endian=1;
+
+  //Number of fields
+  UInt n_fields=0;
+  {  
+    FieldReg::MEField_const_iterator nv = mesh.Field_begin(), ne = mesh.Field_end();
+    for (; nv != ne; ++nv) {
+      const MEField<> &mf = *nv;
+      if (mf.Output() && mf.is_nodal()) {
+	for (UInt d = 0; d < mf.dim(); d++) {
+	n_fields++;
+	}
+      }
+      if (mf.Output() && mf.is_elemental()) {
+	for (UInt d = 0; d < mf.dim(); d++) {
+	  n_fields++;
+	}
+      }
+    }
+  }
+  UInt offset[n_fields+4];
+  offset[0]=0;
+  fpos_t offset_fpos[n_fields+4];
+  UInt n_offsets=0;
+  //Writing Header
+  fprintf(fp_sol, "<?xml version=\"1.0\"?>\n");
+  fprintf(fp_sol, "<VTKFile type=\"UnstructuredGrid\" version=\"0.1\" ");
+  fprintf(fp_sol, "byte_order=\"%sEndian\"",
+	  Endian == *((char *)&Endian) ? "Little" : "Big");
+  fprintf(fp_sol, ">\n");
+  fprintf(fp_sol, "  <UnstructuredGrid>\n");
+  fprintf(fp_sol, "    <Piece NumberOfPoints=\"%i\" NumberOfCells=\"%i\">\n",mesh.num_nodes(),mesh.num_elems());
+  // Node variables (header only)
+  {
+    fprintf(fp_sol, "      <PointData Scalars=\"IO\">\n");
+     FieldReg::MEField_const_iterator nv = mesh.Field_begin(), ne = mesh.Field_end();
+     for (; nv != ne; ++nv) {
+       const MEField<> &mf = *nv;
+       if (mf.Output() && mf.is_nodal()) {
+         for (UInt d = 0; d < mf.dim(); d++) {
+           char buf[512];
+           std::sprintf(buf, "_%d", d);
+           std::string vname = mf.name() + (mf.dim() == 1? "" : std::string(buf));
+	   fprintf(fp_sol,
+		   "        <DataArray type=\"Float64\" Name=\"%s\" NumberOfComponents=\"1\" format=\"appended\" offset=",
+		   vname.c_str());
+	   fgetpos(fp_sol,&offset_fpos[n_offsets++]);
+	   fprintf(fp_sol, "                                                />\n");
+	 }
+       }
+     }
+  }
+  fprintf(fp_sol, "      </PointData>\n");
+ // Element variables (header only)
+  {
+    fprintf(fp_sol, "      <CellData Scalars=\"IO\">\n");
+     FieldReg::MEField_const_iterator nv = mesh.Field_begin(), ne = mesh.Field_end();
+     for (; nv != ne; ++nv) {
+       const MEField<> &mf = *nv;
+       if (mf.Output() && mf.is_elemental()) {
+         for (UInt d = 0; d < mf.dim(); d++) {
+           char buf[512];
+           std::sprintf(buf, "_%d", d);
+           std::string vname = mf.name() + (mf.dim() == 1? "" : std::string(buf));
+	   fprintf(fp_sol,
+		   "        <CellArray type=\"Float64\" Name=\"%s\" NumberOfComponents=\"1\" format=\"appended\" offset=",
+		   vname.c_str());
+	   fgetpos(fp_sol,&offset_fpos[n_offsets++]);
+	   fprintf(fp_sol, "                                                />\n");
+	 }
+       }
+     }
+  }
+  fprintf(fp_sol, "      </CellData>\n");
+  // Mesh (heder only)
+  fprintf(fp_sol, "      <Points>\n");
+  fprintf(fp_sol,"        <DataArray type=\"Float64\" NumberOfComponents=\"3\" format=\"appended\" offset=");
+  fgetpos(fp_sol,&offset_fpos[n_offsets++]);
+  fprintf(fp_sol, "                                                />\n");
+  fprintf(fp_sol, "      </Points>\n");
+  fprintf(fp_sol, "      <Cells>\n");
+  fprintf(fp_sol, "        <DataArray type=\"Int32\" Name=\"connectivity\" format=\"appended\" offset=");
+  fgetpos(fp_sol,&offset_fpos[n_offsets++]);
+  fprintf(fp_sol, "                                                />\n");
+  fprintf(fp_sol, "        <DataArray type=\"Int32\" Name=\"offsets\"  format=\"appended\" offset=");
+  fgetpos(fp_sol,&offset_fpos[n_offsets++]);
+  fprintf(fp_sol, "                                                />\n");
+  fprintf(fp_sol, "        <DataArray type=\"Int32\" Name=\"types\" format=\"appended\" offset=");
+  fgetpos(fp_sol,&offset_fpos[n_offsets++]);
+  fprintf(fp_sol, "                                                />\n");
+  fprintf(fp_sol, "      </Cells>\n");
+  fprintf(fp_sol, "    </Piece>\n");
+  fprintf(fp_sol, "  </UnstructuredGrid>\n");
+  fprintf(fp_sol, "  <AppendedData encoding=\"raw\">\n_");
+  n_offsets=0;
+  //Here begins binary data
+  fclose(fp_sol);
+  //We use a buffer to know the size of data and allow further compression
+  std::stringstream buffer_sol(std::ios::out|std::ios::binary); 
+  std::fstream fstream_sol(filename.c_str(),std::ios::out|std::ios::binary|std::ios::app);
+  //Node variables (data)
+  buffer_sol.str("");
+  UInt buffer_size,data_size=0;
+  {
+    FieldReg::MEField_const_iterator nv = mesh.Field_begin(), ne = mesh.Field_end();
+    std::vector<double> data(mesh.num_nodes(), 0);
+    for (; nv != ne; ++nv) {
+      const MEField<> &mf = *nv;
+      if (mf.Output() && mf.is_nodal()) {
+	for (UInt d = 0; d < mf.dim(); d++) {
+	  offset[n_offsets++]=data_size;
+	  const _field &llf = mf();
+	  get_data(mesh.node_begin(), mesh.node_end(), llf, &data[0], d);
+	  for (UInt e = 0; e < (UInt) mesh.num_nodes(); e++)
+	    buffer_sol.write((char *)(&data[e]),sizeof(double));
+	  data_size+=(UInt) mesh.num_nodes() * sizeof(double);
+	  buffer_size=data_size-offset[n_offsets-1];
+	  fstream_sol.write((char *)(&buffer_size),sizeof(UInt));
+	  data_size+=sizeof(UInt);
+	  fstream_sol.write(buffer_sol.str().c_str(),buffer_size);
+	  buffer_sol.str("");
+	} //for d
+      } // is nodal/output
+    }// fields
+  } // node vars
+  //Element variables (data)
+  buffer_sol.str("");
+  {
+    FieldReg::MEField_const_iterator nv = mesh.Field_begin(), ne = mesh.Field_end();
+    std::vector<double> data(mesh.num_nodes(), 0);
+    for (; nv != ne; ++nv) {
+      const MEField<> &mf = *nv;
+      if (mf.Output() && mf.is_elemental()) {
+	for (UInt d = 0; d < mf.dim(); d++) {
+	  offset[n_offsets++]=data_size;
+	  const _field &llf = mf();
+	  get_data(mesh.elem_begin(), mesh.elem_end(), llf, &data[0], d);
+	  for (UInt e = 0; e < mesh.num_elems(); e++)
+	    buffer_sol.write((char *)(&data[e]),sizeof(double));
+	  data_size+=(UInt) mesh.num_elems() * sizeof(double);
+	  buffer_size=data_size-offset[n_offsets-1];
+	  fstream_sol.write((char *)(&buffer_size),sizeof(UInt));
+	  data_size+=sizeof(UInt);
+	  fstream_sol.write(buffer_sol.str().c_str(),buffer_size);
+	  buffer_sol.str("");
+	} //for d
+      } // is elemental/output
+    }// fields
+  } // element vars
+  //Nodes coordinates
+  std::map<MeshObj::id_type, UInt> id2ord;
+  {
+    MEField<> &coord = *mesh.GetCoordField();
+    Mesh::const_iterator ni = mesh.node_begin(), ne = mesh.node_end();
+    offset[n_offsets++]=data_size;
+    for (UInt i = 0; ni != ne; ++ni) {
+      const MeshObj &node = *ni;
+      double *cd = coord.data(node);
+      // Write coordinates
+      buffer_sol.write((char *)(cd),2*sizeof(double));
+      double cd2=mesh.spatial_dim() == 3 ? cd[2] : 0.0;
+      buffer_sol.write((char *)(&cd2),sizeof(double));
+      // Increment ordinal
+      id2ord[node.get_id()] = i++;
+      data_size+=3*sizeof(double);
+    }
+    buffer_size=data_size-offset[n_offsets-1];
+    fstream_sol.write((char *)(&buffer_size),sizeof(UInt));
+    data_size+=sizeof(UInt);
+    fstream_sol.write(buffer_sol.str().c_str(),buffer_size);
+    buffer_sol.str("");
+  } // node coords
+  // Cells connectivity
+  {
+    Mesh::const_iterator ei = mesh.elem_begin(), ee = mesh.elem_end();
+    offset[n_offsets++]=data_size;
+    for (; ei != ee; ++ei) {
+      const MeshObj &elem = *ei;
+      const MeshObjTopo *topo = GetMeshObjTopo(elem);
+      for (UInt n = 0; n < topo->num_nodes; n++) {
+        MeshObj::id_type id = elem.Relations[n].obj->get_id();
+        std::map<MeshObj::id_type,UInt>::iterator imi = id2ord.find(id);
+        ThrowRequire(imi != id2ord.end());
+	buffer_sol.write((char *)(&imi->second),sizeof(UInt));
+      }
+      data_size+=topo->num_nodes*sizeof(UInt);
+    } // for ei
+    buffer_size=data_size-offset[n_offsets-1];
+    fstream_sol.write((char *)(&buffer_size),sizeof(UInt));
+    data_size+=sizeof(UInt);
+    fstream_sol.write(buffer_sol.str().c_str(),buffer_size);
+    buffer_sol.str("");
+  } // connectivity
+  // Cells offset
+  {
+    Mesh::const_iterator ei = mesh.elem_begin(), ee = mesh.elem_end();
+    offset[n_offsets++]=data_size;
+    UInt off=0;
+    for (; ei != ee; ++ei) {
+      const MeshObj &elem = *ei;
+      const MeshObjTopo *topo = GetMeshObjTopo(elem);
+      off += topo->num_nodes;
+      buffer_sol.write((char *)(&off),sizeof(UInt));
+      data_size+=sizeof(UInt);
+    } // for ei
+    buffer_size=data_size-offset[n_offsets-1];
+    fstream_sol.write((char *)(&buffer_size),sizeof(UInt));
+    data_size+=sizeof(UInt);
+    fstream_sol.write(buffer_sol.str().c_str(),buffer_size);
+    buffer_sol.str("");
+  } // connectivity
+  // Cells type
+  {
+    Mesh::const_iterator ei = mesh.elem_begin(), ee = mesh.elem_end();
+    offset[n_offsets++]=data_size;
+    for (; ei != ee; ++ei) {
+      const MeshObj &elem = *ei;
+      const MeshObjTopo *topo = GetMeshObjTopo(elem);
+      UInt type;
+      switch(topo->num_nodes) {
+      case 3:
+	type=VTK_TRIANGLE;
+        break;
+      case 4:
+	if (topo->parametric_dim == 3) {
+	  //std::cout << "tetra!@!" << std::endl;
+	  type=VTK_TETRA;
+	} else {
+	  //std::cout << "quad!@! " << mesh.parametric_dim() << std::endl;
+	  type=VTK_QUAD;
+	}
+        break;
+      case 8:
+	type=VTK_HEXAHEDRON;
+        break;
+      default:
+          Throw() << "Unsupported VTK element type:" << topo->name << std::endl;
+      }
+      buffer_sol.write((char *)(&type),sizeof(UInt));
+      data_size+=sizeof(UInt);
+    }
+    buffer_size=data_size-offset[n_offsets-1];
+    fstream_sol.write((char *)(&buffer_size),sizeof(UInt));
+    data_size+=sizeof(UInt);
+    fstream_sol.write(buffer_sol.str().c_str(),buffer_size);
+    buffer_sol.str("");
+  } // cell types
+  fstream_sol.close();
+  //Writing ASCII end of file
+  fp_sol = fopen(filename.c_str(), "a+");
+  fprintf(fp_sol, "\n  </AppendedData>\n");
+  fprintf(fp_sol, "</VTKFile>");
+  fclose(fp_sol);
+  //Writing offsets in the header of the file
+  fp_sol = fopen(filename.c_str(), "r+");
+  for (int i=0; i<n_offsets;++i){
+    fsetpos ( fp_sol, &offset_fpos[i] );
+    fprintf(fp_sol,"\"%d\"",offset[i]);
+  }
+  fclose(fp_sol);
 }
   // Manager the file resource so that early exit still closes the file...
   struct FileManager {
