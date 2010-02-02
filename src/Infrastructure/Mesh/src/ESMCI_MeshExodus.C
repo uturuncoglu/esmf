@@ -259,12 +259,22 @@ std::cout << std::endl;
     if (num_nodal_vars > 0) { 
       char *_tmp = NULL;
       std::vector<char*> snames(num_nodal_vars,_tmp);
-    
+
+      char _buff[MAX_STR_LENGTH*num_nodal_vars];
+
+      snames[0] = &_buff[0];
+#if 1
+      for (UInt i = 1; i < (UInt) num_nodal_vars; i++) {
+        snames[i]= &_buff[i*MAX_STR_LENGTH];
+      }
+#endif
+      /*    
       for (UInt i = 0; i < (UInt) num_nodal_vars; i++) {
 	if(snames[i] != NULL)delete snames[i]; 
         snames[i]= new char[MAX_STR_LENGTH];
       }
-    
+      */
+
       ex_get_var_names(exoid, "n", num_nodal_vars, &snames[0]);
     
   /*  std::cout << "var names:";
@@ -298,10 +308,9 @@ std::cout << std::endl;
         // }
       }
       
-
-      for (UInt i = 0; i < (UInt) num_nodal_vars; i++) {
-	delete [] snames[i];
-      }
+      //for (UInt i = 0; i < (UInt) num_nodal_vars; i++) {
+      //	delete [] snames[i];
+      //}
     } // num nodal vars > 0
   
   } // nodal vvars
