@@ -43,7 +43,9 @@ MeshObj *opposite_element(const MeshObj &obj, const int side_ordinal, int &ordin
     return NULL;
   }
 
+
   if (out_objs.size() != 2) {
+    //return NULL;
       std::vector<MeshObj*>::iterator si = out_objs.begin(),
          se = out_objs.end();
       std::cout << "Error, Expected two elements." << std::endl;
