@@ -143,7 +143,7 @@ namespace ESMCI {
 
 	if (ndfields[i]->name() == "_OWNER") continue; // skip owner field
 
-	std::cout << "P:" << Par::Rank() << "nodal field:" << ndfields[i]->name() << std::endl;
+	//std::cout << "P:" << Par::Rank() << "nodal field:" << ndfields[i]->name() << std::endl;
 	IOField<NodalField> &nf = *ndfields[i];
 	RegisterField(nf.name(), MEFamilyStd::instance(), MeshObj::ELEMENT,
 		      ctxt, nf.dim(), nf.output_status());
@@ -336,7 +336,7 @@ namespace ESMCI {
 	      Throw() << "Field " << f.name() << " has no topo on matching kernel";
 
 	    const MEFamily &mef = f.GetMEFamily();
-	    std::cout << "Field " << f.name() << "has topo = " << otopo->name << std::endl;
+	    //std::cout << "Field " << f.name() << "has topo = " << otopo->name << std::endl;
 	    MasterElement<> &me = *mef.getME(otopo->name, METraits<>());
 
 	    // Get all of the (type,nval) sets for the me.
