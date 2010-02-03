@@ -1136,7 +1136,7 @@ void HAdapt::EnforceConstraints(MEField<> &field) const {
           std::vector<MeshObj*> celem;
           MeshObjConn::common_objs(side_child_node.begin(),
              side_child_node.end(), MeshObj::USED_BY, MeshObj::ELEMENT, celem);
-
+#if 0
           if (celem.size() != 1) {
              Par::Out() << "celem size:" << celem.size() << std::endl;
              Par::Out() << "child face nodes:";
@@ -1146,7 +1146,7 @@ void HAdapt::EnforceConstraints(MEField<> &field) const {
              for (UInt i = 0; i < celem.size(); ++i) Par::Out() << *celem[i];
              Throw() << "Error celem size wrong!!";
           }
-
+#endif
           // And, finally, get the polarity info
           if (mesh.side_type() == MeshObj::FACE) {
 
@@ -1272,8 +1272,8 @@ prolong_matrices()
     Mapping<> *map = dynamic_cast<Mapping<>*>(Topo2Map()(ptopo->name));
     ThrowRequire(map);
     
-    Par::Out() << "pdim=" << pdim << ", nip=" << nip << ", nfunc=" << nfunc << std::endl;
-    Par::Out() << "ptopo->num_nodes=" << ptopo->num_nodes << std::endl;
+    //Par::Out() << "pdim=" << pdim << ", nip=" << nip << ", nfunc=" << nfunc << std::endl;
+    //Par::Out() << "ptopo->num_nodes=" << ptopo->num_nodes << std::endl;
     const double *ipoints = me.InterpPoints();
     
     std::vector<double> child_ipoints(nip*pdim);
@@ -1292,8 +1292,8 @@ prolong_matrices()
       }
       
       map->forward(nip, &cmdata[0], ipoints, &child_ipoints[0]);
-      std::copy(child_ipoints.begin(), child_ipoints.end(), std::ostream_iterator<double>(Par::Out(), " "));
-      Par::Out() << "\n end child ipoints" << std::endl;
+      //std::copy(child_ipoints.begin(), child_ipoints.end(), std::ostream_iterator<double>(Par::Out(), " "));
+      //Par::Out() << "\n end child ipoints" << std::endl;
       
       // Now do an interpolation from parent to these points.  Record sensitivities.
       std::vector<fad_type> pfdata(nfunc, 0), cfval(nip,0);
@@ -1318,14 +1318,14 @@ prolong_matrices()
       std::vector<double> &cmatrix = prolong_matrices[c];
       cmatrix.resize(nfunc*nfunc);
       
-      Par::Out() << "topo:" << ptopo->name << ", child:" << c << std::endl;
+      //Par::Out() << "topo:" << ptopo->name << ", child:" << c << std::endl;
       for (UInt i = 0; i < nfunc; i++) {
 	const double *dx = &(ccoef[i].fastAccessDx(0));
 	for (UInt j = 0; j < nfunc; j++) {
 	  cmatrix[i*nfunc+j] = dx[j];
-	  Par::Out() << std::setw(10) << cmatrix[i*nfunc+j] << " ";
+	  //Par::Out() << std::setw(10) << cmatrix[i*nfunc+j] << " ";
 	}
-	Par::Out() << std::endl;
+	//Par::Out() << std::endl;
       }
       
     } // child

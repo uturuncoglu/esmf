@@ -114,7 +114,7 @@ bool Rebalance(Mesh &mesh, MEField<> *bfield) {
   build_obj_migration(mesh, mig, MeshObj::EDGE);
   build_obj_migration(mesh, mig, MeshObj::FACE);
 
-//mig.GetCommRel(MeshObj::EDGE).Print(Par::Out());
+  //mig.GetCommRel(MeshObj::EDGE).Print(Par::Out());
   // Do this one last since the calls above traverse what
   // we have in this spec.
   build_obj_migration(mesh, mig, MeshObj::ELEMENT);
@@ -630,6 +630,9 @@ static bool form_rebalance_comm(Mesh &mesh, CommReg &migration, MEField<> *bfiel
     // RCB
     //Zoltan_Set_Param(zz, "RCB_RECTILINEAR_BLOCKS", "1");
     Zoltan_Set_Param(zz, "KEEP_CUTS", "1");
+    Zoltan_Set_Param(zz, "RCB_OUTPUT_LEVEL", "0");
+    Zoltan_Set_Param(zz, "RCB_OVERALLOC", "2.0");
+
     //Zoltan_Set_Param(zz, "RCB_LOCK_DIRECTIONS", "1");
     Zoltan_Set_Param(zz, "RCB_REUSE", "1");
     Zoltan_Set_Param(zz, "RCB_OUTPUT_LEVEL", "0");

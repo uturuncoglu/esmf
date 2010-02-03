@@ -348,19 +348,22 @@ namespace ESMCI {
 	} // for k
 
 	std::set<std::pair<UChar,UInt> >::iterator si = locSet.begin(), se = locSet.end();
+#if 0
 	Par::Out() << "f:" << f.name() << ", locSet before exchange:" << std::endl;
 	for (; si !=se; ++si) {
 	  Par::Out() << "(" << (int) si->first << ", " << si->second << ")" << std::endl;
 	}
+#endif
 	// Must parallel union nvalSet and nvalSetObj
 	parallel_union_field_info(locSet);
 
 	si = locSet.begin(); se = locSet.end();
+#if 0
 	Par::Out() << "f:" << f.name() << ", locSet after exchange:" << std::endl;
 	for (; si !=se; ++si) {
 	  Par::Out() << "(" << (int) si->first << ", " << si->second << ")" << std::endl;
 	}
-
+#endif
 	// Register low level fields and define the contexts
 	std::set<std::pair<UChar,UInt> >::iterator li = locSet.begin(), le = locSet.end();
 
@@ -415,12 +418,13 @@ namespace ESMCI {
 	    f.setfield(Registerfield(llname, f.FType()));
 	}
 
-	Par::Out() << "l2ctxt:" << std::endl;
 	MEFieldBase::CtxtMap::iterator cmi = loc2ctxt.begin(), cme = loc2ctxt.end();
+#if 0
+	Par::Out() << "l2ctxt:" << std::endl;
 	for (; cmi != cme; ++cmi) {
 	  Par::Out() << "(" << (int) cmi->first.first << ", " << cmi->first.second << ") -> " << cmi->second << std::endl;
 	}
-
+#endif
 	if (f.has_interp()) {
 
 	  if (!f.is_nodal()) Throw() << "Interp for non-nodal not yet implemented, field=" << f.name() << std::endl;

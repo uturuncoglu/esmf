@@ -9,7 +9,7 @@
 
 #include <bitset>
 
-#define CRE_DEBUG
+//#define CRE_DEBUG
 
 namespace ESMCI {
 
