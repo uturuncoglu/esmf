@@ -269,7 +269,8 @@ namespace ESMCI {
     std::vector<int> num_val(csize, 0);
     UInt num_val_l = locSet.size();
 
-    MPI_Allgather(&num_val_l, 1, MPI_UNSIGNED, &num_val[0], 1, MPI_UNSIGNED, Par::Comm());
+    if(sizeof(int) == 4)MPI_Allgather(&num_val_l, 1, MPI_UNSIGNED, &*num_val.begin(), 1, MPI_UNSIGNED, Par::Comm());
+    if(sizeof(int) == 8)MPI_Allgather(&num_val_l, 1, MPI_UNSIGNED, &*num_val.begin(), 1, MPI_UNSIGNED_LONG_LONG, Par::Comm());
 
     std::vector<int> rdisp(csize+1, 0);
     for (UInt i = 0; i < csize; i++) {
@@ -278,13 +279,17 @@ namespace ESMCI {
 
     std::vector<UInt> allval(rdisp[csize], 0);
 
-    MPI_Allgatherv(&nvs[0], nvs.size(), MPI_UNSIGNED, &allval[0],
-		   &num_val[0], &rdisp[0], MPI_UNSIGNED, Par::Comm());
+    if(sizeof(UInt) == 4)MPI_Allgatherv(&*nvs.begin(), nvs.size(), MPI_UNSIGNED, &*allval.begin(),
+					&*num_val.begin(), &*rdisp.begin(), MPI_UNSIGNED, Par::Comm());
+    if(sizeof(UInt) == 8)MPI_Allgatherv(&*nvs.begin(), nvs.size(), MPI_UNSIGNED_LONG_LONG, &*allval.begin(),
+					&*num_val.begin(), &*rdisp.begin(), MPI_UNSIGNED_LONG_LONG, Par::Comm());
 
     std::vector<UInt> allvalo(rdisp[csize], 0);
 
-    MPI_Allgatherv(&nvso[0], nvs.size(), MPI_UNSIGNED, &allvalo[0],
-		   &num_val[0], &rdisp[0], MPI_UNSIGNED, Par::Comm());
+    if(sizeof(UInt) == 4)MPI_Allgatherv(&*nvso.begin(), nvs.size(), MPI_UNSIGNED, &*allvalo.begin(),
+					&*num_val.begin(), &*rdisp.begin(), MPI_UNSIGNED, Par::Comm());
+    if(sizeof(UInt) == 8)MPI_Allgatherv(&*nvso.begin(), nvs.size(), MPI_UNSIGNED_LONG_LONG, &*allvalo.begin(),
+					&*num_val.begin(), &*rdisp.begin(), MPI_UNSIGNED_LONG_LONG, Par::Comm());
 
     // Loop through results
     for (UInt i = 0; i < (UInt) rdisp[csize]; i++) {
@@ -392,6 +397,7 @@ namespace ESMCI {
 	    } else {
 	      // Create a context for imprinting objects.
 	      char buf[1024];
+	      Par::Out() << "NAME = " << f.name() << " is context = " <<  num_ctxt_per_otype << std::endl;
 	      std::sprintf(buf, "_me_%s_%d", f.name().c_str(), num_ctxt_per_otype);
 	      UInt tc_id = mesh.DefineContext(buf);
       

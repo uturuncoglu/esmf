@@ -98,7 +98,7 @@ namespace ESMCI {
 	lcount++;
       }
       for(std::set<int>::iterator r=locadjncy.begin(); r != locadjncy.end();r++)adjncy.push_back(*r);
-      std::cout << std::endl;
+      //std::cout << std::endl;
       next_elem += lcount; lcount = 0;
       i++;
     } // for elem
