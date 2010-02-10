@@ -5,7 +5,7 @@
 
 namespace ESMCI {
 
-//typedef unsigned int UInt;
+  //typedef unsigned int UInt;
 typedef unsigned long int UInt;
 typedef unsigned char UChar;
 typedef unsigned short UShort;

@@ -1,15 +1,10 @@
-# $Id: makefile,v 1.2 2007/08/09 17:33:28 dneckels Exp $
+# $Id: makefile,v 1.8.2.1 2010/02/10 23:44:13 amikstcyr Exp $
 
-# leave alone.
 ALL: build_here 
 
-# Don't set these unless absolutely necessary - they've got to be
-# architecture and compiler independent and should be inherited
-# from the upper level makefile if possible.
-CFLAGS    =
-FFLAGS    =
+# Workaround an MPICH(2) issue
+ESMF_CXXCOMPILECPPFLAGS += -DMPICH_IGNORE_CXX_SEEK -DZOLTAN_HG=1
 
-# If you have C files in this directory, list them all on the line below.
 SOURCEC	  = all_allo.c assign_param_vals.c bind_param.c box_assign.c \
             build_graph.c build_machine_desc.c ch_dist_graph.c check_param.c \
             ch_init_dist.c ch_input_assign.c ch_input_geom.c ch_input_graph.c ch_input_read.c \
@@ -36,25 +31,40 @@ SOURCEC	  = all_allo.c assign_param_vals.c bind_param.c box_assign.c \
             reftree_part.c rib.c rib_util.c rootlist.c scatter_graph.c set_param.c shared.c \
             timer.c timer_params.c verify_graph.c zoltan_align.c zoltan_id.c zoltan_timer.c \
             zz_coord.c zz_gen_files.c zz_hash.c zz_heap.c zz_init.c zz_obj_list.c zz_rand.c \
-            zz_set_fn.c zz_sort.c zz_struct.c zz_util.c
+            zz_set_fn.c zz_sort.c zz_struct.c zz_util.c mem.c
 
 
-# If you have F90 files in this directory, list them all on the line below.
 SOURCEF	  = 
-# If you have .h include files in this dir, list them all on the line below.
-SOURCEH	  = 
+SOURCEH	  = all_allo_const.h BaseLB.h ch_init_dist_const.h ch_input_const.h coloring_const.h \
+	    coloring.h comm.h CONV_NS.h costs_const.h costs.h create_proc_list_const.h \
+	    DataLocationPort.h DataMigrationPort.h DD.h dfs_const.h dfs.h \
+	    DistDataDirectoryPort.h dr_const.h dr_dd.h dr_elem_const.h dr_elem_util_const.h \
+	    dr_err_const.h dr_eval_const.h dr_hg_readfile.h dr_input_const.h Driver.h \
+	    dr_loadbal_const.h dr_maps_const.h dr_mmio.h dr_output_const.h dr_par_util_const.h \
+	    dr_util_const.h EdgeInfoPort.h EntityInfoPort.h EntityList.h EntityListImpl.h \
+	    Epetra_ZoltanMpiDistributor.h exzoltan.h g2l_hash.h GeomInfoPort.h ha_const.h \
+	    hsfc_const.h hsfc.h hsfc_hilbert_const.h HSFC_upper.h IOPort.h key_params.h \
+	    lb_const.h lbi_const.h lb_init_const.h LoadBalancerFactoryPort.h LoadBalancer.h \
+	    matrix.h Mesh.h migoct_const.h migreg_const.h migreg.h migtags_const.h msg_const.h \
+	    octant_const.h octree_const.h OctTree.h octupdate_const.h octupdate.h \
+	    oct_util_const.h order_const.h params_const.h par_average_const.h \
+	    par_bisect_const.h par_const.h par_median_const.h ParMetis.h \
+	    parmetis_jostle_const.h parmetis_jostle.h par_tflops_special_const.h \
+	    PartitionerFactory.h phg_comm.h phg_const.h phg_distrib.h phg.h phg_hypergraph.h \
+	    phg_util.h rcb_const.h rcb.h RCB_upper.h reftree_const.h reftree.h rib_const.h \
+	    rib.h RIB_upper.h rootlist_const.h SFC.h shared.h timer_const.h timer.h \
+	    TreeInfoPort.h zoltan_align.h zoltan_comm_cpp.h zoltan_comm.h zoltan_cpp.h \
+	    zoltan_dd_cpp.h zoltan_dd.h zoltan.h zoltan_id.h zoltan_mem.h zoltan_timer_cpp.h \
+	    zoltan_timer.h zoltan_types.h zoltan_util.h zz_const.h zz_heap.h zz_id_const.h \
+	    zz_rand.h zz_sort.h zz_util_const.h
+
 # List all .h files which should be copied to common include dir
 STOREH	  = 
 
-# Leave these alone.
 OBJSC     = $(addsuffix .o, $(basename $(SOURCEC)))
 OBJSF     = $(addsuffix .o, $(basename $(SOURCEF)))
 
-MANSEC	  = mesh
-LIBBASE	  = libzolt
-
-# The following line must be set to the current subdir name relative
-# to the top level esmf directory. (e.g. Base/src, TimeMgr/interface, etc)
+LIBBASE	  = libesmf
 LOCDIR	  = src/Infrastructure/Mesh/src/Zoltan
 
 CLEANDIRS   =
@@ -63,17 +73,13 @@ CLOBBERDIRS =
 
 include ${ESMF_DIR}/makefile
 
-# Leave the following line blank.
 DIRS	  = 
 
-
-
-# If you have class files which need to be compiled in a particular
-# order, list the dependencies below, with no rules following.
-#
-# e.g.:
-#
-
-
-
-
+# XLC++ on BGL systems has trouble with some of the Zoltan code in -O mode.
+# -> this seems to be a compiler bug and we may be able to take this out once
+# IBM has it fixed.
+ifeq ($(ESMF_OS),Linux)
+ifeq ($(ESMF_COMPILER),xlf)
+ESMF_OPTLEVEL = 0
+endif
+endif
