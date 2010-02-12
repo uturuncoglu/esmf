@@ -6,11 +6,10 @@
 /*****************************************************************************
  * CVS File Information :
  *    $RCSfile: create_proc_list.c,v $
- *    $Author: dneckels $
- *    $Date: 2007/08/09 17:33:17 $
- *    Revision: 1.22 $
+ *    $Author: amikstcyr $
+ *    $Date: 2010/02/12 00:19:56 $
+ *    Revision: 1.23 $
  ****************************************************************************/
-
 
 
 
@@ -21,6 +20,7 @@
 /* if C++, define the rest of this header file as extern C */
 extern "C" {
 #endif
+
 
 static void Zoltan_RB_Gather(int *, int *, int, int, int, MPI_Comm);
 
@@ -244,8 +244,13 @@ static void Zoltan_RB_Gather(
       for (mask = nprocs_small >> 1; mask; mask >>= 1) { /* binary exchange */
          tag++;
          partner = proclower + (rank ^ mask);
-         MPI_Send(send, len, MPI_INT, partner, tag, comm);
-         MPI_Recv(tmp_send, len, MPI_INT, partner, tag, comm, &status);
+         /* Change requested by Qingyu Meng <qymeng@cs.utah.edu> to        */
+         /* support mvapich 1.0 on TACC Ranger.                            */
+         /* MPI_Send(send, len, MPI_INT, partner, tag, comm);              */
+         /* MPI_Recv(tmp_send, len, MPI_INT, partner, tag, comm, &status); */
+         MPI_Sendrecv(send, len, MPI_INT, partner, tag,
+            tmp_send, len, MPI_INT, partner, tag, comm, &status);
+
          for (i = 0; i < len; i++)
             send[i] += tmp_send[i];
       }

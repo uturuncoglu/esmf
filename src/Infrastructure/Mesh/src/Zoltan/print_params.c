@@ -6,21 +6,20 @@
 /*****************************************************************************
  * CVS File Information :
  *    $RCSfile: print_params.c,v $
- *    $Author: dneckels $
- *    $Date: 2007/08/08 22:43:57 $
- *    Revision: 1.13 $
+ *    $Author: amikstcyr $
+ *    $Date: 2010/02/12 00:19:57 $
+ *    Revision: 1.14 $
  ****************************************************************************/
 
+
+#include <stdio.h>
+#include "params_const.h"
+#include "zz_const.h"
 
 #ifdef __cplusplus
 /* if C++, define the rest of this header file as extern C */
 extern "C" {
 #endif
-
-
-#include <stdio.h>
-#include "params_const.h"
-
 
 void Zoltan_Print_Params(
   PARAM_LIST *ptr)			/* pointer to list of parameters */

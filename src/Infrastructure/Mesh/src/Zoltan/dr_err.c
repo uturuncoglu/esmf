@@ -6,9 +6,9 @@
 /*****************************************************************************
  * CVS File Information :
  *    $RCSfile: dr_err.c,v $
- *    $Author: dneckels $
- *    $Date: 2007/08/08 22:43:50 $
- *    Revision: 1.11 $
+ *    $Author: amikstcyr $
+ *    $Date: 2010/02/12 00:19:56 $
+ *    Revision: 1.13 $
  ****************************************************************************/
 
 
@@ -17,6 +17,7 @@
 #include <string.h>
 
 #include "dr_err_const.h"
+#include "dr_const.h"
 
 #ifdef __cplusplus
 /* if C++, define the rest of this header file as extern C */
@@ -137,7 +138,7 @@ void error_report(int Proc)
     }
   }
 
-  return;
+  MPI_Abort(MPI_COMM_WORLD, -1);
 }
 
 #ifdef __cplusplus

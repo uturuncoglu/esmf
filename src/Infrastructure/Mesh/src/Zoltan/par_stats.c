@@ -6,21 +6,21 @@
 /*****************************************************************************
  * CVS File Information :
  *    $RCSfile: par_stats.c,v $
- *    $Author: dneckels $
- *    $Date: 2007/08/09 17:33:38 $
- *    Revision: 1.5 $
+ *    $Author: amikstcyr $
+ *    $Date: 2010/02/12 00:19:57 $
+ *    Revision: 1.6 $
  ****************************************************************************/
+
 
 
 #include <stdio.h>
 #include <stdlib.h>
 #include "par_const.h"
-
+#include "zz_const.h"
 #ifdef __cplusplus
 /* if C++, define the rest of this header file as extern C */
 extern "C" {
 #endif
-
 
 
 /************ R O U T I N E S   I N   T H I S   F I L E  **********************

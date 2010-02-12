@@ -1,8 +1,8 @@
 /*****************************************************************************
  * CVS File Information :
  *    $RCSfile: oct_util.c,v $
- *    $Author: dneckels $
- *    $Date: 2007/08/09 17:33:34 $
+ *    $Author: amikstcyr $
+ *    $Date: 2010/02/12 00:19:57 $
  *    Revision: 1.15 $
  ****************************************************************************/
 
@@ -17,7 +17,6 @@
 /* if C++, define the rest of this header file as extern C */
 extern "C" {
 #endif
-
 
 int Zoltan_Oct_get_child_dir(OCT_Global_Info *OCT_info, int dir, int cnum) {
   if(OCT_info->HILBERT) {

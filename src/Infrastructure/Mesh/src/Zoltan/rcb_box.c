@@ -6,10 +6,11 @@
 /*****************************************************************************
  * CVS File Information :
  *    $RCSfile: rcb_box.c,v $
- *    $Author: dneckels $
- *    $Date: 2007/08/09 17:33:46 $
- *    Revision: 1.3 $
+ *    $Author: amikstcyr $
+ *    $Date: 2010/02/12 00:19:57 $
+ *    Revision: 1.4 $
  ****************************************************************************/
+
 
 
 #include <stdio.h>
@@ -17,7 +18,6 @@
 #include <float.h>
 #include "zz_const.h"
 #include "rcb.h"
-
 
 #ifdef __cplusplus
 /* if C++, define the rest of this header file as extern C */
@@ -97,6 +97,10 @@ int                i, ierr = ZOLTAN_OK;
 
   if (treept[0].right_leaf > 0)
     compute_box(zz, part, treept, treept[0].right_leaf, &box);
+  else{
+    box.lo[0] = box.lo[1] = box.lo[2] = 0;
+    box.hi[0] = box.hi[1] = box.hi[2] = 0;
+  }
 
   *ndim = rcb->Num_Dim;
 

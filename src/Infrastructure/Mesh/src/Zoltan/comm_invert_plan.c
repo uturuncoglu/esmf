@@ -7,9 +7,9 @@
 /*****************************************************************************
  * CVS File Information :
  *    $RCSfile: comm_invert_plan.c,v $
- *    $Author: dneckels $
- *    $Date: 2007/08/08 22:43:45 $
- *    Revision: 1.2 $
+ *    $Author: amikstcyr $
+ *    $Date: 2010/02/12 00:19:56 $
+ *    Revision: 1.4 $
  ****************************************************************************/
 
 #include <stdio.h>
@@ -27,10 +27,10 @@ extern "C" {
  * The sizes in the inverted plan are assumed to be uniform.
  * The input plan is overwritten with the inverted plan.
  * If an error occurs, the old plan is returned unchanged.
- * Note:  receives in New plan are blocked, even if sends in old 
+ * Note:  receives in new plan are blocked, even if sends in old 
  * plan were not.   This blocking allows variable sized sends to be
- * done with the New plan (Zoltan_Comm_Resize).  However, it also means
- * the New plan can not do exactly what Zoltan_Comm_Do_Reverse can do.
+ * done with the new plan (Zoltan_Comm_Resize).  However, it also means
+ * the new plan can not do exactly what Zoltan_Comm_Do_Reverse can do.
  * If the application cares about the order of received data, it should
  * not use this routine.
  */
@@ -40,7 +40,7 @@ ZOLTAN_COMM_OBJ **plan 		/* communicator object to be inverted */
 )
 {
 static char *yo = "Zoltan_Comm_Invert_Plan";
-ZOLTAN_COMM_OBJ *old = *plan, *New = NULL;
+ZOLTAN_COMM_OBJ *old = *plan, *nnew = NULL;
 int i, ierr = ZOLTAN_OK;
 int total_send_length;
 int max_recv_length;
@@ -62,45 +62,62 @@ int max_recv_length;
       max_recv_length = old->lengths_from[i];
   }
 
-  New = (ZOLTAN_COMM_OBJ *) ZOLTAN_MALLOC(sizeof(ZOLTAN_COMM_OBJ));
-  if (!New) {
+  nnew = (ZOLTAN_COMM_OBJ *) ZOLTAN_MALLOC(sizeof(ZOLTAN_COMM_OBJ));
+  if (!nnew) {
     ierr = ZOLTAN_MEMERR;
     goto End;
   }
-  New->lengths_to = old->lengths_from;
-  New->starts_to = old->starts_from;
-  New->procs_to = old->procs_from;
-  New->indices_to = old->indices_from;
-  New->lengths_from = old->lengths_to;
-  New->starts_from = old->starts_to;
-  New->procs_from = old->procs_to;
-  New->indices_from = NULL;    /* In New plan, receives are blocked. */
+  nnew->lengths_to = old->lengths_from;
+  nnew->starts_to = old->starts_from;
+  nnew->procs_to = old->procs_from;
+  nnew->indices_to = old->indices_from;
+  nnew->lengths_from = old->lengths_to;
+  nnew->starts_from = old->starts_to;
+  nnew->procs_from = old->procs_to;
+  nnew->indices_from = NULL;    /* In new plan, receives are blocked. */
 
   /* Assumption:  uniform object sizes in output plans.   */
   /* Can be changed by later calls to Zoltan_Comm_Resize. */
-  New->sizes = NULL;
-  New->sizes_to = NULL;
-  New->sizes_from = NULL;
-  New->starts_to_ptr = NULL;
-  New->starts_from_ptr = NULL;
-  New->indices_to_ptr = NULL;
-  New->indices_from_ptr = NULL;
+  nnew->sizes = NULL;
+  nnew->sizes_to = NULL;
+  nnew->sizes_from = NULL;
+  nnew->starts_to_ptr = NULL;
+  nnew->starts_from_ptr = NULL;
+  nnew->indices_to_ptr = NULL;
+  nnew->indices_from_ptr = NULL;
 
-  New->nvals = old->nvals_recv;
-  New->nvals_recv = old->nvals;
-  New->nrecvs = old->nsends;
-  New->nsends = old->nrecvs;
-  New->self_msg = old->self_msg;
-  New->max_send_size = max_recv_length;
-  New->total_recv_size = total_send_length;
-  New->comm = old->comm;
+  nnew->nvals = old->nvals_recv;
+  nnew->nvals_recv = old->nvals;
+  nnew->nrecvs = old->nsends;
+  nnew->nsends = old->nrecvs;
+  nnew->self_msg = old->self_msg;
+  nnew->max_send_size = max_recv_length;
+  nnew->total_recv_size = total_send_length;
+  nnew->comm = old->comm;
+  nnew->maxed_recvs = 0;
 
-  New->request = (MPI_Request *) ZOLTAN_MALLOC(New->nrecvs*sizeof(MPI_Request));
-  New->status = (MPI_Status *) ZOLTAN_MALLOC(New->nrecvs*sizeof(MPI_Status));
+  if (MPI_RECV_LIMIT > 0){
+    /* If we have a limit to the number of posted receives we are allowed,
+    ** and our plan has exceeded that, then switch to an MPI_Alltoallv so
+    ** that we will have fewer receives posted when we do the communication.
+    */
+    MPI_Allreduce(&nnew->nrecvs, &i, 1, MPI_INT, MPI_MAX, nnew->comm);
+    if (i > MPI_RECV_LIMIT){
+      nnew->maxed_recvs = 1;
+    }
+  }
 
-  if (New->nrecvs && ((New->request == NULL) || (New->status == NULL))) {
-    ierr = ZOLTAN_MEMERR;
-    goto End;
+  if (nnew->maxed_recvs){
+    nnew->request = NULL;
+    nnew->status = NULL;
+  }
+  else{
+    nnew->request = (MPI_Request *) ZOLTAN_MALLOC(nnew->nrecvs*sizeof(MPI_Request));
+    nnew->status = (MPI_Status *) ZOLTAN_MALLOC(nnew->nrecvs*sizeof(MPI_Status));
+    if (nnew->nrecvs && ((nnew->request == NULL) || (nnew->status == NULL))) {
+      ierr = ZOLTAN_MEMERR;
+      goto End;
+    }
   }
 
 End:
@@ -116,13 +133,13 @@ End:
     if (old->request)          ZOLTAN_FREE(&(old->request));
     if (old->status)           ZOLTAN_FREE(&(old->status));
     ZOLTAN_FREE(&old);
-    *plan = New;
+    *plan = nnew;
   }
   else {
-    if (New) {
-      ZOLTAN_FREE(&(New->request));
-      ZOLTAN_FREE(&(New->status));
-      ZOLTAN_FREE(&New);
+    if (nnew) {
+      ZOLTAN_FREE(&(nnew->request));
+      ZOLTAN_FREE(&(nnew->status));
+      ZOLTAN_FREE(&nnew);
     }
   }
   return (ierr);

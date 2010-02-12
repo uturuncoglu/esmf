@@ -6,19 +6,20 @@
 /*****************************************************************************
  * CVS File Information :
  *    $RCSfile: zoltan_align.c,v $
- *    $Author: dneckels $
- *    $Date: 2007/08/08 22:43:59 $
- *    Revision: 1.3 $
+ *    $Author: amikstcyr $
+ *    $Date: 2010/02/12 00:19:57 $
+ *    Revision: 1.4 $
  ****************************************************************************/
 
+
+
+#include "zoltan_align.h"
+#include "zoltan_util.h"
 
 #ifdef __cplusplus
 /* if C++, define the rest of this header file as extern C */
 extern "C" {
 #endif
-
-
-#include "zoltan_align.h"
 
 /*****************************************************************************/
 /*

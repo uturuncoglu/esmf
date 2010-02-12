@@ -1,11 +1,10 @@
 /*****************************************************************************
  * CVS File Information :
  *    $RCSfile: costs.c,v $
- *    $Author: dneckels $
- *    $Date: 2007/08/09 17:33:16 $
+ *    $Author: amikstcyr $
+ *    $Date: 2010/02/12 00:19:56 $
  *    Revision: 1.17 $
  ****************************************************************************/
-
 
 
 #include "zz_const.h"
@@ -17,6 +16,7 @@
 /* if C++, define the rest of this header file as extern C */
 extern "C" {
 #endif
+
 
 /*
  * costs.c

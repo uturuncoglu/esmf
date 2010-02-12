@@ -6,10 +6,11 @@
 /*****************************************************************************
  * CVS File Information :
  *    $RCSfile: inertial2d.c,v $
- *    $Author: dneckels $
- *    $Date: 2007/08/09 17:33:22 $
- *    Revision: 1.19 $
+ *    $Author: amikstcyr $
+ *    $Date: 2010/02/12 00:19:57 $
+ *    Revision: 1.21 $
  ****************************************************************************/
+
 
 /* This software was developed by Bruce Hendrickson and Robert Leland   *
  * at Sandia National Laboratories under US Department of Energy        *
@@ -19,13 +20,11 @@
 #include <stdio.h>
 #include <math.h>
 #include "rib.h"
-
-
+#include "zz_const.h"
 #ifdef __cplusplus
 /* if C++, define the rest of this header file as extern C */
 extern "C" {
 #endif
-
 
 /* macros for routines */
 #define max(a, b) ((a) < (b) ? (b) : (a))
@@ -62,7 +61,7 @@ int Zoltan_RIB_inertial2d(
      int    i, j;               /* loop counter */
      double xcmt, ycmt, wgtt;   /* temp for center of mass */
      double xxt, yyt, xyt;      /* temp for tensor */
-     int    rank;               /* rank in partition (Tflops_Special) */
+     int    rank = 0;           /* rank in partition (Tflops_Special) */
 
      /* Compute center of mass and total mass. */
 

@@ -6,18 +6,15 @@
 /*****************************************************************************
  * CVS File Information :
  *    $RCSfile: phg_util.c,v $
- *    $Author: dneckels $
- *    $Date: 2007/08/09 17:33:46 $
- *    Revision: 1.16 $
+ *    $Author: amikstcyr $
+ *    $Date: 2010/02/12 00:19:57 $
+ *    Revision: 1.20 $
  ****************************************************************************/
 
-#include "phg.h"
-#include <limits.h>
 
-#ifdef __cplusplus
-/* if C++, define the rest of this header file as extern C */
-extern "C" {
-#endif
+#include "phg.h"
+#include "zz_const.h"
+#include <limits.h>
 
 
 
@@ -28,12 +25,16 @@ extern "C" {
 */
 #define SHOW_MINMAXP
     
+#ifdef __cplusplus
+/* if C++, define the rest of this header file as extern C */
+extern "C" {
+#endif
     
 char *Zoltan_PHG_uMe(PHGComm *hgc)
 {
     static char msg[1024];
 
-    sprintf(msg, "<%2d/%2d>: (%2d,%2d)/[%2d,%2d] ->", hgc->zz->Proc, hgc->zz->Num_Proc, hgc->myProc_x, hgc->myProc_y, hgc->nProc_x, hgc->nProc_y);
+    sprintf(msg, "|%2d/%2d|: (%2d,%2d)/[%2d,%2d] ->", hgc->zz->Proc, hgc->zz->Num_Proc, hgc->myProc_x, hgc->myProc_y, hgc->nProc_x, hgc->nProc_y);
     return msg;
 }
 
@@ -179,7 +180,7 @@ int Zoltan_PHG_LoadBalStat(ZZ *zz, HGraph *hg)
         }
 #endif
         printf("Min:   (%7d, %7d, %9d)    Max: (%7d, %7d, %9d)\n", minv, minn, minp, maxv, maxn, maxp);
-        printf("Imbal: (%7.2lf, %7.2lf, %9.2lf)         (%7.2lf, %7.2lf, %9.2lf)\n", 100.0*(av-minv)/av, 100.0*(an-minn)/an, 100.0*(ap-minp)/ap, 100.0*(maxv-av)/av, 100.0*(maxn-an)/an, 100.0*(maxp-ap)/ap);        
+        printf("Imbal: (%7.2f, %7.2f, %9.2f)         (%7.2f, %7.2f, %9.2f)\n", 100.0*(av-minv)/av, 100.0*(an-minn)/an, 100.0*(ap-minp)/ap, 100.0*(maxv-av)/av, 100.0*(maxn-an)/an, 100.0*(maxp-ap)/ap);        
     }
  End:
     Zoltan_Multifree(__FILE__, __LINE__, 1, &v);
@@ -206,6 +207,8 @@ static const int numprimes = sizeof(primes) / sizeof(int);
 int i;
 int rootn;
 int isprime = 1;
+
+ if (n == 1) return 0;
 
   rootn = sqrt((double)n)+1;
   for (i = 0; primes[i] < rootn && i < numprimes; i++)

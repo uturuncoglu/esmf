@@ -6,15 +6,16 @@
 /*****************************************************************************
  * CVS File Information :
  *    $RCSfile: dr_util.c,v $
- *    $Author: dneckels $
- *    $Date: 2007/08/08 22:43:51 $
- *    Revision: 1.11 $
+ *    $Author: amikstcyr $
+ *    $Date: 2010/02/12 00:19:57 $
+ *    Revision: 1.12 $
  ****************************************************************************/
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
 #include <limits.h>
+#include "dr_const.h"
 
 #ifdef __cplusplus
 /* if C++, define the rest of this header file as extern C */

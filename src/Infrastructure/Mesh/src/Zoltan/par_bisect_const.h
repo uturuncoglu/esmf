@@ -6,9 +6,9 @@
 /*****************************************************************************
  * CVS File Information :
  *    $RCSfile: par_bisect_const.h,v $
- *    $Author: dneckels $
- *    $Date: 2007/08/08 22:43:54 $
- *    Revision: 1.10 $
+ *    $Author: amikstcyr $
+ *    $Date: 2010/02/12 00:19:56 $
+ *    Revision: 1.11 $
  ****************************************************************************/
 
 
@@ -25,7 +25,7 @@ extern "C" {
 
 extern int Zoltan_RB_find_bisector(ZZ *, int, double *, double *, 
   int *, int, int, int, double *, MPI_Comm,
-  double *, int, int *, int, int, int, double, double, 
+  double *, int, int, int, int, double, double, 
   double *, double *, double *, double *, int *, int, int);
 
 /* Note: MAX_BISECT_WGTS should be >= RB_MAX_WEIGHTS in RCB. */

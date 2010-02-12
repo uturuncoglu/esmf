@@ -1,8 +1,8 @@
 /*****************************************************************************
  * CVS File Information :
  *    $RCSfile: octree.c,v $
- *    $Author: dneckels $
- *    $Date: 2007/08/09 17:33:34 $
+ *    $Author: amikstcyr $
+ *    $Date: 2010/02/12 00:19:57 $
  *    Revision: 1.11 $
  ****************************************************************************/
 
@@ -10,12 +10,10 @@
 #include "all_allo_const.h"
 #include "octree_const.h"
 
-
 #ifdef __cplusplus
 /* if C++, define the rest of this header file as extern C */
 extern "C" {
 #endif
-
 
 /*****************************************************************************/
 /*

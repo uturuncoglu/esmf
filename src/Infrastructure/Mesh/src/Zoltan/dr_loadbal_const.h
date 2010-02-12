@@ -6,9 +6,9 @@
 /*****************************************************************************
  * CVS File Information :
  *    $RCSfile: dr_loadbal_const.h,v $
- *    $Author: dneckels $
- *    $Date: 2007/08/08 22:43:50 $
- *    Revision: 1.18 $
+ *    $Author: amikstcyr $
+ *    $Date: 2010/02/12 00:19:56 $
+ *    Revision: 1.21 $
  ****************************************************************************/
 
 
@@ -17,22 +17,34 @@
 
 #include "dr_input_const.h"
 
+
+//#ifdef __cplusplus
+
+//#include "zoltan_cpp.h"
+
+//#define ZOLTAN_STRUCT Zoltan &
+
+//extern "C" {
+
+//#else
+
+
+#define ZOLTAN_STRUCT struct Zoltan_Struct*
+
 #ifdef __cplusplus
-
-  #include "zoltan_cpp.h"
-
-  extern "C" {
-
-#else
-
+/* if C++, define the rest of this header file as extern C */
+extern "C" {
 #endif
 
-#define ZOLTAN_STRUCT struct Zoltan_Struct *
+//#endif
 
-extern int setup_zoltan(ZOLTAN_STRUCT, int, PROB_INFO_PTR, MESH_INFO_PTR); 
+extern int setup_zoltan(ZOLTAN_STRUCT, int, PROB_INFO_PTR, MESH_INFO_PTR,
+                                PARIO_INFO_PTR); 
+extern void setup_fixed_obj(MESH_INFO_PTR, int); 
 
 extern int run_zoltan(ZOLTAN_STRUCT, int, PROB_INFO_PTR, MESH_INFO_PTR,
                       PARIO_INFO_PTR); 
+
 
 extern int migrate_elements(int, MESH_INFO_PTR, ZOLTAN_STRUCT,
                             int, int, 

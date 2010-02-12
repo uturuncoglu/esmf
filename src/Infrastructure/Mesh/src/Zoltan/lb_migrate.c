@@ -6,20 +6,18 @@
 /*****************************************************************************
  * CVS File Information :
  *    $RCSfile: lb_migrate.c,v $
- *    $Author: dneckels $
- *    $Date: 2007/08/09 17:33:24 $
- *    Revision: 1.29 $
+ *    $Author: amikstcyr $
+ *    $Date: 2010/02/12 00:19:57 $
+ *    Revision: 1.30 $
  ****************************************************************************/
 
+
+
 #include "zz_const.h"
-
-
 #ifdef __cplusplus
 /* if C++, define the rest of this header file as extern C */
 extern "C" {
 #endif
-
-
 
 /*****************************************************************************/
 /*****************************************************************************/
@@ -381,7 +379,7 @@ int *actual_imp_to_part = NULL;          /* processor may not be included.  */
       sizes[i] = Zoltan_Align(sizes[i]);
       total_send_size += sizes[i] + tag_size;
     }
-    export_buf = (char *) ZOLTAN_MALLOC(total_send_size);
+    export_buf = (char *) ZOLTAN_CALLOC(total_send_size, sizeof(char));
     if (!export_buf) {
       ZOLTAN_PRINT_ERROR(zz->Proc, yo, "Memory error.");
       ierr = ZOLTAN_MEMERR;

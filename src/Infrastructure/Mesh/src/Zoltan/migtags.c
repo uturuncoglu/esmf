@@ -1,9 +1,9 @@
 /*****************************************************************************
  * CVS File Information :
  *    $RCSfile: migtags.c,v $
- *    $Author: dneckels $
- *    $Date: 2007/08/09 17:33:32 $
- *    Revision: 1.13 $
+ *    $Author: amikstcyr $
+ *    $Date: 2010/02/12 00:19:57 $
+ *    Revision: 1.14 $
  ****************************************************************************/
 
 
@@ -17,7 +17,6 @@
 /* if C++, define the rest of this header file as extern C */
 extern "C" {
 #endif
-
 
 /* function prototypes */
 
@@ -49,7 +48,7 @@ int Zoltan_Oct_migrate_objects(ZZ *zz, pOctant *octs, int *newpids, int nocts,
 {
   int i;                   /* index counter */
   int *tag_pids;           /* array of which processors to send information */
-  int np_regs;            /* number of regions previously imported */
+  int np_regs=0;            /* number of regions previously imported */
   Region *p_reg;          /* previously imported regions */
   ZOLTAN_ID_PTR p_gids;      /* global IDs of previously imported regions */
   ZOLTAN_ID_PTR p_lids;      /* local IDs of previously imported regions */

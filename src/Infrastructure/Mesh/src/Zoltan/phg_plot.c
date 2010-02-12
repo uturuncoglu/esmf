@@ -6,19 +6,19 @@
 /*****************************************************************************
  * CVS File Information :
  *    $RCSfile: phg_plot.c,v $
- *    $Author: dneckels $
- *    $Date: 2007/08/09 17:33:42 $
- *    Revision: 1.11 $
+ *    $Author: amikstcyr $
+ *    $Date: 2010/02/12 00:19:57 $
+ *    Revision: 1.12 $
  ****************************************************************************/
 
 #include "zz_sort.h"    
 #include "phg.h"
+#include "zz_const.h"
 
 #ifdef __cplusplus
 /* if C++, define the rest of this header file as extern C */
 extern "C" {
 #endif
-
 
 /*****************************************************************************/
 void Zoltan_PHG_Plot_2D_Distrib(

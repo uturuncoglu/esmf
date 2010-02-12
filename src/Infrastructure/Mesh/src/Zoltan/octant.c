@@ -1,10 +1,11 @@
 /*****************************************************************************
  * CVS File Information :
  *    $RCSfile: octant.c,v $
- *    $Author: dneckels $
- *    $Date: 2007/08/09 17:33:34 $
+ *    $Author: amikstcyr $
+ *    $Date: 2010/02/12 00:19:57 $
  *    Revision: 1.30 $
  ****************************************************************************/
+
 #include "zz_const.h"
 #include "octant_const.h"
 #include "oct_util_const.h"
@@ -13,8 +14,6 @@
 /* if C++, define the rest of this header file as extern C */
 extern "C" {
 #endif
-
-
 
 /*****************************************************************************/
 static int OCT_count;                /* count of all local octants           */

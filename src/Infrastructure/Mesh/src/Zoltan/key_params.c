@@ -6,10 +6,12 @@
 /*****************************************************************************
  * CVS File Information :
  *    $RCSfile: key_params.c,v $
- *    $Author: dneckels $
- *    $Date: 2007/08/09 17:33:22 $
- *    Revision: 1.47 $
+ *    $Author: amikstcyr $
+ *    $Date: 2010/02/12 00:19:57 $
+ *    Revision: 1.51 $
  ****************************************************************************/
+
+
 
 #include <stdio.h>
 #include "zz_const.h"
@@ -18,12 +20,10 @@
 #include "timer_const.h"
 #include "zz_rand.h"
 
-
 #ifdef __cplusplus
 /* if C++, define the rest of this header file as extern C */
 extern "C" {
 #endif
-
 
 /*****************************************************************************/
 /*****************************************************************************/
@@ -44,11 +44,14 @@ static PARAM_VARS Key_params[] = {
   { "TFLOPS_SPECIAL", NULL, "INT", 0 },
   { "COMM_WEIGHT_DIM", NULL, "INT", 0 }, /* For backward compatibility only. */
                                          /* Prefer use of EDGE_WEIGHT_DIM.   */
-  { "NUM_GLOBAL_PARTITIONS", NULL, "INT", 0 },
-  { "NUM_LOCAL_PARTITIONS", NULL, "INT", 0 },
+  { "NUM_GLOBAL_PARTS", NULL, "INT", 0 },
+  { "NUM_GLOBAL_PARTITIONS", NULL, "INT", 0 }, /* Deprecated */
+  { "NUM_LOCAL_PARTS", NULL, "INT", 0 },
+  { "NUM_LOCAL_PARTITIONS", NULL, "INT", 0 },  /* Deprecated */
   { "MIGRATE_ONLY_PROC_CHANGES", NULL, "INT", 0 },
   { "REMAP", NULL, "INT", 0 },
   { "SEED", NULL, "INT", 0 },
+  { "LB_APPROACH", NULL, "STRING", 0 },
   { NULL, NULL, NULL, 0 } };
 /*****************************************************************************/
 /*****************************************************************************/
@@ -70,7 +73,7 @@ int  idx 			/* index of vector param, -1 if scalar */
     PARAM_UTYPE result;		/* value returned from Check_Param */
     int index;			/* index returned from Check_Param */
     int tmp;
-    int Export, import;
+    int nexport, nimport;
 
     status = Zoltan_Check_Param(name, val, Key_params, &result, &index);
 
@@ -220,18 +223,18 @@ int  idx 			/* index of vector param, -1 if scalar */
         break;
 
       case 10:          /* LB.Return_Lists */
-        Export = (strstr(result.sval, "EXPORT") != NULL);
-        import = (strstr(result.sval, "IMPORT") != NULL);
-        if ((Export && import) || (strcmp(result.sval, "ALL") == 0)) {
-          tmp = ZOLTAN_LB_ALL_LISTS;  /* Export AND import lists */
+        nexport = (strstr(result.sval, "EXPORT") != NULL);
+        nimport = (strstr(result.sval, "IMPORT") != NULL);
+        if ((nexport && nimport) || (strcmp(result.sval, "ALL") == 0)) {
+          tmp = ZOLTAN_LB_ALL_LISTS;  /* export AND import lists */
           status = 3;
         }
-        else if (import){
+        else if (nimport){
           tmp = ZOLTAN_LB_IMPORT_LISTS;  /* import lists */
           status = 3;
         }
-        else if (Export){
-          tmp = ZOLTAN_LB_EXPORT_LISTS;  /* Export lists */
+        else if (nexport){
+          tmp = ZOLTAN_LB_EXPORT_LISTS;  /* export lists */
           status = 3;
         }
         else if (strstr(result.sval, "PARTITION")!=NULL) {
@@ -271,11 +274,12 @@ int  idx 			/* index of vector param, -1 if scalar */
 	status = 3;		/* Don't add to Params field of ZZ */
         break;
 
-      case 14:          /* Num_Global_Partitions */
+      case 14:          /* Num_Global_Parts */
+      case 15:
         if (result.def)
             result.ival = zz->Num_Proc;
         if (result.ival < 1) {
-	    sprintf(msg, "Invalid Num_Global_Partitions value (%d); "
+	    sprintf(msg, "Invalid Num_Global_Parts value (%d); "
 		"being set to %d.", result.ival,zz->Num_Proc);
             ZOLTAN_PRINT_WARN(zz->Proc, yo, msg);
             result.ival = zz->Num_Proc;
@@ -284,11 +288,12 @@ int  idx 			/* index of vector param, -1 if scalar */
         status = 3;
         break;
 
-      case 15:          /* Num_Local_Partitions */
+      case 16:          /* Num_Local_Parts */
+      case 17:
         if (result.def)
             result.ival = -1;
         if (result.ival < -1) {
-	    sprintf(msg, "Invalid Num_Local_Partitions value (%d); "
+	    sprintf(msg, "Invalid Num_Local_Parts value (%d); "
 		"being set to %d.", result.ival,-1);
             ZOLTAN_PRINT_WARN(zz->Proc, yo, msg);
             result.ival = -1;
@@ -297,26 +302,35 @@ int  idx 			/* index of vector param, -1 if scalar */
         status = 3;
         break;
 
-      case 16:		/* Migrate_Only_Proc_Changes */
+      case 18:		/* Migrate_Only_Proc_Changes */
         if (result.def)
             result.ival = ZOLTAN_MIGRATE_ONLY_PROC_CHANGES_DEF;
 	zz->Migrate.Only_Proc_Changes = result.ival;
 	status = 3;		/* Don't add to Params field of ZZ */
         break;
 
-      case 17:		/* LB.Remap */
+      case 19:		/* LB.Remap */
         if (result.def)
             result.ival = 0;
 	zz->LB.Remap_Flag = result.ival;
 	status = 3;		/* Don't add to Params field of ZZ */
         break;
 
-      case 18:          /* Seed */
+      case 20:          /* Seed */
         if (result.def)
             result.ival = Zoltan_Seed();
+        zz->Seed = result.ival;
         Zoltan_Srand(result.ival, NULL);
         status = 3;
         break;
+
+      case 21:          /* LB_APPROACH */
+        if (result.def)
+          strcpy(result.sval, ZOLTAN_LB_APPROACH_DEF);
+        strcpy(zz->LB.Approach, result.sval);
+        status = 3;
+        break;
+
       }  /* end switch (index) */
     }
 
@@ -336,7 +350,7 @@ void Zoltan_Print_Key_Params(ZZ const *zz)
          i, zz->LB.Imbalance_Tol[i]);
   printf("ZOLTAN Parameter %s = %s\n", Key_params[1].name, 
          (zz->Migrate.Auto_Migrate ? "TRUE" : "FALSE"));
-  printf("ZOLTAN Parameter %s = %d\n", Key_params[16].name, 
+  printf("ZOLTAN Parameter %s = %d\n", Key_params[18].name, 
          zz->Migrate.Only_Proc_Changes);
   printf("ZOLTAN Parameter %s = %d\n", Key_params[2].name, 
          zz->Obj_Weight_Dim);
@@ -380,12 +394,14 @@ void Zoltan_Print_Key_Params(ZZ const *zz)
      printf("ZOLTAN Parameter %s = %s\n", Key_params[12].name, "TRUE");
   printf("ZOLTAN Parameter %s = %d\n", Key_params[14].name, 
          zz->LB.Num_Global_Parts_Param);
-  printf("ZOLTAN Parameter %s = %d\n", Key_params[15].name, 
+  printf("ZOLTAN Parameter %s = %d\n", Key_params[16].name, 
          zz->LB.Num_Local_Parts_Param);
-  printf("ZOLTAN Parameter %s = %d\n", Key_params[17].name, 
+  printf("ZOLTAN Parameter %s = %d\n", Key_params[19].name, 
          zz->LB.Remap_Flag);
-  printf("ZOLTAN Parameter %s = %d (%u)\n", Key_params[18].name, 
+  printf("ZOLTAN Parameter %s = %d (%u)\n", Key_params[20].name, 
          Zoltan_Seed(), Zoltan_Seed());
+  printf("ZOLTAN Parameter %s = %s\n", Key_params[21].name, 
+         zz->LB.Approach);
 }
 
 #ifdef __cplusplus

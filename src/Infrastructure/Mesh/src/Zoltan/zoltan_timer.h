@@ -7,9 +7,9 @@
 /*****************************************************************************
  * CVS File Information :
  *    $RCSfile: zoltan_timer.h,v $
- *    $Author: dneckels $
- *    $Date: 2007/08/08 22:43:59 $
- *    Revision: 1.7 $
+ *    $Author: amikstcyr $
+ *    $Date: 2010/02/12 00:19:56 $
+ *    Revision: 1.2 $
  ****************************************************************************/
 
 #ifndef __ZOLTANTIMER_H

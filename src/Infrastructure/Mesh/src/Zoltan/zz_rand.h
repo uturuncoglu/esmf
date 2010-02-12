@@ -6,9 +6,9 @@
 /*****************************************************************************
  * CVS File Information :
  *    $RCSfile: zz_rand.h,v $
- *    $Author: dneckels $
- *    $Date: 2007/08/08 22:44:00 $
- *    Revision: 1.5 $
+ *    $Author: amikstcyr $
+ *    $Date: 2010/02/12 00:19:56 $
+ *    Revision: 1.6 $
  ****************************************************************************/
 #ifndef __ZZ_RAND_H
 #define __ZZ_RAND_H
@@ -20,7 +20,7 @@
 extern "C" {
 #endif
 
-#define ZOLTAN_RAND_MAX 0xffffffff
+#define ZOLTAN_RAND_MAX 0x7fffffff
 #define ZOLTAN_RAND_INIT 123456789U
 
 extern unsigned int Zoltan_Seed();

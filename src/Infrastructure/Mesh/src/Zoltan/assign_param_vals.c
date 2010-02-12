@@ -6,9 +6,9 @@
 /*****************************************************************************
  * CVS File Information :
  *    $RCSfile: assign_param_vals.c,v $
- *    $Author: dneckels $
- *    $Date: 2007/08/09 17:33:13 $
- *    Revision: 1.27 $
+ *    $Author: amikstcyr $
+ *    $Date: 2010/02/12 00:19:56 $
+ *    Revision: 1.28 $
  ****************************************************************************/
 
 
@@ -20,6 +20,7 @@
 #include "params_const.h"
 #include "zoltan_types.h"
 #include "zoltan_util.h"
+#include "zz_const.h"
 
 #ifdef __cplusplus
 /* if C++, define the rest of this header file as extern C */

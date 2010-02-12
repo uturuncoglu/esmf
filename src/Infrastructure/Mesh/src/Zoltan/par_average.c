@@ -6,24 +6,23 @@
 /*****************************************************************************
  * CVS File Information :
  *    $RCSfile: par_average.c,v $
- *    $Author: dneckels $
- *    $Date: 2007/08/09 17:33:36 $
+ *    $Author: amikstcyr $
  *    Revision: 1.6.2.1 $
  ****************************************************************************/
+
 
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <float.h>
 #include "par_median_const.h"
+#include "zz_const.h"
 
+#define TINY   1.0e-6
 #ifdef __cplusplus
 /* if C++, define the rest of this header file as extern C */
 extern "C" {
 #endif
-
-
-#define TINY   1.0e-6
 
 /* prototypes for TFLOPS_SPECIAL */
 static void Zoltan_average_cuts_reduce(int, int, int, double *, double *,

@@ -6,17 +6,17 @@
 /*****************************************************************************
  * CVS File Information :
  *    $RCSfile: lb_free.c,v $
- *    $Author: dneckels $
- *    $Date: 2007/08/09 17:33:24 $
- *    Revision: 1.8 $
+ *    $Author: amikstcyr $
+ *    $Date: 2010/02/12 00:19:57 $
+ *    Revision: 1.10 $
  ****************************************************************************/
-#include "zz_const.h"
 
+#include "zz_const.h"
+#include "all_allo_const.h"
 #ifdef __cplusplus
 /* if C++, define the rest of this header file as extern C */
 extern "C" {
 #endif
-
 
 /*****************************************************************************/
 /*****************************************************************************/
@@ -48,11 +48,40 @@ int Zoltan_LB_Free_Part(
   ZOLTAN_FREE(local_ids);
   ZOLTAN_FREE(procs);
   ZOLTAN_FREE(to_part);
-
+  
   return (ZOLTAN_OK);
 
 }
 
+int Zoltan_LB_Special_Free_Part(
+  ZZ *zz,
+  ZOLTAN_ID_PTR *global_ids, /* Array of global IDs */
+  ZOLTAN_ID_PTR *local_ids,  /* Array of local IDs */
+  int **procs,               /* Array of processor IDs */
+  int **to_part              /* Array of partition assignments */
+)
+{
+/*
+ *  Routine to free the arrays returning the results of the load balancing.
+ *  This routine should be used within Zoltan to ensure that F90-allocated
+ *  arrays are freed correctly.  
+ *  For example, Zoltan SPECIAL_MALLOCs return arrays, but then needs to
+ *  free them while changing the return list format.  Zoltan should call
+ *  Zoltan_LB_Special_Free Part (not Zoltan_LB_Free_Part) to SPECIAL_FREE
+ *  the memory that was SPECIAL_MALLOCed.
+ * 
+ *  External applications do not need to use this routine, 
+ *  as the correct malloc/free protocal for their language will be observed.
+ */
+
+  Zoltan_Special_Free(zz, (void **)global_ids, ZOLTAN_SPECIAL_MALLOC_GID);
+  Zoltan_Special_Free(zz, (void **)local_ids, ZOLTAN_SPECIAL_MALLOC_LID);
+  Zoltan_Special_Free(zz, (void **)procs, ZOLTAN_SPECIAL_MALLOC_INT);
+  Zoltan_Special_Free(zz, (void **)to_part, ZOLTAN_SPECIAL_MALLOC_INT);
+
+  return (ZOLTAN_OK);
+
+}
 /*****************************************************************************/
 /*****************************************************************************/
 /*****************************************************************************/
@@ -74,7 +103,7 @@ int Zoltan_LB_Free_Data(
                                    objects to be exported to other processors
                                    to establish the new decomposition.       */
   int **export_procs            /* Array of processor IDs
-                                   to which objects will be exported 
+                                   to which objects will be exported
                                    to establish the new decomposition.       */
 )
 {

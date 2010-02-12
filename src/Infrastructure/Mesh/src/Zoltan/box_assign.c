@@ -6,11 +6,10 @@
 /*****************************************************************************
  * CVS File Information :
  *    $RCSfile: box_assign.c,v $
- *    $Author: dneckels $
- *    $Date: 2007/08/09 17:33:14 $
+ *    $Author: amikstcyr $
+ *    $Date: 2010/02/12 00:19:56 $
  *    Revision: 1.28 $
  ****************************************************************************/
-
 
 
 
@@ -25,6 +24,7 @@
 /* if C++, define the rest of this header file as extern C */
 extern "C" {
 #endif
+
 
 static void Box_Assign(ZZ *, struct rcb_tree *, struct rcb_box *,
   int, int, int *, int *, int *, int);

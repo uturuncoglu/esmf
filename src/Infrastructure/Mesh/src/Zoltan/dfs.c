@@ -1,10 +1,11 @@
 /*****************************************************************************
  * CVS File Information :
  *    $RCSfile: dfs.c,v $
- *    $Author: dneckels $
- *    $Date: 2007/08/09 17:33:17 $
+ *    $Author: amikstcyr $
+ *    $Date: 2010/02/12 00:19:56 $
  *    Revision: 1.33 $
  ****************************************************************************/
+
 
 #include "zz_const.h"
 #include "octree_const.h"
@@ -14,11 +15,11 @@
 #include "migoct_const.h"
 #include "migtags_const.h"
 #include "oct_util_const.h"
-
 #ifdef __cplusplus
 /* if C++, define the rest of this header file as extern C */
 extern "C" {
 #endif
+
 
 static int DFS_Part_Count;      /* count of number of times Zoltan_Oct_dfs_partition
                                    was called */

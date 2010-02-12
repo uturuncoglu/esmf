@@ -6,10 +6,13 @@
 /*****************************************************************************
  * CVS File Information :
  *    $RCSfile: lb_point_assign.c,v $
- *    $Author: dneckels $
- *    $Date: 2007/08/09 17:33:25 $
+ *    $Author: amikstcyr $
+ *    $Date: 2010/02/12 00:19:57 $
  *    Revision: 1.6 $
  ****************************************************************************/
+
+
+
 
 #include "zz_const.h"
 
@@ -17,7 +20,6 @@
 /* if C++, define the rest of this header file as extern C */
 extern "C" {
 #endif
-
 
 /****************************************************************************/
 int Zoltan_LB_Point_Assign (

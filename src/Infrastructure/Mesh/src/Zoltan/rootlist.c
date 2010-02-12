@@ -1,11 +1,10 @@
 /*****************************************************************************
  * CVS File Information :
  *    $RCSfile: rootlist.c,v $
- *    $Author: dneckels $
- *    $Date: 2007/08/09 17:33:48 $
+ *    $Author: amikstcyr $
+ *    $Date: 2010/02/12 00:19:57 $
  *    Revision: 1.9 $
  ****************************************************************************/
-
 
 #include "zz_const.h"
 #include "all_allo_const.h"

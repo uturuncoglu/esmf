@@ -6,10 +6,11 @@
 /*****************************************************************************
  * CVS File Information :
  *    $RCSfile: zoltan_id.c,v $
- *    $Author: dneckels $
- *    $Date: 2007/08/09 17:33:52 $
+ *    $Author: amikstcyr $
+ *    $Date: 2010/02/12 00:19:57 $
  *    Revision: 1.7 $
  ****************************************************************************/
+
 
 
 #include <stdio.h>
@@ -17,7 +18,6 @@
 #include "zoltan_id.h"
 #include "zoltan_util.h"
 #include "zoltan_mem.h"
-
 
 #ifdef __cplusplus
 /* if C++, define the rest of this header file as extern C */

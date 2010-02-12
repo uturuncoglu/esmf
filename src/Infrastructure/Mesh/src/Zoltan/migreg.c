@@ -1,15 +1,17 @@
 /*****************************************************************************
  * CVS File Information :
  *    $RCSfile: migreg.c,v $
- *    $Author: dneckels $
- *    $Date: 2007/08/09 17:33:31 $
- *    Revision: 1.38 $
+ *    $Author: amikstcyr $
+ *    $Date: 2010/02/12 00:19:57 $
+ *    Revision: 1.39 $
  ****************************************************************************/
+
 #include "migreg.h"
 #include "zoltan_comm.h"
 #include "dfs_const.h"
 #include "oct_util_const.h"
 #include "octree_const.h"
+#include "zz_const.h"
 
 #ifdef __cplusplus
 /* if C++, define the rest of this header file as extern C */
@@ -173,7 +175,7 @@ static int Zoltan_Oct_insert_orphan(ZZ *zz, Region reg) {
 }
 
 int Zoltan_Oct_migreg_migrate_orphans(ZZ *zz, pRegion RegionList, int nregions,
-                               int level, OMap *array, int *c1, int *c2) {
+                               int level, Map *array, int *c1, int *c2) {
   int     i, j, k;                    /* index counters */
   pRegion ptr;                        /* region in the mesh */
   COORD   origin;                     /* centroid coordinate information */

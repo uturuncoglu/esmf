@@ -6,9 +6,9 @@
 /*****************************************************************************
  * CVS File Information :
  *    $RCSfile: phg_util.h,v $
- *    $Author: dneckels $
- *    $Date: 2007/08/08 22:43:57 $
- *    Revision: 1.11 $
+ *    $Author: amikstcyr $
+ *    $Date: 2010/02/12 00:19:56 $
+ *    Revision: 1.12 $
  ****************************************************************************/
 
 #ifndef __PHG_UTIL_H
@@ -41,14 +41,6 @@ extern void Zoltan_PHG_Find_Root(int, int, MPI_Comm, int *, int *);
 
 extern int Zoltan_PHG_LoadBalStat(ZZ *zz, HGraph *);
 
-/****************************************************************************/
-#define MEMORY_ERROR { \
-  ZOLTAN_PRINT_ERROR(zz->Proc, yo, "Memory error."); \
-  ierr = ZOLTAN_MEMERR; \
-  goto End; \
-}
-
-    
 #ifdef __cplusplus
 } /* closing bracket for extern "C" */
 #endif

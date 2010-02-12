@@ -6,9 +6,9 @@
 /*****************************************************************************
  * CVS File Information :
  *    $RCSfile: rcb.h,v $
- *    $Author: dneckels $
- *    $Date: 2007/08/08 22:43:57 $
- *    Revision: 1.13 $
+ *    $Author: amikstcyr $
+ *    $Date: 2010/02/12 00:19:56 $
+ *    Revision: 1.14 $
  ****************************************************************************/
 
 
@@ -67,7 +67,7 @@ typedef struct RCB_Struct {
   ZZ_Transform Tran;        /* transformation for degenerate geometry */
 } RCB_STRUCT;
 
-extern int Zoltan_RCB_Build_Structure(ZZ *, int *, int *, int, int);
+extern int Zoltan_RCB_Build_Structure(ZZ *, int *, int *, int, double, int);
 extern void Zoltan_RCB_Print_Structure(ZZ *zz, int howMany);
 
 #ifdef __cplusplus

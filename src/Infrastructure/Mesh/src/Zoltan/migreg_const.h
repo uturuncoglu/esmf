@@ -1,8 +1,8 @@
 /*****************************************************************************
  * CVS File Information :
  *    $RCSfile: migreg_const.h,v $
- *    $Author: dneckels $
- *    $Date: 2007/08/09 17:33:31 $
+ *    $Author: amikstcyr $
+ *    $Date: 2010/02/12 00:19:56 $
  *    Revision: 1.11 $
  ****************************************************************************/
 
@@ -16,7 +16,7 @@ extern "C" {
 
 
 extern int Zoltan_Oct_migreg_migrate_orphans(ZZ *zz, pRegion RegionList, int nreg, 
-				      int level, OMap *array, int *c1, int *c2);
+				      int level, Map *array, int *c1, int *c2);
 
 #ifdef __cplusplus
 } /* closing bracket for extern "C" */

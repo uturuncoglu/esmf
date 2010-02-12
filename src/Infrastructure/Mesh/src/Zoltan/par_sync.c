@@ -6,23 +6,23 @@
 /*****************************************************************************
  * CVS File Information :
  *    $RCSfile: par_sync.c,v $
- *    $Author: dneckels $
- *    $Date: 2007/08/09 17:33:39 $
- *    Revision: 1.8 $
+ *    $Author: amikstcyr $
+ *    $Date: 2010/02/12 00:19:57 $
+ *    Revision: 1.9 $
  ****************************************************************************/
+
 
 
 #include <stdio.h>
 #include <stdlib.h>
 #include "zoltan_util.h"
 #include "par_const.h"
+#include "zz_const.h"
 
 #ifdef __cplusplus
 /* if C++, define the rest of this header file as extern C */
 extern "C" {
 #endif
-
-
 
 #define PRINT_SYNC 5000   /* definition needed for print sync */
 

@@ -6,15 +6,16 @@
 /*****************************************************************************
  * CVS File Information :
  *    $RCSfile: zz_util_const.h,v $
- *    $Author: dneckels $
- *    $Date: 2007/08/08 22:44:00 $
- *    Revision: 1.9 $
+ *    $Author: amikstcyr $
+ *    $Date: 2010/02/12 00:19:56 $
+ *    Revision: 1.12 $
  ****************************************************************************/
 
 
 #ifndef __ZOLTAN_UTIL_CONST_H
 #define __ZOLTAN_UTIL_CONST_H
 
+#include "zz_const.h"
 #include "zoltan_types.h"
 
 #ifdef __cplusplus
@@ -35,6 +36,21 @@ void Zoltan_Transform_Box(double *lo, double *hi, double (*m)[3], int *a,
   int d, int ndims);
 void Zoltan_Transform_Box_Points(double *lo, double *hi, double (*m)[3], 
   int *a, int d, int ndims, double (*v)[3]);
+int Zoltan_AllReduceInPlace(void *, int , MPI_Datatype , MPI_Op , MPI_Comm );
+
+/* A Zoltan_Map is like a C++ STL map.  It uses Zoltan_Hash.
+ */
+
+#define ZOLTAN_MAX_MAP 10 /* The max number of simultaneous sets created */
+
+int Zoltan_Map_Create(ZZ *zz, int hash_range, int num_id_entries, int store_keys, int num_entries);
+int Zoltan_Map_Destroy(ZZ *zz, int set_num);
+int Zoltan_Map_Add(ZZ *zz, int set_num, int *key, int *data);
+int Zoltan_Map_Find(ZZ *zz, int set_num, int *key, int **data);
+int Zoltan_Map_Size(ZZ *zz, int set_num);
+int Zoltan_Map_First(ZZ *zz, int set_num, int **key, int **data);
+int Zoltan_Map_Next(ZZ *zz, int set_num, int **key, int **data);
+
 /*****************************************************************************/
 /*****************************************************************************/
 /*****************************************************************************/

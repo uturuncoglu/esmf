@@ -7,20 +7,22 @@
 /*****************************************************************************
  * CVS File Information :
  *    $RCSfile: zz_heap.c,v $
- *    $Author: dneckels $
- *    $Date: 2007/08/09 17:33:53 $
- *    Revision: 1.21 $
+ *    $Author: amikstcyr $
+ *    $Date: 2010/02/12 00:19:57 $
+ *    Revision: 1.22 $
  ****************************************************************************/
 
+
 #include "zz_heap.h"
+#include "zz_const.h"
+
+
+#define INT_SWAP(A,B)         {int    _C_=(A);(A)=(B);(B)=_C_;}
 
 #ifdef __cplusplus
 /* if C++, define the rest of this header file as extern C */
 extern "C" {
 #endif
-
-
-#define INT_SWAP(A,B)         {int    _C_=(A);(A)=(B);(B)=_C_;}
 
 /* This module implements a binary (max-) heap.
  * Three arrays are associated with a heap:

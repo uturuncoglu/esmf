@@ -6,9 +6,9 @@
 /*****************************************************************************
  * CVS File Information :
  *    $RCSfile: bind_param.c,v $
- *    $Author: dneckels $
- *    $Date: 2007/08/09 17:33:14 $
- *    Revision: 1.17 $
+ *    $Author: amikstcyr $
+ *    $Date: 2010/02/12 00:19:56 $
+ *    Revision: 1.18 $
  ****************************************************************************/
 
 
@@ -21,6 +21,9 @@
 #include "params_const.h"
 #include "zoltan_mem.h"
 #include "zoltan_util.h"
+#include "zz_const.h"
+
+
 #ifdef __cplusplus
 /* if C++, define the rest of this header file as extern C */
 extern "C" {

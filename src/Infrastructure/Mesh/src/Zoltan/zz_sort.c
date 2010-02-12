@@ -6,19 +6,19 @@
 /*****************************************************************************
  * CVS File Information :
  *    $RCSfile: zz_sort.c,v $
- *    $Author: dneckels $
- *    $Date: 2007/08/09 17:33:53 $
- *    Revision: 1.9 $
+ *    $Author: amikstcyr $
+ *    $Date: 2010/02/12 00:19:57 $
+ *    Revision: 1.12 $
  ****************************************************************************/
 
 #include "zz_sort.h"
+
+#include "zz_const.h"
 
 #ifdef __cplusplus
 /* if C++, define the rest of this header file as extern C */
 extern "C" {
 #endif
-
-
 
 /****************************************************************************/
 
@@ -188,88 +188,45 @@ int  equal, larger;
 
 
 
-/* Sorting values in increasing order. Criteria is int. */
+/* Sorting values in array list in increasing order. Criteria is int. */
+/* Also rearrange values in array parlist to match the new order of list. */
 static void quickpart_list_inc_int (
-  int *list, int start, int end, int *equal, int *larger)
+  int *list, int *parlist, int start, int end, int *equal, int *larger)
 {
-int i, key, change;
+int i, key, change, parchange;
 
   key = list ? list[(end+start)/2] : 1;
 
   *equal = *larger = start;
   for (i = start; i <= end; i++)
     if (list[i] < key) {
-       change            = list[i];
-       list[i]           = list[*larger];
-       list[(*larger)++] = list[*equal];
-       list[(*equal)++]  = change;
-       }
+      parchange         = parlist[i];
+      parlist[i]        = parlist[*larger];
+      parlist[(*larger)]= parlist[*equal];
+      parlist[(*equal)] = parchange;
+      change            = list[i];
+      list[i]           = list[*larger];
+      list[(*larger)++] = list[*equal];
+      list[(*equal)++]  = change;
+    }
     else if (list[i] == key) {
-       list[i]           = list[*larger];
-       list[(*larger)++] = key;
-       }
+      parchange         = parlist[i];
+      parlist[i]        = parlist[*larger];
+      parlist[(*larger)]= parchange;
+      list[i]           = list[*larger];
+      list[(*larger)++] = key;
+    }
 }
 
-
-
-void Zoltan_quicksort_list_inc_int (int* list, int start, int end)
+void Zoltan_quicksort_list_inc_int (int* list, int *parlist, int start, int end)
 {
 int  equal, larger;
 
   if (start < end) {
-     quickpart_list_inc_int (list, start, end, &equal, &larger);
-     Zoltan_quicksort_list_inc_int (list, start, equal-1);
-     Zoltan_quicksort_list_inc_int (list, larger,end);
-     }
-}
-
-/****************************************************************************/
-
-
-
-/* Sorting pointers in increasing order. Criteria are multiple ints. */
-static void quickpart_pointer_inc_int_mult (
-  int *sorted, int start, int end, int *equal, int *larger, int *index,
-  int *data)
-{
-int i, j_New, j_old, New, old;
-
-  *equal = *larger = start;
-  for (i = start; i <= end; i++) {
-     New   = sorted[i];
-     old   = sorted[*equal];
-     j_old = index[old];
-     j_New = index[New];
-     while (j_old < index[old+1] && j_New < index[New+1]
-      && data[j_old] == data[j_New]) {
-         j_New++;
-         j_old++;
-         }
-     if (j_old == index[old+1] && j_New == index[New+1]) {
-         sorted[i]           = sorted[*larger];
-         sorted[(*larger)++] = New;
-         }
-     else if (j_New == index[New+1] || (j_old < index[old+1]
-      && data[j_New] < data[j_old])) {
-         sorted[i]           = sorted[*larger];
-         sorted[(*larger)++] = old;
-         sorted[(*equal)++]  = New;
-         }
-     }
-}
-
-
-
-void Zoltan_quicksort_pointer_inc_int_mult (int *sorted, int start, int end,
- int *index, int *data)
-{
-int  equal, larger;
-
-  if (start < end) {
-     quickpart_pointer_inc_int_mult(sorted,start,end,&equal,&larger,index,data);
-     Zoltan_quicksort_pointer_inc_int_mult (sorted, start, equal-1,index, data);
-     Zoltan_quicksort_pointer_inc_int_mult (sorted, larger,end,    index, data);
-     }
+    quickpart_list_inc_int (list, parlist, start, end, &equal, &larger);
+    Zoltan_quicksort_list_inc_int (list, parlist, start,  equal-1);
+    Zoltan_quicksort_list_inc_int (list, parlist, larger, end);
+  }
 }
 
 /****************************************************************************/

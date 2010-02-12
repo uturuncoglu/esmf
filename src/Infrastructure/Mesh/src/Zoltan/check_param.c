@@ -6,16 +6,11 @@
 /*****************************************************************************
  * CVS File Information :
  *    $RCSfile: check_param.c,v $
- *    $Author: dneckels $
- *    $Date: 2007/08/08 22:43:43 $
- *    Revision: 1.21 $
+ *    $Author: amikstcyr $
+ *    $Date: 2010/02/12 00:19:56 $
+ *    Revision: 1.22 $
  ****************************************************************************/
 
-
-#ifdef __cplusplus
-/* if C++, define the rest of this header file as extern C */
-extern "C" {
-#endif
 
 
 #include <stdio.h>
@@ -24,6 +19,12 @@ extern "C" {
 #include <string.h>
 #include "params_const.h"
 #include "zoltan_util.h"
+#include "zz_const.h"
+
+#ifdef __cplusplus
+/* if C++, define the rest of this header file as extern C */
+extern "C" {
+#endif
 
 
 int       Zoltan_Check_Param(

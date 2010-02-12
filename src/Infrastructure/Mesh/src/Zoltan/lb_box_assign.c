@@ -6,17 +6,18 @@
 /*****************************************************************************
  * CVS File Information :
  *    $RCSfile: lb_box_assign.c,v $
- *    $Author: dneckels $
- *    $Date: 2007/08/09 17:33:23 $
+ *    $Author: amikstcyr $
+ *    $Date: 2010/02/12 00:19:57 $
  *    Revision: 1.6 $
  ****************************************************************************/
-#include "zz_const.h"
 
+
+
+#include "zz_const.h"
 #ifdef __cplusplus
 /* if C++, define the rest of this header file as extern C */
 extern "C" {
 #endif
-
 
 /****************************************************************************/
 int Zoltan_LB_Box_Assign (

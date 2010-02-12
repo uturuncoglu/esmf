@@ -6,13 +6,14 @@
 /*****************************************************************************
  * CVS File Information :
  *    $RCSfile: zz_rand.c,v $
- *    $Author: dneckels $
- *    $Date: 2007/08/09 17:33:53 $
- *    Revision: 1.5 $
+ *    $Author: amikstcyr $
+ *    $Date: 2010/02/12 00:19:57 $
+ *    Revision: 1.9 $
  ****************************************************************************/
 
-#include "zz_rand.h"
 
+#include "zz_rand.h"
+#include "zz_const.h"
 
 #ifdef __cplusplus
 /* if C++, define the rest of this header file as extern C */
@@ -21,14 +22,15 @@ extern "C" {
 
 
 /****************************************************************************/
-/* Random Number generator due to Knuth found in Numerical Recipes in C
- * (2nd edition) by Press, Vetterling, Teukolsky, Flannery (Page 284.)
+ /* Linear congruential number generator, with right shift to account for
+ * the lack of randomness (even/odd/even/odd pattern) in low order bit.
+ *
  * Needed because different random number implementations on different 
  * machines produced different answers!  This generator provides a portable, 
  * fast, algorithm with adequate random number generation. 
- * NOTE: this generator assumes 32 bit ints; previously
- * these variables were unsigned long (as was the return value) which
- * gave problems on stratus (which assumed 64 bit longs.) 
+ *
+ * Number generated should be the same on all platforms that have
+ * 32 bit integers.
  */
 
 static unsigned int zidum = ZOLTAN_RAND_INIT;
@@ -52,7 +54,7 @@ unsigned int *idum;
     idum = myidum;
   else
     idum = &zidum;
-  *idum = (1664525U * *idum) + 1013904223U;
+  *idum = ((1664525U * *idum) + 1013904223U) >> 1;
   return (*idum);
 }
 
