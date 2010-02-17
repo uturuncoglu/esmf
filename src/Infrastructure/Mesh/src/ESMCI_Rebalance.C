@@ -28,7 +28,9 @@ namespace ESMCI {
 
     // Two options ... one with default settings 
     // second with tuned user settings....
-
+#ifdef REBAL_DEBUG
+    Par::Out() <<  " are user options enabled? " <<  (is_user_options ? "yes" : "no") << std::endl; 
+#endif
     if(is_user_options){
       if(zz == NULL)zz = Zoltan_Create(MPI_COMM_WORLD);
       for(int i=0;i<ZoltanOptLHS.size();i++)Zoltan_Set_Param(zz, ZoltanOptLHS[i].c_str(), ZoltanOptRHS[i].c_str());
@@ -357,7 +359,8 @@ namespace ESMCI {
   }
 
    void LoadBalance::GetObject(void *user, int numGlobalIds, int numLids, int numObjs,
-				     ZOLTAN_ID_PTR gids, ZOLTAN_ID_PTR lids, int numDim, double *pts, int *err) 
+			       ZOLTAN_ID_PTR gids, ZOLTAN_ID_PTR lids, int numDim,
+			       double *pts, int *err) 
   {
     zoltan_user_data &udata = *(static_cast<zoltan_user_data*>(user));
     MEField<> *coord_field = udata.mesh->GetCoordField();
@@ -410,17 +413,15 @@ namespace ESMCI {
     zoltan_user_data &udata = *(static_cast<zoltan_user_data*>(user));
 
     MeshObjVect::iterator ni = udata.gen_elem.begin(), ne = udata.gen_elem.end();
-    UInt i = 0;
+    UInt ii = 0;
     UInt sum = 0;
     for (; ni != ne; ++ni) {
-      sum+=numEdges[i++];
+      sum+=numEdges[ii++];
     }
-
-    sum=3*sum;
 
     std::vector<UInt> fid2eidprocid;
 
-    fid2eidprocid.reserve(sum);
+    fid2eidprocid.reserve(1+sum/4);
 
     ni = udata.gen_elem.begin(); ne = udata.gen_elem.end();
 
@@ -433,7 +434,7 @@ namespace ESMCI {
 	MeshObjConn::find_relation(elem,MeshObj::EDGE,0,MeshObj::USES);
  
       for (UInt s = 0; s < topo.num_sides; s++){
-	if(GetAttr(*ei->obj).is_shared()){
+	if( (GetAttr(*ei->obj).is_shared())  ){
 	  // Store the map fid->eid
 	  UInt face_id = ei->obj->get_id();
 	  UInt elem_id = elem.get_id();
@@ -449,8 +450,9 @@ namespace ESMCI {
 	ei++;// next side
       }
     }
+    sum = fid2eidprocid.size();
 
-    ThrowRequire(sum == fid2eidprocid.size());
+    // not true anymore ThrowRequire(sum == fid2eidprocid.size());
 #ifdef REBAL_DEBUG
     Par::Out() << "size sum*3 =  "  << sum
 	       <<" and size of the vector = " <<  fid2eidprocid.size() 
@@ -537,74 +539,95 @@ namespace ESMCI {
       }
     }
 
-    ni = udata.gen_elem.begin(); ne = udata.gen_elem.end();
-
-    i = 0;
     sum = 0;
 
-    for (; ni != ne; ++ni) {
-      const MeshObj &elem = **ni;
-      const MeshObjTopo &topo = *GetMeshObjTopo(elem);
+    for (ii=0; ii< numObjs; ii++) {
+      UInt idx = lids[ii];
+      const MeshObj *elem = udata.gen_elem[idx];
+      const MeshObjTopo &topo = *GetMeshObjTopo(*elem);
   
       // go to first side
       MeshObjRelationList::const_iterator ei = 
-	MeshObjConn::find_relation(elem,MeshObj::EDGE,0,MeshObj::USES);
+	MeshObjConn::find_relation(*elem,MeshObj::EDGE,0,MeshObj::USES);
  
       int nedges=0;
 
       for (UInt s = 0; s < topo.num_sides; s++){
 	ESMCI::MeshObj &face = *ei->obj;
+	
 
-	if(GetAttr(face).is_shared()){
+	if( (GetAttr(face).is_shared()) ){
 	  // Is there an element next door (it should...)?
 	  UInt face_id = face.get_id();
 	
 	  nborGlobalIds[sum+nedges] = *f2e[face_id].begin();
 	  nborProcs    [sum+nedges] = *f2proc[face_id].begin(); // returns proc number
-	  //edgeWgts     [sum+nedges] = float(1.0);
 	  nedges++;
+	}else {
+	  const MeshObj *neighbor = MeshObjConn::opposite_element(*elem, s);
+	  if(neighbor != NULL){
+	    if(GetAttr(*neighbor).is_genesis()){
+	      nborGlobalIds[sum+nedges] = neighbor->get_id();
+	      nborProcs    [sum+nedges] = Par::Rank();//neighbor->get_owner(); // returns proc number
+	      nedges++;	  
+	    }else{
+	      Par::Out() << "Wow! neighbor is not a genesis element?" << std::endl; 
+	      Par::Abort();
+	    }
+	  }
 	}
 	ei++;// next side
       }
       sum+=nedges;
-      i++; // next element
-    }
+    }//elements
     err[0] = 0;
   }
 
    void LoadBalance::GetNumEdges(void *user, int num_gid_entries, int num_lid_entries, 
-				       int num_obj, ZOLTAN_ID_PTR global_ids, ZOLTAN_ID_PTR local_ids, 
+				       int num_obj, ZOLTAN_ID_PTR gids, ZOLTAN_ID_PTR lids, 
 				       int *num_edges, int *err)
   {
     zoltan_user_data &udata = *(static_cast<zoltan_user_data*>(user));
 
-    UInt i = 0;
-
-    MeshObjVect::iterator ni = udata.gen_elem.begin(), ne = udata.gen_elem.end();
-
-    for (; ni != ne; ++ni) {
-      const MeshObj &elem = **ni;
-      const MeshObjTopo &topo = *GetMeshObjTopo(elem);
-
-      // go to first side
-      MeshObjRelationList::const_iterator ei = 
-	MeshObjConn::find_relation(elem,MeshObj::EDGE,0,MeshObj::USES); 
-    
-      int nedges = 0;
-    
-      for (UInt s = 0; s < topo.num_sides; s++){
-	if(GetAttr(*ei->obj).is_shared())nedges++;
-
-	ei++;
-
-      }
-      num_edges[i++] = nedges;
 #ifdef REBAL_DEBUG
-      Par::Out() << " GetNumEdges: (hand algo) element " << (*ni)->get_id() 
-		 << " has " << nedges << " connections to other processors" << std::endl;
+      Par::Out() << " num_lid_entries " << num_lid_entries << std::endl;
+      Par::Out() << " num_obj         " << num_obj << std::endl;      
+      udata.mesh->Print(Par::Out());
 #endif
-    }
-    err[0] = 0;
+
+      for (UInt i = 0 ;i< (UInt) num_obj;i++) {
+	UInt idx = lids[i];
+	const MeshObj *elem =  udata.gen_elem[idx];
+	const MeshObjTopo &topo = *GetMeshObjTopo(*elem);
+	
+	// go to first side
+	MeshObjRelationList::const_iterator ei = 
+	  MeshObjConn::find_relation(*elem,MeshObj::EDGE,0,MeshObj::USES); 
+	
+	int nedges = 0;
+	int pedges = 0;
+
+	for (UInt s = 0; s < topo.num_sides; s++){
+	  //Par::Out() << *ei->obj;
+	  if( (GetAttr(*ei->obj).is_shared()) ){
+	    nedges++;pedges++;
+	  }else{
+	    const MeshObj *neighbor = MeshObjConn::opposite_element(*elem, s);
+	    if (neighbor != NULL)nedges++;
+	  }
+	  ei++;
+	}
+	num_edges[idx] = nedges;
+#ifdef REBAL_DEBUG
+	Par::Out() << " GetNumEdges: (hand algo) element " << elem->get_id() 
+		   << " has " << num_edges[idx] << " connections to other elements"
+		   << " and " << pedges << " connections to other processors"
+		   << std::endl;
+#endif
+      }
+      err[0] = 0;
+
+      //Par::Abort(); // kill it
   }
 
 
@@ -619,7 +642,9 @@ namespace ESMCI {
 
     //static struct Zoltan_Struct *zz = NULL;
     int rank = Par::Rank(); 
-
+#ifdef REBAL_DEBUG
+    Par::Out() <<  " is zz NULL? " <<  (zz == NULL ? "yes" : "no") << std::endl; 
+#endif
     if (zz == NULL) {
       zz = Zoltan_Create(MPI_COMM_WORLD);
   
@@ -703,7 +728,9 @@ namespace ESMCI {
     Zoltan_LB_Free_Part(&exportGlobalGids, &exportLocalGids,
 			&exportProcs, &exportToPart);
 
-    // Zoltan_Destroy(&zz);
+    Zoltan_Destroy(&zz);// First implem. tried to keed this "zz" static for re-use at each
+                        // load balancing call but looks like it was generating disjoint
+                        // partitions...! Nuking it solved the problem.
 
     return changes != 0;
   }
@@ -712,9 +739,9 @@ namespace ESMCI {
   // Rebalance mesh
   /*--------------------------------------------------------*/
   bool LoadBalance::Rebalance(Mesh &mesh, MEField<> *bfield) {
-    Trace __trace("Rebalance(Mesh &mesh)");
+    Trace __trace("Rebalance(Mesh &mesh, MEField<> *bfield)");
   
-    CommReg mig("_rebalance_migration", mesh, mesh);
+    CommReg mig("_rebalance_migration v1", mesh, mesh);
 
     ThrowRequire(mesh.is_committed());
 
@@ -724,7 +751,7 @@ namespace ESMCI {
     }
 
 #ifdef REBAL_DEBUG
-    Par::Out() << "Rebalance comm:" << std::endl;
+    Par::Out() << "Rebalance comm v1:" << std::endl;
     mig.CommPrint(Par::Out());
 #endif
 
@@ -831,7 +858,7 @@ namespace ESMCI {
   bool LoadBalance::Rebalance(Mesh &mesh, CommReg &mig) {
 
 #ifdef REBAL_DEBUG
-    Par::Out() << "Rebalance comm:" << std::endl;
+    Par::Out() << "Rebalance comm v2:" << std::endl;
     mig.CommPrint(Par::Out());
 #endif
 
