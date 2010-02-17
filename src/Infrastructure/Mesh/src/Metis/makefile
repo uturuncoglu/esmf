@@ -1,4 +1,4 @@
-# $Id: makefile,v 1.1.2.1 2009/02/06 19:16:37 amikstcyr Exp $
+# $Id: makefile,v 1.1.2.2 2010/02/17 19:44:56 amikstcyr Exp $
 
 ALL: build_here 
 
@@ -6,7 +6,7 @@ ALL: build_here
 ESMF_CXXCOMPILECPPFLAGS += -DMPICH_IGNORE_CXX_SEEK
 
 SOURCEC	  =	balance.c bucketsort.c ccgraph.c coarsen.c compress.c debug.c \
-		estmem.c fm.c fortran.c frename.c graph.c initpart.c kmetis.c \
+		estmem.c fm.c fortran.c frename.c graph_metis.c initpart.c kmetis.c \
 		kvmetis.c kwayfm.c kwayrefine.c kwayvolfm.c kwayvolrefine.c \
 		match.c mbalance.c mbalance2.c mcoarsen.c memory.c mesh.c \
 		meshpart.c mfm.c mfm2.c mincover.c minitpart.c minitpart2.c \
