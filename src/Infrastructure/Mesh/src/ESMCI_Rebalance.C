@@ -649,24 +649,25 @@ namespace ESMCI {
       zz = Zoltan_Create(MPI_COMM_WORLD);
   
       Zoltan_Set_Param(zz, "DEBUG_LEVEL", "0");
-      Zoltan_Set_Param(zz, "LB_METHOD", "HSFC");
-      Zoltan_Set_Param(zz, "LB_APPROACH", "REPARTITION");
+      Zoltan_Set_Param(zz, "LB_APPROACH", "REFINE");
       Zoltan_Set_Param(zz, "NUM_GID_ENTRIES", "1");
       Zoltan_Set_Param(zz, "NUM_LID_ENTRIES", "1");
       Zoltan_Set_Param(zz, "RETURN_LISTS", "ALL");
       Zoltan_Set_Param(zz, "AVERAGE_CUTS", "1");
       Zoltan_Set_Param(zz, "OBJ_WEIGHT_DIM", "1");
-  
-      // RCB
-      //Zoltan_Set_Param(zz, "LB_METHOD", "RCB");
-      //Zoltan_Set_Param(zz, "RCB_RECTILINEAR_BLOCKS", "1");
-      //Zoltan_Set_Param(zz, "KEEP_CUTS", "1");
-      //Zoltan_Set_Param(zz, "RCB_OUTPUT_LEVEL", "0");
-      //Zoltan_Set_Param(zz, "RCB_OVERALLOC", "2.0");
 
-      //Zoltan_Set_Param(zz, "RCB_LOCK_DIRECTIONS", "1");
-      //Zoltan_Set_Param(zz, "RCB_REUSE", "1");
-      //Zoltan_Set_Param(zz, "RCB_OUTPUT_LEVEL", "0");
+#if 0
+      // HSFC
+      Zoltan_Set_Param(zz, "LB_METHOD", "HSFC");
+#else
+      // RCB
+      Zoltan_Set_Param(zz, "LB_METHOD", "RCB");
+      Zoltan_Set_Param(zz, "RCB_RECTILINEAR_BLOCKS", "1");
+      Zoltan_Set_Param(zz, "RCB_OUTPUT_LEVEL", "0");
+      Zoltan_Set_Param(zz, "RCB_OVERALLOC", "2.0");
+      Zoltan_Set_Param(zz, "RCB_SET_DIRECTIONS", "1");
+#endif
+
     }
 
     int changes;
