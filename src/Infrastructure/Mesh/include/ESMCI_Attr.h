@@ -108,8 +108,18 @@ public:
 
   Context &GetContext() { return context;}
   const Context &GetContext() const { return context;}
-  bool is_shared() const { return context.is_set(SHARED_ID); }
+  //bool is_shared() const { return context.is_set(SHARED_ID); }
   bool is_locally_owned() const { return context.is_set(OWNED_ID);}
+
+  bool is_active() const { return context.is_set(ACTIVE_ID); }
+  bool is_shared() const { return context.is_set(SHARED_ID); }
+  bool is_exposed() const { return context.is_set(EXPOSED_BOUNDARY_ID); }
+  bool is_genesis() const { return context.is_set(GENESIS_ID); }
+  bool is_owned() const { return context.is_set(OWNED_ID); }
+  bool is_constrained() const { return context.is_set(CONSTRAINED_ID); }
+  bool is_refined() const { return context.is_set(REFINED_ID); }
+
+
   friend std::ostream &operator<<(std::ostream &os, const Attr &attr);
 
 private:
