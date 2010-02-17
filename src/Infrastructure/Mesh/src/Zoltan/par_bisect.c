@@ -7,7 +7,7 @@
  * CVS File Information :
  *    $RCSfile: par_bisect.c,v $
  *    $Author: amikstcyr $
- *    $Date: 2010/02/12 00:19:57 $
+ *    $Date: 2010/02/17 06:22:54 $
  *    Revision: 1.40 $
  ****************************************************************************/
 
@@ -468,7 +468,7 @@ int Zoltan_RB_find_bisector(
     for (j=1; j<nwgts; j++)
       if (zz->LB.Imbalance_Tol[j]<temp)
         temp = zz->LB.Imbalance_Tol[j];
-    eps = (temp-1.) / (log(num_parts)/log(2.0))
+    eps = (temp-1.) / (log((double)num_parts)/log(2.0))
           * 0.5*Zoltan_norm(mcnorm, nwgts, wtsum, scale);
 
     /* bisector iteration */
