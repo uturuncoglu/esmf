@@ -92,8 +92,10 @@ typedef TraceBack Trace;
 // Condition vanishes under optimized build
 #ifdef NDEBUG
 #define ThrowAssert(cond) ((void) 0)
+#define ESMCIThrowAssert(cond) ((void) 0)
 #else
 #define ThrowAssert(cond) (cond ? (void) 0 : throw Ex() << "Condition {" << #cond << "} failed at " << __FILE__ << ", line:" << __LINE__)
+#define ESMCIThrowAssert(cond) (cond ? (void) 0 : throw ESMCI::Ex() << "Condition {" << #cond << "} failed at " << __FILE__ << ", line:" << __LINE__)
 #endif
 
 // Condition is tested in optimized and debug
@@ -101,6 +103,7 @@ typedef TraceBack Trace;
 #define ESMCIThrowRequire(cond) (cond ? (void) 0 : throw ESMCI::Ex() << "Condition {" << #cond << "} failed at " << __FILE__ << ", line:" << __LINE__)
 
 #define Throw() throw Ex() << __FILE__ << ", line:" << __LINE__ << ":" 
+#define ESMCIThrow() throw ESMCI::Ex() << __FILE__ << ", line:" << __LINE__ << ":" 
 
 } // namespace
 
