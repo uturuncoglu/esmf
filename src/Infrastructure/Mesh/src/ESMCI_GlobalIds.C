@@ -2,6 +2,7 @@
 #include <Mesh/include/ESMCI_ParEnv.h>
 #include <Mesh/include/ESMCI_SparseMsg.h>
 #include <Mesh/include/ESMCI_Exception.h>
+#include <Mesh/include/ESMCI_MeshObj.h>
 
 #include <mpi.h> 
 #include <bitset>
@@ -10,8 +11,8 @@
 namespace ESMCI {
 
 
-void GlobalIds(const std::vector<long> &current_ids,
-                          std::vector<long> &new_ids)
+void GlobalIds(const std::vector<MeshObj::id_type> &current_ids,
+                          std::vector<MeshObj::id_type> &new_ids)
 {
   Trace __trace("get_global_ids(const std::vector<MeshObj::id_type> &current_ids, std::vector<MeshObj::id_type> &new_ids)");
   UInt rank = Par::Rank();
@@ -21,7 +22,7 @@ void GlobalIds(const std::vector<long> &current_ids,
   // Use a rendezvous decomposition holding the hashed bit positions to compute holes
   // and then forward them to the needy procs.
 
-//Par::Out() << " ggi, used:" << current_ids.size() << ", needed:" << new_ids.size() << std::endl;
+  Par::Out() << " ggi, used:" << current_ids.size() << ", needed:" << new_ids.size() << std::endl;
 
 
   // First trade how many id's are needed
@@ -64,7 +65,7 @@ void GlobalIds(const std::vector<long> &current_ids,
   UInt max_new_id = nused_ids + nnew_ids;
 
 
-//Par::Out() << " ggi, max_new_id:" << max_new_id << std::endl;
+  Par::Out() << " ggi, max_new_id:" << max_new_id << std::endl;
   // Send my local ints off
   SparseMsg msg;
 
@@ -81,7 +82,8 @@ void GlobalIds(const std::vector<long> &current_ids,
 
   UInt nbits_per_proc = (ids_per_proc + NBITS) / NBITS;
   std::vector<std::bitset<NBITS> > id_bits(nbits_per_proc, 0);
-//Par::Out() << "ggi, nbpp=" << nbits_per_proc << std::endl;
+  Par::Out() << "ggi, nbpp=" << nbits_per_proc << std::endl;
+
   { // send to rendezvous
     std::vector<UInt> send_procs;
     std::vector<UInt> send_sizes_all(nproc, 0);
@@ -98,7 +100,7 @@ void GlobalIds(const std::vector<long> &current_ids,
       if (lb == send_procs.end() || *lb != proc)
         send_procs.insert(lb, proc);
   
-//Par::Out() << "size id=" << id << " for " << proc << std::endl;
+      Par::Out() << "size id=" << id << " for " << proc << std::endl;
       send_sizes_all[proc] += SparsePack<ULong>::size();
 
     }
@@ -122,7 +124,7 @@ void GlobalIds(const std::vector<long> &current_ids,
       if (id > max_new_id) continue; // don't care about this one
       UInt proc = std::min((UInt)(id / ids_per_proc), Par::Size()-1);
       SparseMsg::buffer &b = *msg.getSendBuffer(proc);
-//Par::Out() << "pack id=" << id << " for " << proc << std::endl;
+      Par::Out() << "pack id=" << id << " for " << proc << std::endl;
       SparsePack<ULong>(b, id);
     }
     if (!msg.filled()) Throw() << "P:" << Par::Rank() << " neg id, not filled!";
@@ -134,7 +136,7 @@ void GlobalIds(const std::vector<long> &current_ids,
       SparseMsg::buffer &b = *msg.getRecvBuffer(*p);
 
       UInt nids = b.msg_size() / SparsePack<ULong>::size();
-//std::cout << "Proc:" << Par::Rank() << " managing " << nids << " ids" << std::endl;
+      std::cout << "Proc:" << Par::Rank() << " managing " << nids << " ids" << std::endl;
        
       for (UInt i = 0; i < nids; i++) {
         ULong id;
@@ -142,7 +144,7 @@ void GlobalIds(const std::vector<long> &current_ids,
         UInt bas = (id - id_base) >> SHIFT;
         UInt of = (id - id_base) & MASK;
         id_bits[bas].set(of);
-//std::cout << "Proc:" << Par::Rank() << ", id=" << id << ", bas=" << bas << ", of:" << of << std::endl;
+	std::cout << "Proc:" << Par::Rank() << ", id=" << id << ", bas=" << bas << ", of:" << of << std::endl;
       }
     }
     if (!msg.empty()) Throw() << "neg id, not empty!";
@@ -159,7 +161,7 @@ void GlobalIds(const std::vector<long> &current_ids,
   // We counted a few extra at the end:
   num_avail_l -= (nbits_per_proc*NBITS - ids_per_proc);
 
-  //std::cout << "P:" << Par::Rank() << ", numavail=" << num_avail_l << std::endl;
+  std::cout << "P:" << Par::Rank() << ", numavail=" << num_avail_l << std::endl;
 
   std::vector<int> num_avail(nproc);
   if (nproc > 1) {
@@ -175,13 +177,10 @@ void GlobalIds(const std::vector<long> &current_ids,
   }
   UInt new_disp_end_l = new_disp_l + num_avail_l;
 
-
-
-/*
-Par::Out() << "offset table:" << std::endl;
-std::copy(new_id_disp.begin(), new_id_disp.end(), std::ostream_iterator<int>(Par::Out(), " "));
-Par::Out() << "my disp_l=" << new_disp_l << ", my end=" << new_disp_end_l << std::endl;
-*/
+  Par::Out() << "offset table:" << std::endl;
+  std::copy(new_id_disp.begin(), new_id_disp.end(), std::ostream_iterator<int>(Par::Out(), " "));
+  Par::Out() << "my disp_l=" << new_disp_l << ", my end=" << new_disp_end_l << std::endl;
+  
   // Now pack and send ids
   {
     SparseMsg msg;
@@ -199,8 +198,8 @@ Par::Out() << "my disp_l=" << new_disp_l << ", my end=" << new_disp_end_l << std
         
         send_sizes_all[p] += nidsend; // multiply later by size of id
    
-//Par::Out() << " sendinig " << nidsend << " to " << p << std::endl;
-//Par::Out() << " new p+1- my loc=" << new_id_disp[p+1] - new_disp_l << std::endl;
+	Par::Out() << " sending " << nidsend << " to " << p << std::endl;
+	Par::Out() << " new p+1- my loc=" << new_id_disp[p+1] - new_disp_l << std::endl;
         new_disp_l += nidsend;
         num_avail_l -= nidsend;
       } // proc
@@ -220,7 +219,7 @@ Par::Out() << "my disp_l=" << new_disp_l << ", my end=" << new_disp_end_l << std
        UInt proc = send_procs[i];
        SparseMsg::buffer &b = *msg.getSendBuffer(proc);
        UInt nids = send_sizes_all[send_procs[i]];
-//Par::Out() << "sproc=" << proc << " nids =" << nids << ", local off=" << local_offset << std::endl;
+       Par::Out() << "sproc=" << proc << " nids =" << nids << ", local off=" << local_offset << std::endl;
 
        for (UInt j = 0; j < nids; j++) {
 
@@ -229,19 +228,19 @@ Par::Out() << "my disp_l=" << new_disp_l << ", my end=" << new_disp_end_l << std
          do {
           bas = local_offset >> SHIFT;
            of = local_offset & MASK;
-//std::cout << "bas,of=" << bas << "," << of << std::endl;
+	   std::cout << "bas,of=" << bas << "," << of << std::endl;
            if (local_offset > ids_per_proc)
              Throw() << "P:" << Par::Rank() << "num_ids_per_proc=" << ids_per_proc << " but local_offset=" << local_offset << std::endl;
            local_offset++;
-//Par::Out() << "inc local offset:" << local_offset << std::endl;
+	   Par::Out() << "inc local offset:" << local_offset << std::endl;
          } while(!id_bits[bas].test(of));
-//Par::Out() << "found bit, (bas,of) =" << bas << "," << of << std::endl;
+	 Par::Out() << "found bit, (bas,of) =" << bas << "," << of << std::endl;
 
          // Manufacture the id
          long id = id_base + local_offset - 1;
-if (id == 0) Throw() << "Id is zero, why?? from proc:" << Par::Rank() << ".  id_base=" << id_base << ", loffset=" << local_offset;
+	 if (id == 0) Throw() << "Id is zero, why?? from proc:" << Par::Rank() << ".  id_base=" << id_base << ", loffset=" << local_offset;
          SparsePack<long>(b, id);
-//Par::Out() << "sending id=" << id << std::endl;
+	 Par::Out() << "sending id=" << id << std::endl;
          
        } // ids for a proc
 
@@ -264,11 +263,11 @@ if (id == 0) Throw() << "Id is zero, why?? from proc:" << Par::Rank() << ".  id_
        for (UInt i = 0; i < nids; i++) {
          long id;
          SparseUnpack<long>(b, id);
-//Par::Out() << "P:" << Par::Rank() << ", got id=" << id << " from P:" << proc << std::endl;
+	 Par::Out() << "P:" << Par::Rank() << ", got id=" << id << " from P:" << proc << std::endl;
          if (num_in >= (UInt) nnew_ids_l) 
            Throw() << "P:" << Par::Rank() << " num_new ids needed:" << nnew_ids_l << ", but up to:" << num_in + 1;
          new_ids[num_in++] = id;
-if (id == 0) Throw() << "Id is zero, why?? from proc:" << proc;
+	 if (id == 0) Throw() << "Id is zero, why?? from proc:" << proc;
        } // nids
      } // inProc
 
