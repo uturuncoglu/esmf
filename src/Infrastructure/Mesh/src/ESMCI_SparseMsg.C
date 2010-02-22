@@ -44,8 +44,8 @@ void SparseMsg::setPattern(UInt num, const UInt *proc) {
   // Set dest proc
   nsend = num;
 
-  std::vector<int> sendto(nproc, 0);
-  std::vector<int> counts(nproc, 1);
+  std::vector<UInt> sendto(nproc, 0);
+  std::vector<UInt> counts(nproc, 1);
   for (UInt i = 0; i < num; i++) {
     ThrowRequire(proc[i] < csize);
     sendto[proc[i]] = 1;
@@ -55,9 +55,15 @@ void SparseMsg::setPattern(UInt num, const UInt *proc) {
     }
   }
 
-  !Par::Serial() ? MPI_Reduce_scatter(&sendto[0], &num_incoming, &counts[0], MPI_INT, MPI_SUM, comm)
-    : num_incoming = sendto[0];
-//std::cout << "Proc:" << rank << "to receive " << num_incoming << " messages" << std::endl;
+  int cnts = (int)counts[0];
+  if(sizeof(UInt)==4){
+    !Par::Serial() ? MPI_Reduce_scatter(&sendto[0], &num_incoming, &cnts, MPI_UNSIGNED, MPI_SUM, comm)
+      : num_incoming = sendto[0];
+  }
+  if(sizeof(UInt)==8){
+    !Par::Serial() ? MPI_Reduce_scatter(&sendto[0], &num_incoming, &cnts, MPI_UNSIGNED_LONG_LONG, MPI_SUM, comm)
+      : num_incoming = sendto[0];
+  }
 
   // Set up send buffers (so we don't have save the proc ids
   if (nsend > 0) outBuffers.resize(nsend); else outBuffers.clear();
