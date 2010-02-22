@@ -31,7 +31,8 @@ void GlobalIds(const std::vector<long> &current_ids,
   std::vector<int> nnew_ids_all(nproc, 0);
 
   if (nproc > 1) {
-    MPI_Allgather(&nnew_ids_l, 1, MPI_INT, &nnew_ids_all[0], 1, MPI_INT, Par::Comm());
+    if(sizeof(int)==8)MPI_Allgather(&nnew_ids_l, 1, MPI_LONG, &nnew_ids_all[0], 1, MPI_LONG, Par::Comm());
+    if(sizeof(int)==4)MPI_Allgather(&nnew_ids_l, 1, MPI_INT, &nnew_ids_all[0], 1,  MPI_INT,  Par::Comm());
   } else {
     nnew_ids_all[0] = nnew_ids_l;
   }
@@ -53,7 +54,8 @@ void GlobalIds(const std::vector<long> &current_ids,
   if (Par::Rank() == 0) nused_ids_l++;
 
   if (nproc > 1) {
-    MPI_Allreduce(&nused_ids_l, &nused_ids, 1, MPI_INT, MPI_SUM, Par::Comm()); 
+    if(sizeof(int)==4)MPI_Allreduce(&nused_ids_l, &nused_ids, 1, MPI_INT, MPI_SUM, Par::Comm()); 
+    if(sizeof(int)==8)MPI_Allreduce(&nused_ids_l, &nused_ids, 1, MPI_LONG, MPI_SUM, Par::Comm()); 
   } else {
     nused_ids = nused_ids_l;
   }
@@ -161,7 +163,8 @@ void GlobalIds(const std::vector<long> &current_ids,
 
   std::vector<int> num_avail(nproc);
   if (nproc > 1) {
-    MPI_Allgather(&num_avail_l, 1, MPI_INT, &num_avail[0], 1, MPI_INT, Par::Comm());
+    if(sizeof(int)==4)MPI_Allgather(&num_avail_l, 1, MPI_INT,  &num_avail[0], 1, MPI_INT,  Par::Comm());
+    if(sizeof(int)==8)MPI_Allgather(&num_avail_l, 1, MPI_LONG, &num_avail[0], 1, MPI_LONG, Par::Comm());
   } else {
     num_avail[0] = num_avail_l;
   }

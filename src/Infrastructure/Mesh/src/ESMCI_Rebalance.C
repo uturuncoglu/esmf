@@ -568,7 +568,7 @@ namespace ESMCI {
 	  if(neighbor != NULL){
 	    if(GetAttr(*neighbor).is_genesis()){
 	      nborGlobalIds[sum+nedges] = neighbor->get_id();
-	      nborProcs    [sum+nedges] = Par::Rank();//neighbor->get_owner(); // returns proc number
+	      nborProcs    [sum+nedges] = neighbor->get_owner(); // returns proc number
 	      nedges++;	  
 	    }else{
 	      Par::Out() << "Wow! neighbor is not a genesis element?" << std::endl; 
