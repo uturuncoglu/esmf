@@ -45,7 +45,7 @@ void SparseMsg::setPattern(UInt num, const UInt *proc) {
   nsend = num;
 
   std::vector<UInt> sendto(nproc, 0);
-  std::vector<UInt> counts(nproc, 1);
+  std::vector<int> counts(nproc, 1);
   for (UInt i = 0; i < num; i++) {
     ThrowRequire(proc[i] < csize);
     sendto[proc[i]] = 1;
@@ -55,13 +55,12 @@ void SparseMsg::setPattern(UInt num, const UInt *proc) {
     }
   }
 
-  int cnts = (int)counts[0];
   if(sizeof(UInt)==4){
-    !Par::Serial() ? MPI_Reduce_scatter(&sendto[0], &num_incoming, &cnts, MPI_UNSIGNED, MPI_SUM, comm)
+    !Par::Serial() ? MPI_Reduce_scatter(&sendto[0], &num_incoming, &*counts.begin(), MPI_UNSIGNED, MPI_SUM, comm)
       : num_incoming = sendto[0];
   }
   if(sizeof(UInt)==8){
-    !Par::Serial() ? MPI_Reduce_scatter(&sendto[0], &num_incoming, &cnts, MPI_UNSIGNED_LONG_LONG, MPI_SUM, comm)
+    !Par::Serial() ? MPI_Reduce_scatter(&sendto[0], &num_incoming, &*counts.begin(), MPI_UNSIGNED_LONG_LONG, MPI_SUM, comm)
       : num_incoming = sendto[0];
   }
 
