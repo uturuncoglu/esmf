@@ -185,10 +185,10 @@ namespace ESMCI {
 	if (fdim != mf->dim()) Throw() << "PopDB, fields dims do not match:(" << fdim << ", " << mf->dim() << ")";
 	_field *llf = mf->GetNodalfield();
 	if (llf == NULL) Throw() << "No primaryfield dof field in nodal Populate";
-
+        
 	// Loop mesh, assigning values.  We assume that all nodes are represented
 	MeshDB::iterator ni = mesh.node_begin(), ne = mesh.node_end();
-	for (; ni != ne; ++ni) {
+	for (ni=mesh.node_begin(); ni != ne; ++ni) {
 	  if (ni->get_data_index() < 0) Throw() << "Node:" << *ni << " has unassigned data index!!";
 	  double *d = nf.data(*ni);
 	  double *newd = llf->data(*ni);
@@ -267,10 +267,13 @@ namespace ESMCI {
 
     // First share how many each processor wishes to send
     std::vector<int> num_val(csize, 0);
-    UInt num_val_l = locSet.size();
+    // BOB UInt num_val_l = locSet.size();
+    int num_val_l = locSet.size();
 
     if(sizeof(int) == 4)MPI_Allgather(&num_val_l, 1, MPI_UNSIGNED, &*num_val.begin(), 1, MPI_UNSIGNED, Par::Comm());
-    if(sizeof(int) == 8)MPI_Allgather(&num_val_l, 1, MPI_UNSIGNED, &*num_val.begin(), 1, MPI_UNSIGNED_LONG_LONG, Par::Comm());
+    // BOB   if(sizeof(int) == 8)MPI_Allgather(&num_val_l, 1, MPI_UNSIGNED, &*num_val.begin(), 1, MPI_UNSIGNED_LONG_LONG, Par::Comm());
+    if(sizeof(int) == 8)MPI_Allgather(&num_val_l, 1, MPI_UNSIGNED_LONG_LONG, &*num_val.begin(), 1, MPI_UNSIGNED_LONG_LONG, Par::Comm());
+
 
     std::vector<int> rdisp(csize+1, 0);
     for (UInt i = 0; i < csize; i++) {

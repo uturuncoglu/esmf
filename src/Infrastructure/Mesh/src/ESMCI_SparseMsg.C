@@ -10,6 +10,7 @@ namespace ESMCI {
 
 static UInt round_to_dword(UInt size) {
   UInt dwsz = sizeof(void*)*4;
+  //UInt dwsz = 32;
   UInt rm = size % dwsz;
   return rm ? size + (dwsz - rm) : size;
 }

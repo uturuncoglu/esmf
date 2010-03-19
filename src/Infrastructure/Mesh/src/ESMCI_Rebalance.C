@@ -474,7 +474,8 @@ namespace ESMCI {
     
       for (; dp != de; ++dp){my_procs.push_back(*dp);iptr++;}
     
-      unsigned long nei_size[iptr];
+      // unsigned long nei_size[iptr];
+      UInt nei_size[iptr];
       MPI_Request sreq[iptr],rreq[iptr];
       MPI_Status  status[iptr];
     
@@ -484,8 +485,8 @@ namespace ESMCI {
 	// Share the size of the stl::vector we are about to send
 	// This is a nearest neighbor communication:
 	if(sizeof(UInt) == 4){
-	  MPI_Irecv(&nei_size[iptr],1,MPI_UNSIGNED_LONG,proc,0,Par::Comm(),&rreq[iptr]);
-	  MPI_Isend(&sum,1,MPI_UNSIGNED_LONG,proc,0,Par::Comm(),&sreq[iptr]);
+	  MPI_Irecv(&nei_size[iptr],1,MPI_UNSIGNED,proc,0,Par::Comm(),&rreq[iptr]);
+	  MPI_Isend(&sum,1,MPI_UNSIGNED,proc,0,Par::Comm(),&sreq[iptr]);
 	}
 	if(sizeof(UInt) == 8){
 	  MPI_Irecv(&nei_size[iptr],1,MPI_UNSIGNED_LONG_LONG,proc,0,Par::Comm(),&rreq[iptr]);
@@ -494,7 +495,7 @@ namespace ESMCI {
 	iptr++;
       }
       MPI_Waitall(iptr,rreq,status);  
-      std::vector<std::vector<unsigned long> > F2E(iptr);
+      std::vector<std::vector<UInt> > F2E(iptr);
     
       for(unsigned long i=0;i<iptr;i++){
 #ifdef REBAL_DEBUG  
@@ -511,8 +512,8 @@ namespace ESMCI {
 	// Share the stl::vector
 	// This is a nearest neighbor communication
 	if(sizeof(UInt) == 4){
-	  MPI_Irecv(&F2E[iptr][0],nei_size[iptr],MPI_UNSIGNED_LONG,proc,0,Par::Comm(),&rreq[iptr]);
-	  MPI_Isend(&fid2eidprocid[0],sum,MPI_UNSIGNED_LONG,proc,0,Par::Comm(),&sreq[iptr]);
+	  MPI_Irecv(&F2E[iptr][0],nei_size[iptr],MPI_UNSIGNED,proc,0,Par::Comm(),&rreq[iptr]);
+	  MPI_Isend(&fid2eidprocid[0],sum,MPI_UNSIGNED,proc,0,Par::Comm(),&sreq[iptr]);
 	}  
 	if(sizeof(UInt) == 8){
 	  MPI_Irecv(&F2E[iptr][0],nei_size[iptr],MPI_UNSIGNED_LONG_LONG,proc,0,Par::Comm(),&rreq[iptr]);
