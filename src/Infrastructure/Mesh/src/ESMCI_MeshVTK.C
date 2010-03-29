@@ -436,7 +436,7 @@ void WriteVTKXMLMesh(const Mesh &mesh, const std::string &filename) {
   std::fstream fstream_sol(filename.c_str(),std::ios::out|std::ios::binary|std::ios::app);
   //Node variables (data)
   buffer_sol.str("");
-  UInt buffer_size,data_size=0;
+  int32 buffer_size,data_size=0;
   {
     FieldReg::MEField_const_iterator nv = mesh.Field_begin(), ne = mesh.Field_end();
     std::vector<double> data(mesh.num_nodes(), 0);
@@ -449,10 +449,10 @@ void WriteVTKXMLMesh(const Mesh &mesh, const std::string &filename) {
 	  get_data(mesh.node_begin(), mesh.node_end(), llf, &data[0], d);
 	  for (UInt e = 0; e < (UInt) mesh.num_nodes(); e++)
 	    buffer_sol.write((char *)(&data[e]),sizeof(double));
-	  data_size+=(UInt) mesh.num_nodes() * sizeof(double);
+	  data_size+=(int32) mesh.num_nodes() * sizeof(double);
 	  buffer_size=data_size-offset[n_offsets-1];
-	  fstream_sol.write((char *)(&buffer_size),sizeof(UInt));
-	  data_size+=sizeof(UInt);
+	  fstream_sol.write((char *)(&buffer_size),sizeof(int32));
+	  data_size+=sizeof(int32);
 	  fstream_sol.write(buffer_sol.str().c_str(),buffer_size);
 	  buffer_sol.str("");
 	} //for d
@@ -473,10 +473,10 @@ void WriteVTKXMLMesh(const Mesh &mesh, const std::string &filename) {
 	  get_data(mesh.elem_begin(), mesh.elem_end(), llf, &data[0], d);
 	  for (UInt e = 0; e < mesh.num_elems(); e++)
 	    buffer_sol.write((char *)(&data[e]),sizeof(double));
-	  data_size+=(UInt) mesh.num_elems() * sizeof(double);
+	  data_size+=(int32) mesh.num_elems() * sizeof(double);
 	  buffer_size=data_size-offset[n_offsets-1];
-	  fstream_sol.write((char *)(&buffer_size),sizeof(UInt));
-	  data_size+=sizeof(UInt);
+	  fstream_sol.write((char *)(&buffer_size),sizeof(int32));
+	  data_size+=sizeof(int32);
 	  fstream_sol.write(buffer_sol.str().c_str(),buffer_size);
 	  buffer_sol.str("");
 	} //for d
@@ -484,12 +484,12 @@ void WriteVTKXMLMesh(const Mesh &mesh, const std::string &filename) {
     }// fields
   } // element vars
   //Nodes coordinates
-  std::map<MeshObj::id_type, UInt> id2ord;
+  std::map<MeshObj::id_type, int32> id2ord;
   {
     MEField<> &coord = *mesh.GetCoordField();
     Mesh::const_iterator ni = mesh.node_begin(), ne = mesh.node_end();
     offset[n_offsets++]=data_size;
-    for (UInt i = 0; ni != ne; ++ni) {
+    for (int32 i = 0; ni != ne; ++ni) {
       const MeshObj &node = *ni;
       double *cd = coord.data(node);
       // Write coordinates
@@ -501,8 +501,8 @@ void WriteVTKXMLMesh(const Mesh &mesh, const std::string &filename) {
       data_size+=3*sizeof(double);
     }
     buffer_size=data_size-offset[n_offsets-1];
-    fstream_sol.write((char *)(&buffer_size),sizeof(UInt));
-    data_size+=sizeof(UInt);
+    fstream_sol.write((char *)(&buffer_size),sizeof(int32));
+    data_size+=sizeof(int32);
     fstream_sol.write(buffer_sol.str().c_str(),buffer_size);
     buffer_sol.str("");
   } // node coords
@@ -515,15 +515,15 @@ void WriteVTKXMLMesh(const Mesh &mesh, const std::string &filename) {
       const MeshObjTopo *topo = GetMeshObjTopo(elem);
       for (UInt n = 0; n < topo->num_nodes; n++) {
         MeshObj::id_type id = elem.Relations[n].obj->get_id();
-        std::map<MeshObj::id_type,UInt>::iterator imi = id2ord.find(id);
+        std::map<MeshObj::id_type,int32>::iterator imi = id2ord.find(id);
         ThrowRequire(imi != id2ord.end());
-	buffer_sol.write((char *)(&imi->second),sizeof(UInt));
+	buffer_sol.write((char *)(&imi->second),sizeof(int32));
       }
-      data_size+=topo->num_nodes*sizeof(UInt);
+      data_size+=topo->num_nodes*sizeof(int32);
     } // for ei
     buffer_size=data_size-offset[n_offsets-1];
-    fstream_sol.write((char *)(&buffer_size),sizeof(UInt));
-    data_size+=sizeof(UInt);
+    fstream_sol.write((char *)(&buffer_size),sizeof(int32));
+    data_size+=sizeof(int32);
     fstream_sol.write(buffer_sol.str().c_str(),buffer_size);
     buffer_sol.str("");
   } // connectivity
@@ -531,17 +531,17 @@ void WriteVTKXMLMesh(const Mesh &mesh, const std::string &filename) {
   {
     Mesh::const_iterator ei = mesh.elem_begin(), ee = mesh.elem_end();
     offset[n_offsets++]=data_size;
-    UInt off=0;
+    int32 off=0;
     for (; ei != ee; ++ei) {
       const MeshObj &elem = *ei;
       const MeshObjTopo *topo = GetMeshObjTopo(elem);
       off += topo->num_nodes;
-      buffer_sol.write((char *)(&off),sizeof(UInt));
-      data_size+=sizeof(UInt);
+      buffer_sol.write((char *)(&off),sizeof(int32));
+      data_size+=sizeof(int32);
     } // for ei
     buffer_size=data_size-offset[n_offsets-1];
-    fstream_sol.write((char *)(&buffer_size),sizeof(UInt));
-    data_size+=sizeof(UInt);
+    fstream_sol.write((char *)(&buffer_size),sizeof(int32));
+    data_size+=sizeof(int32);
     fstream_sol.write(buffer_sol.str().c_str(),buffer_size);
     buffer_sol.str("");
   } // connectivity
@@ -552,7 +552,7 @@ void WriteVTKXMLMesh(const Mesh &mesh, const std::string &filename) {
     for (; ei != ee; ++ei) {
       const MeshObj &elem = *ei;
       const MeshObjTopo *topo = GetMeshObjTopo(elem);
-      UInt type;
+      int32 type;
       switch(topo->num_nodes) {
       case 3:
 	type=VTK_TRIANGLE;
@@ -572,12 +572,12 @@ void WriteVTKXMLMesh(const Mesh &mesh, const std::string &filename) {
       default:
           Throw() << "Unsupported VTK element type:" << topo->name << std::endl;
       }
-      buffer_sol.write((char *)(&type),sizeof(UInt));
-      data_size+=sizeof(UInt);
+      buffer_sol.write((char *)(&type),sizeof(int32));
+      data_size+=sizeof(int32);
     }
     buffer_size=data_size-offset[n_offsets-1];
-    fstream_sol.write((char *)(&buffer_size),sizeof(UInt));
-    data_size+=sizeof(UInt);
+    fstream_sol.write((char *)(&buffer_size),sizeof(int32));
+    data_size+=sizeof(int32);
     fstream_sol.write(buffer_sol.str().c_str(),buffer_size);
     buffer_sol.str("");
   } // cell types
