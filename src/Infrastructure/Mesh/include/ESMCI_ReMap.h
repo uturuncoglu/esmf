@@ -60,7 +60,7 @@ namespace ESMCI {
 
   public:
 
-    typedef enum {NOTPERIODIC=0,XPERIODIC, YPERIODIC, XYPERIODIC} PeriodicityType;
+    typedef enum {NOTPERIODIC=0,XPERIODIC=1, YPERIODIC=2, XYPERIODIC=3} PeriodicityType;
 
     ReMap();
     // Set up the state of the unique object ...

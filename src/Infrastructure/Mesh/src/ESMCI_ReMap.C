@@ -4,13 +4,14 @@
 #include <Mesh/include/ESMCI_MEFamily.h>
 #include <Mesh/include/ESMCI_MeshUtils.h>
 
+#include <limits>
 #include <math.h>
 
 namespace ESMCI {
 
 
-    const double ReMap::pi_  =  3.141592653589793238462643383279;
-    const double ReMap::a_   =  1.0/4096.0;
+  const double ReMap::pi_  =  3.141592653589793238462643383279;
+  const double ReMap::a_   =  2.0*double(std::numeric_limits<double>::epsilon());
 
   //template<class Derived>
   //Derived* AbstractSingleton<Derived>::pInstance_ = 0;
@@ -141,9 +142,9 @@ namespace ESMCI {
 
   void ReMap::ConvertFromCylinder(double &x, double &y, double &z){
     //ReprojectToCylinder(x,y,z); // makes sure we are on cylinder...    
-    double atan_,eps_=1.0E-14;
-    atan_=0.5*pi_*(1.0-x/(r_+eps_));
-    if(y<-eps_)atan_=-atan_;
+    double atan_,eps_=30.0*std::numeric_limits<double>::epsilon();
+    atan_=0.5*pi_*(1.0-x/(r_+0.*eps_));
+    if(y<-double(0))atan_=-atan_;
     x =Lx_*(0.5 + (0.5/pi_)*atan_);
     y=Ly_*(z/R_+0.5);
     z=0.;
@@ -193,7 +194,7 @@ namespace ESMCI {
   };
   
   bool ReMap::TestCylinder(const double &x, const double &y, const double &z){
-    if((x < a_) || (fabs(y) < a_))return true;
+    if((x < -a_) && (fabs(y) < a_))return true;
     return false;
   };
 
@@ -323,7 +324,7 @@ namespace ESMCI {
 	// this is the barycenter after the mapping
 	for (UInt d = 0; d < nd; d++)bcT[d] += fac*corners[n][d];
       }
-      double eps_ = 1.0e-12;
+      double eps_ = (Lx_+Ly_)*double(std::numeric_limits<double>::epsilon());
       double norm[]={0,0,0};
       for(int k=0;k<nd;k++)norm[k]=fabs(bc[k] - bcT[k]);
 
@@ -353,11 +354,19 @@ namespace ESMCI {
   
     if(isper == NOTPERIODIC || !IsNotIdentity())return;
     
-    const double eps_ = 1.0e-12;  
+    const double eps_ = (Lx_+Ly_)*std::numeric_limits<double>::epsilon();
 
     if(1==0){//rt_ == CYLINDER){ 
       if(isper == XPERIODIC){if(fabs(x) +eps_ >= Lx_){x = 0.;}else if(fabs(x) <= eps_){x = Lx_;}}
     }else{
+#if 0
+      std::cout << "x     = " << x << std::endl;
+      std::cout << "y     = " << y << std::endl;
+      std::cout << "eps   = " << eps_ << std::endl;
+      std::cout << "Lx    = " << Lx_ << std::endl;
+      std::cout << "Ly    = " << Ly_ << std::endl;
+      std::cout << "isper = " << isper << std::endl;
+#endif
       if(isper == XPERIODIC){if(fabs(x) +eps_ >= Lx_){x = 0.;}else if(fabs(x) <= eps_){x = Lx_;}}
       if(isper == YPERIODIC){if(fabs(y) +eps_>= Ly_){y = 0.;}else if(fabs(y) <= eps_){y = Ly_;}}
       if(isper == XYPERIODIC){
