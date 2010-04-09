@@ -34,8 +34,8 @@ SparseMsg::SparseMsg() :
 }
 
 SparseMsg::~SparseMsg() {
-  delete [] sendBuf;
-  delete [] recvBuf;
+  if(sendBuf != NULL){delete [] sendBuf;sendBuf=NULL;}
+  if(recvBuf != NULL){delete [] recvBuf;recvBuf=NULL;}
 }
 
 void SparseMsg::setPattern(UInt num, const UInt *proc) {
@@ -82,7 +82,7 @@ void SparseMsg::setSizes(UInt *sizes) {
   }
 
   // Allocate send buffer.  Delete in case already done
-  delete [] sendBuf;
+  if(sendBuf != NULL){delete [] sendBuf;sendBuf=NULL;}
 
   sendBuf = new UChar[totalsize+1];
 
@@ -148,7 +148,7 @@ void SparseMsg::setSizes(UInt *sizes) {
     totalsize += round_to_dword(inSizes[i]);
 //std::cout << "P:" << rank << ", from " << status[i].MPI_SOURCE << ", size:" << inSizes[i] << std::endl;
   }
-  delete [] recvBuf;
+  if(recvBuf != NULL){delete [] recvBuf;recvBuf=NULL;}
 
   recvBuf = new UChar[totalsize+1]; // avoid zero allocation
 
@@ -330,8 +330,8 @@ UInt SparseMsg::commRank() {
 }
 
 void SparseMsg::clear() {
-  delete [] sendBuf;
-  delete [] recvBuf;
+  if(sendBuf != NULL){delete [] sendBuf;sendBuf = NULL;}
+  if(recvBuf != NULL){delete [] recvBuf;recvBuf = NULL;}
 
   std::vector<buffer>().swap(outBuffers);
   std::vector<buffer>().swap(inBuffers);
