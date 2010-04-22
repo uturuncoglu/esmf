@@ -253,6 +253,21 @@ namespace ESMCI {
         Throw() << "Unknown swap type:" << op;
       }
     }
+    static void vectorvalue(T *a, T *b, int op,const UInt n) {
+      switch(op) {
+      case CommRel::OP_SUM:
+	for(UInt i=0;i<n;i++)a[i]=a[i]+b[i];
+	break;
+      case CommRel::OP_MIN:
+        for(UInt i=0;i<n;i++)a[i] = std::min(a[i],b[i]);
+	break;
+      case CommRel::OP_MAX:
+        for(UInt i=0;i<n;i++)a[i] = std::max(a[i],b[i]);
+	break;
+      default:
+        Throw() << "Unknown swap type:" << op;
+      }
+    }
   };
 
   template<typename VTYPE, typename FTYPE>
@@ -427,9 +442,11 @@ namespace ESMCI {
       for (UInt f = 0; f < nfields; f++) {
 	if (sfields[f]->OnObj(obj) && (!at || at->subset(GetAttr(obj)))) {
 	  VTYPE *data = sfields[f]->data(obj);
-	  for (UInt d = 0; d < sfields[f]->dim(obj); d++) {
-	    SparsePack<VTYPE>(b, data[d]);
-	  }
+	  //std::cout << "Field has size " <<  sfields[f]->dim(obj) << std::endl;
+	  //for (UInt d = 0; d < sfields[f]->dim(obj); d++) {
+	  //  SparsePack<VTYPE>(b, data[d]);
+	  //}
+	  SparsePack<VTYPE>(b, &data[0],sfields[f]->dim(obj));
 	}
       }
     }
@@ -455,18 +472,23 @@ namespace ESMCI {
     for (; ri != domain_end(); ri++) {
       UInt proc = ri->processor;
       SparseMsg::buffer &b = *msg.getRecvBuffer(proc);
-      const CommNode &cn = *ri;
+      const CommNode  &cn = *ri;
       const MeshObj &obj = *cn.obj;
       
       // Coming from the owner, so unpack
       for (UInt f = 0; f < nfields; f++) {
 	if (rfields[f]->OnObj(obj) && (!at || at->subset(GetAttr(obj)))) {
 	  VTYPE *data = rfields[f]->data(obj);
-	  for (UInt d = 0; d < rfields[f]->dim(obj); d++) {
-	    VTYPE val;
-	    SparseUnpack<VTYPE>(b, val);
-	    data[d] = SwapIt<VTYPE>::value(data[d], val, op); 
-	  }
+	  // for (UInt d = 0; d < rfields[f]->dim(obj); d++) {
+	  //  VTYPE val;
+	  //  SparseUnpack<VTYPE>(b, val);
+	  //  data[d] = SwapIt<VTYPE>::value(data[d], val, op); 
+	  // }
+
+	  VTYPE val[rfields[f]->dim(obj)];
+	  SparseUnpack<VTYPE>(b, val,rfields[f]->dim(obj));
+	  SwapIt<VTYPE>::vectorvalue(data, val, op,rfields[f]->dim(obj)); 
+
 	}
       }
 

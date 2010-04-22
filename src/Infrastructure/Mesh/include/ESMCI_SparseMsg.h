@@ -51,9 +51,12 @@ public:
     bool empty() { return cur >= (beg + msize); }
   
     UInt loc() const { return cur - beg; }
-
+    
   private:
-    UChar *beg, *end, *cur;
+    UChar *beg, *end;
+  public:
+    UChar *cur;
+  private:
     int msize;  // actual message size
     UInt bsize;  // size (with rounding to word boundary)
     UInt proc;
@@ -147,10 +150,12 @@ private:
   std::vector<MPI_Request> async_srequest;
 };
 
+  
 template<class T>
 class SparsePack {
 public:
   explicit SparsePack(SparseMsg::buffer &buf, T t) {buf.push((UChar*)&t, sizeof(T));}
+  explicit SparsePack(SparseMsg::buffer &buf, T *t,const unsigned int n) {buf.push((UChar*)&t[0], sizeof(T)*n);}
   SparsePack() {}
   static UInt size() { return sizeof(T);}
 };
@@ -159,8 +164,40 @@ template<class T>
 class SparseUnpack {
 public:
   explicit SparseUnpack(SparseMsg::buffer &buf, T &t) {buf.pop((UChar*)&t, sizeof(T));}
+  explicit SparseUnpack(SparseMsg::buffer &buf, T *t,const unsigned int n) {buf.pop((UChar*)&t[0], sizeof(T)*n);}
   SparseUnpack() {}
 };
+
+  // specialize the classes
+  template<>
+  class SparsePack<double> {
+  public:
+    explicit SparsePack(SparseMsg::buffer &buf, double t) {buf.push((UChar*)&t, sizeof(double));}
+    explicit SparsePack(SparseMsg::buffer &buf, double *from,const unsigned int n) {
+      //buf.push((UChar*)&t[0], sizeof(double)*n);
+      double *to = reinterpret_cast<double*>(buf.cur);
+      for(UInt i=0;i<n;i++)to[i] = from[i]; // Unroll ?
+
+      buf.cur=buf.cur+n*sizeof(double);
+    }
+    SparsePack() {}
+    static UInt size() { return sizeof(double);}
+  };
+  
+  template<>
+  class SparseUnpack<double> {
+  public:
+    explicit SparseUnpack(SparseMsg::buffer &buf, double &t) {buf.pop((UChar*)&t, sizeof(double));}
+    explicit SparseUnpack(SparseMsg::buffer &buf, double *to,const unsigned int n) {
+      //buf.pop((UChar*)&t[0], sizeof(double)*n);
+      double *from = reinterpret_cast<double*>(buf.cur);
+      for(UInt i=0;i<n;i++)to[i] = from[i]; // Unroll ?
+      
+      buf.cur=buf.cur+n*sizeof(double);
+    }
+    SparseUnpack() {}
+  };
+    
 
 } // namespace
 
