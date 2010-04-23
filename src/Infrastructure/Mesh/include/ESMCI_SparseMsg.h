@@ -192,10 +192,6 @@ public:
 	  } while (--nn>0);
 	}      
       buf.cur=buf.cur+n*sizeof(double);
-#else
-      std::memcpy(buf.cur,from,sizeof(double)*n);
-      buf.cur=buf.cur+n*sizeof(double);
-#endif
     }
     SparsePack() {}
     static UInt size() { return sizeof(double);}
