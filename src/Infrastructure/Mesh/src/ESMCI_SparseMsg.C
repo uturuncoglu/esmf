@@ -9,8 +9,8 @@
 namespace ESMCI {
 
 static UInt round_to_dword(UInt size) {
-  UInt dwsz = sizeof(void*)*4;
-  //UInt dwsz = 32;
+  //UInt dwsz = sizeof(void*)*4;
+  UInt dwsz =128; 
   UInt rm = size % dwsz;
   return rm ? size + (dwsz - rm) : size;
 }
@@ -309,16 +309,48 @@ void SparseMsg::resetBuffers() {
   }
 }
 
-void SparseMsg::buffer::push(const UChar * src, UInt size) {
-  for (UInt i = 0; i < size; i++) {
-    *cur++ = *src++;
+  void SparseMsg::buffer::push(const UChar * src, UInt size) {
+#if 0
+    for (UInt i = 0; i < size; i++) {
+      *cur++ = *src++;
+    }
+#else
+    UInt n = (size+7) / 8;
+    switch(size%8)
+      {
+      case 0: do { *cur++ = *src++;
+	case 7:      *cur++ = *src++;
+	case 6:      *cur++ = *src++;
+	case 5:      *cur++ = *src++;
+	case 4:      *cur++ = *src++;
+	case 3:      *cur++ = *src++;
+	case 2:      *cur++ = *src++;
+	case 1:      *cur++ = *src++;
+	} while (--n>0);
+      }
+#endif
   }
-}
 
 void SparseMsg::buffer::pop(UChar *dest, UInt size) {
+#if 0
   for (UInt i = 0; i < size; i++) {
     *dest++ = *cur++;
   }
+#else
+  UInt n = (size+7) / 8;
+  switch(size%8)
+    {
+    case 0: do { *dest++ = *cur++;
+      case 7:      *dest++ = *cur++;
+      case 6:      *dest++ = *cur++;
+      case 5:      *dest++ = *cur++;
+      case 4:      *dest++ = *cur++;
+      case 3:      *dest++ = *cur++;
+      case 2:      *dest++ = *cur++;
+      case 1:      *dest++ = *cur++;
+      } while (--n>0);
+    }
+#endif
 }
 
 UInt SparseMsg::commSize() {

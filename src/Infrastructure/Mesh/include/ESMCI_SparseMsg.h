@@ -174,11 +174,28 @@ public:
   public:
     explicit SparsePack(SparseMsg::buffer &buf, double t) {buf.push((UChar*)&t, sizeof(double));}
     explicit SparsePack(SparseMsg::buffer &buf, double *from,const unsigned int n) {
-      //buf.push((UChar*)&t[0], sizeof(double)*n);
-      double *to = reinterpret_cast<double*>(buf.cur);
-      for(UInt i=0;i<n;i++)to[i] = from[i]; // Unroll ?
 
+      double *to = reinterpret_cast<double*>(buf.cur);
+      //for(UInt i=0;i<n;i++)to[i] = from[i]; // Unroll ?
+      
+      unsigned int nn = (n+7) / 8;
+      switch(n%8)
+	{
+	case 0: do { *to++ = *from++;
+	  case 7:    *to++ = *from++;
+	  case 6:    *to++ = *from++;
+	  case 5:    *to++ = *from++;
+	  case 4:    *to++ = *from++;
+	  case 3:    *to++ = *from++;
+	  case 2:    *to++ = *from++;
+	  case 1:    *to++ = *from++;
+	  } while (--nn>0);
+	}      
       buf.cur=buf.cur+n*sizeof(double);
+#else
+      std::memcpy(buf.cur,from,sizeof(double)*n);
+      buf.cur=buf.cur+n*sizeof(double);
+#endif
     }
     SparsePack() {}
     static UInt size() { return sizeof(double);}
@@ -189,10 +206,23 @@ public:
   public:
     explicit SparseUnpack(SparseMsg::buffer &buf, double &t) {buf.pop((UChar*)&t, sizeof(double));}
     explicit SparseUnpack(SparseMsg::buffer &buf, double *to,const unsigned int n) {
-      //buf.pop((UChar*)&t[0], sizeof(double)*n);
+
       double *from = reinterpret_cast<double*>(buf.cur);
-      for(UInt i=0;i<n;i++)to[i] = from[i]; // Unroll ?
-      
+      //for(UInt i=0;i<n;i++)to[i] = from[i]; // Unroll ?
+
+      unsigned int nn = (n+7) / 8;
+      switch(n%8)
+	{
+	case 0: do { *to++ = *from++;
+	  case 7:    *to++ = *from++;
+	  case 6:    *to++ = *from++;
+	  case 5:    *to++ = *from++;
+	  case 4:    *to++ = *from++;
+	  case 3:    *to++ = *from++;
+	  case 2:    *to++ = *from++;
+	  case 1:    *to++ = *from++;
+	  } while (--nn>0);
+	}      
       buf.cur=buf.cur+n*sizeof(double);
     }
     SparseUnpack() {}
