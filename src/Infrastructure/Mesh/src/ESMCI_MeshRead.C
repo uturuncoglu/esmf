@@ -7,6 +7,7 @@
 #include <Mesh/include/ESMCI_MeshSkin.h>
 #include <Mesh/include/ESMCI_ParEnv.h>
 #include <Mesh/include/ESMCI_MeshVTK.h>
+#include <Mesh/include/ESMCI_MeshGMSH.h>
 
 #include <mpi.h>
 
@@ -87,8 +88,16 @@ void ReadMesh(Mesh &mesh, const std::string &fbase, bool skin, int file_type)
   int psize = Par::Size();
 
   std::string newname;
-  std::string extension = (file_type == ESMCI_FILE_EXODUS ? ".g" : ".vtk");
-
+  
+  std::string extension="";
+  if (file_type == ESMCI_FILE_EXODUS) {
+    extension=".g";
+  } else if (file_type == ESMCI_FILE_VTK) {
+    extension=".vtk";
+  } else if (file_type == ESMCI_FILE_GMSH) {
+    extension=".msh";
+  } else Throw() << "Unknown file type:" << file_type;
+  
   // If csize = 1, read fbase.g
   if (psize > 1) {
     std::ostringstream newname_str;
@@ -103,6 +112,8 @@ void ReadMesh(Mesh &mesh, const std::string &fbase, bool skin, int file_type)
     LoadExMesh(mesh, newname);
   } else if (file_type == ESMCI_FILE_VTK) {
     ReadVTKMesh(mesh, newname);
+  } else if (file_type == ESMCI_FILE_GMSH) {
+    ReadGMSHMesh(mesh, newname);
   } else Throw() << "Unknown file type:" << file_type;
 
   mesh.remove_unused_nodes();

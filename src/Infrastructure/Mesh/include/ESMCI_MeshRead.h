@@ -7,7 +7,7 @@
 
 namespace ESMCI {
 
-enum { ESMCI_FILE_EXODUS = 0, ESMCI_FILE_VTK=1, ESMCI_FILE_VTKXML=2 };
+enum { ESMCI_FILE_EXODUS = 0, ESMCI_FILE_VTK=1, ESMCI_FILE_VTKXML=2, ESMCI_FILE_GMSH=3 };
 
 // Read the mesh in parallel (append the correct strings to the local filename)
 // Create the shared CommRel.

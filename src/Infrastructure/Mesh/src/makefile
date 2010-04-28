@@ -1,4 +1,4 @@
-# $Id: makefile,v 1.16.2.3 2009/03/31 20:43:36 amikstcyr Exp $
+# $Id: makefile,v 1.16.2.4 2010/04/28 22:50:21 sblaise Exp $
 
 # leave alone.
 ALL: build_here 
@@ -49,6 +49,7 @@ SOURCEC	  = \
            ESMCI_MeshSkin.C \
            ESMCI_MeshUtils.C \
            ESMCI_MeshVTK.C \
+           ESMCI_MeshGMSH.C \
            ESMCI_MEValues.C \
            ESMCI_Migrator.C \
 	   ESMCI_ParamHandler.C \

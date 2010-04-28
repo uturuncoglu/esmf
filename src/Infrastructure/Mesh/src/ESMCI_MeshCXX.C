@@ -19,6 +19,7 @@
 #include <Mesh/include/ESMCI_MeshCXX.h>
 #include "ESMCI_MeshRead.h"
 #include "ESMCI_MeshVTK.h"
+#include "ESMCI_MeshGMSH.h"
 #include "ESMCI_ParEnv.h"
 #include "ESMCI_MeshUtils.h"
 
