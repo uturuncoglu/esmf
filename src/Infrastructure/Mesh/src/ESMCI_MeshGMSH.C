@@ -42,7 +42,7 @@ namespace ESMCI {
     int gmsh_format=0;
     file >> gmsh_format;
     if (gmsh_format != 2)
-      Throw() << "LoadMeshDB GMSH error: can only read format 2 files and not " << gmsh_format << std::endl;
+      Throw() << "LoadMeshDB GMSH error: can only read gmsh v2 files and not v" << gmsh_format << std::endl;
     getline(file,line);
     read_check_line(file,"$EndMeshFormat");
     read_check_line(file,"$Nodes");
@@ -55,8 +55,7 @@ namespace ESMCI {
       file >> file_id;
       id_map[file_id]=i;
       for (UInt j = 0; j < 3; j++) {
-	int t_i = 3*i;
-	file >> coord[t_i+j];
+	file >> coord[3*i+j];
       }
     }//npoints
     getline(file,line);
@@ -68,7 +67,6 @@ namespace ESMCI {
     //We just consider 2d flat elements
     std::vector<UInt*> tris_to_nodes;
     std::vector<UInt*> quads_to_nodes;
-    UInt elemnumber[nelems];
     UInt elemtypes[nelems];
     int tag;
     std::vector<UInt> nodes(3);
@@ -76,7 +74,7 @@ namespace ESMCI {
     typedef std::map<std::pair <UInt,UInt>,int> tagmap;
     tagmap nodepairs_to_tags;
     for (UInt i = 0; i < nelems; i++) {
-      file >> elemnumber[i];
+      file >> buf0;
       file >> elemtypes[i];
       file >> ntags;
       tag=0;
@@ -85,7 +83,7 @@ namespace ESMCI {
       for (UInt j=1; j<ntags; j++)
 	file >> buf0; //Just one tag (the first) is passed to ESMF
       switch (elemtypes[i]){
-      case 1:{
+      case 1:{ //2-node line (tags used as sidesets)
 	file >> buf0;
 	file >> buf1;
 	std::pair <UInt,UInt> nodepair (buf0,buf1);
@@ -94,7 +92,7 @@ namespace ESMCI {
 	nodepairs_to_tags[nodepair]=tag;
 	break;
       }
-      case 2:{
+      case 2:{ //3-node triangle
 	pdim=2;
 	UInt *tri_to_nodes=new UInt[3];
 	file >> tri_to_nodes[0];
@@ -103,7 +101,7 @@ namespace ESMCI {
 	tris_to_nodes.push_back(tri_to_nodes);
 	break;
       }
-      case 3:{
+      case 3:{ //4-node quadrangle
 	pdim=2;
 	UInt *quad_to_nodes=new UInt[4];
 	file >> quad_to_nodes[0];
@@ -111,6 +109,10 @@ namespace ESMCI {
 	file >> quad_to_nodes[2];
 	file >> quad_to_nodes[3];
 	quads_to_nodes.push_back(quad_to_nodes);
+	break;
+      }
+      case 15:{ //1-node point: just throw the data
+	file >> buf0;
 	break;
       }
       default:
@@ -162,7 +164,7 @@ namespace ESMCI {
       const MeshObjTopo *topo=NULL; //1d lines are not elements in ESMF
       switch (elemtypes[i]){
       case 2:{
-	topo=GetTopo("TRI3");
+	topo=GetTopo(sdim==3?"SHELL3":"TRI3");
 	cur_off=tri_off;
 	tri_off++;
 	elem_off++;
@@ -170,7 +172,7 @@ namespace ESMCI {
 	break;
       }
       case 3:{
-	topo=GetTopo("QUAD");
+	topo=GetTopo(sdim==3?"SHELL":"QUAD");
 	cur_off=quad_off;
 	quad_off++;
 	elem_off++;
@@ -219,7 +221,8 @@ namespace ESMCI {
     for (int i=0; i<quads_to_nodes.size();i++)
       delete[] quads_to_nodes[i];
     //No data in gmsh mesh files
-    
+    if (Par::Rank()==0)
+      std::cout << "MeshGMSH Load file " << filename << " complete." << std::endl;
   }//LoadGMSHMesh
 
 } //namespace
