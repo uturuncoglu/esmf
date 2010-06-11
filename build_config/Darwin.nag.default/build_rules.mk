@@ -1,4 +1,4 @@
-# $Id: build_rules.mk,v 1.19 2007/03/16 18:02:44 theurich Exp $
+# $Id: build_rules.mk,v 1.23.2.1 2010/06/11 16:06:42 svasquez Exp $
 #
 # Darwin.nag.default
 #
@@ -6,7 +6,7 @@
 ############################################################
 # Default compiler setting.
 #
-ESMF_F90DEFAULT         = f95
+ESMF_F90DEFAULT         = nagfor
 ESMF_CXXDEFAULT         = g++
 
 ############################################################
@@ -28,32 +28,34 @@ ESMF_MPIRUNDEFAULT      = $(ESMF_DIR)/src/Infrastructure/stubs/mpiuni/mpirun
 else
 ifeq ($(ESMF_COMM),mpich)
 # Mpich ----------------------------------------------------
+ESMF_CXXCOMPILECPPFLAGS+= -DESMF_MPICH
 ESMF_F90DEFAULT         = mpif90
-ESMF_F90LINKLIBS       += 
 ESMF_CXXDEFAULT         = mpiCC
-ESMF_CXXCOMPILEOPTS    += -DESMF_MPICH
-ESMF_MPIRUNDEFAULT      = mpirun
+ESMF_MPIRUNDEFAULT      = mpirun $(ESMF_MPILAUNCHOPTIONS)
 else
 ifeq ($(ESMF_COMM),mpich2)
 # Mpich2 ---------------------------------------------------
 ESMF_F90DEFAULT         = mpif90
 ESMF_CXXDEFAULT         = mpicxx
-ESMF_MPIRUNDEFAULT      = mpirun
-ESMF_MPIMPMDRUNDEFAULT  = mpiexec
+ESMF_MPIRUNDEFAULT      = mpirun $(ESMF_MPILAUNCHOPTIONS)
+ESMF_MPIMPMDRUNDEFAULT  = mpiexec $(ESMF_MPILAUNCHOPTIONS)
 else
 ifeq ($(ESMF_COMM),lam)
 # LAM (assumed to be built with nag f95) ----------------
+ESMF_CXXCOMPILECPPFLAGS+= -DESMF_NO_SIGUSR2
 ESMF_F90DEFAULT         = mpif77
 ESMF_CXXDEFAULT         = mpic++
-ESMF_MPIRUNDEFAULT      = mpirun
-ESMF_MPIMPMDRUNDEFAULT  = mpiexec
+ESMF_MPIRUNDEFAULT      = mpirun $(ESMF_MPILAUNCHOPTIONS)
+ESMF_MPIMPMDRUNDEFAULT  = mpiexec $(ESMF_MPILAUNCHOPTIONS)
 else
 ifeq ($(ESMF_COMM),openmpi)
 # OpenMPI --------------------------------------------------
+ESMF_CXXCOMPILECPPFLAGS+= -DESMF_NO_SIGUSR2
 ESMF_F90DEFAULT         = mpif90
+ESMF_F90LINKLIBS       += -lmpi_cxx
 ESMF_CXXDEFAULT         = mpicxx
-ESMF_MPIRUNDEFAULT      = mpirun
-ESMF_MPIMPMDRUNDEFAULT  = mpiexec
+ESMF_MPIRUNDEFAULT      = mpirun $(ESMF_MPILAUNCHOPTIONS)
+ESMF_MPIMPMDRUNDEFAULT  = mpiexec $(ESMF_MPILAUNCHOPTIONS)
 else
 ifeq ($(ESMF_COMM),user)
 # User specified flags -------------------------------------
@@ -73,6 +75,11 @@ ESMF_F90COMPILER_VERSION    = ${ESMF_F90COMPILER} -v -V -dryrun
 ESMF_CXXCOMPILER_VERSION    = ${ESMF_CXXCOMPILER} -v --version
 
 ############################################################
+# nag currently does not support OpenMP
+#
+ESMF_OPENMP := OFF
+
+############################################################
 # Some ESMF tests fail for NAG with -O -> turn optimization off by default
 #
 ESMF_OPTLEVELDEFAULT  = 0
@@ -86,6 +93,15 @@ ESMF_F90COMPILEOPTS += -kind=byte
 # Set f95 to be more premissive and issue warning before error
 #
 ESMF_F90COMPILEOPTS += -dusty
+
+############################################################
+# Conditionally add pthread compiler and linker flags
+#
+
+ifeq ($(ESMF_PTHREADS),ON)
+ESMF_F90COMPILEOPTS += -thread_safe
+ESMF_F90LINKOPTS    += -thread_safe
+endif
 
 ############################################################
 # Need this until the file convention is fixed (then remove these two lines)
