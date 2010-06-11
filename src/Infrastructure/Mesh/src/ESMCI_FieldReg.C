@@ -271,8 +271,8 @@ namespace ESMCI {
     int num_val_l = locSet.size();
 
     if(sizeof(int) == 4)MPI_Allgather(&num_val_l, 1, MPI_UNSIGNED, &*num_val.begin(), 1, MPI_UNSIGNED, Par::Comm());
-    // BOB   if(sizeof(int) == 8)MPI_Allgather(&num_val_l, 1, MPI_UNSIGNED, &*num_val.begin(), 1, MPI_UNSIGNED_LONG_LONG, Par::Comm());
-    if(sizeof(int) == 8)MPI_Allgather(&num_val_l, 1, MPI_UNSIGNED_LONG_LONG, &*num_val.begin(), 1, MPI_UNSIGNED_LONG_LONG, Par::Comm());
+    // BOB   if(sizeof(int) == 8)MPI_Allgather(&num_val_l, 1, MPI_UNSIGNED, &*num_val.begin(), 1, MPI_UNSIGNED_LONG, Par::Comm());
+    if(sizeof(int) == 8)MPI_Allgather(&num_val_l, 1, MPI_UNSIGNED_LONG, &*num_val.begin(), 1, MPI_UNSIGNED_LONG, Par::Comm());
 
 
     std::vector<int> rdisp(csize+1, 0);
@@ -284,15 +284,15 @@ namespace ESMCI {
 
     if(sizeof(UInt) == 4)MPI_Allgatherv(&*nvs.begin(), nvs.size(), MPI_UNSIGNED, &*allval.begin(),
 					&*num_val.begin(), &*rdisp.begin(), MPI_UNSIGNED, Par::Comm());
-    if(sizeof(UInt) == 8)MPI_Allgatherv(&*nvs.begin(), nvs.size(), MPI_UNSIGNED_LONG_LONG, &*allval.begin(),
-					&*num_val.begin(), &*rdisp.begin(), MPI_UNSIGNED_LONG_LONG, Par::Comm());
+    if(sizeof(UInt) == 8)MPI_Allgatherv(&*nvs.begin(), nvs.size(), MPI_UNSIGNED_LONG, &*allval.begin(),
+					&*num_val.begin(), &*rdisp.begin(), MPI_UNSIGNED_LONG, Par::Comm());
 
     std::vector<UInt> allvalo(rdisp[csize], 0);
 
     if(sizeof(UInt) == 4)MPI_Allgatherv(&*nvso.begin(), nvs.size(), MPI_UNSIGNED, &*allvalo.begin(),
 					&*num_val.begin(), &*rdisp.begin(), MPI_UNSIGNED, Par::Comm());
-    if(sizeof(UInt) == 8)MPI_Allgatherv(&*nvso.begin(), nvs.size(), MPI_UNSIGNED_LONG_LONG, &*allvalo.begin(),
-					&*num_val.begin(), &*rdisp.begin(), MPI_UNSIGNED_LONG_LONG, Par::Comm());
+    if(sizeof(UInt) == 8)MPI_Allgatherv(&*nvso.begin(), nvs.size(), MPI_UNSIGNED_LONG, &*allvalo.begin(),
+					&*num_val.begin(), &*rdisp.begin(), MPI_UNSIGNED_LONG, Par::Comm());
 
     // Loop through results
     for (UInt i = 0; i < (UInt) rdisp[csize]; i++) {

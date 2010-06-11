@@ -489,8 +489,8 @@ namespace ESMCI {
 	  MPI_Isend(&sum,1,MPI_UNSIGNED,proc,0,Par::Comm(),&sreq[iptr]);
 	}
 	if(sizeof(UInt) == 8){
-	  MPI_Irecv(&nei_size[iptr],1,MPI_UNSIGNED_LONG_LONG,proc,0,Par::Comm(),&rreq[iptr]);
-	  MPI_Isend(&sum,1,MPI_UNSIGNED_LONG_LONG,proc,0,Par::Comm(),&sreq[iptr]);
+	  MPI_Irecv(&nei_size[iptr],1,MPI_UNSIGNED_LONG,proc,0,Par::Comm(),&rreq[iptr]);
+	  MPI_Isend(&sum,1,MPI_UNSIGNED_LONG,proc,0,Par::Comm(),&sreq[iptr]);
 	}  
 	iptr++;
       }
@@ -516,8 +516,8 @@ namespace ESMCI {
 	  MPI_Isend(&fid2eidprocid[0],sum,MPI_UNSIGNED,proc,0,Par::Comm(),&sreq[iptr]);
 	}  
 	if(sizeof(UInt) == 8){
-	  MPI_Irecv(&F2E[iptr][0],nei_size[iptr],MPI_UNSIGNED_LONG_LONG,proc,0,Par::Comm(),&rreq[iptr]);
-	  MPI_Isend(&fid2eidprocid[0],sum,MPI_UNSIGNED_LONG_LONG,proc,0,Par::Comm(),&sreq[iptr]);
+	  MPI_Irecv(&F2E[iptr][0],nei_size[iptr],MPI_UNSIGNED_LONG,proc,0,Par::Comm(),&rreq[iptr]);
+	  MPI_Isend(&fid2eidprocid[0],sum,MPI_UNSIGNED_LONG,proc,0,Par::Comm(),&sreq[iptr]);
 	}  
 	iptr++;
       }

@@ -61,7 +61,7 @@ void SparseMsg::setPattern(UInt num, const UInt *proc) {
       : num_incoming = sendto[0];
   }
   if(sizeof(UInt)==8){
-    !Par::Serial() ? MPI_Reduce_scatter(&sendto[0], &num_incoming, &*counts.begin(), MPI_UNSIGNED_LONG_LONG, MPI_SUM, comm)
+    !Par::Serial() ? MPI_Reduce_scatter(&sendto[0], &num_incoming, &*counts.begin(), MPI_UNSIGNED_LONG, MPI_SUM, comm)
       : num_incoming = sendto[0];
   }
 
