@@ -1,7 +1,7 @@
-! $Id: ESMF_UtilTypes.F90,v 1.54 2007/07/25 22:23:28 theurich Exp $
+! $Id: ESMF_UtilTypes.F90,v 1.71.2.1 2010/06/11 22:08:13 theurich Exp $
 !
 ! Earth System Modeling Framework
-! Copyright 2002-2007, University Corporation for Atmospheric Research,
+! Copyright 2002-2009, University Corporation for Atmospheric Research,
 ! Massachusetts Institute of Technology, Geophysical Fluid Dynamics
 ! Laboratory, University of Michigan, National Centers for Environmental
 ! Prediction, Los Alamos National Laboratory, Argonne National Laboratory,
@@ -67,24 +67,27 @@
 
       integer, parameter :: ESMF_SUCCESS = 0, ESMF_FAILURE = -1
       integer, parameter :: ESMF_MAXSTR = 128
+! TODO:FIELDINTEGRATION Adjust MAXGRIDDIM
       integer, parameter :: ESMF_MAXDIM = 7, &
                             ESMF_MAXDECOMPDIM = 3, &
-                            ESMF_MAXIGRIDDIM = 3
+                            ESMF_MAXIGRIDDIM = 3, &
+                            ESMF_MAXGRIDDIM = 3
      
 !EOPI
 
       integer, parameter :: ESMF_MAJOR_VERSION = 3
       integer, parameter :: ESMF_MINOR_VERSION = 1
-      integer, parameter :: ESMF_REVISION      = 0
+      integer, parameter :: ESMF_REVISION      = 2
       integer, parameter :: ESMF_PATCHLEVEL    = 0
-      character(80), parameter :: ESMF_VERSION_STRING = "3.1.0 beta snapshot"
+      character(*), parameter :: ESMF_VERSION_STRING = &
+        "3.1.2 beta snapshot MESH_BRANCH"
 
 !------------------------------------------------------------------------------
 !
 !    ! General object status, useful for any object
 
 !     ! WARNING: 
-!     !  constants MUST match corresponding values in ../include/ESMC_Util.h
+!     !  constants MUST match corresponding values in ../include/ESMCI_Util.h
 
       type ESMF_Status
       sequence
@@ -97,7 +100,8 @@
                                       ESMF_STATUS_UNALLOCATED = ESMF_Status(3), &
                                       ESMF_STATUS_ALLOCATED = ESMF_Status(4), &
                                       ESMF_STATUS_BUSY = ESMF_Status(5), &
-                                      ESMF_STATUS_INVALID = ESMF_Status(6)
+                                      ESMF_STATUS_INVALID = ESMF_Status(6), &
+                                      ESMF_STATUS_NOT_READY = ESMF_Status(7)
  
 !------------------------------------------------------------------------------
 !
@@ -224,23 +228,19 @@
          ESMF_ID_CLOCK = ESMF_ObjectID(8, "ESMF_Clock"), &
          ESMF_ID_ARRAYSPEC = ESMF_ObjectID(9, "ESMF_ArraySpec"), &
          ESMF_ID_LOCALARRAY = ESMF_ObjectID(10, "ESMF_LocalArray"), &
-         ESMF_ID_ARRAYDATAMAP = ESMF_ObjectID(11, "ESMF_ArrayDataMap"), &
+         ESMF_ID_ARRAYBUNDLE = ESMF_ObjectID(11, "ESMF_ArrayBundle"), &
          ESMF_ID_VM = ESMF_ObjectID(12, "ESMF_VM"), &
          ESMF_ID_DELAYOUT = ESMF_ObjectID(13, "ESMF_DELayout"), &
          ESMF_ID_CONFIG = ESMF_ObjectID(14, "ESMF_Config"), &
          ESMF_ID_ARRAY = ESMF_ObjectID(16, "ESMF_Array"), &
          ESMF_ID_INTERNDG = ESMF_ObjectID(17, "ESMF_InternDG"), &
-         ESMF_ID_PHYSGRID = ESMF_ObjectID(18, "ESMF_PhysGrid"), &
-         ESMF_ID_IGRID = ESMF_ObjectID(19, "ESMF_IGrid"), &
-         ESMF_ID_EXCHANGEPACKET = ESMF_ObjectID(20, "ESMF_ExchangePacket"), &
          ESMF_ID_COMMTABLE = ESMF_ObjectID(21, "ESMF_CommTable"), &
          ESMF_ID_ROUTETABLE = ESMF_ObjectID(22, "ESMF_RouteTable"), &
          ESMF_ID_ROUTE = ESMF_ObjectID(23, "ESMF_Route"), &
          ESMF_ID_ROUTEHANDLE = ESMF_ObjectID(24, "ESMF_RouteHandle"), &
          ESMF_ID_FIELDDATAMAP = ESMF_ObjectID(25, "ESMF_FieldDataMap"), &
          ESMF_ID_FIELD = ESMF_ObjectID(26, "ESMF_Field"), &
-         ESMF_ID_BUNDLEDATAMAP = ESMF_ObjectID(27, "ESMF_BundleDataMap"), &
-         ESMF_ID_BUNDLE = ESMF_ObjectID(28, "ESMF_Bundle"), &
+         ESMF_ID_FIELDBUNDLE = ESMF_ObjectID(28, "ESMF_FieldBundle"), &
          ESMF_ID_TRANSFORMVALUES = ESMF_ObjectID(29, "ESMF_TransformValues"), &
          ESMF_ID_REGRID = ESMF_ObjectID(30, "ESMF_Regrid"), &
          ESMF_ID_TRANSFORM = ESMF_ObjectID(31, "ESMF_Transform"), &
@@ -465,7 +465,54 @@
 
       type(ESMF_IndexFlag), parameter ::  &
                                ESMF_INDEX_DELOCAL  = ESMF_IndexFlag(0), &
-                               ESMF_INDEX_GLOBAL = ESMF_IndexFlag(1)
+                               ESMF_INDEX_GLOBAL = ESMF_IndexFlag(1), &
+                               ESMF_INDEX_USER = ESMF_IndexFlag(2)
+
+!------------------------------------------------------------------------------
+!     ! ESMF_RegionFlag
+!
+!     ! Interface flag for setting index bounds
+
+      type ESMF_RegionFlag
+      sequence
+      private
+        integer :: i_type
+      end type
+
+      type(ESMF_RegionFlag), parameter ::  &
+        ESMF_REGION_TOTAL = ESMF_RegionFlag(0), &
+        ESMF_REGION_SELECT = ESMF_RegionFlag(1), &
+        ESMF_REGION_EMPTY = ESMF_RegionFlag(2)
+
+!------------------------------------------------------------------------------
+!     ! ESMF_AttWriteFlag
+!
+!     ! Interface flag for Attribute write methods
+
+      type ESMF_AttWriteFlag
+      sequence
+      !private
+        integer :: value
+      end type
+
+      type(ESMF_AttWriteFlag), parameter ::  &
+        ESMF_ATTWRITE_TAB = ESMF_AttWriteFlag(0), &
+        ESMF_ATTWRITE_XML = ESMF_AttWriteFlag(1)
+
+!------------------------------------------------------------------------------
+!     ! ESMF_AttPackNestFlag
+!
+!     ! Interface flag for Attribute package nesting
+
+      type ESMF_AttPackNestFlag
+      sequence
+      !private
+        integer :: value
+      end type
+
+      type(ESMF_AttPackNestFlag), parameter ::  &
+        ESMF_ATTPACKNEST_OFF = ESMF_AttPackNestFlag(0), &
+        ESMF_ATTPACKNEST_ON = ESMF_AttPackNestFlag(1)
 
 !------------------------------------------------------------------------------
 !BOPI
@@ -505,7 +552,10 @@
 
       public ESMF_Direction, ESMF_MODE_FORWARD, ESMF_MODE_REVERSE
 
-      public ESMF_IndexFlag, ESMF_INDEX_DELOCAL, ESMF_INDEX_GLOBAL
+      public ESMF_IndexFlag
+      public ESMF_INDEX_DELOCAL, ESMF_INDEX_GLOBAL, ESMF_INDEX_USER
+      public ESMF_RegionFlag, &
+             ESMF_REGION_TOTAL, ESMF_REGION_SELECT, ESMF_REGION_EMPTY
 
       public ESMF_ReduceFlag, ESMF_SUM, ESMF_MIN, ESMF_MAX
       public ESMF_BlockingFlag, ESMF_BLOCKING, ESMF_VASBLOCKING, &
@@ -513,10 +563,13 @@
       public ESMF_ContextFlag, ESMF_CHILD_IN_NEW_VM, ESMF_CHILD_IN_PARENT_VM
       public ESMF_TerminationFlag, ESMF_FINAL, ESMF_KEEPMPI, ESMF_ABORT
       public ESMF_DePinFlag, ESMF_DE_PIN_PET, ESMF_DE_PIN_VAS
+      public ESMF_AttWriteFlag, ESMF_ATTWRITE_TAB, ESMF_ATTWRITE_XML
+      public ESMF_AttPackNestFlag, ESMF_ATTPACKNEST_OFF, ESMF_ATTPACKNEST_ON
 
       public ESMF_FAILURE, ESMF_SUCCESS
       public ESMF_MAXSTR
-      public ESMF_MAXDIM, ESMF_MAXDECOMPDIM, ESMF_MAXIGRIDDIM
+! TODO:FIELDINTEGRATION Adjust MAXGRIDDIM
+      public ESMF_MAXDIM, ESMF_MAXDECOMPDIM, ESMF_MAXIGRIDDIM, ESMF_MAXGRIDDIM
      
       public ESMF_MAJOR_VERSION, ESMF_MINOR_VERSION
       public ESMF_REVISION, ESMF_PATCHLEVEL
@@ -531,13 +584,12 @@
       public ESMF_ID_BASE, ESMF_ID_IOSPEC, ESMF_ID_LOGERR, ESMF_ID_TIME
       public ESMF_ID_CALENDAR, ESMF_ID_TIMEINTERVAL, ESMF_ID_ALARM
       public ESMF_ID_CLOCK, ESMF_ID_ARRAYSPEC, ESMF_ID_LOCALARRAY
-      public ESMF_ID_ARRAYDATAMAP, ESMF_ID_VM, ESMF_ID_DELAYOUT
+      public ESMF_ID_ARRAYBUNDLE, ESMF_ID_VM, ESMF_ID_DELAYOUT
       public ESMF_ID_CONFIG, ESMF_ID_ARRAY
       public ESMF_ID_INTERNARRAY, ESMF_ID_INTERNDG
-      public ESMF_ID_PHYSGRID, ESMF_ID_IGRID, ESMF_ID_EXCHANGEPACKET
       public ESMF_ID_COMMTABLE, ESMF_ID_ROUTETABLE, ESMF_ID_ROUTE
       public ESMF_ID_ROUTEHANDLE, ESMF_ID_FIELDDATAMAP, ESMF_ID_FIELD
-      public ESMF_ID_BUNDLEDATAMAP, ESMF_ID_BUNDLE, ESMF_ID_TRANSFORMVALUES
+      public ESMF_ID_FIELDBUNDLE, ESMF_ID_TRANSFORMVALUES
       public ESMF_ID_REGRID, ESMF_ID_TRANSFORM, ESMF_ID_STATE
       public ESMF_ID_GRIDCOMPONENT, ESMF_ID_CPLCOMPONENT, ESMF_ID_COMPONENT
 
@@ -583,6 +635,7 @@ interface operator (.eq.)
   module procedure ESMF_lgeq
   module procedure ESMF_dmeq
   module procedure ESMF_ifeq
+  module procedure ESMF_rfeq
 end interface
 
 interface operator (.ne.)
@@ -603,6 +656,9 @@ interface assignment (=)
   module procedure ESMF_bfas
   module procedure ESMF_dkas
   module procedure ESMF_tfas
+  module procedure ESMF_tfas_v
+  module procedure ESMF_tfas2
+  module procedure ESMF_tfas2_v
   module procedure ESMF_ptas
   module procedure ESMF_ptas2
 end interface  
@@ -1153,6 +1209,27 @@ subroutine ESMF_tfas(lval, tfval)
  lval = (tfval%value .eq. 1)    ! this must match initializer
 end subroutine
 
+subroutine ESMF_tfas_v(lval, tfval)
+ logical, intent(out) :: lval(:)
+ type(ESMF_Logical), intent(in) :: tfval(:)
+
+ lval = (tfval%value .eq. 1)    ! this must match initializer
+end subroutine
+
+subroutine ESMF_tfas2 (tfval, lval)
+ type(ESMF_Logical), intent(out) :: tfval
+ logical, intent(in) :: lval
+
+ tfval = merge (ESMF_TRUE, ESMF_FALSE, lval)
+end subroutine
+
+subroutine ESMF_tfas2_v (tfval, lval)
+ type(ESMF_Logical), intent(out) :: tfval(:)
+ logical, intent(in) :: lval(:)
+
+ tfval = merge (ESMF_TRUE, ESMF_FALSE, lval)
+end subroutine
+
 !------------------------------------------------------------------------------
 ! function to compare two ESMF_AxisIndex to see if they're the same or not
 
@@ -1241,6 +1318,17 @@ function ESMF_ifeq(if1, if2)
   type(ESMF_IndexFlag), intent(in) :: if1, if2
 
   ESMF_ifeq = (if1%i_type .eq. if2%i_type)
+end function
+
+
+!------------------------------------------------------------------------------
+! function to compare two ESMF_RegionFlag types
+
+function ESMF_rfeq(rf1, rf2)
+  logical ESMF_rfeq
+  type(ESMF_RegionFlag), intent(in) :: rf1, rf2
+
+  ESMF_rfeq = (rf1%i_type .eq. rf2%i_type)
 end function
 
 

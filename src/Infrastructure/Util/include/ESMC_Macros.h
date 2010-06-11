@@ -1,7 +1,7 @@
-// $Id: ESMC_Macros.h,v 1.19 2007/07/25 22:23:28 theurich Exp $
+// $Id: ESMC_Macros.h,v 1.26.2.1 2010/06/11 22:08:13 theurich Exp $
 //
 // Earth System Modeling Framework
-// Copyright 2002-2007, University Corporation for Atmospheric Research,
+// Copyright 2002-2009, University Corporation for Atmospheric Research,
 // Massachusetts Institute of Technology, Geophysical Fluid Dynamics
 // Laboratory, University of Michigan, National Centers for Environmental
 // Prediction, Los Alamos National Laboratory, Argonne National Laboratory,
@@ -36,6 +36,9 @@
 #define ESMF_MAXDIM 7
 #define ESMF_MAXDECOMPDIM 3
 #define ESMF_MAXIGRIDDIM 3
+// TODO:FIELDINTEGRATION: Remove the MAXIGRIDDIM and increase the 
+// number of MAXGRIDDIM to 7.
+#define ESMF_MAXGRIDDIM 3
 
 #if 0
 // this is now in ESMF_Macros.inc
@@ -45,10 +48,10 @@
 
 #define ESMF_MAJOR_VERSION 3
 #define ESMF_MINOR_VERSION 1
-#define ESMF_REVISION      0
+#define ESMF_REVISION      2
 #define ESMF_PATCHLEVEL    0
 
-#define ESMF_VERSION_STRING "3.1.0 beta snapshot"
+#define ESMF_VERSION_STRING "3.1.2 beta snapshot MESH_BRANCH"
 
 #endif   // ESMC_MACROS_H
 

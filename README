@@ -1,11 +1,11 @@
 ================================================================================
 
-                        README - ESMF v3.1.0 beta snapshot
+                        README - ESMF v3.1.2 beta snapshot [MESH_BRANCH]
 
                     Earth System Modeling Framework (ESMF)
 
  Earth System Modeling Framework
- Copyright 2002-2007, University Corporation for Atmospheric Research,
+ Copyright 2002-2009, University Corporation for Atmospheric Research,
  Massachusetts Institute of Technology, Geophysical Fluid Dynamics
  Laboratory, University of Michigan, National Centers for Environmental
  Prediction, Los Alamos National Laboratory, Argonne National Laboratory,
@@ -81,9 +81,10 @@ The following compilers and utilities are required for compiling, linking and
 testing the ESMF software:
 * Fortran90 (or later) compiler
 * C++ compiler
-* MPI implementation compatible with the above compilers (but see below)
 * GNU's gcc compiler - for a standard cpp preprocessor implementation
 * GNU make
+* MPI implementation compatible with the above compilers (but see below)
+* LAPACK library compatible with the above compilers (but see below)
 * Perl - for running test scripts
 
 Alternatively ESMF can be built using a single-processor MPI-bypass library
@@ -126,10 +127,12 @@ Environment Variables
 ---------------------
 
 The following environment variables are the most likely ones to be used
-for the ESMF library build under normal circumstances. In most situations only
-one or two environment variables must be set. There are other environment
-variables which can be set to customize the ESMF library build process. The 
-ESMF User's Guide documents these in detail.
+for a typical ESMF library build under normal circumstances. In most
+situations only one or two environment variables need to be set. There are
+other environment variables which can be set to customize the ESMF library
+build process. In particular, ESMF's dependency on 3rd party libraries, such as
+LAPACK, NETCDF, etc., is controlled by special environment variables. The ESMF
+User's Guide documents all environment variables in detail. 
 
 ESMF_DIR
 
@@ -176,7 +179,7 @@ name that is expected for the compiler executables. Furthermore, the
 ESMF_COMPILER setting is used to select compiler and linker flags consistent
 with the compilers indicated.
 
-By default Fortran and C++ compiler executables are expected to be located in
+By default, Fortran and C++ compiler executables are expected to be located in
 a location contained in the user's PATH environment variable. This means that
 if you cannot locate the correct compiler executable via the "which" command
 on the shell prompt the ESMF build system won't find it either!
@@ -212,7 +215,7 @@ ESMF_OS
 Typically equal to the output of "uname -s" except for UNICOS/mp where
 ESMF_OS is set to Unicos. This variable is not normally set by the user unless 
 cross-compiling. ESMF_OS indicates the target system for which the ESMF library
-is being built. Under normal circumstances, i.e. ESMF is being build on the 
+is being built. Under normal circumstances, i.e. ESMF is being built on the 
 target system, ESMF_OS is set automatically. However, when cross-compiling for
 a different target system ESMF_OS must be set to the respective target OS. For
 example, when compiling for the Cray X1 on an interactive X1 node ESMF_OS will
@@ -222,13 +225,13 @@ the intended target platform.
 
 ESMF_INSTALL_PREFIX
 
-This variable specifies the prefix of the installation path used during the
-installation process accessible thought the install target. Libraries, F90
-module files, header files and documentation all are installed relative to
-ESMF_INSTALL_PREFIX by default. See the ESMF User's Guide on how to customize
-the installation location of the installed files using additional 
-"ESMF_INSTALL_..." environment variables. The ESMF_INSTALL_PREFIX may be
-provided as absolute path or relative to ESMF_DIR.
+This variable specifies the prefix of the installation path used with the
+install target. Libraries, F90 module files, header files and documentation
+all are installed relative to ESMF_INSTALL_PREFIX by default. See the ESMF
+User's Guide on how to customize the installation location of the installed
+files using additional "ESMF_INSTALL_..." environment variables.
+The ESMF_INSTALL_PREFIX may be provided as an absolute path or relative to 
+ESMF_DIR.
 
 
 Supported Makefile Targets
@@ -237,7 +240,7 @@ Supported Makefile Targets
  info       : print out extensive system configuration information about what
               compilers, libraries, paths, flags, etc are being used
 
- clean      : remove all files built for this platform/compiler/wordsize.
+ clean      : remove all files built for this OS/compiler/ABI.
  distclean  : remove all files built for all architectures
  clobber    : same as distclean
 
@@ -291,7 +294,7 @@ Platform Specific Notes Related to Executing Test Targets
 After the ESMF library has been built successfully it is a good idea to test
 its functional integrity by building and executing a range of test applications.
 It is important to use the same environment settings for the ESMF gmake test 
-targets as were used during the library built.
+targets as were used during the library build.
 
 The ESMF library sources come with 4 flavors of test codes:
 - unit_tests:   separately test the functionality of individual ESMF code units
@@ -300,72 +303,26 @@ The ESMF library sources come with 4 flavors of test codes:
                 sources are quoted in the ESMF Reference Manual.
 - demos:        more complex applications to demonstrate ESMF's capabilities
 
-Unless the ESMF library was built in MPI-bypass mode (mpiuni) all applications
+Unless the ESMF library was built in MPI-bypass mode (mpiuni), all applications
 compiled and linked against ESMF automatically become MPI applications and must
 be executed as such. Details of how to execute MPI applications vary widely from
-system to system. The ESMF gmake test targets hide a good portion of this
-complexity. The remaining differences are given here on a per platform basis:
+system to system. ESMF uses an mpirun script mechanism to abstract away most of
+these differences.
 
-IBM      -    The ESMF AIX configuration assumes the use of LoadLeveler by
- AIX &        default. In general this means that the user must set the
- Linux        MP_RMPOOL environment variable to a valid setting in order to
-              successfully start MPI applications. In our experience "1" will
-              be a good value, but see your own system documentation for more
-              help on this.
-              IBM systems running LSF (i.e. new AIX systems as well as IBM/AMD64
-              Linux clusters) require that the ESMF_BATCH environment variable
-              is set to "lsf.ibmpjl". This will ensure that each ESMF test
-              application runs as a separate LSF job and uses the IBM parallel
-              job launcher facility for LSF. Details about the LSF setup, such
-              as queues, limits and project ids, are site dependent. These
-              options must be specified via the associated environment variable
-              ESMF_BATCHOPTIONS and will be used by the ESMF makefile in
-              conjunction with the LSF bsub command. (E.g. on NCAR's bluevista
-              machine you may want to set ESMF_BATCHOPTIONS="-qdebug -W10".)
-              The test targets expect to be run from within a queue that allows
-              interactive mode. Please consult your system documentation for
-              more help on this.
-              
-OSF1     -    The default assumed for the HP/Compaq Sierra Cluster is to run
-              test targets through the LSF batch system. Each ESMF test
-              application runs as a separate LSF job and uses the RMS prun
-              facility to start parallel execution. Details about the LSF setup,
-              such as queues, limits and project ids, are site dependent. These
-              options must be specified via the associated environment variable
-              ESMF_BATCHOPTIONS and will be used by the ESMF makefile in
-              conjunction with the LSF bsub command. (E.g. on GSFC's halem
-              machine you may want to set ESMF_BATCHOPTIONS="-qgeneral
-              -P<your_project_id>".) 
-              The test targets expect to be run from within a queue that
-              allows interactive mode. Please consult your system documentation
-              for more help on this.
-              
-Darwin   -    The ESMF Darwin configurations assume that resources to run the
-              test applications have been made available prior to calling ESMF
-              gmake test targets. The ESMF makefile uses the MPI startup 
-              script according to the ESMF_COMM setting in order to launch
-              parallel execution.
-              
-IRIX64   -    The ESMF IRIX64 configuration assumes that resources to run the
-              test applications have been made available prior to calling ESMF
-              gmake test targets. The ESMF makefile uses SGI's MPI startup 
-              script in order to launch parallel execution.
-              
-Linux    -    The ESMF Linux configurations assume that resources to run the
-              test applications have been made available prior to calling ESMF
-              gmake test targets. The ESMF makefile uses the MPI startup 
-              script according to the ESMF_COMM setting in order to launch
-              parallel execution. Only exception to this rule are IBM/Linux
-              clusters. Please see the IBM section for details.
-              
-Unicos   -    The ESMF Unicos configuration assumes that resources to run the
-              test applications have been made available prior to calling ESMF
-              gmake test targets. The ESMF makefile uses Cray's MPI startup 
-              script in order to launch parallel execution. On some Cray X1
-              systems it will be necessary to set the MPI_REQUEST_MAX
-              environment variable to about 4000 to successfully run all 
-              bundled ESMF test applications.
-              
+ESMF provides mpirun scripts for a wide range of system configurations. These
+are used by ESMF by default or can be set by the user via the ESMF_MPIRUN
+environment variable. The best way to see how the existing scripts are used
+on the supported platforms is to go to the "Supported Platforms" web page at
+http://www.esmf.ucar.edu/download/platforms/ and follow the link for the
+platform of interest. Each test report contains the output of "gmake info",
+which lists the settings of the ESMF_MPIxxx environment variables.
+
+Users are encouraged to read the "Setting up ESMF to run Test Suite
+Applications" in the User's Guide to gain a deeper insight into how ESMF
+manages parallel application launching. This User's Guide section is especially
+valuable in case no suitable script is available and the user is confronted
+with the task of writing a customized, system specific mpirun script to work
+with ESMF.
 
 ================================================================================
 ================================================================================
@@ -488,7 +445,7 @@ Adding a New Platform
 
    Ignore the output of all other unit tests until the ESMF_ArrayF90PtrUTest
    passes cleanly without complaining about byte count mismatches.  Adjust the
-   sizes in the ESMC_Conf.h file until it passes, and then make clean and
+   sizes in the ESMC_Conf.h file until it passes, and then "make clean" and
    rebuild the entire library and test suite.
 
 5. Once it is working, post it back on the esmfcontrib sourceforge site and
@@ -538,12 +495,15 @@ MORE HELP:
 Information about the ESMF project can be found at the ESMF web site:
         http://www.esmf.ucar.edu
 
-The latest documentation for the project can be found at:
-        http://www.esmf.ucar.edu -> Downloads & Documentation
+Software documentation for the last public release is at:
+        http://www.esmf.ucar.edu -> Users -> Documentation
+
+Software documentation for all releases is at:
+        http://www.esmf.ucar.edu -> Download -> View All Releases
 
 The ESMF User's Guide contains information on building and installing the ESMF.
 The ESMF Reference Manual contains information on the architecture of the ESMF,
-example code, and details of the APIs (Application Programming Interfaces).
+example code, and details of the API (Application Programming Interface).
 
 The ESMF library source code is also available for download at:
 	http://sourceforge.net/projects/esmf
@@ -555,7 +515,7 @@ the bugs, support, and task lists for ESMF.
 Use test cases demonstrating how ESMF can be used in realistic situations are
 available as a separate module through CVS. Please follow the instructions on 
 the ESMF web site:
-        http://www.esmf.ucar.edu -> Development -> Test and Validation
+        http://www.esmf.ucar.edu -> Developers -> Test & Validation
 
 Contributions from ESMF users are available at:
 	http://sourceforge.net/projects/esmfcontrib
@@ -564,4 +524,4 @@ Please contact esmf_support@ucar.edu with any questions or problems.
 
 
 ================================================================================
- $Id: README,v 1.86 2007/07/25 22:20:33 theurich Exp $
+ $Id: README,v 1.97.2.1 2010/06/11 22:08:13 theurich Exp $
