@@ -392,7 +392,7 @@ namespace ESMCI {
       static const double m1 = onethird*t + ca;
       static const double m2 = onethird*t - len*sa;
       static const double m3 = onethird*t + len*sa;
-
+#if 1
       if (numDim == 3) {
 	pts[ind]   = m1*c[0] + m2*c[1] + m3*c[2];
 	pts[ind+1] = m3*c[0] + m1*c[1] + m2*c[2];
@@ -401,6 +401,16 @@ namespace ESMCI {
 	pts[ind] = ca*c[0] - sa*c[1];
 	pts[ind+1] = sa*c[0] + ca*c[1];
       }
+#else
+     if (numDim == 3) {
+	pts[ind]   = c[0];
+	pts[ind+1] = c[1];
+	pts[ind+2] = c[2];
+      } else if (numDim == 2) {
+	pts[ind] = c[0];
+	pts[ind+1] = c[1];
+      }
+#endif
     }
   }
 
@@ -495,6 +505,8 @@ namespace ESMCI {
 	iptr++;
       }
       MPI_Waitall(iptr,rreq,status);  
+      MPI_Waitall(iptr,sreq,status);
+  
       std::vector<std::vector<UInt> > F2E(iptr);
     
       for(unsigned long i=0;i<iptr;i++){
@@ -523,6 +535,7 @@ namespace ESMCI {
       }
     
       MPI_Waitall(iptr,rreq,status);
+      MPI_Waitall(iptr,sreq,status);
     
       // Order the shared conforming edges for 
       // entry point determination
