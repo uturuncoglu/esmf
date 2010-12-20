@@ -32,7 +32,11 @@ namespace ESMCI {
     Par::Out() <<  " are user options enabled? " <<  (is_user_options ? "yes" : "no") << std::endl; 
 #endif
     if(is_user_options){
-      if(zz == NULL)zz = Zoltan_Create(MPI_COMM_WORLD);
+      if(zz == NULL){
+	float ver;
+	int rc = Zoltan_Initialize(0, NULL, &ver);
+	zz = Zoltan_Create(MPI_COMM_WORLD);
+      }
       for(int i=0;i<ZoltanOptLHS.size();i++)Zoltan_Set_Param(zz, ZoltanOptLHS[i].c_str(), ZoltanOptRHS[i].c_str());
     }
     if(pMEField != NULL)return LoadBalance::Rebalance(*pMesh, pMEField);
@@ -720,7 +724,15 @@ namespace ESMCI {
 			     &numImport, &importGlobalGids, &importLocalGids, &importProcs, &importToPart,
 			     &numExport, &exportGlobalGids, &exportLocalGids, &exportProcs, &exportToPart);
 
-
+#if 0
+    int mem_debug=2;
+    Zoltan_Memory_Debug(mem_debug);
+    size_t total_mem = Zoltan_Memory_Usage(ZOLTAN_MEM_STAT_TOTAL);
+    std::cout << "P:" << rank << ", Total mem: " << total_mem << std::endl;
+    total_mem = Zoltan_Memory_Usage(ZOLTAN_MEM_STAT_MAXIMUM);
+    std::cout << "P:" << rank << ", Max mem: " << total_mem << std::endl;
+    //Zoltan_Memory_Stats();
+#endif
     //std::cout << "P:" << rank << ", numIMp:" << numImport << ", numExport:" << numExport << std::endl;
 
     // Figure out the migration CommSpec.  Just put the genesis
@@ -744,7 +756,7 @@ namespace ESMCI {
     Zoltan_LB_Free_Part(&exportGlobalGids, &exportLocalGids,
 			&exportProcs, &exportToPart);
 
-    //Zoltan_Destroy(&zz);// First implem. tried to keed this "zz" static for re-use at each
+    Zoltan_Destroy(&zz);// First implem. tried to keed this "zz" static for re-use at each
                         // load balancing call but looks like it was generating disjoint
                         // partitions...! Nuking it solved the problem.
 
