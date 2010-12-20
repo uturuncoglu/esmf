@@ -662,6 +662,7 @@ namespace ESMCI {
     if (zz == NULL) {
       zz = Zoltan_Create(MPI_COMM_WORLD);
   
+#if 0
       Zoltan_Set_Param(zz, "DEBUG_LEVEL", "0");
       Zoltan_Set_Param(zz, "LB_APPROACH", "REFINE");
       Zoltan_Set_Param(zz, "NUM_GID_ENTRIES", "1");
@@ -681,7 +682,7 @@ namespace ESMCI {
       Zoltan_Set_Param(zz, "RCB_OVERALLOC", "2.0");
       Zoltan_Set_Param(zz, "RCB_SET_DIRECTIONS", "1");
 #endif
-
+#endif
     }
 
     int changes;
@@ -743,7 +744,7 @@ namespace ESMCI {
     Zoltan_LB_Free_Part(&exportGlobalGids, &exportLocalGids,
 			&exportProcs, &exportToPart);
 
-    Zoltan_Destroy(&zz);// First implem. tried to keed this "zz" static for re-use at each
+    //Zoltan_Destroy(&zz);// First implem. tried to keed this "zz" static for re-use at each
                         // load balancing call but looks like it was generating disjoint
                         // partitions...! Nuking it solved the problem.
 
