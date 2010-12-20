@@ -259,7 +259,7 @@ namespace ESMCI {
 
    void LoadBalance::build_lists(Mesh &mesh, MeshObjVect &gen_elem) {
 
-    gen_elem.clear();
+     MeshObjVect().swap(gen_elem);
 
     // Loop and add the genesis elements
     KernelList::iterator si = mesh.set_begin(), se = mesh.set_end();
