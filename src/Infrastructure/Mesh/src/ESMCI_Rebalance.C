@@ -655,38 +655,16 @@ namespace ESMCI {
   /*--------------------------------------------------------*/
   bool LoadBalance::form_rebalance_comm(Mesh &mesh, CommReg &migration, MEField<> *bfield) {
 
-    float ver;
-    int rc = Zoltan_Initialize(0, NULL, &ver);
-
+    int rc;
     //static struct Zoltan_Struct *zz = NULL;
     int rank = Par::Rank(); 
 #ifdef REBAL_DEBUG
     Par::Out() <<  " is zz NULL? " <<  (zz == NULL ? "yes" : "no") << std::endl; 
 #endif
     if (zz == NULL) {
+      float ver;
+      rc = Zoltan_Initialize(0, NULL, &ver);
       zz = Zoltan_Create(MPI_COMM_WORLD);
-  
-#if 0
-      Zoltan_Set_Param(zz, "DEBUG_LEVEL", "0");
-      Zoltan_Set_Param(zz, "LB_APPROACH", "REFINE");
-      Zoltan_Set_Param(zz, "NUM_GID_ENTRIES", "1");
-      Zoltan_Set_Param(zz, "NUM_LID_ENTRIES", "1");
-      Zoltan_Set_Param(zz, "RETURN_LISTS", "ALL");
-      Zoltan_Set_Param(zz, "AVERAGE_CUTS", "1");
-      Zoltan_Set_Param(zz, "OBJ_WEIGHT_DIM", "1");
-
-#if 0
-      // HSFC
-      Zoltan_Set_Param(zz, "LB_METHOD", "HSFC");
-#else
-      // RCB
-      Zoltan_Set_Param(zz, "LB_METHOD", "RCB");
-      Zoltan_Set_Param(zz, "RCB_RECTILINEAR_BLOCKS", "1");
-      Zoltan_Set_Param(zz, "RCB_OUTPUT_LEVEL", "0");
-      Zoltan_Set_Param(zz, "RCB_OVERALLOC", "2.0");
-      Zoltan_Set_Param(zz, "RCB_SET_DIRECTIONS", "1");
-#endif
-#endif
     }
 
     int changes;
