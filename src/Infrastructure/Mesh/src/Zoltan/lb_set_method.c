@@ -7,7 +7,7 @@
  * CVS File Information :
  *    $RCSfile: lb_set_method.c,v $
  *    $Author: amikstcyr $
- *    $Date: 2010/02/12 00:19:57 $
+ *    $Date: 2010/12/21 00:26:16 $
  *    Revision: 1.48 $
  ****************************************************************************/
 
@@ -216,10 +216,13 @@ int Zoltan_LB_Set_LB_Method(ZZ *zz, char *method_name)
     goto End;
   }
 
+  /* NUKE  Bec very annoying */
+#if 0
   if (zz->Proc == zz->Debug_Proc && zz->Debug_Level >= ZOLTAN_DEBUG_PARAMS) {
     printf("ZOLTAN Load balancing method = %d (%s)\n", 
            zz->LB.Method, method_name);
   }
+#endif
 
 End:
 
