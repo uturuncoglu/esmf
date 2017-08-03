@@ -1845,6 +1845,9 @@ call ESMF_LogWrite(msgString, ESMF_LOGMSG_INFO)
     real(ESMF_KIND_R8)              :: timeBase, timeStart, timeStop
     real(ESMF_KIND_R8)              :: timeSum(1000)  ! room for 1000 elements
     logical                         :: loopFlag
+    integer :: step = 0
+    character(ESMF_MAXSTR), parameter :: trace_reg_name_prefix = "NUOPC_Driver:Run:"
+    character(ESMF_MAXSTR) :: trace_reg_name = trace_reg_name_prefix
 
     rc = ESMF_SUCCESS
 
@@ -1994,7 +1997,21 @@ call ESMF_LogWrite(msgString, ESMF_LOGMSG_INFO)
       if (runElement%j >= 0) then
         ! connector component
         j = runElement%j
+        compName = ""
+        !call ESMF_CplCompGet(is%wrap%connectorComp(i,j), name=compName, &
+        !  rc=rc)
+        !print *, "NUOPC_Driver:run:comp step= ", step, "; comp_name(conn) = ", trim(compName)
+        !step = step + 1
         if (NUOPC_CompAreServicesSet(is%wrap%connectorComp(i,j))) then
+#ifdef NUOPC_DRIVER_TRACE
+          call ESMF_CplCompGet(is%wrap%connectorComp(i,j), name=compName, &
+            rc=rc)
+          if (ESMF_LogFoundError(rcToCheck=rc, msg=ESMF_LOGERR_PASSTHRU, &
+            line=__LINE__, file=trim(name)//":"//FILENAME, rcToReturn=rc)) &
+            return  ! bail out
+          write(trace_reg_name,*) trim(trace_reg_name_prefix),trim(compName)
+          call ESMF_TraceRegionEnter(trim(trace_reg_name))
+#endif
           write (iString, *) i
           write (jString, *) j
           call NUOPC_CompSearchRevPhaseMap(is%wrap%connectorComp(i,j), &
@@ -2080,10 +2097,25 @@ call ESMF_LogWrite(msgString, ESMF_LOGMSG_INFO)
               timeStop-timeStart
           endif
             
+#ifdef NUOPC_DRIVER_TRACE
+          call ESMF_TraceRegionExit(trim(trace_reg_name))
+#endif
         endif
       else
         ! model or mediator component
+        compName = ""
+        !call ESMF_GridCompGet(is%wrap%modelComp(i), name=compName, rc=rc)
+        !print *, "NUOPC_Driver:run:comp step= ", step, "; comp_name = ", trim(compName)
+        !step = step + 1
         if (NUOPC_CompAreServicesSet(is%wrap%modelComp(i))) then
+#ifdef NUOPC_DRIVER_TRACE
+          call ESMF_GridCompGet(is%wrap%modelComp(i), name=compName, rc=rc)
+          if (ESMF_LogFoundError(rcToCheck=rc, msg=ESMF_LOGERR_PASSTHRU, &
+            line=__LINE__, file=trim(name)//":"//FILENAME, rcToReturn=rc)) &
+            return  ! bail out
+          write(trace_reg_name,*) trim(trace_reg_name_prefix),trim(compName)
+          call ESMF_TraceRegionEnter(trim(trace_reg_name))
+#endif
           write (iString, *) i
           call NUOPC_CompSearchRevPhaseMap(is%wrap%modelComp(i), &
             ESMF_METHOD_RUN, phaseIndex=phase, phaseLabel=pLabel, rc=rc)
@@ -2154,6 +2186,9 @@ call ESMF_LogWrite(msgString, ESMF_LOGMSG_INFO)
               timeStop-timeStart
           endif
             
+#ifdef NUOPC_DRIVER_TRACE
+          call ESMF_TraceRegionExit(trim(trace_reg_name))
+#endif
         endif
       endif
 
