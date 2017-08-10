@@ -1848,6 +1848,7 @@ call ESMF_LogWrite(msgString, ESMF_LOGMSG_INFO)
     integer :: step = 0
     character(ESMF_MAXSTR), parameter :: trace_reg_name_prefix = "NUOPC_Driver:Run:"
     character(ESMF_MAXSTR) :: trace_reg_name = trace_reg_name_prefix
+    character(ESMF_MAXSTR) :: callthrough_reg_name = ""
 
     rc = ESMF_SUCCESS
 
@@ -2148,11 +2149,15 @@ call ESMF_LogWrite(msgString, ESMF_LOGMSG_INFO)
 
 #ifdef NUOPC_DRIVER_TRACE
           call ESMF_TraceRegionEnter("NUOPC_Driver:GridComp:Callthrough")
+          callthrough_reg_name = ""
+          write(callthrough_reg_name,*) "NUOPC_Driver:GridComp:Callthrough:",trim(compName)
+          call ESMF_TraceRegionEnter(trim(callthrough_reg_name))
 #endif    
           call ESMF_GridCompRun(is%wrap%modelComp(i), &
             importState=is%wrap%modelIS(i), exportState=is%wrap%modelES(i), &
             clock=internalClock, phase=phase, userRc=localrc, rc=rc)
 #ifdef NUOPC_DRIVER_TRACE
+          call ESMF_TraceRegionExit(trim(callthrough_reg_name))
           call ESMF_TraceRegionExit("NUOPC_Driver:GridComp:Callthrough")
 #endif
           if (ESMF_LogFoundError(rcToCheck=rc, &
