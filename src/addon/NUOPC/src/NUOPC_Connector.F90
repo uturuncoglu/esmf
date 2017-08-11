@@ -1394,11 +1394,6 @@ print *, "current bondLevel=", bondLevel
     
     rc = ESMF_SUCCESS
 
-#define NUOPC_DRIVER_TRACE__OFF
-#ifdef NUOPC_DRIVER_TRACE
-    call ESMF_TraceRegionEnter("NUOPC:InitializeP3")
-#endif
-
     ! query the Component for info
     call ESMF_CplCompGet(cplcomp, name=name, rc=rc)
     if (ESMF_LogFoundError(rcToCheck=rc, msg=ESMF_LOGERR_PASSTHRU, &
@@ -1872,9 +1867,6 @@ call ESMF_LogWrite("eShareStatus: "//trim(eShareStatus), ESMF_LOGMSG_INFO, rc=rc
     if (associated(exportFieldList)) deallocate(exportFieldList)
     if (associated(exportNamespaceList)) deallocate(exportNamespaceList)
     
-#ifdef NUOPC_DRIVER_TRACE
-    call ESMF_TraceRegionExit("NUOPC:InitializeP3")
-#endif
   end subroutine
 
   !-----------------------------------------------------------------------------
@@ -2644,6 +2636,7 @@ call ESMF_LogWrite("eShareStatus: "//trim(eShareStatus), ESMF_LOGMSG_INFO, rc=rc
 
     rc = ESMF_SUCCESS
 
+#define NUOPC_DRIVER_TRACE__OFF
 #ifdef NUOPC_DRIVER_TRACE
     call ESMF_TraceRegionEnter("NUOPC:Connector:Run")
 #endif
@@ -2738,9 +2731,6 @@ call ESMF_VMLogCurrentGarbageInfo(trim(name)//": RUN enter: ")
     endif
 
     ! SPECIALIZE by calling into attached method to execute routehandle
-#ifdef NUOPC_DRIVER_TRACE
-    call ESMF_TraceRegionEnter("NUOPC:Connector:Run:ExecuteRouteHandle")
-#endif
     call ESMF_MethodExecute(cplcomp, label=label_ExecuteRouteHandle, &
       existflag=existflag, userRc=localrc, rc=rc)
     if (ESMF_LogFoundError(rcToCheck=rc, msg=ESMF_LOGERR_PASSTHRU, &
@@ -2781,9 +2771,6 @@ call ESMF_VMLogCurrentGarbageInfo(trim(name)//": RUN enter: ")
           line=__LINE__, file=trim(name)//":"//FILENAME)) return  ! bail out
       endif    
     endif
-#ifdef NUOPC_DRIVER_TRACE
-    call ESMF_TraceRegionExit("NUOPC:Connector:Run:ExecuteRouteHandle")
-#endif
     
     if (btest(profiling,0)) then    ! PROFILE
       ! PROFILE
