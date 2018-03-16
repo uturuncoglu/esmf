@@ -32,6 +32,8 @@
 !
 !------------------------------------------------------------------------------
 ! !USES:
+      use ESMF_BaseMod
+      use ESMF_VMMod
       use ESMF_UtilTypesMod
       use ESMF_InitMacrosMod    ! ESMF initializer macros
       use ESMF_LogErrMod        ! ESMF error handling
@@ -1439,7 +1441,7 @@ end subroutine ESMF_GeomBaseGet
       integer, intent(inout) :: offset
       type(ESMF_AttReconcileFlag), optional :: attreconflag
       integer, intent(out), optional :: rc
- !
+!
 ! !DESCRIPTION:
 !      Takes a byte-stream buffer and reads the information needed to
 !      recreate a Grid object.  Recursively calls the deserialize routines
@@ -1465,6 +1467,20 @@ end subroutine ESMF_GeomBaseGet
     integer :: localrc
     type(ESMF_AttReconcileFlag) :: lattreconflag
 
+    type(ESMF_Base) :: base_temp
+    integer :: offset_temp
+
+    integer :: id_temp
+    type(ESMF_VMId) :: vmid_temp
+    type(ESMF_Grid) :: grid_temp
+    type(ESMF_Logical) :: object_found
+
+type (ESMF_VM) :: vm
+integer :: mypet, npets
+integer :: i
+logical, parameter :: trace = .false.
+logical, parameter :: ENABLE_SHARED_GRID_SUPPORT = .true.
+
     ! Initialize return code; assume failure until success is certain
     if (present(rc)) rc = ESMF_RC_NOT_IMPL
 
@@ -1481,7 +1497,7 @@ end subroutine ESMF_GeomBaseGet
                                      ESMF_CONTEXT, rcToReturn=rc)) return
 
     ! serialize GeomBase info
-    call c_ESMC_GeomBaseDeserialize(gbcp%type%type,     &
+    call c_ESMC_GeomBaseDeserialize(gbcp%type%type, &
                                     gbcp%staggerloc%staggerloc, &
                                     gbcp%meshloc%meshloc, &
                                     gbcp%xgridside, &
@@ -1495,11 +1511,68 @@ end subroutine ESMF_GeomBaseGet
     select case(gbcp%type%type)
 
        case (ESMF_GEOMTYPE_GRID%type) ! Grid
-           gbcp%grid=ESMF_GridDeserialize(buffer=buffer, &
+if (.not. ENABLE_SHARED_GRID_SUPPORT) then
+          gbcp%grid=ESMF_GridDeserialize(buffer=buffer, &
               offset=offset, attreconflag=lattreconflag, rc=localrc)
           if (ESMF_LogFoundError(localrc, &
                                  ESMF_ERR_PASSTHRU, &
                                  ESMF_CONTEXT, rcToReturn=rc)) return
+else
+
+          ! Peek into the serialized Base to see if this Grid ID/VMId already exists
+call ESMF_VMGetCurrent (vm)
+call ESMF_VMGet(vm, localPet=mypet)
+if (trace) print *, ESMF_METHOD, ': PET', mypet, ' is in shared grid test code'
+!print *, 'matchtable on PET', mypet, ':'
+!call c_esmc_vmprintmatchtable(vm)
+
+if (trace) print *, ESMF_METHOD, ': creating a VMId for peek'
+          call ESMF_VMIdCreate (vmid_temp, localrc)
+          if (ESMF_LogFoundError(localrc, &
+                                 ESMF_ERR_PASSTHRU, &
+                                 ESMF_CONTEXT, rcToReturn=rc)) return
+
+if (trace) print *, ESMF_METHOD, ': deserialize the VMId for peek.  Offset =', offset
+          offset_temp = offset
+          call ESMF_BaseDeserializeIDVMId (buffer, offset_temp,  &
+                                 id_temp, vmid_temp, localrc)
+          if (ESMF_LogFoundError(localrc, &
+                                 ESMF_ERR_PASSTHRU, &
+                                 ESMF_CONTEXT, rcToReturn=rc)) return
+          print '(1x,2a,i5)', ESMF_METHOD, ': peeked id =', id_temp
+          print *, ESMF_METHOD, ': peeked VMId:'
+          call ESMF_VMIdPrint (vmid_temp)
+
+if (trace) print *, ESMF_METHOD, ': attempt to access object with temp id/vmID'
+          call c_esmc_vmgetobject (grid_temp,  &
+              id_temp, vmid_temp,  ESMF_GEOMTYPE_GRID%type,  &
+              object_found, localrc)
+          if (ESMF_LogFoundError(localrc, &
+                                 ESMF_ERR_PASSTHRU, &
+                                 ESMF_CONTEXT, rcToReturn=rc)) return
+
+if (trace) print *, ESMF_METHOD, ': Destroy temp VMId'
+          call ESMF_VMIdDestroy (vmid_temp, localrc)
+          if (ESMF_LogFoundError(localrc, &
+                                 ESMF_ERR_PASSTHRU, &
+                                 ESMF_CONTEXT, rcToReturn=rc)) return
+
+if (trace) print *, ESMF_METHOD, ': test for shared object, object_found = ', object_found == ESMF_TRUE
+          if (object_found == ESMF_TRUE) then
+            if (.true.) print *, ESMF_METHOD, ': Grid pre-exists in PET', mypet, '.  Linking existing Grid.'
+            gbcp%grid = grid_temp
+            gbcp%grid%isInit = ESMF_INIT_CREATED
+call ESMF_GridPrint (gbcp%grid)
+! TODO: (increment Base and/or VM refCount?, etc.  Gerhard says not yet.)
+          else
+            if (.true.) print *, ESMF_METHOD, ': Existing Grid not found in PET', mypet, '. Deserializing new one.'
+            gbcp%grid=ESMF_GridDeserialize(buffer=buffer, &
+                offset=offset, attreconflag=lattreconflag, rc=localrc)
+            if (ESMF_LogFoundError(localrc, &
+                                   ESMF_ERR_PASSTHRU, &
+                                   ESMF_CONTEXT, rcToReturn=rc)) return
+          end if
+end if
 
        case  (ESMF_GEOMTYPE_MESH%type)
           gbcp%mesh=ESMF_MeshDeserialize(buffer=buffer, &

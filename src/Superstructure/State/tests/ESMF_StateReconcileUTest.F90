@@ -180,6 +180,8 @@ program ESMF_StateReconcileUTest
     integer :: i
     logical :: reconcile_needed, recneeded_expected
 
+character :: yn
+
     ! individual test failure message
     character(ESMF_MAXSTR) :: failMsg
     character(ESMF_MAXSTR) :: name
@@ -201,6 +203,7 @@ call ESMF_LogSet (flush=.true.)
     write (localpet_str, '(i4)') localPet
     localpet_str = adjustl (localpet_str)
 
+#if 0
     !-------------------------------------------------------------------------
     ! exclusive component test section
     !-------------------------------------------------------------------------
@@ -1102,6 +1105,7 @@ call ESMF_LogSet (flush=.true.)
         fieldBundle=fb_attr_new,  &
         rc=rc)
     call ESMF_Test((rc == ESMF_SUCCESS), name, failMsg, result, ESMF_SRCLINE)
+#endif
 
 !-------------------------------------------------------------------------
 !   Fields with shared Grids
@@ -1159,14 +1163,24 @@ call ESMF_LogSet (flush=.true.)
     end if
     call ESMF_Test(rc == ESMF_SUCCESS, name, failMsg, result, ESMF_SRCLINE)
 
+call ESMF_UtilIOUnitFlush (6)
+call ESMF_VMBarrier (vm)
+
     !-------------------------------------------------------------------------
     !NEX_UTest_Multi_Proc_Only
     write(failMsg, *) "Did not return ESMF_SUCCESS"
     write(name, *) "Reconcile State for shared Grid test"
+call ESMF_LogSet (trace=.true., flush=.true.)
     call ESMF_StateReconcile (state_sgrid, rc=rc)
+call ESMF_LogSet (trace=.false.)
     call ESMF_Test(rc == ESMF_SUCCESS, name, failMsg, result, ESMF_SRCLINE)
 
 !    call ESMF_StatePrint (state_sgrid, options='long')
+if (localpet == 0) then
+  write (*,'(a)',advance='no') 'Proceed? '
+!  read *, yn
+endif
+call ESMF_VMBarrier (vm)
 
     !-------------------------------------------------------------------------
     !NEX_UTest_Multi_Proc_Only
@@ -1180,6 +1194,10 @@ call ESMF_LogSet (flush=.true.)
     call ESMF_Test(rc == ESMF_SUCCESS, name, failMsg, result, ESMF_SRCLINE)
 
     call ESMF_FieldPrint (field_sg1)
+
+call ESMF_UtilIOUnitFlush (6)
+call ESMF_VMBarrier (vm)
+
     !-------------------------------------------------------------------------
     !NEX_UTest_Multi_Proc_Only
     write(failMsg, *) "Did not return ESMF_SUCCESS"
@@ -1205,12 +1223,15 @@ call ESMF_LogSet (flush=.true.)
     call ESMF_FieldGet (field_sg2, grid=grid_sg2, rc=rc)
     call ESMF_Test(rc == ESMF_SUCCESS, name, failMsg, result, ESMF_SRCLINE)
 
+call ESMF_UtilIOUnitFlush (6)
+call ESMF_VMBarrier (vm)
+
     !-------------------------------------------------------------------------
-    !NEX_norunUTest_Multi_Proc_Only
-!    write(failMsg, *) "Did not return ESMF_SUCCESS"
-!    write(name, *) "Compare shared grids test"
-!    rc = merge (ESMF_SUCCESS, ESMF_FAILURE, grid_sg1 == grid_sg2)
-!    call ESMF_Test(rc == ESMF_SUCCESS, name, failMsg, result, ESMF_SRCLINE)
+    !NEX_UTest_Multi_Proc_Only
+    write(failMsg, *) "Did not return ESMF_SUCCESS"
+    write(name, *) "Compare shared grids test"
+    rc = merge (ESMF_SUCCESS, ESMF_FAILURE, grid_sg1 == grid_sg2)
+    call ESMF_Test(rc == ESMF_SUCCESS, name, failMsg, result, ESMF_SRCLINE)
 
 !-------------------------------------------------------------------------
 10  continue
