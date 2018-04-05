@@ -1198,6 +1198,7 @@ interface operator (/=)
   module procedure ESMF_ctfne
   module procedure ESMF_tnfne
   module procedure ESMF_frne
+  module procedure ESMF_inqfne
   module procedure ESMF_unmappedactionne
   module procedure ESMF_RegridPoleNe
   module procedure ESMF_FileFormatNe
@@ -1668,12 +1669,22 @@ end subroutine
 !------------------------------------------------------------------------------
 ! function to compare two ESMF_InquireFlag types
 
-function ESMF_inqfeq(inqf1, inqf2)
+function ESMF_inqfeq (inqf1, inqf2)
   logical ESMF_inqfeq
   type(ESMF_InquireFlag), intent(in) :: inqf1, inqf2
 
   ESMF_inqfeq = (inqf1%flag == inqf2%flag)
 end function ESMF_inqfeq
+
+!------------------------------------------------------------------------------
+! function to compare two ESMF_InquireFlag types
+
+function ESMF_inqfne (inqf1, inqf2)
+  logical ESMF_inqfne
+  type(ESMF_InquireFlag), intent(in) :: inqf1, inqf2
+
+  ESMF_inqfne = (inqf1%flag /= inqf2%flag)
+end function ESMF_inqfne
 
 !------------------------------------------------------------------------------
 ! function to compare two ESMF_Region_Flag types
