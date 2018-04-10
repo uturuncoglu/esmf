@@ -868,9 +868,11 @@ void MeshCap::meshinfoserialize(int *intMeshFreed,
 
 
 void MeshCap::meshinfodeserialize(int *intMeshFreed,
-                                 int *spatialDim, int *parametricDim,
-                                  char *buffer, int *offset, int *rc,
-                                  ESMCI_FortranStrLenArg buffer_l){
+                          int *spatialDim, int *parametricDim,
+                          const char *buffer, int *offset,
+                          ESMC_InquireFlag *inquireflag,
+                          int *rc,
+                          ESMCI_FortranStrLenArg buffer_l){
 #undef ESMC_METHOD
 #define ESMC_METHOD "MeshCap::meshinfodeserialize()"
 
@@ -878,9 +880,11 @@ void MeshCap::meshinfodeserialize(int *intMeshFreed,
   // Check if need, and if so
   // eventually put into something separate from both Mesh and MOAB
   ESMCI_meshinfodeserialize(intMeshFreed,
-                            spatialDim, parametricDim,
-                            buffer, offset, rc,
-                            buffer_l);
+                          spatialDim, parametricDim,
+                          buffer, offset,
+                          inquireflag,
+                          rc,
+                          buffer_l);
 }
 
 void MeshCap::meshserialize(char *buffer, int *length, int *offset,
@@ -905,7 +909,9 @@ void MeshCap::meshserialize(char *buffer, int *length, int *offset,
 
 }
 
-MeshCap *MeshCap::meshdeserialize(char *buffer, int *offset, int *rc,
+MeshCap *MeshCap::meshdeserialize(const char *buffer, int *offset,
+                              ESMC_InquireFlag *inquireflag,
+                              int *rc,
                               ESMCI_FortranStrLenArg buffer_l){
 #undef ESMC_METHOD
 #define ESMC_METHOD "MeshCap::meshdeserialize()"
@@ -918,7 +924,7 @@ MeshCap *MeshCap::meshdeserialize(char *buffer, int *offset, int *rc,
     int localrc;
 
     ESMCI_meshdeserialize(&mesh,
-                          buffer, offset, &localrc,
+                          buffer, offset, inquireflag, &localrc,
                           buffer_l);
     if (ESMC_LogDefault.MsgFoundError(localrc, ESMCI_ERR_PASSTHRU,
                                       ESMC_CONTEXT, rc)) return NULL;

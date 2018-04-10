@@ -1960,7 +1960,9 @@ contains
 
     offset = 0
 
-    xgrid1 = ESMF_XGridDeserialize(buffer, offset, rc=localrc)
+    xgrid1 = ESMF_XGridDeserialize(buffer, offset,  &
+        attreconflag=ESMF_ATTRECONCILE_OFF,  inquireflag=ESMF_NOINQUIRE,  &
+        rc=localrc)
     if (ESMF_LogFoundError(localrc, &
         ESMF_ERR_PASSTHRU, &
         ESMF_CONTEXT, rcToReturn=rc)) return

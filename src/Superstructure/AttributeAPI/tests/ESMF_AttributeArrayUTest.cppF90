@@ -52,6 +52,12 @@ program ESMF_AttributeArrayUTest
       type(ESMF_ArraySpec) :: arrayspec
       type(ESMF_DistGrid)  :: distgrid
 
+      character(1), allocatable :: buffer(:)
+      integer :: buff_size
+
+      type(ESMF_AttReconcileFlag) :: attreconflag
+      integer :: offset1, offset2
+
       ! macro variables
       AttributeTestVariablesMacro()
 
@@ -83,6 +89,105 @@ program ESMF_AttributeArrayUTest
 !-------------------------------------------------------------------------
 
 AttributeTestMacro(array, an Array, EX_UTest, NEX_UTest)
+
+^ifdef ESMF_TESTEXHAUSTIVE
+      ! BEGIN tests of certain INTERNAL methods.  They are subject
+      ! to change and are NOT part of the ESMF user API.
+
+      ! Test with Attribute Reconcile disabled
+
+      !EX_UTest
+      ! test the serialize inquire-only option
+      ! WARNING: This is testing an INTERNAL method.  It is NOT
+      ! part of the supported ESMF user API!
+      attreconflag = ESMF_ATTRECONCILE_OFF
+      buff_size = 1
+      allocate (buffer(buff_size))
+      offset1 = 0
+      call c_esmc_arrayserialize (array, buffer, buff_size, offset1, &
+          attreconflag, ESMF_INQUIREONLY, rc)
+      write(name, *) "ESMF_ArraySerialize - inquire only option w/Attributes"
+      write(failMsg, *) "rc =", rc, ", offset =", offset1
+      call ESMF_Test((rc == ESMF_SUCCESS), &
+                      name, failMsg, result, ESMF_SRCLINE)
+      print *, '  offset returned =', offset1, ' bytes'
+      deallocate (buffer)
+
+      !EX_UTest
+      ! test doing a serialize for real.
+      ! WARNING: This is testing an INTERNAL method.  It is NOT
+      ! part of the supported ESMF user API!
+      buff_size = offset1  ! from previous inquiry
+      allocate (buffer(buff_size))
+      buffer = char (z'42')
+      offset2 = 0
+      call c_esmc_arrayserialize (array, buffer, buff_size, offset2, &
+          attreconflag, ESMF_NOINQUIRE, rc)
+      write(name, *) "ESMF_BaseSerialize - perform serialization w/Attributes"
+      write(failMsg, *) "rc =", rc, ", offset =", offset2
+      call ESMF_Test((rc == ESMF_SUCCESS), &
+                      name, failMsg, result, ESMF_SRCLINE)
+      print *, '  offset returned =', offset2, ' bytes'
+
+      !EX_UTest
+      ! Compare inquired size with actual size.  Note that the two
+      ! sizes will not be equal because the inquire option currently
+      ! overestimates the space needed - which is ok.
+      ! WARNING: This is testing an INTERNAL method.  It is NOT
+      ! part of the supported ESMF user API!
+      write(name, *) "Compare calculated buffer size with actual size"
+      write(failMsg, *) 'actual offset', offset2, ' > inquire offset', offset1
+      call ESMF_Test(offset1 >= offset2, &
+                      name, failMsg, result, ESMF_SRCLINE)
+
+      deallocate (buffer)
+
+      ! Test with Attribute reconcile enabled
+
+      !EX_UTest
+      ! test the serialize inquire-only option
+      ! WARNING: This is testing an INTERNAL method.  It is NOT
+      ! part of the supported ESMF user API!
+      attreconflag = ESMF_ATTRECONCILE_ON
+      buff_size = 1
+      allocate (buffer(buff_size))
+      offset1 = 0
+      call c_esmc_arrayserialize (array, buffer, buff_size, offset1, &
+          attreconflag, ESMF_INQUIREONLY, rc)
+      write(name, *) "ESMF_ArraySerialize - inquire only option w/Attributes"
+      write(failMsg, *) "rc =", rc, ", offset =", offset1
+      call ESMF_Test((rc == ESMF_SUCCESS), &
+                      name, failMsg, result, ESMF_SRCLINE)
+      print *, '  offset returned =', offset1, ' bytes'
+      deallocate (buffer)
+
+      !EX_UTest
+      ! test doing a serialize for real.
+      ! WARNING: This is testing an INTERNAL method.  It is NOT
+      ! part of the supported ESMF user API!
+      buff_size = offset1  ! from previous inquiry
+      allocate (buffer(buff_size))
+      buffer = char (z'42')
+      offset2 = 0
+      call c_esmc_arrayserialize (array, buffer, buff_size, offset2, &
+          attreconflag, ESMF_NOINQUIRE, rc)
+      write(name, *) "ESMF_BaseSerialize - perform serialization w/Attributes"
+      write(failMsg, *) "rc =", rc, ", offset =", offset2
+      call ESMF_Test((rc == ESMF_SUCCESS), &
+                      name, failMsg, result, ESMF_SRCLINE)
+      print *, '  offset returned =', offset2, ' bytes'
+
+      !EX_UTest
+      ! Compare inquired size with actual size.  Note that the two
+      ! sizes will not be equal because the inquire option currently
+      ! overestimates the space needed - which is ok.
+      ! WARNING: This is testing an INTERNAL method.  It is NOT
+      ! part of the supported ESMF user API!
+      write(name, *) "Compare calculated buffer size with actual size"
+      write(failMsg, *) 'actual offset', offset2, ' > inquire offset', offset1
+      call ESMF_Test(offset1 >= offset2, &
+                      name, failMsg, result, ESMF_SRCLINE)
+^endif
 
       !------------------------------------------------------------------------
       ! clean up

@@ -366,10 +366,11 @@ namespace ESMCI {
                          int localDe, int64_t unmap_val = 0) const;
     // serialize() and deserialize()
     int serialize(char *buffer, int *length, int *offset,
-      const ESMC_AttReconcileFlag &attreconflag,
-      const ESMC_InquireFlag &inquireflag) const;
-    int deserialize(char *buffer, int *offset,
-      const ESMC_AttReconcileFlag &attreconflag);
+      ESMC_AttReconcileFlag attreconflag,
+      ESMC_InquireFlag inquireflag) const;
+    int deserialize(const char *buffer, int *offset,
+      ESMC_AttReconcileFlag attreconflag,
+      ESMC_InquireFlag inquireflag);
     // comms
     int gather(void *array, ESMC_TypeKind_Flag typekind, int rank,
       int *counts, int *tile, int rootPet, VM *vm);

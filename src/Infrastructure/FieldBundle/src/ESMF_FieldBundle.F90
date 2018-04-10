@@ -5853,15 +5853,16 @@ call ESMF_LogWrite("Aft ESMF_IOWrite", ESMF_LOGMSG_INFO, rc=rc)
 !
 ! !INTERFACE:
     function ESMF_FieldBundleDeserialize(buffer, offset, &
-                                          attreconflag, rc) 
+                                          attreconflag, inquireflag, rc) 
 !
 ! !RETURN VALUE:
       type(ESMF_FieldBundle) :: ESMF_FieldBundleDeserialize   
 !
 ! !ARGUMENTS:
-      character, pointer, dimension(:) :: buffer
+      character, intent(in) :: buffer(0:)
       integer, intent(inout) :: offset
-      type(ESMF_AttReconcileFlag), optional :: attreconflag
+      type(ESMF_AttReconcileFlag), intent(in) :: attreconflag
+      type(ESMF_InquireFlag), intent(in) :: inquireflag
       integer, intent(out), optional :: rc 
 !
 ! !DESCRIPTION:
@@ -5879,8 +5880,11 @@ call ESMF_LogWrite("Aft ESMF_IOWrite", ESMF_LOGMSG_INFO, rc=rc)
 !           Current read offset in the current buffer.  This will be
 !           updated by this routine and return pointing to the next
 !           unread byte in the buffer.
-!     \item[{[attreconflag]}]
-!           Flag to tell if Attribute serialization is to be done
+!     \item[attreconflag]
+!           Flag to tell if Attribute deserialization is to be done
+!     \item[inquireflag]
+!           Flag to tell if actual deserialization is to be done, or to just
+!           update offset.
 !     \item [{[rc]}]
 !           Return code; equals {\tt ESMF\_SUCCESS} if there are no errors.
 !     \end{description}
@@ -5903,12 +5907,12 @@ call ESMF_LogWrite("Aft ESMF_IOWrite", ESMF_LOGMSG_INFO, rc=rc)
 
       nullify(flist)
 
-      ! deal with optional attreconflag
-      if (present(attreconflag)) then
-        lattreconflag = attreconflag
-      else
-        lattreconflag = ESMF_ATTRECONCILE_OFF
-      endif
+      if (inquireflag /= ESMF_NOINQUIRE) then
+        if (ESMF_LogFoundError (ESMF_RC_NOT_IMPL,  &
+            msg="INQUIRY not supported yet", ESMF_CONTEXT,  &
+            rcToReturn=rc)) return
+      end if
+
       ! linkChange flag true for all but Components
       linkChange = ESMF_TRUE;
 
@@ -5924,7 +5928,8 @@ call ESMF_LogWrite("Aft ESMF_IOWrite", ESMF_LOGMSG_INFO, rc=rc)
 
       ! Deserialize Base
       bp%base = ESMF_BaseDeserialize (buffer, offset=offset,  &
-          attreconflag=lattreconflag, rc=localrc)
+          attreconflag=attreconflag, inquireflag=inquireflag,  &
+          rc=localrc)
       if (ESMF_LogFoundError(localrc, &
         ESMF_ERR_PASSTHRU, &
         ESMF_CONTEXT, rcToReturn=rc)) return
@@ -5937,14 +5942,15 @@ call ESMF_LogWrite("Aft ESMF_IOWrite", ESMF_LOGMSG_INFO, rc=rc)
       ! Deserialize other FieldBundle members
       
       call c_ESMC_FieldBundleDeserialize(bp%status, fieldCount, &
-                                 buffer, offset, localrc)
+                                 buffer, offset, inquireflag, localrc)
       if (ESMF_LogFoundError(localrc, &
         ESMF_ERR_PASSTHRU, &
         ESMF_CONTEXT, rcToReturn=rc)) return
 
       if(bp%status == ESMF_FBSTATUS_GRIDSET) then
         bp%geombase = ESMF_GeomBaseDeserialize(buffer, offset, &
-          attreconflag=attreconflag, rc=localrc)
+            attreconflag=attreconflag, inquireflag=inquireflag,  &
+            rc=localrc)
         if (ESMF_LogFoundError(localrc, &
           ESMF_ERR_PASSTHRU, &
           ESMF_CONTEXT, rcToReturn=rc)) return
@@ -5974,7 +5980,8 @@ call ESMF_LogWrite("Aft ESMF_IOWrite", ESMF_LOGMSG_INFO, rc=rc)
 
       do i = 1, fieldCount
         flist(i) = ESMF_FieldDeserialize(buffer, offset, &
-                                    attreconflag=lattreconflag, rc=localrc)
+                                    attreconflag=lattreconflag, inquireflag=inquireflag,  &
+                                    rc=localrc)
         if (ESMF_LogFoundError(localrc, &
           ESMF_ERR_PASSTHRU, &
           ESMF_CONTEXT, rcToReturn=rc)) then

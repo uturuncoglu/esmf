@@ -259,7 +259,7 @@ program ESMF_GridCreateUTest
   !NEX_UTest
   write(name, *) "Grid creation from file with default RegDecomp Test"
   write(failMsg, *) "Did not return ESMF_SUCCESS"
-  grid=ESMF_GridCreate('data/T42_grid.nc',ESMF_FILEFORMAT_SCRIP,rc=localrc)
+  grid=ESMF_GridCreate('data/T42_grid.nc',ESMF_FILEFORMAT_SCRIP,rc=rc)
   call ESMF_Test((rc.eq.ESMF_SUCCESS), name, failMsg, result, ESMF_SRCLINE)
 
   !-----------------------------------------------------------------------------
@@ -268,7 +268,7 @@ program ESMF_GridCreateUTest
   write(failMsg, *) "Did not return ESMF_SUCCESS"
 
   grid=ESMF_GridCreate('data/T42_grid.nc',ESMF_FILEFORMAT_SCRIP, &
-    regDecomp=(/2,2/), rc=localrc)
+    regDecomp=(/2,2/), rc=rc)
   call ESMF_Test((rc.eq.ESMF_SUCCESS), name, failMsg, result, ESMF_SRCLINE)
 
   !-----------------------------------------------------------------------------
@@ -2256,8 +2256,11 @@ program ESMF_GridCreateUTest
   if (localrc .ne. ESMF_SUCCESS) rc=ESMF_FAILURE
 
   ! Deserialize
-   offset=0
-   grid2=ESMF_GridDeserialize(buf, offset, rc=localrc) 
+  offset=0
+  grid2=ESMF_GridDeserialize(buf, offset,  &
+      attreconflag=ESMF_ATTRECONCILE_OFF,  &
+      inquireflag=ESMF_NOINQUIRE,  &
+      rc=localrc) 
   if (localrc .ne. ESMF_SUCCESS) rc=ESMF_FAILURE
 
   ! Get rid of buffer

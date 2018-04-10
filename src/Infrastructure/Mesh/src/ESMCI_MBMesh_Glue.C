@@ -2598,7 +2598,9 @@ void ESMCI_meshinfoserialize(int *intMeshFreed,
 
 
 void ESMCI_meshinfodeserialize(int *intMeshFreed,
-                                 char *buffer, int *offset, int *localrc,
+                                 const char *buffer, int *offset,
+                                 ESMC_InquireFlag *inquireflag,
+                                 int *localrc,
                                  ESMCI_FortranStrLenArg buffer_l){
 
     int *ip;
@@ -2796,7 +2798,9 @@ void ESMCI_meshserialize(Mesh **meshpp,
 
 
 void ESMCI_meshdeserialize(Mesh **meshpp,
-                                 char *buffer, int *offset, int *rc,
+                                 const char *buffer, int *offset,
+                                 ESMC_InquireFlag *inquireflag,
+                                 int *rc,
                                  ESMCI_FortranStrLenArg buffer_l){
 
 #undef  ESMC_METHOD

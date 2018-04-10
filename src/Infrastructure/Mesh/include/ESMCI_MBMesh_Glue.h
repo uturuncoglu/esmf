@@ -113,21 +113,28 @@ void ESMCI_meshcreateelemdistgrid(Mesh **meshpp, int *egrid, int *num_lelems, in
 
 void ESMCI_meshinfoserialize(int *intMeshFreed,
                 char *buffer, int *length, int *offset,
-                ESMC_InquireFlag *inquireflag, int *localrc,
-                             ESMCI_FortranStrLenArg buffer_l);
+                ESMC_InquireFlag *inquireflag,
+                int *localrc,
+                ESMCI_FortranStrLenArg buffer_l);
 
 void ESMCI_meshinfodeserialize(int *intMeshFreed,
-                                 char *buffer, int *offset, int *localrc,
-                               ESMCI_FortranStrLenArg buffer_l);
+                const char *buffer,
+                int *offset,
+                ESMC_InquireFlag *inquireflag,
+                int *localrc,
+                ESMCI_FortranStrLenArg buffer_l);
 
 void ESMCI_meshserialize(Mesh **meshpp,
                 char *buffer, int *length, int *offset,
-                ESMC_InquireFlag *inquireflag, int *rc,
-                         ESMCI_FortranStrLenArg buffer_l);
+                ESMC_InquireFlag *inquireflag,
+                int *rc,
+                ESMCI_FortranStrLenArg buffer_l);
 
 void ESMCI_meshdeserialize(Mesh **meshpp,
-                                 char *buffer, int *offset, int *rc,
-                           ESMCI_FortranStrLenArg buffer_l);
+                const char *buffer, int *offset,
+                ESMC_InquireFlag *inquireflag,
+                int *rc,
+                ESMCI_FortranStrLenArg buffer_l);
 
 
 void ESMCI_meshfindpnt(Mesh **meshpp, int *unmappedaction, int *dimPnts, int *numPnts,

@@ -1601,12 +1601,13 @@ int DELayout::serialize(
 DELayout *DELayout::deserialize(
 //
 // !RETURN VALUE:
-//    int return code
+//    Pointer to DELayout, NULL on failure.
 //
 // !ARGUMENTS:
-  char *buffer,          // in - byte stream to read
-  int *offset) {         // inout - original offset, updated to point
+  const char *buffer,    // in - byte stream to read
+  int *offset,           // inout - original offset, updated to point
                          //  to first free byte after current obj info
+  ESMC_InquireFlag inquireflag) { // in - inquiry flag
 //
 // !DESCRIPTION:
 //    Turn a stream of bytes into an object.
@@ -1616,6 +1617,10 @@ DELayout *DELayout::deserialize(
   // initialize return code; assume routine not implemented
   int localrc = ESMC_RC_NOT_IMPL;         // local return code
   int rc = ESMC_RC_NOT_IMPL;              // final return code
+
+  if (inquireflag != ESMF_NOINQUIRE)
+    if (ESMC_LogDefault.MsgFoundError(localrc, "INQUIRY not supported yet", ESMC_CONTEXT,
+        &rc)) return NULL;
 
   DELayout *a = new DELayout(-1); // prevent baseID counter increment
   int i, j;
@@ -1630,7 +1635,7 @@ DELayout *DELayout::deserialize(
   r=*offset%8;
   if (r!=0) *offset += 8-r;  // alignment
   ESMC_AttReconcileFlag attreconflag = ESMC_ATTRECONCILE_OFF;
-  localrc = a->ESMC_Base::ESMC_Deserialize(buffer,offset,attreconflag);
+  localrc = a->ESMC_Base::ESMC_Deserialize(buffer,offset,attreconflag, inquireflag);
   if (ESMC_LogDefault.MsgFoundError(localrc, ESMCI_ERR_PASSTHRU, ESMC_CONTEXT,
     &rc)) return NULL;
 

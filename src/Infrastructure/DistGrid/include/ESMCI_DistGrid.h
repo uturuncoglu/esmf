@@ -232,7 +232,7 @@ namespace ESMCI {
     // serialize() and deserialize()
     int serialize(char *buffer, int *length, int *offset, ESMC_InquireFlag)
       const;
-    static DistGrid *deserialize(char *buffer, int *offset);
+    static DistGrid *deserialize(const char *buffer, int *offset, ESMC_InquireFlag);
     // connections
     static int connection(InterArray<int> *connection, int tileIndexA, 
       int tileIndexB, InterArray<int> *positionVector,

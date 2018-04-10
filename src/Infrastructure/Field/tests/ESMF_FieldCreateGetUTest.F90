@@ -7154,7 +7154,9 @@ contains
 
             offset = 0
 
-            field1 = ESMF_FieldDeserialize(buffer, offset, rc=localrc)
+            field1 = ESMF_FieldDeserialize(buffer, offset,  &
+                attreconflag=ESMF_ATTRECONCILE_OFF,  &
+                inquireflag=ESMF_NOINQUIRE, rc=localrc)
             if (ESMF_LogFoundError(localrc, &
                 ESMF_ERR_PASSTHRU, &
                 ESMF_CONTEXT, rcToReturn=rc)) return

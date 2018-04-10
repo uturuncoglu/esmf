@@ -739,8 +739,10 @@ extern "C" {
       ESMC_NOT_PRESENT_FILTER(rc));
   }
   
-  void FTN_X(c_esmc_distgridserialize)(ESMCI::DistGrid **distgrid, char *buf, int *length,
-    int *offset, ESMC_InquireFlag *inquireflag, int *rc,
+  void FTN_X(c_esmc_distgridserialize)(ESMCI::DistGrid **distgrid,
+    char *buf, int *length, int *offset,
+    ESMC_InquireFlag *inquireflag,
+    int *rc,
     ESMCI_FortranStrLenArg buf_l){
 #undef  ESMC_METHOD
 #define ESMC_METHOD "c_esmc_distgridserialize()"
@@ -755,8 +757,10 @@ extern "C" {
       ESMC_NOT_PRESENT_FILTER(rc));
   }
 
-  void FTN_X(c_esmc_distgriddeserialize)(ESMCI::DistGrid **distgrid, char *buf,
-    int *offset, int *rc,
+  void FTN_X(c_esmc_distgriddeserialize)(ESMCI::DistGrid **distgrid,
+    const char *buf, int *offset,
+    ESMC_InquireFlag *inquireflag,
+    int *rc,
     ESMCI_FortranStrLenArg buf_l){
 #undef  ESMC_METHOD
 #define ESMC_METHOD "c_esmc_distgriddeserialize()"
@@ -765,7 +769,7 @@ extern "C" {
     if (rc!=NULL) *rc = ESMC_RC_NOT_IMPL;
 
     // Deserialize the distgrid
-    *distgrid=ESMCI::DistGrid::deserialize(buf, offset);
+    *distgrid=ESMCI::DistGrid::deserialize(buf, offset, *inquireflag);
 
     // Return success
     if (rc!=NULL) *rc = ESMF_SUCCESS;

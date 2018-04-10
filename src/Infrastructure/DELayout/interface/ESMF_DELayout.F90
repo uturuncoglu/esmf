@@ -2085,15 +2085,16 @@ type(ESMF_KeywordEnforcer), optional:: keywordEnforcer ! must use keywords below
 ! !IROUTINE: ESMF_DELayoutDeserialize - Deserialize a byte stream into a DELayout
 !
 ! !INTERFACE:
-  function ESMF_DELayoutDeserialize(buffer, offset, rc) 
+  function ESMF_DELayoutDeserialize(buffer, offset, inquireflag, rc) 
 !
 ! !RETURN VALUE:
     type(ESMF_DELayout) :: ESMF_DELayoutDeserialize   
 !
 ! !ARGUMENTS:
-    character, pointer               :: buffer(:)
-    integer,   intent(inout)         :: offset
-    integer,   intent(out), optional :: rc 
+    character, intent(in)              :: buffer(0:)
+    integer,   intent(inout)           :: offset
+    type(ESMF_InquireFlag), intent(in) :: inquireflag
+    integer,   intent(out), optional   :: rc 
 !
 ! !DESCRIPTION:
 !      Takes a byte-stream buffer and reads the information needed to
@@ -2124,7 +2125,7 @@ type(ESMF_KeywordEnforcer), optional:: keywordEnforcer ! must use keywords below
 
     ! Call into the C++ interface.
     call c_ESMC_DELayoutDeserialize(ESMF_DELayoutDeserialize%this, buffer, &
-      offset, localrc)
+      offset, inquireflag, localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, &
       ESMF_CONTEXT, rcToReturn=rc)) return
       

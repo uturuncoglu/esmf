@@ -3648,8 +3648,8 @@ int Array::serialize(
   char *buffer,          // inout - byte stream to fill
   int *length,           // inout - buf length
   int *offset,           // inout - original offset
-  const ESMC_AttReconcileFlag &attreconflag,     // in - attreconcile flag
-  const ESMC_InquireFlag &inquireflag) const {   // in - inquiry flag
+  ESMC_AttReconcileFlag attreconflag,     // in - attreconcile flag
+  ESMC_InquireFlag inquireflag) const {   // in - inquiry flag
 //
 // !DESCRIPTION:
 //    Turn info in array class into a stream of bytes.
@@ -3666,6 +3666,7 @@ int Array::serialize(
   ESMC_TypeKind_Flag *dkp;
   ESMC_IndexFlag *ifp;
   int r;
+bool debug = false;
 
   // Check if buffer has enough free memory to hold object
   if ((inquireflag != ESMF_INQUIREONLY) && (*length - *offset) <
@@ -3678,15 +3679,21 @@ int Array::serialize(
   // Serialize the Base class,
   r=*offset%8;
   if (r!=0) *offset += 8-r;  // alignment
+if (debug)
+    std::cout << ESMC_METHOD << ": calling Base serialize, offset = " << *offset << std::endl;
   localrc = ESMC_Base::ESMC_Serialize(buffer, length, offset, attreconflag,
     inquireflag);
   if (ESMC_LogDefault.MsgFoundError(localrc, ESMCI_ERR_PASSTHRU, ESMC_CONTEXT,
     &rc)) return rc;
   // Serialize the DistGrid
+if (debug)
+    std::cout << ESMC_METHOD << ": calling distgrid serialize, offset = " << *offset << std::endl;
   localrc = distgrid->serialize(buffer, length, offset, inquireflag);
   if (ESMC_LogDefault.MsgFoundError(localrc, ESMCI_ERR_PASSTHRU, ESMC_CONTEXT,
     &rc)) return rc;
   // Serialize Array meta data
+if (debug)
+    std::cout << ESMC_METHOD << ": metadata serialize, offset = " << *offset << std::endl;
   r=*offset%8;
   if (r!=0) *offset += 8-r;  // alignment
   dkp = (ESMC_TypeKind_Flag *)(buffer + *offset);
@@ -3694,6 +3701,8 @@ int Array::serialize(
     *dkp++ = typekind;
   else
      dkp++;
+if (debug)
+    std::cout << ESMC_METHOD << ": serialized typekind = " << typekind << std::endl;
   ip = (int *)dkp;
   if (inquireflag != ESMF_INQUIREONLY)
     *ip++ = rank;
@@ -3751,9 +3760,10 @@ int Array::deserialize(
 //    int return code
 //
 // !ARGUMENTS:
-  char *buffer,          // in - byte stream to read
+  const char *buffer,    // in - byte stream to read
   int *offset,           // inout - original offset
-  const ESMC_AttReconcileFlag &attreconflag) {  // in - attreconcile flag
+  ESMC_AttReconcileFlag attreconflag,  // in - attreconcile flag
+  ESMC_InquireFlag inquireflag) {      // in - inquiry flag
 //
 // !DESCRIPTION:
 //    Turn a stream of bytes into an object.
@@ -3770,28 +3780,56 @@ int Array::deserialize(
   ESMC_TypeKind_Flag *dkp;
   ESMC_IndexFlag *ifp;
   int r;
+bool debug = false;
+
+  if (inquireflag != ESMF_NOINQUIRE)
+    if (ESMC_LogDefault.MsgFoundError(localrc, "INQUIRY not supported yet", ESMC_CONTEXT,
+        &rc)) return rc;
 
   // Deserialize the Base class
   r=*offset%8;
   if (r!=0) *offset += 8-r;  // alignment
-  localrc = ESMC_Base::ESMC_Deserialize(buffer, offset, attreconflag);
+if (debug)
+    std::cout << ESMC_METHOD << ": calling Base deserialize, offset = " << *offset << std::endl;
+  localrc = ESMC_Base::ESMC_Deserialize(buffer, offset, attreconflag, inquireflag);
   if (ESMC_LogDefault.MsgFoundError(localrc, ESMCI_ERR_PASSTHRU, ESMC_CONTEXT,
     &rc)) return rc;
+  ESMC_Base::ESMC_Print();
   // Deserialize the DistGrid
-  distgrid = DistGrid::deserialize(buffer, offset);
+if (debug)
+    std::cout << ESMC_METHOD << ": calling DistGrid deserialize, offset = " << *offset << std::endl;
+  distgrid = DistGrid::deserialize(buffer, offset, inquireflag);
+  if (!distgrid)
+    if (ESMC_LogDefault.MsgFoundError(ESMF_RC_INTNRL_BAD, ESMCI_ERR_PASSTHRU, ESMC_CONTEXT,
+        &rc)) return rc;
+if (debug)
+    distgrid->print();
   distgridCreator = true;  // deserialize creates a local object
   // Pull DELayout out of DistGrid
   delayout = distgrid->getDELayout();
   // Deserialize Array meta data
+if (debug)
+    std::cout << ESMC_METHOD << ": deserializing metadata, offset = " << *offset << std::endl;
   r=*offset%8;
   if (r!=0) *offset += 8-r;  // alignment
   dkp = (ESMC_TypeKind_Flag *)(buffer + *offset);
   typekind = *dkp++;
+if (debug)
+    std::cout << ESMC_METHOD << ": deserialized typekind = " << typekind << std::endl;
+  // sanity check typekind
+  if (typekind <=0 || typekind > ESMF_NOKIND) {
+    std::stringstream errmsg;
+    errmsg << "sanity check - typekind = " << typekind;
+    if (ESMC_LogDefault.MsgFoundError(ESMF_RC_INTNRL_BAD, errmsg.str(), ESMC_CONTEXT,
+        &rc)) return rc;
+  }
   ip = (int *)dkp;
   rank = *ip++;
   ifp = (ESMC_IndexFlag *)ip;
   indexflag = *ifp++;
   ip = (int *)ifp;
+if (debug)
+    std::cout << ESMC_METHOD << ": deserializing tensorCount and bounds" << std::endl;
   tensorCount = *ip++;
   undistLBound = new int[tensorCount];
   undistUBound = new int[tensorCount];
@@ -3799,6 +3837,8 @@ int Array::deserialize(
     undistLBound[i] = *ip++;
     undistUBound[i] = *ip++;
   }
+if (debug)
+    std::cout << ESMC_METHOD << ": deserializing maps" << std::endl;
   distgridToArrayMap = new int[distgrid->getDimCount()];
   for (int i=0; i<distgrid->getDimCount(); i++)
     distgridToArrayMap[i] = *ip++;
@@ -3818,6 +3858,8 @@ int Array::deserialize(
   *offset = (cp - buffer);
 
   // set values with local dependency
+if (debug)
+    std::cout << ESMC_METHOD << ": allocating new LocalArray" << std::endl;
   larrayList = new LocalArray*[0];     // no DE on proxy object
   larrayBaseAddrList = new void*[0];        // no DE on proxy object
   totalElementCountPLocalDe = NULL;         // no De on proxy object
@@ -3826,6 +3868,8 @@ int Array::deserialize(
                                                  // TODO: until ref. counting
 
   ioRH = NULL;  // invalidate
+if (debug)
+    std::cout << ESMC_METHOD << ": deserialize complete" << std::endl;
   // return successfully
   rc = ESMF_SUCCESS;
   return rc;

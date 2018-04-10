@@ -616,9 +616,10 @@ static const char *const version = "$Id$";
 //    {\tt ESMF\_SUCCESS} or error code on failure.
 //
 // !ARGUMENTS:
-      char *buffer,          // in - byte stream to read
+      const char *buffer,    // in - byte stream to read
       int *offset,           // inout - original offset
-      const ESMC_AttReconcileFlag &attreconflag) {  // in - attreconcile flag
+      ESMC_AttReconcileFlag attreconflag,  // in - attreconcile flag
+      ESMC_InquireFlag inquireflag) {      // in - inquire flag
 //
 // !DESCRIPTION:
 //    Turn a stream of bytes into an object.
@@ -635,10 +636,18 @@ static const char *const version = "$Id$";
     // Initialize local return code; assume routine not implemented
     localrc = ESMC_RC_NOT_IMPL;
 
+    if (inquireflag != ESMF_NOINQUIRE)
+      if (ESMC_LogDefault.MsgFoundError(localrc, "INQUIRY not supported yet", ESMC_CONTEXT,
+          &localrc)) return localrc;
+
     int r=*offset%8;
     if (r!=0) *offset += 8-r;  // alignment
 
     ip = (int *)(buffer + *offset);
+    int canary = *ip++;
+    if (canary != ESMC_TYPECANARY_BASE)
+      if (ESMC_LogDefault.MsgFoundError(ESMF_RC_INTNRL_BAD, "bad canary value",
+          ESMC_CONTEXT, &localrc)) return localrc;
     ID = *ip++;
     refCount = *ip++;  
     classID = *ip++;
@@ -686,7 +695,8 @@ static const char *const version = "$Id$";
     if (attreconflag == ESMC_ATTRECONCILE_ON) {
       if (*offset%8 != 0)
         *offset += 8 - *offset%8;
-      localrc = root->ESMC_Deserialize(buffer,offset);
+      printf ("%s: calling ESMC_Deserialize with buffer pointer = %p\n", ESMC_METHOD, buffer);
+      localrc = root->ESMC_Deserialize(buffer,offset, inquireflag);
       if (ESMC_LogDefault.MsgFoundError(localrc, ESMCI_ERR_PASSTHRU, 
             ESMC_CONTEXT, &localrc)) return localrc;
     }
@@ -735,6 +745,11 @@ static const char *const version = "$Id$";
     if (r!=0) offset_local += 8-r;  // alignment
 
     ip = (int *)(buffer + offset_local);
+    int canary = *ip++;
+    if (canary != ESMC_TYPECANARY_BASE)
+      if (ESMC_LogDefault.MsgFoundError(ESMF_RC_INTNRL_BAD, "bad canary value",
+          ESMC_CONTEXT, &localrc)) return localrc;
+
     *ID = *ip;
     ip+=3;
 
@@ -766,7 +781,7 @@ static const char *const version = "$Id$";
     if (offset_local%8 != 0)
       offset_local += 8 - offset_local%8;
 // std::cout << ESMC_METHOD << ": calling vmID deserialize inquiry at offset: " << offset_local << std::endl;
-    vmID->deserialize (buffer, &offset_local, false);
+    vmID->deserialize ((char*)buffer, &offset_local, false);
 
   return ESMF_SUCCESS;
 
@@ -914,8 +929,8 @@ static const char *const version = "$Id$";
       char *buffer,          // inout - byte stream to fill
       int *length,           // inout - buf length; realloc'd here if needed
       int *offset,           // inout - original offset
-      const ESMC_AttReconcileFlag &attreconflag,     // in - attreconcile flag
-      const ESMC_InquireFlag &inquireflag) const {   // in - inquire flag
+      ESMC_AttReconcileFlag attreconflag,     // in - attreconcile flag
+      ESMC_InquireFlag inquireflag) const {   // in - inquire flag
 //
 // !DESCRIPTION:
 //    Turn info in base class into a stream of bytes.
@@ -948,6 +963,7 @@ static const char *const version = "$Id$";
       }
 
       ip = (int *)(buffer + *offset);
+      *ip++ = canary;  // Base canary value
       *ip++ = ID;
       *ip++ = refCount;  
       *ip++ = classID;  
@@ -1024,6 +1040,9 @@ static const char *const version = "$Id$";
    // Initialize local return code; assume routine not implemented
    localrc = ESMC_RC_NOT_IMPL;
 
+   if (canary != ESMC_TYPECANARY_BASE)
+     return ESMF_FAILURE;
+
   if (baseStatus != ESMF_STATUS_READY) 
     return ESMF_FAILURE;
 
@@ -1077,7 +1096,8 @@ static const char *const version = "$Id$";
 //
 //EOPI
   int rc;
-  
+
+  canary = ESMC_TYPECANARY_BASE;
   if (vmArg==NULL){
     // no VM passed in -> get vmID of the current VM context
     vmID = ESMCI::VM::getCurrentID(&rc);
@@ -1144,7 +1164,8 @@ static const char *const version = "$Id$";
 //
 //EOPI
   int rc;
-  
+
+  canary = ESMC_TYPECANARY_BASE;
   vmID = ESMCI::VM::getCurrentID(&rc);  // get vmID of current VM context
   if (id==-1){
     // proxy members hold NULL for the vm and space for a remote VMId
@@ -1214,7 +1235,8 @@ static const char *const version = "$Id$";
 //
 //EOPI
   int rc;
-  
+
+  canary = ESMC_TYPECANARY_BASE;
   vmID = ESMCI::VM::getCurrentID(&rc);  // get vmID of current VM context
   vm = ESMCI::VM::getCurrent(&rc);
 //  ESMCI::VMIdPrint(vmID);

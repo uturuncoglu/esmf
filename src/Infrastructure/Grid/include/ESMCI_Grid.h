@@ -410,13 +410,14 @@ template <class TYPE>
                 char *buffer,   // inout - byte stream to fill
                 int *length,    // inout - buf length
                 int *offset,    // inout - original offset
-                const ESMC_AttReconcileFlag &attreconflag,  // attreconcile flag
-                const ESMC_InquireFlag &inquireflag);       // inquire flag
+                ESMC_AttReconcileFlag attreconflag,  // attreconcile flag
+                ESMC_InquireFlag inquireflag);       // inquire flag
 
   int deserialize(
-                  char *buffer,          // in - byte stream to read
-                  int *offset,           // inout - original offset
-                  const ESMC_AttReconcileFlag &attreconflag);  // attreconcile flag 
+                const char *buffer,    // in - byte stream to read
+                int *offset,           // inout - original offset
+                ESMC_AttReconcileFlag attreconflag,  // attreconcile flag
+                ESMC_InquireFlag inquireflag);       // inquire flag
 
   // create fully formed grid
  static Grid *create(int nameLen,                                // (in)

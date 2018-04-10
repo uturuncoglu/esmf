@@ -72,14 +72,16 @@ void FTN_X(c_esmc_xgridserialize)(
                 int * s, 
                 int * ngridA, int * ngridB, int * online, int * flag,
                 char *buffer, int *length, int *offset,
-                ESMC_InquireFlag *inquireflag, int *localrc,
+                ESMC_InquireFlag *inquireflag, int *rc,
                 ESMCI_FortranStrLenArg buf_l){
+#undef ESMC_METHOD
+#define ESMC_METHOD "c_esmc_xgridserialize()"
 
     ESMC_InquireFlag linquireflag = *inquireflag;
     int i, padding;
  
     // Initialize return code; assume routine not implemented
-    if (localrc) *localrc = ESMC_RC_NOT_IMPL;
+    if (rc) *rc = ESMC_RC_NOT_IMPL;
 
     char * ptr = (char *)(buffer + *offset);
 
@@ -106,7 +108,7 @@ void FTN_X(c_esmc_xgridserialize)(
     padding = (*offset)%8;
     if(padding) (*offset) += 8-padding;
 
-    if (localrc) *localrc = ESMF_SUCCESS;
+    if (rc) *rc = ESMF_SUCCESS;
 
     return;
 } 
@@ -115,13 +117,21 @@ void FTN_X(c_esmc_xgridserialize)(
 void FTN_X(c_esmc_xgriddeserialize)(
                 int * s, 
                 int * ngridA, int * ngridB, int * online, int * flag,
-                char *buffer, int *offset, int *localrc,
+                const char *buffer, int *offset,
+                ESMC_InquireFlag inquireflag,
+                int *rc,
                 ESMCI_FortranStrLenArg buffer_l){
+#undef ESMC_METHOD
+#define ESMC_METHOD "c_esmc_xgriddeserialize()"
 
     int i, padding;
 
     // Initialize return code; assume routine not implemented
-    if (localrc) *localrc = ESMC_RC_NOT_IMPL;
+    if (rc) *rc = ESMC_RC_NOT_IMPL;
+
+    if (inquireflag != ESMF_NOINQUIRE)
+      if (ESMC_LogDefault.MsgFoundError(ESMC_RC_NOT_IMPL, "INQUIRY not supported yet", ESMC_CONTEXT,
+          rc)) return;
 
     char * ptr = (char *)(buffer + *offset);
 #define SSIZE 4
@@ -142,7 +152,7 @@ void FTN_X(c_esmc_xgriddeserialize)(
     padding = (*offset)%8;
     if(padding) (*offset) += 8-padding;
 
-    if (localrc) *localrc = ESMF_SUCCESS;
+    if (rc) *rc = ESMF_SUCCESS;
 
     return;
   } 
@@ -154,6 +164,8 @@ void FTN_X(c_esmc_smmspecserialize)(
                 char *buffer, int *length, int *offset,
                 ESMC_InquireFlag *inquireflag, int *localrc,
                 ESMCI_FortranStrLenArg buf_l){
+#undef ESMC_METHOD
+#define ESMC_METHOD "c_esmc_smmspecserialize()"
 
     ESMC_InquireFlag linquireflag = *inquireflag;
     int i, padding;
@@ -172,9 +184,11 @@ void FTN_X(c_esmc_smmspecserialize)(
 void FTN_X(c_esmc_smmspecdeserialize)(
                 int * cellCount, 
                 int * indices, double * weights, 
-                char *buffer, int *offset,
+                const char *buffer, int *offset,
                 int *localrc,
                 ESMCI_FortranStrLenArg buf_l){
+#undef ESMC_METHOD
+#define ESMC_METHOD "c_esmc_xgriddeserialize()"
 
     int i, padding;
  
@@ -209,6 +223,8 @@ void FTN_X(c_esmc_xgridregrid_create)(MeshCap **meshsrcpp, MeshCap **meshdstpp,
 }
 
 void FTN_X(c_esmc_copy_tempweights_xgrid)(ESMCI::TempWeights **_tw, int *ii, double *w) {
+#undef ESMC_METHOD
+#define ESMC_METHOD "c_esmc_copy_tempweights_xgrid()"
 
   ESMCI::TempWeights &tw = (**_tw);
 

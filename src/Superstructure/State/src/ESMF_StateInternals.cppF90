@@ -1117,28 +1117,27 @@ StateClsAddListMacro(ESMF_State, State, states, spp, STATE)
           call c_ESMC_StateItemSerialize(sip%otype, sip%namep, &
                                          buffer, length, offset, &
                                          linquireflag, localrc)
+          if (ESMF_LogFoundError(localrc, &
+              ESMF_ERR_PASSTHRU, &
+              ESMF_CONTEXT, rcToReturn=rc)) return
 
           select case (sip%otype%ot)
             case (ESMF_STATEITEM_FIELDBUNDLE%ot)
              call ESMF_FieldBundleSerialize(sip%datap%fbp, buffer, length, &
                                        offset, attreconflag=lattreconflag, &
                                        inquireflag=linquireflag, rc=localrc)
-              continue ! TODO: serialize
             case (ESMF_STATEITEM_FIELD%ot)
              call ESMF_FieldSerialize(sip%datap%fp, buffer, length, &
                                        offset, attreconflag=lattreconflag, &
                                        inquireflag=linquireflag, rc=localrc)
-              continue ! TODO: serialize
             case (ESMF_STATEITEM_ARRAY%ot)
              call c_ESMC_ArraySerialize(sip%datap%ap, buffer(1), &
                                        length, offset, lattreconflag, &
                                        linquireflag, localrc)
-              continue ! TODO: serialize
             case (ESMF_STATEITEM_ARRAYBUNDLE%ot)
              call c_ESMC_ArrayBundleSerialize(sip%datap%abp, buffer(1), &
                                        length, offset, lattreconflag, &
                                        linquireflag, localrc)
-              continue ! TODO: serialize
             case (ESMF_STATEITEM_STATE%ot)
              wrapper%statep => sip%datap%spp
              ESMF_INIT_SET_CREATED(wrapper)
@@ -1146,17 +1145,27 @@ StateClsAddListMacro(ESMF_State, State, states, spp, STATE)
                                        attreconflag=lattreconflag, &
                                        inquireflag=linquireflag, rc=localrc)
 #if 0
-              continue ! TODO: serialize
             case (ESMF_STATEITEM_NAME%ot)
              call c_ESMC_StringSerialize(sip%namep, buffer(1), &
                                          length, offset, linquireflag, localrc)
               continue ! TODO: serialize
             case (ESMF_STATEITEM_INDIRECT%ot)
+              continue ! TODO: serialize
 #endif
-              continue ! TODO: serialize
             case (ESMF_STATEITEM_UNKNOWN%ot)
-              continue ! TODO: serialize
+              localrc = ESMC_RC_INTNRL_INCONS
+              if (ESMF_LogFoundError(localrc, &
+                  msg='unknown state item type', &
+                  ESMF_CONTEXT, rcToReturn=rc)) return
+            case default
+              localrc = ESMC_RC_INTNRL_INCONS
+              if (ESMF_LogFoundError(localrc, &
+                  msg='unrecognized state item type', &
+                  ESMF_CONTEXT, rcToReturn=rc)) return
           end select
+          if (ESMF_LogFoundError(localrc, &
+              ESMF_ERR_PASSTHRU, &
+              ESMF_CONTEXT, rcToReturn=rc)) return
 
       enddo
 
@@ -1180,7 +1189,7 @@ StateClsAddListMacro(ESMF_State, State, states, spp, STATE)
 !
 ! !INTERFACE:
     recursive function ESMF_StateDeserialize(vm, buffer, offset, &
-                                            attreconflag, rc) &
+                                            attreconflag, inquireflag, rc) &
               result (substate)
 !
 ! !RETURN VALUE:
@@ -1188,9 +1197,10 @@ StateClsAddListMacro(ESMF_State, State, states, spp, STATE)
 !
 ! !ARGUMENTS:
       type(ESMF_VM), intent(in)    :: vm
-      character,     pointer       :: buffer(:)
+      character,     intent(in)    :: buffer(:)
       integer,       intent(inout) :: offset
-      type(ESMF_AttReconcileFlag), intent(in), optional :: attreconflag
+      type(ESMF_AttReconcileFlag), intent(in) :: attreconflag
+      type(ESMF_InquireFLag),      intent(in) :: inquireflag
       integer,       intent(out),  optional :: rc
 !
 ! !DESCRIPTION:
@@ -1210,8 +1220,11 @@ StateClsAddListMacro(ESMF_State, State, states, spp, STATE)
 !           Current read offset in the current buffer.  This will be
 !           updated by this routine and return pointing to the next
 !           unread byte in the buffer.
-!     \item[{[attreconflag]}]
+!     \item[attreconflag]
 !           Flag to tell if Attribute deserialization is to be done
+!     \item[inquireflag]
+!           Flag to tell if actual deserialization is to be done, or just
+!           update the offset.
 !     \item [{[rc]}]
 !           Return code; equals {\tt ESMF\_SUCCESS} if there are no errors.
 !     \end{description}
@@ -1225,7 +1238,6 @@ StateClsAddListMacro(ESMF_State, State, states, spp, STATE)
       type(ESMF_StateItem),  pointer :: sip    ! state item
       type(ESMF_StateItemWrap), allocatable :: siwrap(:)
       type(ESMF_State) :: subsubstate
-      type(ESMF_AttReconcileFlag) :: lattreconflag
       type(ESMF_Logical) :: linkChange
       integer :: datacount
       character(ESMF_MAXSTR) :: localnamep
@@ -1234,12 +1246,6 @@ StateClsAddListMacro(ESMF_State, State, states, spp, STATE)
       ! check variables
       ESMF_INIT_CHECK_DEEP(ESMF_VMGetInit,vm,rc)
 
-      ! deal with optional attreconflag
-      if (present(attreconflag)) then
-        lattreconflag = attreconflag
-      else
-        lattreconflag = ESMF_ATTRECONCILE_OFF
-      endif
       ! linkChanges is true for all but Component
       linkChange = ESMF_TRUE
 
@@ -1252,7 +1258,7 @@ StateClsAddListMacro(ESMF_State, State, states, spp, STATE)
                msg="space for new State object", &
                ESMF_CONTEXT, rcToReturn=rc)) return
 
-      call c_ESMC_BaseDeserialize(sp%base, buffer, offset, lattreconflag, localrc)
+      call c_ESMC_BaseDeserialize(sp%base, buffer, offset, attreconflag, inquireflag, localrc)
       if (ESMF_LogFoundError(localrc, &
            ESMF_ERR_PASSTHRU, &
            ESMF_CONTEXT, rcToReturn=rc)) return
@@ -1262,7 +1268,7 @@ StateClsAddListMacro(ESMF_State, State, states, spp, STATE)
           ESMF_CONTEXT, rcToReturn=rc)) return
 
       call c_ESMC_StateDeserialize(sp%st, datacount, &
-          buffer, offset, localrc)
+          buffer, offset, inquireflag, localrc)
       if (ESMF_LogFoundError(localrc, &
           ESMF_ERR_PASSTHRU, &
           ESMF_CONTEXT, rcToReturn=rc)) return
@@ -1280,7 +1286,7 @@ StateClsAddListMacro(ESMF_State, State, states, spp, STATE)
       do i = 1, datacount
           ! Proxy items are owned by the State.
           call c_ESMC_StateItemDeserialize(localotype, localnamep, &
-              buffer, offset, localrc)
+              buffer, offset, inquireflag, localrc)
           if (ESMF_LogFoundError (localrc,  &
               ESMF_ERR_PASSTHRU,  &
               ESMF_CONTEXT, rcToReturn=rc)) return
@@ -1295,10 +1301,10 @@ StateClsAddListMacro(ESMF_State, State, states, spp, STATE)
           select case (sip%otype%ot)
             case (ESMF_STATEITEM_FIELDBUNDLE%ot)
               sip%datap%fbp = ESMF_FieldBundleDeserialize(buffer, offset, &
-                  attreconflag=lattreconflag, rc=localrc)
+                  attreconflag=attreconflag, inquireflag=inquireflag, rc=localrc)
               !  here we relink the State Attribute hierarchy to the FieldBundle
               !  Attribute hierarchy, as they were linked before
-              if (lattreconflag == ESMF_ATTRECONCILE_ON) then
+              if (attreconflag == ESMF_ATTRECONCILE_ON) then
                 call c_ESMC_AttributeLink(sp%base, sip%datap%fbp%this%base, &
                     linkChange, localrc)
                 if (ESMF_LogFoundError(localrc, &
@@ -1311,10 +1317,10 @@ StateClsAddListMacro(ESMF_State, State, states, spp, STATE)
 
             case (ESMF_STATEITEM_FIELD%ot)
               sip%datap%fp = ESMF_FieldDeserialize(buffer, offset, &
-                attreconflag=lattreconflag, rc=localrc)
+                attreconflag=attreconflag, inquireflag=inquireflag, rc=localrc)
               !  here we relink the State Attribute hierarchy to the Field
               !  Attribute hierarchy, as they were linked before
-              if (lattreconflag == ESMF_ATTRECONCILE_ON) then
+              if (attreconflag == ESMF_ATTRECONCILE_ON) then
                 call c_ESMC_AttributeLink(sp%base, sip%datap%fp%ftypep%base, &
                     linkChange, localrc)
                 if (ESMF_LogFoundError(localrc, &
@@ -1327,19 +1333,20 @@ StateClsAddListMacro(ESMF_State, State, states, spp, STATE)
 
             case (ESMF_STATEITEM_ARRAY%ot)
               call c_ESMC_ArrayDeserialize(sip%datap%ap, buffer, offset, &
-                  lattreconflag, localrc)
+                  attreconflag, inquireflag, localrc)
 
             case (ESMF_STATEITEM_ARRAYBUNDLE%ot)
               call c_ESMC_ArrayBundleDeserialize(sip%datap%abp, buffer, offset,&
-                  lattreconflag, localrc)
+                  attreconflag, inquireflag, localrc)
 
             case (ESMF_STATEITEM_STATE%ot)
               subsubstate = ESMF_StateDeserialize(vm, buffer, offset, &
-                                              attreconflag=lattreconflag, rc=localrc)
+                  attreconflag=attreconflag, inquireflag=inquireflag,  &
+                  rc=localrc)
               sip%datap%spp => subsubstate%statep
               !  here we relink the State Attribute hierarchy to the subState
               !  Attribute hierarchy, as they were linked before
-              if (lattreconflag == ESMF_ATTRECONCILE_ON) then
+              if (attreconflag == ESMF_ATTRECONCILE_ON) then
                 call c_ESMC_AttributeLink(sp%base, sip%datap%spp%base, &
                     linkChange, localrc)
                 if (ESMF_LogFoundError(localrc, &

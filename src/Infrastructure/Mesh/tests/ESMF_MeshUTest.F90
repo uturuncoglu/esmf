@@ -892,7 +892,7 @@ program ESMF_MeshUTest
 
   ! Deserialize
   offset=0
-  mesh2=ESMF_MeshDeserialize(buf, offset, rc=localrc)
+  mesh2=ESMF_MeshDeserialize(buf, offset, inquireflag=ESMF_NOINQUIRE, rc=localrc)
   if (localrc .ne. ESMF_SUCCESS) rc=ESMF_FAILURE
 
   ! Check loc stream info

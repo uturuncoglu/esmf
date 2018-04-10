@@ -46,6 +46,7 @@ class ESMC_Base;
 class ESMC_Base
 {
   protected:
+    ESMC_TypeCanary canary;       // unique value for Base class
     int             ID;           // unique ID for any object in this VM context
     ESMCI::VMId     *vmID;        // unique vmID for any VM in the system
     int             ID_remote;    // remote ID from proxies origin
@@ -119,10 +120,11 @@ class ESMC_Base
 
     // flatten an object into a byte stream, and reconstitute it again
     int ESMC_Serialize(char *buffer, int *length, int *offset, 
-                      const ESMC_AttReconcileFlag &attreconflag,
-                      const ESMC_InquireFlag &inquireflag) const;
-    int ESMC_Deserialize(char *buffer, int *offset,
-                      const ESMC_AttReconcileFlag &attreconflag);
+                      ESMC_AttReconcileFlag attreconflag,
+                      ESMC_InquireFlag inquireflag) const;
+    int ESMC_Deserialize(const char *buffer, int *offset,
+                      ESMC_AttReconcileFlag attreconflag,
+                      ESMC_InquireFlag inquireflag);
     static int ESMC_Deserialize(const char *buffer, const int *offset,
                       int *ID, ESMCI::VMId *vmId);
     

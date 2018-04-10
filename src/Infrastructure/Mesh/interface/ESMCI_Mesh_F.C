@@ -228,14 +228,16 @@ extern "C" void FTN_X(c_esmc_meshinfoserialize)(int *intMeshFreed,
 
 
 extern "C" void FTN_X(c_esmc_meshinfodeserialize)(int *intMeshFreed,
-                                 int *spatialDim, int *parametricDim,
-                                 char *buffer, int *offset, int *localrc,
-                                 ESMCI_FortranStrLenArg buffer_l){
+                             int *spatialDim, int *parametricDim,
+                             const char *buffer, int *offset,
+                             ESMC_InquireFlag *inquireflag,
+                             int *localrc,
+                             ESMCI_FortranStrLenArg buffer_l){
 
   MeshCap::meshinfodeserialize(intMeshFreed,
-                               spatialDim, parametricDim,
-                               buffer, offset, localrc,
-                               buffer_l);
+                             spatialDim, parametricDim,
+                             buffer, offset, inquireflag, localrc,
+                             buffer_l);
 }
 
 
@@ -252,10 +254,12 @@ extern "C" void FTN_X(c_esmc_meshserialize)(MeshCap **meshpp,
 
 
 extern "C" void FTN_X(c_esmc_meshdeserialize)(MeshCap **meshpp,
-                                 char *buffer, int *offset, int *rc,
-                                 ESMCI_FortranStrLenArg buffer_l){
+                             const char *buffer, int *offset,
+                             ESMC_InquireFlag *inquireflag,
+                             int *rc,
+                             ESMCI_FortranStrLenArg buffer_l){
 
-  *meshpp=MeshCap::meshdeserialize(buffer, offset, rc,
+  *meshpp=MeshCap::meshdeserialize(buffer, offset, inquireflag, rc,
                              buffer_l);
 }
 

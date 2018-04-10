@@ -22186,15 +22186,16 @@ type(ESMF_KeywordEnforcer), optional:: keywordEnforcer ! must use keywords below
 !
 ! !INTERFACE:
       function ESMF_GridDeserialize(buffer, offset, &
-                                    attreconflag, rc)
+                                    attreconflag, inquireflag, rc)
 !
 ! !RETURN VALUE:
       type(ESMF_Grid) :: ESMF_GridDeserialize
 !
 ! !ARGUMENTS:
-      character, pointer, dimension(:) :: buffer
+      character, intent(in)  :: buffer(0:)
       integer, intent(inout) :: offset
-      type(ESMF_AttReconcileFlag), optional :: attreconflag
+      type(ESMF_AttReconcileFlag), intent(in) :: attreconflag
+      type(ESMF_InquireFlag), intent(in)      :: inquireflag
       integer, intent(out), optional :: rc
 !
 ! !DESCRIPTION:
@@ -22211,8 +22212,11 @@ type(ESMF_KeywordEnforcer), optional:: keywordEnforcer ! must use keywords below
 !           Current read offset in the current buffer.  This will be
 !           updated by this routine and return pointing to the next
 !           unread byte in the buffer.
-!     \item[{[attreconflag]}]
+!     \item[attreconflag]
 !           Flag to tell if Attribute serialization is to be done
+!     \item[inquireflag]
+!           Flag to tell if deserialization is to be done (ESMF_NOINQUIRE)
+!           or if this is simply a size inquiry (ESMF_INQUIREONLY)
 !     \item [{[rc]}]
 !           Return code; equals {\tt ESMF\_SUCCESS} if there are no errors.
 !     \end{description}
@@ -22221,22 +22225,14 @@ type(ESMF_KeywordEnforcer), optional:: keywordEnforcer ! must use keywords below
 
       integer :: localrc
       type(ESMF_Grid) :: grid
-      type(ESMF_AttReconcileFlag) :: lattreconflag
 
       ! Initialize
       localrc = ESMF_RC_NOT_IMPL
       if  (present(rc)) rc = ESMF_RC_NOT_IMPL
 
-      ! deal with optional attreconflag
-      if (present(attreconflag)) then
-        lattreconflag = attreconflag
-      else
-        lattreconflag = ESMF_ATTRECONCILE_OFF
-      endif
-
       ! Call into C++ to Deserialize the Grid
       call c_ESMC_GridDeserialize(grid%this, buffer, offset, &
-        lattreconflag, localrc)
+        attreconflag, inquireflag, localrc)
       if (ESMF_LogFoundError(localrc, &
                                  ESMF_ERR_PASSTHRU, &
                                  ESMF_CONTEXT, rcToReturn=rc)) return

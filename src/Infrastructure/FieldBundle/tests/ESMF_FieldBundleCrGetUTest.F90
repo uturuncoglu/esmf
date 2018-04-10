@@ -502,7 +502,9 @@ contains
 
         offset = 0
 
-        bundle1 = ESMF_FieldBundleDeserialize(buffer, offset, rc=localrc)
+        bundle1 = ESMF_FieldBundleDeserialize(buffer, offset,  &
+            attreconflag=ESMF_ATTRECONCILE_OFF, inquireflag=ESMF_NOINQUIRE,  &
+            rc=localrc)
         if (ESMF_LogFoundError(localrc, &
             ESMF_ERR_PASSTHRU, &
             ESMF_CONTEXT, rcToReturn=rc)) return

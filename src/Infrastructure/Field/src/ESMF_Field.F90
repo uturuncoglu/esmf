@@ -552,15 +552,16 @@ type(ESMF_KeywordEnforcer), optional:: keywordEnforcer ! must use keywords below
 !
 ! !INTERFACE:
       function ESMF_FieldDeserialize(buffer, offset, &
-                                    attreconflag, rc) 
+                                    attreconflag, inquireflag, rc) 
 !
 ! !RETURN VALUE:
       type(ESMF_Field) :: ESMF_FieldDeserialize   
 !
 ! !ARGUMENTS:
-      character, pointer, dimension(:) :: buffer
+      character, intent(in) :: buffer(0:)
       integer, intent(inout) :: offset
-      type(ESMF_AttReconcileFlag), optional :: attreconflag
+      type(ESMF_AttReconcileFlag), intent(in) :: attreconflag
+      type(ESMF_InquireFlag), intent(in) :: inquireflag
       integer, intent(out), optional :: rc 
 !
 ! !DESCRIPTION:
@@ -578,8 +579,11 @@ type(ESMF_KeywordEnforcer), optional:: keywordEnforcer ! must use keywords below
 !           Current read offset in the current buffer.  This will be
 !           updated by this routine and return pointing to the next
 !           unread byte in the buffer.
-!     \item[{[attreconflag]}]
-!           Flag to tell if Attribute serialization is to be done
+!     \item[attreconflag]
+!           Flag to tell if Attribute deserialization is to be done
+!     \item[inquireflag]
+!           Flag to tell if actual deserialization is to be done, or to just
+!           update offset.
 !     \item [{[rc]}]
 !           Return code; equals {\tt ESMF\_SUCCESS} if there are no errors.
 !     \end{description}
@@ -596,15 +600,14 @@ type(ESMF_KeywordEnforcer), optional:: keywordEnforcer ! must use keywords below
       localrc = ESMF_RC_NOT_IMPL
       if  (present(rc)) rc = ESMF_RC_NOT_IMPL
 
-      ! deal with optional attreconflag
-      if (present(attreconflag)) then
-        lattreconflag = attreconflag
-      else
-        lattreconflag = ESMF_ATTRECONCILE_OFF
-      endif
-
       ! In case of error, make sure this is invalid.
       nullify(ESMF_FieldDeserialize%ftypep)
+
+      if (inquireflag /= ESMF_NOINQUIRE) then
+        if (ESMF_LogFoundError (ESMF_RC_NOT_IMPL,  &
+            msg="INQUIRY not supported yet", ESMF_CONTEXT,  &
+            rcToReturn=rc)) return
+      end if
 
       ! Shortcut to internals
       allocate(fp, stat=localrc)
@@ -613,7 +616,7 @@ type(ESMF_KeywordEnforcer), optional:: keywordEnforcer ! must use keywords below
                                      ESMF_CONTEXT, rcToReturn=rc)) return
 
       ! Deserialize Base
-      fp%base = ESMF_BaseDeserialize(buffer, offset, lattreconflag, rc=localrc)
+      fp%base = ESMF_BaseDeserialize(buffer, offset, attreconflag, inquireflag, rc=localrc)
       if (ESMF_LogFoundError(localrc, &
                                  ESMF_ERR_PASSTHRU, &
                                  ESMF_CONTEXT, rcToReturn=rc)) return
@@ -630,15 +633,16 @@ type(ESMF_KeywordEnforcer), optional:: keywordEnforcer ! must use keywords below
                                    fp%dimCount, fp%gridToFieldMap, &
                                    fp%ungriddedLBound, fp%ungriddedUBound, &
                                    fp%totalLWidth, fp%totalUWidth, &
-                                   buffer, offset, localrc)
+                                   buffer, offset, inquireflag, localrc)
       if (ESMF_LogFoundError(localrc, &
                                 ESMF_ERR_PASSTHRU, &
                                 ESMF_CONTEXT, rcToReturn=rc)) return
 
       if (fp%status .eq. ESMF_FIELDSTATUS_GRIDSET .or. &
           fp%status .eq. ESMF_FIELDSTATUS_COMPLETE) then
+print *, ESMF_METHOD, ': calling GeomBase deserialize'
           fp%geombase=ESMF_GeomBaseDeserialize(buffer, offset, &
-                                              lattreconflag, localrc)
+                                              attreconflag, inquireflag, localrc)
           if (ESMF_LogFoundError(localrc, &
                                      ESMF_ERR_PASSTHRU, &
                                      ESMF_CONTEXT, rcToReturn=rc)) return
@@ -657,8 +661,9 @@ type(ESMF_KeywordEnforcer), optional:: keywordEnforcer ! must use keywords below
       endif
 
       if (fp%status .eq. ESMF_FIELDSTATUS_COMPLETE) then
+print *, ESMF_METHOD, ': calling Array deserialize'
           call c_ESMC_ArrayDeserialize(fp%array, buffer, offset, &
-                                      lattreconflag, localrc)
+                                      attreconflag, inquireflag, localrc)
           if (ESMF_LogFoundError(localrc, &
                                      ESMF_ERR_PASSTHRU, &
                                      ESMF_CONTEXT, rcToReturn=rc)) return
@@ -673,6 +678,7 @@ type(ESMF_KeywordEnforcer), optional:: keywordEnforcer ! must use keywords below
       ESMF_FieldDeserialize%ftypep => fp
       
       ! Add copy of this object into ESMF garbage collection table
+print *, ESMF_METHOD, ': Adding deserialized Field into GC table'
       call c_ESMC_VMAddFObject(ESMF_FieldDeserialize, ESMF_ID_FIELD%objectID)
       
       ESMF_INIT_SET_CREATED(ESMF_FieldDeserialize)

@@ -1737,8 +1737,8 @@ int ArrayBundle::serialize(
   char *buffer,          // inout - byte stream to fill
   int *length,           // inout - buf length
   int *offset,           // inout - original offset
-  const ESMC_AttReconcileFlag &attreconflag,   // in - attreconcile flag
-  const ESMC_InquireFlag &inquireflag) const { // in - inquireflag
+  ESMC_AttReconcileFlag attreconflag,   // in - attreconcile flag
+  ESMC_InquireFlag inquireflag) const { // in - inquireflag
 //
 // !DESCRIPTION:
 //    Turn info in ArrayBundle class into a stream of bytes.
@@ -1808,9 +1808,10 @@ int ArrayBundle::deserialize(
 //    int return code
 //
 // !ARGUMENTS:
-  char *buffer,          // in - byte stream to read
+  const char *buffer,    // in - byte stream to read
   int *offset,           // inout - original offset
-  const ESMC_AttReconcileFlag &attreconflag) {  // in - attreconcile flag
+  ESMC_AttReconcileFlag attreconflag, // in - attreconcile flag
+  ESMC_InquireFlag inquireflag) {     // in - inquire flag
 //
 // !DESCRIPTION:
 //    Turn a stream of bytes into an object.
@@ -1821,6 +1822,10 @@ int ArrayBundle::deserialize(
   int localrc = ESMC_RC_NOT_IMPL;         // local return code
   int rc = ESMC_RC_NOT_IMPL;              // final return code
 
+  if (inquireflag != ESMF_NOINQUIRE)
+    if (ESMC_LogDefault.MsgFoundError(localrc, "INQUIRY not supported yet", ESMC_CONTEXT,
+        &rc)) return rc;
+
   // Prepare pointer variables of different types
   char *cp;
   int *ip;
@@ -1829,7 +1834,7 @@ int ArrayBundle::deserialize(
   // Deserialize the Base class
   r=*offset%8;
   if (r!=0) *offset += 8-r;  // alignment
-  localrc = ESMC_Base::ESMC_Deserialize(buffer,offset,attreconflag);
+  localrc = ESMC_Base::ESMC_Deserialize(buffer,offset,attreconflag, inquireflag);
   if (ESMC_LogDefault.MsgFoundError(localrc, ESMCI_ERR_PASSTHRU, ESMC_CONTEXT,
     &rc)) return rc;
   // Deserialize the ArrayBundle with all its Arrays
@@ -1841,7 +1846,7 @@ int ArrayBundle::deserialize(
   *offset = (cp - buffer);
   for (int i=0; i<arrayCount; i++){
     Array *array = new Array(-1); // prevent baseID counter increment
-    array->deserialize(buffer,offset,attreconflag);
+    array->deserialize(buffer,offset, attreconflag, inquireflag);
     arrayContainer.add(string(array->getName()), array, true);
   }
   arrayCreator = true;  // deserialize creates local Array objects

@@ -4610,6 +4610,7 @@ int DistGrid::serialize(
   ESMC_I8 *lp;
   ESMC_TypeKind_Flag *tkp;
   int r;
+bool debug = false;
 
   // Check if buffer has enough free memory to hold object
   if ((inquireflag != ESMF_INQUIREONLY) && (*length - *offset)
@@ -4623,15 +4624,21 @@ int DistGrid::serialize(
   r=*offset%8;
   if (r!=0) *offset += 8-r;  // alignment
   ESMC_AttReconcileFlag attreconflag = ESMC_ATTRECONCILE_OFF;
+if (debug)
+    std::cout << ESMC_METHOD << ": Base serialize, offset = " << *offset << std::endl;
   localrc = this->ESMC_Base::ESMC_Serialize(buffer,length,offset,attreconflag,
       inquireflag);
   if (ESMC_LogDefault.MsgFoundError(localrc, ESMCI_ERR_PASSTHRU, ESMC_CONTEXT,
     &rc)) return rc;
   // Serialize the DELayout
+if (debug)
+    std::cout << ESMC_METHOD << ": delayout serialize, offset = " << *offset << std::endl;
   localrc = delayout->serialize(buffer, length, offset,inquireflag);
   if (ESMC_LogDefault.MsgFoundError(localrc, ESMCI_ERR_PASSTHRU, ESMC_CONTEXT,
     &rc)) return rc;
   // Serialize DistGrid meta data
+if (debug)
+    std::cout << ESMC_METHOD << ": metadata serialize, offset = " << *offset << std::endl;
   r=*offset%8;
   if (r!=0) *offset += 8-r;  // alignment
   tkp = (ESMC_TypeKind_Flag *)(buffer + *offset);
@@ -4733,9 +4740,10 @@ DistGrid *DistGrid::deserialize(
 //    DistGrid * to deserialized proxy object
 //
 // !ARGUMENTS:
-  char *buffer,          // in - byte stream to read
-  int *offset) {         // inout - original offset, updated to point 
-                             //  to first free byte after current obj info
+  const char *buffer,    // in - byte stream to read
+  int *offset,           // inout - original offset, updated to point
+                         // to first free byte after current obj info
+  ESMC_InquireFlag inquireflag) { // in - inquire flag
 //
 // !DESCRIPTION:
 //    Turn a stream of bytes into an object.
@@ -4746,6 +4754,10 @@ DistGrid *DistGrid::deserialize(
   int localrc = ESMC_RC_NOT_IMPL;         // local return code
   int rc = ESMC_RC_NOT_IMPL;              // final return code
 
+  if (inquireflag != ESMF_NOINQUIRE)
+    if (ESMC_LogDefault.MsgFoundError(localrc, "INQUIRY not supported yet", ESMC_CONTEXT,
+        &rc)) return NULL;
+
   DistGrid *a = new DistGrid(-1); // prevent baseID counter increment
   int i;
   char *cp;
@@ -4753,24 +4765,45 @@ DistGrid *DistGrid::deserialize(
   ESMC_I8 *lp;
   ESMC_TypeKind_Flag *tkp;
   int r;
-  
+
+bool debug = false;
+
   // Deserialize the Base class
   r=*offset%8;
   if (r!=0) *offset += 8-r;  // alignment
   ESMC_AttReconcileFlag attreconflag = ESMC_ATTRECONCILE_OFF;
-  localrc = a->ESMC_Base::ESMC_Deserialize(buffer,offset,attreconflag);
+if (debug)
+    std::cout << ESMC_METHOD << ": Base deserialize, offset = " << *offset << std::endl;
+  localrc = a->ESMC_Base::ESMC_Deserialize(buffer,offset,attreconflag, inquireflag);
   if (ESMC_LogDefault.MsgFoundError(localrc, ESMCI_ERR_PASSTHRU, ESMC_CONTEXT,
-    &rc)) return NULL;
+      &rc)) {
+    delete a;
+    return NULL;
+  }
   // Deserialize the DELayout
-  a->delayout = DELayout::deserialize(buffer, offset);
+if (debug)
+    std::cout << ESMC_METHOD << ": DELayout deserialize, offset = " << *offset << std::endl;
+  a->delayout = DELayout::deserialize(buffer, offset, inquireflag);
   a->delayoutCreator = true;  // deserialize creates a local object
   // VM is a special case
   a->vm = NULL; // VM must be reset
   // Deserialize DistGrid meta data
+if (debug)
+    std::cout << ESMC_METHOD << ": metadata deserialize, offset = " << *offset << std::endl;
   r=*offset%8;
   if (r!=0) *offset += 8-r;  // alignment
   tkp = (ESMC_TypeKind_Flag *)(buffer + *offset);
   a->indexTK = *tkp++;
+  // sanity check typekind
+  if (a->indexTK <=0 || a->indexTK > ESMF_NOKIND) {
+    std::stringstream errmsg;
+    errmsg << "sanity check - index typekind = " << a->indexTK;
+    if (ESMC_LogDefault.MsgFoundError(ESMF_RC_INTNRL_BAD, errmsg.str(), ESMC_CONTEXT,
+        &rc)) {
+      delete a;
+      return NULL;
+    }
+  }
   ip = (int *)tkp;
   a->dimCount = *ip++;
   a->tileCount = *ip++;

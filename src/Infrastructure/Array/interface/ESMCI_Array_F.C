@@ -1267,8 +1267,10 @@ extern "C" {
   }
   
   void FTN_X(c_esmc_arrayserialize)(ESMCI::Array **array, char *buf, int *length,
-    int *offset, ESMC_AttReconcileFlag *attreconflag,
-    ESMC_InquireFlag *inquireflag, int *rc,
+    int *offset,
+    ESMC_AttReconcileFlag *attreconflag,
+    ESMC_InquireFlag *inquireflag,
+    int *rc,
     ESMCI_FortranStrLenArg buf_l){
 #undef  ESMC_METHOD
 #define ESMC_METHOD "c_esmc_arrayserialize()"
@@ -1281,8 +1283,11 @@ extern "C" {
       ESMC_NOT_PRESENT_FILTER(rc));
   }
 
-  void FTN_X(c_esmc_arraydeserialize)(ESMCI::Array **array, char *buf,
-    int *offset, ESMC_AttReconcileFlag *attreconflag, int *rc,
+  void FTN_X(c_esmc_arraydeserialize)(ESMCI::Array **array, const char *buf,
+    int *offset,
+    ESMC_AttReconcileFlag *attreconflag,
+    ESMC_InquireFlag *inquireflag,
+    int *rc,
     ESMCI_FortranStrLenArg buf_l){
 #undef  ESMC_METHOD
 #define ESMC_METHOD "c_esmc_arraydeserialize()"
@@ -1291,7 +1296,7 @@ extern "C" {
     *array = new ESMCI::Array(-1);  // prevent baseID counter increment
     // Call into the actual C++ method wrapped inside LogErr handling
     ESMC_LogDefault.MsgFoundError((*array)->deserialize(
-      buf, offset, *attreconflag),
+      buf, offset, *attreconflag, *inquireflag),
       ESMCI_ERR_PASSTHRU, ESMC_CONTEXT,
       ESMC_NOT_PRESENT_FILTER(rc));
   }

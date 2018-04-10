@@ -977,7 +977,7 @@ program ESMF_LocStreamCreateUTest
 
   ! Deserialize
   offset=0
-  locstream2=ESMF_LocStreamDeserialize(buf, offset, rc=localrc)
+  locstream2=ESMF_LocStreamDeserialize(buf, offset, rc=localrc, inquireflag=ESMF_NOINQUIRE)
   if (localrc .ne. ESMF_SUCCESS) rc=ESMF_FAILURE
 
 

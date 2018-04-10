@@ -4879,14 +4879,15 @@ type(ESMF_KeywordEnforcer), optional:: keywordEnforcer ! must use keywords below
 ! !IROUTINE: ESMF_MeshDeserialize - Deserialize a byte stream into a Mesh
 !
 ! !INTERFACE:
-      function ESMF_MeshDeserialize(buffer, offset, rc)
+      function ESMF_MeshDeserialize(buffer, offset, inquireflag, rc)
 !
 ! !RETURN VALUE:
       type(ESMF_Mesh) :: ESMF_MeshDeserialize
 !
 ! !ARGUMENTS:
-      character, pointer, dimension(:) :: buffer
-       integer, intent(inout) :: offset
+      character, intent(in) :: buffer(0:)
+      integer, intent(inout) :: offset
+      type(ESMF_InquireFlag), intent(in), optional :: inquireflag
       integer, intent(out), optional :: rc
 !
 ! !DESCRIPTION:
@@ -4903,6 +4904,7 @@ type(ESMF_KeywordEnforcer), optional:: keywordEnforcer ! must use keywords below
 !           Current read offset in the current buffer.  This will be
 !           updated by this routine and return pointing to the next
 !           unread byte in the buffer.
+!     \item [inquireflag]
 !     \item [{[rc]}]
 !           Return code; equals {\tt ESMF\_SUCCESS} if there are no errors.
 !     \end{description}
@@ -4920,7 +4922,7 @@ type(ESMF_KeywordEnforcer), optional:: keywordEnforcer ! must use keywords below
 
 
      ! Deserialize node Distgrid
-     call c_ESMC_DistGridDeserialize(ESMF_MeshDeserialize%nodal_distgrid, buffer, offset, localrc)
+     call c_ESMC_DistGridDeserialize(ESMF_MeshDeserialize%nodal_distgrid, buffer, offset, inquireflag, localrc)
      if (ESMF_LogFoundError(localrc, &
                                  ESMF_ERR_PASSTHRU, &
                                  ESMF_CONTEXT, rcToReturn=rc)) return
@@ -4931,7 +4933,7 @@ type(ESMF_KeywordEnforcer), optional:: keywordEnforcer ! must use keywords below
                                  ESMF_CONTEXT, rcToReturn=rc)) return
 
      ! Deserialize element Distgrid
-     call c_ESMC_DistGridDeserialize(ESMF_MeshDeserialize%element_distgrid, buffer, offset, localrc)
+     call c_ESMC_DistGridDeserialize(ESMF_MeshDeserialize%element_distgrid, buffer, offset, inquireflag, localrc)
      if (ESMF_LogFoundError(localrc, &
                                  ESMF_ERR_PASSTHRU, &
                                  ESMF_CONTEXT, rcToReturn=rc)) return
@@ -4944,7 +4946,7 @@ type(ESMF_KeywordEnforcer), optional:: keywordEnforcer ! must use keywords below
       ! Deserialize other ESMF_MeshDeserialize items
       call c_ESMC_MeshInfoDeserialize(intMeshFreed, &
            spatialDim, parametricDim, &
-           buffer, offset, localrc)
+           buffer, offset, inquireflag, localrc)
       if (ESMF_LogFoundError(localrc, &
                                  ESMF_ERR_PASSTHRU, &
                                  ESMF_CONTEXT, rcToReturn=rc)) return
@@ -4969,7 +4971,7 @@ type(ESMF_KeywordEnforcer), optional:: keywordEnforcer ! must use keywords below
       ! If exists serialize mesh
       if (.not. ESMF_MeshDeserialize%isCMeshFreed) then
          call c_ESMC_MeshDeserialize(ESMF_MeshDeserialize%this, buffer, &
-                                     offset, localrc)
+                                     offset, inquireflag, localrc)
          if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, &
               ESMF_CONTEXT, rcToReturn=rc)) return
       endif

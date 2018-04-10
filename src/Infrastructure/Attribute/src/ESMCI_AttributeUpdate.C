@@ -183,7 +183,7 @@ static const int keySize = 4*sizeof(int) + 1;
       // reset the base
       setBase(temp_base);
       // now rebuild
-      this->ESMC_Deserialize(recvBuf, &offset);
+      this->ESMC_Deserialize(recvBuf, &offset, ESMF_NOINQUIRE);
     }
     else {
       localrc = AttributeUpdateBufRecv(recvBuf, localPet, &offset, recvlength);
@@ -375,7 +375,7 @@ static const int keySize = 4*sizeof(int) + 1;
     attr = new Attribute(ESMF_FALSE);
     attr->setBase(attrBase);
     attr->parent = this;
-    attr->ESMC_Deserialize(recvBuf,offset);
+    attr->ESMC_Deserialize(recvBuf,offset, ESMF_NOINQUIRE);
     localrc = AttributeSet(attr);
     if (localrc != ESMF_SUCCESS) {
       ESMC_LogDefault.MsgFoundError(ESMC_RC_ARG_VALUE,
@@ -413,7 +413,7 @@ static const int keySize = 4*sizeof(int) + 1;
     attr = new Attribute(ESMF_FALSE);
     attr->setBase(attrBase);
     attr->parent = this;
-    attr->ESMC_Deserialize(recvBuf,offset);
+    attr->ESMC_Deserialize(recvBuf,offset, ESMF_NOINQUIRE);
 
     // find the right Attribute to modify
     char *srckey, *dstkey;
@@ -485,7 +485,7 @@ static const int keySize = 4*sizeof(int) + 1;
     attr = new Attribute("42","42","42","42");
     attr->setBase(attrBase);
     attr->parent = this;
-    attr->ESMC_Deserialize(recvBuf,offset);
+    attr->ESMC_Deserialize(recvBuf,offset, ESMF_NOINQUIRE);
     localrc = AttPackSet(attr);
     if (localrc != ESMF_SUCCESS) {
       ESMC_LogDefault.MsgFoundError(ESMC_RC_ARG_VALUE,
