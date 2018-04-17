@@ -750,7 +750,8 @@
       type(ESMF_ExtrapMethod_Flag), parameter :: &
            ESMF_EXTRAPMETHOD_NONE    = ESMF_ExtrapMethod_Flag(0), &
            ESMF_EXTRAPMETHOD_NEAREST_STOD = ESMF_ExtrapMethod_Flag(1), &
-           ESMF_EXTRAPMETHOD_NEAREST_IDAVG = ESMF_ExtrapMethod_Flag(2)
+           ESMF_EXTRAPMETHOD_NEAREST_IDAVG = ESMF_ExtrapMethod_Flag(2), &
+           ESMF_EXTRAPMETHOD_CREEP = ESMF_ExtrapMethod_Flag(3)
 
 !------------------------------------------------------------------------------
       type ESMF_LineType_Flag
@@ -1050,7 +1051,8 @@
 
        public ESMF_ExtrapMethod_Flag, ESMF_EXTRAPMETHOD_NONE, & 
                                       ESMF_EXTRAPMETHOD_NEAREST_STOD, &
-                                      ESMF_EXTRAPMETHOD_NEAREST_IDAVG
+                                      ESMF_EXTRAPMETHOD_NEAREST_IDAVG, &
+                                      ESMF_EXTRAPMETHOD_CREEP
 
        public ESMF_LineType_Flag,   ESMF_LINETYPE_CART, &
                                    ESMF_LINETYPE_GREAT_CIRCLE
@@ -1182,6 +1184,7 @@ interface operator (==)
   module procedure ESMF_FileFormatEq
   module procedure ESMF_FileStatusEq
   module procedure ESMF_RegridMethodEq
+  module procedure ESMF_ExtrapMethodEq
   module procedure ESMF_CoordSysEqual
   module procedure ESMF_LineTypeEqual
   module procedure ESMF_NormTypeEqual
@@ -1203,6 +1206,7 @@ interface operator (/=)
   module procedure ESMF_FileFormatNe
   module procedure ESMF_FileStatusNe
   module procedure ESMF_RegridMethodNe
+  module procedure ESMF_ExtrapMethodNe
   module procedure ESMF_CoordSysNotEqual
   module procedure ESMF_LineTypeNotEqual
   module procedure ESMF_NormTypeNotEqual
@@ -1793,6 +1797,24 @@ function ESMF_FileStatusNe(fs1, fs2)
 
   ESMF_FileStatusNe = (fs1%status_type == fs2%status_type)
 end function ESMF_FileStatusNe
+
+!------------------------------------------------------------------------------
+! function to compare two ESMF_ExtrapMethod types
+
+function ESMF_ExtrapMethodEq(ep1, ep2)
+ logical ESMF_ExtrapMethodEq
+ type(ESMF_ExtrapMethod_Flag), intent(in) :: ep1, ep2
+
+ ESMF_ExtrapMethodEq = (ep1%extrapmethod == ep2%extrapmethod)
+end function
+
+function ESMF_ExtrapMethodNe(ep1, ep2)
+ logical ESMF_ExtrapMethodNe
+ type(ESMF_ExtrapMethod_Flag), intent(in) :: ep1, ep2
+
+ ESMF_ExtrapMethodNe = (ep1%extrapmethod /= ep2%extrapmethod)
+end function
+
 
 !------------------------------------------------------------------------------
 ! function to compare two ESMF_RegridMethod types

@@ -643,7 +643,8 @@ type(ESMF_KeywordEnforcer), optional:: keywordEnforcer ! must use keywords below
         type(ESMF_Array)     :: dstArray
         type(ESMF_Array)     :: fracArray
         type(ESMF_Mesh)      :: srcMesh, srcMeshDual
-        type(ESMF_Mesh)      :: dstMesh, tempMesh
+        type(ESMF_Mesh)      :: dstMesh, dstMeshDual
+        type(ESMF_Mesh)      :: tempMesh
         type(ESMF_MeshLoc)   :: srcMeshloc,dstMeshloc,fracMeshloc
         type(ESMF_StaggerLoc) :: srcStaggerLoc,dstStaggerLoc
         type(ESMF_StaggerLoc) :: srcStaggerLocG2M,dstStaggerLocG2M
@@ -661,7 +662,8 @@ type(ESMF_KeywordEnforcer), optional:: keywordEnforcer ! must use keywords below
         type(ESMF_LineType_Flag):: localLineType
         type(ESMF_NormType_Flag):: localNormType
         type(ESMF_ExtrapMethod_Flag):: localExtrapMethod
-        logical :: srcDual, src_pl_used, dst_pl_used
+        logical :: srcDual, dstDual
+        logical :: src_pl_used, dst_pl_used
         type(ESMF_PointList) :: dstPointList, srcPointList
         type(ESMF_LocStream) :: dstLocStream, srcLocStream
         logical :: hasStatusArray
@@ -745,7 +747,8 @@ type(ESMF_KeywordEnforcer), optional:: keywordEnforcer ! must use keywords below
 
 
         ! Init variables
-         srcDual=.false.
+        srcDual=.false.
+        dstDual=.false.
         src_pl_used=.false.
         dst_pl_used=.false.
 
@@ -1185,7 +1188,14 @@ type(ESMF_KeywordEnforcer), optional:: keywordEnforcer ! must use keywords below
             dst_pl_used=.true.
           endif
 
-
+          ! If we're doing creep fill, then also need Mesh
+          if (localExtrapMethod .eq. ESMF_EXTRAPMETHOD_CREEP) then
+               dstMesh = ESMF_GridToMesh(dstGrid, dstStaggerLocG2M, dstIsSphere, dstIsLatLonDeg, &
+                    maskValues=dstMaskValues, regridConserve=regridConserveG2M, rc=localrc)
+               if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, &
+                    ESMF_CONTEXT, rcToReturn=rc)) return
+          endif
+        !!!! CREEP STOPPED HERE !!!
 
         else if (dstgeomtype .eq. ESMF_GEOMTYPE_MESH) then
 
@@ -1228,6 +1238,36 @@ type(ESMF_KeywordEnforcer), optional:: keywordEnforcer ! must use keywords below
                ESMF_CONTEXT, rcToReturn=rc)) return
              dst_pl_used=.true.
 
+             ! Generate Mesh for creep fill extrapolation 
+             if (localExtrapMethod .eq. ESMF_EXTRAPMETHOD_CREEP) then
+                if (dstMeshloc .ne. ESMF_MESHLOC_NODE) then
+                   if (dstMeshloc .eq. ESMF_MESHLOC_ELEMENT) then
+                      ! Create a dual of the Mesh
+                      dstMeshDual=ESMF_MeshCreateDual(tempMesh, rc=localrc)
+                      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, &
+                           ESMF_CONTEXT, rcToReturn=rc)) return
+                   
+                      ! Use the dual as the srcMesh
+                      tempMesh=dstMeshDual
+                   
+                      ! Record that we created the dual
+                      dstDual=.true.
+                   else
+                      call ESMF_LogSetError(rcToCheck=ESMF_RC_ARG_BAD, & 
+                           msg="- D can currently only do non-conservative  on a mesh built on nodes or elements", & 
+                           ESMF_CONTEXT, rcToReturn=rc) 
+                      return  
+                   endif
+                endif
+
+                ! Turn on masking
+                if (present(dstMaskValues)) then
+                   call ESMF_MeshTurnOnNodeMask(tempMesh, maskValues=dstMaskValues, rc=localrc);
+                   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, &
+                        ESMF_CONTEXT, rcToReturn=rc)) return
+                endif
+                dstMesh=tempMesh               
+             endif
           endif
           
         else if (dstgeomtype .eq. ESMF_GEOMTYPE_LOCSTREAM) then
@@ -1252,6 +1292,13 @@ type(ESMF_KeywordEnforcer), optional:: keywordEnforcer ! must use keywords below
             ESMF_CONTEXT, rcToReturn=rc)) return
           dst_pl_used=.true.
 
+          ! Can't do creep fill on locstream
+          if (localExtrapMethod .eq. ESMF_EXTRAPMETHOD_CREEP) then
+             call ESMF_LogSetError(rcToCheck=ESMF_RC_ARG_BAD, & 
+                  msg=" - Creep fill extrapolation is not allowed when destination is a location stream", & 
+                  ESMF_CONTEXT, rcToReturn=rc) 
+             return  
+          endif
         else
           call ESMF_LogSetError(rcToCheck=ESMF_RC_ARG_WRONG, &
             msg="destination GEOMTYPE not supported, must be GRID,MESH or LOCSTREAM", &
@@ -1478,24 +1525,42 @@ type(ESMF_KeywordEnforcer), optional:: keywordEnforcer ! must use keywords below
              if (ESMF_LogFoundError(localrc, &
                ESMF_ERR_PASSTHRU, &
                ESMF_CONTEXT, rcToReturn=rc)) return
+           else 
+              ! If we're doing creep fill, then also made mesh
+              if (localExtrapMethod .eq. ESMF_EXTRAPMETHOD_CREEP) then
+                 call ESMF_MeshDestroy(dstMesh,rc=localrc)
+                 if (ESMF_LogFoundError(localrc, &
+                      ESMF_ERR_PASSTHRU, &
+                      ESMF_CONTEXT, rcToReturn=rc)) return
+              endif
            endif           
         else if (dstgeomtype .eq. ESMF_GEOMTYPE_MESH) then
            if (.not. dst_pl_used) then
 
-           ! Otherwise reset masking
-           if (present(dstMaskValues)) then
-              if ((lregridmethod .eq. ESMF_REGRIDMETHOD_CONSERVE) .or. &
-                   (lregridmethod .eq. ESMF_REGRIDMETHOD_CONSERVE_2ND)) then
-                 call ESMF_MeshTurnOffCellMask(dstMesh, rc=localrc);
-                 if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, &
-                      ESMF_CONTEXT, rcToReturn=rc)) return
-              else
-                 call ESMF_MeshTurnOffNodeMask(dstMesh, rc=localrc);
-                 if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, &
-                   ESMF_CONTEXT, rcToReturn=rc)) return
+              ! Otherwise reset masking
+              if (present(dstMaskValues)) then
+                 if ((lregridmethod .eq. ESMF_REGRIDMETHOD_CONSERVE) .or. &
+                      (lregridmethod .eq. ESMF_REGRIDMETHOD_CONSERVE_2ND)) then
+                    call ESMF_MeshTurnOffCellMask(dstMesh, rc=localrc);
+                    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, &
+                         ESMF_CONTEXT, rcToReturn=rc)) return
+                 else
+                    call ESMF_MeshTurnOffNodeMask(dstMesh, rc=localrc);
+                    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, &
+                         ESMF_CONTEXT, rcToReturn=rc)) return
+                 endif
               endif
-           endif
 
+           else
+              ! If we're doing creep fill and made a dual, then also destroy
+              if ((localExtrapMethod .eq. ESMF_EXTRAPMETHOD_CREEP) .and. &
+                   dstDual) then
+
+                 call ESMF_MeshDestroy(dstMesh,rc=localrc)
+                 if (ESMF_LogFoundError(localrc, &
+                      ESMF_ERR_PASSTHRU, &
+                      ESMF_CONTEXT, rcToReturn=rc)) return
+              endif
            endif
         endif
 

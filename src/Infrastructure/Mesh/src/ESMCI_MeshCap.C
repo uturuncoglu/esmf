@@ -501,7 +501,6 @@ void MeshCap::regrid_create(
   void *mesh_src_p;
   void *mesh_dst_p;
 
-
    // Handle case where incoming meshes are null
   if (*mcapsrcpp != NULL) {
     if (*mcapdstpp != NULL) {

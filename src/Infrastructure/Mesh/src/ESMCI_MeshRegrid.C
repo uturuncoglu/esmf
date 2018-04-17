@@ -13,6 +13,9 @@
 #include <Mesh/include/ESMCI_MeshRegrid.h>
 #include <Mesh/include/ESMCI_MeshRead.h>
 #include <Mesh/include/ESMCI_Interp.h>
+#include <Mesh/include/ESMCI_CreepFill.h>
+
+#include <vector>
 
 //-----------------------------------------------------------------------------
  // leave the following line as-is; it will insert the cvs ident string
@@ -483,6 +486,22 @@ static void _create_pointlist_of_mesh_elems_not_in_wmat(Mesh *mesh, WMat &wts, P
 }
 #endif
 
+// Get list of dst ids in wts (i.e. mapped points)
+ static void _get_dst_gids_in_wmat(WMat &wts, std::vector<int> &dst_gids) {
+
+   // Get weight iterators
+   WMat::WeightMap::iterator wi =wts.begin_row(),we = wts.end_row();
+   for (; wi != we; ++wi) {
+    
+     // get dst id
+     int dst_gid=wi->first.id;
+
+     // Stick it into the list
+     dst_gids.push_back(dst_gid);
+   }
+ }
+
+
 // Get the list of ids in the mesh, but not in the wts
 // (i.e. if mesh is the dest. mesh, the unmapped points)
 static void _create_pointlist_of_points_not_in_wmat(PointList *pointlist, WMat &wts, PointList **_missing_points) {
@@ -569,8 +588,26 @@ static void _create_pointlist_of_points_not_in_wmat(PointList *pointlist, WMat &
              ESMC_R8 extrapDistExponent,
              bool set_dst_status, WMat &dst_status) {
 
+   printf("BOB: in extrap() extrapMethod=%d\n",extrapMethod);
 
-   //  printf("BOB: in extrap() extrapMethod=%d\n",extrapMethod);
+   if (extrapMethod == ESMC_EXTRAPMETHOD_CREEP) {
+     printf("BOB: in extrap() extrapMethod is CREEP \n");
+
+     // Set info for calling into interp
+     IWeights extrap_wts;
+     WMat extrap_dst_status;
+     std::vector<int> valid_gids;
+
+     // Get list of valid gids
+     _get_dst_gids_in_wmat(wts, valid_gids);
+
+     printf("dstmesh=%d \n",dstmesh);
+
+     // Get creep fill weights
+     CreepFill(*dstmesh, valid_gids, 3, extrap_wts, set_dst_status, extrap_dst_status);
+
+     return;
+   }
 
    // Construct pointlist for srcmesh
    // We need a pointlist to be able to use nearest neighbor
@@ -799,8 +836,13 @@ static void _create_pointlist_of_points_not_in_wmat(PointList *pointlist, WMat &
     // destroyed before we do other things like the extrapolation below
     {
 
+      // Only pass the dstMesh into rendezvous grid creation, if the dstpointlist doesn't exist.
+      // (sometimes we have both for extrapolation)
+      Mesh *tmp_dstmesh=NULL;
+      if (dstpointlist == NULL) tmp_dstmesh=dstmesh;
+
       // Build the rendezvous grids
-      Interp interp(srcmesh, srcpointlist, dstmesh, dstpointlist,
+      Interp interp(srcmesh, srcpointlist, tmp_dstmesh, dstpointlist,
                     midmesh, false, *regridMethod,
                     set_dst_status, dst_status,
                     mtype, *unmappedaction);
