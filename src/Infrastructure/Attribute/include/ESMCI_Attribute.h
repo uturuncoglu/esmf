@@ -157,8 +157,7 @@ class Attribute
       void *datap);
     Attribute& operator=(const Attribute& source);
     ~Attribute(void);
-    int ESMC_Deserialize(const char *buffer, int *offset,
-      ESMC_InquireFlag inquireflag);
+    int ESMC_Deserialize(const char *buffer, int *offset);
     int ESMC_Serialize(char *buffer, int *length, int *offset,
       ESMC_InquireFlag inquireflag) const;
     int ESMC_SerializeCC(char *buffer, int *length, int &offset,

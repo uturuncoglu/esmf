@@ -1022,16 +1022,15 @@ contains
 !
 ! !INTERFACE:
       function ESMF_XGridDeserialize(buffer, offset, &
-                                    attreconflag, inquireflag, rc) 
+                                    attreconflag, rc) 
 !
 ! !RETURN VALUE:
       type(ESMF_XGrid)                        :: ESMF_XGridDeserialize   
 !
 ! !ARGUMENTS:
-      character, intent(in)                   :: buffer(0:)
+      character, pointer, dimension(:)        :: buffer
       integer, intent(inout)                  :: offset
       type(ESMF_AttReconcileFlag), intent(in) :: attreconflag
-      type(ESMF_InquireFlag), intent(in)      :: inquireflag
       integer, intent(out), optional          :: rc 
 !
 ! !DESCRIPTION:
@@ -1051,9 +1050,6 @@ contains
 !           unread byte in the buffer.
 !     \item[attreconflag]
 !           Flag to tell if Attribute serialization is to be done
-!     \item[inquireflag]
-!           Flag to tell if deserialization is to be done (ESMF_NOINQUIRE)
-!           or if this is simply a size inquiry (ESMF_INQUIREONLY)
 !     \item [{[rc]}]
 !           Return code; equals {\tt ESMF\_SUCCESS} if there are no errors.
 !     \end{description}
@@ -1070,12 +1066,6 @@ contains
       localrc = ESMF_RC_NOT_IMPL
       if  (present(rc)) rc = ESMF_RC_NOT_IMPL
 
-      if (inquireflag /= ESMF_NOINQUIRE) then
-        if (ESMF_LogFoundError (ESMF_RC_NOT_IMPL,  &
-            msg="INQUIRY not supported yet", ESMF_CONTEXT,  &
-            rcToReturn=rc)) return
-      end if
-
       ! In case of error, make sure this is invalid.
       nullify(ESMF_XGridDeserialize%xgtypep)
 
@@ -1091,7 +1081,7 @@ contains
                                  ESMF_CONTEXT, rcToReturn=rc)) return
 
       ! Deserialize Base
-      fp%base = ESMF_BaseDeserialize(buffer, offset, attreconflag, inquireflag, rc=localrc)
+      fp%base = ESMF_BaseDeserialize(buffer, offset, attreconflag, rc=localrc)
       if (ESMF_LogFoundError(localrc, &
                                  ESMF_ERR_PASSTHRU, &
                                  ESMF_CONTEXT, rcToReturn=rc)) return
@@ -1104,14 +1094,14 @@ contains
       ! call into the C api to deserialize this status array and other meta-data
       flag = 0
       call c_ESMC_XGridDeserialize(s, ngridA, ngridB, fp%online, flag, &
-                                 buffer, offset, inquireflag, localrc)
+                                 buffer, offset, localrc)
       if (ESMF_LogFoundError(localrc, &
                                  ESMF_ERR_PASSTHRU, &
                                  ESMF_CONTEXT, rcToReturn=rc)) return
 
       ! Deserialize the balanced distgrid
       call C_ESMC_DistGridDeserialize(fp%distgridM, buffer, offset,  &
-                                   inquireflag, localrc)
+                                   localrc)
       if (ESMF_LogFoundError(localrc, &
                                ESMF_ERR_PASSTHRU, &
                                ESMF_CONTEXT, rcToReturn=rc)) return
@@ -1134,7 +1124,7 @@ contains
       if(associated(fp%distgridA)) then
           do i = 1, ngridA
             call C_ESMC_DistGridDeserialize(fp%distgridA(i), buffer, offset,  &
-                                     inquireflag, localrc)
+                                     localrc)
             if (ESMF_LogFoundError(localrc, &
                                      ESMF_ERR_PASSTHRU, &
                                      ESMF_CONTEXT, rcToReturn=rc)) return
@@ -1144,7 +1134,7 @@ contains
       if(associated(fp%distgridB)) then
           do i = 1, ngridB
             call C_ESMC_DistGridDeserialize(fp%distgridB(i), buffer, offset, &
-                                     inquireflag, localrc)
+                                     localrc)
             if (ESMF_LogFoundError(localrc, &
                                      ESMF_ERR_PASSTHRU, &
                                      ESMF_CONTEXT, rcToReturn=rc)) return
@@ -1155,7 +1145,7 @@ contains
       if(associated(fp%sideA)) then
           do i = 1, ngridA
             fp%sideA(i) = ESMF_XGridGeomBaseDeserialize(buffer=buffer, offset=offset, &
-                                     attreconflag=attreconflag, inquireflag=inquireflag,  &
+                                     attreconflag=attreconflag,  &
                                      rc=localrc)
             if (ESMF_LogFoundError(localrc, &
                                      ESMF_ERR_PASSTHRU, &
@@ -1166,7 +1156,7 @@ contains
       if(associated(fp%sideB)) then
           do i = 1, ngridB
             fp%sideB(i) = ESMF_XGridGeomBaseDeserialize(buffer=buffer, offset=offset, &
-                                     attreconflag=attreconflag, inquireflag=inquireflag,  &
+                                     attreconflag=attreconflag,  &
                                      rc=localrc)
             if (ESMF_LogFoundError(localrc, &
                                      ESMF_ERR_PASSTHRU, &
@@ -1178,7 +1168,7 @@ contains
       if(associated(fp%fracA2X)) then
           do i = 1, ngridA
             call c_ESMC_ArrayDeserialize(fp%fracA2X(i), buffer, offset, &
-                attreconflag, inquireflag, localrc)
+                attreconflag, localrc)
             if (ESMF_LogFoundError(localrc, &
                                      ESMF_ERR_PASSTHRU, &
                                      ESMF_CONTEXT, rcToReturn=rc)) return
@@ -1188,7 +1178,7 @@ contains
       if(associated(fp%fracB2X)) then
           do i = 1, ngridB
             call c_ESMC_ArrayDeserialize(fp%fracB2X(i), buffer, offset, &
-                attreconflag, inquireflag, localrc)
+                attreconflag, localrc)
             if (ESMF_LogFoundError(localrc, &
                                      ESMF_ERR_PASSTHRU, &
                                      ESMF_CONTEXT, rcToReturn=rc)) return
@@ -1197,7 +1187,7 @@ contains
       if(associated(fp%fracX2A)) then
           do i = 1, ngridA
             call c_ESMC_ArrayDeserialize(fp%fracX2A(i), buffer, offset, &
-                attreconflag, inquireflag, localrc)
+                attreconflag, localrc)
             if (ESMF_LogFoundError(localrc, &
                                      ESMF_ERR_PASSTHRU, &
                                      ESMF_CONTEXT, rcToReturn=rc)) return
@@ -1206,7 +1196,7 @@ contains
       if(associated(fp%fracX2B)) then
           do i = 1, ngridB
             call c_ESMC_ArrayDeserialize(fp%fracX2B(i), buffer, offset, &
-                attreconflag, inquireflag, localrc)
+                attreconflag, localrc)
             if (ESMF_LogFoundError(localrc, &
                                      ESMF_ERR_PASSTHRU, &
                                      ESMF_CONTEXT, rcToReturn=rc)) return
@@ -1214,7 +1204,7 @@ contains
       endif
       if(fp%online == 1) then
           call c_ESMC_ArrayDeserialize(fp%fracX, buffer, offset, &
-              attreconflag, inquireflag, localrc)
+              attreconflag, localrc)
           if (ESMF_LogFoundError(localrc, &
                                    ESMF_ERR_PASSTHRU, &
                                    ESMF_CONTEXT, rcToReturn=rc)) return
@@ -1222,7 +1212,7 @@ contains
       if(associated(fp%frac2A)) then
           do i = 1, ngridA
             call c_ESMC_ArrayDeserialize(fp%frac2A(i), buffer, offset, &
-                attreconflag, inquireflag, localrc)
+                attreconflag, localrc)
             if (ESMF_LogFoundError(localrc, &
                                      ESMF_ERR_PASSTHRU, &
                                      ESMF_CONTEXT, rcToReturn=rc)) return
@@ -1231,7 +1221,7 @@ contains
       if(associated(fp%frac2B)) then
           do i = 1, ngridB
             call c_ESMC_ArrayDeserialize(fp%frac2B(i), buffer, offset, &
-                attreconflag, inquireflag, localrc)
+                attreconflag, localrc)
             if (ESMF_LogFoundError(localrc, &
                                      ESMF_ERR_PASSTHRU, &
                                      ESMF_CONTEXT, rcToReturn=rc)) return
@@ -1241,7 +1231,7 @@ contains
       if(flag == 1) then
         fp%storeOverlay = .true.
         fp%mesh = ESMF_MeshDeserialize(buffer=buffer, offset=offset, &
-                                 inquireflag=inquireflag, rc=localrc)
+                                 rc=localrc)
         if (ESMF_LogFoundError(localrc, &
                                  ESMF_ERR_PASSTHRU, &
                                  ESMF_CONTEXT, rcToReturn=rc)) return

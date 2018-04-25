@@ -129,8 +129,7 @@ class ArrayBundle : public ESMC_Base {    // inherits from ESMC_Base class
                   ESMC_AttReconcileFlag attreconflag,
                   ESMC_InquireFlag inquireflag) const;
     int deserialize(const char *buffer,int *offset,
-                  ESMC_AttReconcileFlag attreconflag,
-                  ESMC_InquireFlag inquireflag);
+                  ESMC_AttReconcileFlag attreconflag);
     // comms
     static int haloStore(ArrayBundle *arraybundle, RouteHandle **routehandle,
       ESMC_HaloStartRegionFlag halostartregionflag=ESMF_REGION_EXCLUSIVE,

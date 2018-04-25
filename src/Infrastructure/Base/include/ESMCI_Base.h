@@ -123,8 +123,7 @@ class ESMC_Base
                       ESMC_AttReconcileFlag attreconflag,
                       ESMC_InquireFlag inquireflag) const;
     int ESMC_Deserialize(const char *buffer, int *offset,
-                      ESMC_AttReconcileFlag attreconflag,
-                      ESMC_InquireFlag inquireflag);
+                      ESMC_AttReconcileFlag attreconflag);
     static int ESMC_Deserialize(const char *buffer, const int *offset,
                       int *ID, ESMCI::VMId *vmId);
     

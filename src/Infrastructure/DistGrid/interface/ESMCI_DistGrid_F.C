@@ -759,7 +759,6 @@ extern "C" {
 
   void FTN_X(c_esmc_distgriddeserialize)(ESMCI::DistGrid **distgrid,
     const char *buf, int *offset,
-    ESMC_InquireFlag *inquireflag,
     int *rc,
     ESMCI_FortranStrLenArg buf_l){
 #undef  ESMC_METHOD
@@ -769,7 +768,7 @@ extern "C" {
     if (rc!=NULL) *rc = ESMC_RC_NOT_IMPL;
 
     // Deserialize the distgrid
-    *distgrid=ESMCI::DistGrid::deserialize(buf, offset, *inquireflag);
+    *distgrid=ESMCI::DistGrid::deserialize(buf, offset);
 
     // Return success
     if (rc!=NULL) *rc = ESMF_SUCCESS;

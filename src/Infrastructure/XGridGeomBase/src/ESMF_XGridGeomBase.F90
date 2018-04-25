@@ -1069,16 +1069,15 @@ end function ESMF_XGridGeomBaseMatch
 ! !IROUTINE: ESMF_XGridGeomBaseDeserialize - Deserialize a byte stream into a GeomBase
 !
 ! !INTERFACE:
-      function ESMF_XGridGeomBaseDeserialize(buffer, offset, attreconflag, inquireflag, rc)
+      function ESMF_XGridGeomBaseDeserialize(buffer, offset, attreconflag, rc)
 !
 ! !RETURN VALUE:
       type(ESMF_XGridGeomBase) :: ESMF_XGridGeomBaseDeserialize
 !
 ! !ARGUMENTS:
-      character, intent(in)                   :: buffer(0:)
+      character, pointer, dimension(:)        :: buffer
       integer, intent(inout)                  :: offset
       type(ESMF_AttReconcileFlag), intent(in) :: attreconflag
-      type(ESMF_InquireFlag), intent(in)      :: inquireflag
       integer, intent(out), optional          :: rc
 !
 ! !DESCRIPTION:
@@ -1097,7 +1096,6 @@ end function ESMF_XGridGeomBaseMatch
 !           unread byte in the buffer.
 !     \item[attreconflag]
 !           Flag to tell if Attribute serialization is to be done
-!     \item[inquireflag]
 !     \item [{[rc]}]
 !           Return code; equals {\tt ESMF\_SUCCESS} if there are no errors.
 !     \end{description}
@@ -1110,12 +1108,6 @@ end function ESMF_XGridGeomBaseMatch
     ! Initialize return code; assume failure until success is certain
     if (present(rc)) rc = ESMF_RC_NOT_IMPL
 
-    if (inquireflag /= ESMF_NOINQUIRE) then
-      if (ESMF_LogFoundError (ESMF_RC_NOT_IMPL,  &
-          msg="INQUIRY not supported yet", ESMF_CONTEXT,  &
-          rcToReturn=rc)) return
-    end if
-
     ! allocate GeomBase type
     allocate(gbcp, stat=localrc)
     if (ESMF_LogFoundAllocError(localrc, msg="Allocating GeomBase type object", &
@@ -1126,7 +1118,7 @@ end function ESMF_XGridGeomBaseMatch
     call c_ESMC_XGridGeomBaseDeserialize(gbcp%type%type,        &
                                     gbcp%staggerloc%staggerloc, &
                                     gbcp%meshloc%meshloc, &
-                                    buffer, offset, inquireflag, localrc)
+                                    buffer, offset, localrc)
     if (ESMF_LogFoundError(localrc, &
    ESMF_ERR_PASSTHRU, &
    ESMF_CONTEXT, rcToReturn=rc)) return
@@ -1136,7 +1128,7 @@ end function ESMF_XGridGeomBaseMatch
 
      case (ESMF_XGRIDGEOMTYPE_GRID%type) ! Grid
         gbcp%grid=ESMF_GridDeserialize(buffer=buffer, offset=offset,  &
-            attreconflag=attreconflag, inquireflag=inquireflag,  &
+            attreconflag=attreconflag,  &
             rc=localrc)
         if (ESMF_LogFoundError(localrc, &
            ESMF_ERR_PASSTHRU, &
@@ -1144,7 +1136,7 @@ end function ESMF_XGridGeomBaseMatch
 
      case (ESMF_XGRIDGEOMTYPE_MESH%type)
         gbcp%mesh=ESMF_MeshDeserialize(buffer=buffer, &
-            offset=offset, inquireflag=inquireflag,   &
+            offset=offset,   &
             rc=localrc)
         if (ESMF_LogFoundError(localrc, &
            ESMF_ERR_PASSTHRU, &

@@ -3942,15 +3942,14 @@ type(ESMF_KeywordEnforcer), optional:: keywordEnforcer ! must use keywords below
 ! !IROUTINE: ESMF_LocStreamDeserialize - Deserialize a byte stream into a LocStream
 !
 ! !INTERFACE:
-      function ESMF_LocStreamDeserialize(buffer, offset, inquireflag, rc) 
+      function ESMF_LocStreamDeserialize(buffer, offset, rc) 
 !
 ! !RETURN VALUE:
       type(ESMF_LocStream) :: ESMF_LocStreamDeserialize   
 !
 ! !ARGUMENTS:
-      character, intent(in)              :: buffer(0:)
+      character, pointer, dimension(:)   :: buffer
       integer,   intent(inout)           :: offset
-      type(ESMF_InquireFlag), intent(in) :: inquireflag
       integer,   intent(out), optional   :: rc 
 !
 ! !DESCRIPTION:
@@ -3967,8 +3966,6 @@ type(ESMF_KeywordEnforcer), optional:: keywordEnforcer ! must use keywords below
 !           Current read offset in the current buffer.  This will be
 !           updated by this routine and return pointing to the next
 !           unread byte in the buffer.
-!     \item [inquireflag]
-!           Calculate new offset without deserializing from the buffer
 !     \item [{[rc]}]
 !           Return code; equals {\tt ESMF\_SUCCESS} if there are no errors.
 !     \end{description}
@@ -3984,12 +3981,6 @@ type(ESMF_KeywordEnforcer), optional:: keywordEnforcer ! must use keywords below
       localrc = ESMF_RC_NOT_IMPL
       if  (present(rc)) rc = ESMF_RC_NOT_IMPL
 
-      if (inquireflag /= ESMF_NOINQUIRE) then
-        if (ESMF_LogFoundError (ESMF_RC_NOT_IMPL,  &
-            msg="INQUIRY not supported yet", ESMF_CONTEXT,  &
-            rcToReturn=rc)) return
-      end if
-
       ! allocate LocStream type
       allocate(lstypep, stat=localrc)
       if (ESMF_LogFoundAllocError(localrc, msg="Allocating LocStream type object", &
@@ -3998,7 +3989,7 @@ type(ESMF_KeywordEnforcer), optional:: keywordEnforcer ! must use keywords below
       ! Deserialize Base
       attreconflag = ESMF_ATTRECONCILE_OFF
       lstypep%base = ESMF_BaseDeserialize(buffer,  offset, &
-          attreconflag, inquireflag, localrc)
+          attreconflag, localrc)
       if (ESMF_LogFoundError(localrc, &
                                  ESMF_ERR_PASSTHRU, &
                                  ESMF_CONTEXT, rcToReturn=rc)) return
@@ -4011,7 +4002,7 @@ type(ESMF_KeywordEnforcer), optional:: keywordEnforcer ! must use keywords below
 
       ! Deserialize Distgrid
       call c_ESMC_DistGridDeserialize(lstypep%distgrid, buffer, offset,  &
-          inquireflag, localrc)
+          localrc)
       if (ESMF_LogFoundError(localrc, &
                                  ESMF_ERR_PASSTHRU, &
                                  ESMF_CONTEXT, rcToReturn=rc)) return
@@ -4024,7 +4015,7 @@ type(ESMF_KeywordEnforcer), optional:: keywordEnforcer ! must use keywords below
 
       ! Deserialize other locstream items
       call c_ESMC_LocStreamDeserialize(lstypep%indexflag, lstypep%keyCount, &
-              buffer, offset, inquireflag, localrc)
+              buffer, offset, localrc)
       if (ESMF_LogFoundError(localrc, &
                                  ESMF_ERR_PASSTHRU, &
                                  ESMF_CONTEXT, rcToReturn=rc)) return
@@ -4063,14 +4054,14 @@ type(ESMF_KeywordEnforcer), optional:: keywordEnforcer ! must use keywords below
                   lstypep%keyNames(i), &
                   lstypep%keyUnits(i), &
                   lstypep%keyLongNames(i), &
-                  buffer, offset, inquireflag, localrc)
+                  buffer, offset, localrc)
          if (ESMF_LogFoundError(localrc, &
                                  ESMF_ERR_PASSTHRU, &
                                  ESMF_CONTEXT, rcToReturn=rc)) return
 
          ! Deserialize key Array
          call c_ESMC_ArrayDeserialize(lstypep%keys(i), buffer, offset, &
-             attreconflag, inquireflag, localrc)
+             attreconflag, localrc)
          if (ESMF_LogFoundError(localrc, &
                                  ESMF_ERR_PASSTHRU, &
                                  ESMF_CONTEXT, rcToReturn=rc)) return

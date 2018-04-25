@@ -1020,7 +1020,7 @@ module ESMF_BaseMod
 ! !IROUTINE: ESMF_BaseDeserialize - Deserialize from a buffer
 !
 ! !INTERFACE:
-  function ESMF_BaseDeserialize (buffer, offset, attreconflag, inquireflag, rc) 
+  function ESMF_BaseDeserialize (buffer, offset, attreconflag, rc) 
 !
 ! !RETURN VALUE:
     type(ESMF_Base) :: ESMF_BaseDeserialize
@@ -1029,7 +1029,6 @@ module ESMF_BaseMod
     character,       intent(in)    :: buffer(0:)
     integer,         intent(inout) :: offset
     type(ESMF_AttReconcileFlag), intent(in) :: attreconflag
-    type(ESMF_InquireFlag),      intent(in) :: inquireflag
     integer,         intent(out), optional  :: rc
 !
 ! !DESCRIPTION:
@@ -1059,7 +1058,7 @@ module ESMF_BaseMod
 
     call c_ESMC_BaseDeserialize(ESMF_BaseDeserialize,  &
         buffer, offset, &
-        attreconflag, inquireflag,  &
+        attreconflag,  &
         localrc)
     if (ESMF_LogFoundError(localrc, &
         msg="Top level Base Deserialize", &

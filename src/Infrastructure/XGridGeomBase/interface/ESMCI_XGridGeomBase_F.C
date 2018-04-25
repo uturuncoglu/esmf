@@ -87,7 +87,6 @@ extern "C" {
   void FTN_X(c_esmc_xgridgeombasedeserialize)(int *geomtype, int * staggerloc,
                                        int *meshloc,
                                        const char *buffer, int *offset,
-                                       ESMC_InquireFlag *inquireflag,
                                        int *rc,
                                        ESMCI_FortranStrLenArg buffer_l){
 #undef  ESMC_METHOD
@@ -97,10 +96,6 @@ extern "C" {
 
     // Initialize return code; assume routine not implemented
     if (rc) *rc = ESMC_RC_NOT_IMPL;
-
-    if (*inquireflag != ESMF_NOINQUIRE)
-      if (ESMC_LogDefault.MsgFoundError(ESMC_RC_NOT_IMPL, "INQUIRY not supported yet", ESMC_CONTEXT,
-          rc)) return;
 
     // Get data out
     ip = (int *)(buffer + *offset);

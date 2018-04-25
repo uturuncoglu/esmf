@@ -730,7 +730,7 @@ extern "C" {
 
   void FTN_X(c_esmc_arraybundledeserialize)(ESMCI::ArrayBundle **arraybundle,
     const char *buf, int *offset,
-    ESMC_AttReconcileFlag *attreconflag, ESMC_InquireFlag *inquireflag,
+    ESMC_AttReconcileFlag *attreconflag,
     int *rc,
     ESMCI_FortranStrLenArg buf_l){
 #undef  ESMC_METHOD
@@ -740,7 +740,7 @@ extern "C" {
     *arraybundle = new ESMCI::ArrayBundle(-1);  // prevent baseID counter incr.
     // Call into the actual C++ method wrapped inside LogErr handling
     ESMC_LogDefault.MsgFoundError((*arraybundle)->deserialize(
-      buf,offset, *attreconflag, *inquireflag),
+      buf,offset, *attreconflag),
       ESMCI_ERR_PASSTHRU, ESMC_CONTEXT,
       ESMC_NOT_PRESENT_FILTER(rc));
   }

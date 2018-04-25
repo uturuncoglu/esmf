@@ -89,7 +89,6 @@ void FTN_X(c_esmc_fieldbundledeserialize)(
                               int *status,
                               int *field_count, 
                               const char *buffer, int *offset,
-                              ESMC_InquireFlag *inquireflag,
                               int *rc,
                               ESMCI_FortranStrLenArg buffer_l){
 
@@ -98,10 +97,6 @@ void FTN_X(c_esmc_fieldbundledeserialize)(
     // either put the code here, or call into a real C++ function
     ESMC_Status *sp;
     int *ip;
-
-    if (*inquireflag != ESMF_NOINQUIRE)
-      if (ESMC_LogDefault.MsgFoundError(ESMF_RC_NOT_IMPL, "INQUIRY not supported yet", ESMC_CONTEXT,
-          rc)) return;
 
     ip = (int *)(buffer + *offset);
     *status = *ip++;

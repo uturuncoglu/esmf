@@ -114,14 +114,13 @@ void ESMCI_meshcreateelemdistgrid(Mesh **meshpp, int *egrid, int *num_lelems, in
 void ESMCI_meshinfoserialize(int *intMeshFreed,
                 char *buffer, int *length, int *offset,
                 ESMC_InquireFlag *inquireflag,
-                int *localrc,
+                int *rc,
                 ESMCI_FortranStrLenArg buffer_l);
 
 void ESMCI_meshinfodeserialize(int *intMeshFreed,
                 const char *buffer,
                 int *offset,
-                ESMC_InquireFlag *inquireflag,
-                int *localrc,
+                int *rc,
                 ESMCI_FortranStrLenArg buffer_l);
 
 void ESMCI_meshserialize(Mesh **meshpp,
@@ -132,7 +131,6 @@ void ESMCI_meshserialize(Mesh **meshpp,
 
 void ESMCI_meshdeserialize(Mesh **meshpp,
                 const char *buffer, int *offset,
-                ESMC_InquireFlag *inquireflag,
                 int *rc,
                 ESMCI_FortranStrLenArg buffer_l);
 

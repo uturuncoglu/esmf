@@ -3033,7 +3033,6 @@ void c_esmc_grid_get_from_proto(ESMCI::Grid **_grid,
   void FTN_X(c_esmc_griddeserialize)(ESMCI::Grid **grid,
     const char *buf, int *offset,
     ESMC_AttReconcileFlag *attreconflag,
-    ESMC_InquireFlag *inquireflag,
     int *rc,
     ESMCI_FortranStrLenArg buf_l){
 #undef  ESMC_METHOD
@@ -3043,7 +3042,7 @@ void c_esmc_grid_get_from_proto(ESMCI::Grid **_grid,
     *grid = new ESMCI::Grid(-1);  // prevent baseID counter increment
     // Call into the actual C++ method wrapped inside LogErr handling
     ESMC_LogDefault.MsgFoundError((*grid)->deserialize(
-      buf, offset, *attreconflag, *inquireflag),
+      buf, offset, *attreconflag),
       ESMCI_ERR_PASSTHRU,
       ESMC_CONTEXT, ESMC_NOT_PRESENT_FILTER(rc));
   }

@@ -158,8 +158,7 @@ class DELayout : public ESMC_Base {    // inherits from ESMC_Base class
     // serialize() and deserialize()
     int serialize(char *buffer, int *length, int *offset,
       ESMC_InquireFlag inquireflag) const;
-    static DELayout *deserialize(const char *buffer, int *offset,
-      ESMC_InquireFlag inquireflag);
+    static DELayout *deserialize(const char *buffer, int *offset);
     // work queue synchronization methods
     ServiceReply serviceOffer(int de, int *rc);
     int serviceComplete(int de);

@@ -4481,9 +4481,8 @@ if (attrRoot == ESMF_TRUE) {
 //
 // !ARGUMENTS:
       const char *constbuffer, // in - byte stream to read
-      int *offset,             // inout - original offset, updated to point
+      int *offset) {           // inout - original offset, updated to point
                                //       to first free byte after current obj
-      ESMC_InquireFlag inquireflag) { // in - update offset only
 //
 // !DESCRIPTION:
 //    Turn a stream of bytes into an {\tt Attribute} hierarchy.
@@ -4498,10 +4497,6 @@ if (attrRoot == ESMF_TRUE) {
     // Initialize local return code; assume routine not implemented
     localrc = ESMC_RC_NOT_IMPL;
     int rc = ESMC_RC_NOT_IMPL;
-
-    if (inquireflag != ESMF_NOINQUIRE)
-      if (ESMC_LogDefault.MsgFoundError(localrc, "INQUIRY not supported yet", ESMC_CONTEXT,
-          &rc)) return rc;
 
     // Define serialization macros
 #define DESERIALIZE_VAR(bufptr,loff,var,t) \
@@ -4609,7 +4604,7 @@ if (attrRoot == ESMF_TRUE) {
         return ESMF_FAILURE;
       attr->setBase(attrBase);
       attr->parent = this;
-      localrc = attr->ESMC_Deserialize(buffer,&loffset, inquireflag);
+      localrc = attr->ESMC_Deserialize(buffer,&loffset);
       if (ESMC_LogDefault.MsgFoundError(localrc, ESMCI_ERR_PASSTHRU, ESMC_CONTEXT,
             &localrc)) return localrc;
       localrc = AttributeSet(attr);
@@ -4624,7 +4619,7 @@ if (attrRoot == ESMF_TRUE) {
         return ESMF_FAILURE;
       attr->setBase(attrBase);
       attr->parent = this;
-      localrc = attr->ESMC_Deserialize(buffer,&loffset, inquireflag);
+      localrc = attr->ESMC_Deserialize(buffer,&loffset);
       if (ESMC_LogDefault.MsgFoundError(localrc, ESMCI_ERR_PASSTHRU, ESMC_CONTEXT,
             &localrc)) return localrc;
       localrc = AttPackSet(attr);

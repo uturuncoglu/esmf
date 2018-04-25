@@ -341,7 +341,6 @@ void FTN_X(c_esmc_locstreamserialize)(ESMC_IndexFlag *indexflag,
 void FTN_X(c_esmc_locstreamdeserialize)(ESMC_IndexFlag *indexflag,
                 int *keyCount, const char *buffer,
                 int *offset,
-                const ESMC_InquireFlag *inquireflag,
                 int *rc,
                 ESMCI_FortranStrLenArg buffer_l){
 
@@ -350,10 +349,6 @@ void FTN_X(c_esmc_locstreamdeserialize)(ESMC_IndexFlag *indexflag,
 
     // Initialize return code; assume routine not implemented
     if (rc) *rc = ESMC_RC_NOT_IMPL;
-
-    if (*inquireflag != ESMF_NOINQUIRE)
-      if (ESMC_LogDefault.MsgFoundError(ESMC_RC_NOT_IMPL, "INQUIRY not supported yet", ESMC_CONTEXT,
-          rc)) return;
 
     // Get indexflag
     ifp = (ESMC_IndexFlag *)(buffer + *offset);
@@ -451,7 +446,6 @@ void FTN_X(c_esmc_locstreamkeydeserialize)(
                                          char *longName,
                                          const char *buffer,
                                          int *offset,
-                                         const ESMC_InquireFlag *inquireflag,
                                          int *rc,
                                          ESMCI_FortranStrLenArg keyName_l,
                                          ESMCI_FortranStrLenArg units_l,
@@ -464,10 +458,6 @@ void FTN_X(c_esmc_locstreamkeydeserialize)(
 
   // Initialize return code; assume routine not implemented
   if (rc) *rc = ESMC_RC_NOT_IMPL;
-
-  if (*inquireflag != ESMF_NOINQUIRE)
-    if (ESMC_LogDefault.MsgFoundError(ESMC_RC_NOT_IMPL, "INQUIRY not supported yet", ESMC_CONTEXT,
-        rc)) return;
 
   // Get pointer to memory
   ip = (int *)(buffer + *offset);

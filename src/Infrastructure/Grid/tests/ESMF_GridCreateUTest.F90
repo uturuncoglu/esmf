@@ -2259,7 +2259,6 @@ program ESMF_GridCreateUTest
   offset=0
   grid2=ESMF_GridDeserialize(buf, offset,  &
       attreconflag=ESMF_ATTRECONCILE_OFF,  &
-      inquireflag=ESMF_NOINQUIRE,  &
       rc=localrc) 
   if (localrc .ne. ESMF_SUCCESS) rc=ESMF_FAILURE
 

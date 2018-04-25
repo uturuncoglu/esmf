@@ -4741,9 +4741,8 @@ DistGrid *DistGrid::deserialize(
 //
 // !ARGUMENTS:
   const char *buffer,    // in - byte stream to read
-  int *offset,           // inout - original offset, updated to point
+  int *offset) {         // inout - original offset, updated to point
                          // to first free byte after current obj info
-  ESMC_InquireFlag inquireflag) { // in - inquire flag
 //
 // !DESCRIPTION:
 //    Turn a stream of bytes into an object.
@@ -4753,10 +4752,6 @@ DistGrid *DistGrid::deserialize(
   // initialize return code; assume routine not implemented
   int localrc = ESMC_RC_NOT_IMPL;         // local return code
   int rc = ESMC_RC_NOT_IMPL;              // final return code
-
-  if (inquireflag != ESMF_NOINQUIRE)
-    if (ESMC_LogDefault.MsgFoundError(localrc, "INQUIRY not supported yet", ESMC_CONTEXT,
-        &rc)) return NULL;
 
   DistGrid *a = new DistGrid(-1); // prevent baseID counter increment
   int i;
@@ -4774,7 +4769,7 @@ bool debug = false;
   ESMC_AttReconcileFlag attreconflag = ESMC_ATTRECONCILE_OFF;
 if (debug)
     std::cout << ESMC_METHOD << ": Base deserialize, offset = " << *offset << std::endl;
-  localrc = a->ESMC_Base::ESMC_Deserialize(buffer,offset,attreconflag, inquireflag);
+  localrc = a->ESMC_Base::ESMC_Deserialize(buffer,offset,attreconflag);
   if (ESMC_LogDefault.MsgFoundError(localrc, ESMCI_ERR_PASSTHRU, ESMC_CONTEXT,
       &rc)) {
     delete a;
@@ -4783,7 +4778,7 @@ if (debug)
   // Deserialize the DELayout
 if (debug)
     std::cout << ESMC_METHOD << ": DELayout deserialize, offset = " << *offset << std::endl;
-  a->delayout = DELayout::deserialize(buffer, offset, inquireflag);
+  a->delayout = DELayout::deserialize(buffer, offset);
   a->delayoutCreator = true;  // deserialize creates a local object
   // VM is a special case
   a->vm = NULL; // VM must be reset

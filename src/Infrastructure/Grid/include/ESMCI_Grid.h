@@ -416,8 +416,7 @@ template <class TYPE>
   int deserialize(
                 const char *buffer,    // in - byte stream to read
                 int *offset,           // inout - original offset
-                ESMC_AttReconcileFlag attreconflag,  // attreconcile flag
-                ESMC_InquireFlag inquireflag);       // inquire flag
+                ESMC_AttReconcileFlag attreconflag);  // attreconcile flag
 
   // create fully formed grid
  static Grid *create(int nameLen,                                // (in)

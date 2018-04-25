@@ -253,7 +253,6 @@ extern "C" {
       const char *buf,          // in - really a byte stream
       int *offset,              // in/out - current offset in the stream
       ESMC_AttReconcileFlag *attreconflag, // in - attreconcile flag
-      ESMC_InquireFlag *inquireflag,       // in - inquire-only flag
       int *rc,                  // out - return code
       ESMCI_FortranStrLenArg buf_l) { // hidden/in - buffer length
 // 
@@ -281,7 +280,7 @@ extern "C" {
     return;
   }
 
-  *rc = (*base)->ESMC_Deserialize(buf, offset, *attreconflag, *inquireflag);
+  *rc = (*base)->ESMC_Deserialize(buf, offset, *attreconflag);
 
   return;
 

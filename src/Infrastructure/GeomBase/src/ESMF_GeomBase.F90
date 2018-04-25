@@ -1431,16 +1431,15 @@ end subroutine ESMF_GeomBaseGet
 ! !IROUTINE: ESMF_GeomBaseDeserialize - Deserialize a byte stream into a GeomBase
 !
 ! !INTERFACE:
-      function ESMF_GeomBaseDeserialize(buffer, offset, attreconflag, inquireflag, rc)
+      function ESMF_GeomBaseDeserialize(buffer, offset, attreconflag, rc)
 !
 ! !RETURN VALUE:
       type(ESMF_GeomBase) :: ESMF_GeomBaseDeserialize
 !
 ! !ARGUMENTS:
-      character, intent(in) :: buffer(0:)
+      character, pointer, dimension(:) :: buffer
       integer, intent(inout) :: offset
       type(ESMF_AttReconcileFlag), intent(in) :: attreconflag
-      type(ESMF_InquireFlag), intent(in) :: inquireflag
       integer, intent(out), optional :: rc
 !
 ! !DESCRIPTION:
@@ -1459,8 +1458,6 @@ end subroutine ESMF_GeomBaseGet
 !           unread byte in the buffer.
 !     \item[attreconflag]
 !           Flag to tell if Attribute deserialization is to be done
-!     \item[inquireflag]
-!           Flag to tell if deserialization is to be done, or to just adjust
 !     \item [{[rc]}]
 !           Return code; equals {\tt ESMF\_SUCCESS} if there are no errors.
 !     \end{description}
@@ -1486,12 +1483,6 @@ logical, parameter :: ENABLE_SHARED_GRID_SUPPORT = .false.
     ! Initialize return code; assume failure until success is certain
     if (present(rc)) rc = ESMF_RC_NOT_IMPL
 
-    if (inquireflag /= ESMF_NOINQUIRE) then
-      if (ESMF_LogFoundError (ESMF_RC_NOT_IMPL,  &
-          msg="INQUIRY not supported yet", ESMF_CONTEXT,  &
-          rcToReturn=rc)) return
-    end if
-
     ! allocate GeomBase type
     allocate(gbcp, stat=localrc)
     if (ESMF_LogFoundAllocError(localrc, msg="Allocating GeomBase type object", &
@@ -1503,7 +1494,7 @@ logical, parameter :: ENABLE_SHARED_GRID_SUPPORT = .false.
                                     gbcp%meshloc%meshloc, &
                                     gbcp%xgridside, &
                                     gbcp%xgridIndex, &
-                                    buffer, offset, inquireflag,  &
+                                    buffer, offset,  &
                                     localrc)
     if (ESMF_LogFoundError(localrc, &
                                  ESMF_ERR_PASSTHRU, &
@@ -1515,7 +1506,7 @@ logical, parameter :: ENABLE_SHARED_GRID_SUPPORT = .false.
        case (ESMF_GEOMTYPE_GRID%type) ! Grid
 if (.not. ENABLE_SHARED_GRID_SUPPORT) then
           gbcp%grid=ESMF_GridDeserialize(buffer=buffer, &
-              offset=offset, attreconflag=attreconflag, inquireflag=inquireflag,  &
+              offset=offset, attreconflag=attreconflag,  &
               rc=localrc)
           if (ESMF_LogFoundError(localrc, &
                                  ESMF_ERR_PASSTHRU, &
@@ -1570,7 +1561,7 @@ call ESMF_GridPrint (gbcp%grid)
           else
             if (.true.) print *, ESMF_METHOD, ': Existing Grid not found in PET', mypet, '. Deserializing new one.'
             gbcp%grid=ESMF_GridDeserialize(buffer=buffer, &
-                offset=offset, attreconflag=attreconflag, inquireflag=inquireflag,  &
+                offset=offset, attreconflag=attreconflag,  &
                 rc=localrc)
             if (ESMF_LogFoundError(localrc, &
                                    ESMF_ERR_PASSTHRU, &
@@ -1580,7 +1571,7 @@ end if
 
        case  (ESMF_GEOMTYPE_MESH%type)
           gbcp%mesh=ESMF_MeshDeserialize(buffer=buffer, &
-              offset=offset, inquireflag=inquireflag, rc=localrc)
+              offset=offset, rc=localrc)
           if (ESMF_LogFoundError(localrc, &
                                  ESMF_ERR_PASSTHRU, &
                                  ESMF_CONTEXT, rcToReturn=rc)) return
@@ -1588,14 +1579,14 @@ end if
 
        case  (ESMF_GEOMTYPE_LOCSTREAM%type)
           gbcp%locstream=ESMF_LocStreamDeserialize(buffer=buffer, &
-              offset=offset, inquireflag=inquireflag, rc=localrc)
+              offset=offset, rc=localrc)
           if (ESMF_LogFoundError(localrc, &
                                  ESMF_ERR_PASSTHRU, &
                                  ESMF_CONTEXT, rcToReturn=rc)) return
 
        case  (ESMF_GEOMTYPE_XGRID%type)
           gbcp%xgrid=ESMF_XGridDeserialize(buffer=buffer, &
-              offset=offset, attreconflag=attreconflag, inquireflag=inquireflag,  &
+              offset=offset, attreconflag=attreconflag,  &
               rc=localrc)
           if (ESMF_LogFoundError(localrc, &
                                  ESMF_ERR_PASSTHRU, &

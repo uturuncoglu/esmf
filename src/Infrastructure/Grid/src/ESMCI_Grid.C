@@ -5813,9 +5813,7 @@ int Grid::deserialize(
 // !ARGUMENTS:
   const char *buffer,   // in - byte stream to read
   int *offset,          // inout - original offset 
-  ESMC_AttReconcileFlag attreconflag,  // attreconcile flag
-  ESMC_InquireFlag inquireflag)        // inquire flag
-{
+  ESMC_AttReconcileFlag attreconflag) {  // attreconcile flag
 //
 // !DESCRIPTION:
 //    Turn a stream of bytes into an object.
@@ -5849,15 +5847,11 @@ int Grid::deserialize(
   loff += (s1*s2*sizeof(t));  \
   }
 
-  if (inquireflag != ESMF_NOINQUIRE)
-    if (ESMC_LogDefault.MsgFoundError(localrc, "INQUIRY not supported yet", ESMC_CONTEXT,
-        &rc)) return rc;
-
   // get localoffset
   loffset=*offset;
 
   // First, deserialize the base class
-  localrc = ESMC_Base::ESMC_Deserialize(buffer, &loffset, attreconflag, inquireflag);
+  localrc = ESMC_Base::ESMC_Deserialize(buffer, &loffset, attreconflag);
   if (ESMC_LogDefault.MsgFoundError(localrc, ESMCI_ERR_PASSTHRU, ESMC_CONTEXT,
      &rc)) return rc;
   
@@ -5955,7 +5949,7 @@ int Grid::deserialize(
       for (int c=0; c<dimCount; c++) {
         if (coordExists[s][c]) {
           coordArrayList[s][c]=new Array(-1); // prevent baseID counter increment
-          coordArrayList[s][c]->deserialize(buffer, &loffset, attreconflag, inquireflag);
+          coordArrayList[s][c]->deserialize(buffer, &loffset, attreconflag);
         } else {
           coordArrayList[s][c]=ESMC_NULL_POINTER;
         }
@@ -5986,7 +5980,7 @@ int Grid::deserialize(
       for (int i=0; i<ESMC_GRIDITEM_COUNT; i++) {
         if (itemExists[s][i]) {
           itemArrayList[s][i]=new Array(-1);  // prevent baseID counter increment
-          itemArrayList[s][i]->deserialize(buffer, &loffset, attreconflag, inquireflag);
+          itemArrayList[s][i]->deserialize(buffer, &loffset, attreconflag);
         } else {
           itemArrayList[s][i]=ESMC_NULL_POINTER;
         }
@@ -6014,21 +6008,21 @@ int Grid::deserialize(
     staggerDistgridList=new DistGrid *[staggerLocCount];
     for (int s=0; s<staggerLocCount; s++) {
       if (staggerDistgridExists[s]) {
-        staggerDistgridList[s]=DistGrid::deserialize(buffer, &loffset, inquireflag);
+        staggerDistgridList[s]=DistGrid::deserialize(buffer, &loffset);
       } else {
         staggerDistgridList[s]=ESMC_NULL_POINTER;
       }
     }
     
     // Deserialize the DistGrid
-    distgrid = DistGrid::deserialize(buffer, &loffset, inquireflag);
+    distgrid = DistGrid::deserialize(buffer, &loffset);
     
     // make sure loffset is aligned correctly
     r=loffset%8;
     if (r!=0) loffset += 8-r;
     
     // Deserialize the DistGrid
-    distgrid_wo_poles = DistGrid::deserialize(buffer, &loffset, inquireflag);  
+    distgrid_wo_poles = DistGrid::deserialize(buffer, &loffset);  
 
     // free coordExists
     _free2D<bool>(&coordExists);
@@ -6054,7 +6048,7 @@ int Grid::deserialize(
         if (r!=0) loffset += 8-r;
         
         // Deserialize the DistGrid
-        proto->distgrid = DistGrid::deserialize(buffer, &loffset, inquireflag);
+        proto->distgrid = DistGrid::deserialize(buffer, &loffset);
     }
   }
   

@@ -369,8 +369,7 @@ namespace ESMCI {
       ESMC_AttReconcileFlag attreconflag,
       ESMC_InquireFlag inquireflag) const;
     int deserialize(const char *buffer, int *offset,
-      ESMC_AttReconcileFlag attreconflag,
-      ESMC_InquireFlag inquireflag);
+      ESMC_AttReconcileFlag attreconflag);
     // comms
     int gather(void *array, ESMC_TypeKind_Flag typekind, int rank,
       int *counts, int *tile, int rootPet, VM *vm);

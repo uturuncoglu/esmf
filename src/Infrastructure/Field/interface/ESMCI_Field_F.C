@@ -228,14 +228,15 @@ void FTN_X(c_esmc_fieldserialize)(
 void FTN_X(c_esmc_fielddeserialize)(
                 ESMC_Status *status,
                 ESMC_Status *iostatus,
-                int * dimCount,
-                int * gridToFieldMap,
-                int * ungriddedLBound,
-                int * ungriddedUBound,
-                int * totalLWidth,
-                int * totalUWidth,
-                const char *buffer, int *offset,
-                ESMC_InquireFlag *inquireflag, int *rc,
+                const int * dimCount,
+                const int * gridToFieldMap,
+                const int * ungriddedLBound,
+                const int * ungriddedUBound,
+                const int * totalLWidth,
+                const int * totalUWidth,
+                const char *buffer,
+                int *offset,
+                int *rc,
                 ESMCI_FortranStrLenArg buffer_l){
 
 #undef  ESMC_METHOD
@@ -244,10 +245,6 @@ void FTN_X(c_esmc_fielddeserialize)(
 
     // Initialize return code; assume routine not implemented
     if (rc) *rc = ESMC_RC_NOT_IMPL;
-
-    if (*inquireflag != ESMF_NOINQUIRE)
-      if (ESMC_LogDefault.MsgFoundError(ESMC_RC_NOT_IMPL, "INQUIRY not supported yet", ESMC_CONTEXT,
-          rc)) return;
 
     // either put the code here, or call into a real C++ function
     ESMC_Status *sp;

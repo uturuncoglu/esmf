@@ -89,7 +89,7 @@ void FTN_X(c_esmc_statedeserialize)(
                              int *st, 
                              int *datacount, 
                              const char *buffer, int *offset,
-                             ESMC_InquireFlag *inquireflag, int *rc,
+                             int *rc,
                              ESMCI_FortranStrLenArg buffer_l){
 
 #undef  ESMC_METHOD
@@ -171,7 +171,7 @@ void FTN_X(c_esmc_stateitemserialize)(int *otype,
 void FTN_X(c_esmc_stateitemdeserialize)(int *otype, 
                                char *namep, 
                                char *buffer, int *offset,
-                               ESMC_InquireFlag *inquireflag, int *rc,
+                               int *rc,
                                ESMCI_FortranStrLenArg clen,
                                ESMCI_FortranStrLenArg buffer_l) {
 

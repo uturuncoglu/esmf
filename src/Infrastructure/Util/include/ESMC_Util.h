@@ -163,9 +163,22 @@ enum ESMC_StaggerLoc {ESMC_STAGGERLOC_INVALID=-2,
 enum ESMC_TypeCanary {
                     // Generally used in serialize/deserialize methods
                     // to detect alignment problems
-                    ESMC_TYPECANARY_BASE=1366601,
+                    ESMC_TYPECANARY_ARRAY=1366601,
+                    ESMC_TYPECANARY_ARRAYBUNDLE,
                     ESMC_TYPECANARY_ATTRIBUTE,
-                    ESMC_TYPECANARY_GRID};
+                    ESMC_TYPECANARY_BASE,
+                    ESMC_TYPECANARY_DELAYOUT,
+                    ESMC_TYPECANARY_DISTGRID,
+                    ESMC_TYPECANARY_FIELD,
+                    ESMC_TYPECANARY_FIELDBUNDLE,
+                    ESMC_TYPECANARY_GEOMBASE,
+                    ESMC_TYPECANARY_GRID,
+                    ESMC_TYPECANARY_LOCSTREAM,
+                    ESMC_TYPECANARY_LOCSTREAMKEY,
+                    ESMC_TYPECANARY_MESH,
+                    ESMC_TYPECANARY_STATE,
+                    ESMC_TYPECANARY_XGRID,
+                    ESMC_TYPECANARY_XGRIDGEOMBASE};
 
 enum ESMC_TypeKind_Flag {ESMC_TYPEKIND_I1=1,
                     ESMC_TYPEKIND_I2,

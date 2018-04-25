@@ -67,7 +67,7 @@
       type(ESMF_VMId) :: vmid, vmid_inq, vmid_new, vmid_new2
       character, allocatable   :: buffer(:)
       integer :: buff_size
-      integer :: offset1, offset2, offset3, offset4
+      integer :: offset1, offset2, offset3
       logical :: tf
 #endif
 
@@ -337,7 +337,7 @@
       ! part of the supported ESMF user API!
       offset3 = 0
       base2 = ESMF_BaseDeserialize (buffer, offset3, &
-          attreconflag, inquireflag=ESMF_NOINQUIRE, rc=rc)
+          attreconflag, rc=rc)
       write(name, *) "ESMF_BaseDeserialize - perform deserialization"
       write(failMsg, *) "rc =", rc, ", offset =", offset3
       call ESMF_Test((rc == ESMF_SUCCESS), &
@@ -351,29 +351,6 @@
       write(failMsg, *) 'offset', offset2, ' /=', offset3
       call ESMF_Test(offset2 == offset3, &
                       name, failMsg, result, ESMF_SRCLINE)
-
-#if 0
-      !EX_xxxUTest
-      ! test doing a offset-only deserialize.
-      ! WARNING: This is testing an INTERNAL method.  It is NOT
-      ! part of the supported ESMF user API!
-      offset4 = 0
-      base2 = ESMF_BaseDeserialize (buffer, offset4, &
-          attreconflag, inquireflag=ESMF_INQUIREONLY, rc=rc)
-      write(name, *) "ESMF_BaseDeserialize - perform offset-only deserialization"
-      write(failMsg, *) "rc =", rc, ", offset =", offset4
-      call ESMF_Test((rc == ESMF_SUCCESS), &
-                      name, failMsg, result, ESMF_SRCLINE)
-
-      !EX_xxxUTest
-      ! Compare actual deserialized offset with offset-only deserialized offset.
-      ! WARNING: This is testing an INTERNAL method.  It is NOT
-      ! part of the supported ESMF user API!
-      write(name, *) "Compare real vs offset-only deserialize offsets"
-      write(failMsg, *) 'offset', offset3, ' /=', offset4
-      call ESMF_Test(offset3 == offset4, &
-                      name, failMsg, result, ESMF_SRCLINE)
-#endif
 
       !EX_UTest
       ! Create VMId for inquiry

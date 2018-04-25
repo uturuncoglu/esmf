@@ -118,15 +118,14 @@
                          int *spatialDim, int *parametricDim,
                          char *buffer, int *length, int *offset,
                          ESMC_InquireFlag *inquireflag,
-                         int *localrc,
+                         int *rc,
                          ESMCI_FortranStrLenArg buffer_l);
 
 
     static void meshinfodeserialize(int *intMeshFreed,
                          int *spatialDim, int *parametricDim,
                          const char *buffer, int *offset,
-                         ESMC_InquireFlag *inquireflag,
-                         int *localrc,
+                         int *rc,
                          ESMCI_FortranStrLenArg buffer_l);
 
     void meshserialize(char *buffer, int *length, int *offset,
@@ -136,8 +135,7 @@
 
 
     static MeshCap *meshdeserialize(const char *buffer, int *offset,
-                         ESMC_InquireFlag *inquireflag,
-                         int *rc,
+                          int *rc,
                          ESMCI_FortranStrLenArg buffer_l);
 
     void meshfindpnt(int *unmappedaction, int *dimPnts, int *numPnts,

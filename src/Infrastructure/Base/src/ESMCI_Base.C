@@ -618,8 +618,7 @@ static const char *const version = "$Id$";
 // !ARGUMENTS:
       const char *buffer,    // in - byte stream to read
       int *offset,           // inout - original offset
-      ESMC_AttReconcileFlag attreconflag,  // in - attreconcile flag
-      ESMC_InquireFlag inquireflag) {      // in - inquire flag
+      ESMC_AttReconcileFlag attreconflag) {  // in - attreconcile flag
 //
 // !DESCRIPTION:
 //    Turn a stream of bytes into an object.
@@ -635,10 +634,6 @@ static const char *const version = "$Id$";
 
     // Initialize local return code; assume routine not implemented
     localrc = ESMC_RC_NOT_IMPL;
-
-    if (inquireflag != ESMF_NOINQUIRE)
-      if (ESMC_LogDefault.MsgFoundError(localrc, "INQUIRY not supported yet", ESMC_CONTEXT,
-          &localrc)) return localrc;
 
     int r=*offset%8;
     if (r!=0) *offset += 8-r;  // alignment
@@ -696,7 +691,7 @@ static const char *const version = "$Id$";
       if (*offset%8 != 0)
         *offset += 8 - *offset%8;
       printf ("%s: calling ESMC_Deserialize with buffer pointer = %p\n", ESMC_METHOD, buffer);
-      localrc = root->ESMC_Deserialize(buffer,offset, inquireflag);
+      localrc = root->ESMC_Deserialize(buffer,offset);
       if (ESMC_LogDefault.MsgFoundError(localrc, ESMCI_ERR_PASSTHRU, 
             ESMC_CONTEXT, &localrc)) return localrc;
     }

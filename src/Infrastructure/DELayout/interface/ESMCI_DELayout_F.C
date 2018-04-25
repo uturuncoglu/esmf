@@ -405,14 +405,14 @@ extern "C" {
   void FTN_X(c_esmc_delayoutdeserialize)(ESMCI::DELayout **delayout,
     const char *buf,
     int *offset,
-    ESMC_InquireFlag *inquireflag, int *rc,
+    int *rc,
     ESMCI_FortranStrLenArg buf_l){
 #undef  ESMC_METHOD
 #define ESMC_METHOD "c_esmc_delayoutdeserialize"
     // Initialize return code; assume routine not implemented
     if (rc!=NULL) *rc = ESMC_RC_NOT_IMPL;
     int localrc = ESMC_RC_NOT_IMPL;
-    (*delayout) = ESMCI::DELayout::deserialize(buf, offset, *inquireflag);
+    (*delayout) = ESMCI::DELayout::deserialize(buf, offset);
     if (*delayout == NULL) 
       localrc = ESMC_RC_INTNRL_BAD;
     else

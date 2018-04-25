@@ -1103,7 +1103,7 @@ contains
             print *, "deserializing FieldBundle, offset =", buffer_offset
           end if
           fieldbundle = ESMF_FieldBundleDeserialize(obj_buffer, buffer_offset, &
-              attreconflag=attreconflag, inquireflag=ESMF_NOINQUIRE,  &
+              attreconflag=attreconflag,  &
               rc=localrc)
           if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, &
               ESMF_CONTEXT,  &
@@ -1126,7 +1126,7 @@ contains
             print *, "deserializing Field, offset =", buffer_offset
           end if
           field = ESMF_FieldDeserialize(obj_buffer, buffer_offset, &
-              attreconflag=attreconflag, inquireflag=ESMF_NOINQUIRE,  &
+              attreconflag=attreconflag,  &
               rc=localrc)
           if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, &
               ESMF_CONTEXT,  &
@@ -1154,7 +1154,7 @@ contains
                 ": deserializing Array, offset =", buffer_offset
           end if
           call c_ESMC_ArrayDeserialize(array, obj_buffer, buffer_offset, &
-              attreconflag, ESMF_NOINQUIRE, localrc)
+              attreconflag, localrc)
           if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, &
               ESMF_CONTEXT,  &
               rcToReturn=rc)) return
@@ -1182,7 +1182,7 @@ contains
             print *, "deserializing ArrayBundle, offset =", buffer_offset
           end if
           call c_ESMC_ArrayBundleDeserialize(arraybundle, obj_buffer, &
-              buffer_offset, attreconflag, ESMF_NOINQUIRE, localrc)
+              buffer_offset, attreconflag, localrc)
           if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, &
               ESMF_CONTEXT,  &
               rcToReturn=rc)) return
@@ -1210,7 +1210,7 @@ contains
             print *, "deserializing nested State, offset =", buffer_offset
           end if
           substate = ESMF_StateDeserialize(vm, obj_buffer, buffer_offset, &
-              attreconflag=attreconflag, inquireflag=ESMF_NOINQUIRE,  &
+              attreconflag=attreconflag,  &
               rc=localrc)
           if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, &
               ESMF_CONTEXT,  &
@@ -1410,7 +1410,7 @@ contains
     do, i=0, npets-1
       if (i /= mypet) then
         base_temp = ESMF_BaseDeserialize (buffer_recv, offset=recv_offsets(i),  &
-            attreconflag=ESMF_ATTRECONCILE_ON, inquireflag=ESMF_NOINQUIRE,  &
+            attreconflag=ESMF_ATTRECONCILE_ON,  &
             rc=localrc)
         if (ESMF_LogFoundError(localrc, &
             ESMF_ERR_PASSTHRU, &

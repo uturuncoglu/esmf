@@ -215,13 +215,13 @@ extern "C" void FTN_X(c_esmc_meshcreateelemdistgrid)(MeshCap **meshpp, int *egri
 extern "C" void FTN_X(c_esmc_meshinfoserialize)(int *intMeshFreed,
                 int *spatialDim, int *parametricDim,
                 char *buffer, int *length, int *offset,
-                ESMC_InquireFlag *inquireflag, int *localrc,
+                ESMC_InquireFlag *inquireflag, int *rc,
                 ESMCI_FortranStrLenArg buffer_l){
 
   MeshCap::meshinfoserialize(intMeshFreed,
                              spatialDim, parametricDim,
                              buffer, length, offset,
-                             inquireflag, localrc,
+                             inquireflag, rc,
                              buffer_l);
 
 }
@@ -230,13 +230,12 @@ extern "C" void FTN_X(c_esmc_meshinfoserialize)(int *intMeshFreed,
 extern "C" void FTN_X(c_esmc_meshinfodeserialize)(int *intMeshFreed,
                              int *spatialDim, int *parametricDim,
                              const char *buffer, int *offset,
-                             ESMC_InquireFlag *inquireflag,
-                             int *localrc,
+                             int *rc,
                              ESMCI_FortranStrLenArg buffer_l){
 
   MeshCap::meshinfodeserialize(intMeshFreed,
                              spatialDim, parametricDim,
-                             buffer, offset, inquireflag, localrc,
+                             buffer, offset, rc,
                              buffer_l);
 }
 
@@ -255,11 +254,10 @@ extern "C" void FTN_X(c_esmc_meshserialize)(MeshCap **meshpp,
 
 extern "C" void FTN_X(c_esmc_meshdeserialize)(MeshCap **meshpp,
                              const char *buffer, int *offset,
-                             ESMC_InquireFlag *inquireflag,
                              int *rc,
                              ESMCI_FortranStrLenArg buffer_l){
 
-  *meshpp=MeshCap::meshdeserialize(buffer, offset, inquireflag, rc,
+  *meshpp=MeshCap::meshdeserialize(buffer, offset, rc,
                              buffer_l);
 }
 

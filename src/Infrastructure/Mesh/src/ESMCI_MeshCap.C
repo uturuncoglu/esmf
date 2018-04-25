@@ -870,7 +870,6 @@ void MeshCap::meshinfoserialize(int *intMeshFreed,
 void MeshCap::meshinfodeserialize(int *intMeshFreed,
                           int *spatialDim, int *parametricDim,
                           const char *buffer, int *offset,
-                          ESMC_InquireFlag *inquireflag,
                           int *rc,
                           ESMCI_FortranStrLenArg buffer_l){
 #undef ESMC_METHOD
@@ -882,7 +881,6 @@ void MeshCap::meshinfodeserialize(int *intMeshFreed,
   ESMCI_meshinfodeserialize(intMeshFreed,
                           spatialDim, parametricDim,
                           buffer, offset,
-                          inquireflag,
                           rc,
                           buffer_l);
 }
@@ -910,7 +908,6 @@ void MeshCap::meshserialize(char *buffer, int *length, int *offset,
 }
 
 MeshCap *MeshCap::meshdeserialize(const char *buffer, int *offset,
-                              ESMC_InquireFlag *inquireflag,
                               int *rc,
                               ESMCI_FortranStrLenArg buffer_l){
 #undef ESMC_METHOD
@@ -924,7 +921,7 @@ MeshCap *MeshCap::meshdeserialize(const char *buffer, int *offset,
     int localrc;
 
     ESMCI_meshdeserialize(&mesh,
-                          buffer, offset, inquireflag, &localrc,
+                          buffer, offset, &localrc,
                           buffer_l);
     if (ESMC_LogDefault.MsgFoundError(localrc, ESMCI_ERR_PASSTHRU,
                                       ESMC_CONTEXT, rc)) return NULL;

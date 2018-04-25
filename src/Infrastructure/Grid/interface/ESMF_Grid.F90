@@ -22186,16 +22186,15 @@ type(ESMF_KeywordEnforcer), optional:: keywordEnforcer ! must use keywords below
 !
 ! !INTERFACE:
       function ESMF_GridDeserialize(buffer, offset, &
-                                    attreconflag, inquireflag, rc)
+                                    attreconflag, rc)
 !
 ! !RETURN VALUE:
       type(ESMF_Grid) :: ESMF_GridDeserialize
 !
 ! !ARGUMENTS:
-      character, intent(in)  :: buffer(0:)
+      character, pointer, dimension(:)  :: buffer
       integer, intent(inout) :: offset
       type(ESMF_AttReconcileFlag), intent(in) :: attreconflag
-      type(ESMF_InquireFlag), intent(in)      :: inquireflag
       integer, intent(out), optional :: rc
 !
 ! !DESCRIPTION:
@@ -22214,9 +22213,6 @@ type(ESMF_KeywordEnforcer), optional:: keywordEnforcer ! must use keywords below
 !           unread byte in the buffer.
 !     \item[attreconflag]
 !           Flag to tell if Attribute serialization is to be done
-!     \item[inquireflag]
-!           Flag to tell if deserialization is to be done (ESMF_NOINQUIRE)
-!           or if this is simply a size inquiry (ESMF_INQUIREONLY)
 !     \item [{[rc]}]
 !           Return code; equals {\tt ESMF\_SUCCESS} if there are no errors.
 !     \end{description}
@@ -22232,7 +22228,7 @@ type(ESMF_KeywordEnforcer), optional:: keywordEnforcer ! must use keywords below
 
       ! Call into C++ to Deserialize the Grid
       call c_ESMC_GridDeserialize(grid%this, buffer, offset, &
-        attreconflag, inquireflag, localrc)
+        attreconflag, localrc)
       if (ESMF_LogFoundError(localrc, &
                                  ESMF_ERR_PASSTHRU, &
                                  ESMF_CONTEXT, rcToReturn=rc)) return

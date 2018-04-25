@@ -118,7 +118,6 @@ void FTN_X(c_esmc_xgriddeserialize)(
                 int * s, 
                 int * ngridA, int * ngridB, int * online, int * flag,
                 const char *buffer, int *offset,
-                ESMC_InquireFlag inquireflag,
                 int *rc,
                 ESMCI_FortranStrLenArg buffer_l){
 #undef ESMC_METHOD
@@ -128,10 +127,6 @@ void FTN_X(c_esmc_xgriddeserialize)(
 
     // Initialize return code; assume routine not implemented
     if (rc) *rc = ESMC_RC_NOT_IMPL;
-
-    if (inquireflag != ESMF_NOINQUIRE)
-      if (ESMC_LogDefault.MsgFoundError(ESMC_RC_NOT_IMPL, "INQUIRY not supported yet", ESMC_CONTEXT,
-          rc)) return;
 
     char * ptr = (char *)(buffer + *offset);
 #define SSIZE 4

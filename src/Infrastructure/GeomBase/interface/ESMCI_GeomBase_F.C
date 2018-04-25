@@ -89,7 +89,6 @@ extern "C" {
   void FTN_X(c_esmc_geombasedeserialize)(int *geomtype, int * staggerloc,
                                        int *meshloc, int *xgridside, int *xgridindex,
                                        const char *buffer, int *offset, int *rc,
-                                       ESMC_InquireFlag *inquireflag,
                                        ESMCI_FortranStrLenArg buffer_l){
 
     int *ip;

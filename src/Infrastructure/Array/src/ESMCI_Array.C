@@ -3762,8 +3762,7 @@ int Array::deserialize(
 // !ARGUMENTS:
   const char *buffer,    // in - byte stream to read
   int *offset,           // inout - original offset
-  ESMC_AttReconcileFlag attreconflag,  // in - attreconcile flag
-  ESMC_InquireFlag inquireflag) {      // in - inquiry flag
+  ESMC_AttReconcileFlag attreconflag) {  // in - attreconcile flag
 //
 // !DESCRIPTION:
 //    Turn a stream of bytes into an object.
@@ -3782,23 +3781,19 @@ int Array::deserialize(
   int r;
 bool debug = false;
 
-  if (inquireflag != ESMF_NOINQUIRE)
-    if (ESMC_LogDefault.MsgFoundError(localrc, "INQUIRY not supported yet", ESMC_CONTEXT,
-        &rc)) return rc;
-
   // Deserialize the Base class
   r=*offset%8;
   if (r!=0) *offset += 8-r;  // alignment
 if (debug)
     std::cout << ESMC_METHOD << ": calling Base deserialize, offset = " << *offset << std::endl;
-  localrc = ESMC_Base::ESMC_Deserialize(buffer, offset, attreconflag, inquireflag);
+  localrc = ESMC_Base::ESMC_Deserialize(buffer, offset, attreconflag);
   if (ESMC_LogDefault.MsgFoundError(localrc, ESMCI_ERR_PASSTHRU, ESMC_CONTEXT,
     &rc)) return rc;
   ESMC_Base::ESMC_Print();
   // Deserialize the DistGrid
 if (debug)
     std::cout << ESMC_METHOD << ": calling DistGrid deserialize, offset = " << *offset << std::endl;
-  distgrid = DistGrid::deserialize(buffer, offset, inquireflag);
+  distgrid = DistGrid::deserialize(buffer, offset);
   if (!distgrid)
     if (ESMC_LogDefault.MsgFoundError(ESMF_RC_INTNRL_BAD, ESMCI_ERR_PASSTHRU, ESMC_CONTEXT,
         &rc)) return rc;
