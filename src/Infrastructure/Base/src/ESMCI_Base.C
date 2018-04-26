@@ -640,9 +640,13 @@ static const char *const version = "$Id$";
 
     ip = (int *)(buffer + *offset);
     int canary = *ip++;
-    if (canary != ESMC_TYPECANARY_BASE)
-      if (ESMC_LogDefault.MsgFoundError(ESMF_RC_INTNRL_BAD, "bad canary value",
+    if (canary != ESMC_TYPECANARY_BASE) {
+      std::stringstream msg;
+      msg << "bad canary value: " << canary << ", offset = " << offset;
+      if (ESMC_LogDefault.MsgFoundError(ESMF_RC_INTNRL_BAD, msg,
           ESMC_CONTEXT, &localrc)) return localrc;
+    }
+
     ID = *ip++;
     refCount = *ip++;  
     classID = *ip++;
@@ -741,9 +745,12 @@ static const char *const version = "$Id$";
 
     ip = (int *)(buffer + offset_local);
     int canary = *ip++;
-    if (canary != ESMC_TYPECANARY_BASE)
-      if (ESMC_LogDefault.MsgFoundError(ESMF_RC_INTNRL_BAD, "bad canary value",
+    if (canary != ESMC_TYPECANARY_BASE) {
+      std::stringstream msg;
+      msg << "bad canary value: " << canary;
+      if (ESMC_LogDefault.MsgFoundError(ESMF_RC_INTNRL_BAD, msg,
           ESMC_CONTEXT, &localrc)) return localrc;
+    }
 
     *ID = *ip;
     ip+=3;
