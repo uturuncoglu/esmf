@@ -5890,7 +5890,6 @@ call ESMF_LogWrite("Aft ESMF_IOWrite", ESMF_LOGMSG_INFO, rc=rc)
       integer :: localrc, status             ! Error status, allocation status
       integer :: i, fieldCount
       type(ESMF_FieldBundleType), pointer :: bp   ! fieldbundle type
-      type(ESMF_AttReconcileFlag) :: lattreconflag
       type(ESMF_Grid) :: grid
       type(ESMF_GeomType_Flag) :: geomtype
       type(ESMF_Field), pointer :: flist(:)
@@ -5970,7 +5969,7 @@ call ESMF_LogWrite("Aft ESMF_IOWrite", ESMF_LOGMSG_INFO, rc=rc)
 
       do i = 1, fieldCount
         flist(i) = ESMF_FieldDeserialize(buffer, offset, &
-                                    attreconflag=lattreconflag,  &
+                                    attreconflag=attreconflag,  &
                                     rc=localrc)
         if (ESMF_LogFoundError(localrc, &
           ESMF_ERR_PASSTHRU, &
