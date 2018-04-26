@@ -4509,7 +4509,6 @@ if (attrRoot == ESMF_TRUE) {
   loff += s; \
 
     char *buffer = const_cast<char *>(constbuffer);
-    printf("%s: buffer pointer = %p, %p\n", ESMC_METHOD, buffer, constbuffer);
 
     // get localoffset
     int r=*offset%8;

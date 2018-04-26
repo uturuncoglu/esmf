@@ -642,7 +642,7 @@ static const char *const version = "$Id$";
     int canary = *ip++;
     if (canary != ESMC_TYPECANARY_BASE) {
       std::stringstream msg;
-      msg << "bad canary value: " << canary << ", offset = " << offset;
+      msg << "bad canary value: " << canary << ", offset = " << *offset;
       if (ESMC_LogDefault.MsgFoundError(ESMF_RC_INTNRL_BAD, msg,
           ESMC_CONTEXT, &localrc)) return localrc;
     }
@@ -950,6 +950,13 @@ static const char *const version = "$Id$";
 
     int r=*offset%8;
     if (r!=0) *offset += 8-r;  // alignment
+
+    if (canary != ESMC_TYPECANARY_BASE) {
+      ESMC_LogDefault.MsgFoundError(ESMC_RC_INTNRL_INCONS,
+                               "Bad canary in Base",
+            ESMC_CONTEXT, &localrc);
+        return localrc;
+    }
 
     fixedpart = sizeof(ESMC_Base);
     if (inquireflag == ESMF_INQUIREONLY) {
