@@ -694,7 +694,7 @@ static const char *const version = "$Id$";
     if (attreconflag == ESMC_ATTRECONCILE_ON) {
       if (*offset%8 != 0)
         *offset += 8 - *offset%8;
-      printf ("%s: calling ESMC_Deserialize with buffer pointer = %p\n", ESMC_METHOD, buffer);
+      // printf ("%s: calling ESMC_Deserialize with buffer pointer = %p\n", ESMC_METHOD, buffer);
       localrc = root->ESMC_Deserialize(buffer,offset);
       if (ESMC_LogDefault.MsgFoundError(localrc, ESMCI_ERR_PASSTHRU, 
             ESMC_CONTEXT, &localrc)) return localrc;
