@@ -4514,7 +4514,17 @@ if (attrRoot == ESMF_TRUE) {
     int r=*offset%8;
     if (r!=0) *offset += 8-r;  // alignment
     int loffset=*offset;
-    
+
+
+    int canary;
+    DESERIALIZE_VAR(buffer,loffset,canary,int);
+    if (canary != ESMC_TYPECANARY_ATTRIBUTE) {
+      ESMC_LogDefault.MsgFoundError(ESMC_RC_INTNRL_INCONS,
+            "Bad canary in Attribute",
+            ESMC_CONTEXT, &localrc);
+        return localrc;
+    }
+
     DESERIALIZE_VAR(buffer,loffset,chars,string::size_type);
     DESERIALIZE_VARC(buffer,loffset,attrName,temp,chars);
 
@@ -4732,6 +4742,7 @@ if (attrRoot == ESMF_TRUE) {
     // Initialize local return code; assume routine not implemented
     localrc = ESMC_RC_NOT_IMPL;
 
+    SERIALIZE_VAR(cc,buffer,offset,ESMC_TYPECANARY_ATTRIBUTE,int);
     SERIALIZE_VAR(cc,buffer,offset,(attrName.size()),string::size_type);
     SERIALIZE_VARC(cc,buffer,offset,attrName,(attrName.size()));
 
