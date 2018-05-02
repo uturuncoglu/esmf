@@ -203,7 +203,7 @@ call ESMF_LogSet (flush=.true.)
     write (localpet_str, '(i4)') localPet
     localpet_str = adjustl (localpet_str)
 
-#if 1
+#if 0
     !-------------------------------------------------------------------------
     ! exclusive component test section
     !-------------------------------------------------------------------------
@@ -1170,9 +1170,9 @@ call ESMF_VMBarrier (vm)
     !NEX_UTest_Multi_Proc_Only
     write(failMsg, *) "Did not return ESMF_SUCCESS"
     write(name, *) "Reconcile State for shared Grid test"
-call ESMF_LogSet (flush=.true.)
-!    call ESMF_StateReconcile (state_sgrid, rc=rc)
-rc=ESMF_FAILURE
+call ESMF_LogSet (trace=.true., flush=.true.)
+    call ESMF_StateReconcile (state_sgrid, rc=rc)
+call ESMF_LogSet (trace=.false.)
     call ESMF_Test(rc == ESMF_SUCCESS, name, failMsg, result, ESMF_SRCLINE)
 
 !    call ESMF_StatePrint (state_sgrid, options='long')
