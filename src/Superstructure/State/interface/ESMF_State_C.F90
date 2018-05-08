@@ -171,7 +171,7 @@
 
        ! the array object returned to the C interface must consist only of the
        ! this pointer. It must not contain the isInit member.
-       call ESMF_ArrayCopyThis(farray, array, rc)
+       call ESMF_ArrayCopyThis(farray, array, localrc)
        if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU,  &
            ESMF_CONTEXT, rcToReturn=rc)) return
 
