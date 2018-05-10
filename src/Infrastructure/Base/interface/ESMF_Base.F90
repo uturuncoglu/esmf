@@ -1026,7 +1026,7 @@ module ESMF_BaseMod
     type(ESMF_Base) :: ESMF_BaseDeserialize
 !
 ! !ARGUMENTS:
-    character,       intent(in)    :: buffer(0:)
+    character,       intent(in)    :: buffer(:)
     integer,         intent(inout) :: offset
     type(ESMF_AttReconcileFlag), intent(in) :: attreconflag
     integer,         intent(out), optional  :: rc

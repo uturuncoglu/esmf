@@ -46,7 +46,10 @@ class ESMC_Base;
 class ESMC_Base
 {
   protected:
+#undef CANARY_DEBUG
+#if defined (CANARY_DEBUG)
     ESMC_TypeCanary canary;       // unique value for Base class
+#endif
     int             ID;           // unique ID for any object in this VM context
     ESMCI::VMId     *vmID;        // unique vmID for any VM in the system
     int             ID_remote;    // remote ID from proxies origin

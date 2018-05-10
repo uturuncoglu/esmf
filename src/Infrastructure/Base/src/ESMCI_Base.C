@@ -639,6 +639,7 @@ static const char *const version = "$Id$";
     if (r!=0) *offset += 8-r;  // alignment
 
     ip = (int *)(buffer + *offset);
+#if defined (CANARY_DEBUG)
     int canary = *ip++;
     if (canary != ESMC_TYPECANARY_BASE) {
       std::stringstream msg;
@@ -646,6 +647,7 @@ static const char *const version = "$Id$";
       if (ESMC_LogDefault.MsgFoundError(ESMF_RC_INTNRL_BAD, msg,
           ESMC_CONTEXT, &localrc)) return localrc;
     }
+#endif
 
     ID = *ip++;
     refCount = *ip++;  
@@ -695,7 +697,7 @@ static const char *const version = "$Id$";
       if (*offset%8 != 0)
         *offset += 8 - *offset%8;
       // printf ("%s: calling ESMC_Deserialize with buffer pointer = %p\n", ESMC_METHOD, buffer);
-      localrc = root->ESMC_Deserialize(buffer,offset);
+      localrc = root->ESMC_Deserialize((char*)buffer,offset);
       if (ESMC_LogDefault.MsgFoundError(localrc, ESMCI_ERR_PASSTHRU, 
             ESMC_CONTEXT, &localrc)) return localrc;
     }
@@ -744,6 +746,7 @@ static const char *const version = "$Id$";
     if (r!=0) offset_local += 8-r;  // alignment
 
     ip = (int *)(buffer + offset_local);
+#if defined (CANARY_DEBUG)
     int canary = *ip++;
     if (canary != ESMC_TYPECANARY_BASE) {
       std::stringstream msg;
@@ -751,6 +754,7 @@ static const char *const version = "$Id$";
       if (ESMC_LogDefault.MsgFoundError(ESMF_RC_INTNRL_BAD, msg,
           ESMC_CONTEXT, &localrc)) return localrc;
     }
+#endif
 
     *ID = *ip;
     ip+=3;
@@ -951,12 +955,14 @@ static const char *const version = "$Id$";
     int r=*offset%8;
     if (r!=0) *offset += 8-r;  // alignment
 
+#if defined (CANARY_DEBUG)
     if (canary != ESMC_TYPECANARY_BASE) {
       ESMC_LogDefault.MsgFoundError(ESMC_RC_INTNRL_INCONS,
                                "Bad canary in Base",
             ESMC_CONTEXT, &localrc);
         return localrc;
     }
+#endif
 
     fixedpart = sizeof(ESMC_Base);
     if (inquireflag == ESMF_INQUIREONLY) {
@@ -972,7 +978,9 @@ static const char *const version = "$Id$";
       }
 
       ip = (int *)(buffer + *offset);
+#if defined (CANARY_DEBUG)
       *ip++ = canary;  // Base canary value
+#endif
       *ip++ = ID;
       *ip++ = refCount;  
       *ip++ = classID;  
@@ -1049,8 +1057,10 @@ static const char *const version = "$Id$";
    // Initialize local return code; assume routine not implemented
    localrc = ESMC_RC_NOT_IMPL;
 
+#if defined (CANARY_DEBUG)
    if (canary != ESMC_TYPECANARY_BASE)
      return ESMF_FAILURE;
+#endif
 
   if (baseStatus != ESMF_STATUS_READY) 
     return ESMF_FAILURE;
@@ -1106,7 +1116,9 @@ static const char *const version = "$Id$";
 //EOPI
   int rc;
 
+#if defined (CANARY_DEBUG)
   canary = ESMC_TYPECANARY_BASE;
+#endif
   if (vmArg==NULL){
     // no VM passed in -> get vmID of the current VM context
     vmID = ESMCI::VM::getCurrentID(&rc);
@@ -1174,7 +1186,9 @@ static const char *const version = "$Id$";
 //EOPI
   int rc;
 
+#if defined (CANARY_DEBUG)
   canary = ESMC_TYPECANARY_BASE;
+#endif
   vmID = ESMCI::VM::getCurrentID(&rc);  // get vmID of current VM context
   if (id==-1){
     // proxy members hold NULL for the vm and space for a remote VMId
@@ -1245,7 +1259,9 @@ static const char *const version = "$Id$";
 //EOPI
   int rc;
 
+#if defined (CANARY_DEBUG)
   canary = ESMC_TYPECANARY_BASE;
+#endif
   vmID = ESMCI::VM::getCurrentID(&rc);  // get vmID of current VM context
   vm = ESMCI::VM::getCurrent(&rc);
 //  ESMCI::VMIdPrint(vmID);

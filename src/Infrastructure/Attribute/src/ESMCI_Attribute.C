@@ -4480,9 +4480,9 @@ if (attrRoot == ESMF_TRUE) {
 //    {\tt ESMF\_SUCCESS} or error code on failure.
 //
 // !ARGUMENTS:
-      const char *constbuffer, // in - byte stream to read
-      int *offset) {           // inout - original offset, updated to point
-                               //       to first free byte after current obj
+      char *buffer,          // in - byte stream to read
+      int *offset) {         // inout - original offset, updated to point
+                             //       to first free byte after current obj
 //
 // !DESCRIPTION:
 //    Turn a stream of bytes into an {\tt Attribute} hierarchy.
@@ -4496,7 +4496,6 @@ if (attrRoot == ESMF_TRUE) {
     
     // Initialize local return code; assume routine not implemented
     localrc = ESMC_RC_NOT_IMPL;
-    int rc = ESMC_RC_NOT_IMPL;
 
     // Define serialization macros
 #define DESERIALIZE_VAR(bufptr,loff,var,t) \
@@ -4508,14 +4507,13 @@ if (attrRoot == ESMF_TRUE) {
   var = var2; \
   loff += s; \
 
-    char *buffer = const_cast<char *>(constbuffer);
-
     // get localoffset
     int r=*offset%8;
     if (r!=0) *offset += 8-r;  // alignment
     int loffset=*offset;
 
-
+#undef CANARY_DEBUG
+#if defined (CANARY_DEBUG)
     int canary;
     DESERIALIZE_VAR(buffer,loffset,canary,int);
     if (canary != ESMC_TYPECANARY_ATTRIBUTE) {
@@ -4524,6 +4522,7 @@ if (attrRoot == ESMF_TRUE) {
             ESMC_CONTEXT, &localrc);
         return localrc;
     }
+#endif
 
     DESERIALIZE_VAR(buffer,loffset,chars,string::size_type);
     DESERIALIZE_VARC(buffer,loffset,attrName,temp,chars);
@@ -4742,7 +4741,9 @@ if (attrRoot == ESMF_TRUE) {
     // Initialize local return code; assume routine not implemented
     localrc = ESMC_RC_NOT_IMPL;
 
+#if defined (CANARY_DEBUG)
     SERIALIZE_VAR(cc,buffer,offset,ESMC_TYPECANARY_ATTRIBUTE,int);
+#endif
     SERIALIZE_VAR(cc,buffer,offset,(attrName.size()),string::size_type);
     SERIALIZE_VARC(cc,buffer,offset,attrName,(attrName.size()));
 
