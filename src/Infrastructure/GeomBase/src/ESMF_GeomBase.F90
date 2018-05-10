@@ -1586,7 +1586,7 @@ end if
 
        case  (ESMF_GEOMTYPE_XGRID%type)
           gbcp%xgrid=ESMF_XGridDeserialize(buffer=buffer, &
-              offset=offset, attreconflag=attreconflag,  &
+              offset=offset, attreconflag=ESMF_ATTRECONCILE_OFF,  &
               rc=localrc)
           if (ESMF_LogFoundError(localrc, &
                                  ESMF_ERR_PASSTHRU, &
