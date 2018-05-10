@@ -592,6 +592,8 @@ type(ESMF_KeywordEnforcer), optional:: keywordEnforcer ! must use keywords below
       type(ESMF_AttReconcileFlag) :: lattreconflag
       type(ESMF_Logical) :: linkChange
 
+      logical, parameter :: trace = .false.
+
       ! Initialize
       localrc = ESMF_RC_NOT_IMPL
       if  (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -630,7 +632,7 @@ type(ESMF_KeywordEnforcer), optional:: keywordEnforcer ! must use keywords below
 
       if (fp%status .eq. ESMF_FIELDSTATUS_GRIDSET .or. &
           fp%status .eq. ESMF_FIELDSTATUS_COMPLETE) then
-print *, ESMF_METHOD, ': calling GeomBase deserialize'
+          if (trace) print *, ESMF_METHOD, ': calling GeomBase deserialize'
           fp%geombase=ESMF_GeomBaseDeserialize(buffer, offset, &
                                               attreconflag, localrc)
           if (ESMF_LogFoundError(localrc, &
@@ -651,7 +653,7 @@ print *, ESMF_METHOD, ': calling GeomBase deserialize'
       endif
 
       if (fp%status .eq. ESMF_FIELDSTATUS_COMPLETE) then
-print *, ESMF_METHOD, ': calling Array deserialize'
+          if (trace) print *, ESMF_METHOD, ': calling Array deserialize'
           call c_ESMC_ArrayDeserialize(fp%array, buffer, offset, &
                                       attreconflag, localrc)
           if (ESMF_LogFoundError(localrc, &
@@ -668,7 +670,7 @@ print *, ESMF_METHOD, ': calling Array deserialize'
       ESMF_FieldDeserialize%ftypep => fp
       
       ! Add copy of this object into ESMF garbage collection table
-print *, ESMF_METHOD, ': Adding deserialized Field into GC table'
+      if (trace) print *, ESMF_METHOD, ': Adding deserialized Field into GC table'
       call c_ESMC_VMAddFObject(ESMF_FieldDeserialize, ESMF_ID_FIELD%objectID)
       
       ESMF_INIT_SET_CREATED(ESMF_FieldDeserialize)
