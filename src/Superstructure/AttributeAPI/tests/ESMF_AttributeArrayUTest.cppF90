@@ -106,7 +106,7 @@ AttributeTestMacro(array, an Array, EX_UTest, NEX_UTest)
       offset1 = 0
       call c_esmc_arrayserialize (array, buffer, buff_size, offset1, &
           attreconflag, ESMF_INQUIREONLY, rc)
-      write(name, *) "ESMF_ArraySerialize - inquire only option w/Attributes"
+      write(name, *) "ESMF_ArraySerialize - inquire only option w/o Attributes"
       write(failMsg, *) "rc =", rc, ", offset =", offset1
       call ESMF_Test((rc == ESMF_SUCCESS), &
                       name, failMsg, result, ESMF_SRCLINE)
@@ -123,7 +123,7 @@ AttributeTestMacro(array, an Array, EX_UTest, NEX_UTest)
       offset2 = 0
       call c_esmc_arrayserialize (array, buffer, buff_size, offset2, &
           attreconflag, ESMF_NOINQUIRE, rc)
-      write(name, *) "ESMF_BaseSerialize - perform serialization w/Attributes"
+      write(name, *) "ESMF_BaseSerialize - perform serialization w/o Attributes"
       write(failMsg, *) "rc =", rc, ", offset =", offset2
       call ESMF_Test((rc == ESMF_SUCCESS), &
                       name, failMsg, result, ESMF_SRCLINE)
