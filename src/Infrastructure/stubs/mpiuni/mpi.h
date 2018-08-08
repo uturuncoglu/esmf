@@ -96,6 +96,12 @@ extern void *MPIUNI_TMP;
 #define MPI_ERRORS_RETURN    0
 #define MPI_STATUS_IGNORE    0
 #define MPI_ROOT             0
+#define MPI_IN_PLACE         0
+#define MPI_DATATYPE_NULL    0
+#define MPI_INFO_NULL        0
+#define MPI_GROUP_NULL       0
+#define MPI_PROC_NULL        0
+#define MPI_STATUSES_IGNORE  0
 
 /* External types */
 typedef int    MPI_Comm;  
@@ -103,8 +109,8 @@ typedef void   *MPI_Request;
 typedef void   *MPI_Group;
 typedef struct {int MPI_TAG,MPI_SOURCE,MPI_ERROR;} MPI_Status;
 typedef char*   MPI_Errhandler;
-typedef int    MPI_Offset;  
-typedef struct {int dummy;} MPI_Info;
+typedef long long MPI_Offset;
+typedef int MPI_Info;
 
 extern int MPIUNI_Memcpy(void*,const void*,int);
 
@@ -129,6 +135,9 @@ extern int MPIUNI_Memcpy(void*,const void*,int);
 #define MPI_UNSIGNED_LONG   sizeof(unsigned long)
 #define MPIU_PETSCLOGDOUBLE sizeof(PetscLogDouble)
 #define MPI_REQUEST_NULL    ((MPI_Request)0)
+#define MPI_UNSIGNED_SHORT     sizeof(unsigned short)
+#define MPI_LONG_LONG          sizeof(long long)
+#define MPI_UNSIGNED_LONG_LONG sizeof(unsigned long long)
 
 #define MPI_UNDEFINED    678
 #define MPI_MAX_PROCESSOR_NAME 512
