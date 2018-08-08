@@ -95,6 +95,7 @@ extern void *MPIUNI_TMP;
 #define MPI_TAG_UB           0
 #define MPI_ERRORS_RETURN    0
 #define MPI_STATUS_IGNORE    0
+#define MPI_ROOT             0
 
 /* External types */
 typedef int    MPI_Comm;  
@@ -102,6 +103,8 @@ typedef void   *MPI_Request;
 typedef void   *MPI_Group;
 typedef struct {int MPI_TAG,MPI_SOURCE,MPI_ERROR;} MPI_Status;
 typedef char*   MPI_Errhandler;
+typedef int    MPI_Offset;  
+typedef struct {int dummy;} MPI_Info;
 
 extern int MPIUNI_Memcpy(void*,const void*,int);
 
