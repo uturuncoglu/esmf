@@ -1,16 +1,19 @@
 # $Id$ 
 
-ALL:  build_unit_tests
-run:  run_unit_tests
+ALL:      build_unit_tests
+run:      run_unit_tests
 run_uni:  run_unit_tests_uni
 
 LOCDIR	  = src/Infrastructure/Attribute/tests
 
-TESTS_BUILD   = $(ESMF_TESTDIR)/ESMC_AttributeJSONUTest
+TESTS_BUILD   = $(ESMF_TESTDIR)/ESMC_AttributeJSONUTest \
+                $(ESMF_TESTDIR)/ESMC_NlohmannJSONUTest
 
-TESTS_RUN     = RUN_ESMC_AttributeJSONUTest
+TESTS_RUN     = RUN_ESMC_AttributeJSONUTest \
+                RUN_ESMC_NlohmannJSONUTest
 
-TESTS_RUN_UNI = RUN_ESMC_AttributeJSONUTestUNI
+TESTS_RUN_UNI = RUN_ESMC_AttributeJSONUTestUNI \
+                RUN_ESMC_NlohmannJSONUTestUNI
 
 
 include ${ESMF_DIR}/makefile
@@ -28,4 +31,8 @@ RUN_ESMC_AttributeJSONUTest:
 RUN_ESMC_AttributeJSONUTestUNI:
 	$(MAKE) TNAME=AttributeJSON NP=1 ctest
 
+RUN_ESMC_NlohmannJSONUTest:
+	$(MAKE) TNAME=NlohmannJSON NP=4 ctest
 
+RUN_ESMC_NlohmannJSONUTestUNI:
+	$(MAKE) TNAME=NlohmannJSON NP=1 ctest
