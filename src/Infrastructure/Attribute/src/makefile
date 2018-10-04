@@ -8,7 +8,7 @@ SOURCEC	  = ESMCI_Attribute.C ESMCI_AttributeUpdate.C ESMCI_AttributeWrite.C \
 	        ESMCI_AttributeWriteTab.C ESMCI_AttributeWriteXML.C \
             ESMCI_AttributeWriteJSON.C
 SOURCEF	  =
-STOREH    = ESMCI_Attribute.h 
+STOREH    = ESMCI_Attribute.h nlohmann/json/json.hpp
 
 OBJSC     = $(addsuffix .o, $(basename $(SOURCEC)))
 OBJSF     = $(addsuffix .o, $(basename $(SOURCEF)))
