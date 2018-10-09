@@ -6,9 +6,10 @@ ALL: build_here
 SOURCEC	  = ESMCI_Attribute.C ESMCI_AttributeUpdate.C ESMCI_AttributeWrite.C \
 	        ESMCI_AttributeWriteCIM.C ESMCI_AttributeWriteCIMgrids.C \
 	        ESMCI_AttributeWriteTab.C ESMCI_AttributeWriteXML.C \
-            ESMCI_AttributeWriteJSON.C
+            ESMCI_AttributeWriteJSON.C \
+            ESMCI_Attributes.C
 SOURCEF	  =
-STOREH    = ESMCI_Attribute.h nlohmann/json/json.hpp
+STOREH    = ESMCI_Attribute.h nlohmann/json/json.hpp ESMCI_Attributes.h
 
 OBJSC     = $(addsuffix .o, $(basename $(SOURCEC)))
 OBJSF     = $(addsuffix .o, $(basename $(SOURCEF)))
@@ -24,4 +25,3 @@ CLOBBERDIRS =
 include $(ESMF_DIR)/makefile
 
 DIRS = 
-
