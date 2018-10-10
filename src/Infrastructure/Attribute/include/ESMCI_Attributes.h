@@ -61,7 +61,6 @@ class Attributes
 
  public:
     Attributes(void);
-    Attributes& operator=(const Attributes& source);
     ~Attributes(void);
 
 //    template <typename T>

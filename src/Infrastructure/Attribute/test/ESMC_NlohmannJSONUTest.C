@@ -28,12 +28,13 @@ using json = nlohmann::json;  // Convenience rename for JSON namespace.
 
 //==============================================================================
 //BOP
-// !PROGRAM: ESMC_NlohmannJSONUTest - Test the nlohmann/json for Modern C++ library
+// !PROGRAM: ESMC_NlohmannJSONUTest - Test the nlohmann/json for Modern C++
+//           library
 //
-// !DESCRIPTION:
+// !DESCRIPTION: Test inclusion of JSON header file and creating a basic object
 //
 //EOP
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 int main(void){
 
@@ -41,7 +42,7 @@ int main(void){
   char name[80];
   char failMsg[80];
   int result = 0;
-  int rc = ESMF_SUCCESS;
+  int rc = ESMF_FAILURE;
 
   //----------------------------------------------------------------------------
   ESMC_TestStart(__FILE__, __LINE__, 0);
@@ -67,6 +68,8 @@ int main(void){
   general["what"] = "has been added";
 
   std::cout << root.dump(4) << std::endl;
+
+  rc = ESMF_SUCCESS
 
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
 
