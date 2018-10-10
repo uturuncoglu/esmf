@@ -43,7 +43,7 @@ int testConstructor(){
   return rc;
 };
 
-int testSet(){
+int testSetGet(){
   int rc = ESMF_FAILURE;
 
   Attributes attrs;
@@ -53,6 +53,7 @@ int testSet(){
 
   int value = 10;
   rc = attrs.set("theKey", value);
+  assert(rc == ESMF_SUCCESS);
 
   const json &storage = attrs.getStorageRef();
 
@@ -86,9 +87,9 @@ int main(void){
 
   //----------------------------------------------------------------------------
   //NEX_UTest
-  strcpy(name, "Attributes Set");
+  strcpy(name, "Attributes SetGet");
   strcpy(failMsg, "Did not return ESMF_SUCCESS");
-  rc = testSet();
+  rc = testSetGet();
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //----------------------------------------------------------------------------
 

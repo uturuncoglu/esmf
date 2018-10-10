@@ -24,6 +24,9 @@
 //
 //-----------------------------------------------------------------------------
 
+// ESMF header
+#include "ESMC.h"
+
 #include "ESMCI_Attributes.h"
 #include "json.hpp"
 
@@ -53,12 +56,14 @@ const json& Attributes::getStorageRef(){
   return this->storage;
 };
 
-//template <typename T>
-int Attributes::set(std::string key, int value){
+template <typename T>
+int Attributes::set(string key, T value){
 //  for (typeKeyList::iterator it = keyList.begin(); it != keyList.end(); ++it){
 //    std::cout << ' ' << *it << std::endl;
 //  }
   this->storage[key] = value;
+  return 0;
 };
+template int Attributes::set<int>(string, int);
 
 }  // namespace

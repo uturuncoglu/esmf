@@ -18,18 +18,13 @@
 
 //-----------------------------------------------------------------------------
 
-#include <cstring>
-#include <string>
 #include <vector>
-#include <algorithm>
-#include <cmath>
-#include <cstdio>
-#include <fstream>
 
 #include "ESMCI_Util.h"
 #include "json.hpp"
 
 using json = nlohmann::json;  // Convenience rename for JSON namespace.
+using std::string;
 
 //-----------------------------------------------------------------------------
 //BOP
@@ -63,9 +58,9 @@ class Attributes
 
     const json& getStorageRef(void);
 
-//    template <typename T>
 //    int get(typeKeyList &keyList, T *value);
-    int set(std::string key, int value);
+    template <typename T>
+    int set(string key, T value);
 
 };
 } // namespace
