@@ -24,7 +24,7 @@
 // JSON header
 #include "json.hpp"
 
-using json = nlohmann::json;  // Convenience rename for JSON namespace.
+using json = nlohmann::json;  // Convenience rename for JSON namespace
 
 //==============================================================================
 //BOP

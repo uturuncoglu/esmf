@@ -22,9 +22,9 @@
 
 //==============================================================================
 //BOP
-// !PROGRAM: ESMC_AttributeJSONUTest - Internal Attribute JSON functionality
+// !PROGRAM: ESMC_AttributesUTest - Internal Attribute JSON functionality
 //
-// !DESCRIPTION:
+// !DESCRIPTION: Test Attributes class
 //
 //EOP
 //-----------------------------------------------------------------------------
