@@ -6,13 +6,13 @@ run_uni:  run_unit_tests_uni
 
 LOCDIR	  = src/Infrastructure/Attribute/tests
 
-TESTS_BUILD   = $(ESMF_TESTDIR)/ESMC_AttributeJSONUTest \
+TESTS_BUILD   = $(ESMF_TESTDIR)/ESMC_AttributesUTest \
                 $(ESMF_TESTDIR)/ESMC_NlohmannJSONUTest
 
-TESTS_RUN     = RUN_ESMC_AttributeJSONUTest \
+TESTS_RUN     = RUN_ESMC_AttributesUTest \
                 RUN_ESMC_NlohmannJSONUTest
 
-TESTS_RUN_UNI = RUN_ESMC_AttributeJSONUTestUNI \
+TESTS_RUN_UNI = RUN_ESMC_AttributesUTestUNI \
                 RUN_ESMC_NlohmannJSONUTestUNI
 
 
@@ -25,11 +25,11 @@ CLEANFILES  = $(TESTS_BUILD)
 CLOBBERDIRS =
 
 
-RUN_ESMC_AttributeJSONUTest:
-	$(MAKE) TNAME=AttributeJSON NP=4 ctest
+RUN_ESMC_AttributesUTest:
+	$(MAKE) TNAME=Attributes NP=4 ctest
 
-RUN_ESMC_AttributeJSONUTestUNI:
-	$(MAKE) TNAME=AttributeJSON NP=1 ctest
+RUN_ESMC_AttributesUTestUNI:
+	$(MAKE) TNAME=Attributes NP=1 ctest
 
 RUN_ESMC_NlohmannJSONUTest:
 	$(MAKE) TNAME=NlohmannJSON NP=4 ctest
