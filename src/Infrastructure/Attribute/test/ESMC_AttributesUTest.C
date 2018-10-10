@@ -20,6 +20,9 @@
 // ESMF Test header
 #include "ESMC_Test.h"
 
+// Attributes header
+#include "ESMCI_Attributes.h"
+
 //==============================================================================
 //BOP
 // !PROGRAM: ESMC_AttributesUTest - Internal Attribute JSON functionality
@@ -29,12 +32,17 @@
 //EOP
 //------------------------------------------------------------------------------
 
+int testConstructor(){
+  ESMCI::Attributes attrs;
+  return ESMF_SUCCESS;
+};
+
 int main(void){
 
   char name[80];
   char failMsg[80];
   int result = 0;
-  int rc = ESMF_SUCCESS;
+  int rc = ESMF_FAILURE;
 
   //----------------------------------------------------------------------------
   ESMC_TestStart(__FILE__, __LINE__, 0);
@@ -42,9 +50,9 @@ int main(void){
 
   //----------------------------------------------------------------------------
   //NEX_UTest
-  // Create an Attribute JSON
-  strcpy(name, "Attribute JSON Create");
+  strcpy(name, "Attributes Constructor");
   strcpy(failMsg, "Did not return ESMF_SUCCESS");
+  rc = testConstructor();
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //----------------------------------------------------------------------------
 
@@ -53,4 +61,4 @@ int main(void){
   //----------------------------------------------------------------------------
 
   return 0;
-}
+};

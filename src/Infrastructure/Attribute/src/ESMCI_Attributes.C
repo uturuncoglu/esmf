@@ -45,4 +45,6 @@ Attributes::Attributes(void){
   this->storage = json::object();
 };
 
+Attributes::~Attributes(void){};
+
 }  // namespace

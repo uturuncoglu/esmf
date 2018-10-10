@@ -69,9 +69,10 @@ int main(void){
 
   std::cout << root.dump(4) << std::endl;
 
-  rc = ESMF_SUCCESS
+  rc = ESMF_SUCCESS;
 
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
+  //----------------------------------------------------------------------------
 
   //----------------------------------------------------------------------------
   ESMC_TestEnd(__FILE__, __LINE__, 0);
