@@ -45,10 +45,8 @@ using json = nlohmann::json;  // Convenience rename for JSON namespace.
 
 namespace ESMCI {
 
-  class Attributes;
-
   // Standard key type
-  typedef std::vector<char> typeKeyList;
+  typedef std::vector<std::string> typeKeyList;
 
 class Attributes
 {
@@ -63,9 +61,11 @@ class Attributes
     Attributes(void);
     ~Attributes(void);
 
+    const json& getStorageRef(void);
+
 //    template <typename T>
 //    int get(typeKeyList &keyList, T *value);
-//    int set(typeKeyList &keyList, T value);
+    int set(std::string key, int value);
 
 };
 } // namespace

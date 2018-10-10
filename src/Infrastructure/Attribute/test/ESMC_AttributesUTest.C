@@ -13,6 +13,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <iostream>
+#include <assert.h>
 
 // ESMF header
 #include "ESMC.h"
@@ -22,6 +24,8 @@
 
 // Attributes header
 #include "ESMCI_Attributes.h"
+
+using namespace ESMCI;
 
 //==============================================================================
 //BOP
@@ -33,8 +37,32 @@
 //------------------------------------------------------------------------------
 
 int testConstructor(){
-  ESMCI::Attributes attrs;
-  return ESMF_SUCCESS;
+  int rc = ESMF_FAILURE;
+  Attributes attrs;
+  rc = ESMF_SUCCESS;
+  return rc;
+};
+
+int testSet(){
+  int rc = ESMF_FAILURE;
+
+  Attributes attrs;
+
+  typeKeyList kl;
+  kl.push_back("theKey");
+
+  int value = 10;
+  rc = attrs.set("theKey", value);
+
+  const json &storage = attrs.getStorageRef();
+
+  if (storage["theKey"] != value) rc = ESMF_FAILURE;
+
+  std::cout << storage.dump(2) << std::endl;
+//  std::cout << storage["theKey"] << std::endl;
+
+
+  return rc;
 };
 
 int main(void){
@@ -53,6 +81,14 @@ int main(void){
   strcpy(name, "Attributes Constructor");
   strcpy(failMsg, "Did not return ESMF_SUCCESS");
   rc = testConstructor();
+  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
+  //----------------------------------------------------------------------------
+
+  //----------------------------------------------------------------------------
+  //NEX_UTest
+  strcpy(name, "Attributes Set");
+  strcpy(failMsg, "Did not return ESMF_SUCCESS");
+  rc = testSet();
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //----------------------------------------------------------------------------
 

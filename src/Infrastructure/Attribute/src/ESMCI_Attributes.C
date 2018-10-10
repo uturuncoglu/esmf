@@ -25,13 +25,15 @@
 //-----------------------------------------------------------------------------
 
 #include "ESMCI_Attributes.h"
+#include "json.hpp"
 
 #include <vector>
-#include "json.hpp"
+#include <iostream>
+
+using json = nlohmann::json;  // Convenience rename for JSON namespace.
 
 using std::string;
 using std::vector;
-using json = nlohmann::json;  // Convenience rename for JSON namespace.
 
 //-----------------------------------------------------------------------------
  // leave the following line as-is; it will insert the cvs ident string
@@ -46,5 +48,17 @@ Attributes::Attributes(void){
 };
 
 Attributes::~Attributes(void){};
+
+const json& Attributes::getStorageRef(){
+  return this->storage;
+};
+
+//template <typename T>
+int Attributes::set(std::string key, int value){
+//  for (typeKeyList::iterator it = keyList.begin(); it != keyList.end(); ++it){
+//    std::cout << ' ' << *it << std::endl;
+//  }
+  this->storage[key] = value;
+};
 
 }  // namespace
