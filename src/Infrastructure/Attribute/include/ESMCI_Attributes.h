@@ -55,7 +55,9 @@ class Attributes
 
     const json& getStorageRef(void);
 
-//    int get(typeKeyList &keyList, T *value);
+    template <typename T>
+    T get(string key, int &rc);
+
     template <typename T>
     int set(string key, T value);
 

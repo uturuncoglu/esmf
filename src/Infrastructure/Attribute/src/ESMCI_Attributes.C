@@ -57,6 +57,16 @@ const json& Attributes::getStorageRef(){
 };
 
 template <typename T>
+T Attributes::get(string key, int &rc){
+  json::json_pointer jp(key);
+  T ret;
+  ret = this->storage.value(jp, NULL);
+  rc = ESMF_SUCCESS;
+  return ret;
+};
+template int Attributes::get<int>(string, int&);
+
+template <typename T>
 int Attributes::set(string key, T value){
   json::json_pointer jp(key);
   this->storage[jp] = value;
