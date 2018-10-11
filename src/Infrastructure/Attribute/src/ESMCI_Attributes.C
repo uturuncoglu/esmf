@@ -67,11 +67,12 @@ T Attributes::get(string key, int &rc){
 template int Attributes::get<int>(string, int&);
 
 template <typename T>
-int Attributes::set(string key, T value){
+void Attributes::set(string key, T value, int &rc){
   json::json_pointer jp(key);
   this->storage[jp] = value;
-  return ESMF_SUCCESS;
+  rc = ESMF_SUCCESS;
+  return;
 };
-template int Attributes::set<int>(string, int);
+template void Attributes::set<int>(string, int, int&);
 
 }  // namespace

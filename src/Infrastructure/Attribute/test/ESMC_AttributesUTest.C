@@ -55,7 +55,8 @@ int testSetGet(){
 
   int value = 10;
   string key = "/theKey";
-  rc = attrs.set(key, value);
+  rc = ESMF_FAILURE;
+  attrs.set(key, value, rc);
   checkEsmfReturnCode(rc);
 
   const json& storage = attrs.getStorageRef();
@@ -78,7 +79,8 @@ int testSetGet(){
 
   int value2 = 33;
   string keyp = "/root/group1/group2";
-  rc = attrs.set(keyp, value2);
+  rc = ESMF_FAILURE;
+  attrs.set(keyp, value2, rc);
   checkEsmfReturnCode(rc);
 
   if (storage["root"]["group1"]["group2"] != value2){
