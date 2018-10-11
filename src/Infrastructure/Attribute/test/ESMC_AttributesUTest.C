@@ -36,6 +36,11 @@ using namespace ESMCI;
 //EOP
 //------------------------------------------------------------------------------
 
+void checkEsmfReturnCode(int &rc){
+  assert(rc == ESMF_SUCCESS);
+  return;
+};
+
 int testConstructor(){
   int rc = ESMF_FAILURE;
   Attributes attrs;
@@ -51,7 +56,7 @@ int testSetGet(){
   int value = 10;
   string key = "/theKey";
   rc = attrs.set(key, value);
-  assert(rc == ESMF_SUCCESS);
+  checkEsmfReturnCode(rc);
 
   const json& storage = attrs.getStorageRef();
 
@@ -62,7 +67,7 @@ int testSetGet(){
 
   rc = ESMF_FAILURE;
   int actual = attrs.get<int>(key, rc);
-  assert(rc == ESMF_SUCCESS);
+  checkEsmfReturnCode(rc);
 
   if (actual != value){
     rc = ESMF_FAILURE;
@@ -74,7 +79,7 @@ int testSetGet(){
   int value2 = 33;
   string keyp = "/root/group1/group2";
   rc = attrs.set(keyp, value2);
-  assert(rc == ESMF_SUCCESS);
+  checkEsmfReturnCode(rc);
 
   if (storage["root"]["group1"]["group2"] != value2){
     rc = ESMF_FAILURE;
@@ -83,7 +88,7 @@ int testSetGet(){
 
   rc = ESMF_FAILURE;
   actual = attrs.get<int>(keyp, rc);
-  assert(rc == ESMF_SUCCESS);
+  checkEsmfReturnCode(rc);
 
   if (actual != value2){
     rc = ESMF_FAILURE;
