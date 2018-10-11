@@ -97,7 +97,7 @@ int testSetGet(){
     return rc;
   }
 
-  std::cout << storage.dump(2) << std::endl;
+//  std::cout << storage.dump(2) << std::endl;
 
   return rc;
 };
