@@ -24,10 +24,10 @@
 //
 //-----------------------------------------------------------------------------
 
-// ESMF header
 #include "ESMC.h"
-
+#include "ESMCI_Macros.h"
 #include "ESMCI_Attributes.h"
+#include "ESMCI_LogErr.h"
 #include "json.hpp"
 
 #include <vector>
@@ -46,26 +46,41 @@ using std::vector;
 
 namespace ESMCI {
 
+#undef  ESMC_METHOD
+#define ESMC_METHOD "Attributes"
 Attributes::Attributes(void){
   this->storage = json::object();
 };
 
 Attributes::~Attributes(void){};
 
+#undef  ESMC_METHOD
+#define ESMC_METHOD "Attributes::getStorageRef"
 const json& Attributes::getStorageRef(){
   return this->storage;
 };
 
+#undef  ESMC_METHOD
+#define ESMC_METHOD "Attributes::get"
 template <typename T>
 T Attributes::get(string key, int &rc){
   json::json_pointer jp(key);
   T ret;
-  ret = this->storage[jp];
+  try {
+    ret = this->storage[jp];
+  }
+  catch (json::type_error& e) {
+    ESMC_LogDefault.MsgFoundError(ESMC_RC_ATTR_WRONGTYPE, e.what(),
+                                  ESMC_CONTEXT, &rc);
+    return rc;
+  }
   rc = ESMF_SUCCESS;
   return ret;
 };
 template int Attributes::get<int>(string, int&);
 
+#undef  ESMC_METHOD
+#define ESMC_METHOD "Attributes::set"
 template <typename T>
 void Attributes::set(string key, T value, int &rc){
   json::json_pointer jp(key);

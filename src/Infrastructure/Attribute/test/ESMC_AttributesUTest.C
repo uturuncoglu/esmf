@@ -36,7 +36,7 @@ using namespace ESMCI;
 //EOP
 //------------------------------------------------------------------------------
 
-void checkEsmfReturnCode(int &rc){
+void checkESMFReturnCode(int &rc){
   assert(rc == ESMF_SUCCESS);
   return;
 };
@@ -57,7 +57,7 @@ int testSetGet(){
   string key = "/theKey";
   rc = ESMF_FAILURE;
   attrs.set(key, value, rc);
-  checkEsmfReturnCode(rc);
+  checkESMFReturnCode(rc);
 
   const json& storage = attrs.getStorageRef();
 
@@ -68,7 +68,7 @@ int testSetGet(){
 
   rc = ESMF_FAILURE;
   int actual = attrs.get<int>(key, rc);
-  checkEsmfReturnCode(rc);
+  checkESMFReturnCode(rc);
 
   if (actual != value){
     rc = ESMF_FAILURE;
@@ -81,7 +81,7 @@ int testSetGet(){
   string keyp = "/root/group1/group2";
   rc = ESMF_FAILURE;
   attrs.set(keyp, value2, rc);
-  checkEsmfReturnCode(rc);
+  checkESMFReturnCode(rc);
 
   if (storage["root"]["group1"]["group2"] != value2){
     rc = ESMF_FAILURE;
@@ -90,7 +90,7 @@ int testSetGet(){
 
   rc = ESMF_FAILURE;
   actual = attrs.get<int>(keyp, rc);
-  checkEsmfReturnCode(rc);
+  checkESMFReturnCode(rc);
 
   if (actual != value2){
     rc = ESMF_FAILURE;
@@ -99,6 +99,23 @@ int testSetGet(){
 
 //  std::cout << storage.dump(2) << std::endl;
 
+  return rc;
+};
+
+int testSetGetErrorHandling(){
+  int rc = ESMF_FAILURE;
+
+  Attributes attrs;
+
+  string key = "/theKey";
+  int actual = attrs.get<int>(key, rc);
+  // Test is expected to fail as we have not added anything at this key.
+  if (rc != ESMC_RC_ATTR_WRONGTYPE){
+    rc = ESMF_FAILURE;
+    return rc;
+  }
+
+  rc = ESMF_SUCCESS;
   return rc;
 };
 
@@ -126,6 +143,14 @@ int main(void){
   strcpy(name, "Attributes SetGet");
   strcpy(failMsg, "Did not return ESMF_SUCCESS");
   rc = testSetGet();
+  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
+  //----------------------------------------------------------------------------
+  
+  //----------------------------------------------------------------------------
+  //NEX_UTest
+  strcpy(name, "Attributes SetGet Error Handling");
+  strcpy(failMsg, "Did not return ESMF_SUCCESS");
+  rc = testSetGetErrorHandling();
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //----------------------------------------------------------------------------
 
