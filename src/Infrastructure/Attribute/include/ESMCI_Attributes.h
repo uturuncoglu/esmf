@@ -40,9 +40,6 @@ using std::string;
 
 namespace ESMCI {
 
-  // Standard key type
-  typedef std::vector<std::string> typeKeyList;
-
 class Attributes
 {
  private:

@@ -67,6 +67,10 @@ int main(void){
   json &general  = root["ESMF"]["General"];
   general["what"] = "has been added";
 
+  // Use a JSON Pointer
+  json::json_pointer jp("/foo/bar/nest");
+  root[jp] = "a deep nest";
+
   std::cout << root.dump(4) << std::endl;
 
   rc = ESMF_SUCCESS;

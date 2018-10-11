@@ -58,11 +58,9 @@ const json& Attributes::getStorageRef(){
 
 template <typename T>
 int Attributes::set(string key, T value){
-//  for (typeKeyList::iterator it = keyList.begin(); it != keyList.end(); ++it){
-//    std::cout << ' ' << *it << std::endl;
-//  }
-  this->storage[key] = value;
-  return 0;
+  json::json_pointer jp(key);
+  this->storage[jp] = value;
+  return ESMF_SUCCESS;
 };
 template int Attributes::set<int>(string, int);
 

@@ -48,20 +48,27 @@ int testSetGet(){
 
   Attributes attrs;
 
-  typeKeyList kl;
-  kl.push_back("theKey");
-
   int value = 10;
-  rc = attrs.set("theKey", value);
+  rc = attrs.set("/theKey", value);
   assert(rc == ESMF_SUCCESS);
 
-  const json &storage = attrs.getStorageRef();
+  const json& storage = attrs.getStorageRef();
 
-  if (storage["theKey"] != value) rc = ESMF_FAILURE;
+  if (storage["theKey"] != value){
+    rc = ESMF_FAILURE;
+    return rc;
+  }
+
+  int value2 = 33;
+  rc = attrs.set("/root/group1/group2", value2);
+  assert(rc == ESMF_SUCCESS);
+
+  if (storage["root"]["group1"]["group2"] != value2){
+    rc = ESMF_FAILURE;
+    return rc;
+  }
 
   std::cout << storage.dump(2) << std::endl;
-//  std::cout << storage["theKey"] << std::endl;
-
 
   return rc;
 };
