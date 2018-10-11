@@ -97,7 +97,21 @@ int testSetGet(){
     return rc;
   }
 
-//  std::cout << storage.dump(2) << std::endl;
+  //----------------------------------------------------------------------------
+
+  key = "/twiceSet";
+  attrs.set(key, 10, rc);
+  checkESMFReturnCode(rc);
+  value = 12;
+  attrs.set(key, value, rc);
+  checkESMFReturnCode(rc);
+
+  if (attrs.get<int>(key, rc) != value){
+    rc = ESMF_FAILURE;
+    return rc;
+  }
+
+  std::cout << storage.dump(2) << std::endl;
 
   return rc;
 };
@@ -109,6 +123,7 @@ int testSetGetErrorHandling(){
 
   string key = "/theKey";
   int actual = attrs.get<int>(key, rc);
+
   // Test is expected to fail as we have not added anything at this key.
   if (rc != ESMC_RC_ATTR_WRONGTYPE){
     rc = ESMF_FAILURE;

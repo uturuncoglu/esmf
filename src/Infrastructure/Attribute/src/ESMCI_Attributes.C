@@ -52,6 +52,8 @@ Attributes::Attributes(void){
   this->storage = json::object();
 };
 
+#undef  ESMC_METHOD
+#define ESMC_METHOD "~Attributes"
 Attributes::~Attributes(void){};
 
 #undef  ESMC_METHOD
