@@ -60,7 +60,7 @@ template <typename T>
 T Attributes::get(string key, int &rc){
   json::json_pointer jp(key);
   T ret;
-  ret = this->storage.value(jp, NULL);
+  ret = this->storage[jp];
   rc = ESMF_SUCCESS;
   return ret;
 };
