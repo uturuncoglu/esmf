@@ -71,6 +71,12 @@ int main(void){
   json::json_pointer jp("/foo/bar/nest");
   root[jp] = "a deep nest";
 
+  // Add an element then erase it
+  json toClear = {{"one", 1}, {"two", 2}, {"three", 2.9}};
+  root["toClear"] = toClear;
+  std::cout << root.dump(4) << std::endl;
+  root["toClear"].erase();
+
   std::cout << root.dump(4) << std::endl;
 
   rc = ESMF_SUCCESS;
