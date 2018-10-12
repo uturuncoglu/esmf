@@ -16,14 +16,11 @@
 #include <iostream>
 #include <assert.h>
 
-// ESMF header
 #include "ESMC.h"
-
-// ESMF Test header
 #include "ESMC_Test.h"
-
-// Attributes header
 #include "ESMCI_Attributes.h"
+#include "ESMCI_Macros.h"
+#include "ESMCI_LogErr.h"
 
 using namespace ESMCI;
 
@@ -36,43 +33,48 @@ using namespace ESMCI;
 //EOP
 //------------------------------------------------------------------------------
 
-void checkESMFReturnCode(int &rc){
-  assert(rc == ESMF_SUCCESS);
+void finalizeFailure(int &rc, char failMsg[], string msg){
+  rc = ESMF_FAILURE;
+  strcpy(failMsg, msg.c_str());
   return;
 };
 
-int testConstructor(){
-  int rc = ESMF_FAILURE;
+void testConstructor(int &rc){
+  rc = ESMF_FAILURE;
   Attributes attrs;
   rc = ESMF_SUCCESS;
-  return rc;
+  return;
 };
 
-int testSetGet(){
-  int rc = ESMF_FAILURE;
+#undef  ESMC_METHOD
+#define ESMC_METHOD "testSetGet"
+void testSetGet(int &rc, char failMsg[]){
+  rc = ESMF_FAILURE;
 
   Attributes attrs;
+
+  // ---------------------------------------------------------------------------
+  // Test setting a single value.
 
   int value = 10;
   string key = "/theKey";
-  rc = ESMF_FAILURE;
   attrs.set(key, value, false, rc);
-  checkESMFReturnCode(rc);
+  if (ESMC_LogDefault.MsgFoundError(rc, ESMCI_ERR_PASSTHRU, ESMC_CONTEXT,
+                                    &rc)) return;
 
   const json& storage = attrs.getStorageRef();
 
   if (storage["theKey"] != value){
-    rc = ESMF_FAILURE;
-    return rc;
+    return finalizeFailure(rc, failMsg, "Did not set key correctly");
   }
 
   rc = ESMF_FAILURE;
   int actual = attrs.get<int>(key, rc);
-  checkESMFReturnCode(rc);
+  if (ESMC_LogDefault.MsgFoundError(rc, ESMCI_ERR_PASSTHRU, ESMC_CONTEXT,
+                                    &rc)) return;
 
   if (actual != value){
-    rc = ESMF_FAILURE;
-    return rc;
+    return finalizeFailure(rc, failMsg, "Did not get key correctly");
   }
 
   //----------------------------------------------------------------------------
@@ -81,43 +83,46 @@ int testSetGet(){
   string keyp = "/root/group1/group2";
   rc = ESMF_FAILURE;
   attrs.set(keyp, value2, false, rc);
-  checkESMFReturnCode(rc);
+  if (ESMC_LogDefault.MsgFoundError(rc, ESMCI_ERR_PASSTHRU, ESMC_CONTEXT,
+                                    &rc)) return;
 
   if (storage["root"]["group1"]["group2"] != value2){
-    rc = ESMF_FAILURE;
-    return rc;
+    return finalizeFailure(rc, failMsg, "Did not set nested key correctly");
   }
 
   rc = ESMF_FAILURE;
   actual = attrs.get<int>(keyp, rc);
-  checkESMFReturnCode(rc);
+  if (ESMC_LogDefault.MsgFoundError(rc, ESMCI_ERR_PASSTHRU, ESMC_CONTEXT,
+                                    &rc)) return;
 
   if (actual != value2){
-    rc = ESMF_FAILURE;
-    return rc;
+    return finalizeFailure(rc, failMsg, "Did not get nested key correctly");
   }
 
   //----------------------------------------------------------------------------
 
   key = "/twiceSet";
   attrs.set(key, 10, false, rc);
-  checkESMFReturnCode(rc);
+  if (ESMC_LogDefault.MsgFoundError(rc, ESMCI_ERR_PASSTHRU, ESMC_CONTEXT,
+                                    &rc)) return;
   value = 12;
   attrs.set(key, value, true, rc);
-  checkESMFReturnCode(rc);
+  if (ESMC_LogDefault.MsgFoundError(rc, ESMCI_ERR_PASSTHRU, ESMC_CONTEXT,
+                                    &rc)) return;
 
   if (attrs.get<int>(key, rc) != value){
-    rc = ESMF_FAILURE;
-    return rc;
+    return finalizeFailure(rc, failMsg, "Did not overload existing key correctly");
   }
 
 //  std::cout << storage.dump(2) << std::endl;
 
-  return rc;
+  return;
 };
 
-int testSetGetErrorHandling(){
-  int rc = ESMF_FAILURE;
+#undef  ESMC_METHOD
+#define ESMC_METHOD "testSetGetErrorHandling"
+void testSetGetErrorHandling(int &rc, char failMsg[]){
+  rc = ESMF_FAILURE;
 
   Attributes attrs;
 
@@ -130,8 +135,7 @@ int testSetGetErrorHandling(){
 
   // Test is expected to fail as we have not added anything at this key.
   if (rc != ESMC_RC_ATTR_WRONGTYPE){
-    rc = ESMF_FAILURE;
-    return rc;
+    return finalizeFailure(rc, failMsg, "Return code not with get error");
   }
 
   // ---------------------------------------------------------------------------
@@ -140,15 +144,15 @@ int testSetGetErrorHandling(){
 
   string key2 = "/theKey2";
   attrs.set(key2, 111, false, rc);
-  checkESMFReturnCode(rc);
+  if (ESMC_LogDefault.MsgFoundError(rc, ESMCI_ERR_PASSTHRU, ESMC_CONTEXT,
+                                    &rc)) return;
   attrs.set(key2, 222, false, rc);
   if (rc != ESMC_RC_CANNOT_SET){
-    rc = ESMF_FAILURE;
-    return rc;
+    return finalizeFailure(rc, failMsg, "Error not handled with existing key");
   }
 
   rc = ESMF_SUCCESS;
-  return rc;
+  return;
 };
 
 int main(void){
@@ -158,6 +162,8 @@ int main(void){
   int result = 0;
   int rc = ESMF_FAILURE;
 
+  strcpy(failMsg, "Did not return ESMF_SUCCESS");  // Default fail message
+
   //----------------------------------------------------------------------------
   ESMC_TestStart(__FILE__, __LINE__, 0);
   //----------------------------------------------------------------------------
@@ -165,24 +171,22 @@ int main(void){
   //----------------------------------------------------------------------------
   //NEX_UTest
   strcpy(name, "Attributes Constructor");
-  strcpy(failMsg, "Did not return ESMF_SUCCESS");
-  rc = testConstructor();
+
+  testConstructor(rc);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //----------------------------------------------------------------------------
 
   //----------------------------------------------------------------------------
   //NEX_UTest
   strcpy(name, "Attributes SetGet");
-  strcpy(failMsg, "Did not return ESMF_SUCCESS");
-  rc = testSetGet();
+  testSetGet(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //----------------------------------------------------------------------------
   
   //----------------------------------------------------------------------------
   //NEX_UTest
   strcpy(name, "Attributes SetGet Error Handling");
-  strcpy(failMsg, "Did not return ESMF_SUCCESS");
-  rc = testSetGetErrorHandling();
+  testSetGetErrorHandling(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //----------------------------------------------------------------------------
 
