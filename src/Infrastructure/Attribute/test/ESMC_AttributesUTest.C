@@ -56,7 +56,7 @@ int testSetGet(){
   int value = 10;
   string key = "/theKey";
   rc = ESMF_FAILURE;
-  attrs.set(key, value, rc);
+  attrs.set(key, value, false, rc);
   checkESMFReturnCode(rc);
 
   const json& storage = attrs.getStorageRef();
@@ -80,7 +80,7 @@ int testSetGet(){
   int value2 = 33;
   string keyp = "/root/group1/group2";
   rc = ESMF_FAILURE;
-  attrs.set(keyp, value2, rc);
+  attrs.set(keyp, value2, false, rc);
   checkESMFReturnCode(rc);
 
   if (storage["root"]["group1"]["group2"] != value2){
@@ -100,10 +100,10 @@ int testSetGet(){
   //----------------------------------------------------------------------------
 
   key = "/twiceSet";
-  attrs.set(key, 10, rc);
+  attrs.set(key, 10, false, rc);
   checkESMFReturnCode(rc);
   value = 12;
-  attrs.set(key, value, rc);
+  attrs.set(key, value, true, rc);
   checkESMFReturnCode(rc);
 
   if (attrs.get<int>(key, rc) != value){
@@ -121,11 +121,28 @@ int testSetGetErrorHandling(){
 
   Attributes attrs;
 
+  // ---------------------------------------------------------------------------
+  // Assert trying to get a value that is not in the map or is the wrong type
+  // will error.
+
   string key = "/theKey";
   int actual = attrs.get<int>(key, rc);
 
   // Test is expected to fail as we have not added anything at this key.
   if (rc != ESMC_RC_ATTR_WRONGTYPE){
+    rc = ESMF_FAILURE;
+    return rc;
+  }
+
+  // ---------------------------------------------------------------------------
+  // Assert setting force to false will error out if the map has already been
+  // created.
+
+  string key2 = "/theKey2";
+  attrs.set(key2, 111, false, rc);
+  checkESMFReturnCode(rc);
+  attrs.set(key2, 222, false, rc);
+  if (rc != ESMC_RC_CANNOT_SET){
     rc = ESMF_FAILURE;
     return rc;
   }

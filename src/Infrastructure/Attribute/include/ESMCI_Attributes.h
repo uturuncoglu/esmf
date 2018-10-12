@@ -59,7 +59,7 @@ class Attributes
     T get(string key, int &rc);
 
     template <typename T>
-    void set(string key, T value, int &rc);
+    void set(string key, T value, bool force, int &rc);
 
 };
 } // namespace

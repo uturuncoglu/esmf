@@ -84,12 +84,20 @@ template int Attributes::get<int>(string, int&);
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::set"
 template <typename T>
-void Attributes::set(string key, T value, int &rc){
+void Attributes::set(string key, T value, bool force, int &rc){
   json::json_pointer jp(key);
+  if (force == false){
+    if (!this->storage.value(jp, NULL)){
+      string msg = "Attribute key \"" + key + "\" already in map and force=false.";
+      ESMC_LogDefault.MsgFoundError(ESMC_RC_CANNOT_SET, msg, ESMC_CONTEXT,
+                                    &rc);
+      return;
+    }
+  }
   this->storage[jp] = value;
   rc = ESMF_SUCCESS;
   return;
 };
-template void Attributes::set<int>(string, int, int&);
+template void Attributes::set<int>(string, int, bool, int&);
 
 }  // namespace
