@@ -67,6 +67,21 @@ void testErase(int &rc, char failMsg[]){
     return finalizeFailure(rc, failMsg, "Nested item not deleted");
   }
 
+  //----------------------------------------------------------------------------
+  // Test errors handled with bad key combinations and erase.
+
+  rc = ESMF_FAILURE;
+  attrs.erase("/nothing", "nested", rc);
+  if (rc != ESMC_RC_NOT_FOUND) {
+    return finalizeFailure(rc, failMsg, "Error not handled for missing parent");
+  }
+
+  rc = ESMF_FAILURE;
+  attrs.erase("/something", "underground", rc);
+  if (rc != ESMC_RC_NOT_FOUND) {
+    return finalizeFailure(rc, failMsg, "Error not handled for missing child");
+  }
+
 //  std::cout << storage.dump(2) << std::endl;
 
   rc = ESMF_SUCCESS;

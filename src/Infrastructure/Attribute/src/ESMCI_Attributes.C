@@ -62,8 +62,24 @@ void Attributes::erase(string keyParent, string keyChild, int &rc){
   rc = ESMF_FAILURE;
 
   json::json_pointer jp(keyParent);
-  json &ref = this->storage.at(jp);
-  ref.erase(ref.find(keyChild));
+
+  try {
+    json &target = this->storage.at(jp);
+    try {
+      // Will throw out_of_range if key does not exist.
+      json &found = target.at(keyChild);
+
+      target.erase(keyChild);
+    } catch (json::out_of_range& e) {
+      ESMC_LogDefault.MsgFoundError(ESMC_RC_NOT_FOUND, e.what(),
+                                    ESMC_CONTEXT, &rc);
+      return;
+    }
+  } catch (json::out_of_range& e) {
+      ESMC_LogDefault.MsgFoundError(ESMC_RC_NOT_FOUND, e.what(),
+                                    ESMC_CONTEXT, &rc);
+      return;
+  }
 
   rc = ESMF_SUCCESS;
   return;
@@ -84,11 +100,10 @@ T Attributes::get(string key, int &rc){
   T ret;
   try {
     ret = this->storage[jp];
-  }
-  catch (json::type_error& e) {
+  } catch (json::type_error& e) {
     ESMC_LogDefault.MsgFoundError(ESMC_RC_ATTR_WRONGTYPE, e.what(),
                                   ESMC_CONTEXT, &rc);
-    return rc;
+    return 0;
   }
   rc = ESMF_SUCCESS;
   return ret;
@@ -107,8 +122,7 @@ void Attributes::set(string key, T value, bool force, int &rc){
       string msg = "Attribute key \"" + key + "\" already in map and force=false.";
       ESMC_LogDefault.MsgFoundError(ESMC_RC_CANNOT_SET, msg, ESMC_CONTEXT, &rc);
       return;
-    }
-    catch (json::out_of_range){
+    } catch (json::out_of_range){
       // Key is not found in the map. Just pass on through.
       // See: https://github.com/nlohmann/json/issues/1194#issuecomment-413002974
     }
