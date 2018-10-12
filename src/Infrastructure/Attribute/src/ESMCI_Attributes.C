@@ -66,6 +66,7 @@ const json& Attributes::getStorageRef(){
 #define ESMC_METHOD "Attributes::get"
 template <typename T>
 T Attributes::get(string key, int &rc){
+  rc = ESMF_FAILURE;
   json::json_pointer jp(key);
   T ret;
   try {
@@ -85,6 +86,7 @@ template int Attributes::get<int>(string, int&);
 #define ESMC_METHOD "Attributes::set"
 template <typename T>
 void Attributes::set(string key, T value, bool force, int &rc){
+  rc = ESMF_FAILURE;
   json::json_pointer jp(key);
   if (!force){
     try {
