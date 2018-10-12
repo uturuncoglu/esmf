@@ -92,8 +92,7 @@ void Attributes::set(string key, T value, bool force, int &rc){
     try {
       T result = this->storage[jp];
       string msg = "Attribute key \"" + key + "\" already in map and force=false.";
-      ESMC_LogDefault.MsgFoundError(ESMC_RC_CANNOT_SET, msg, ESMC_CONTEXT,
-                                    &rc);
+      ESMC_LogDefault.MsgFoundError(ESMC_RC_CANNOT_SET, msg, ESMC_CONTEXT, &rc);
       return;
     }
     catch (json::type_error){
