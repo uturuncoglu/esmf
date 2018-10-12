@@ -111,7 +111,7 @@ int testSetGet(){
     return rc;
   }
 
-  std::cout << storage.dump(2) << std::endl;
+//  std::cout << storage.dump(2) << std::endl;
 
   return rc;
 };
@@ -122,7 +122,7 @@ int testSetGetErrorHandling(){
   Attributes attrs;
 
   // ---------------------------------------------------------------------------
-  // Assert trying to get a value that is not in the map or is the wrong type
+  // Test trying to get a value that is not in the map or is the wrong type
   // will error.
 
   string key = "/theKey";
@@ -135,7 +135,7 @@ int testSetGetErrorHandling(){
   }
 
   // ---------------------------------------------------------------------------
-  // Assert setting force to false will error out if the map has already been
+  // Test setting force to false will error out if the map has already been
   // created.
 
   string key2 = "/theKey2";

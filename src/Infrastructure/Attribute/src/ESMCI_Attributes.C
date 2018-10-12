@@ -86,12 +86,18 @@ template int Attributes::get<int>(string, int&);
 template <typename T>
 void Attributes::set(string key, T value, bool force, int &rc){
   json::json_pointer jp(key);
-  if (force == false){
-    if (!this->storage.value(jp, NULL)){
+  if (!force){
+    try {
+      T result = this->storage[jp];
       string msg = "Attribute key \"" + key + "\" already in map and force=false.";
       ESMC_LogDefault.MsgFoundError(ESMC_RC_CANNOT_SET, msg, ESMC_CONTEXT,
                                     &rc);
       return;
+    }
+    catch (json::type_error){
+    // HACK (bekozi): This means the key is not in the dictionary. Ideally, we
+    // could test using "find", but this does not work with a JSON pointer. Just
+    // pass on through to the set command.
     }
   }
   this->storage[jp] = value;
