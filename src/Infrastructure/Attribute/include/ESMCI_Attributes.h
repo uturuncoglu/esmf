@@ -53,6 +53,8 @@ class Attributes
     Attributes(void);
     ~Attributes(void);
 
+    void erase(string key, string keyChild, int &rc);
+
     const json& getStorageRef(void);
 
     template <typename T>

@@ -57,6 +57,19 @@ Attributes::Attributes(void){
 Attributes::~Attributes(void){};
 
 #undef  ESMC_METHOD
+#define ESMC_METHOD "Attributes::erase"
+void Attributes::erase(string keyParent, string keyChild, int &rc){
+  rc = ESMF_FAILURE;
+
+  json::json_pointer jp(keyParent);
+  json &ref = this->storage.at(jp);
+  ref.erase(ref.find(keyChild));
+
+  rc = ESMF_SUCCESS;
+  return;
+};
+
+#undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::getStorageRef"
 const json& Attributes::getStorageRef(){
   return this->storage;

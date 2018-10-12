@@ -47,6 +47,33 @@ void testConstructor(int &rc){
 };
 
 #undef  ESMC_METHOD
+#define ESMC_METHOD "testErase"
+void testErase(int &rc, char failMsg[]){
+  rc = ESMF_FAILURE;
+
+  Attributes attrs;
+
+  string key = "/something/nested";
+  attrs.set(key, 10, false, rc);
+  if (ESMC_LogDefault.MsgFoundError(rc, ESMCI_ERR_PASSTHRU, ESMC_CONTEXT,
+                                    &rc)) return;
+  attrs.erase("/something", "nested", rc);
+  if (ESMC_LogDefault.MsgFoundError(rc, ESMCI_ERR_PASSTHRU, ESMC_CONTEXT,
+                                    &rc)) return;
+
+  const json &storage = attrs.getStorageRef();
+  const json &actual = storage["something"];
+  if (actual.find("nested") != actual.end()){
+    return finalizeFailure(rc, failMsg, "Nested item not deleted");
+  }
+
+//  std::cout << storage.dump(2) << std::endl;
+
+  rc = ESMF_SUCCESS;
+  return;
+};
+
+#undef  ESMC_METHOD
 #define ESMC_METHOD "testSetGet"
 void testSetGet(int &rc, char failMsg[]){
   rc = ESMF_FAILURE;
@@ -173,6 +200,13 @@ int main(void){
   strcpy(name, "Attributes Constructor");
 
   testConstructor(rc);
+  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
+  //----------------------------------------------------------------------------
+
+  //----------------------------------------------------------------------------
+  //NEX_UTest
+  strcpy(name, "Attributes Erase");
+  testErase(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //----------------------------------------------------------------------------
 

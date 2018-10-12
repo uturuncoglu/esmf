@@ -64,7 +64,7 @@ int main(void){
   root["ESMF"]["Extended"]["long_name"] = "foobar";
 
   // Reference the ESMF/General JSON object then add something to it
-  json &general  = root["ESMF"]["General"];
+  json &general = root["ESMF"]["General"];
   general["what"] = "has been added";
 
   // Use a JSON Pointer
