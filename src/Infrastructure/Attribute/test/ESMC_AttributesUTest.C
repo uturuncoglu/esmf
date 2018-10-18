@@ -56,7 +56,13 @@ void testConstructor(int &rc, char failMsg[]){
                                     &rc)) return;
 
   if (actual != desired){
-    return finalizeFailure(rc, failMsg, "JSON object changed value.");
+    return finalizeFailure(rc, failMsg, "JSON object changed value");
+  }
+
+  root.clear();
+  int actual2 = a.get<int>("/foo", rc);
+  if (actual != desired){
+    return finalizeFailure(rc, failMsg, "Clear removed desired value");
   }
 
   return;
