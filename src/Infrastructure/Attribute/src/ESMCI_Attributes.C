@@ -58,7 +58,7 @@ Attributes::~Attributes(void){};
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "~Attributes(json&)"
-Attributes::Attributes(json &storage){
+Attributes::Attributes(const json &storage){
   this->storage = storage;
 };
 

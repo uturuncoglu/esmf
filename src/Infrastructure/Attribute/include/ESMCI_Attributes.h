@@ -52,7 +52,7 @@ class Attributes
  public:
     Attributes(void);
     ~Attributes(void);
-    Attributes(json &storage);
+    Attributes(const json &storage);
 
     void erase(string key, string keyChild, int &rc);
 
