@@ -57,6 +57,12 @@ Attributes::Attributes(void){
 Attributes::~Attributes(void){};
 
 #undef  ESMC_METHOD
+#define ESMC_METHOD "~Attributes(json&)"
+Attributes::Attributes(json &storage){
+  this->storage = storage;
+};
+
+#undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::erase"
 void Attributes::erase(string keyParent, string keyChild, int &rc){
   rc = ESMF_FAILURE;
@@ -99,12 +105,13 @@ T Attributes::get(string key, int &rc){
   json::json_pointer jp(key);
   T ret;
   try {
-    ret = this->storage[jp];
-  } catch (json::type_error& e) {
-    ESMC_LogDefault.MsgFoundError(ESMC_RC_ATTR_WRONGTYPE, e.what(),
+    ret = this->storage.at(jp).get<T>();
+  } catch (json::out_of_range& e) {
+    ESMC_LogDefault.MsgFoundError(ESMC_RC_NOT_FOUND, e.what(),
                                   ESMC_CONTEXT, &rc);
     return 0;
   }
+
   rc = ESMF_SUCCESS;
   return ret;
 };

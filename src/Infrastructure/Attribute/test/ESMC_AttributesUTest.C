@@ -176,8 +176,8 @@ void testSetGetErrorHandling(int &rc, char failMsg[]){
   int actual = attrs.get<int>(key, rc);
 
   // Test is expected to fail as we have not added anything at this key.
-  if (rc != ESMC_RC_ATTR_WRONGTYPE){
-    return finalizeFailure(rc, failMsg, "Return code not with get error");
+  if (rc != ESMC_RC_NOT_FOUND){
+    return finalizeFailure(rc, failMsg, "Return code not compliant with get error");
   }
 
   // ---------------------------------------------------------------------------
