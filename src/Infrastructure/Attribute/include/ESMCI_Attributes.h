@@ -56,13 +56,15 @@ class Attributes
 
     void erase(string key, string keyChild, int &rc);
 
-    const json& getStorageRef(void);
+    const json& getStorageRef(void) const ;
 
     template <typename T>
-    T get(string key, int &rc);
+    T get(string key, int &rc) const;
 
     template <typename T>
     void set(string key, T value, bool force, int &rc);
+
+    void update(const Attributes &attrs, int &rc);
 
 };
 } // namespace

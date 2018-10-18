@@ -213,6 +213,38 @@ void testSetGetErrorHandling(int &rc, char failMsg[]){
   return;
 };
 
+#undef  ESMC_METHOD
+#define ESMC_METHOD "testUpdate"
+void testUpdate(int &rc, char failMsg[]){
+  rc = ESMF_FAILURE;
+
+  json update_target =  R"( {"color": "red", "price": 17.99} )"_json;
+  Attributes update_target_attrs(update_target);
+
+  json used_to_update = R"( {"color": "blue", "speed": 100} )"_json;
+  Attributes used_to_update_attrs(used_to_update);
+
+  const json& lhs = update_target_attrs.getStorageRef();
+  const json& rhs = used_to_update_attrs.getStorageRef();
+
+  if (lhs == rhs){
+    return finalizeFailure(rc, failMsg, "Storage should not be equal");
+  }
+
+  rc = ESMF_FAILURE;
+  update_target_attrs.update(used_to_update_attrs, rc);
+  if (ESMC_LogDefault.MsgFoundError(rc, ESMCI_ERR_PASSTHRU, ESMC_CONTEXT,
+                                    &rc)) return;
+
+  const json desired = R"( {"color": "blue", "price": 17.99, "speed": 100} )"_json;
+
+  if (lhs != desired){
+    return finalizeFailure(rc, failMsg, "Storage not updated");
+  }
+
+  return;
+};
+
 int main(void){
 
   char name[80];
@@ -252,6 +284,13 @@ int main(void){
   //NEX_UTest
   strcpy(name, "Attributes SetGet Error Handling");
   testSetGetErrorHandling(rc, failMsg);
+  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
+  //----------------------------------------------------------------------------
+
+  //----------------------------------------------------------------------------
+  //NEX_UTest
+  strcpy(name, "Attributes Update");
+  testUpdate(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //----------------------------------------------------------------------------
 

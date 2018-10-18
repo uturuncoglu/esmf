@@ -93,14 +93,14 @@ void Attributes::erase(string keyParent, string keyChild, int &rc){
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::getStorageRef"
-const json& Attributes::getStorageRef(){
+const json& Attributes::getStorageRef() const{
   return this->storage;
 };
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::get"
 template <typename T>
-T Attributes::get(string key, int &rc){
+T Attributes::get(string key, int &rc) const{
   rc = ESMF_FAILURE;
   json::json_pointer jp(key);
   T ret;
@@ -115,7 +115,7 @@ T Attributes::get(string key, int &rc){
   rc = ESMF_SUCCESS;
   return ret;
 };
-template int Attributes::get<int>(string, int&);
+template int Attributes::get<int>(string, int&) const;
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::set"
@@ -139,5 +139,15 @@ void Attributes::set(string key, T value, bool force, int &rc){
   return;
 };
 template void Attributes::set<int>(string, int, bool, int&);
+
+#undef  ESMC_METHOD
+#define ESMC_METHOD "Attributes::update"
+void Attributes::update(const Attributes &attrs, int &rc){
+  rc = ESMF_FAILURE;
+  const json& r_j = attrs.getStorageRef();
+  this->storage.update(r_j);
+  rc = ESMF_SUCCESS;
+  return;
+};
 
 }  // namespace
