@@ -105,7 +105,7 @@ T Attributes::get(string key, int &rc){
   json::json_pointer jp(key);
   T ret;
   try {
-    ret = this->storage.at(jp).get<T>();
+    ret = this->storage.at(jp);
   } catch (json::out_of_range& e) {
     ESMC_LogDefault.MsgFoundError(ESMC_RC_NOT_FOUND, e.what(),
                                   ESMC_CONTEXT, &rc);

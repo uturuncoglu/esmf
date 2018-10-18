@@ -39,10 +39,26 @@ void finalizeFailure(int &rc, char failMsg[], string msg){
   return;
 };
 
-void testConstructor(int &rc){
-  rc = ESMF_FAILURE;
+#undef  ESMC_METHOD
+#define ESMC_METHOD "testConstructor"
+void testConstructor(int &rc, char failMsg[]){
   Attributes attrs;
-  rc = ESMF_SUCCESS;
+
+  // Test constructing from a JSON object instance creates a copy.
+  json root;
+  int desired = 5;
+  root["foo"] = desired;
+  Attributes a(root);
+  root["foo"] = 10;
+
+  int actual = a.get<int>("/foo", rc);
+  if (ESMC_LogDefault.MsgFoundError(rc, ESMCI_ERR_PASSTHRU, ESMC_CONTEXT,
+                                    &rc)) return;
+
+  if (actual != desired){
+    return finalizeFailure(rc, failMsg, "JSON object changed value.");
+  }
+
   return;
 };
 
@@ -214,7 +230,7 @@ int main(void){
   //NEX_UTest
   strcpy(name, "Attributes Constructor");
 
-  testConstructor(rc);
+  testConstructor(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //----------------------------------------------------------------------------
 
