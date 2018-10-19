@@ -36,6 +36,10 @@ using json = nlohmann::json;  // Convenience rename for JSON namespace
 //EOP
 //------------------------------------------------------------------------------
 
+const long int * const runGetPointer(const json & j){
+  return j["theNumber"].get_ptr<const json::number_integer_t * const>();
+}
+
 int main(void){
 
   // Test variables
@@ -77,11 +81,53 @@ int main(void){
 //  std::cout << root.dump(4) << std::endl;
   root.erase("toClear");
 
-//  std::cout << root.dump(4) << std::endl;
+  ESMC_Test(true, name, failMsg, &result, __FILE__, __LINE__, 0);
 
-  rc = ESMF_SUCCESS;
+  //----------------------------------------------------------------------------
+  //NEX_UTest
+  strcpy(name, "Reference and pointer access using the JSON API");
+  bool failed = false;
 
-  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
+  json j;
+  int desired = 123;
+  j["theNumber"] = desired;
+
+  int const & the_ref1 = j["theNumber"].get_ref<const json::number_integer_t&>();
+  int const & the_ref2 = j["theNumber"].get_ref<const json::number_integer_t&>();
+  if (the_ref1 != the_ref2){
+    strcpy(failMsg, "Values not equal for references");
+    failed = true;
+    ESMC_Test(false, name, failMsg, &result, __FILE__, __LINE__, 0);
+  }
+  if (&the_ref1 == &the_ref2){
+    strcpy(failMsg, "Addresses are equal for references");
+    failed = true;
+    ESMC_Test(false, name, failMsg, &result, __FILE__, __LINE__, 0);
+  }
+
+  auto ptr = j["theNumber"].get_ptr<const json::number_integer_t* const>();
+  if (*ptr != desired){
+    strcpy(failMsg, "Pointer value is not the desired value");
+    failed = true;
+    ESMC_Test(false, name, failMsg, &result, __FILE__, __LINE__, 0);
+  }
+
+  const long int * ptr2 = runGetPointer(j);
+  if (*ptr != *ptr2){
+    strcpy(failMsg, "Pointer values are not equal");
+    failed = true;
+    ESMC_Test(false, name, failMsg, &result, __FILE__, __LINE__, 0);
+  }
+  if (&*ptr != &*ptr2){
+    strcpy(failMsg, "Pointer addresses are not equal");
+    failed = true;
+    ESMC_Test(false, name, failMsg, &result, __FILE__, __LINE__, 0);
+  }
+
+  if (!failed){
+    ESMC_Test(true, name, failMsg, &result, __FILE__, __LINE__, 0);
+  }
+
   //----------------------------------------------------------------------------
 
   //----------------------------------------------------------------------------
