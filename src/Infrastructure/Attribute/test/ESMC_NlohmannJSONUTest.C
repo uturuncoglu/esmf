@@ -53,6 +53,10 @@ class MockAttributesNoCopy
     json* getPointer() const{
       return this->storage;
     }
+
+    const json& getStorageRef() const{
+      return *(this->storage);
+    }
 };
 
 const long int * const runGetPointer(const string & key, const json & j){
@@ -152,6 +156,7 @@ int main(void){
   //NEX_UTest
   strcpy(name, "Mock attributes constructor");
   strcpy(failMsg, "Did not return ESMF_SUCCESS");
+  failed = false;
 
   json j2;
   MockAttributesNoCopy mattrs(j2);
@@ -159,10 +164,16 @@ int main(void){
   string value2 = "nothing";
   j2[key2] = value2;
 
+  const json &refVar = mattrs.getStorageRef();
+  if (&refVar != &j2){
+    strcpy(failMsg, "Storage reference not equivalent");
+    failed = true;
+    ESMC_Test(false, name, failMsg, &result, __FILE__, __LINE__, 0);
+  }
+
   json *ref = mattrs.getPointer();
   string actual2 = ref->at(key2);
 
-  failed = false;
   if (actual2 != value2){
     strcpy(failMsg, "Value not added to target JSON object");
     failed = true;
