@@ -46,11 +46,11 @@ class MockAttributesNoCopy
       this->storage = &storage;
     };
 
-    string dump(){
+    string dump() const{
       return this->storage->dump(2);
     }
 
-    json* getPointer(){
+    json* getPointer() const{
       return this->storage;
     }
 };
