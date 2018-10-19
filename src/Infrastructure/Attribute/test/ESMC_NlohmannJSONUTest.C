@@ -24,6 +24,7 @@
 // JSON header
 #include "json.hpp"
 
+using namespace std;
 using json = nlohmann::json;  // Convenience rename for JSON namespace
 
 //==============================================================================
@@ -36,8 +37,8 @@ using json = nlohmann::json;  // Convenience rename for JSON namespace
 //EOP
 //------------------------------------------------------------------------------
 
-const long int * const runGetPointer(const json & j){
-  return j["theNumber"].get_ptr<const json::number_integer_t * const>();
+const long int * const runGetPointer(const string & key, const json & j){
+  return j.at(key).get_ptr<const json::number_integer_t * const>();
 }
 
 int main(void){
@@ -90,10 +91,11 @@ int main(void){
 
   json j;
   int desired = 123;
-  j["theNumber"] = desired;
+  string key = "theNumber";
+  j[key] = desired;
 
-  int const & the_ref1 = j["theNumber"].get_ref<const json::number_integer_t&>();
-  int const & the_ref2 = j["theNumber"].get_ref<const json::number_integer_t&>();
+  int const & the_ref1 = j[key].get_ref<const json::number_integer_t&>();
+  int const & the_ref2 = j[key].get_ref<const json::number_integer_t&>();
   if (the_ref1 != the_ref2){
     strcpy(failMsg, "Values not equal for references");
     failed = true;
@@ -105,14 +107,14 @@ int main(void){
     ESMC_Test(false, name, failMsg, &result, __FILE__, __LINE__, 0);
   }
 
-  auto ptr = j["theNumber"].get_ptr<const json::number_integer_t* const>();
+  auto ptr = j[key].get_ptr<const json::number_integer_t* const>();
   if (*ptr != desired){
     strcpy(failMsg, "Pointer value is not the desired value");
     failed = true;
     ESMC_Test(false, name, failMsg, &result, __FILE__, __LINE__, 0);
   }
 
-  const long int * ptr2 = runGetPointer(j);
+  const long int * ptr2 = runGetPointer(key, j);
   if (*ptr != *ptr2){
     strcpy(failMsg, "Pointer values are not equal");
     failed = true;
