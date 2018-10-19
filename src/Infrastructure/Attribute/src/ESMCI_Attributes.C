@@ -64,7 +64,7 @@ Attributes::Attributes(const json &storage){
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::erase"
-void Attributes::erase(string keyParent, string keyChild, int &rc){
+void Attributes::erase(const string &keyParent, const string &keyChild, int &rc){
   rc = ESMF_FAILURE;
 
   json::json_pointer jp(keyParent);
@@ -99,28 +99,27 @@ const json& Attributes::getStorageRef() const{
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::get"
-template <typename T>
-T Attributes::get(string key, int &rc) const{
+template <typename T, typename JT>
+T Attributes::get(const string &key, int &rc) const{
   rc = ESMF_FAILURE;
   json::json_pointer jp(key);
-  T ret;
   try {
-    ret = this->storage.at(jp);
+    T ret = this->storage.at(jp).get_ptr<JT>();
+    rc = ESMF_SUCCESS;
+    return ret;
   } catch (json::out_of_range& e) {
     ESMC_LogDefault.MsgFoundError(ESMC_RC_NOT_FOUND, e.what(),
                                   ESMC_CONTEXT, &rc);
     return 0;
   }
-
-  rc = ESMF_SUCCESS;
-  return ret;
 };
-template int Attributes::get<int>(string, int&) const;
+template const long int* const Attributes::get<const long int* const,
+                const json::number_integer_t* const>(const string&, int&) const;
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::set"
 template <typename T>
-void Attributes::set(string key, T value, bool force, int &rc){
+void Attributes::set(const string &key, T value, bool force, int &rc){
   rc = ESMF_FAILURE;
   json::json_pointer jp(key);
   if (!force){
@@ -138,7 +137,7 @@ void Attributes::set(string key, T value, bool force, int &rc){
   rc = ESMF_SUCCESS;
   return;
 };
-template void Attributes::set<int>(string, int, bool, int&);
+template void Attributes::set<int>(const string&, int, bool, int&);
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::update"

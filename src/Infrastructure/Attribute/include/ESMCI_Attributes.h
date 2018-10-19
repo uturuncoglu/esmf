@@ -54,15 +54,15 @@ class Attributes
     ~Attributes(void);
     Attributes(const json &storage);
 
-    void erase(string key, string keyChild, int &rc);
+    void erase(const string &key, const string &keyChild, int &rc);
 
-    const json& getStorageRef(void) const ;
+    const json& getStorageRef(void) const;
+
+    template <typename T, typename JT>
+    T get(const string &key, int &rc) const;
 
     template <typename T>
-    T get(string key, int &rc) const;
-
-    template <typename T>
-    void set(string key, T value, bool force, int &rc);
+    void set(const string &key, T value, bool force, int &rc);
 
     void update(const Attributes &attrs, int &rc);
 

@@ -38,7 +38,7 @@ using json = nlohmann::json;  // Convenience rename for JSON namespace
 //------------------------------------------------------------------------------
 
 const long int * const runGetPointer(const string & key, const json & j){
-  return j.at(key).get_ptr<const json::number_integer_t * const>();
+  return j.at(key).get_ptr<const json::number_integer_t* const>();
 }
 
 int main(void){
