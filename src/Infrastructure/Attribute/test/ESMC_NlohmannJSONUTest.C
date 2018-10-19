@@ -37,6 +37,24 @@ using json = nlohmann::json;  // Convenience rename for JSON namespace
 //EOP
 //------------------------------------------------------------------------------
 
+class MockAttributesNoCopy
+{
+  public:
+    json *storage;
+
+    MockAttributesNoCopy(json &storage){
+      this->storage = &storage;
+    };
+
+    string dump(){
+      return this->storage->dump(2);
+    }
+
+    json* getPointer(){
+      return this->storage;
+    }
+};
+
 const long int * const runGetPointer(const string & key, const json & j){
   return j.at(key).get_ptr<const json::number_integer_t* const>();
 }
@@ -131,6 +149,34 @@ int main(void){
   }
 
   //----------------------------------------------------------------------------
+  //NEX_UTest
+  strcpy(name, "Mock attributes constructor");
+  strcpy(failMsg, "Did not return ESMF_SUCCESS");
+
+  json j2;
+  MockAttributesNoCopy mattrs(j2);
+  string key2 = "something";
+  string value2 = "nothing";
+  j2[key2] = value2;
+
+  json *ref = mattrs.getPointer();
+  string actual2 = ref->at(key2);
+
+  failed = false;
+  if (actual2 != value2){
+    strcpy(failMsg, "Value not added to target JSON object");
+    failed = true;
+    ESMC_Test(false, name, failMsg, &result, __FILE__, __LINE__, 0);
+  }
+  if (&j2 != &*ref){
+    strcpy(failMsg, "Address target not equivalent");
+    failed = true;
+    ESMC_Test(false, name, failMsg, &result, __FILE__, __LINE__, 0);
+  }
+
+  if (!failed){
+    ESMC_Test(true, name, failMsg, &result, __FILE__, __LINE__, 0);
+  }
 
   //----------------------------------------------------------------------------
   ESMC_TestEnd(__FILE__, __LINE__, 0);
