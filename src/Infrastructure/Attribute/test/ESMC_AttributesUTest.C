@@ -24,6 +24,9 @@
 
 using namespace ESMCI;
 
+typedef const long int* const attr_int_ptr_t;
+typedef const json::number_integer_t* const json_int_ptr_t;
+
 //==============================================================================
 //BOP
 // !PROGRAM: ESMC_AttributesUTest - Internal Attribute JSON functionality
@@ -51,17 +54,17 @@ void testConstructor(int &rc, char failMsg[]){
   Attributes a(root);
   root["foo"] = 10;
 
-  int actual = a.get<int>("/foo", rc);
+  auto actual = a.get<attr_int_ptr_t, json_int_ptr_t>("/foo", rc);
   if (ESMC_LogDefault.MsgFoundError(rc, ESMCI_ERR_PASSTHRU, ESMC_CONTEXT,
                                     &rc)) return;
 
-  if (actual != desired){
+  if (*actual != desired){
     return finalizeFailure(rc, failMsg, "JSON object changed value");
   }
 
   root.clear();
-  int actual2 = a.get<int>("/foo", rc);
-  if (actual != desired){
+  auto actual2 = a.get<attr_int_ptr_t, json_int_ptr_t>("/foo", rc);
+  if (*actual2 != desired){
     return finalizeFailure(rc, failMsg, "Clear removed desired value");
   }
 
@@ -133,11 +136,11 @@ void testSetGet(int &rc, char failMsg[]){
   }
 
   rc = ESMF_FAILURE;
-  int actual = attrs.get<int>(key, rc);
+  attr_int_ptr_t actual = attrs.get<attr_int_ptr_t, json_int_ptr_t>(key, rc);
   if (ESMC_LogDefault.MsgFoundError(rc, ESMCI_ERR_PASSTHRU, ESMC_CONTEXT,
                                     &rc)) return;
 
-  if (actual != value){
+  if (*actual != value){
     return finalizeFailure(rc, failMsg, "Did not get key correctly");
   }
 
@@ -155,11 +158,11 @@ void testSetGet(int &rc, char failMsg[]){
   }
 
   rc = ESMF_FAILURE;
-  actual = attrs.get<int>(keyp, rc);
+  auto actual2 = attrs.get<attr_int_ptr_t, json_int_ptr_t>(keyp, rc);
   if (ESMC_LogDefault.MsgFoundError(rc, ESMCI_ERR_PASSTHRU, ESMC_CONTEXT,
                                     &rc)) return;
 
-  if (actual != value2){
+  if (*actual2 != value2){
     return finalizeFailure(rc, failMsg, "Did not get nested key correctly");
   }
 
@@ -174,7 +177,7 @@ void testSetGet(int &rc, char failMsg[]){
   if (ESMC_LogDefault.MsgFoundError(rc, ESMCI_ERR_PASSTHRU, ESMC_CONTEXT,
                                     &rc)) return;
 
-  if (attrs.get<int>(key, rc) != value){
+  if (*attrs.get<attr_int_ptr_t, json_int_ptr_t>(key, rc) != value){
     return finalizeFailure(rc, failMsg, "Did not overload existing key correctly");
   }
 
@@ -195,7 +198,7 @@ void testSetGetErrorHandling(int &rc, char failMsg[]){
   // will error.
 
   string key = "/theKey";
-  int actual = attrs.get<int>(key, rc);
+  auto actual = attrs.get<attr_int_ptr_t, json_int_ptr_t>(key, rc);
 
   // Test is expected to fail as we have not added anything at this key.
   if (rc != ESMC_RC_NOT_FOUND){
