@@ -48,9 +48,7 @@ namespace ESMCI {
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes"
-Attributes::Attributes(void){
-  this->storage = json::object();
-};
+Attributes::Attributes(void){};
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "~Attributes"

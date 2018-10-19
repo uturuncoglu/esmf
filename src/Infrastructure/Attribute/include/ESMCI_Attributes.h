@@ -43,7 +43,6 @@ namespace ESMCI {
 class Attributes
 {
  private:
-    std::string attrName;  // Inline to reduce memory thrashing
     json storage;  // JSON object store
 
     // Prevent accidental copying
