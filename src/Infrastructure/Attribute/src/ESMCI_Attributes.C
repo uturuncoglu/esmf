@@ -73,16 +73,16 @@ Attributes::Attributes(const string &input, int &rc){
     return;
   }
   rc = ESMF_SUCCESS;
-  };
+};
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::dump (no indent)"
-  string Attributes::dump(int &rc){
-    rc = ESMF_FAILURE;
-    string ret = this->storage.dump();
-    rc = ESMF_SUCCESS;
-    return ret;
-  };
+string Attributes::dump(int &rc){
+  rc = ESMF_FAILURE;
+  string ret = this->storage.dump();
+  rc = ESMF_SUCCESS;
+  return ret;
+};
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::dump (with indent)"
