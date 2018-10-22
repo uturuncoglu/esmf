@@ -52,6 +52,10 @@ class Attributes
     Attributes(void);
     ~Attributes(void);
     Attributes(const json &storage);
+    Attributes(const string &input, int &rc);
+
+    string dump(int &rc);
+    string dump(int indent, int &rc);
 
     void erase(const string &key, const string &keyChild, int &rc);
 

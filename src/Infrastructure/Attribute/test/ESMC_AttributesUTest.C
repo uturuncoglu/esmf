@@ -21,6 +21,7 @@
 #include "ESMCI_Attributes.h"
 #include "ESMCI_Macros.h"
 #include "ESMCI_LogErr.h"
+#include "ESMCI_Util.h"
 
 using namespace ESMCI;
 

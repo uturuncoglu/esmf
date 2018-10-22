@@ -28,6 +28,7 @@
 #include "ESMCI_Macros.h"
 #include "ESMCI_Attributes.h"
 #include "ESMCI_LogErr.h"
+#include "ESMCI_Util.h"
 #include "json.hpp"
 
 #include <vector>
@@ -58,6 +59,38 @@ Attributes::~Attributes(void){};
 #define ESMC_METHOD "~Attributes(json&)"
 Attributes::Attributes(const json &storage){
   this->storage = storage;
+};
+
+#undef  ESMC_METHOD
+#define ESMC_METHOD "Attributes(string&)"
+Attributes::Attributes(const string &input, int &rc){
+  rc = ESMF_FAILURE;
+  try {
+    this->storage = json::parse(input);
+  } catch (json::parse_error &e) {
+    ESMC_LogDefault.MsgFoundError(ESMC_RC_OBJ_NOT_CREATED, e.what(),
+                                  ESMC_CONTEXT, &rc);
+    return;
+  }
+  rc = ESMF_SUCCESS;
+  };
+
+#undef  ESMC_METHOD
+#define ESMC_METHOD "Attributes::dump (no indent)"
+  string Attributes::dump(int &rc){
+    rc = ESMF_FAILURE;
+    string ret = this->storage.dump();
+    rc = ESMF_SUCCESS;
+    return ret;
+  };
+
+#undef  ESMC_METHOD
+#define ESMC_METHOD "Attributes::dump (with indent)"
+string Attributes::dump(int indent, int &rc){
+  rc = ESMF_FAILURE;
+  string ret = this->storage.dump(indent);
+  rc = ESMF_SUCCESS;
+  return ret;
 };
 
 #undef  ESMC_METHOD
