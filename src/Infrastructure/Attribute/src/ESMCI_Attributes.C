@@ -34,10 +34,9 @@
 #include <vector>
 #include <iostream>
 
-using json = nlohmann::json;  // Convenience rename for JSON namespace.
+using namespace std;
 
-using std::string;
-using std::vector;
+using json = nlohmann::json;  // Convenience rename for JSON namespace.
 
 //-----------------------------------------------------------------------------
  // leave the following line as-is; it will insert the cvs ident string
@@ -77,7 +76,7 @@ Attributes::Attributes(const string &input, int &rc){
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::dump (no indent)"
-string Attributes::dump(int &rc){
+string Attributes::dump(int &rc) const{
   rc = ESMF_FAILURE;
   string ret = this->storage.dump();
   rc = ESMF_SUCCESS;
@@ -86,7 +85,7 @@ string Attributes::dump(int &rc){
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::dump (with indent)"
-string Attributes::dump(int indent, int &rc){
+string Attributes::dump(int indent, int &rc) const{
   rc = ESMF_FAILURE;
   string ret = this->storage.dump(indent);
   rc = ESMF_SUCCESS;
@@ -98,7 +97,9 @@ string Attributes::dump(int indent, int &rc){
 void Attributes::erase(const string &keyParent, const string &keyChild, int &rc){
   rc = ESMF_FAILURE;
 
-  json::json_pointer jp(keyParent);
+  json::json_pointer jp = this->formatKey(keyParent, rc);
+  if (ESMC_LogDefault.MsgFoundError(rc, ESMCI_ERR_PASSTHRU, ESMC_CONTEXT,
+                                    &rc)) return;
 
   try {
     json &target = this->storage.at(jp);
@@ -123,9 +124,28 @@ void Attributes::erase(const string &keyParent, const string &keyChild, int &rc)
 };
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "Attributes::getStorageRef"
-const json& Attributes::getStorageRef() const{
-  return this->storage;
+#define ESMC_METHOD "Attributes::formatKey"
+json::json_pointer Attributes::formatKey(const string &key, int &rc) {
+  rc = ESMF_FAILURE;
+  string localKey;
+
+  if (key[0] != '/') {
+    localKey = '/' + key;
+  } else {
+    localKey = key;
+  }
+
+  if (localKey.find("//") != string::npos){
+    string msg = "Double forward slashes not allowed in key names";
+    ESMC_LogDefault.MsgFoundError(ESMC_RC_ARG_BAD, msg, ESMC_CONTEXT, &rc);
+    json::json_pointer jp("");
+    return jp;
+  }
+
+  json::json_pointer jp(localKey);
+  rc = ESMF_SUCCESS;
+
+  return jp;
 };
 
 #undef  ESMC_METHOD
@@ -133,7 +153,11 @@ const json& Attributes::getStorageRef() const{
 template <typename T, typename JT>
 T Attributes::get(const string &key, int &rc) const{
   rc = ESMF_FAILURE;
-  json::json_pointer jp(key);
+
+  json::json_pointer jp = this->formatKey(key, rc);
+  if (ESMC_LogDefault.MsgFoundError(rc, ESMCI_ERR_PASSTHRU, ESMC_CONTEXT,
+                                    &rc)) return 0;
+
   try {
     T ret = this->storage.at(jp).get_ptr<JT>();
     rc = ESMF_SUCCESS;
@@ -148,10 +172,20 @@ template const long int* const Attributes::get<const long int* const,
                 const json::number_integer_t* const>(const string&, int&) const;
 
 #undef  ESMC_METHOD
+#define ESMC_METHOD "Attributes::getStorageRef"
+const json& Attributes::getStorageRef() const{
+  return this->storage;
+};
+
+#undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::set"
-bool Attributes::hasKey(const string &key, int &rc){
+bool Attributes::hasKey(const string &key, int &rc) const{
   rc = ESMF_FAILURE;
-  json::json_pointer jp(key);
+
+  json::json_pointer jp = this->formatKey(key, rc);
+  if (ESMC_LogDefault.MsgFoundError(rc, ESMCI_ERR_PASSTHRU, ESMC_CONTEXT,
+                                    &rc)) return false;
+
   bool ret;
   try{
     this->storage.at(jp);
@@ -168,7 +202,11 @@ bool Attributes::hasKey(const string &key, int &rc){
 template <typename T>
 void Attributes::set(const string &key, T value, bool force, int &rc){
   rc = ESMF_FAILURE;
-  json::json_pointer jp(key);
+
+  json::json_pointer jp = this->formatKey(key, rc);
+  if (ESMC_LogDefault.MsgFoundError(rc, ESMCI_ERR_PASSTHRU, ESMC_CONTEXT,
+                                    &rc)) return;
+
   if (!force){
     try {
       T result = this->storage.at(jp);

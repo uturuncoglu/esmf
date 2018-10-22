@@ -24,6 +24,7 @@
 #include "ESMCI_Util.h"
 
 using namespace ESMCI;
+using namespace std;
 
 typedef const long int* const attr_int_ptr_t;
 typedef const json::number_integer_t* const json_int_ptr_t;
@@ -218,7 +219,7 @@ void testSetGetErrorHandling(int &rc, char failMsg[]){
 
   Attributes attrs;
 
-  // ---------------------------------------------------------------------------
+  //----------------------------------------------------------------------------
   // Test trying to get a value that is not in the map or is the wrong type
   // will error.
 
@@ -230,7 +231,7 @@ void testSetGetErrorHandling(int &rc, char failMsg[]){
     return finalizeFailure(rc, failMsg, "Return code not compliant with get error");
   }
 
-  // ---------------------------------------------------------------------------
+  //----------------------------------------------------------------------------
   // Test setting force to false will error out if the map has already been
   // created.
 
@@ -242,6 +243,17 @@ void testSetGetErrorHandling(int &rc, char failMsg[]){
   if (rc != ESMC_RC_CANNOT_SET){
     return finalizeFailure(rc, failMsg, "Error not handled with existing key");
   }
+
+  //----------------------------------------------------------------------------
+  // Test a malformed key
+
+  string key3 = "//key";
+  attrs.set(key3, 111, false, rc);
+  if (rc != ESMC_RC_ARG_BAD){
+    return finalizeFailure(rc, failMsg, "Key is not parseable");
+  }
+
+  //----------------------------------------------------------------------------
 
   rc = ESMF_SUCCESS;
   return;

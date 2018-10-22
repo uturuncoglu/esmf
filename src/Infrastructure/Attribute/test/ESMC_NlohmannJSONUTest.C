@@ -154,6 +154,22 @@ int main(void){
 
   //----------------------------------------------------------------------------
   //NEX_UTest
+  strcpy(name, "Catching a parse_error from a JSON pointer");
+  strcpy(failMsg, "Did not catch parse_error");
+  failed = false;
+
+  string badKey = "//////key";
+  try {
+    json::json_pointer jpBad(badKey);
+    failed = true;
+  } catch (json::parse_error& e) {
+    failed = false;
+  }
+
+  ESMC_Test(failed, name, failMsg, &result, __FILE__, __LINE__, 0);
+
+  //----------------------------------------------------------------------------
+  //NEX_UTest
   strcpy(name, "Mock attributes constructor");
   strcpy(failMsg, "Did not return ESMF_SUCCESS");
   failed = false;

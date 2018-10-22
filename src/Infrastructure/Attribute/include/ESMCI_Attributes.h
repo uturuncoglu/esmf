@@ -48,20 +48,22 @@ class Attributes
     // Prevent accidental copying
     Attributes(const Attributes&);
 
+    static json::json_pointer formatKey(const string &key, int &rc);
+
  public:
     Attributes(void);
     ~Attributes(void);
     Attributes(const json &storage);
     Attributes(const string &input, int &rc);
 
-    string dump(int &rc);
-    string dump(int indent, int &rc);
+    string dump(int &rc) const;
+    string dump(int indent, int &rc) const;
 
     void erase(const string &key, const string &keyChild, int &rc);
 
     const json& getStorageRef(void) const;
 
-    bool hasKey(const string &key, int &rc);
+    bool hasKey(const string &key, int &rc) const;
 
     template <typename T, typename JT>
     T get(const string &key, int &rc) const;
