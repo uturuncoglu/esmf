@@ -73,6 +73,30 @@ void testConstructor(int &rc, char failMsg[]){
 };
 
 #undef  ESMC_METHOD
+#define ESMC_METHOD "testHasKey"
+void testHasKey(int &rc, char failMsg[]){
+  rc = ESMF_FAILURE;
+
+  Attributes attrs;
+
+  attrs.set("/neverEver", 13, false, rc);
+  if (ESMC_LogDefault.MsgFoundError(rc, ESMCI_ERR_PASSTHRU, ESMC_CONTEXT,
+                                    &rc)) return;
+
+  bool actual = attrs.hasKey("/hello", rc);
+  if (actual){
+    return finalizeFailure(rc, failMsg, "Key is not present");
+  }
+
+  bool actual2 = attrs.hasKey("/neverEver", rc);
+  if (!actual2){
+    return finalizeFailure(rc, failMsg, "Key is present");
+  }
+
+  rc = ESMF_SUCCESS;
+}
+
+#undef  ESMC_METHOD
 #define ESMC_METHOD "testErase"
 void testErase(int &rc, char failMsg[]){
   rc = ESMF_FAILURE;
@@ -301,6 +325,13 @@ int main(void){
   //NEX_UTest
   strcpy(name, "Attributes Update");
   testUpdate(rc, failMsg);
+  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
+  //----------------------------------------------------------------------------
+
+  //----------------------------------------------------------------------------
+  //NEX_UTest
+  strcpy(name, "Attributes hasKey");
+  testHasKey(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //----------------------------------------------------------------------------
 

@@ -149,6 +149,22 @@ template const long int* const Attributes::get<const long int* const,
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::set"
+bool Attributes::hasKey(const string &key, int &rc){
+  rc = ESMF_FAILURE;
+  json::json_pointer jp(key);
+  bool ret;
+  try{
+    this->storage.at(jp);
+    ret = true;
+  } catch (json::out_of_range& e) {
+    ret = false;
+  }
+  rc = ESMF_SUCCESS;
+  return ret;
+}
+
+#undef  ESMC_METHOD
+#define ESMC_METHOD "Attributes::set"
 template <typename T>
 void Attributes::set(const string &key, T value, bool force, int &rc){
   rc = ESMF_FAILURE;

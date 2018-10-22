@@ -61,6 +61,8 @@ class Attributes
 
     const json& getStorageRef(void) const;
 
+    bool hasKey(const string &key, int &rc);
+
     template <typename T, typename JT>
     T get(const string &key, int &rc) const;
 
