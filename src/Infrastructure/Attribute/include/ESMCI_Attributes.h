@@ -43,7 +43,7 @@ namespace ESMCI {
 class Attributes
 {
  private:
-    json storage;  // JSON object store
+    json storage;  // JSON object store for keys/values managed by this instance
 
     // Prevent accidental copying
     Attributes(const Attributes&);
