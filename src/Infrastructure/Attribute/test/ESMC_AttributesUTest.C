@@ -185,7 +185,7 @@ void testSetGet(int &rc, char failMsg[]){
   // Test setting a single value.
 
   int value = 10;
-  string key = "/theKey";
+  string key = "theKey";
   attrs.set(key, value, false, rc);
   ESMF_CHECKERR_STD(rc, ESMCI_ERR_PASSTHRU, rc);
 
