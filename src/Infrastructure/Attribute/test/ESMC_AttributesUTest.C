@@ -291,8 +291,9 @@ void testSetGetErrorHandling(int &rc, char failMsg[]){
   //----------------------------------------------------------------------------
   // Test a malformed key
 
+//  cout << "Starting malformed key test" << endl;
   failed = true;
-  string key3 = "//key";
+  string key3 = "///key";
   try {
     attrs.set(key3, 111, false, rc);
   }
@@ -302,6 +303,7 @@ void testSetGetErrorHandling(int &rc, char failMsg[]){
     }
   }
   if (failed){
+    cout << "HERE" << endl;
     return finalizeFailure(rc, failMsg, "Key is not parseable");
   }
 

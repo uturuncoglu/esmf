@@ -134,8 +134,8 @@ json::json_pointer Attributes::formatKey(const string &key, int &rc) {
     localKey = key;
   }
 
-  if (localKey.find("//") != string::npos){
-    string msg = "Double forward slashes not allowed in key names";
+  if (localKey.find("///") != string::npos){
+    string msg = "Triple forward slashes not allowed in key names";
     ESMF_CHECKERR_STD(ESMC_RC_ARG_BAD, msg, rc);
   }
 
