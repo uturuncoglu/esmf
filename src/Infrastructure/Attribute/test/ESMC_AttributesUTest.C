@@ -29,10 +29,6 @@ using namespace std;
 typedef const long int* const attr_int_ptr_t;
 typedef const json::number_integer_t* const json_int_ptr_t;
 
-// Standard check error macro
-#define ESMF_CHECKERR_STD(rc, msg) {\
-  if (ESMC_LogDefault.MsgFoundError(rc, msg, ESMC_CONTEXT, &rc)) return;}\
-
 //==============================================================================
 //BOP
 // !PROGRAM: ESMC_AttributesUTest - Internal Attribute JSON functionality
@@ -61,8 +57,7 @@ void testConstructor(int &rc, char failMsg[]){
   root["foo"] = 10;
 
   auto actual = a.get<attr_int_ptr_t, json_int_ptr_t>("/foo", rc);
-  if (ESMC_LogDefault.MsgFoundError(rc, ESMCI_ERR_PASSTHRU, ESMC_CONTEXT,
-                                    &rc)) return;
+  ESMF_CHECKERR_STD(rc, ESMCI_ERR_PASSTHRU, rc);
 
   if (*actual != desired){
     return finalizeFailure(rc, failMsg, "JSON object changed value");
@@ -110,9 +105,10 @@ void testErase(int &rc, char failMsg[]){
 
   string key = "/something/nested";
   attrs.set(key, 10, false, rc);
-  ESMF_CHECKERR_STD(rc, ESMCI_ERR_PASSTHRU);
+  ESMF_CHECKERR_STD(rc, ESMCI_ERR_PASSTHRU, rc);
+
   attrs.erase("/something", "nested", rc);
-  ESMF_CHECKERR_STD(rc, ESMCI_ERR_PASSTHRU);
+  ESMF_CHECKERR_STD(rc, ESMCI_ERR_PASSTHRU, rc);
 
   const json &storage = attrs.getStorageRef();
   const json &actual = storage["something"];
@@ -167,8 +163,7 @@ void testSetGet(int &rc, char failMsg[]){
   int value = 10;
   string key = "/theKey";
   attrs.set(key, value, false, rc);
-  if (ESMC_LogDefault.MsgFoundError(rc, ESMCI_ERR_PASSTHRU, ESMC_CONTEXT,
-                                    &rc)) return;
+  ESMF_CHECKERR_STD(rc, ESMCI_ERR_PASSTHRU, rc);
 
   const json& storage = attrs.getStorageRef();
 
@@ -178,8 +173,7 @@ void testSetGet(int &rc, char failMsg[]){
 
   rc = ESMF_FAILURE;
   attr_int_ptr_t actual = attrs.get<attr_int_ptr_t, json_int_ptr_t>(key, rc);
-  if (ESMC_LogDefault.MsgFoundError(rc, ESMCI_ERR_PASSTHRU, ESMC_CONTEXT,
-                                    &rc)) return;
+  ESMF_CHECKERR_STD(rc, ESMCI_ERR_PASSTHRU, rc);
 
   if (*actual != value){
     return finalizeFailure(rc, failMsg, "Did not get key correctly");
@@ -191,8 +185,7 @@ void testSetGet(int &rc, char failMsg[]){
   string keyp = "/root/group1/group2";
   rc = ESMF_FAILURE;
   attrs.set(keyp, value2, false, rc);
-  if (ESMC_LogDefault.MsgFoundError(rc, ESMCI_ERR_PASSTHRU, ESMC_CONTEXT,
-                                    &rc)) return;
+  ESMF_CHECKERR_STD(rc, ESMCI_ERR_PASSTHRU, rc);
 
   if (storage["root"]["group1"]["group2"] != value2){
     return finalizeFailure(rc, failMsg, "Did not set nested key correctly");
@@ -200,8 +193,7 @@ void testSetGet(int &rc, char failMsg[]){
 
   rc = ESMF_FAILURE;
   auto actual2 = attrs.get<attr_int_ptr_t, json_int_ptr_t>(keyp, rc);
-  if (ESMC_LogDefault.MsgFoundError(rc, ESMCI_ERR_PASSTHRU, ESMC_CONTEXT,
-                                    &rc)) return;
+  ESMF_CHECKERR_STD(rc, ESMCI_ERR_PASSTHRU, rc);
 
   if (*actual2 != value2){
     return finalizeFailure(rc, failMsg, "Did not get nested key correctly");
@@ -211,18 +203,15 @@ void testSetGet(int &rc, char failMsg[]){
 
   key = "/twiceSet";
   attrs.set(key, 10, false, rc);
-  if (ESMC_LogDefault.MsgFoundError(rc, ESMCI_ERR_PASSTHRU, ESMC_CONTEXT,
-                                    &rc)) return;
+  ESMF_CHECKERR_STD(rc, ESMCI_ERR_PASSTHRU, rc);
+
   value = 12;
   attrs.set(key, value, true, rc);
-  if (ESMC_LogDefault.MsgFoundError(rc, ESMCI_ERR_PASSTHRU, ESMC_CONTEXT,
-                                    &rc)) return;
+  ESMF_CHECKERR_STD(rc, ESMCI_ERR_PASSTHRU, rc);
 
   if (*attrs.get<attr_int_ptr_t, json_int_ptr_t>(key, rc) != value){
     return finalizeFailure(rc, failMsg, "Did not overload existing key correctly");
   }
-
-//  std::cout << storage.dump(2) << std::endl;
 
   return;
 };
@@ -238,11 +227,19 @@ void testSetGetErrorHandling(int &rc, char failMsg[]){
   // Test trying to get a value that is not in the map or is the wrong type
   // will error.
 
+  bool failed = true;
   string key = "/theKey";
-  auto actual = attrs.get<attr_int_ptr_t, json_int_ptr_t>(key, rc);
+  try {
+    auto actual = attrs.get<attr_int_ptr_t, json_int_ptr_t>(key, rc);
+  }
+  catch (json::out_of_range) {
+    if (rc == ESMC_RC_NOT_FOUND){
+      failed = false;
+    }
+  }
 
   // Test is expected to fail as we have not added anything at this key.
-  if (rc != ESMC_RC_NOT_FOUND){
+  if (failed){
     return finalizeFailure(rc, failMsg, "Return code not compliant with get error");
   }
 
@@ -252,19 +249,35 @@ void testSetGetErrorHandling(int &rc, char failMsg[]){
 
   string key2 = "/theKey2";
   attrs.set(key2, 111, false, rc);
-  if (ESMC_LogDefault.MsgFoundError(rc, ESMCI_ERR_PASSTHRU, ESMC_CONTEXT,
-                                    &rc)) return;
-  attrs.set(key2, 222, false, rc);
-  if (rc != ESMC_RC_CANNOT_SET){
+  ESMF_CHECKERR_STD(rc, ESMCI_ERR_PASSTHRU, rc);
+
+  failed = true;
+  try {
+    attrs.set(key2, 222, false, rc);
+  }
+  catch (int err) {
+    if (err == ESMC_RC_CANNOT_SET) {
+      failed = false;
+    }
+  }
+  if (failed){
     return finalizeFailure(rc, failMsg, "Error not handled with existing key");
   }
 
   //----------------------------------------------------------------------------
   // Test a malformed key
 
+  failed = true;
   string key3 = "//key";
-  attrs.set(key3, 111, false, rc);
-  if (rc != ESMC_RC_ARG_BAD){
+  try {
+    attrs.set(key3, 111, false, rc);
+  }
+  catch (int err) {
+    if (rc == ESMC_RC_ARG_BAD){
+      failed = false;
+    }
+  }
+  if (failed){
     return finalizeFailure(rc, failMsg, "Key is not parseable");
   }
 
@@ -294,8 +307,7 @@ void testUpdate(int &rc, char failMsg[]){
 
   rc = ESMF_FAILURE;
   update_target_attrs.update(used_to_update_attrs, rc);
-  if (ESMC_LogDefault.MsgFoundError(rc, ESMCI_ERR_PASSTHRU, ESMC_CONTEXT,
-                                    &rc)) return;
+  ESMF_CHECKERR_STD(rc, ESMCI_ERR_PASSTHRU, rc);
 
   const json desired = R"( {"color": "blue", "price": 17.99, "speed": 100} )"_json;
 
@@ -322,7 +334,6 @@ int main(void){
   //----------------------------------------------------------------------------
   //NEX_UTest
   strcpy(name, "Attributes Constructor");
-
   testConstructor(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //----------------------------------------------------------------------------

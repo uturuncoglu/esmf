@@ -67,9 +67,7 @@ Attributes::Attributes(const string &input, int &rc){
   try {
     this->storage = json::parse(input);
   } catch (json::parse_error &e) {
-    ESMC_LogDefault.MsgFoundError(ESMC_RC_OBJ_NOT_CREATED, e.what(),
-                                  ESMC_CONTEXT, &rc);
-    return;
+    ESMF_THROW_JSON(e, ESMC_RC_OBJ_NOT_CREATED, rc);
   }
   rc = ESMF_SUCCESS;
 };
@@ -98,8 +96,7 @@ void Attributes::erase(const string &keyParent, const string &keyChild, int &rc)
   rc = ESMF_FAILURE;
 
   json::json_pointer jp = this->formatKey(keyParent, rc);
-  if (ESMC_LogDefault.MsgFoundError(rc, ESMCI_ERR_PASSTHRU, ESMC_CONTEXT,
-                                    &rc)) return;
+  ESMF_CHECKERR_STD(rc, ESMCI_ERR_PASSTHRU, rc);
 
   try {
     json &target = this->storage.at(jp);
@@ -109,14 +106,10 @@ void Attributes::erase(const string &keyParent, const string &keyChild, int &rc)
 
       target.erase(keyChild);
     } catch (json::out_of_range& e) {
-      ESMC_LogDefault.MsgFoundError(ESMC_RC_NOT_FOUND, e.what(),
-                                    ESMC_CONTEXT, &rc);
-      throw(e);
+      ESMF_THROW_JSON(e, ESMC_RC_NOT_FOUND, rc);
     }
   } catch (json::out_of_range& e) {
-      ESMC_LogDefault.MsgFoundError(ESMC_RC_NOT_FOUND, e.what(),
-                                    ESMC_CONTEXT, &rc);
-      throw(e);
+      ESMF_THROW_JSON(e, ESMC_RC_NOT_FOUND, rc);
   }
 
   rc = ESMF_SUCCESS;
@@ -137,9 +130,7 @@ json::json_pointer Attributes::formatKey(const string &key, int &rc) {
 
   if (localKey.find("//") != string::npos){
     string msg = "Double forward slashes not allowed in key names";
-    ESMC_LogDefault.MsgFoundError(ESMC_RC_ARG_BAD, msg, ESMC_CONTEXT, &rc);
-    json::json_pointer jp("");
-    return jp;
+    ESMF_CHECKERR_STD(ESMC_RC_ARG_BAD, msg, rc);
   }
 
   json::json_pointer jp(localKey);
@@ -155,17 +146,15 @@ T Attributes::get(const string &key, int &rc) const{
   rc = ESMF_FAILURE;
 
   json::json_pointer jp = this->formatKey(key, rc);
-  if (ESMC_LogDefault.MsgFoundError(rc, ESMCI_ERR_PASSTHRU, ESMC_CONTEXT,
-                                    &rc)) return 0;
+  ESMF_CHECKERR_STD(rc, ESMCI_ERR_PASSTHRU, rc);
 
   try {
     T ret = this->storage.at(jp).get_ptr<JT>();
     rc = ESMF_SUCCESS;
     return ret;
-  } catch (json::out_of_range& e) {
-    ESMC_LogDefault.MsgFoundError(ESMC_RC_NOT_FOUND, e.what(),
-                                  ESMC_CONTEXT, &rc);
-    return 0;
+  }
+  catch (json::out_of_range& e) {
+    ESMF_THROW_JSON(e, ESMC_RC_NOT_FOUND, rc);
   }
 };
 template const long int* const Attributes::get<const long int* const,
@@ -183,8 +172,7 @@ bool Attributes::hasKey(const string &key, int &rc) const{
   rc = ESMF_FAILURE;
 
   json::json_pointer jp = this->formatKey(key, rc);
-  if (ESMC_LogDefault.MsgFoundError(rc, ESMCI_ERR_PASSTHRU, ESMC_CONTEXT,
-                                    &rc)) return false;
+  ESMF_CHECKERR_STD(rc, ESMCI_ERR_PASSTHRU, rc);
 
   bool ret;
   try{
@@ -204,16 +192,15 @@ void Attributes::set(const string &key, T value, bool force, int &rc){
   rc = ESMF_FAILURE;
 
   json::json_pointer jp = this->formatKey(key, rc);
-  if (ESMC_LogDefault.MsgFoundError(rc, ESMCI_ERR_PASSTHRU, ESMC_CONTEXT,
-                                    &rc)) return;
+  ESMF_CHECKERR_STD(rc, ESMCI_ERR_PASSTHRU, rc);
 
   if (!force){
     try {
       T result = this->storage.at(jp);
       string msg = "Attribute key \"" + key + "\" already in map and force=false.";
-      ESMC_LogDefault.MsgFoundError(ESMC_RC_CANNOT_SET, msg, ESMC_CONTEXT, &rc);
-      return;
-    } catch (json::out_of_range){
+      ESMF_CHECKERR_STD(ESMC_RC_CANNOT_SET, msg, rc);
+    }
+    catch (json::out_of_range){
       // Key is not found in the map. Just pass on through.
       // See: https://github.com/nlohmann/json/issues/1194#issuecomment-413002974
     }

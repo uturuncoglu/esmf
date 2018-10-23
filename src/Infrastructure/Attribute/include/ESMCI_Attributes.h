@@ -26,6 +26,15 @@
 using json = nlohmann::json;  // Convenience rename for JSON namespace.
 using std::string;
 
+// Standard ESMF check error macros
+#define ESMF_CHECKERR_STD(actual_rc, msg, update_rc) {\
+  if (ESMC_LogDefault.MsgFoundError(actual_rc, msg, ESMC_CONTEXT, &update_rc))\
+    throw(actual_rc);}\
+
+#define ESMF_THROW_JSON(exc, actual_rc, update_rc) {\
+  ESMC_LogDefault.MsgFoundError(actual_rc, exc.what(), ESMC_CONTEXT,\
+    &update_rc); throw(exc);}\
+
 //-----------------------------------------------------------------------------
 //BOP
 // !CLASS:  Attributes
