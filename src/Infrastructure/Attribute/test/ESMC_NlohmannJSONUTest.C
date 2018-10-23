@@ -63,7 +63,7 @@ const long int * const runGetPointer(const string & key, const json & j){
   return j.at(key).get_ptr<const json::number_integer_t* const>();
 }
 
-int main(void){
+int main(void) {
 
   // Test variables
   char name[80];
@@ -99,7 +99,9 @@ int main(void){
   root[jp] = "a deep nest";
 
   // Add an element then erase it
-  json toClear = {{"one", 1}, {"two", 2}, {"three", 2.9}};
+  json toClear = {{"one",   1},
+                  {"two",   2},
+                  {"three", 2.9}};
   root["toClear"] = toClear;
 //  std::cout << root.dump(4) << std::endl;
   root.erase("toClear");
@@ -116,39 +118,39 @@ int main(void){
   string key = "theNumber";
   j[key] = desired;
 
-  int const & the_ref1 = j[key].get_ref<const json::number_integer_t&>();
-  int const & the_ref2 = j[key].get_ref<const json::number_integer_t&>();
-  if (the_ref1 != the_ref2){
+  int const &the_ref1 = j[key].get_ref<const json::number_integer_t &>();
+  int const &the_ref2 = j[key].get_ref<const json::number_integer_t &>();
+  if (the_ref1 != the_ref2) {
     strcpy(failMsg, "Values not equal for references");
     failed = true;
     ESMC_Test(false, name, failMsg, &result, __FILE__, __LINE__, 0);
   }
-  if (&the_ref1 == &the_ref2){
+  if (&the_ref1 == &the_ref2) {
     strcpy(failMsg, "Addresses are equal for references");
     failed = true;
     ESMC_Test(false, name, failMsg, &result, __FILE__, __LINE__, 0);
   }
 
-  auto ptr = j[key].get_ptr<const json::number_integer_t* const>();
-  if (*ptr != desired){
+  auto ptr = j[key].get_ptr<const json::number_integer_t *const>();
+  if (*ptr != desired) {
     strcpy(failMsg, "Pointer value is not the desired value");
     failed = true;
     ESMC_Test(false, name, failMsg, &result, __FILE__, __LINE__, 0);
   }
 
-  const long int * ptr2 = runGetPointer(key, j);
-  if (*ptr != *ptr2){
+  const long int *ptr2 = runGetPointer(key, j);
+  if (*ptr != *ptr2) {
     strcpy(failMsg, "Pointer values are not equal");
     failed = true;
     ESMC_Test(false, name, failMsg, &result, __FILE__, __LINE__, 0);
   }
-  if (&*ptr != &*ptr2){
+  if (&*ptr != &*ptr2) {
     strcpy(failMsg, "Pointer addresses are not equal");
     failed = true;
     ESMC_Test(false, name, failMsg, &result, __FILE__, __LINE__, 0);
   }
 
-  if (!failed){
+  if (!failed) {
     ESMC_Test(true, name, failMsg, &result, __FILE__, __LINE__, 0);
   }
 
@@ -162,7 +164,7 @@ int main(void){
   try {
     json::json_pointer jpBad(badKey);
     failed = true;
-  } catch (json::parse_error& e) {
+  } catch (json::parse_error &e) {
     failed = false;
   }
 
@@ -181,7 +183,7 @@ int main(void){
   j2[key2] = value2;
 
   const json &refVar = mattrs.getStorageRef();
-  if (&refVar != &j2){
+  if (&refVar != &j2) {
     strcpy(failMsg, "Storage reference not equivalent");
     failed = true;
     ESMC_Test(false, name, failMsg, &result, __FILE__, __LINE__, 0);
@@ -190,19 +192,49 @@ int main(void){
   json *ref = mattrs.getPointer();
   string actual2 = ref->at(key2);
 
-  if (actual2 != value2){
+  if (actual2 != value2) {
     strcpy(failMsg, "Value not added to target JSON object");
     failed = true;
     ESMC_Test(false, name, failMsg, &result, __FILE__, __LINE__, 0);
   }
-  if (&j2 != &*ref){
+  if (&j2 != &*ref) {
     strcpy(failMsg, "Address target not equivalent");
     failed = true;
     ESMC_Test(false, name, failMsg, &result, __FILE__, __LINE__, 0);
   }
 
-  if (!failed){
+  if (!failed) {
     ESMC_Test(true, name, failMsg, &result, __FILE__, __LINE__, 0);
+  }
+
+  //----------------------------------------------------------------------------
+  //NEX_UTest
+  strcpy(name, "Move constructor");
+  strcpy(failMsg, "Did not return ESMF_SUCCSS");
+  failed = false;
+
+  json src;
+  src["something"] = 13;
+
+  long int *srcPtr = src.at("something").get_ptr<json::number_integer_t *>();
+
+  json dst(move(src));
+
+  long int *dstPtr = dst.at("something").get_ptr<json::number_integer_t *>();
+
+  if (&*srcPtr != &*dstPtr) {
+    failed = true;
+    ESMC_Test(false, name, "Addresses not equal after move", &result, __FILE__,
+              __LINE__, 0);
+  }
+
+  if (!src.is_null()) {
+    failed = true;
+    ESMC_Test(false, name, "Source not null", &result, __FILE__, __LINE__, 0);
+  }
+
+  if (!failed) {
+    ESMC_Test(!failed, name, failMsg, &result, __FILE__, __LINE__, 0);
   }
 
   //----------------------------------------------------------------------------
