@@ -124,8 +124,8 @@ void testErase(int &rc, char failMsg[]){
   try {
     attrs.erase("/nothing", "nested", rc);
     failed = true;
-  } catch (json::out_of_range &e) {
-    if (rc == ESMC_RC_NOT_FOUND){
+  } catch (int err) {
+    if (rc == ESMC_RC_NOT_FOUND && err == ESMC_RC_NOT_FOUND){
       failed = false;
     }
   }
@@ -137,8 +137,8 @@ void testErase(int &rc, char failMsg[]){
   try {
     attrs.erase("/something", "underground", rc);
     failed = true;
-  } catch (json::out_of_range &e){
-    if (rc == ESMC_RC_NOT_FOUND){
+  } catch (int err){
+    if (rc == ESMC_RC_NOT_FOUND && err == ESMC_RC_NOT_FOUND){
       failed = false;
     }
   }
@@ -232,8 +232,8 @@ void testSetGetErrorHandling(int &rc, char failMsg[]){
   try {
     auto actual = attrs.get<attr_int_ptr_t, json_int_ptr_t>(key, rc);
   }
-  catch (json::out_of_range) {
-    if (rc == ESMC_RC_NOT_FOUND){
+  catch (int err) {
+    if (rc == ESMC_RC_NOT_FOUND && err == ESMC_RC_NOT_FOUND){
       failed = false;
     }
   }
@@ -256,7 +256,7 @@ void testSetGetErrorHandling(int &rc, char failMsg[]){
     attrs.set(key2, 222, false, rc);
   }
   catch (int err) {
-    if (err == ESMC_RC_CANNOT_SET) {
+    if (rc == ESMC_RC_CANNOT_SET && err == ESMC_RC_CANNOT_SET) {
       failed = false;
     }
   }
@@ -273,7 +273,7 @@ void testSetGetErrorHandling(int &rc, char failMsg[]){
     attrs.set(key3, 111, false, rc);
   }
   catch (int err) {
-    if (rc == ESMC_RC_ARG_BAD){
+    if (rc == ESMC_RC_ARG_BAD && err == ESMC_RC_ARG_BAD){
       failed = false;
     }
   }

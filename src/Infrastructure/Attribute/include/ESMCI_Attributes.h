@@ -33,7 +33,7 @@ using std::string;
 
 #define ESMF_THROW_JSON(exc, actual_rc, update_rc) {\
   ESMC_LogDefault.MsgFoundError(actual_rc, exc.what(), ESMC_CONTEXT,\
-    &update_rc); throw(exc);}\
+    &update_rc); throw(actual_rc);}\
 
 //-----------------------------------------------------------------------------
 //BOP
