@@ -63,6 +63,7 @@ class Attributes
     Attributes(void);
     ~Attributes(void);
     Attributes(const json &storage);
+    Attributes(json &&storage);
     Attributes(const string &input, int &rc);
 
     string dump(int &rc) const;

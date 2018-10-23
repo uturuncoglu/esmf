@@ -69,6 +69,30 @@ void testConstructor(int &rc, char failMsg[]){
     return finalizeFailure(rc, failMsg, "Clear removed desired value");
   }
 
+  //----------------------------------------------------------------------------
+  // Test move constructor
+
+  json src;
+  src["foo"] = 112;
+
+  long int *srcPtr = src.at("foo").get_ptr<json::number_integer_t *>();
+
+  Attributes dst(move(src));
+
+  if (!src.is_null()){
+    return finalizeFailure(rc, failMsg, "JSON object not moved");
+  }
+
+  auto actual3 = dst.get<attr_int_ptr_t , json_int_ptr_t>("foo", rc);
+  ESMF_CHECKERR_STD(rc, ESMCI_ERR_PASSTHRU, rc);
+
+  if (*actual3 != 112) {
+    return finalizeFailure(rc, failMsg, "Value bad after move");
+  }
+  if (&*actual3 != &*srcPtr) {
+    return finalizeFailure(rc, failMsg, "Pointer addresses not equal after move");
+  }
+
   return;
 };
 
