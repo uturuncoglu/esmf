@@ -111,12 +111,12 @@ void Attributes::erase(const string &keyParent, const string &keyChild, int &rc)
     } catch (json::out_of_range& e) {
       ESMC_LogDefault.MsgFoundError(ESMC_RC_NOT_FOUND, e.what(),
                                     ESMC_CONTEXT, &rc);
-      return;
+      throw(e);
     }
   } catch (json::out_of_range& e) {
       ESMC_LogDefault.MsgFoundError(ESMC_RC_NOT_FOUND, e.what(),
                                     ESMC_CONTEXT, &rc);
-      return;
+      throw(e);
   }
 
   rc = ESMF_SUCCESS;

@@ -29,6 +29,10 @@ using namespace std;
 typedef const long int* const attr_int_ptr_t;
 typedef const json::number_integer_t* const json_int_ptr_t;
 
+// Standard check error macro
+#define ESMF_CHECKERR_STD(rc, msg) {\
+  if (ESMC_LogDefault.MsgFoundError(rc, msg, ESMC_CONTEXT, &rc)) return;}\
+
 //==============================================================================
 //BOP
 // !PROGRAM: ESMC_AttributesUTest - Internal Attribute JSON functionality
@@ -106,11 +110,9 @@ void testErase(int &rc, char failMsg[]){
 
   string key = "/something/nested";
   attrs.set(key, 10, false, rc);
-  if (ESMC_LogDefault.MsgFoundError(rc, ESMCI_ERR_PASSTHRU, ESMC_CONTEXT,
-                                    &rc)) return;
+  ESMF_CHECKERR_STD(rc, ESMCI_ERR_PASSTHRU);
   attrs.erase("/something", "nested", rc);
-  if (ESMC_LogDefault.MsgFoundError(rc, ESMCI_ERR_PASSTHRU, ESMC_CONTEXT,
-                                    &rc)) return;
+  ESMF_CHECKERR_STD(rc, ESMCI_ERR_PASSTHRU);
 
   const json &storage = attrs.getStorageRef();
   const json &actual = storage["something"];
@@ -122,18 +124,31 @@ void testErase(int &rc, char failMsg[]){
   // Test errors handled with bad key combinations and erase.
 
   rc = ESMF_FAILURE;
-  attrs.erase("/nothing", "nested", rc);
-  if (rc != ESMC_RC_NOT_FOUND) {
+  bool failed = true;
+  try {
+    attrs.erase("/nothing", "nested", rc);
+    failed = true;
+  } catch (json::out_of_range &e) {
+    if (rc == ESMC_RC_NOT_FOUND){
+      failed = false;
+    }
+  }
+  if (failed) {
     return finalizeFailure(rc, failMsg, "Error not handled for missing parent");
   }
 
   rc = ESMF_FAILURE;
-  attrs.erase("/something", "underground", rc);
-  if (rc != ESMC_RC_NOT_FOUND) {
+  try {
+    attrs.erase("/something", "underground", rc);
+    failed = true;
+  } catch (json::out_of_range &e){
+    if (rc == ESMC_RC_NOT_FOUND){
+      failed = false;
+    }
+  }
+  if (failed) {
     return finalizeFailure(rc, failMsg, "Error not handled for missing child");
   }
-
-//  std::cout << storage.dump(2) << std::endl;
 
   rc = ESMF_SUCCESS;
   return;
