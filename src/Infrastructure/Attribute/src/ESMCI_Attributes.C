@@ -231,17 +231,28 @@ void Attributes::update(const Attributes &attrs, int &rc) {
 #define ESMC_METHOD "createJSONPackage"
 json createJSONPackage(const string &pkgKey, int &rc) {
   rc = ESMF_FAILURE;
+
   json j;
-  if (pkgKey == "ESMF:Metadata:Group") {
-    j["variables"]  = json::object();
-    j["dimensions"] = json::value_t::array;
-    j["attrs"]      = json::object();
-    j["name"]       = json::value_t::null;
-    j["groups"]     = json::object();
+  j["name"] = json::value_t::null;  // Will be string
+
+  if (pkgKey == "ESMF:Metadata:Dimension") {
+    j["size"] = json::value_t::null;  // Will be int or potentially null if unlimited
+    j["is_unlimited"] = json::value_t::null;  // Will be bool
+  } else if (pkgKey == "ESMF:Metadata:Group") {
+    j["variables"] = json::object();
+    j["dimensions"] = json::object();
+    j["attrs"] = json::object();
+    j["groups"] = json::object();
+    j["uri"] = json::value_t::null;  // Will be string or rename null
+  } else if (pkgKey == "ESMF:Metadata:Variable") {
+    j["dtype"] = json::value_t::null;  // Will be string
+    j["dimensions"] = json::array();  // Will append string dimension names
+    j["attrs"] = json::object();
   } else {
     string msg = "Package name not found: " + pkgKey;
     ESMF_CHECKERR_STD(ESMF_RC_NOT_FOUND, msg, rc);
   }
+
   rc = ESMF_SUCCESS;
   return j;
 }
