@@ -278,7 +278,12 @@ void testSetGetErrorHandling(int &rc, char failMsg[]){
   // Test the ESMF attributes exception
 
   esmf_attrs_error ae("ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, "a message");
-  cout << ae.what() << endl;
+  const char *actual = ae.what();
+  string desired = "Error/Return Code 541 (ESMC_RC_NOT_FOUND): a message";
+  if (actual != desired){
+    return finalizeFailure(rc, failMsg, "Error string output not correct");
+  }
+
 
   //----------------------------------------------------------------------------
   // Test trying to get a value that is not in the map or is the wrong type

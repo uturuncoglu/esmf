@@ -49,6 +49,8 @@ using std::string;
 
 namespace ESMCI {
 
+//------------------------------------------------------------------------------
+
 class esmf_attrs_error : public std::exception
 {
 public:
@@ -64,6 +66,8 @@ public:
 private:
   string msg;
 };
+
+//------------------------------------------------------------------------------
 
 class Attributes
 {
@@ -101,7 +105,11 @@ class Attributes
 
 };
 
+//------------------------------------------------------------------------------
+
 json createJSONPackage(const string &pkgKey, int &rc);
+
+//------------------------------------------------------------------------------
 
 } // namespace
 
