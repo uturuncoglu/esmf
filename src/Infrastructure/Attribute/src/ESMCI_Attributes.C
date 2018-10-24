@@ -194,19 +194,19 @@ bool Attributes::hasKey(const string &key, int &rc) const{
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::set"
 template <typename T>
-void Attributes::set(const string &key, T value, bool force, int &rc){
+void Attributes::set(const string &key, T value, bool force, int &rc) {
   rc = ESMF_FAILURE;
 
   json::json_pointer jp = this->formatKey(key, rc);
   ESMF_CHECKERR_STD(rc, ESMCI_ERR_PASSTHRU, rc);
 
-  if (!force){
+  if (!force) {
     try {
       T result = this->storage.at(jp);
       string msg = "Attribute key \"" + key + "\" already in map and force=false.";
       ESMF_CHECKERR_STD(ESMC_RC_CANNOT_SET, msg, rc);
     }
-    catch (json::out_of_range){
+    catch (json::out_of_range) {
       // Key is not found in the map. Just pass on through.
       // See: https://github.com/nlohmann/json/issues/1194#issuecomment-413002974
     }
@@ -219,12 +219,31 @@ template void Attributes::set<int>(const string&, int, bool, int&);
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::update"
-void Attributes::update(const Attributes &attrs, int &rc){
+void Attributes::update(const Attributes &attrs, int &rc) {
   rc = ESMF_FAILURE;
   const json& r_j = attrs.getStorageRef();
   this->storage.update(r_j);
   rc = ESMF_SUCCESS;
   return;
 };
+
+#undef  ESMC_METHOD
+#define ESMC_METHOD "createJSONPackage"
+json createJSONPackage(const string &pkgKey, int &rc) {
+  rc = ESMF_FAILURE;
+  json j;
+  if (pkgKey == "ESMF:Metadata:Group") {
+    j["variables"]  = json::object();
+    j["dimensions"] = json::value_t::array;
+    j["attrs"]      = json::object();
+    j["name"]       = json::value_t::null;
+    j["groups"]     = json::object();
+  } else {
+    string msg = "Package name not found: " + pkgKey;
+    ESMF_CHECKERR_STD(ESMF_RC_NOT_FOUND, msg, rc);
+  }
+  rc = ESMF_SUCCESS;
+  return j;
+}
 
 }  // namespace

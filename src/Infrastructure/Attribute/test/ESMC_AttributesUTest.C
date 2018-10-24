@@ -97,15 +97,27 @@ void testConstructor(int &rc, char failMsg[]){
 };
 
 #undef  ESMC_METHOD
+#define ESMC_METHOD "testCreateJSONPackage"
+void testCreateJSONPackage(int &rc, char failMsg[]) {
+  rc = ESMF_FAILURE;
+
+  string pkgKey = "ESMF:Metadata:Group";
+  json jattrs = createJSONPackage(pkgKey, rc);
+  ESMF_CHECKERR_STD(rc, ESMCI_ERR_PASSTHRU, rc);
+
+  rc = ESMF_SUCCESS;
+  return;
+}
+
+#undef  ESMC_METHOD
 #define ESMC_METHOD "testHasKey"
-void testHasKey(int &rc, char failMsg[]){
+void testHasKey(int &rc, char failMsg[]) {
   rc = ESMF_FAILURE;
 
   Attributes attrs;
 
   attrs.set("/neverEver", 13, false, rc);
-  if (ESMC_LogDefault.MsgFoundError(rc, ESMCI_ERR_PASSTHRU, ESMC_CONTEXT,
-                                    &rc)) return;
+  ESMF_CHECKERR_STD(rc, ESMCI_ERR_PASSTHRU, rc);
 
   bool actual = attrs.hasKey("/hello", rc);
   if (actual){
@@ -396,6 +408,13 @@ int main(void){
   //NEX_UTest
   strcpy(name, "Attributes hasKey");
   testHasKey(rc, failMsg);
+  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
+  //----------------------------------------------------------------------------
+
+  //----------------------------------------------------------------------------
+  //NEX_UTest
+  strcpy(name, "Attributes createJSONPackage");
+  testCreateJSONPackage(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //----------------------------------------------------------------------------
 

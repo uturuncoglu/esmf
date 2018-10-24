@@ -84,6 +84,9 @@ class Attributes
     void update(const Attributes &attrs, int &rc);
 
 };
+
+json createJSONPackage(const string &pkgKey, int &rc);
+
 } // namespace
 
 // Fortran interface functions
