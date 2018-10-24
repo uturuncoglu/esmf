@@ -57,7 +57,7 @@ void testConstructor(int &rc, char failMsg[]){
   root["foo"] = 10;
 
   auto actual = a.get<attr_int_ptr_t, json_int_ptr_t>("/foo", rc);
-  ESMF_CHECKERR_STD(rc, ESMCI_ERR_PASSTHRU, rc);
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 
   if (*actual != desired){
     return finalizeFailure(rc, failMsg, "JSON object changed value");
@@ -84,7 +84,7 @@ void testConstructor(int &rc, char failMsg[]){
   }
 
   auto actual3 = dst.get<attr_int_ptr_t , json_int_ptr_t>("foo", rc);
-  ESMF_CHECKERR_STD(rc, ESMCI_ERR_PASSTHRU, rc);
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 
   if (*actual3 != 112) {
     return finalizeFailure(rc, failMsg, "Value bad after move");
@@ -103,7 +103,7 @@ void testCreateJSONPackage(int &rc, char failMsg[]) {
 
   string pkgKey = "ESMF:Metadata:Group";
   json jattrs = createJSONPackage(pkgKey, rc);
-  ESMF_CHECKERR_STD(rc, ESMCI_ERR_PASSTHRU, rc);
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 
   //----------------------------------------------------------------------------
   // Test an unsupported key
@@ -113,8 +113,8 @@ void testCreateJSONPackage(int &rc, char failMsg[]) {
   try {
     json noattrs = createJSONPackage(badPkgKey, rc);
   }
-  catch (int err) {
-    if (err == ESMF_RC_NOT_FOUND) {
+  catch (esmf_attrs_error &err) {
+    if (err.getReturnCode() == ESMF_RC_NOT_FOUND) {
       failed = false;
     }
   }
@@ -134,7 +134,7 @@ void testHasKey(int &rc, char failMsg[]) {
   Attributes attrs;
 
   attrs.set("/neverEver", 13, false, rc);
-  ESMF_CHECKERR_STD(rc, ESMCI_ERR_PASSTHRU, rc);
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 
   bool actual = attrs.hasKey("/hello", rc);
   if (actual){
@@ -158,10 +158,10 @@ void testErase(int &rc, char failMsg[]){
 
   string key = "/something/nested";
   attrs.set(key, 10, false, rc);
-  ESMF_CHECKERR_STD(rc, ESMCI_ERR_PASSTHRU, rc);
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 
   attrs.erase("/something", "nested", rc);
-  ESMF_CHECKERR_STD(rc, ESMCI_ERR_PASSTHRU, rc);
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 
   const json &storage = attrs.getStorageRef();
   const json &actual = storage["something"];
@@ -177,8 +177,8 @@ void testErase(int &rc, char failMsg[]){
   try {
     attrs.erase("/nothing", "nested", rc);
     failed = true;
-  } catch (int err) {
-    if (rc == ESMC_RC_NOT_FOUND && err == ESMC_RC_NOT_FOUND){
+  } catch (esmf_attrs_error &err) {
+    if (rc == ESMC_RC_NOT_FOUND){
       failed = false;
     }
   }
@@ -190,8 +190,8 @@ void testErase(int &rc, char failMsg[]){
   try {
     attrs.erase("/something", "underground", rc);
     failed = true;
-  } catch (int err){
-    if (rc == ESMC_RC_NOT_FOUND && err == ESMC_RC_NOT_FOUND){
+  } catch (esmf_attrs_error &err){
+    if (rc == ESMC_RC_NOT_FOUND){
       failed = false;
     }
   }
@@ -216,7 +216,7 @@ void testSetGet(int &rc, char failMsg[]){
   int value = 10;
   string key = "theKey";
   attrs.set(key, value, false, rc);
-  ESMF_CHECKERR_STD(rc, ESMCI_ERR_PASSTHRU, rc);
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 
   const json& storage = attrs.getStorageRef();
 
@@ -226,7 +226,7 @@ void testSetGet(int &rc, char failMsg[]){
 
   rc = ESMF_FAILURE;
   attr_int_ptr_t actual = attrs.get<attr_int_ptr_t, json_int_ptr_t>(key, rc);
-  ESMF_CHECKERR_STD(rc, ESMCI_ERR_PASSTHRU, rc);
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 
   if (*actual != value){
     return finalizeFailure(rc, failMsg, "Did not get key correctly");
@@ -238,7 +238,7 @@ void testSetGet(int &rc, char failMsg[]){
   string keyp = "/root/group1/group2";
   rc = ESMF_FAILURE;
   attrs.set(keyp, value2, false, rc);
-  ESMF_CHECKERR_STD(rc, ESMCI_ERR_PASSTHRU, rc);
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 
   if (storage["root"]["group1"]["group2"] != value2){
     return finalizeFailure(rc, failMsg, "Did not set nested key correctly");
@@ -246,7 +246,7 @@ void testSetGet(int &rc, char failMsg[]){
 
   rc = ESMF_FAILURE;
   auto actual2 = attrs.get<attr_int_ptr_t, json_int_ptr_t>(keyp, rc);
-  ESMF_CHECKERR_STD(rc, ESMCI_ERR_PASSTHRU, rc);
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 
   if (*actual2 != value2){
     return finalizeFailure(rc, failMsg, "Did not get nested key correctly");
@@ -256,11 +256,11 @@ void testSetGet(int &rc, char failMsg[]){
 
   key = "/twiceSet";
   attrs.set(key, 10, false, rc);
-  ESMF_CHECKERR_STD(rc, ESMCI_ERR_PASSTHRU, rc);
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 
   value = 12;
   attrs.set(key, value, true, rc);
-  ESMF_CHECKERR_STD(rc, ESMCI_ERR_PASSTHRU, rc);
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 
   if (*attrs.get<attr_int_ptr_t, json_int_ptr_t>(key, rc) != value){
     return finalizeFailure(rc, failMsg, "Did not overload existing key correctly");
@@ -279,8 +279,8 @@ void testSetGetErrorHandling(int &rc, char failMsg[]){
 
   esmf_attrs_error ae("ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, "a message");
   const char *actual = ae.what();
-  string desired = "Error/Return Code 541 (ESMC_RC_NOT_FOUND): a message";
-  if (actual != desired){
+  string desired = "Error/Return Code 541 (ESMC_RC_NOT_FOUND) - a message";
+  if (actual != desired || ae.getReturnCode() != ESMC_RC_NOT_FOUND) {
     return finalizeFailure(rc, failMsg, "Error string output not correct");
   }
 
@@ -296,8 +296,8 @@ void testSetGetErrorHandling(int &rc, char failMsg[]){
   try {
     auto actual = attrs.get<attr_int_ptr_t, json_int_ptr_t>(key, rc);
   }
-  catch (int err) {
-    if (rc == ESMC_RC_NOT_FOUND && err == ESMC_RC_NOT_FOUND){
+  catch (esmf_attrs_error &err) {
+    if (rc == ESMC_RC_NOT_FOUND){
       failed = false;
     }
   }
@@ -313,14 +313,14 @@ void testSetGetErrorHandling(int &rc, char failMsg[]){
 
   string key2 = "/theKey2";
   attrs.set(key2, 111, false, rc);
-  ESMF_CHECKERR_STD(rc, ESMCI_ERR_PASSTHRU, rc);
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 
   failed = true;
   try {
     attrs.set(key2, 222, false, rc);
   }
-  catch (int err) {
-    if (rc == ESMC_RC_CANNOT_SET && err == ESMC_RC_CANNOT_SET) {
+  catch (esmf_attrs_error &err) {
+    if (rc == ESMC_RC_CANNOT_SET) {
       failed = false;
     }
   }
@@ -331,19 +331,17 @@ void testSetGetErrorHandling(int &rc, char failMsg[]){
   //----------------------------------------------------------------------------
   // Test a malformed key
 
-//  cout << "Starting malformed key test" << endl;
   failed = true;
   string key3 = "///key";
   try {
     attrs.set(key3, 111, false, rc);
   }
-  catch (int err) {
-    if (rc == ESMC_RC_ARG_BAD && err == ESMC_RC_ARG_BAD){
+  catch (esmf_attrs_error &err) {
+    if (rc == ESMC_RC_ARG_BAD && err.getReturnCode() == ESMC_RC_ARG_BAD){
       failed = false;
     }
   }
   if (failed){
-    cout << "HERE" << endl;
     return finalizeFailure(rc, failMsg, "Key is not parseable");
   }
 
@@ -373,7 +371,7 @@ void testUpdate(int &rc, char failMsg[]){
 
   rc = ESMF_FAILURE;
   update_target_attrs.update(used_to_update_attrs, rc);
-  ESMF_CHECKERR_STD(rc, ESMCI_ERR_PASSTHRU, rc);
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 
   const json desired = R"( {"color": "blue", "price": 17.99, "speed": 100} )"_json;
 

@@ -27,13 +27,14 @@ using json = nlohmann::json;  // Convenience rename for JSON namespace.
 using std::string;
 
 // Standard ESMF check error macros
-#define ESMF_CHECKERR_STD(actual_rc, msg, update_rc) {\
-  if (ESMC_LogDefault.MsgFoundError(actual_rc, msg, ESMC_CONTEXT, &update_rc))\
-    throw(actual_rc);}\
+#define ESMF_CHECKERR_STD(name_rc, actual_rc, msg, update_rc) {\
+  esmf_attrs_error local_macro_error(name_rc, actual_rc, msg);\
+  if (ESMC_LogDefault.MsgFoundError(actual_rc, local_macro_error.what(), \
+      ESMC_CONTEXT, &update_rc)) throw(local_macro_error);}\
 
-#define ESMF_THROW_JSON(exc, actual_rc, update_rc) {\
-  ESMC_LogDefault.MsgFoundError(actual_rc, exc.what(), ESMC_CONTEXT,\
-    &update_rc); throw(actual_rc);}\
+#define ESMF_THROW_JSON(json_exc, name_rc, actual_rc, update_rc) {\
+  ESMC_LogDefault.MsgFoundError(actual_rc, json_exc.what(), ESMC_CONTEXT,\
+    &update_rc); throw(esmf_attrs_error(name_rc, actual_rc, json_exc.what()));}\
 
 //-----------------------------------------------------------------------------
 //BOP
@@ -55,16 +56,25 @@ class esmf_attrs_error : public std::exception
 {
 public:
   esmf_attrs_error(const string &code_name, int rc, const string &msg) {
-    string the_msg = "Error/Return Code " + std::to_string(rc) + " (" + \
-                     code_name + "): " + msg;
+    string the_msg;
+    if (code_name != "") {
+      the_msg = "Error/Return Code " + std::to_string(rc) + " (" + \
+                     code_name + ") - " + msg;
+    } else {
+      the_msg = "Error/Return Code " + std::to_string(rc) + " - " + msg;
+    }
     this->msg = the_msg;
+    this->rc = rc;
   }
+
+  int getReturnCode() {return this->rc;}
 
   const char* what() const noexcept {
     return this->msg.c_str();
   }
 private:
   string msg;
+  int rc;
 };
 
 //------------------------------------------------------------------------------
