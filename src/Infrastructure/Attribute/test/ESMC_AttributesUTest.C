@@ -274,11 +274,17 @@ void testSetGet(int &rc, char failMsg[]){
 void testSetGetErrorHandling(int &rc, char failMsg[]){
   rc = ESMF_FAILURE;
 
-  Attributes attrs;
+  //----------------------------------------------------------------------------
+  // Test the ESMF attributes exception
+
+  esmf_attrs_error ae("ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, "a message");
+  cout << ae.what() << endl;
 
   //----------------------------------------------------------------------------
   // Test trying to get a value that is not in the map or is the wrong type
   // will error.
+
+  Attributes attrs;
 
   bool failed = true;
   string key = "/theKey";
