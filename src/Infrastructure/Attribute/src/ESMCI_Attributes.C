@@ -47,11 +47,11 @@ using json = nlohmann::json;  // Convenience rename for JSON namespace.
 namespace ESMCI {
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "Attributes"
+#define ESMC_METHOD "Attributes()"
 Attributes::Attributes(void){};
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "~Attributes"
+#define ESMC_METHOD "~Attributes()"
 Attributes::~Attributes(void){};
 
 #undef  ESMC_METHOD
@@ -79,7 +79,7 @@ Attributes::Attributes(const string &input, int &rc){
 };
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "Attributes::dump (no indent)"
+#define ESMC_METHOD "Attributes::dump(int &rc)"
 string Attributes::dump(int &rc) const{
   rc = ESMF_FAILURE;
   string ret = this->storage.dump();
@@ -88,7 +88,7 @@ string Attributes::dump(int &rc) const{
 };
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "Attributes::dump (with indent)"
+#define ESMC_METHOD "Attributes::dump(int indent, int &rc)"
 string Attributes::dump(int indent, int &rc) const{
   rc = ESMF_FAILURE;
   string ret = this->storage.dump(indent);
@@ -97,7 +97,7 @@ string Attributes::dump(int indent, int &rc) const{
 };
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "Attributes::erase"
+#define ESMC_METHOD "Attributes::erase()"
 void Attributes::erase(const string &keyParent, const string &keyChild, int &rc){
   rc = ESMF_FAILURE;
 
@@ -123,7 +123,7 @@ void Attributes::erase(const string &keyParent, const string &keyChild, int &rc)
 };
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "Attributes::formatKey"
+#define ESMC_METHOD "Attributes::formatKey()"
 json::json_pointer Attributes::formatKey(const string &key, int &rc) {
   rc = ESMF_FAILURE;
   string localKey;
@@ -146,7 +146,7 @@ json::json_pointer Attributes::formatKey(const string &key, int &rc) {
 };
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "Attributes::get"
+#define ESMC_METHOD "Attributes::get()"
 template <typename T, typename JT>
 T Attributes::get(const string &key, int &rc) const{
   rc = ESMF_FAILURE;
@@ -167,13 +167,13 @@ template const long int* const Attributes::get<const long int* const,
                 const json::number_integer_t* const>(const string&, int&) const;
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "Attributes::getStorageRef"
+#define ESMC_METHOD "Attributes::getStorageRef()"
 const json& Attributes::getStorageRef() const{
   return this->storage;
 };
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "Attributes::set"
+#define ESMC_METHOD "Attributes::set()"
 bool Attributes::hasKey(const string &key, int &rc) const{
   rc = ESMF_FAILURE;
 
@@ -192,7 +192,7 @@ bool Attributes::hasKey(const string &key, int &rc) const{
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "Attributes::set"
+#define ESMC_METHOD "Attributes::set()"
 template <typename T>
 void Attributes::set(const string &key, T value, bool force, int &rc) {
   rc = ESMF_FAILURE;
@@ -218,7 +218,7 @@ void Attributes::set(const string &key, T value, bool force, int &rc) {
 template void Attributes::set<int>(const string&, int, bool, int&);
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "Attributes::update"
+#define ESMC_METHOD "Attributes::update()"
 void Attributes::update(const Attributes &attrs, int &rc) {
   rc = ESMF_FAILURE;
   const json& r_j = attrs.getStorageRef();
@@ -228,7 +228,7 @@ void Attributes::update(const Attributes &attrs, int &rc) {
 };
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "createJSONPackage"
+#define ESMC_METHOD "createJSONPackage()"
 json createJSONPackage(const string &pkgKey, int &rc) {
   rc = ESMF_FAILURE;
 

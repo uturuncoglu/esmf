@@ -45,7 +45,7 @@ void finalizeFailure(int &rc, char failMsg[], string msg){
 };
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "testConstructor"
+#define ESMC_METHOD "testConstructor()"
 void testConstructor(int &rc, char failMsg[]){
   Attributes attrs;
 
@@ -97,7 +97,7 @@ void testConstructor(int &rc, char failMsg[]){
 };
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "testCreateJSONPackage"
+#define ESMC_METHOD "testCreateJSONPackage()"
 void testCreateJSONPackage(int &rc, char failMsg[]) {
   rc = ESMF_FAILURE;
 
@@ -127,7 +127,7 @@ void testCreateJSONPackage(int &rc, char failMsg[]) {
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "testHasKey"
+#define ESMC_METHOD "testHasKey()"
 void testHasKey(int &rc, char failMsg[]) {
   rc = ESMF_FAILURE;
 
@@ -150,7 +150,7 @@ void testHasKey(int &rc, char failMsg[]) {
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "testErase"
+#define ESMC_METHOD "testErase()"
 void testErase(int &rc, char failMsg[]){
   rc = ESMF_FAILURE;
 
@@ -204,7 +204,7 @@ void testErase(int &rc, char failMsg[]){
 };
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "testSetGet"
+#define ESMC_METHOD "testSetGet()"
 void testSetGet(int &rc, char failMsg[]){
   rc = ESMF_FAILURE;
 
@@ -270,7 +270,7 @@ void testSetGet(int &rc, char failMsg[]){
 };
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "testSetGetErrorHandling"
+#define ESMC_METHOD "testSetGetErrorHandling()"
 void testSetGetErrorHandling(int &rc, char failMsg[]){
   rc = ESMF_FAILURE;
 
@@ -352,7 +352,7 @@ void testSetGetErrorHandling(int &rc, char failMsg[]){
 };
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "testUpdate"
+#define ESMC_METHOD "testUpdate()"
 void testUpdate(int &rc, char failMsg[]){
   rc = ESMF_FAILURE;
 
