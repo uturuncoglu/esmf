@@ -53,9 +53,9 @@ class esmf_attrs_error : public std::exception
 {
 public:
   esmf_attrs_error(const string &code_name, int rc, const string &msg) {
-    string theMessage = "Error/Return Code " + std::to_string(rc) + " (" + \
-                        code_name + "): " + msg;
-    this->msg = theMessage;
+    string the_msg = "Error/Return Code " + std::to_string(rc) + " (" + \
+                     code_name + "): " + msg;
+    this->msg = the_msg;
   }
 
   const char* what() const noexcept {
