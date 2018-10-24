@@ -55,23 +55,12 @@ namespace ESMCI {
 class esmf_attrs_error : public std::exception
 {
 public:
-  esmf_attrs_error(const string &code_name, int rc, const string &msg) {
-    string the_msg;
-    if (code_name != "") {
-      the_msg = "Error/Return Code " + std::to_string(rc) + " (" + \
-                     code_name + ") - " + msg;
-    } else {
-      the_msg = "Error/Return Code " + std::to_string(rc) + " - " + msg;
-    }
-    this->msg = the_msg;
-    this->rc = rc;
-  }
+  esmf_attrs_error(const string &code_name, int rc, const string &msg);
 
   int getReturnCode() {return this->rc;}
 
-  const char* what() const noexcept {
-    return this->msg.c_str();
-  }
+  const char* what() const noexcept {return this->msg.c_str();}
+
 private:
   string msg;
   int rc;

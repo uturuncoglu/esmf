@@ -227,6 +227,25 @@ void Attributes::update(const Attributes &attrs, int &rc) {
   return;
 };
 
+//------------------------------------------------------------------------------
+
+#undef  ESMC_METHOD
+#define ESMC_METHOD "esmf_attrs_error::esmf_attrs_error()"
+esmf_attrs_error::esmf_attrs_error (const string &code_name, int rc,
+                                    const string &msg) {
+  string the_msg;
+  if (code_name != "") {
+    the_msg = "Error/Return Code " + std::to_string(rc) + " (" + \
+                     code_name + ") - " + msg;
+  } else {
+    the_msg = "Error/Return Code " + std::to_string(rc) + " - " + msg;
+  }
+  this->msg = the_msg;
+  this->rc = rc;
+}
+
+//------------------------------------------------------------------------------
+
 #undef  ESMC_METHOD
 #define ESMC_METHOD "createJSONPackage()"
 json createJSONPackage(const string &pkgKey, int &rc) {
