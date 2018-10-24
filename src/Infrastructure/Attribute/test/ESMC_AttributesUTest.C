@@ -105,6 +105,23 @@ void testCreateJSONPackage(int &rc, char failMsg[]) {
   json jattrs = createJSONPackage(pkgKey, rc);
   ESMF_CHECKERR_STD(rc, ESMCI_ERR_PASSTHRU, rc);
 
+  //----------------------------------------------------------------------------
+  // Test an unsupported key
+
+  bool failed = true;
+  string badPkgKey = "Does:Not:Exist";
+  try {
+    json noattrs = createJSONPackage(badPkgKey, rc);
+  }
+  catch (int err) {
+    if (err == ESMF_RC_NOT_FOUND) {
+      failed = false;
+    }
+  }
+  if (failed) {
+    return finalizeFailure(rc, failMsg, "Package should not be returned");
+  }
+
   rc = ESMF_SUCCESS;
   return;
 }
