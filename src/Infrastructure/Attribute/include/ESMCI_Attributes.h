@@ -90,6 +90,9 @@ public:
 
   void erase(const string &key, const string &keyChild, int &rc);
 
+  template <typename T>
+  T get(const string &key, int &rc) const;
+
   const json& getStorageRef(void) const;
 
   template <typename T, typename JT>

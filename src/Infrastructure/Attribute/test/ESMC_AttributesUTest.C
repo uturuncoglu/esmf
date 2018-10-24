@@ -127,6 +127,45 @@ void testCreateJSONPackage(int &rc, char failMsg[]) {
 }
 
 #undef  ESMC_METHOD
+#define ESMC_METHOD "testGet()"
+void testGet(int &rc, char failMsg[]) {
+  rc = ESMF_FAILURE;
+
+  Attributes attrs;
+
+  attrs.set("target", 50, false, rc);
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+
+  auto actual = attrs.get<int>("target", rc);
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+
+  if (actual != 50) {
+    return finalizeFailure(rc, failMsg, "Could not get target");
+  }
+
+  auto actual_ptr = attrs.getPointer<attr_int_ptr_t,json_int_ptr_t>("target", rc);
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+
+  std::size_t addr1 = (std::size_t)&actual;
+  std::size_t addr2 = (std::size_t)&*actual_ptr;
+  if (addr1 == addr2) {
+    return finalizeFailure(rc, failMsg, "Addresses should not be equal");
+  }
+
+  try {
+    attrs.get<int>("blah", rc);
+    return finalizeFailure(rc, failMsg, "Error not raised for missing key");
+  } catch (esmf_attrs_error& err) {
+    if (err.getReturnCode() != ESMC_RC_NOT_FOUND) {
+      return finalizeFailure(rc, failMsg, "Wrong error return code");
+    }
+  }
+
+  rc = ESMF_SUCCESS;
+  return;
+}
+
+#undef  ESMC_METHOD
 #define ESMC_METHOD "testHasKey()"
 void testHasKey(int &rc, char failMsg[]) {
   rc = ESMF_FAILURE;
@@ -441,6 +480,13 @@ int main(void){
   //NEX_UTest
   strcpy(name, "Attributes createJSONPackage()");
   testCreateJSONPackage(rc, failMsg);
+  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
+  //----------------------------------------------------------------------------
+
+  //----------------------------------------------------------------------------
+  //NEX_UTest
+  strcpy(name, "Attributes get()");
+  testGet(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //----------------------------------------------------------------------------
 

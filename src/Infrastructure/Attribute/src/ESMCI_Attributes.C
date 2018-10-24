@@ -146,9 +146,29 @@ json::json_pointer Attributes::formatKey(const string &key, int &rc) {
 };
 
 #undef  ESMC_METHOD
+#define ESMC_METHOD "Attributes::get()"
+template <typename T>
+T Attributes::get(const string &key, int &rc) const {
+  rc = ESMF_FAILURE;
+
+  json::json_pointer jp = this->formatKey(key, rc);
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+
+  try {
+    T ret = this->storage.at(jp);
+    rc = ESMF_SUCCESS;
+    return ret;
+  }
+  catch (json::out_of_range& e) {
+    ESMF_THROW_JSON(e, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);
+  }
+}
+template int Attributes::get(const string&, int&) const;
+
+#undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::getPointer()"
 template <typename T, typename JT>
-T Attributes::getPointer(const string &key, int &rc) const{
+T Attributes::getPointer(const string &key, int &rc) const {
   rc = ESMF_FAILURE;
 
   json::json_pointer jp = this->formatKey(key, rc);
