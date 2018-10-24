@@ -146,9 +146,9 @@ json::json_pointer Attributes::formatKey(const string &key, int &rc) {
 };
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "Attributes::get()"
+#define ESMC_METHOD "Attributes::getPointer()"
 template <typename T, typename JT>
-T Attributes::get(const string &key, int &rc) const{
+T Attributes::getPointer(const string &key, int &rc) const{
   rc = ESMF_FAILURE;
 
   json::json_pointer jp = this->formatKey(key, rc);
@@ -163,7 +163,7 @@ T Attributes::get(const string &key, int &rc) const{
     ESMF_THROW_JSON(e, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);
   }
 };
-template const long int* const Attributes::get<const long int* const,
+template const long int* const Attributes::getPointer<const long int* const,
                 const json::number_integer_t* const>(const string&, int&) const;
 
 #undef  ESMC_METHOD

@@ -106,7 +106,7 @@ class Attributes
     bool hasKey(const string &key, int &rc) const;
 
     template <typename T, typename JT>
-    T get(const string &key, int &rc) const;
+    T getPointer(const string &key, int &rc) const;
 
     template <typename T>
     void set(const string &key, T value, bool force, int &rc);

@@ -56,7 +56,7 @@ void testConstructor(int &rc, char failMsg[]){
   Attributes a(root);
   root["foo"] = 10;
 
-  auto actual = a.get<attr_int_ptr_t, json_int_ptr_t>("/foo", rc);
+  auto actual = a.getPointer<attr_int_ptr_t, json_int_ptr_t>("/foo", rc);
   ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 
   if (*actual != desired){
@@ -64,7 +64,7 @@ void testConstructor(int &rc, char failMsg[]){
   }
 
   root.clear();
-  auto actual2 = a.get<attr_int_ptr_t, json_int_ptr_t>("/foo", rc);
+  auto actual2 = a.getPointer<attr_int_ptr_t, json_int_ptr_t>("/foo", rc);
   if (*actual2 != desired){
     return finalizeFailure(rc, failMsg, "Clear removed desired value");
   }
@@ -83,7 +83,7 @@ void testConstructor(int &rc, char failMsg[]){
     return finalizeFailure(rc, failMsg, "JSON object not moved");
   }
 
-  auto actual3 = dst.get<attr_int_ptr_t , json_int_ptr_t>("foo", rc);
+  auto actual3 = dst.getPointer<attr_int_ptr_t , json_int_ptr_t>("foo", rc);
   ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 
   if (*actual3 != 112) {
@@ -225,11 +225,11 @@ void testSetGet(int &rc, char failMsg[]){
   }
 
   rc = ESMF_FAILURE;
-  attr_int_ptr_t actual = attrs.get<attr_int_ptr_t, json_int_ptr_t>(key, rc);
+  attr_int_ptr_t actual = attrs.getPointer<attr_int_ptr_t, json_int_ptr_t>(key, rc);
   ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 
   if (*actual != value){
-    return finalizeFailure(rc, failMsg, "Did not get key correctly");
+    return finalizeFailure(rc, failMsg, "Did not get pointer key correctly");
   }
 
   //----------------------------------------------------------------------------
@@ -245,7 +245,7 @@ void testSetGet(int &rc, char failMsg[]){
   }
 
   rc = ESMF_FAILURE;
-  auto actual2 = attrs.get<attr_int_ptr_t, json_int_ptr_t>(keyp, rc);
+  auto actual2 = attrs.getPointer<attr_int_ptr_t, json_int_ptr_t>(keyp, rc);
   ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 
   if (*actual2 != value2){
@@ -262,7 +262,7 @@ void testSetGet(int &rc, char failMsg[]){
   attrs.set(key, value, true, rc);
   ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 
-  if (*attrs.get<attr_int_ptr_t, json_int_ptr_t>(key, rc) != value){
+  if (*attrs.getPointer<attr_int_ptr_t, json_int_ptr_t>(key, rc) != value){
     return finalizeFailure(rc, failMsg, "Did not overload existing key correctly");
   }
 
@@ -294,7 +294,7 @@ void testSetGetErrorHandling(int &rc, char failMsg[]){
   bool failed = true;
   string key = "/theKey";
   try {
-    auto actual = attrs.get<attr_int_ptr_t, json_int_ptr_t>(key, rc);
+    auto actual = attrs.getPointer<attr_int_ptr_t, json_int_ptr_t>(key, rc);
   }
   catch (esmf_attrs_error &err) {
     if (rc == ESMC_RC_NOT_FOUND){
@@ -397,49 +397,49 @@ int main(void){
 
   //----------------------------------------------------------------------------
   //NEX_UTest
-  strcpy(name, "Attributes Constructor");
+  strcpy(name, "Attributes Constructors");
   testConstructor(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //----------------------------------------------------------------------------
 
   //----------------------------------------------------------------------------
   //NEX_UTest
-  strcpy(name, "Attributes Erase");
+  strcpy(name, "Attributes erase()");
   testErase(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //----------------------------------------------------------------------------
 
   //----------------------------------------------------------------------------
   //NEX_UTest
-  strcpy(name, "Attributes SetGet");
+  strcpy(name, "Attributes set() & getPointer()");
   testSetGet(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //----------------------------------------------------------------------------
   
   //----------------------------------------------------------------------------
   //NEX_UTest
-  strcpy(name, "Attributes SetGet Error Handling");
+  strcpy(name, "Attributes Set/Get Error Handling");
   testSetGetErrorHandling(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //----------------------------------------------------------------------------
 
   //----------------------------------------------------------------------------
   //NEX_UTest
-  strcpy(name, "Attributes Update");
+  strcpy(name, "Attributes update()");
   testUpdate(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //----------------------------------------------------------------------------
 
   //----------------------------------------------------------------------------
   //NEX_UTest
-  strcpy(name, "Attributes hasKey");
+  strcpy(name, "Attributes hasKey()");
   testHasKey(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //----------------------------------------------------------------------------
 
   //----------------------------------------------------------------------------
   //NEX_UTest
-  strcpy(name, "Attributes createJSONPackage");
+  strcpy(name, "Attributes createJSONPackage()");
   testCreateJSONPackage(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //----------------------------------------------------------------------------
