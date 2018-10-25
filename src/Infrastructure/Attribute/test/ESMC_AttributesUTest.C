@@ -8,7 +8,7 @@
 // NASA Goddard Space Flight Center.
 // Licensed under the University of Illinois-NCSA License.
 //
-//==============================================================================
+//=============================================================================
 
 #include <stdlib.h>
 #include <string.h>
@@ -29,16 +29,16 @@ using namespace std;
 typedef const long int* const attr_int_ptr_t;
 typedef const json::number_integer_t* const json_int_ptr_t;
 
-//==============================================================================
+//=============================================================================
 //BOP
 // !PROGRAM: ESMC_AttributesUTest - Internal Attribute JSON functionality
 //
 // !DESCRIPTION: Test Attributes class
 //
 //EOP
-//------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 
-void finalizeFailure(int &rc, char failMsg[], string msg){
+void finalizeFailure(int &rc, char failMsg[], string msg) {
   rc = ESMF_FAILURE;
   strcpy(failMsg, msg.c_str());
   return;
@@ -46,7 +46,7 @@ void finalizeFailure(int &rc, char failMsg[], string msg){
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "testConstructor()"
-void testConstructor(int &rc, char failMsg[]){
+void testConstructor(int &rc, char failMsg[]) {
   Attributes attrs;
 
   // Test constructing from a JSON object instance creates a copy.
@@ -69,7 +69,7 @@ void testConstructor(int &rc, char failMsg[]){
     return finalizeFailure(rc, failMsg, "Clear removed desired value");
   }
 
-  //----------------------------------------------------------------------------
+  //---------------------------------------------------------------------------
   // Test move constructor
 
   json src;
@@ -105,7 +105,7 @@ void testCreateJSONPackage(int &rc, char failMsg[]) {
   json jattrs = createJSONPackage(pkgKey, rc);
   ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 
-  //----------------------------------------------------------------------------
+  //---------------------------------------------------------------------------
   // Test an unsupported key
 
   bool failed = true;
@@ -190,7 +190,7 @@ void testHasKey(int &rc, char failMsg[]) {
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "testErase()"
-void testErase(int &rc, char failMsg[]){
+void testErase(int &rc, char failMsg[]) {
   rc = ESMF_FAILURE;
 
   Attributes attrs;
@@ -208,7 +208,7 @@ void testErase(int &rc, char failMsg[]){
     return finalizeFailure(rc, failMsg, "Nested item not deleted");
   }
 
-  //----------------------------------------------------------------------------
+  //---------------------------------------------------------------------------
   // Test errors handled with bad key combinations and erase.
 
   rc = ESMF_FAILURE;
@@ -244,12 +244,12 @@ void testErase(int &rc, char failMsg[]){
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "testSetGet()"
-void testSetGet(int &rc, char failMsg[]){
+void testSetGet(int &rc, char failMsg[]) {
   rc = ESMF_FAILURE;
 
   Attributes attrs;
 
-  // ---------------------------------------------------------------------------
+  // --------------------------------------------------------------------------
   // Test setting a single value.
 
   int value = 10;
@@ -271,7 +271,7 @@ void testSetGet(int &rc, char failMsg[]){
     return finalizeFailure(rc, failMsg, "Did not get pointer key correctly");
   }
 
-  //----------------------------------------------------------------------------
+  //---------------------------------------------------------------------------
 
   int value2 = 33;
   string keyp = "/root/group1/group2";
@@ -291,7 +291,7 @@ void testSetGet(int &rc, char failMsg[]){
     return finalizeFailure(rc, failMsg, "Did not get nested key correctly");
   }
 
-  //----------------------------------------------------------------------------
+  //---------------------------------------------------------------------------
 
   key = "/twiceSet";
   attrs.set(key, 10, false, rc);
@@ -310,10 +310,10 @@ void testSetGet(int &rc, char failMsg[]){
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "testSetGetErrorHandling()"
-void testSetGetErrorHandling(int &rc, char failMsg[]){
+void testSetGetErrorHandling(int &rc, char failMsg[]) {
   rc = ESMF_FAILURE;
 
-  //----------------------------------------------------------------------------
+  //---------------------------------------------------------------------------
   // Test the ESMF attributes exception
 
   esmf_attrs_error ae("ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, "a message");
@@ -324,7 +324,7 @@ void testSetGetErrorHandling(int &rc, char failMsg[]){
   }
 
 
-  //----------------------------------------------------------------------------
+  //---------------------------------------------------------------------------
   // Test trying to get a value that is not in the map or is the wrong type
   // will error.
 
@@ -346,7 +346,7 @@ void testSetGetErrorHandling(int &rc, char failMsg[]){
     return finalizeFailure(rc, failMsg, "Return code not compliant with get error");
   }
 
-  //----------------------------------------------------------------------------
+  //---------------------------------------------------------------------------
   // Test setting force to false will error out if the map has already been
   // created.
 
@@ -367,7 +367,7 @@ void testSetGetErrorHandling(int &rc, char failMsg[]){
     return finalizeFailure(rc, failMsg, "Error not handled with existing key");
   }
 
-  //----------------------------------------------------------------------------
+  //---------------------------------------------------------------------------
   // Test a malformed key
 
   failed = true;
@@ -376,7 +376,7 @@ void testSetGetErrorHandling(int &rc, char failMsg[]){
     attrs.set(key3, 111, false, rc);
   }
   catch (esmf_attrs_error &err) {
-    if (rc == ESMC_RC_ARG_BAD && err.getReturnCode() == ESMC_RC_ARG_BAD){
+    if (rc == ESMC_RC_ARG_BAD && err.getReturnCode() == ESMC_RC_ARG_BAD) {
       failed = false;
     }
   }
@@ -384,7 +384,7 @@ void testSetGetErrorHandling(int &rc, char failMsg[]){
     return finalizeFailure(rc, failMsg, "Key is not parseable");
   }
 
-  //----------------------------------------------------------------------------
+  //---------------------------------------------------------------------------
 
   rc = ESMF_SUCCESS;
   return;
@@ -392,7 +392,7 @@ void testSetGetErrorHandling(int &rc, char failMsg[]){
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "testUpdate()"
-void testUpdate(int &rc, char failMsg[]){
+void testUpdate(int &rc, char failMsg[]) {
   rc = ESMF_FAILURE;
 
   json update_target =  R"( {"color": "red", "price": 17.99} )"_json;
@@ -421,7 +421,7 @@ void testUpdate(int &rc, char failMsg[]){
   return;
 };
 
-int main(void){
+int main(void) {
 
   char name[80];
   char failMsg[80];
@@ -430,69 +430,69 @@ int main(void){
 
   strcpy(failMsg, "Did not return ESMF_SUCCESS");  // Default fail message
 
-  //----------------------------------------------------------------------------
+  //---------------------------------------------------------------------------
   ESMC_TestStart(__FILE__, __LINE__, 0);
-  //----------------------------------------------------------------------------
+  //---------------------------------------------------------------------------
 
-  //----------------------------------------------------------------------------
+  //---------------------------------------------------------------------------
   //NEX_UTest
   strcpy(name, "Attributes Constructors");
   testConstructor(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
-  //----------------------------------------------------------------------------
+  //---------------------------------------------------------------------------
 
-  //----------------------------------------------------------------------------
+  //---------------------------------------------------------------------------
   //NEX_UTest
   strcpy(name, "Attributes erase()");
   testErase(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
-  //----------------------------------------------------------------------------
+  //---------------------------------------------------------------------------
 
-  //----------------------------------------------------------------------------
+  //---------------------------------------------------------------------------
   //NEX_UTest
   strcpy(name, "Attributes set() & getPointer()");
   testSetGet(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
-  //----------------------------------------------------------------------------
+  //---------------------------------------------------------------------------
   
-  //----------------------------------------------------------------------------
+  //---------------------------------------------------------------------------
   //NEX_UTest
   strcpy(name, "Attributes Set/Get Error Handling");
   testSetGetErrorHandling(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
-  //----------------------------------------------------------------------------
+  //---------------------------------------------------------------------------
 
-  //----------------------------------------------------------------------------
+  //---------------------------------------------------------------------------
   //NEX_UTest
   strcpy(name, "Attributes update()");
   testUpdate(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
-  //----------------------------------------------------------------------------
+  //---------------------------------------------------------------------------
 
-  //----------------------------------------------------------------------------
+  //---------------------------------------------------------------------------
   //NEX_UTest
   strcpy(name, "Attributes hasKey()");
   testHasKey(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
-  //----------------------------------------------------------------------------
+  //---------------------------------------------------------------------------
 
-  //----------------------------------------------------------------------------
+  //---------------------------------------------------------------------------
   //NEX_UTest
   strcpy(name, "Attributes createJSONPackage()");
   testCreateJSONPackage(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
-  //----------------------------------------------------------------------------
+  //---------------------------------------------------------------------------
 
-  //----------------------------------------------------------------------------
+  //---------------------------------------------------------------------------
   //NEX_UTest
   strcpy(name, "Attributes get()");
   testGet(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
-  //----------------------------------------------------------------------------
+  //---------------------------------------------------------------------------
 
-  //----------------------------------------------------------------------------
+  //---------------------------------------------------------------------------
   ESMC_TestEnd(__FILE__, __LINE__, 0);
-  //----------------------------------------------------------------------------
+  //---------------------------------------------------------------------------
 
   return 0;
 };

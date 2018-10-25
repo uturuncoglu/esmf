@@ -247,7 +247,7 @@ void Attributes::update(const Attributes &attrs, int &rc) {
   return;
 };
 
-//------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "esmf_attrs_error::esmf_attrs_error()"
@@ -264,7 +264,7 @@ esmf_attrs_error::esmf_attrs_error (const string &code_name, int rc,
   this->rc = rc;
 }
 
-//------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "createJSONPackage()"
