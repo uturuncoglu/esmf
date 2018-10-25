@@ -193,7 +193,7 @@ const json& Attributes::getStorageRef() const{
 };
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "Attributes::set()"
+#define ESMC_METHOD "Attributes::hasKey()"
 bool Attributes::hasKey(const string &key, int &rc) const{
   rc = ESMF_FAILURE;
 
