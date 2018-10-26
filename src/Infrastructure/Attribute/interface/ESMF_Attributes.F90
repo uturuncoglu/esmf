@@ -9,7 +9,7 @@
 ! Licensed under the University of Illinois-NCSA License.
 !
 !==============================================================================
-#define ESMF_FILENAME "ESMF_Attributes.F90"
+#define ESMF_FILENAME "src/Infrastructure/Attribute/interface/ESMF_Attributes.F90"
 !==============================================================================
 
 module ESMF_AttributesMod
@@ -22,7 +22,7 @@ module ESMF_AttributesMod
 !------------------------------------------------------------------------------
 
 ! INCLUDES
-!#include "ESMF.h"
+#include "ESMF.h"
 
 !==============================================================================
 !BOPI
@@ -32,7 +32,6 @@ module ESMF_AttributesMod
 !   Fortran API wrapper of C++ implemenation of Attributes
 !
 !------------------------------------------------------------------------------
-
 
 ! !USES:
 use ESMF_UtilTypesMod     ! ESMF utility types
@@ -65,10 +64,23 @@ character(*), parameter, private :: version = '$Id$'
 
 contains
 
-function ESMF_AttributesCreate()
+#undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_AttributesCreate()"
+function ESMF_AttributesCreate(rc) result(attrs)
   implicit none
-  type(ESMF_Attributes) :: ESMF_AttributesCreate
-  ESMF_AttributesCreate%ptr = c_create_attributes()
+  integer, intent(inout), optional :: rc
+  integer :: localrc
+  type(ESMF_Attributes) :: attrs
+
+  localrc = ESMF_FAILURE
+  if (present(rc)) rc = ESMF_FAILURE
+
+  attrs%ptr = c_create_attributes(localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
+                         rcToReturn=rc)) return
+
+  if (present(rc)) rc = ESMF_SUCCESS
+
 end function ESMF_AttributesCreate
 
 end module ESMF_AttributesMod

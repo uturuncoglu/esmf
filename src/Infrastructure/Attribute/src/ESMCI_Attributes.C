@@ -302,7 +302,8 @@ extern "C" {
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "extern::create_attributes()"
-ESMCI::Attributes* create_attributes() {
+ESMCI::Attributes* create_attributes(int &rc) {
+  rc = ESMF_SUCCESS;
   return new ESMCI::Attributes();
 }
 
