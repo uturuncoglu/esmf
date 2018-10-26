@@ -51,10 +51,6 @@ namespace ESMCI {
 Attributes::Attributes(void){};
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "~Attributes()"
-Attributes::~Attributes(void){};
-
-#undef  ESMC_METHOD
 #define ESMC_METHOD "~Attributes(json&)"
 Attributes::Attributes(const json &storage){
   this->storage = storage;
@@ -296,15 +292,22 @@ json createJSONPackage(const string &pkgKey, int &rc) {
   return j;
 }
 
-}  // namespace
+}  // namespace ESMCI
 
 extern "C" {
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_CreateAttributes()"
-ESMCI::Attributes* ESMC_CreateAttributes(int &rc) {
+#define ESMC_METHOD "ESMC_AttributesCreate()"
+ESMCI::Attributes* ESMC_AttributesCreate(int &rc) {
   rc = ESMF_SUCCESS;
   return new ESMCI::Attributes();
 }
 
+#undef  ESMC_METHOD
+#define ESMC_METHOD "ESMC_AttributesDestroy()"
+void ESMC_AttributesDestroy(ESMCI::Attributes *attrs, int &rc) {
+  delete attrs;
+  rc = ESMF_SUCCESS;
 }
+
+}  // extern "C"

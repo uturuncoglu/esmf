@@ -83,10 +83,16 @@ program ESMF_AttributesUTest
 
   !----------------------------------------------------------------------------
   !NEX_UTest
-  write(name, *) "ESMF_AttributesCreate"
-  write(failMsg, *) "Did not return ESMF_SUCCESS"
+  write(name, *) "ESMF_AttributesCreate/ESMF_AttributesDestroy"
+
+  write(failMsg, *) "Did not create Attributes"
   rc = ESMF_FAILURE
   attrs = ESMF_AttributesCreate(rc)
+  call ESMF_Test((rc == ESMF_SUCCESS), name, failMsg, result, ESMF_SRCLINE)
+
+  write(failMsg, *) "Did not destroy Attributes"
+  rc = ESMF_FAILURE;
+  call ESMF_AttributesDestroy(attrs, rc)
   call ESMF_Test((rc == ESMF_SUCCESS), name, failMsg, result, ESMF_SRCLINE)
   !----------------------------------------------------------------------------
 

@@ -62,7 +62,7 @@ end type ESMF_Attributes
 character(*), parameter, private :: version = '$Id$'
 !------------------------------------------------------------------------------
 
-contains
+contains  !====================================================================
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributesCreate()"
@@ -75,12 +75,31 @@ function ESMF_AttributesCreate(rc) result(attrs)
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
 
-  attrs%ptr = c_create_attributes(localrc)
+  attrs%ptr = c_attrs_create(localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
                          rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
-
 end function ESMF_AttributesCreate
 
-end module ESMF_AttributesMod
+!------------------------------------------------------------------------------
+
+#undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_AttributesDestroy()"
+subroutine ESMF_AttributesDestroy(attrs, rc)
+  implicit none
+  type(ESMF_Attributes), intent(inout) :: attrs
+  integer, intent(inout), optional :: rc
+  integer :: localrc
+
+  localrc = ESMF_FAILURE
+  if (present(rc)) rc = ESMF_FAILURE
+
+  call c_attrs_destroy(attrs%ptr, localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
+                         rcToReturn=rc)) return
+
+  if (present(rc)) rc = ESMF_SUCCESS
+end subroutine ESMF_AttributesDestroy
+
+end module ESMF_AttributesMod  !===============================================

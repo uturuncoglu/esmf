@@ -80,7 +80,6 @@ private:
 
 public:
   Attributes(void);
-  ~Attributes(void);
   Attributes(const json &storage);
   Attributes(json &&storage);
   Attributes(const string &input, int &rc);
@@ -118,8 +117,9 @@ json createJSONPackage(const string &pkgKey, int &rc);
 // Fortran interface functions
 extern "C" {
 
-  ESMCI::Attributes* ESMC_CreateAttributes(int &rc);
+  ESMCI::Attributes* ESMC_AttributesCreate(int &rc);
+  void ESMC_AttributesDestroy(ESMCI::Attributes *attrs, int &rc);
 
-}
+}  // extern "C"
 
 #endif  // ifdef barrier
