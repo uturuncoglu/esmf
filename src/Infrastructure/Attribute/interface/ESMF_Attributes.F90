@@ -103,4 +103,26 @@ subroutine ESMF_AttributesDestroy(attrs, rc)
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributesDestroy
 
+!------------------------------------------------------------------------------
+
+#undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_AttributesSet()"
+subroutine ESMF_AttributesSet(key, rc)
+  implicit none
+  character(len=*), intent(in) :: key
+  integer, intent(inout), optional :: rc
+  integer :: localrc
+
+  localrc = ESMF_FAILURE
+  if (present(rc)) rc = ESMF_FAILURE
+
+  print *, trim(key)//C_NULL_CHAR
+
+  call c_attrs_set(trim(key)//C_NULL_CHAR, rc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
+      rcToReturn=rc)) return
+
+  if (present(rc)) rc = ESMF_SUCCESS
+end subroutine ESMF_AttributesSet
+
 end module ESMF_AttributesMod  !===============================================

@@ -60,6 +60,7 @@ program ESMF_AttributesUTest
   ! individual test failure message
   character(ESMF_MAXSTR) :: failMsg
   character(ESMF_MAXSTR) :: name
+  character(ESMF_MAXSTR) :: key
 
   integer               :: rc, petCount, i
   integer, allocatable  :: petList(:)
@@ -68,7 +69,7 @@ program ESMF_AttributesUTest
   ! cumulative result: count failures; no failures equals "all pass"
   integer               :: result = 0
 
-  type(ESMF_Attributes) :: attrs
+  type(ESMF_Attributes) :: attrs, attrs2
 
   !----------------------------------------------------------------------------
   call ESMF_TestStart(ESMF_SRCLINE, rc=rc)  ! calls ESMF_Initialize() internally
@@ -94,6 +95,23 @@ program ESMF_AttributesUTest
   rc = ESMF_FAILURE;
   call ESMF_AttributesDestroy(attrs, rc)
   call ESMF_Test((rc == ESMF_SUCCESS), name, failMsg, result, ESMF_SRCLINE)
+  !----------------------------------------------------------------------------
+
+  !----------------------------------------------------------------------------
+  !NEX_UTest
+  write(name, *) "ESMF_AttributesSet"
+  rc = ESMF_FAILURE
+
+  write(failMsg, *) "Did not set key"
+  key = "testKey"
+  call ESMF_AttributesSet(key, rc)
+  call ESMF_Test((rc == ESMF_SUCCESS), name, failMsg, result, ESMF_SRCLINE)
+
+!  attrs2 = ESMF_AttributesCreate(rc)
+!  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+!
+!  call ESMF_AttributesDestroy(attrs2, rc)
+!  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
   !----------------------------------------------------------------------------
 
   !----------------------------------------------------------------------------

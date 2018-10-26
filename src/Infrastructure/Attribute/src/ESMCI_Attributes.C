@@ -310,4 +310,14 @@ void ESMC_AttributesDestroy(ESMCI::Attributes *attrs, int &rc) {
   rc = ESMF_SUCCESS;
 }
 
+#undef  ESMC_METHOD
+#define ESMC_METHOD "ESMC_AttributesSet()"
+void ESMC_AttributesSet(char *key, int &rc) {
+  rc = ESMF_FAILURE;
+  std::cout << "the key on next line" << std::endl;
+  std::cout << key << std::endl;
+  std::cout << "should have gotten key" << std::endl;
+  rc = ESMF_SUCCESS;
+}
+
 }  // extern "C"

@@ -12,4 +12,11 @@ interface
     type(C_PTR), value :: attrs
     integer(C_INT), intent(inout) :: rc
   end subroutine c_attrs_destroy
+
+  subroutine c_attrs_set(key, rc) bind(C, name="ESMC_AttributesSet")
+    use iso_c_binding
+    implicit none
+    character(kind=C_CHAR), intent(in) :: key(*)
+    integer(C_INT), intent(inout) :: rc
+  end subroutine c_attrs_set
 end interface

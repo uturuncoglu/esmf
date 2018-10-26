@@ -119,6 +119,7 @@ extern "C" {
 
   ESMCI::Attributes* ESMC_AttributesCreate(int &rc);
   void ESMC_AttributesDestroy(ESMCI::Attributes *attrs, int &rc);
+  void ESMC_AttributesSet(char *key, int &rc);
 
 }  // extern "C"
 
