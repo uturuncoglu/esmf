@@ -102,16 +102,16 @@ program ESMF_AttributesUTest
   write(name, *) "ESMF_AttributesSet"
   rc = ESMF_FAILURE
 
+  attrs2 = ESMF_AttributesCreate(rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
   write(failMsg, *) "Did not set key"
   key = "testKey"
-  call ESMF_AttributesSet(key, rc)
+  call ESMF_AttributesSet(attrs2, key, rc)
   call ESMF_Test((rc == ESMF_SUCCESS), name, failMsg, result, ESMF_SRCLINE)
 
-!  attrs2 = ESMF_AttributesCreate(rc)
-!  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
-!
-!  call ESMF_AttributesDestroy(attrs2, rc)
-!  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+  call ESMF_AttributesDestroy(attrs2, rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
   !----------------------------------------------------------------------------
 
   !----------------------------------------------------------------------------

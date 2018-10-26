@@ -107,8 +107,9 @@ end subroutine ESMF_AttributesDestroy
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributesSet()"
-subroutine ESMF_AttributesSet(key, rc)
+subroutine ESMF_AttributesSet(attrs, key, rc)
   implicit none
+  type(ESMF_Attributes), intent(inout) :: attrs
   character(len=*), intent(in) :: key
   integer, intent(inout), optional :: rc
   integer :: localrc
@@ -116,7 +117,7 @@ subroutine ESMF_AttributesSet(key, rc)
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
 
-  call c_attrs_set(trim(key)//C_NULL_CHAR, localrc)
+  call c_attrs_set(attrs%ptr, trim(key)//C_NULL_CHAR, localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
       rcToReturn=rc)) return
 

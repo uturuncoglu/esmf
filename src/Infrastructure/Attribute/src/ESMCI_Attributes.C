@@ -312,11 +312,14 @@ void ESMC_AttributesDestroy(ESMCI::Attributes *attrs, int &rc) {
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_AttributesSet()"
-void ESMC_AttributesSet(char *key, int &rc) {
+void ESMC_AttributesSet(ESMCI::Attributes *attrs, char *key, int &rc) {
   rc = ESMF_FAILURE;
-  std::cout << "the key on next line" << std::endl;
-  std::cout << key << std::endl;
-  std::cout << "should have gotten key" << std::endl;
+
+  std::string localKey(key);
+  attrs->set<int>(localKey, 333, false, rc);
+
+  std::cout << attrs->dump(2, rc) << std::endl;
+
   rc = ESMF_SUCCESS;
 }
 

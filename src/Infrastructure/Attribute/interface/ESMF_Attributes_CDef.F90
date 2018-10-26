@@ -13,9 +13,10 @@ interface
     integer(C_INT), intent(inout) :: rc
   end subroutine c_attrs_destroy
 
-  subroutine c_attrs_set(key, rc) bind(C, name="ESMC_AttributesSet")
+  subroutine c_attrs_set(attrs, key, rc) bind(C, name="ESMC_AttributesSet")
     use iso_c_binding
     implicit none
+    type(C_PTR), value :: attrs
     character(kind=C_CHAR), intent(in) :: key(*)
     integer(C_INT), intent(inout) :: rc
   end subroutine c_attrs_set
