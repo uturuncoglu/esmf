@@ -3,7 +3,7 @@
 ALL: build_here 
 
 SOURCEC	  = ESMCI_Attribute_F.C
-SOURCEF	  = 
+SOURCEF	  = ESMF_Attributes.F90
 SOURCEH	  = 
 
 OBJSC     = $(addsuffix .o, $(basename $(SOURCEC)))

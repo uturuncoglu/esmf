@@ -297,3 +297,13 @@ json createJSONPackage(const string &pkgKey, int &rc) {
 }
 
 }  // namespace
+
+extern "C" {
+
+#undef  ESMC_METHOD
+#define ESMC_METHOD "extern::create_attributes()"
+ESMCI::Attributes* create_attributes() {
+  return new ESMCI::Attributes();
+}
+
+}
