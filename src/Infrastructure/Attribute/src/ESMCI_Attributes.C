@@ -301,8 +301,8 @@ json createJSONPackage(const string &pkgKey, int &rc) {
 extern "C" {
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "extern::create_attributes()"
-ESMCI::Attributes* create_attributes(int &rc) {
+#define ESMC_METHOD "ESMC_CreateAttributes()"
+ESMCI::Attributes* ESMC_CreateAttributes(int &rc) {
   rc = ESMF_SUCCESS;
   return new ESMCI::Attributes();
 }

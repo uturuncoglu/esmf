@@ -1,5 +1,5 @@
 interface
-  function c_create_attributes(rc) bind(C, name="create_attributes")
+  function c_create_attributes(rc) bind(C, name="ESMC_CreateAttributes")
     use iso_c_binding
     implicit none
     integer(C_INT), intent(inout) :: rc

@@ -118,7 +118,7 @@ json createJSONPackage(const string &pkgKey, int &rc);
 // Fortran interface functions
 extern "C" {
 
-  ESMCI::Attributes* create_attributes(int &rc);
+  ESMCI::Attributes* ESMC_CreateAttributes(int &rc);
 
 }
 
