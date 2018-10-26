@@ -96,6 +96,7 @@ subroutine ESMF_AttributesDestroy(attrs, rc)
   if (present(rc)) rc = ESMF_FAILURE
 
   call c_attrs_destroy(attrs%ptr, localrc)
+  attrs%ptr = C_NULL_PTR
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
                          rcToReturn=rc)) return
 
