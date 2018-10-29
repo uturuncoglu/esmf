@@ -123,8 +123,6 @@ subroutine ESMF_AttributesGet(attrs, key, value, default, rc)
 
   if (present(default)) then
     localdefault = default
-    print *, "(f) default= ", default
-    print *, "(f) localdefault= ", localdefault
     localdefault_ptr = C_LOC(localdefault)
   else
     localdefault_ptr = C_NULL_PTR
