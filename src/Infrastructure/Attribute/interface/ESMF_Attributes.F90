@@ -139,15 +139,14 @@ subroutine ESMF_AttributesSet(attrs, key, value, force, rc)
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  logical(C_BOOL) :: localforce
+  integer(C_INT) :: localforce
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
 
-  if (present(force)) then
-    localforce = force
-  else
-    localforce = .true.
+  localforce = 1
+  if (present(force) .and. force .eqv. .false.) then
+    localforce = 0
   end if
 
   call c_attrs_set(attrs%ptr, trim(key)//C_NULL_CHAR, value, localforce, localrc)

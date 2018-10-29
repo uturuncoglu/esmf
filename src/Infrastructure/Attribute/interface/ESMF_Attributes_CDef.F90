@@ -17,7 +17,7 @@ interface
     use iso_c_binding
     implicit none
     type(C_PTR), value :: attrs
-    character(kind=C_CHAR), intent(in) :: key(*)
+    character(C_CHAR), intent(in) :: key(*)
     integer(C_INT), intent(inout) :: rc
     integer(C_INT) :: c_attrs_get
   end function c_attrs_get
@@ -27,8 +27,8 @@ interface
     implicit none
     type(C_PTR), value :: attrs
     character(kind=C_CHAR), intent(in) :: key(*)
-    integer(C_INT), intent(in) :: value
-    logical(C_BOOL), intent(in) :: force
+    integer(C_INT), intent(in) :: value !tdk: FEATURE: try adding "value" attribute
+    integer(C_INT), intent(in) :: force
     integer(C_INT), intent(inout) :: rc
   end subroutine c_attrs_set
 end interface

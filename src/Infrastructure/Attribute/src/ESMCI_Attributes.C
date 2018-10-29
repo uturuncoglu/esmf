@@ -322,12 +322,18 @@ int ESMC_AttributesGet(ESMCI::Attributes *attrs, char *key, int &rc) {
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_AttributesSet()"
 void ESMC_AttributesSet(ESMCI::Attributes *attrs, char *key, int &value,
-                        bool force, int &rc) {
+                        int &force, int &rc) {
   rc = ESMF_FAILURE;
+  bool localforce;
+
+  if (force == 1) {
+    localforce = true;
+  } else {
+    localforce = false;
+  }
 
   std::string localKey(key);
-  attrs->set<int>(localKey, value, force, rc);
-//  std::cout << attrs->dump(2, rc) << std::endl;
+  attrs->set<int>(localKey, value, localforce, rc);
 }
 
 }  // extern "C"

@@ -71,7 +71,7 @@ program ESMF_AttributesUTest
 
   integer(ESMF_KIND_I4) :: value, actual
 
-  type(ESMF_Attributes) :: attrs, attrs2
+  type(ESMF_Attributes) :: attrs, attrs2, attrs3, attrs4
 
   !----------------------------------------------------------------------------
   call ESMF_TestStart(ESMF_SRCLINE, rc=rc)  ! calls ESMF_Initialize() internally
@@ -111,7 +111,6 @@ program ESMF_AttributesUTest
   write(failMsg, *) "Did not set key"
   key = "testKey"
   actual = 333
-  !tdk: TEST: force=.false.
   call ESMF_AttributesSet(attrs2, key, actual, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
   call ESMF_Test((rc == ESMF_SUCCESS), name, failMsg, result, ESMF_SRCLINE)
@@ -125,6 +124,51 @@ program ESMF_AttributesUTest
 
   call ESMF_AttributesDestroy(attrs2, rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+  !----------------------------------------------------------------------------
+
+  !----------------------------------------------------------------------------
+  !NEX_UTest
+  ! Test we can overload the value if force is true
+  rc = ESMF_FAILURE
+
+  attrs3 = ESMF_AttributesCreate(rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  write(name, *) "ESMF_AttributesSet Force Flag"
+  write(failMsg, *) "Could not overload value"
+  key = "testKey"
+  actual = 333
+
+  call ESMF_AttributesSet(attrs3, "foobar", 123, force=.true., rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  call ESMF_AttributesSet(attrs3, "foobar", 123, force=.true., rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  call ESMF_Test((rc == ESMF_SUCCESS), name, failMsg, result, ESMF_SRCLINE)
+
+  call ESMF_AttributesDestroy(attrs3, rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+  !----------------------------------------------------------------------------
+
+  !----------------------------------------------------------------------------
+  !NEX_UTest
+  ! Test creating and destroying a bunch of attributes
+  rc = ESMF_FAILURE
+  write(name, *) "ESMF_AttributesSet Force Flag"
+  write(failMsg, *) "Could not overload value"
+  key = "testKey"
+  actual = 333
+
+  do i=1, 10
+    attrs4 = ESMF_AttributesCreate(rc)
+    if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+    call ESMF_AttributesDestroy(attrs4, rc)
+    if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+  end do
+
+  call ESMF_Test((rc == ESMF_SUCCESS), name, failMsg, result, ESMF_SRCLINE)
   !----------------------------------------------------------------------------
 
   !----------------------------------------------------------------------------
