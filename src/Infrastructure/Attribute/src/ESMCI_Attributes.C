@@ -120,7 +120,7 @@ void Attributes::erase(const string &keyParent, const string &keyChild, int &rc)
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::formatKey()"
-json::json_pointer Attributes::formatKey(const string &key, int &rc) {
+json::json_pointer Attributes::formatKey(const string& key, int& rc) {
   rc = ESMF_FAILURE;
   string localKey;
 
@@ -144,7 +144,7 @@ json::json_pointer Attributes::formatKey(const string &key, int &rc) {
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::get()"
 template <typename T>
-T Attributes::get(const string &key, int &rc) const {
+T Attributes::get(const string& key, int& rc) const {
   rc = ESMF_FAILURE;
 
   json::json_pointer jp = this->formatKey(key, rc);
@@ -164,7 +164,7 @@ template int Attributes::get(const string&, int&) const;
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::getPointer()"
 template <typename T, typename JT>
-T Attributes::getPointer(const string &key, int &rc) const {
+T Attributes::getPointer(const string& key, int& rc) const {
   rc = ESMF_FAILURE;
 
   json::json_pointer jp = this->formatKey(key, rc);
@@ -190,7 +190,7 @@ const json& Attributes::getStorageRef() const{
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::hasKey()"
-bool Attributes::hasKey(const string &key, int &rc) const{
+bool Attributes::hasKey(const string& key, int& rc) const{
   rc = ESMF_FAILURE;
 
   json::json_pointer jp = this->formatKey(key, rc);
