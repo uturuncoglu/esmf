@@ -314,7 +314,6 @@ void ESMC_AttributesDestroy(ESMCI::Attributes *attrs, int &rc) {
 #define ESMC_METHOD "ESMC_AttributesGet()"
 int ESMC_AttributesGet(ESMCI::Attributes *attrs, char *key, int &rc) {
   rc = ESMF_FAILURE;
-
   std::string localKey(key);
   int ret = attrs->get<int>(localKey, rc);
   return ret;
@@ -322,13 +321,13 @@ int ESMC_AttributesGet(ESMCI::Attributes *attrs, char *key, int &rc) {
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_AttributesSet()"
-void ESMC_AttributesSet(ESMCI::Attributes *attrs, char *key, int &rc) {
+void ESMC_AttributesSet(ESMCI::Attributes *attrs, char *key, int &value,
+                        bool force, int &rc) {
   rc = ESMF_FAILURE;
 
   std::string localKey(key);
-  attrs->set<int>(localKey, 333, false, rc);  //tdk: add value and force flags to interface
-
-  std::cout << attrs->dump(2, rc) << std::endl;  //tdk:remove
+  attrs->set<int>(localKey, value, force, rc);
+//  std::cout << attrs->dump(2, rc) << std::endl;
 }
 
 }  // extern "C"

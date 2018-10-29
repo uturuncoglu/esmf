@@ -129,17 +129,28 @@ end subroutine ESMF_AttributesGet
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributesSet()"
-subroutine ESMF_AttributesSet(attrs, key, rc)
+subroutine ESMF_AttributesSet(attrs, key, value, force, rc)
   implicit none
+
   type(ESMF_Attributes), intent(inout) :: attrs
   character(len=*), intent(in) :: key
+  integer(ESMF_KIND_I4), intent(in) :: value
+  logical, intent(in), optional :: force
   integer, intent(inout), optional :: rc
+
   integer :: localrc
+  logical(C_BOOL) :: localforce
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
 
-  call c_attrs_set(attrs%ptr, trim(key)//C_NULL_CHAR, localrc)
+  if (present(force)) then
+    localforce = force
+  else
+    localforce = .true.
+  end if
+
+  call c_attrs_set(attrs%ptr, trim(key)//C_NULL_CHAR, value, localforce, localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
       rcToReturn=rc)) return
 

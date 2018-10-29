@@ -69,7 +69,7 @@ program ESMF_AttributesUTest
   ! cumulative result: count failures; no failures equals "all pass"
   integer               :: result = 0
 
-  integer               :: value
+  integer(ESMF_KIND_I4) :: value, actual
 
   type(ESMF_Attributes) :: attrs, attrs2
 
@@ -110,7 +110,9 @@ program ESMF_AttributesUTest
   write(name, *) "ESMF_AttributesSet"
   write(failMsg, *) "Did not set key"
   key = "testKey"
-  call ESMF_AttributesSet(attrs2, key, rc)
+  actual = 333
+  !tdk: TEST: force=.false.
+  call ESMF_AttributesSet(attrs2, key, actual, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
   call ESMF_Test((rc == ESMF_SUCCESS), name, failMsg, result, ESMF_SRCLINE)
 
@@ -119,7 +121,7 @@ program ESMF_AttributesUTest
   call ESMF_AttributesGet(attrs2, key, value, rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-  call ESMF_Test((value == 333), name, failMsg, result, ESMF_SRCLINE)
+  call ESMF_Test((value == actual), name, failMsg, result, ESMF_SRCLINE)
 
   call ESMF_AttributesDestroy(attrs2, rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
