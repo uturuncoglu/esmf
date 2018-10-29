@@ -48,23 +48,23 @@ namespace ESMCI {
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes()"
-Attributes::Attributes(void){};
+Attributes::Attributes(void) = default;
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "~Attributes(json&)"
-Attributes::Attributes(const json &storage){
+Attributes::Attributes(const json& storage){
   this->storage = storage;
 };
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "~Attributes(json&&)"
-  Attributes::Attributes(json &&storage){
+  Attributes::Attributes(json&& storage){
     this->storage = move(storage);
   };
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes(string&)"
-Attributes::Attributes(const string &input, int &rc){
+Attributes::Attributes(const string& input, int& rc){
   rc = ESMF_FAILURE;
   try {
     this->storage = json::parse(input);
@@ -76,7 +76,7 @@ Attributes::Attributes(const string &input, int &rc){
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::dump(int &rc)"
-string Attributes::dump(int &rc) const{
+string Attributes::dump(int& rc) const{
   rc = ESMF_FAILURE;
   string ret = this->storage.dump();
   rc = ESMF_SUCCESS;
@@ -85,7 +85,7 @@ string Attributes::dump(int &rc) const{
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::dump(int indent, int &rc)"
-string Attributes::dump(int indent, int &rc) const{
+string Attributes::dump(int indent, int& rc) const{
   rc = ESMF_FAILURE;
   string ret = this->storage.dump(indent);
   rc = ESMF_SUCCESS;
@@ -94,7 +94,7 @@ string Attributes::dump(int indent, int &rc) const{
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::erase()"
-void Attributes::erase(const string &keyParent, const string &keyChild, int &rc){
+void Attributes::erase(const string& keyParent, const string& keyChild, int& rc){
   rc = ESMF_FAILURE;
 
   json::json_pointer jp = this->formatKey(keyParent, rc);
