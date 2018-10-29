@@ -51,13 +51,17 @@ namespace ESMCI {
 Attributes::Attributes(void) = default;
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "~Attributes(json&)"
+#define ESMC_METHOD "~Attributes()"
+Attributes::~Attributes(void) = default;
+
+#undef  ESMC_METHOD
+#define ESMC_METHOD "Attributes(json&)"
 Attributes::Attributes(const json& storage){
   this->storage = storage;
 };
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "~Attributes(json&&)"
+#define ESMC_METHOD "Attributes(json&&)"
   Attributes::Attributes(json&& storage){
     this->storage = move(storage);
   };
