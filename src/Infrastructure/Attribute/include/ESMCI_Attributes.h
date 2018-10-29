@@ -73,43 +73,45 @@ class Attributes
 private:
   json storage;  // JSON object store for keys/values managed by this instance
 
-  // Prevent accidental copying
-  Attributes(const Attributes&);
-
-  static json::json_pointer formatKey(const string &key, int &rc);
+  static json::json_pointer formatKey(const string& key, int& rc);
 
 public:
-  Attributes(void);
-  ~Attributes(void);
-  Attributes(const json &storage);
-  Attributes(json &&storage);
-  Attributes(const string &input, int &rc);
+  Attributes(void) = default;  // Default constructor
+  ~Attributes(void) = default; // Default destructor
+  Attributes(Attributes&&) = delete; // Move constructor
+  Attributes(const Attributes&) = delete; // Copy constructor
+  Attributes&operator=(const Attributes&) = delete; // Copy assignment
+  Attributes&operator=(Attributes&&) = delete; // Move assignment
 
-  string dump(int &rc) const;
-  string dump(int indent, int &rc) const;
+  Attributes(const json& storage);
+  Attributes(json&& storage);
+  Attributes(const string& input, int& rc);
 
-  void erase(const string &key, const string &keyChild, int &rc);
+  string dump(int& rc) const;
+  string dump(int indent, int& rc) const;
+
+  void erase(const string& key, const string& keyChild, int& rc);
 
   template <typename T>
-  T get(const string &key, int &rc) const;
+  T get(const string& key, int& rc) const;
 
   const json& getStorageRef(void) const;
 
   template <typename T, typename JT>
-  T getPointer(const string &key, int &rc) const;
+  T getPointer(const string& key, int& rc) const;
 
-  bool hasKey(const string &key, int &rc) const;
+  bool hasKey(const string& key, int& rc) const;
 
   template <typename T>
-  void set(const string &key, T value, bool force, int &rc);
+  void set(const string& key, T value, bool force, int& rc);
 
-  void update(const Attributes &attrs, int &rc);
+  void update(const Attributes& attrs, int& rc);
 
 };
 
 //-----------------------------------------------------------------------------
 
-json createJSONPackage(const string &pkgKey, int &rc);
+json createJSONPackage(const string& pkgKey, int& rc);
 
 //-----------------------------------------------------------------------------
 

@@ -38,7 +38,7 @@ typedef const json::number_integer_t* const json_int_ptr_t;
 //EOP
 //-----------------------------------------------------------------------------
 
-void finalizeFailure(int &rc, char failMsg[], string msg) {
+void finalizeFailure(int& rc, char failMsg[], string msg) {
   rc = ESMF_FAILURE;
   strcpy(failMsg, msg.c_str());
   return;
@@ -46,7 +46,7 @@ void finalizeFailure(int &rc, char failMsg[], string msg) {
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "testConstructor()"
-void testConstructor(int &rc, char failMsg[]) {
+void testConstructor(int& rc, char failMsg[]) {
   Attributes attrs;
 
   // Test constructing from a JSON object instance creates a copy.
@@ -98,7 +98,7 @@ void testConstructor(int &rc, char failMsg[]) {
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "testCreateJSONPackage()"
-void testCreateJSONPackage(int &rc, char failMsg[]) {
+void testCreateJSONPackage(int& rc, char failMsg[]) {
   rc = ESMF_FAILURE;
 
   string pkgKey = "ESMF:Metadata:Group";
@@ -128,7 +128,7 @@ void testCreateJSONPackage(int &rc, char failMsg[]) {
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "testGet()"
-void testGet(int &rc, char failMsg[]) {
+void testGet(int& rc, char failMsg[]) {
   rc = ESMF_FAILURE;
 
   Attributes attrs;
@@ -167,7 +167,7 @@ void testGet(int &rc, char failMsg[]) {
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "testHasKey()"
-void testHasKey(int &rc, char failMsg[]) {
+void testHasKey(int& rc, char failMsg[]) {
   rc = ESMF_FAILURE;
 
   Attributes attrs;
@@ -190,7 +190,7 @@ void testHasKey(int &rc, char failMsg[]) {
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "testErase()"
-void testErase(int &rc, char failMsg[]) {
+void testErase(int& rc, char failMsg[]) {
   rc = ESMF_FAILURE;
 
   Attributes attrs;
@@ -244,7 +244,7 @@ void testErase(int &rc, char failMsg[]) {
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "testSetGet()"
-void testSetGet(int &rc, char failMsg[]) {
+void testSetGet(int& rc, char failMsg[]) {
   rc = ESMF_FAILURE;
 
   Attributes attrs;
@@ -310,7 +310,7 @@ void testSetGet(int &rc, char failMsg[]) {
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "testSetGetErrorHandling()"
-void testSetGetErrorHandling(int &rc, char failMsg[]) {
+void testSetGetErrorHandling(int& rc, char failMsg[]) {
   rc = ESMF_FAILURE;
 
   //---------------------------------------------------------------------------
@@ -335,7 +335,7 @@ void testSetGetErrorHandling(int &rc, char failMsg[]) {
   try {
     auto actual = attrs.getPointer<attr_int_ptr_t, json_int_ptr_t>(key, rc);
   }
-  catch (esmf_attrs_error &err) {
+  catch (esmf_attrs_error& err) {
     if (rc == ESMC_RC_NOT_FOUND){
       failed = false;
     }
@@ -392,7 +392,7 @@ void testSetGetErrorHandling(int &rc, char failMsg[]) {
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "testUpdate()"
-void testUpdate(int &rc, char failMsg[]) {
+void testUpdate(int& rc, char failMsg[]) {
   rc = ESMF_FAILURE;
 
   json update_target =  R"( {"color": "red", "price": 17.99} )"_json;

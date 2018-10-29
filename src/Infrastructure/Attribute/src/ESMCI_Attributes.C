@@ -47,14 +47,6 @@ using json = nlohmann::json;  // Convenience rename for JSON namespace.
 namespace ESMCI {
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "Attributes()"
-Attributes::Attributes(void) = default;
-
-#undef  ESMC_METHOD
-#define ESMC_METHOD "~Attributes()"
-Attributes::~Attributes(void) = default;
-
-#undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes(json&)"
 Attributes::Attributes(const json& storage){
   this->storage = storage;
@@ -68,11 +60,11 @@ Attributes::Attributes(const json& storage){
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes(string&)"
-Attributes::Attributes(const string& input, int& rc){
+Attributes::Attributes(const string& input, int& rc) {
   rc = ESMF_FAILURE;
   try {
     this->storage = json::parse(input);
-  } catch (json::parse_error &e) {
+  } catch (json::parse_error& e) {
     ESMF_THROW_JSON(e, "ESMC_RC_OBJ_NOT_CREATED", ESMC_RC_OBJ_NOT_CREATED, rc);
   }
   rc = ESMF_SUCCESS;
@@ -80,7 +72,7 @@ Attributes::Attributes(const string& input, int& rc){
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::dump(int &rc)"
-string Attributes::dump(int& rc) const{
+string Attributes::dump(int& rc) const {
   rc = ESMF_FAILURE;
   string ret = this->storage.dump();
   rc = ESMF_SUCCESS;
@@ -89,7 +81,7 @@ string Attributes::dump(int& rc) const{
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::dump(int indent, int &rc)"
-string Attributes::dump(int indent, int& rc) const{
+string Attributes::dump(int indent, int& rc) const {
   rc = ESMF_FAILURE;
   string ret = this->storage.dump(indent);
   rc = ESMF_SUCCESS;
@@ -98,7 +90,7 @@ string Attributes::dump(int indent, int& rc) const{
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::erase()"
-void Attributes::erase(const string& keyParent, const string& keyChild, int& rc){
+void Attributes::erase(const string& keyParent, const string& keyChild, int& rc) {
   rc = ESMF_FAILURE;
 
   json::json_pointer jp = this->formatKey(keyParent, rc);
@@ -214,7 +206,7 @@ bool Attributes::hasKey(const string& key, int& rc) const{
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::set()"
 template <typename T>
-void Attributes::set(const string &key, T value, bool force, int &rc) {
+void Attributes::set(const string& key, T value, bool force, int& rc) {
   rc = ESMF_FAILURE;
 
   json::json_pointer jp = this->formatKey(key, rc);
@@ -251,8 +243,8 @@ void Attributes::update(const Attributes &attrs, int &rc) {
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "esmf_attrs_error::esmf_attrs_error()"
-esmf_attrs_error::esmf_attrs_error (const string &code_name, int rc,
-                                    const string &msg) {
+esmf_attrs_error::esmf_attrs_error (const string& code_name, int rc,
+                                    const string& msg) {
   string the_msg;
   if (code_name != "") {
     the_msg = "Error/Return Code " + std::to_string(rc) + " (" + \
@@ -268,7 +260,7 @@ esmf_attrs_error::esmf_attrs_error (const string &code_name, int rc,
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "createJSONPackage()"
-json createJSONPackage(const string &pkgKey, int &rc) {
+json createJSONPackage(const string& pkgKey, int& rc) {
   rc = ESMF_FAILURE;
 
   json j;
@@ -302,21 +294,21 @@ extern "C" {
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_AttributesCreate()"
-ESMCI::Attributes* ESMC_AttributesCreate(int &rc) {
+ESMCI::Attributes* ESMC_AttributesCreate(int& rc) {
   rc = ESMF_SUCCESS;
   return new ESMCI::Attributes();
 }
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_AttributesDestroy()"
-void ESMC_AttributesDestroy(ESMCI::Attributes *attrs, int &rc) {
+void ESMC_AttributesDestroy(ESMCI::Attributes* attrs, int& rc) {
   delete attrs;
   rc = ESMF_SUCCESS;
 }
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_AttributesGet()"
-int ESMC_AttributesGet(ESMCI::Attributes *attrs, char *key, int &rc) {
+int ESMC_AttributesGet(ESMCI::Attributes* attrs, char* key, int& rc) {
   rc = ESMF_FAILURE;
   std::string localKey(key);
   int ret = attrs->get<int>(localKey, rc);
@@ -325,8 +317,8 @@ int ESMC_AttributesGet(ESMCI::Attributes *attrs, char *key, int &rc) {
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_AttributesSet()"
-void ESMC_AttributesSet(ESMCI::Attributes *attrs, char *key, int &value,
-                        int &force, int &rc) {
+void ESMC_AttributesSet(ESMCI::Attributes* attrs, char* key, int& value,
+                        int& force, int& rc) {
   rc = ESMF_FAILURE;
   bool localforce = force;
 

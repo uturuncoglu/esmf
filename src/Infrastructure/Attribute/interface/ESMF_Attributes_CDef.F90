@@ -27,7 +27,7 @@ interface
     implicit none
     type(C_PTR), value :: attrs
     character(kind=C_CHAR), intent(in) :: key(*)
-    integer(C_INT), intent(in) :: value !tdk: FEATURE: try adding "value" attribute
+    integer(C_INT), intent(in) :: value
     integer(C_INT), intent(in) :: force
     integer(C_INT), intent(inout) :: rc
   end subroutine c_attrs_set
