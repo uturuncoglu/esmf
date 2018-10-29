@@ -69,6 +69,8 @@ program ESMF_AttributesUTest
   ! cumulative result: count failures; no failures equals "all pass"
   integer               :: result = 0
 
+  integer               :: value
+
   type(ESMF_Attributes) :: attrs, attrs2
 
   !----------------------------------------------------------------------------
@@ -99,16 +101,25 @@ program ESMF_AttributesUTest
 
   !----------------------------------------------------------------------------
   !NEX_UTest
-  write(name, *) "ESMF_AttributesSet"
+  ! Test basic set/get operation
   rc = ESMF_FAILURE
 
   attrs2 = ESMF_AttributesCreate(rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
+  write(name, *) "ESMF_AttributesSet"
   write(failMsg, *) "Did not set key"
   key = "testKey"
   call ESMF_AttributesSet(attrs2, key, rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
   call ESMF_Test((rc == ESMF_SUCCESS), name, failMsg, result, ESMF_SRCLINE)
+
+  write(name, *) "ESMF_AttributesGet"
+  write(failMsg, *) "Did not get key"
+  call ESMF_AttributesGet(attrs2, key, value, rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  call ESMF_Test((value == 333), name, failMsg, result, ESMF_SRCLINE)
 
   call ESMF_AttributesDestroy(attrs2, rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)

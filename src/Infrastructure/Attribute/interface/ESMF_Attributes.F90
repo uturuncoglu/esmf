@@ -106,6 +106,28 @@ end subroutine ESMF_AttributesDestroy
 !------------------------------------------------------------------------------
 
 #undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_AttributesGet()"
+subroutine ESMF_AttributesGet(attrs, key, value, rc)
+  implicit none
+  type(ESMF_Attributes), intent(inout) :: attrs
+  character(len=*), intent(in) :: key
+  integer(ESMF_KIND_I4), intent(inout) :: value
+  integer, intent(inout), optional :: rc
+  integer :: localrc
+
+  localrc = ESMF_FAILURE
+  if (present(rc)) rc = ESMF_FAILURE
+
+  value = c_attrs_get(attrs%ptr, trim(key)//C_NULL_CHAR, localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
+                         rcToReturn=rc)) return
+
+  if (present(rc)) rc = ESMF_SUCCESS
+end subroutine ESMF_AttributesGet
+
+!------------------------------------------------------------------------------
+
+#undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributesSet()"
 subroutine ESMF_AttributesSet(attrs, key, rc)
   implicit none
