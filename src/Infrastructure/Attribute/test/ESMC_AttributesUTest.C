@@ -161,6 +161,18 @@ void testGet(int& rc, char failMsg[]) {
     }
   }
 
+  // Test get with a default value --------------------------------------------
+
+  Attributes attrs2;
+  rc = ESMF_FAILURE;
+  int def = 3000;
+  auto actual2 = attrs2.get<int>("blah-dee-blah", rc, &def);
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+
+  if (actual2 != def) {
+    return finalizeFailure(rc, failMsg, "Did not get default value");
+  }
+
   rc = ESMF_SUCCESS;
   return;
 }

@@ -140,7 +140,7 @@ json::json_pointer Attributes::formatKey(const string& key, int& rc) {
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::get()"
 template <typename T>
-T Attributes::get(const string& key, int& rc) const {
+T Attributes::get(const string& key, int& rc, T* def) const {
   rc = ESMF_FAILURE;
 
   json::json_pointer jp = this->formatKey(key, rc);
@@ -152,10 +152,14 @@ T Attributes::get(const string& key, int& rc) const {
     return ret;
   }
   catch (json::out_of_range& e) {
+    if (def) {
+      T ret = *def;
+      return ret;
+    }
     ESMF_THROW_JSON(e, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);
   }
 }
-template int Attributes::get(const string&, int&) const;
+template int Attributes::get(const string&, int&, int*) const;
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::getPointer()"
@@ -308,10 +312,10 @@ void ESMC_AttributesDestroy(ESMCI::Attributes* attrs, int& rc) {
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_AttributesGet()"
-int ESMC_AttributesGet(ESMCI::Attributes* attrs, char* key, int& rc) {
+int ESMC_AttributesGet(ESMCI::Attributes* attrs, char* key, int& rc, int* def) {
   rc = ESMF_FAILURE;
   std::string localKey(key);
-  int ret = attrs->get<int>(localKey, rc);
+  int ret = attrs->get<int>(localKey, rc, def);
   return ret;
 }
 

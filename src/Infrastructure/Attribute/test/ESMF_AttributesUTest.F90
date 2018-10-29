@@ -69,9 +69,9 @@ program ESMF_AttributesUTest
   ! cumulative result: count failures; no failures equals "all pass"
   integer               :: result = 0
 
-  integer(ESMF_KIND_I4) :: value, actual
+  integer(ESMF_KIND_I4) :: value, actual, actual2
 
-  type(ESMF_Attributes) :: attrs, attrs2, attrs3, attrs4
+  type(ESMF_Attributes) :: attrs, attrs2, attrs3, attrs4, attrs5
 
   !----------------------------------------------------------------------------
   call ESMF_TestStart(ESMF_SRCLINE, rc=rc)  ! calls ESMF_Initialize() internally
@@ -170,6 +170,25 @@ program ESMF_AttributesUTest
   end do
 
   call ESMF_Test((rc == ESMF_SUCCESS), name, failMsg, result, ESMF_SRCLINE)
+  !----------------------------------------------------------------------------
+
+  !----------------------------------------------------------------------------
+  !NEX_UTest
+  ! Test get with a default value
+  rc = ESMF_FAILURE
+
+  attrs5 = ESMF_AttributesCreate(rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  write(name, *) "ESMF_AttributesGet with Default Value"
+  write(failMsg, *) "Did not get default value"
+  call ESMF_AttributesGet(attrs5, "doesNotExist", actual2, rc=rc, default=5897)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  call ESMF_Test((actual2 == 5897), name, failMsg, result, ESMF_SRCLINE)
+
+  call ESMF_AttributesDestroy(attrs5, rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
   !----------------------------------------------------------------------------
 
   !----------------------------------------------------------------------------

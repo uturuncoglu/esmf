@@ -107,18 +107,29 @@ end subroutine ESMF_AttributesDestroy
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributesGet()"
-subroutine ESMF_AttributesGet(attrs, key, value, rc)
+subroutine ESMF_AttributesGet(attrs, key, value, default, rc)
   implicit none
   type(ESMF_Attributes), intent(inout) :: attrs
   character(len=*), intent(in) :: key
   integer(ESMF_KIND_I4), intent(inout) :: value
+  integer, intent(in), optional :: default
   integer, intent(inout), optional :: rc
   integer :: localrc
+  integer(C_INT), target :: localdefault
+  type(C_PTR) :: localdefault_ptr
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
 
-  value = c_attrs_get(attrs%ptr, trim(key)//C_NULL_CHAR, localrc)
+  if (present(default)) then
+    localdefault = default
+    print *, "(f) default= ", default
+    print *, "(f) localdefault= ", localdefault
+    localdefault_ptr = C_LOC(localdefault)
+  else
+    localdefault_ptr = C_NULL_PTR
+  end if
+  value = c_attrs_get(attrs%ptr, trim(key)//C_NULL_CHAR, localrc, localdefault_ptr)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
                          rcToReturn=rc)) return
 
