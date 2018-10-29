@@ -324,13 +324,13 @@ int ESMC_AttributesGet(ESMCI::Attributes *attrs, char *key, int &rc) {
 void ESMC_AttributesSet(ESMCI::Attributes *attrs, char *key, int &value,
                         int &force, int &rc) {
   rc = ESMF_FAILURE;
-  bool localforce;
+  bool localforce = force;
 
-  if (force == 1) {
-    localforce = true;
-  } else {
-    localforce = false;
-  }
+//  if (force == 1) {
+//    localforce = true;
+//  } else {
+//    localforce = false;
+//  }
 
   std::string localKey(key);
   attrs->set<int>(localKey, value, localforce, rc);

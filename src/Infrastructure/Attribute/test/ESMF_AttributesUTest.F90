@@ -155,12 +155,10 @@ program ESMF_AttributesUTest
   !NEX_UTest
   ! Test creating and destroying a bunch of attributes
   rc = ESMF_FAILURE
-  write(name, *) "ESMF_AttributesSet Force Flag"
-  write(failMsg, *) "Could not overload value"
-  key = "testKey"
-  actual = 333
+  write(name, *) "ESMF_Attributes Create+Destroy Loop"
+  write(failMsg, *) "Failure during loop test"
 
-  do i=1, 10
+  do i=1, 100000
     attrs4 = ESMF_AttributesCreate(rc)
     if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
