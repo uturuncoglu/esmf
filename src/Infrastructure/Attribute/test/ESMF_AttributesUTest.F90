@@ -162,6 +162,9 @@ program ESMF_AttributesUTest
     attrs4 = ESMF_AttributesCreate(rc)
     if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
+    call ESMF_AttributesSet(attrs4, "foobar", 123, rc=rc)
+    if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
     call ESMF_AttributesDestroy(attrs4, rc)
     if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
   end do
