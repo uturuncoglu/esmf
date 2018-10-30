@@ -19,6 +19,7 @@
 //-----------------------------------------------------------------------------
 
 #include <vector>
+#include <fstream>
 
 #include "ESMCI_Util.h"
 #include "json.hpp"
@@ -107,6 +108,18 @@ public:
 
   void update(const Attributes& attrs, int& rc);
 
+};
+
+//-----------------------------------------------------------------------------
+
+class PackageFactory
+//tdk: FEATURE: add rule of five
+{
+private:
+  json cache;
+
+public:
+  json getOrCreate(const string& key, const string& uri = "");
 };
 
 //-----------------------------------------------------------------------------

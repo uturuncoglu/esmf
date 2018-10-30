@@ -20,8 +20,6 @@
 //
 // !DESCRIPTION:
 //
-// tdk: DOC: add description
-//
 //-----------------------------------------------------------------------------
 
 #include "ESMC.h"
@@ -258,6 +256,22 @@ esmf_attrs_error::esmf_attrs_error (const string& code_name, int rc,
   }
   this->msg = the_msg;
   this->rc = rc;
+}
+
+//-----------------------------------------------------------------------------
+
+#undef  ESMC_METHOD
+#define ESMC_METHOD "PackageFactory::getOrCreate()"
+json PackageFactory::getOrCreate(const string& key, const string& uri) {
+  try {
+    return this->cache.at(key);
+  } catch (json::out_of_range& e) {
+    std::ifstream i(uri, std::ifstream::in);
+    json j;
+    i >> j;
+    this->cache[key] = j;
+    return this->getOrCreate(key);
+  }
 }
 
 //-----------------------------------------------------------------------------

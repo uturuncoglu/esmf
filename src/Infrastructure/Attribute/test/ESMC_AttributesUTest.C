@@ -14,7 +14,6 @@
 #include <string.h>
 #include <stdio.h>
 #include <iostream>
-#include <assert.h>
 
 #include "ESMC.h"
 #include "ESMC_Test.h"
@@ -334,7 +333,6 @@ void testSetGetErrorHandling(int& rc, char failMsg[]) {
   if (actual != desired || ae.getReturnCode() != ESMC_RC_NOT_FOUND) {
     return finalizeFailure(rc, failMsg, "Error string output not correct");
   }
-
 
   //---------------------------------------------------------------------------
   // Test trying to get a value that is not in the map or is the wrong type
