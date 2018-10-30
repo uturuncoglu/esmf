@@ -23,6 +23,14 @@ interface
     integer(C_INT) :: c_attrs_get
   end function c_attrs_get
 
+  subroutine c_attrs_print(attrs, indent, rc) bind(C, name="ESMC_AttributesPrint")
+    use iso_c_binding
+    implicit none
+    type(C_PTR), value :: attrs
+    integer(C_INT), intent(in) :: indent
+    integer(C_INT), intent(inout) :: rc
+  end subroutine c_attrs_print
+
   subroutine c_attrs_set(attrs, key, value, force, rc) bind(C, name="ESMC_AttributesSet")
     use iso_c_binding
     implicit none

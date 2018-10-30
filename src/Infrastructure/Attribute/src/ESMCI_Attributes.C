@@ -320,6 +320,13 @@ int ESMC_AttributesGet(ESMCI::Attributes* attrs, char* key, int& rc, int* def) {
 }
 
 #undef  ESMC_METHOD
+#define ESMC_METHOD "ESMC_AttributesPrint()"
+void ESMC_AttributesPrint(ESMCI::Attributes* attrs, int& indent, int& rc) {
+  rc = ESMF_FAILURE;
+  std::cout << attrs->dump(indent, rc) << std::endl;
+}
+
+#undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_AttributesSet()"
 void ESMC_AttributesSet(ESMCI::Attributes* attrs, char* key, int& value,
                         int& force, int& rc) {

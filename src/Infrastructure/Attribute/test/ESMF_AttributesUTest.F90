@@ -71,7 +71,7 @@ program ESMF_AttributesUTest
 
   integer(ESMF_KIND_I4) :: value, actual, actual2
 
-  type(ESMF_Attributes) :: attrs, attrs2, attrs3, attrs4, attrs5
+  type(ESMF_Attributes) :: attrs, attrs2, attrs3, attrs4, attrs5, attrs6
 
   !----------------------------------------------------------------------------
   call ESMF_TestStart(ESMF_SRCLINE, rc=rc)  ! calls ESMF_Initialize() internally
@@ -188,6 +188,42 @@ program ESMF_AttributesUTest
   call ESMF_Test((actual2 == 5897), name, failMsg, result, ESMF_SRCLINE)
 
   call ESMF_AttributesDestroy(attrs5, rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+  !----------------------------------------------------------------------------
+
+  !----------------------------------------------------------------------------
+  !NEX_UTest
+  write(name, *) "ESMF_AttributesPrint"
+  write(failMsg, *) "Print somehow not successful"
+
+  rc = ESMF_FAILURE
+
+  attrs6 = ESMF_AttributesCreate(rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  call ESMF_AttributesSet(attrs6, "/i/am/nested", 111, rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  call ESMF_AttributesSet(attrs6, "top-level", 222, rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  print *, ""
+  print *, "===== ESMF_AttributesPrint Test Start ====="
+  print *, ""
+
+  call ESMF_AttributesPrint(attrs6, rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  call ESMF_AttributesPrint(attrs6, indent=1, rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  print *, ""
+  print *, "===== ESMF_AttributesPrint Test End ====="
+  print *, ""
+
+  call ESMF_Test((rc == ESMF_SUCCESS), name, failMsg, result, ESMF_SRCLINE)
+
+  call ESMF_AttributesDestroy(attrs6, rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
   !----------------------------------------------------------------------------
 

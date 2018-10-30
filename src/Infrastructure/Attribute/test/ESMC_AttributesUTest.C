@@ -161,7 +161,7 @@ void testGet(int& rc, char failMsg[]) {
     }
   }
 
-  // Test get with a default value --------------------------------------------
+  // Test get with a default value ============================================
 
   Attributes attrs2;
   rc = ESMF_FAILURE;

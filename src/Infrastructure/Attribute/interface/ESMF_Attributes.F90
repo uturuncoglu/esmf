@@ -137,6 +137,34 @@ end subroutine ESMF_AttributesGet
 !------------------------------------------------------------------------------
 
 #undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_AttributesPrint()"
+subroutine ESMF_AttributesPrint(attrs, indent, rc)
+  implicit none
+  type(ESMF_Attributes), intent(in) :: attrs
+  integer, intent(in), optional :: indent
+  integer, intent(inout), optional :: rc
+
+  integer :: localrc, localindent
+
+  localrc = ESMF_FAILURE
+  if (present(rc)) rc = ESMF_FAILURE
+
+  if (present(indent)) then
+    localindent = indent
+  else
+    localindent = 4
+  end if
+
+  call c_attrs_print(attrs%ptr, localindent, localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
+      rcToReturn=rc)) return
+
+  if (present(rc)) rc = ESMF_SUCCESS
+end subroutine ESMF_AttributesPrint
+
+!------------------------------------------------------------------------------
+
+#undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributesSet()"
 subroutine ESMF_AttributesSet(attrs, key, value, force, rc)
   implicit none
