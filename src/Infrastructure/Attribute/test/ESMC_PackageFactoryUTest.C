@@ -134,14 +134,14 @@ int main(void) {
 
   //---------------------------------------------------------------------------
   //NEX_UTest
-  strcpy(name, "Test PackageFactory Constructor");
+  strcpy(name, "PackageFactory Constructor");
   testConstructor(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //---------------------------------------------------------------------------
 
   //---------------------------------------------------------------------------
   //NEX_UTest
-  strcpy(name, "Test PackageFactory::getOrCreateJSON()");
+  strcpy(name, "PackageFactory::getOrCreateJSON()");
   testGetOrCreateJSON(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //---------------------------------------------------------------------------
