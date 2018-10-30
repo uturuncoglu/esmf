@@ -72,7 +72,8 @@ private:
 class Attributes
 {
 private:
-  json storage;  // JSON object store for keys/values managed by this instance
+  // JSON object store for keys/values managed by this instance
+  json storage = json::object();
 
   static json::json_pointer formatKey(const string& key, int& rc);
 
@@ -113,13 +114,17 @@ public:
 //-----------------------------------------------------------------------------
 
 class PackageFactory
-//tdk: FEATURE: add rule of five
+// tdk: FEATURE: add rule of five
 {
 private:
-  json cache;
+  json cache = json::object();
+  json uris = json::object();
 
 public:
-  json getOrCreate(const string& key, const string& uri = "");
+  PackageFactory(void) = default;  // Default constructor
+  ~PackageFactory(void) = default; // Default destructor
+
+  json getOrCreateJSON(const string& key, int& rc, const string& uri = "");
 };
 
 //-----------------------------------------------------------------------------

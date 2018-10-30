@@ -261,16 +261,35 @@ esmf_attrs_error::esmf_attrs_error (const string& code_name, int rc,
 //-----------------------------------------------------------------------------
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "PackageFactory::getOrCreate()"
-json PackageFactory::getOrCreate(const string& key, const string& uri) {
+#define ESMC_METHOD "PackageFactory::getOrCreateJSON()"
+json PackageFactory::getOrCreateJSON(const string& key, int& rc,
+                                     const string& uri) {
+  rc = ESMF_FAILURE;
   try {
-    return this->cache.at(key);
+    json ret = this->cache.at(key);
+    rc = ESMF_SUCCESS;
+    return ret;
   } catch (json::out_of_range& e) {
-    std::ifstream i(uri, std::ifstream::in);
+    string localuri;
+    if (uri == "") {
+      localuri = this->uris.value(key, uri);
+    } else {
+      localuri = uri;
+    }
+    std::ifstream i(localuri, std::ifstream::in);
+    if (!i.good()){
+      string errmsg = "File location is bad for key '" + key + "': " + localuri;
+      ESMF_CHECKERR_STD("ESMC_RC_FILE_READ", ESMC_RC_FILE_READ, errmsg, rc);
+    }
     json j;
-    i >> j;
-    this->cache[key] = j;
-    return this->getOrCreate(key);
+    try {
+      i >> j;
+    } catch (json::parse_error& e) {
+      ESMF_THROW_JSON(e, "ESMC_RC_FILE_READ", ESMC_RC_FILE_READ, rc);
+    }
+    i.close();
+    this->cache[key] = move(j);
+    return this->getOrCreateJSON(key, rc);
   }
 }
 
