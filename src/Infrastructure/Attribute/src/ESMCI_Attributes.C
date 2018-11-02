@@ -118,7 +118,7 @@ json::json_pointer Attributes::formatKey(const string& key, int& rc) {
   rc = ESMF_FAILURE;
   string localKey;
 
-  if (key[0] != '/') {
+  if (key != "" && key[0] != '/') {
     localKey = '/' + key;
   } else {
     localKey = key;
@@ -350,7 +350,16 @@ void ESMC_AttributesErase(ESMCI::Attributes* attrs, char* keyParent,
   rc = ESMF_FAILURE;
   std::string localkeyParent(keyParent);
   std::string localkeyChild(keyChild);
-  return attrs->erase(localkeyParent, localkeyChild, rc);
+
+  // This seems strange. This is the best method to delete from the Fortran
+  // interface to avoid passing "" as the parent key when you want to delete
+  // from the root. Otherwise a parent and child key are always required which
+  // seems redundant.
+  if (localkeyChild == "") {
+    return attrs->erase(localkeyChild, localkeyParent, rc);
+  } else {
+    return attrs->erase(localkeyParent, localkeyChild, rc);
+  }
 }
 
 #undef  ESMC_METHOD

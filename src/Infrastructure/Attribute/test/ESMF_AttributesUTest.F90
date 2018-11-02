@@ -230,7 +230,6 @@ program ESMF_AttributesUTest
   !----------------------------------------------------------------------------
   !NEX_UTest
   write(name, *) "ESMF_AttributesErase"
-  write(failMsg, *) "Not erased from Attributes storage"
 
   rc = ESMF_FAILURE
 
@@ -243,14 +242,27 @@ program ESMF_AttributesUTest
   call ESMF_AttributesErase(attrs7, "this/is/erase", keyChild="test", rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-!  call ESMF_AttributesPrint(attrs7, rc=rc)
-!  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
-
   call ESMF_AttributesGet(attrs7, "/this/is/erase/test", actual3, &
                           default=-999, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
+  write(failMsg, *) "Child not erased from parent"
   call ESMF_Test((actual3 == -999), name, failMsg, result, ESMF_SRCLINE)
+
+!  call ESMF_AttributesPrint(attrs7, rc=rc)
+!  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  call ESMF_AttributesErase(attrs7, "this", rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+!  call ESMF_AttributesPrint(attrs7, rc=rc)
+!  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  call ESMF_AttributesGet(attrs7, "this", actual3, default=-888, rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  write(failMsg, *) "Did not erase from root"
+  call ESMF_Test((actual3 == -888), name, failMsg, result, ESMF_SRCLINE)
 
   call ESMF_AttributesDestroy(attrs7, rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
