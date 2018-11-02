@@ -69,9 +69,9 @@ program ESMF_AttributesUTest
   ! cumulative result: count failures; no failures equals "all pass"
   integer               :: result = 0
 
-  integer(ESMF_KIND_I4) :: value, actual, actual2
+  integer(ESMF_KIND_I4) :: value, actual, actual2, actual3
 
-  type(ESMF_Attributes) :: attrs, attrs2, attrs3, attrs4, attrs5, attrs6
+  type(ESMF_Attributes) :: attrs, attrs2, attrs3, attrs4, attrs5, attrs6, attrs7
 
   !----------------------------------------------------------------------------
   call ESMF_TestStart(ESMF_SRCLINE, rc=rc)  ! calls ESMF_Initialize() internally
@@ -224,6 +224,35 @@ program ESMF_AttributesUTest
   call ESMF_Test((rc == ESMF_SUCCESS), name, failMsg, result, ESMF_SRCLINE)
 
   call ESMF_AttributesDestroy(attrs6, rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+  !----------------------------------------------------------------------------
+
+  !----------------------------------------------------------------------------
+  !NEX_UTest
+  write(name, *) "ESMF_AttributesErase"
+  write(failMsg, *) "Not erased from Attributes storage"
+
+  rc = ESMF_FAILURE
+
+  attrs7 = ESMF_AttributesCreate(rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  call ESMF_AttributesSet(attrs7, "this/is/erase/test", 111, rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  call ESMF_AttributesErase(attrs7, "this/is/erase", keyChild="test", rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+!  call ESMF_AttributesPrint(attrs7, rc=rc)
+!  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  call ESMF_AttributesGet(attrs7, "/this/is/erase/test", actual3, &
+                          default=-999, rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  call ESMF_Test((actual3 == -999), name, failMsg, result, ESMF_SRCLINE)
+
+  call ESMF_AttributesDestroy(attrs7, rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
   !----------------------------------------------------------------------------
 

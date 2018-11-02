@@ -68,6 +68,7 @@ contains  !====================================================================
 #define ESMF_METHOD "ESMF_AttributesCreate()"
 function ESMF_AttributesCreate(rc) result(attrs)
   implicit none
+
   integer, intent(inout), optional :: rc
   integer :: localrc
   type(ESMF_Attributes) :: attrs
@@ -88,6 +89,7 @@ end function ESMF_AttributesCreate
 #define ESMF_METHOD "ESMF_AttributesDestroy()"
 subroutine ESMF_AttributesDestroy(attrs, rc)
   implicit none
+
   type(ESMF_Attributes), intent(inout) :: attrs
   integer, intent(inout), optional :: rc
   integer :: localrc
@@ -106,14 +108,48 @@ end subroutine ESMF_AttributesDestroy
 !------------------------------------------------------------------------------
 
 #undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_AttributesErase()"
+subroutine ESMF_AttributesErase(attrs, keyParent, keyChild, rc)
+  implicit none
+
+  type(ESMF_Attributes), intent(inout) :: attrs
+  character(len=*), intent(in) :: keyParent
+  character(len=*), intent(in), optional :: keyChild
+  integer, intent(inout), optional :: rc
+
+  integer :: localrc
+  character(len=ESMF_MAXSTR) :: localkeyChild
+
+  localrc = ESMF_FAILURE
+  if (present(rc)) rc = ESMF_FAILURE
+
+  if (present(keyChild)) then
+    localkeyChild = keyChild
+  else
+    localkeyChild = ""
+  end if
+
+  call c_attrs_erase(attrs%ptr, trim(keyParent)//C_NULL_CHAR, &
+                     trim(localkeyChild)//C_NULL_CHAR, localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
+                         rcToReturn=rc)) return
+
+  if (present(rc)) rc = ESMF_SUCCESS
+end subroutine ESMF_AttributesErase
+
+!------------------------------------------------------------------------------
+
+#undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributesGet()"
 subroutine ESMF_AttributesGet(attrs, key, value, default, rc)
   implicit none
+
   type(ESMF_Attributes), intent(inout) :: attrs
   character(len=*), intent(in) :: key
   integer(ESMF_KIND_I4), intent(inout) :: value
   integer, intent(in), optional :: default
   integer, intent(inout), optional :: rc
+
   integer :: localrc
   integer(C_INT), target :: localdefault
   type(C_PTR) :: localdefault_ptr
@@ -127,6 +163,7 @@ subroutine ESMF_AttributesGet(attrs, key, value, default, rc)
   else
     localdefault_ptr = C_NULL_PTR
   end if
+
   value = c_attrs_get(attrs%ptr, trim(key)//C_NULL_CHAR, localrc, localdefault_ptr)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
                          rcToReturn=rc)) return
@@ -140,6 +177,7 @@ end subroutine ESMF_AttributesGet
 #define ESMF_METHOD "ESMF_AttributesPrint()"
 subroutine ESMF_AttributesPrint(attrs, indent, rc)
   implicit none
+
   type(ESMF_Attributes), intent(in) :: attrs
   integer, intent(in), optional :: indent
   integer, intent(inout), optional :: rc

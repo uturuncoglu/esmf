@@ -13,6 +13,15 @@ interface
     integer(C_INT), intent(inout) :: rc
   end subroutine c_attrs_destroy
 
+  subroutine c_attrs_erase(attrs, keyParent, keyChild, rc) bind(C, name="ESMC_AttributesErase")
+    use iso_c_binding
+    implicit none
+    type(C_PTR), value :: attrs
+    character(C_CHAR), intent(in) :: keyParent(*)
+    character(C_CHAR), intent(in) :: keyChild(*)
+    integer(C_INT), intent(inout) :: rc
+  end subroutine c_attrs_erase
+
   function c_attrs_get(attrs, key, rc, default) bind(C, name="ESMC_AttributesGet")
     use iso_c_binding
     implicit none

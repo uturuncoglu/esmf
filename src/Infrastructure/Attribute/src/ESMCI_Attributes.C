@@ -344,6 +344,16 @@ void ESMC_AttributesDestroy(ESMCI::Attributes* attrs, int& rc) {
 }
 
 #undef  ESMC_METHOD
+#define ESMC_METHOD "ESMC_AttributesErase()"
+void ESMC_AttributesErase(ESMCI::Attributes* attrs, char* keyParent,
+                          char* keyChild, int& rc) {
+  rc = ESMF_FAILURE;
+  std::string localkeyParent(keyParent);
+  std::string localkeyChild(keyChild);
+  return attrs->erase(localkeyParent, localkeyChild, rc);
+}
+
+#undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_AttributesGet()"
 int ESMC_AttributesGet(ESMCI::Attributes* attrs, char* key, int& rc, int* def) {
   rc = ESMF_FAILURE;
