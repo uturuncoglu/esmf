@@ -304,7 +304,8 @@ json createJSONPackage(const string& pkgKey, int& rc) {
   j["name"] = json::value_t::null;  // Will be string
 
   if (pkgKey == "ESMF:Metadata:Dimension") {
-    j["size"] = json::value_t::null;  // Will be int or potentially null if unlimited
+    // Will be int or potentially null if unlimited
+    j["size"] = json::value_t::null;
     j["is_unlimited"] = json::value_t::null;  // Will be bool
   } else if (pkgKey == "ESMF:Metadata:Group") {
     j["variables"] = json::object();
