@@ -21,6 +21,7 @@
 #include "ESMCI_Macros.h"
 #include "ESMCI_LogErr.h"
 #include "ESMCI_Util.h"
+#include "ESMCI_VM.h"
 
 using namespace ESMCI;
 using namespace std;
@@ -44,10 +45,41 @@ void finalizeFailure(int& rc, char failMsg[], string msg) {
 };
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "testBroadcast()"
-void testBroadcast(int& rc, char failMsg[]) {
+#define ESMC_METHOD "testBroadcastAttributes()"
+void testBroadcastAttributes(int& rc, char failMsg[]) {
+  rc = ESMF_FAILURE;
 
-  return finalizeFailure(rc, failMsg, "no testing yet");
+  ESMCI::VM *vm = ESMCI::VM::getCurrent(&rc);
+  ESMF_CHECKERR_STD("", rc, "Did not get current VM", rc);
+
+  int localPet = vm->getLocalPet();
+  int petCount = vm->getPetCount();
+
+  Attributes attrs;
+
+  int rootPet;
+  // Use a non-zero root pet for parallel testing
+  if (petCount == 1) {
+    rootPet = 0;
+  } else {
+    rootPet = 1;
+  }
+
+  int desired = 5;
+  if (localPet == rootPet) {
+    attrs.set("foo", desired, false, rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+  }
+
+  ESMCI::broadcastAttributes(&attrs, rootPet, rc);
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+
+  int actual = attrs.get<int>("foo", rc);
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+
+  if (actual != desired) {
+    return finalizeFailure(rc, failMsg, "Value not broadcast");
+  }
 
   return;
 };
@@ -511,8 +543,8 @@ int main(void) {
 
   //---------------------------------------------------------------------------
   //NEX_UTest
-  strcpy(name, "Attributes broadcast()");
-  testBroadcast(rc, failMsg);
+  strcpy(name, "Attributes broadcastAttributes()");
+  testBroadcastAttributes(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //---------------------------------------------------------------------------
 

@@ -27,7 +27,9 @@
 #include "ESMCI_Attributes.h"
 #include "ESMCI_LogErr.h"
 #include "ESMCI_Util.h"
+#include "ESMCI_VM.h"
 #include "json.hpp"
+#include "assert.h"  // tdk: LAST: turn off assert.h
 
 #include <vector>
 #include <iostream>
@@ -59,6 +61,7 @@ Attributes::Attributes(const json& storage){
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes(string&)"
 Attributes::Attributes(const string& input, int& rc) {
+  // tdk:FEAT: use the parse method on the object!
   rc = ESMF_FAILURE;
   try {
     this->storage = json::parse(input);
@@ -206,6 +209,19 @@ bool Attributes::hasKey(const string& key, int& rc) const{
 }
 
 #undef  ESMC_METHOD
+#define ESMC_METHOD "Attributes::parse()"
+void Attributes::parse(const string& input, int& rc) {
+  rc = ESMF_FAILURE;
+  try {
+    this->storage = json::parse(input);
+  } catch (json::parse_error& e) {
+    ESMF_THROW_JSON(e, "ESMC_RC_OBJ_NOT_CREATED", ESMC_RC_OBJ_NOT_CREATED, rc);
+  }
+  rc = ESMF_SUCCESS;
+  return;
+}
+
+#undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::set()"
 template <typename T>
 void Attributes::set(const string& key, T value, bool force, int& rc) {
@@ -293,16 +309,55 @@ json PackageFactory::getOrCreateJSON(const string& key, int& rc,
   }
 }
 
+void tdklog(const string& msg) {
+  string localmsg = "tdk: " + msg;
+  ESMC_LogWrite(localmsg.c_str(), ESMC_LOGMSG_INFO);
+}
+
 //-----------------------------------------------------------------------------
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "broadcast()"
-void broadcast(ESMCI::Attributes* attrs, int rootPet, int& rc) {
+#define ESMC_METHOD "broadcastAttributes()"
+void broadcastAttributes(ESMCI::Attributes* attrs, int rootPet, int& rc) {
   rc = ESMF_FAILURE;
 
+  ESMCI::VM *vm = ESMCI::VM::getCurrent(&rc);
+  ESMF_CHECKERR_STD("", rc, "Did not get current VM", rc);
 
+  int localPet = vm->getLocalPet();
 
-  rc = ESMF_SUCCESS;
+  size_t target_size = 0;  // Size of serialized attributes storage
+  string target;  // Serialize storage buffer
+  if (localPet == rootPet) {
+    // If this is the root, serialize the attributes storage to string
+    target = attrs->dump(rc);
+    ESMF_CHECKERR_STD("", rc, "Could not dump attributes", rc);
+
+    target_size = target.size();
+  }
+
+  // Broadcast size of the string buffer holding the serialized attributes.
+  // Used for allocating destination string buffers on receiving PETs.
+  rc = vm->broadcast(&target_size, sizeof(target_size), rootPet);
+  ESMF_CHECKERR_STD("", rc, "Did not broadcast string size", rc);
+
+  string target_received(target_size, '\0');  // Allocate receive buffer
+  if (localPet == rootPet) {
+    // If this is root, just move the data to the receive buffer with no copy.
+    target_received = move(target);
+  }
+
+  // Broadcast the string buffer
+  rc = vm->broadcast(&target_received[0], target_size, rootPet);
+  ESMF_CHECKERR_STD("", rc, "Did not broadcast string", rc);
+
+  if (localPet != rootPet) {
+    // If not root, then parse the incoming string buffer into attributes
+    // storage.
+    attrs->parse(target_received, rc);
+    ESMF_CHECKERR_STD("", rc, "Did not parse string", rc);
+  }
+
   return;
 }
 

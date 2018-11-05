@@ -104,6 +104,8 @@ public:
 
   bool hasKey(const string& key, int& rc) const;
 
+  void parse(const string& input, int& rc);
+
   template <typename T>
   void set(const string& key, T value, bool force, int& rc);
 
@@ -129,7 +131,7 @@ public:
 
 //-----------------------------------------------------------------------------
 
-  void broadcast(ESMCI::Attributes* attrs, int rootPet, int& rc); // tdk: FEATURE: non-blocking
+  void broadcastAttributes(ESMCI::Attributes* attrs, int rootPet, int& rc); // tdk: FEATURE: non-blocking
   json createJSONPackage(const string& pkgKey, int& rc);
 
 //-----------------------------------------------------------------------------
