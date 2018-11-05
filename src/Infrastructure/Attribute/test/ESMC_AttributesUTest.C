@@ -44,6 +44,15 @@ void finalizeFailure(int& rc, char failMsg[], string msg) {
 };
 
 #undef  ESMC_METHOD
+#define ESMC_METHOD "testBroadcast()"
+void testBroadcast(int& rc, char failMsg[]) {
+
+  return finalizeFailure(rc, failMsg, "no testing yet");
+
+  return;
+};
+
+#undef  ESMC_METHOD
 #define ESMC_METHOD "testConstructor()"
 void testConstructor(int& rc, char failMsg[]) {
   Attributes attrs;
@@ -497,6 +506,13 @@ int main(void) {
   //NEX_UTest
   strcpy(name, "Attributes get()");
   testGet(rc, failMsg);
+  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
+  //---------------------------------------------------------------------------
+
+  //---------------------------------------------------------------------------
+  //NEX_UTest
+  strcpy(name, "Attributes broadcast()");
+  testBroadcast(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //---------------------------------------------------------------------------
 

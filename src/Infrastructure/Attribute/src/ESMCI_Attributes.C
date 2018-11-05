@@ -296,6 +296,17 @@ json PackageFactory::getOrCreateJSON(const string& key, int& rc,
 //-----------------------------------------------------------------------------
 
 #undef  ESMC_METHOD
+#define ESMC_METHOD "broadcast()"
+void broadcast(ESMCI::Attributes* attrs, int rootPet, int& rc) {
+  rc = ESMF_FAILURE;
+
+
+
+  rc = ESMF_SUCCESS;
+  return;
+}
+
+#undef  ESMC_METHOD
 #define ESMC_METHOD "createJSONPackage()"
 json createJSONPackage(const string& pkgKey, int& rc) {
   rc = ESMF_FAILURE;
