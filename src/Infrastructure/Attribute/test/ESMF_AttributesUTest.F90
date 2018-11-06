@@ -86,40 +86,44 @@ program ESMF_AttributesUTest
 
   !----------------------------------------------------------------------------
   !NEX_UTest
-  write(name, *) "ESMF_AttributesCreate/ESMF_AttributesDestroy"
-
-  write(failMsg, *) "Did not create Attributes"
+  write(name, *) "ESMF_AttributesCreate"
   rc = ESMF_FAILURE
-  attrs = ESMF_AttributesCreate(rc)
+  attrs = ESMF_AttributesCreate(rc=rc)
+  write(failMsg, *) "Did not create Attributes"
   call ESMF_Test((rc == ESMF_SUCCESS), name, failMsg, result, ESMF_SRCLINE)
 
-  write(failMsg, *) "Did not destroy Attributes"
+  !----------------------------------------------------------------------------
+  !NEX_UTest
+  write(name, *) "ESMF_AttributesDestroy"
   rc = ESMF_FAILURE;
-  call ESMF_AttributesDestroy(attrs, rc)
+  call ESMF_AttributesDestroy(attrs, rc=rc)
+  write(failMsg, *) "Did not destroy Attributes"
   call ESMF_Test((rc == ESMF_SUCCESS), name, failMsg, result, ESMF_SRCLINE)
   !----------------------------------------------------------------------------
 
   !----------------------------------------------------------------------------
   !NEX_UTest
-  ! Test basic set/get operation
+  write(name, *) "ESMF_AttributesSet"
   rc = ESMF_FAILURE
 
   attrs2 = ESMF_AttributesCreate(rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-  write(name, *) "ESMF_AttributesSet"
-  write(failMsg, *) "Did not set key"
   key = "testKey"
   actual = 333
   call ESMF_AttributesSet(attrs2, key, actual, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  write(failMsg, *) "Did not set key"
   call ESMF_Test((rc == ESMF_SUCCESS), name, failMsg, result, ESMF_SRCLINE)
 
+  !----------------------------------------------------------------------------
+  !NEX_UTest
   write(name, *) "ESMF_AttributesGet"
-  write(failMsg, *) "Did not get key"
   call ESMF_AttributesGet(attrs2, key, value, rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
+  write(failMsg, *) "Did not get key"
   call ESMF_Test((value == actual), name, failMsg, result, ESMF_SRCLINE)
 
   call ESMF_AttributesDestroy(attrs2, rc)
@@ -129,13 +133,12 @@ program ESMF_AttributesUTest
   !----------------------------------------------------------------------------
   !NEX_UTest
   ! Test we can overload the value if force is true
+  write(name, *) "ESMF_AttributesSet Force Flag"
   rc = ESMF_FAILURE
 
   attrs3 = ESMF_AttributesCreate(rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-  write(name, *) "ESMF_AttributesSet Force Flag"
-  write(failMsg, *) "Could not overload value"
   key = "testKey"
   actual = 333
 
@@ -145,6 +148,7 @@ program ESMF_AttributesUTest
   call ESMF_AttributesSet(attrs3, "foobar", 123, force=.true., rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
+  write(failMsg, *) "Could not overload value"
   call ESMF_Test((rc == ESMF_SUCCESS), name, failMsg, result, ESMF_SRCLINE)
 
   call ESMF_AttributesDestroy(attrs3, rc)
@@ -156,7 +160,6 @@ program ESMF_AttributesUTest
   ! Test creating and destroying a bunch of attributes
   rc = ESMF_FAILURE
   write(name, *) "ESMF_Attributes Create+Destroy Loop"
-  write(failMsg, *) "Failure during loop test"
 
   do i=1, 100000
     attrs4 = ESMF_AttributesCreate(rc)
@@ -169,22 +172,23 @@ program ESMF_AttributesUTest
     if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
   end do
 
+  write(failMsg, *) "Failure during loop test"
   call ESMF_Test((rc == ESMF_SUCCESS), name, failMsg, result, ESMF_SRCLINE)
   !----------------------------------------------------------------------------
 
   !----------------------------------------------------------------------------
   !NEX_UTest
   ! Test get with a default value
+  write(name, *) "ESMF_AttributesGet with Default Value"
   rc = ESMF_FAILURE
 
   attrs5 = ESMF_AttributesCreate(rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-  write(name, *) "ESMF_AttributesGet with Default Value"
-  write(failMsg, *) "Did not get default value"
   call ESMF_AttributesGet(attrs5, "doesNotExist", actual2, rc=rc, default=5897)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
+  write(failMsg, *) "Did not get default value"
   call ESMF_Test((actual2 == 5897), name, failMsg, result, ESMF_SRCLINE)
 
   call ESMF_AttributesDestroy(attrs5, rc)
@@ -194,7 +198,6 @@ program ESMF_AttributesUTest
   !----------------------------------------------------------------------------
   !NEX_UTest
   write(name, *) "ESMF_AttributesPrint"
-  write(failMsg, *) "Print somehow not successful"
 
   rc = ESMF_FAILURE
 
@@ -221,6 +224,7 @@ program ESMF_AttributesUTest
   print *, "===== ESMF_AttributesPrint Test End ====="
   print *, ""
 
+  write(failMsg, *) "Print somehow not successful"
   call ESMF_Test((rc == ESMF_SUCCESS), name, failMsg, result, ESMF_SRCLINE)
 
   call ESMF_AttributesDestroy(attrs6, rc)
@@ -229,7 +233,7 @@ program ESMF_AttributesUTest
 
   !----------------------------------------------------------------------------
   !NEX_UTest
-  write(name, *) "ESMF_AttributesErase"
+  write(name, *) "ESMF_AttributesErase Child From Parent"
 
   rc = ESMF_FAILURE
 
@@ -251,6 +255,10 @@ program ESMF_AttributesUTest
 
 !  call ESMF_AttributesPrint(attrs7, rc=rc)
 !  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  !----------------------------------------------------------------------------
+  !NEX_UTest
+  write(name, *) "ESMF_AttributesErase Root"
 
   call ESMF_AttributesErase(attrs7, "this", rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)

@@ -35,22 +35,22 @@ RUN_ESMC_AttributesUTest:
 	$(MAKE) TNAME=Attributes NP=4 ctest
 
 RUN_ESMC_AttributesUTestUNI:
-	$(MAKE) TNAME=Attributes NP=1 ctest
+	$(MAKE) TNAME=AttributesUNI NP=1 ctest
 
 RUN_ESMC_NlohmannJSONUTest:
 	$(MAKE) TNAME=NlohmannJSON NP=4 ctest
 
 RUN_ESMC_NlohmannJSONUTestUNI:
-	$(MAKE) TNAME=NlohmannJSON NP=1 ctest
+	$(MAKE) TNAME=NlohmannJSONUNI NP=1 ctest
 
 RUN_ESMF_AttributesUTest:
 	$(MAKE) TNAME=Attributes NP=4 ftest
 
 RUN_ESMF_AttributesUTestUNI:
-	$(MAKE) TNAME=ESMF_Attributes NP=1 ftest
+	$(MAKE) TNAME=ESMF_AttributesUNI NP=1 ftest
 
 RUN_ESMC_PackageFactoryUTest:
 	$(MAKE) TNAME=PackageFactory NP=4 ctest
 
 RUN_ESMC_PackageFactoryUTestUNI:
-	$(MAKE) TNAME=PackageFactory NP=1 ctest
+	$(MAKE) TNAME=PackageFactoryUNI NP=1 ctest
