@@ -134,6 +134,8 @@ int main(void) {
 
   //---------------------------------------------------------------------------
   //NEX_disabled_UTest
+  //tdk:TEST: enable testing for PackageFactory if this is used; turned off now
+  //tdk:TEST:   because they do not work in parallel
   strcpy(name, "PackageFactory Constructor");
   testConstructor(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
