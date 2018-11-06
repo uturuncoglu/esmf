@@ -161,6 +161,7 @@ T Attributes::get(const string& key, int& rc, T* def) const {
   }
 }
 template int Attributes::get(const string&, int&, int*) const;
+template string Attributes::get(const string&, int&, string*) const;
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::getPointer()"
@@ -181,7 +182,9 @@ T Attributes::getPointer(const string& key, int& rc) const {
   }
 };
 template const long int* const Attributes::getPointer<const long int* const,
-                const json::number_integer_t* const>(const string&, int&) const;
+    const json::number_integer_t* const>(const string&, int&) const;
+template const string* const Attributes::getPointer<const string* const,
+    const json::string_t* const>(const string&, int&) const;
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::getStorageRef()"
@@ -246,6 +249,7 @@ void Attributes::set(const string& key, T value, bool force, int& rc) {
   return;
 };
 template void Attributes::set<int>(const string&, int, bool, int&);
+template void Attributes::set<string>(const string&, string, bool, int&);
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::update()"

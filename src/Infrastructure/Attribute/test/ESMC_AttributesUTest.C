@@ -301,8 +301,7 @@ void testSetGet(int& rc, char failMsg[]) {
 
   Attributes attrs;
 
-  // --------------------------------------------------------------------------
-  // Test setting a single value.
+  // Test setting a single value ==============================================
 
   int value = 10;
   string key = "theKey";
@@ -355,6 +354,20 @@ void testSetGet(int& rc, char failMsg[]) {
 
   if (*attrs.getPointer<attr_int_ptr_t, json_int_ptr_t>(key, rc) != value){
     return finalizeFailure(rc, failMsg, "Did not overload existing key correctly");
+  }
+
+  // Test with string data type ===============================================
+
+  key = "hello";
+  string value3 = "world";
+  attrs.set(key, value3, false, rc);
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+
+  string actual3 = attrs.get<string>(key, rc);
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+
+  if (actual3 != value3) {
+    return finalizeFailure(rc, failMsg, "Did not get string value");
   }
 
   return;
