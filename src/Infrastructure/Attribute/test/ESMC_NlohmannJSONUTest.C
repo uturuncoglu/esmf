@@ -70,6 +70,7 @@ int main(void) {
   char failMsg[80];
   int result = 0;
   int rc = ESMF_FAILURE;
+  int failed = false;
 
   //----------------------------------------------------------------------------
   ESMC_TestStart(__FILE__, __LINE__, 0);
@@ -110,8 +111,9 @@ int main(void) {
 
   //----------------------------------------------------------------------------
   //NEX_UTest
-  strcpy(name, "Reference and pointer access using the JSON API");
-  bool failed = false;
+  strcpy(name, "Reference and pointer access using the JSON API (1)");
+  strcpy(failMsg, "Values not equal for references");
+  failed = false;
 
   json j;
   int desired = 123;
@@ -120,60 +122,66 @@ int main(void) {
 
   int const &the_ref1 = j[key].get_ref<const json::number_integer_t &>();
   int const &the_ref2 = j[key].get_ref<const json::number_integer_t &>();
+
   if (the_ref1 != the_ref2) {
-    strcpy(failMsg, "Values not equal for references");
     failed = true;
-    ESMC_Test(false, name, failMsg, &result, __FILE__, __LINE__, 0);
   }
+
+  ESMC_Test(!failed, name, failMsg, &result, __FILE__, __LINE__, 0);
+
+  //----------------------------------------------------------------------------
+  //NEX_UTest
+  strcpy(name, "Reference and pointer access using the JSON API (2)");
+  strcpy(failMsg, "Addresses are equal for references");
+  failed = false;
+
   if (&the_ref1 == &the_ref2) {
-    strcpy(failMsg, "Addresses are equal for references");
     failed = true;
-    ESMC_Test(false, name, failMsg, &result, __FILE__, __LINE__, 0);
   }
+
+  ESMC_Test(!failed, name, failMsg, &result, __FILE__, __LINE__, 0);
+
+  //----------------------------------------------------------------------------
+  //NEX_UTest
+  strcpy(name, "Reference and pointer access using the JSON API (3)");
+  strcpy(failMsg, "Pointer value is not the desired value");
+  failed = false;
 
   auto ptr = j[key].get_ptr<const json::number_integer_t *const>();
   if (*ptr != desired) {
-    strcpy(failMsg, "Pointer value is not the desired value");
     failed = true;
-    ESMC_Test(false, name, failMsg, &result, __FILE__, __LINE__, 0);
   }
+
+  ESMC_Test(!failed, name, failMsg, &result, __FILE__, __LINE__, 0);
+
+  //----------------------------------------------------------------------------
+  //NEX_UTest
+  strcpy(name, "Reference and pointer access using the JSON API (4)");
+  strcpy(failMsg, "Pointer values are not equal");
+  failed = false;
 
   const long int *ptr2 = runGetPointer(key, j);
   if (*ptr != *ptr2) {
-    strcpy(failMsg, "Pointer values are not equal");
     failed = true;
-    ESMC_Test(false, name, failMsg, &result, __FILE__, __LINE__, 0);
   }
-  if (&*ptr != &*ptr2) {
-    strcpy(failMsg, "Pointer addresses are not equal");
-    failed = true;
-    ESMC_Test(false, name, failMsg, &result, __FILE__, __LINE__, 0);
-  }
-
-  if (!failed) {
-    ESMC_Test(true, name, failMsg, &result, __FILE__, __LINE__, 0);
-  }
+  ESMC_Test(!failed, name, failMsg, &result, __FILE__, __LINE__, 0);
 
   //----------------------------------------------------------------------------
   //NEX_UTest
-  strcpy(name, "Catching a parse_error from a JSON pointer");
-  strcpy(failMsg, "Did not catch parse_error");
+  strcpy(name, "Reference and pointer access using the JSON API (5)");
+  strcpy(failMsg, "Pointer addresses are not equal");
   failed = false;
 
-  string badKey = "//////key";
-  try {
-    json::json_pointer jpBad(badKey);
+  if (&*ptr != &*ptr2) {
     failed = true;
-  } catch (json::parse_error &e) {
-    failed = false;
   }
 
-  ESMC_Test(failed, name, failMsg, &result, __FILE__, __LINE__, 0);
+  ESMC_Test(!failed, name, failMsg, &result, __FILE__, __LINE__, 0);
 
   //----------------------------------------------------------------------------
   //NEX_UTest
-  strcpy(name, "Mock attributes constructor");
-  strcpy(failMsg, "Did not return ESMF_SUCCESS");
+  strcpy(name, "Mock attributes constructor (1)");
+  strcpy(failMsg, "Storage reference not equivalent");
   failed = false;
 
   json j2;
@@ -184,33 +192,42 @@ int main(void) {
 
   const json &refVar = mattrs.getStorageRef();
   if (&refVar != &j2) {
-    strcpy(failMsg, "Storage reference not equivalent");
     failed = true;
-    ESMC_Test(false, name, failMsg, &result, __FILE__, __LINE__, 0);
   }
+
+  ESMC_Test(!failed, name, failMsg, &result, __FILE__, __LINE__, 0);
+
+  //----------------------------------------------------------------------------
+  //NEX_UTest
+  strcpy(name, "Mock attributes constructor (2)");
+  strcpy(failMsg, "Value not added to target JSON object");
+  failed = false;
 
   json *ref = mattrs.getPointer();
   string actual2 = ref->at(key2);
 
   if (actual2 != value2) {
-    strcpy(failMsg, "Value not added to target JSON object");
     failed = true;
-    ESMC_Test(false, name, failMsg, &result, __FILE__, __LINE__, 0);
-  }
-  if (&j2 != &*ref) {
-    strcpy(failMsg, "Address target not equivalent");
-    failed = true;
-    ESMC_Test(false, name, failMsg, &result, __FILE__, __LINE__, 0);
   }
 
-  if (!failed) {
-    ESMC_Test(true, name, failMsg, &result, __FILE__, __LINE__, 0);
-  }
+  ESMC_Test(!failed, name, failMsg, &result, __FILE__, __LINE__, 0);
 
   //----------------------------------------------------------------------------
   //NEX_UTest
-  strcpy(name, "Move constructor");
-  strcpy(failMsg, "Did not return ESMF_SUCCSS");
+  strcpy(name, "Mock attributes constructor (3)");
+  strcpy(failMsg, "Address target not equivalent");
+  failed = false;
+
+  if (&j2 != &*ref) {
+    failed = true;
+  }
+
+  ESMC_Test(!failed, name, failMsg, &result, __FILE__, __LINE__, 0);
+
+  //----------------------------------------------------------------------------
+  //NEX_UTest
+  strcpy(name, "Move constructor (1)");
+  strcpy(failMsg, "Addresses not equal after move");
   failed = false;
 
   json src;
@@ -224,18 +241,21 @@ int main(void) {
 
   if (&*srcPtr != &*dstPtr) {
     failed = true;
-    ESMC_Test(false, name, "Addresses not equal after move", &result, __FILE__,
-              __LINE__, 0);
   }
+
+  ESMC_Test(!failed, name, failMsg, &result, __FILE__,  __LINE__, 0);
+
+  //----------------------------------------------------------------------------
+  //NEX_UTest
+  strcpy(name, "Move constructor (2)");
+  strcpy(failMsg, "Source not null");
+  failed = false;
 
   if (!src.is_null()) {
     failed = true;
-    ESMC_Test(false, name, "Source not null", &result, __FILE__, __LINE__, 0);
   }
 
-  if (!failed) {
-    ESMC_Test(!failed, name, failMsg, &result, __FILE__, __LINE__, 0);
-  }
+  ESMC_Test(!failed, name, failMsg, &result, __FILE__, __LINE__, 0);
 
   //----------------------------------------------------------------------------
   ESMC_TestEnd(__FILE__, __LINE__, 0);
