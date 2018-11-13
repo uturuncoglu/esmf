@@ -200,12 +200,13 @@ bool Attributes::hasKey(const string& key, int& rc) const{
   ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 
   bool ret;
-  try{
+  try {
     this->storage.at(jp);
     ret = true;
   } catch (json::out_of_range& e) {
     ret = false;
   }
+
   rc = ESMF_SUCCESS;
   return ret;
 }

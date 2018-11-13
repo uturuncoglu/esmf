@@ -126,12 +126,12 @@ program ESMF_AttributesUTest
   write(name, *) "ESMF_AttributesGet"
   write(failMsg, *) "Did not get key"
 
-  call ESMF_AttributesGet(attrs2, key, value, rc)
+  call ESMF_AttributesGet(attrs2, key, value, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
   call ESMF_Test((value == actual), name, failMsg, result, ESMF_SRCLINE)
 
-  call ESMF_AttributesDestroy(attrs2, rc)
+  call ESMF_AttributesDestroy(attrs2, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
   !----------------------------------------------------------------------------
 
@@ -142,7 +142,7 @@ program ESMF_AttributesUTest
   write(failMsg, *) "Could not overload value"
   rc = ESMF_FAILURE
 
-  attrs3 = ESMF_AttributesCreate(rc)
+  attrs3 = ESMF_AttributesCreate(rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
   key = "testKey"
@@ -207,7 +207,7 @@ program ESMF_AttributesUTest
 
   rc = ESMF_FAILURE
 
-  attrs6 = ESMF_AttributesCreate(rc)
+  attrs6 = ESMF_AttributesCreate(rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
   call ESMF_AttributesSet(attrs6, "/i/am/nested", 111, rc=rc)
