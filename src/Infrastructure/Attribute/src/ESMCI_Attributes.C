@@ -29,7 +29,6 @@
 #include "ESMCI_Util.h"
 #include "ESMCI_VM.h"
 #include "json.hpp"
-#include "assert.h"  // tdk: LAST: turn off assert.h
 
 #include <vector>
 #include <iostream>
