@@ -51,9 +51,10 @@ program ESMF_AttributesProfileUTest
   integer, allocatable, dimension(:) :: seed
   real                  :: r
   integer(ESMF_KIND_I4) :: value
-  type(ESMF_Attributes) :: attrs
+  type(ESMF_Attributes) :: attrs, attrs2
   integer, parameter    :: nkeys = 1000
   integer, parameter    :: ntests = 100000
+  logical :: is_present
 
   !----------------------------------------------------------------------------
   call ESMF_TestStart(ESMF_SRCLINE, rc=rc)  ! calls ESMF_Initialize() internally
@@ -118,12 +119,47 @@ program ESMF_AttributesProfileUTest
 
 !  call ESMF_AttributesPrint(attrs)
 
-  call ESMF_AttributesDestroy(attrs, rc=rc)
-  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
-
   deallocate(seed)
 
   call ESMF_Test((rc == ESMF_SUCCESS), name, failMsg, result, ESMF_SRCLINE)
+  !----------------------------------------------------------------------------
+
+  !----------------------------------------------------------------------------
+  !NEX_UTest
+
+  ! Profile checking for attribute presence.
+
+  do ii=1, ntests
+
+    call ESMF_TraceRegionEnter("JSON_Attributes::IsPresent False", rc=rc)
+    if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+    is_present = ESMF_AttributesIsPresent(attrs, "this", rc=rc)
+    if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+    call ESMF_TraceRegionExit("JSON_Attributes::IsPresent False", rc=rc)
+    if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  end do
+
+  do ii=1, ntests
+
+    call ESMF_TraceRegionEnter("JSON_Attributes::IsPresent True", rc=rc)
+    if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+    is_present = ESMF_AttributesIsPresent(attrs, "999", rc=rc)
+    if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+    call ESMF_TraceRegionExit("JSON_Attributes::IsPresent True", rc=rc)
+    if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  end do
+
+  call ESMF_Test((rc == ESMF_SUCCESS), name, failMsg, result, ESMF_SRCLINE)
+
+  call ESMF_AttributesDestroy(attrs, rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
   !----------------------------------------------------------------------------
 
   !----------------------------------------------------------------------------

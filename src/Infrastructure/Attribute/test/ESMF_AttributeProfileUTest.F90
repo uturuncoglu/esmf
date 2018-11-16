@@ -87,7 +87,6 @@ program ESMF_AttributesUTest
     call ESMF_TraceRegionEnter("ESMF_Attribute::Set", rc=rc)
     if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-    ! call ESMF_AttributeSet(ls, adjustl(trim(key)), ii, attrs, rc=rc)
     call ESMF_AttributeSet(ls, key, ii, attrs, rc=rc)
     if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
@@ -121,7 +120,6 @@ program ESMF_AttributesUTest
 
 !  call ESMF_AttributesPrint(attrs)
 
-!  call ESMF_AttributesDestroy(attrs, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
   call ESMF_LocStreamDestroy(ls, rc=rc)
