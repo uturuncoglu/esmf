@@ -54,7 +54,10 @@ program ESMF_AttributesUTest
 
   integer(ESMF_KIND_I4) :: value, actual, actual2, actual3
 
-  type(ESMF_Attributes) :: attrs, attrs2, attrs3, attrs4, attrs5, attrs6, attrs7
+  type(ESMF_Attributes) :: attrs, attrs2, attrs3, attrs4, attrs5, attrs6, &
+                           attrs7, attrs8
+
+  logical :: is_present
 
   !----------------------------------------------------------------------------
   call ESMF_TestStart(ESMF_SRCLINE, rc=rc)  ! calls ESMF_Initialize() internally
@@ -260,7 +263,44 @@ program ESMF_AttributesUTest
 
   call ESMF_Test((actual3 == -888), name, failMsg, result, ESMF_SRCLINE)
 
-  call ESMF_AttributesDestroy(attrs7, rc)
+  call ESMF_AttributesDestroy(attrs7, rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+  !----------------------------------------------------------------------------
+
+  !----------------------------------------------------------------------------
+  !NEX_UTest
+  write(name, *) "ESMF_AttributesIsPresent False"
+  write(failMsg, *) "Attribute key should not be present"
+
+  attrs8 = ESMF_AttributesCreate(rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  is_present = ESMF_AttributesIsPresent(attrs8, "this", rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  call ESMF_Test((.not. is_present), name, failMsg, result, ESMF_SRCLINE)
+
+  call ESMF_AttributesDestroy(attrs8, rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+  !----------------------------------------------------------------------------
+
+  !----------------------------------------------------------------------------
+  !NEX_UTest
+  write(name, *) "ESMF_AttributesIsPresent True"
+  write(failMsg, *) "Attribute key is actually present"
+
+  attrs8 = ESMF_AttributesCreate(rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  call ESMF_AttributesSet(attrs8, "this", 11, rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  is_present = ESMF_AttributesIsPresent(attrs8, "this", rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  call ESMF_Test((is_present), name, failMsg, result, ESMF_SRCLINE)
+
+  call ESMF_AttributesDestroy(attrs8, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
   !----------------------------------------------------------------------------
 

@@ -166,10 +166,34 @@ subroutine ESMF_AttributesGet(attrs, key, value, default, rc)
 
   value = c_attrs_get(attrs%ptr, trim(key)//C_NULL_CHAR, localrc, localdefault_ptr)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
-                         rcToReturn=rc)) return
+    rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributesGet
+
+!------------------------------------------------------------------------------
+
+#undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_AttributesIsPresent()"
+function ESMF_AttributesIsPresent(attrs, key, rc) result(is_present)
+  implicit none
+
+  type(ESMF_Attributes), intent(in) :: attrs
+  character(len=*), intent(in) :: key
+  integer, intent(inout), optional :: rc
+  logical :: is_present
+
+  integer :: localrc
+
+  localrc = ESMF_FAILURE
+  if (present(rc)) rc = ESMF_FAILURE
+
+  is_present = c_attrs_is_present(attrs%ptr, trim(key)//C_NULL_CHAR, localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
+    rcToReturn=rc)) return
+
+  if (present(rc)) rc = ESMF_SUCCESS
+end function ESMF_AttributesIsPresent
 
 !------------------------------------------------------------------------------
 

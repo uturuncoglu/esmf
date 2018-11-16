@@ -32,6 +32,15 @@ interface
     integer(C_INT) :: c_attrs_get
   end function c_attrs_get
 
+  function c_attrs_is_present(attrs, key, rc) bind(C, name="ESMC_AttributesIsPresent")
+    use iso_c_binding
+    implicit none
+    type(C_PTR), value :: attrs
+    character(C_CHAR), intent(in) :: key(*)
+    integer(C_INT), intent(inout) :: rc
+    integer(C_INT) :: c_attrs_is_present
+  end function c_attrs_is_present
+
   subroutine c_attrs_print(attrs, indent, rc) bind(C, name="ESMC_AttributesPrint")
     use iso_c_binding
     implicit none

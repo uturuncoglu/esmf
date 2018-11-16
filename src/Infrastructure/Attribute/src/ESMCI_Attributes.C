@@ -443,6 +443,14 @@ int ESMC_AttributesGet(ESMCI::Attributes* attrs, char* key, int& rc, int* def) {
 }
 
 #undef  ESMC_METHOD
+#define ESMC_METHOD "ESMC_AttributesIsPresent()"
+int ESMC_AttributesIsPresent(ESMCI::Attributes* attrs, char* key, int& rc) {
+  string local_key(key);
+  int ret = attrs->hasKey(local_key, rc);
+  return ret;
+}
+
+#undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_AttributesPrint()"
 void ESMC_AttributesPrint(ESMCI::Attributes* attrs, int& indent, int& rc) {
   rc = ESMF_FAILURE;
