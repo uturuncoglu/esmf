@@ -15,22 +15,6 @@
 #include "ESMF_Macros.inc"
 #include "ESMF.h"
 
-!module ESMF_AttributesUTestMod
-!
-!  ! modules
-!  use ESMF_TestMod     ! test methods
-!  use ESMF
-!
-!  implicit none
-!
-!  private
-!
-!  public
-!
-!contains !--------------------------------------------------------------------
-!
-!end module
-
 !==============================================================================
 !==============================================================================
 !==============================================================================
@@ -39,7 +23,7 @@ program ESMF_AttributesUTest
 
   !============================================================================
   !BOP
-  ! !PROGRAM: ESMF_ArraySMMUTest -  Tests ArraySMM()
+  ! !PROGRAM: ESMF_AttributesUTest - Test general Attributes usage
   !
   ! !DESCRIPTION:
   !
@@ -53,8 +37,7 @@ program ESMF_AttributesUTest
 
   !----------------------------------------------------------------------------
   ! The following line turns the CVS identifier string into a printable variable.
-  character(*), parameter :: version = &
-    '$Id$'
+  character(*), parameter :: version = '$Id$'
   !----------------------------------------------------------------------------
 
   ! individual test failure message

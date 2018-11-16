@@ -220,7 +220,7 @@ subroutine ESMF_AttributesSet(attrs, key, value, force, rc)
   if (present(rc)) rc = ESMF_FAILURE
 
   localforce = 1
-  if (present(force))
+  if (present(force)) then
     if (force .eqv. .false.) then
       localforce = 0
     end if
