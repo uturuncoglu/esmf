@@ -193,19 +193,29 @@ const json& Attributes::getStorageRef() const{
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::hasKey()"
-bool Attributes::hasKey(const string& key, int& rc) const{
+bool Attributes::hasKey(const string& key, int& rc, bool isptr) const{
   rc = ESMF_FAILURE;
 
-  json::json_pointer jp = this->formatKey(key, rc);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
-
   bool ret;
-  try {
-    this->storage.at(jp);
-    ret = true;
-  } catch (json::out_of_range& e) {
-    ret = false;
+  if (isptr) {
+    // Use JSON pointer syntax. This is slower than just attempting to find
+    // the key. JSON pointers do not work with find. See: https://github.com/nlohmann/json/issues/1182#issuecomment-409708389
+    // for an explanation.
+    json::json_pointer jp = this->formatKey(key, rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+
+    try {
+      this->storage.at(jp);
+      ret = true;
+    } catch (json::out_of_range& e) {
+      ret = false;
+    }
+  } else {
+    ret = !(this->storage.find(key) == this->storage.end());
   }
+
+  cout << "(x) hasKey, isptr= " << ret << endl; //tdk:p
+  cout << "(x) hasKey, ret= " << ret << endl; //tdk:p
 
   rc = ESMF_SUCCESS;
   return ret;

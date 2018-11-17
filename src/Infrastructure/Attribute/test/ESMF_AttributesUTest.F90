@@ -278,6 +278,8 @@ program ESMF_AttributesUTest
   is_present = ESMF_AttributesIsPresent(attrs8, "this", rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
+  print *, "(f) is_present=", is_present !tdk:p
+
   call ESMF_Test((.not. is_present), name, failMsg, result, ESMF_SRCLINE)
 
   call ESMF_AttributesDestroy(attrs8, rc=rc)

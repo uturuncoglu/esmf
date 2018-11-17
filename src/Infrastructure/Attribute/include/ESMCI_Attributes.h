@@ -102,7 +102,7 @@ public:
   template <typename T, typename JT>
   T getPointer(const string& key, int& rc) const;
 
-  bool hasKey(const string& key, int& rc) const;
+  bool hasKey(const string& key, int& rc, bool isptr = false) const;
 
   void parse(const string& input, int& rc);
 

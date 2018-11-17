@@ -227,14 +227,20 @@ void testHasKey(int& rc, char failMsg[]) {
   attrs.set("/neverEver", 13, false, rc);
   ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 
-  bool actual = attrs.hasKey("/hello", rc);
+  bool actual = attrs.hasKey("/hello", rc, true);
   if (actual){
     return finalizeFailure(rc, failMsg, "Key is not present");
   }
 
-  bool actual2 = attrs.hasKey("/neverEver", rc);
+  bool actual2 = attrs.hasKey("/neverEver", rc, true);
   if (!actual2){
     return finalizeFailure(rc, failMsg, "Key is present");
+  }
+
+  // Test not using a JSON pointer.
+  bool actual3 = attrs.hasKey("neverEver", rc);
+  if (!actual3){
+    return finalizeFailure(rc, failMsg, "Key is present with non-pointer");
   }
 
   rc = ESMF_SUCCESS;
