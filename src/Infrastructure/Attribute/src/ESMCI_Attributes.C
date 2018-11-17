@@ -194,6 +194,7 @@ const json& Attributes::getStorageRef() const{
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::hasKey()"
 bool Attributes::hasKey(const string& key, int& rc, bool isptr) const{
+  // isptr is optional
   rc = ESMF_FAILURE;
 
   bool ret;
@@ -211,6 +212,8 @@ bool Attributes::hasKey(const string& key, int& rc, bool isptr) const{
       ret = false;
     }
   } else {
+    // This is faster because it avoids exceptions. However, it does not work
+    // with JSON pointers.
     ret = !(this->storage.find(key) == this->storage.end());
   }
 
@@ -454,9 +457,9 @@ int ESMC_AttributesGet(ESMCI::Attributes* attrs, char* key, int& rc, int* def) {
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_AttributesIsPresent()"
-int ESMC_AttributesIsPresent(ESMCI::Attributes* attrs, char* key, int& rc) {
+int ESMC_AttributesIsPresent(ESMCI::Attributes* attrs, char* key, int& rc, int& isptr) {
   string local_key(key);
-  int ret = attrs->hasKey(local_key, rc);
+  int ret = attrs->hasKey(local_key, rc, isptr);
   return ret;
 }
 

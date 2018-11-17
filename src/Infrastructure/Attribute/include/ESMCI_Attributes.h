@@ -146,7 +146,7 @@ extern "C" {
   void ESMC_AttributesErase(ESMCI::Attributes* attrs, char* keyParent,
                             char* keyChild, int& rc);
   int ESMC_AttributesGet(ESMCI::Attributes* attrs, char* key, int& rc, int* def);
-  int ESMC_AttributesIsPresent(ESMCI::Attributes* attrs, char* key, int& rc);
+  int ESMC_AttributesIsPresent(ESMCI::Attributes* attrs, char* key, int& rc, int& isptr);
   void ESMC_AttributesPrint(ESMCI::Attributes* attrs, int& indent, int& rc);
   void ESMC_AttributesSet(ESMCI::Attributes* attrs, char* key, int& value,
                           int& force, int& rc);

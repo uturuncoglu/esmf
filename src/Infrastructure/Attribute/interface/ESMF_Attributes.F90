@@ -175,20 +175,36 @@ end subroutine ESMF_AttributesGet
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributesIsPresent()"
-function ESMF_AttributesIsPresent(attrs, key, rc) result(is_present)
+function ESMF_AttributesIsPresent(attrs, key, isPointer, rc) result(is_present)
   implicit none
 
   type(ESMF_Attributes), intent(in) :: attrs
   character(len=*), intent(in) :: key
+  logical, intent(in), optional :: isPointer
   integer, intent(inout), optional :: rc
   logical :: is_present
 
+  logical :: local_isPointer
   integer :: localrc
+  integer(C_INT) :: isPointer_forC
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
 
-  is_present = c_attrs_is_present(attrs%ptr, trim(key)//C_NULL_CHAR, localrc)
+  if (present(isPointer)) then
+    local_isPointer = isPointer
+  else
+    local_isPointer = .false.
+  end if
+
+  if (local_isPointer) then
+    isPointer_forC = 1
+  else
+    isPointer_forC = 0
+  end if
+
+  is_present = c_attrs_is_present(attrs%ptr, trim(key)//C_NULL_CHAR, localrc, &
+    isPointer_forC)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
     rcToReturn=rc)) return
 

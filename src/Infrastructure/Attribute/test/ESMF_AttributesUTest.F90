@@ -278,8 +278,6 @@ program ESMF_AttributesUTest
   is_present = ESMF_AttributesIsPresent(attrs8, "this", rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-  print *, "(f) is_present=", is_present !tdk:p
-
   call ESMF_Test((.not. is_present), name, failMsg, result, ESMF_SRCLINE)
 
   call ESMF_AttributesDestroy(attrs8, rc=rc)
@@ -298,6 +296,27 @@ program ESMF_AttributesUTest
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
   is_present = ESMF_AttributesIsPresent(attrs8, "this", rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  call ESMF_Test((is_present), name, failMsg, result, ESMF_SRCLINE)
+
+  call ESMF_AttributesDestroy(attrs8, rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+  !----------------------------------------------------------------------------
+
+  !----------------------------------------------------------------------------
+  !NEX_UTest
+  write(name, *) "ESMF_AttributesIsPresent True w/ Pointer"
+  write(failMsg, *) "Attribute key is present using pointer syntax"
+
+  attrs8 = ESMF_AttributesCreate(rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  call ESMF_AttributesSet(attrs8, "/this/is/nested", 11, rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  is_present = ESMF_AttributesIsPresent(attrs8, "/this/is/nested", &
+    isPointer=.true., rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
   call ESMF_Test((is_present), name, failMsg, result, ESMF_SRCLINE)
