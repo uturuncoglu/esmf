@@ -146,18 +146,19 @@ T Attributes::get(const string& key, int& rc, T* def) const {
   json::json_pointer jp = this->formatKey(key, rc);
   ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 
-  try {
-    T ret = this->storage.at(jp);
-    rc = ESMF_SUCCESS;
-    return ret;
-  }
-  catch (json::out_of_range& e) {
-    if (def) {
-      T ret = *def;
-      return ret;
+  T ret;
+  if (def) {
+    ret = this->storage.value(jp, *def);
+  } else {
+    try {
+      ret = this->storage.at(jp);
     }
-    ESMF_THROW_JSON(e, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);
+    catch (json::out_of_range& e) {
+      ESMF_THROW_JSON(e, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);
+    }
   }
+
+  return ret;
 }
 template int Attributes::get(const string&, int&, int*) const;
 template string Attributes::get(const string&, int&, string*) const;
