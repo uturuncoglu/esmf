@@ -244,20 +244,19 @@ template <typename T>
 void Attributes::set(const string& key, T value, bool force, int& rc) {
   rc = ESMF_FAILURE;
 
-  json::json_pointer jp = this->formatKey(key, rc);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
-
   if (!force) {
-    try {
-      T result = this->storage.at(jp);
+    bool has_key = this->hasKey(key, rc, true);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+
+    if (has_key) {
       string msg = "Attribute key \'" + key + "\' already in map and force=false.";
       ESMF_CHECKERR_STD("ESMC_RC_CANNOT_SET", ESMC_RC_CANNOT_SET, msg, rc);
     }
-    catch (json::out_of_range) {
-      // Key is not found in the map. Just pass on through.
-      // See: https://github.com/nlohmann/json/issues/1194#issuecomment-413002974
-    }
   }
+
+  json::json_pointer jp = this->formatKey(key, rc);
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+
   this->storage[jp] = value;
 
   rc = ESMF_SUCCESS;
