@@ -259,6 +259,7 @@ void Attributes::set(const string& key, T value, bool force, int& rc) {
     }
   }
   this->storage[jp] = value;
+
   rc = ESMF_SUCCESS;
   return;
 };
