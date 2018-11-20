@@ -274,7 +274,8 @@ void testErase(int& rc, char failMsg[]) {
   try {
     attrs.erase("/nothing", "nested", rc);
     failed = true;
-  } catch (esmf_attrs_error &err) {
+  }
+  catch (esmf_attrs_error &err) {
     if (rc == ESMC_RC_NOT_FOUND){
       failed = false;
     }
@@ -287,7 +288,8 @@ void testErase(int& rc, char failMsg[]) {
   try {
     attrs.erase("/something", "underground", rc);
     failed = true;
-  } catch (esmf_attrs_error &err){
+  }
+  catch (esmf_attrs_error &err){
     if (rc == ESMC_RC_NOT_FOUND){
       failed = false;
     }
