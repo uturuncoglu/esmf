@@ -378,6 +378,21 @@ void testSetGet(int& rc, char failMsg[]) {
     return finalizeFailure(rc, failMsg, "Did not get string value");
   }
 
+  // Test using a JSON Pointer with an array ==================================
+
+  std::vector<int> c_vector {1, 2, 3, 4};
+  json ja;
+  json j_vec(c_vector);
+  ja["foo"] = j_vec;
+  Attributes attrsvec(ja);
+
+  auto actual4 = attrsvec.get<int>("/foo/2", rc);
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+
+  if (actual4 != c_vector[2]) {
+    return finalizeFailure(rc, failMsg, "Did not get array element value");
+  }
+
   return;
 };
 

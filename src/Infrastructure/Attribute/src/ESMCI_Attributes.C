@@ -222,9 +222,6 @@ bool Attributes::hasKey(const string& key, int& rc, bool isptr) const{
     ret = !(this->storage.find(key) == this->storage.end());
   }
 
-  cout << "(x) hasKey, isptr= " << ret << endl; //tdk:p
-  cout << "(x) hasKey, ret= " << ret << endl; //tdk:p
-
   rc = ESMF_SUCCESS;
   return ret;
 }
