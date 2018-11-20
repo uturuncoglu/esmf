@@ -64,7 +64,8 @@ Attributes::Attributes(const string& input, int& rc) {
   rc = ESMF_FAILURE;
   try {
     this->storage = json::parse(input);
-  } catch (json::parse_error& e) {
+  }
+  catch (json::parse_error& e) {
     ESMF_THROW_JSON(e, "ESMC_RC_OBJ_NOT_CREATED", ESMC_RC_OBJ_NOT_CREATED, rc);
   }
   rc = ESMF_SUCCESS;
@@ -103,11 +104,13 @@ void Attributes::erase(const string& keyParent, const string& keyChild, int& rc)
       json &found = target.at(keyChild);
 
       target.erase(keyChild);
-    } catch (json::out_of_range& e) {
+    }
+    catch (json::out_of_range& e) {
       ESMF_THROW_JSON(e, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);
     }
-  } catch (json::out_of_range& e) {
-      ESMF_THROW_JSON(e, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);
+  }
+  catch (json::out_of_range& e) {
+    ESMF_THROW_JSON(e, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);
   }
 
   rc = ESMF_SUCCESS;
@@ -209,7 +212,8 @@ bool Attributes::hasKey(const string& key, int& rc, bool isptr) const{
     try {
       this->storage.at(jp);
       ret = true;
-    } catch (json::out_of_range& e) {
+    }
+    catch (json::out_of_range& e) {
       ret = false;
     }
   } else {
@@ -231,7 +235,8 @@ void Attributes::parse(const string& input, int& rc) {
   rc = ESMF_FAILURE;
   try {
     this->storage = json::parse(input);
-  } catch (json::parse_error& e) {
+  }
+  catch (json::parse_error& e) {
     ESMF_THROW_JSON(e, "ESMC_RC_OBJ_NOT_CREATED", ESMC_RC_OBJ_NOT_CREATED, rc);
   }
   rc = ESMF_SUCCESS;
