@@ -206,7 +206,7 @@ subroutine ESMF_AttributesGetArray(attrs, key, value, rc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
     rcToReturn=rc)) return
 
-  value = C_LOC(local_cptr)
+  call C_F_POINTER(local_cptr, value, [n])
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributesGetArray
