@@ -59,6 +59,13 @@ class MockAttributesNoCopy
     }
 };
 
+void print_vector(vector<int> vec) {
+  for (auto ii : vec) {
+    cout << ii << " ";
+  }
+  cout << endl;
+}
+
 const long int * const runGetPointer(const string & key, const json & j){
   return j.at(key).get_ptr<const json::number_integer_t* const>();
 }
@@ -252,6 +259,55 @@ int main(void) {
   failed = false;
 
   if (!src.is_null()) {
+    failed = true;
+  }
+
+  ESMC_Test(!failed, name, failMsg, &result, __FILE__, __LINE__, 0);
+
+  //----------------------------------------------------------------------------
+  //NEX_UTest
+  strcpy(name, "Vector retrieval");
+  strcpy(failMsg, "Vectors not working");
+  failed = false;
+
+  json jv;
+  vector<int> c_vec({1, 2, 3, 4});
+  jv["foo"] = c_vec;
+
+  // Retrieve the pointer to the array stored in JSON.
+  vector<json>* booyah = jv.at("foo").get_ptr<json::array_t*>();
+
+  // Allocate an integer vector to copy JSON array into.
+  vector<int> booyah2(booyah[0].size(), -999);
+
+  // Copy JSON data into new vector.
+  for (auto ii=0; ii<booyah[0].size(); ++ii) {
+    booyah2[ii] = booyah[0][ii];
+  }
+
+  // Test desired vector matches JSON vector.
+  for (int ii=0; ii<=3; ++ii) {
+    if (c_vec[ii] != booyah[0][ii]) {
+      failed = true;
+    }
+  }
+
+  // Test desired vector matches copied vector.
+  for (int ii=0; ii<=3; ++ii) {
+    if (c_vec[ii] != booyah2[ii]) {
+      failed = true;
+    }
+  }
+
+  // Test changing JSON store changes JSON vector pointer.
+  jv["foo"][1] = -999;
+  if (booyah[0][1] != -999) {
+    failed = true;
+  }
+
+  // Test changing JSON vector pointer changes JSON store.
+  booyah[0][2] = 4444;
+  if (jv["foo"][2] != 4444) {
     failed = true;
   }
 

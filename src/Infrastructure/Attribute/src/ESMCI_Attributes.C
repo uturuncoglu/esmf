@@ -163,8 +163,11 @@ T Attributes::get(const string& key, int& rc, T* def) const {
 
   return ret;
 }
-template int Attributes::get(const string&, int&, int*) const;  //tdk:TEMPLATE
-template string Attributes::get(const string&, int&, string*) const;  //tdk:TEMPLATE
+template float Attributes::get(const string&, int&, float*) const;
+template double Attributes::get(const string&, int&, double*) const;
+template int Attributes::get(const string&, int&, int*) const;
+template long int Attributes::get(const string&, int&, long int*) const;
+template string Attributes::get(const string&, int&, string*) const;
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::getPointer()"
@@ -184,10 +187,16 @@ T Attributes::getPointer(const string& key, int& rc) const {
     ESMF_THROW_JSON(e, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);
   }
 };
-template const long int* const Attributes::getPointer<const long int* const,
-    const json::number_integer_t* const>(const string&, int&) const;  //tdk:TEMPLATE
-template const string* const Attributes::getPointer<const string* const,
-    const json::string_t* const>(const string&, int&) const;  //tdk:TEMPLATE
+//  template const float* const Attributes::getPointer<const float* const,
+//          const json::number_float_t* const>(const string&, int&) const;
+  template const double* const Attributes::getPointer<const double* const,
+          const json::number_float_t* const>(const string&, int&) const;
+//  template const int* const Attributes::getPointer<const int* const,
+//          const json::number_integer_t* const>(const string&, int&) const;
+  template const long int* const Attributes::getPointer<const long int* const,
+          const json::number_integer_t* const>(const string&, int&) const;
+  template const string* const Attributes::getPointer<const string* const,
+          const json::string_t* const>(const string&, int&) const;
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::getStorageRef()"
@@ -264,8 +273,12 @@ void Attributes::set(const string& key, T value, bool force, int& rc) {
   rc = ESMF_SUCCESS;
   return;
 };
-template void Attributes::set<int>(const string&, int, bool, int&);  //tdk:TEMPLATE
-template void Attributes::set<string>(const string&, string, bool, int&);  //tdk:TEMPLATE
+template void Attributes::set<float>(const string&, float, bool, int&);
+template void Attributes::set<double>(const string&, double, bool, int&);
+template void Attributes::set<int>(const string&, int, bool, int&);
+template void Attributes::set<long int>(const string&, long int, bool, int&);
+template void Attributes::set<string>(const string&, string, bool, int&);
+template void Attributes::set<vector<int>>(const string&, vector<int>, bool, int&);
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::update()"

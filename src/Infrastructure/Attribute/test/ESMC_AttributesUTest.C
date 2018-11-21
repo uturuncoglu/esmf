@@ -393,6 +393,21 @@ void testSetGet(int& rc, char failMsg[]) {
     return finalizeFailure(rc, failMsg, "Did not get array element value");
   }
 
+  // Test with a vector =======================================================
+
+  std::vector<int> c_vector2 {1, 2, 3, 4};
+
+  Attributes attrs2;
+
+  attrs2.set("/in/a/nest", c_vector2, false, rc);
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+
+//  cout << attrs2.dump(2, rc) << endl;
+
+//  if (actual4 != c_vector[2]) {
+//    return finalizeFailure(rc, failMsg, "Did not get array element value");
+//  }
+
   return;
 };
 
