@@ -189,14 +189,16 @@ T Attributes::getPointer(const string& key, int& rc) const {
 };
 //  template const float* const Attributes::getPointer<const float* const,
 //          const json::number_float_t* const>(const string&, int&) const;
-  template const double* const Attributes::getPointer<const double* const,
-          const json::number_float_t* const>(const string&, int&) const;
+template const double* const Attributes::getPointer<const double* const,
+        const json::number_float_t* const>(const string&, int&) const;
 //  template const int* const Attributes::getPointer<const int* const,
 //          const json::number_integer_t* const>(const string&, int&) const;
-  template const long int* const Attributes::getPointer<const long int* const,
-          const json::number_integer_t* const>(const string&, int&) const;
-  template const string* const Attributes::getPointer<const string* const,
-          const json::string_t* const>(const string&, int&) const;
+template const long int* const Attributes::getPointer<const long int* const,
+        const json::number_integer_t* const>(const string&, int&) const;
+template const string* const Attributes::getPointer<const string* const,
+        const json::string_t* const>(const string&, int&) const;
+template const vector<json>* const Attributes::getPointer<const vector<json>*
+        const, const json::array_t* const>(const string&, int&) const;
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::getStorageRef()"
