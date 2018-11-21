@@ -474,6 +474,18 @@ int ESMC_AttributesGet(ESMCI::Attributes* attrs, char* key, int& rc, int* def) {
 }
 
 #undef  ESMC_METHOD
+#define ESMC_METHOD "ESMC_AttributesGet()"
+const std::vector<json>* const ESMC_AttributesGetArray(ESMCI::Attributes* attrs, char* key, int& n, int& rc) {
+  rc = ESMF_FAILURE;
+  std::string localKey(key);
+  const std::vector<json>* const ret = attrs->getPointer<
+          const std::vector<json>* const, const json::array_t* const>(localKey,
+                  rc);
+  n = ret->size();
+  return ret;
+}
+
+#undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_AttributesIsPresent()"
 int ESMC_AttributesIsPresent(ESMCI::Attributes* attrs, char* key, int& rc, int& isptr) {
   string local_key(key);

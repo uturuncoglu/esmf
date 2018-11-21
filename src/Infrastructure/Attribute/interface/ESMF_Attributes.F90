@@ -174,6 +174,46 @@ end subroutine ESMF_AttributesGet
 !------------------------------------------------------------------------------
 
 #undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_AttributesGetArray()"
+subroutine ESMF_AttributesGetArray(attrs, key, value, rc)
+  ! Notes:
+  !    * Default does not really make sense for getting a JSON array. This
+  !      argument is intentionally left out.
+  implicit none
+
+  type(ESMF_Attributes), intent(inout) :: attrs
+  character(len=*), intent(in) :: key
+  integer(ESMF_KIND_I4), dimension(:), pointer, intent(inout) :: value
+  ! integer, intent(in), optional :: default
+  integer, intent(inout), optional :: rc
+
+  integer :: localrc, n
+  type(C_PTR), pointer :: local_cptr
+  ! integer(C_INT), target :: localdefault
+  ! type(C_PTR) :: localdefault_ptr
+
+  localrc = ESMF_FAILURE
+  if (present(rc)) rc = ESMF_FAILURE
+
+  ! if (present(default)) then
+  !   localdefault = default
+  !   localdefault_ptr = C_LOC(localdefault)
+  ! else
+  !   localdefault_ptr = C_NULL_PTR
+  ! end if
+
+  local_cptr = c_attrs_get_array(attrs%ptr, trim(key)//C_NULL_CHAR, n, localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
+    rcToReturn=rc)) return
+
+  value = C_LOC(local_cptr)
+
+  if (present(rc)) rc = ESMF_SUCCESS
+end subroutine ESMF_AttributesGetArray
+
+!------------------------------------------------------------------------------
+
+#undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributesIsPresent()"
 function ESMF_AttributesIsPresent(attrs, key, isPointer, rc) result(is_present)
   implicit none
