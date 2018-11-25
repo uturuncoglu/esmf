@@ -270,7 +270,11 @@ void Attributes::set(const string& key, T value, bool force, int& rc) {
   json::json_pointer jp = this->formatKey(key, rc);
   ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 
+  cout << "(x) key= " << key << endl;  //tdk:p
+
   this->storage[jp] = value;
+
+  cout << "(x) this->storage.dump()" << this->storage.dump(2) << endl;  //tdk:p
 
   rc = ESMF_SUCCESS;
   return;
@@ -515,6 +519,50 @@ void ESMC_AttributesSet(ESMCI::Attributes* attrs, char* key, int& value,
 
   std::string localKey(key);
   attrs->set<int>(localKey, value, localforce, rc);
+}
+
+#undef  ESMC_METHOD
+#define ESMC_METHOD "ESMC_AttributesSetArray()"
+void ESMC_AttributesSetArray(ESMCI::Attributes* attrs, char* key, int* value,
+                        int& n, int& force, int& rc) {
+  rc = ESMF_FAILURE;
+  bool localforce = force;
+
+//  if (force == 1) {
+//    localforce = true;
+//  } else {
+//    localforce = false;
+//  }
+
+  cout << "(c) n= " << n << endl; //tdk:p
+
+  vector<int> local_value;
+  local_value.reserve(n);
+  for (auto ii=0; ii<n; ii++) {
+    cout << "(c) value[ii]= " << value[ii] << endl; //tdk:p
+    local_value[ii] = value[ii];
+    cout << "(c) local_value[ii]= " << local_value[ii] << endl; //tdk:p
+  }
+
+  json::array_t ja;
+  ja.reserve(3);
+//  ja[0] = json::number_integer_t(local_value[0]);
+//  ja[1] = json::number_integer_t(local_value[1]);
+//  ja[2] = json::number_integer_t(local_value[2]);
+
+  cout << "(c) ja[0]= " << ja[0] << endl; //tdk:p
+
+  json fj;
+//  fj["the-key"] = json::array({value[0], value[1], value[2]});
+  fj["the-key"] = ja;
+
+  cout << "(c) fj.dump " << fj.dump(2) << endl; //tdk:p
+
+//  vector<int> local_value = {123, 456, 789};
+
+  std::string localKey(key);
+  attrs->set<vector<int>>(localKey, local_value, localforce, rc);
+  cout << "(c) attrs->dump() " << attrs->dump(2, rc) << endl;  //tdk:p
 }
 
 }  // extern "C"

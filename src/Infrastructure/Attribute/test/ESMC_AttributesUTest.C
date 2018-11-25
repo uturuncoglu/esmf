@@ -399,10 +399,11 @@ void testSetGet(int& rc, char failMsg[]) {
 
   Attributes attrs2;
 
-  attrs2.set("/in/a/nest", c_vector2, false, rc);
+//  attrs2.set("/in/a/nest", c_vector2, false, rc);
+  attrs2.set("the-key", c_vector2, false, rc);
   ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 
-//  cout << attrs2.dump(2, rc) << endl;
+  cout << "(x) attrs utest dump= " << attrs2.dump(2, rc) << endl; //tdk:p
 
 //  if (actual4 != c_vector[2]) {
 //    return finalizeFailure(rc, failMsg, "Did not get array element value");

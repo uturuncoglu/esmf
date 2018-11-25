@@ -151,6 +151,8 @@ extern "C" {
   void ESMC_AttributesPrint(ESMCI::Attributes* attrs, int& indent, int& rc);
   void ESMC_AttributesSet(ESMCI::Attributes* attrs, char* key, int& value,
                           int& force, int& rc);  //tdk:TEMPLATE
+  void ESMC_AttributesSetArray(ESMCI::Attributes* attrs, char* key, int* value,
+                          int& n, int& force, int& rc);  //tdk:TEMPLATE
 
 }  // extern "C"
 

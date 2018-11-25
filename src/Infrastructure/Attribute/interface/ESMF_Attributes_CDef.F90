@@ -70,4 +70,15 @@ interface
     integer(C_INT), intent(in) :: force
     integer(C_INT), intent(inout) :: rc
   end subroutine c_attrs_set
+
+  subroutine c_attrs_set_array(attrs, key, value, n, force, rc) bind(C, name="ESMC_AttributesSetArray")
+    use iso_c_binding
+    implicit none
+    type(C_PTR), value :: attrs
+    character(kind=C_CHAR), intent(in) :: key(*)
+    integer(C_INT), dimension(*), intent(in) :: value
+    integer(C_INT), intent(in) :: n
+    integer(C_INT), intent(in) :: force
+    integer(C_INT), intent(inout) :: rc
+  end subroutine c_attrs_set_array
 end interface

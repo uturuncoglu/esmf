@@ -314,6 +314,29 @@ int main(void) {
   ESMC_Test(!failed, name, failMsg, &result, __FILE__, __LINE__, 0);
 
   //----------------------------------------------------------------------------
+  //NEX_UTest
+  strcpy(name, "Vector reservation");
+  strcpy(failMsg, "Vector reservation failed");
+  failed = false;
+
+  json jr;
+  jr["the_array"] = json::array();
+  json::array_t* the_array_ptr = jr.at("the_array").get_ptr<json::array_t*>();
+  the_array_ptr->reserve(3);
+
+  if (the_array_ptr->capacity() != 3) {
+    failed = true;
+  }
+
+  the_array_ptr->push_back(333);
+
+  if (the_array_ptr[0][0] != 333) {
+    failed = true;
+  }
+
+  ESMC_Test(!failed, name, failMsg, &result, __FILE__, __LINE__, 0);
+
+  //----------------------------------------------------------------------------
   ESMC_TestEnd(__FILE__, __LINE__, 0);
   //----------------------------------------------------------------------------
 

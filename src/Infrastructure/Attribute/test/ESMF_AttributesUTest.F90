@@ -54,8 +54,10 @@ program ESMF_AttributesUTest
 
   integer(ESMF_KIND_I4) :: value, actual, actual2, actual3
 
+  integer(C_INT), dimension(3) :: arr_i4
+
   type(ESMF_Attributes) :: attrs, attrs2, attrs3, attrs4, attrs5, attrs6, &
-                           attrs7, attrs8
+                           attrs7, attrs8, attrs9
 
   logical :: is_present
 
@@ -322,6 +324,30 @@ program ESMF_AttributesUTest
   call ESMF_Test((is_present), name, failMsg, result, ESMF_SRCLINE)
 
   call ESMF_AttributesDestroy(attrs8, rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+  !----------------------------------------------------------------------------
+
+  !----------------------------------------------------------------------------
+  !NEX_UTest
+  write(name, *) "ESMF_AttributesSetArray"
+  write(failMsg, *) "Array not set correctly"
+
+  arr_i4(1) = 123
+  arr_i4(2) = 456
+  arr_i4(3) = 789
+
+  attrs9 = ESMF_AttributesCreate(rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  call ESMF_AttributesSetArray(attrs9, "the-key", arr_i4, rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  call ESMF_AttributesPrint(attrs9, rc=rc) !tdk:p
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  call ESMF_Test((rc==ESMF_SUCCESS), name, failMsg, result, ESMF_SRCLINE)
+
+  call ESMF_AttributesDestroy(attrs9, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
   !----------------------------------------------------------------------------
 

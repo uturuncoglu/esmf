@@ -313,4 +313,39 @@ subroutine ESMF_AttributesSet(attrs, key, value, force, rc)
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributesSet
 
+!------------------------------------------------------------------------------
+
+#undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_AttributesSetArray()"
+subroutine ESMF_AttributesSetArray(attrs, key, value, force, rc)
+  implicit none
+
+  type(ESMF_Attributes), intent(inout) :: attrs
+  character(len=*), intent(in) :: key
+  integer(C_INT), dimension(:), intent(in) :: value
+  logical, intent(in), optional :: force
+  integer, intent(inout), optional :: rc
+
+  integer :: localrc
+  integer(C_INT) :: localforce
+
+  localrc = ESMF_FAILURE
+  if (present(rc)) rc = ESMF_FAILURE
+
+  localforce = 1
+  if (present(force)) then
+    if (force .eqv. .false.) then
+      localforce = 0
+    end if
+  end if
+
+  print *, "(f) value (the array)=", value !tdk:p
+
+  call c_attrs_set_array(attrs%ptr, trim(key)//C_NULL_CHAR, value, size(value), localforce, localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
+      rcToReturn=rc)) return
+
+  if (present(rc)) rc = ESMF_SUCCESS
+end subroutine ESMF_AttributesSetArray
+
 end module ESMF_AttributesMod  !===============================================
