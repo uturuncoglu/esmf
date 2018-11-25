@@ -270,11 +270,7 @@ void Attributes::set(const string& key, T value, bool force, int& rc) {
   json::json_pointer jp = this->formatKey(key, rc);
   ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 
-  cout << "(x) key= " << key << endl;  //tdk:p
-
   this->storage[jp] = value;
-
-  cout << "(x) this->storage.dump()" << this->storage.dump(2) << endl;  //tdk:p
 
   rc = ESMF_SUCCESS;
   return;
@@ -285,7 +281,37 @@ template void Attributes::set<int>(const string&, int, bool, int&);
 template void Attributes::set<long int>(const string&, long int, bool, int&);
 template void Attributes::set<string>(const string&, string, bool, int&);
 
-void Attributes::set(const string& key, int* value, bool force, int& rc) {};
+#undef  ESMC_METHOD
+#define ESMC_METHOD "Attributes::set(..., T*, ...)"
+void Attributes::set(const string& key, int values[], int& count, bool force, int& rc) {
+  rc = ESMF_FAILURE;
+
+  if (!force) {
+    //tdk:OPTIMIZE: hasKey should be handled by an external function
+    bool has_key = this->hasKey(key, rc, true);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+
+    if (has_key) {
+      string msg = "Attribute key \'" + key + "\' already in map and force=false.";
+      ESMF_CHECKERR_STD("ESMC_RC_CANNOT_SET", ESMC_RC_CANNOT_SET, msg, rc);
+    }
+  }
+
+  json::json_pointer jp = this->formatKey(key, rc);
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+
+  this->storage[jp] = json::array();
+  //tdk:OPTIMIZE: can this "at" be removed?
+  json::array_t* arr_ptr = this->storage.at(jp).get_ptr<json::array_t*>();
+  arr_ptr->reserve(count);
+
+  for (auto ii=0; ii<count; ii++) {
+    arr_ptr->push_back(values[ii]);
+  }
+
+  rc = ESMF_SUCCESS;
+  return;
+};
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::update()"
@@ -524,8 +550,8 @@ void ESMC_AttributesSet(ESMCI::Attributes* attrs, char* key, int& value,
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_AttributesSetArray()"
-void ESMC_AttributesSetArray(ESMCI::Attributes* attrs, char* key, int* value,
-                        int& n, int& force, int& rc) {
+void ESMC_AttributesSetArray(ESMCI::Attributes* attrs, char* key, int* values,
+                        int& count, int& force, int& rc) {
   rc = ESMF_FAILURE;
   bool localforce = force;
 
@@ -535,25 +561,8 @@ void ESMC_AttributesSetArray(ESMCI::Attributes* attrs, char* key, int* value,
 //    localforce = false;
 //  }
 
-//  vector<int> local_value;
-//  local_value.reserve(n);
-//  for (auto ii=0; ii<n; ii++) {
-//    local_value[ii] = value[ii];
-//  }
-
-  json fj;
-  fj["the-key"] = json::array();
-  json::array_t* ap = fj.at("the-key").get_ptr<json::array_t*>();
-  ap->reserve(n);
-  for (auto ii=0; ii<n; ii++) {
-//    local_value[ii] = value[ii];
-    ap->push_back(value[ii]);
-  }
-  cout << "(c) fj.dump " << fj.dump(2) << endl; //tdk:p
-
   std::string localKey(key);
-//  attrs->set<vector<int>>(localKey, local_value, localforce, rc);
-  cout << "(c) attrs->dump() " << attrs->dump(2, rc) << endl;  //tdk:p
+  attrs->set(localKey, values, count, localforce, rc);
 }
 
 }  // extern "C"

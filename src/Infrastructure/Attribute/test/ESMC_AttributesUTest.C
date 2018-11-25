@@ -393,21 +393,23 @@ void testSetGet(int& rc, char failMsg[]) {
     return finalizeFailure(rc, failMsg, "Did not get array element value");
   }
 
-  // Test with a pointer ======================================================
+  // Test with an array pointer ===============================================
 
-  int c_vector2[] = {1, 2, 3, 4};
+  int c_int_arr[4] = {1, 2, 3, 4};
+  int count = 4;
 
   Attributes attrs2;
 
-//  attrs2.set("/in/a/nest", c_vector2, false, rc);
-  attrs2.set("the-key", c_vector2, false, rc);
+  attrs2.set("the-key", c_int_arr, count, false, rc);
   ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 
-  cout << "(x) attrs utest dump= " << attrs2.dump(2, rc) << endl; //tdk:p
+  json::array_t apref = attrs2.getStorageRef()["the-key"];
 
-//  if (actual4 != c_vector[2]) {
-//    return finalizeFailure(rc, failMsg, "Did not get array element value");
-//  }
+  for (auto ii=0; ii<count; ii++) {
+    if (apref[ii] != c_int_arr[ii]) {
+      return finalizeFailure(rc, failMsg, "Element array not equal");
+    }
+  }
 
   return;
 };
