@@ -534,34 +534,24 @@ void ESMC_AttributesSetArray(ESMCI::Attributes* attrs, char* key, int* value,
 //    localforce = false;
 //  }
 
-  cout << "(c) n= " << n << endl; //tdk:p
-
-  vector<int> local_value;
-  local_value.reserve(n);
-  for (auto ii=0; ii<n; ii++) {
-    cout << "(c) value[ii]= " << value[ii] << endl; //tdk:p
-    local_value[ii] = value[ii];
-    cout << "(c) local_value[ii]= " << local_value[ii] << endl; //tdk:p
-  }
-
-  json::array_t ja;
-  ja.reserve(3);
-//  ja[0] = json::number_integer_t(local_value[0]);
-//  ja[1] = json::number_integer_t(local_value[1]);
-//  ja[2] = json::number_integer_t(local_value[2]);
-
-  cout << "(c) ja[0]= " << ja[0] << endl; //tdk:p
+//  vector<int> local_value;
+//  local_value.reserve(n);
+//  for (auto ii=0; ii<n; ii++) {
+//    local_value[ii] = value[ii];
+//  }
 
   json fj;
-//  fj["the-key"] = json::array({value[0], value[1], value[2]});
-  fj["the-key"] = ja;
-
+  fj["the-key"] = json::array();
+  json::array_t* ap = fj.at("the-key").get_ptr<json::array_t*>();
+  ap->reserve(n);
+  for (auto ii=0; ii<n; ii++) {
+//    local_value[ii] = value[ii];
+    ap->push_back(value[ii]);
+  }
   cout << "(c) fj.dump " << fj.dump(2) << endl; //tdk:p
 
-//  vector<int> local_value = {123, 456, 789};
-
   std::string localKey(key);
-  attrs->set<vector<int>>(localKey, local_value, localforce, rc);
+//  attrs->set<vector<int>>(localKey, local_value, localforce, rc);
   cout << "(c) attrs->dump() " << attrs->dump(2, rc) << endl;  //tdk:p
 }
 
