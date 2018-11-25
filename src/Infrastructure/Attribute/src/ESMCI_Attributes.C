@@ -284,7 +284,8 @@ template void Attributes::set<double>(const string&, double, bool, int&);
 template void Attributes::set<int>(const string&, int, bool, int&);
 template void Attributes::set<long int>(const string&, long int, bool, int&);
 template void Attributes::set<string>(const string&, string, bool, int&);
-template void Attributes::set<vector<int>>(const string&, vector<int>, bool, int&);
+
+void Attributes::set(const string& key, int* value, bool force, int& rc) {};
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::update()"

@@ -393,9 +393,9 @@ void testSetGet(int& rc, char failMsg[]) {
     return finalizeFailure(rc, failMsg, "Did not get array element value");
   }
 
-  // Test with a vector =======================================================
+  // Test with a pointer ======================================================
 
-  std::vector<int> c_vector2 {1, 2, 3, 4};
+  int c_vector2[] = {1, 2, 3, 4};
 
   Attributes attrs2;
 

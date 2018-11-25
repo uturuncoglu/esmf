@@ -109,6 +109,8 @@ public:
   template <typename T>
   void set(const string& key, T value, bool force, int& rc);
 
+  void set(const string& key, int* value, bool force, int& rc);
+
   void update(const Attributes& attrs, int& rc);
 
 };
