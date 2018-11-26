@@ -175,7 +175,7 @@ end subroutine ESMF_AttributesGet
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributesGetArray()"
-subroutine ESMF_AttributesGetArray(attrs, key, value, rc)
+subroutine ESMF_AttributesGetArray(attrs, key, values, count, rc)
   ! Notes:
   !    * Default does not really make sense for getting a JSON array. This
   !      argument is intentionally left out.
@@ -183,8 +183,8 @@ subroutine ESMF_AttributesGetArray(attrs, key, value, rc)
 
   type(ESMF_Attributes), intent(inout) :: attrs
   character(len=*), intent(in) :: key
-  integer(ESMF_KIND_I4), dimension(:), pointer, intent(inout) :: value
-  ! integer, intent(in), optional :: default
+  integer(ESMF_KIND_I4), dimension(:), allocatable, intent(inout), optional :: values
+  integer, intent(inout), optional :: count
   integer, intent(inout), optional :: rc
 
   integer :: localrc, n
@@ -195,6 +195,7 @@ subroutine ESMF_AttributesGetArray(attrs, key, value, rc)
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
 
+  !tdk:TODO: check for presence?
   ! if (present(default)) then
   !   localdefault = default
   !   localdefault_ptr = C_LOC(localdefault)
@@ -202,11 +203,11 @@ subroutine ESMF_AttributesGetArray(attrs, key, value, rc)
   !   localdefault_ptr = C_NULL_PTR
   ! end if
 
-  local_cptr = c_attrs_get_array(attrs%ptr, trim(key)//C_NULL_CHAR, n, localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
-    rcToReturn=rc)) return
+  ! local_cptr = c_attrs_get_array(attrs%ptr, trim(key)//C_NULL_CHAR, n, localrc)
+  ! if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
+    ! rcToReturn=rc)) return
 
-  call C_F_POINTER(local_cptr, value, [n])
+  ! call C_F_POINTER(local_cptr, value, [n])
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributesGetArray
@@ -243,6 +244,7 @@ function ESMF_AttributesIsPresent(attrs, key, isPointer, rc) result(is_present)
     isPointer_forC = 0
   end if
 
+  !tdk:FIX: this conversion throws a compiler warning.
   is_present = c_attrs_is_present(attrs%ptr, trim(key)//C_NULL_CHAR, localrc, &
     isPointer_forC)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
@@ -317,12 +319,12 @@ end subroutine ESMF_AttributesSet
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributesSetArray()"
-subroutine ESMF_AttributesSetArray(attrs, key, value, force, rc)
+subroutine ESMF_AttributesSetArray(attrs, key, values, force, rc)
   implicit none
 
   type(ESMF_Attributes), intent(inout) :: attrs
   character(len=*), intent(in) :: key
-  integer(C_INT), dimension(:), intent(in) :: value
+  integer(ESMF_KIND_I4), dimension(:), intent(in) :: values
   logical, intent(in), optional :: force
   integer, intent(inout), optional :: rc
 
@@ -339,9 +341,10 @@ subroutine ESMF_AttributesSetArray(attrs, key, value, force, rc)
     end if
   end if
 
-  print *, "(f) value (the array)=", value !tdk:p
+  print *, "(f) value (the array)=", values !tdk:p
 
-  call c_attrs_set_array(attrs%ptr, trim(key)//C_NULL_CHAR, value, size(value), localforce, localrc)
+  call c_attrs_set_array(attrs%ptr, trim(key)//C_NULL_CHAR, values, &
+      size(values), localforce, localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
       rcToReturn=rc)) return
 

@@ -375,6 +375,7 @@ json PackageFactory::getOrCreateJSON(const string& key, int& rc,
   }
 }
 
+//tdk:REMOVE
 void tdklog(const string& msg) {
   string localmsg = "tdk: " + msg;
   ESMC_LogWrite(localmsg.c_str(), ESMC_LOGMSG_INFO);
@@ -505,15 +506,24 @@ int ESMC_AttributesGet(ESMCI::Attributes* attrs, char* key, int& rc, int* def) {
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_AttributesGet()"
-const std::vector<json>* const ESMC_AttributesGetArray(ESMCI::Attributes* attrs, char* key, int& n, int& rc) {
+#define ESMC_METHOD "ESMC_AttributesGetArray()"
+void ESMC_AttributesGetArray(ESMCI::Attributes* attrs, char* key, int* values, int* count, int& rc) {
   rc = ESMF_FAILURE;
   std::string localKey(key);
-  const std::vector<json>* const ret = attrs->getPointer<
-          const std::vector<json>* const, const json::array_t* const>(localKey,
-                  rc);
-  n = ret->size();
-  return ret;
+  const vector<json>* const ap = attrs->getPointer<const vector<json>* const,
+          const json::array_t* const>(localKey, rc);
+  //tdk:FIX: check rc code?
+  std::size_t local_count = ap->size();
+  if (count) {
+    *count = (int)local_count;
+  }
+  if (values) {
+    for (auto ii=0; ii<local_count; ii++) {
+      values[ii] = ap[0][ii];
+    }
+  }
+  rc = ESMF_SUCCESS;
+  return;
 }
 
 #undef  ESMC_METHOD

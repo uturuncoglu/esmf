@@ -337,16 +337,6 @@ int main(void) {
   ESMC_Test(!failed, name, failMsg, &result, __FILE__, __LINE__, 0);
 
   //----------------------------------------------------------------------------
-  //NEX_UTest
-  strcpy(name, "JSON array to C++ array pointer");
-  strcpy(failMsg, "Conversion to pointer failed");
-  failed = false;
-
-  failed = true;
-
-  ESMC_Test(!failed, name, failMsg, &result, __FILE__, __LINE__, 0);
-
-  //----------------------------------------------------------------------------
   ESMC_TestEnd(__FILE__, __LINE__, 0);
   //----------------------------------------------------------------------------
 

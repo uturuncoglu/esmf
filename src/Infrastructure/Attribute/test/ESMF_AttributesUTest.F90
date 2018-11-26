@@ -52,10 +52,9 @@ program ESMF_AttributesUTest
   ! cumulative result: count failures; no failures equals "all pass"
   integer               :: result = 0
 
-  integer(ESMF_KIND_I4) :: value, actual, actual2, actual3
-
-  integer(C_INT), dimension(3) :: arr_i4
-
+  integer(ESMF_KIND_I4) :: value, actual, actual2, actual3, arr_i4_get_count
+  integer(ESMF_KIND_I4), dimension(3) :: arr_i4
+  integer(ESMF_KIND_I4), dimension(:), allocatable :: arr_i4_get
   type(ESMF_Attributes) :: attrs, attrs2, attrs3, attrs4, attrs5, attrs6, &
                            attrs7, attrs8, attrs9
 
@@ -343,6 +342,9 @@ program ESMF_AttributesUTest
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
   call ESMF_AttributesPrint(attrs9, rc=rc) !tdk:p
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  call ESMF_AttributesGetArray(attrs9, "the-key", values=arr_i4_get, count=arr_i4_get_count, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
   call ESMF_Test((rc==ESMF_SUCCESS), name, failMsg, result, ESMF_SRCLINE)

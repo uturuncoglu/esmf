@@ -32,16 +32,15 @@ interface
     integer(C_INT) :: c_attrs_get
   end function c_attrs_get
 
-  function c_attrs_get_array(attrs, key, n, rc) bind(C, name="ESMC_AttributesGetArray")
+  subroutine c_attrs_get_array(attrs, key, values, count, rc) bind(C, name="ESMC_AttributesGetArray")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: attrs
     character(C_CHAR), intent(in) :: key(*)
-    integer(C_INT), intent(inout) :: n
+    integer(C_INT), dimension(*), intent(in) :: values
+    integer(C_INT), intent(inout) :: count
     integer(C_INT), intent(inout) :: rc
-    ! type(C_PTR), value :: default
-    type(C_PTR) :: c_attrs_get_array
-  end function c_attrs_get_array
+  end subroutine c_attrs_get_array
 
   function c_attrs_is_present(attrs, key, isptr, rc) bind(C, name="ESMC_AttributesIsPresent")
     use iso_c_binding
@@ -71,13 +70,13 @@ interface
     integer(C_INT), intent(inout) :: rc
   end subroutine c_attrs_set
 
-  subroutine c_attrs_set_array(attrs, key, value, n, force, rc) bind(C, name="ESMC_AttributesSetArray")
+  subroutine c_attrs_set_array(attrs, key, values, count, force, rc) bind(C, name="ESMC_AttributesSetArray")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: attrs
     character(kind=C_CHAR), intent(in) :: key(*)
-    integer(C_INT), dimension(*), intent(in) :: value
-    integer(C_INT), intent(in) :: n
+    integer(C_INT), dimension(*), intent(in) :: values
+    integer(C_INT), intent(in) :: count
     integer(C_INT), intent(in) :: force
     integer(C_INT), intent(inout) :: rc
   end subroutine c_attrs_set_array
