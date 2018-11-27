@@ -58,7 +58,7 @@ program ESMF_AttributesUTest
   type(ESMF_Attributes) :: attrs, attrs2, attrs3, attrs4, attrs5, attrs6, &
                            attrs7, attrs8, attrs9
 
-  logical :: is_present
+  logical :: is_present, failed
 
   !----------------------------------------------------------------------------
   call ESMF_TestStart(ESMF_SRCLINE, rc=rc)  ! calls ESMF_Initialize() internally
@@ -330,6 +330,7 @@ program ESMF_AttributesUTest
   !NEX_UTest
   write(name, *) "ESMF_Attributes Array Setting/Getting"
   write(failMsg, *) "Array operations failed"
+  failed = .false.
 
   arr_i4(1) = 123
   arr_i4(2) = 456
@@ -350,7 +351,15 @@ program ESMF_AttributesUTest
   print *, "(f) arr_i4_get=", arr_i4_get
   print *, "(f) arr_i4_get_count=", arr_i4_get_count
 
-  call ESMF_Test((rc==ESMF_SUCCESS), name, failMsg, result, ESMF_SRCLINE)
+  do i=1, 3
+    if (arr_i4(i) /= arr_i4_get(i)) then
+      failed = .true.
+    end if
+  end do
+
+  deallocate(arr_i4_get)
+
+  call ESMF_Test((.not. failed), name, failMsg, result, ESMF_SRCLINE)
 
   call ESMF_AttributesDestroy(attrs9, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
