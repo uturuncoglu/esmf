@@ -282,7 +282,7 @@ template void Attributes::set<long int>(const string&, long int, bool, int&);
 template void Attributes::set<string>(const string&, string, bool, int&);
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "Attributes::set(..., T*, ...)"
+#define ESMC_METHOD "Attributes::set(<array>)"
 void Attributes::set(const string& key, int values[], int& count, bool force, int& rc) {
   rc = ESMF_FAILURE;
 
