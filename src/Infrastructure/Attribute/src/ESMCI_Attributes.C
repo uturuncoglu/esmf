@@ -507,21 +507,29 @@ int ESMC_AttributesGet(ESMCI::Attributes* attrs, char* key, int& rc, int* def) {
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_AttributesGetArray()"
-void ESMC_AttributesGetArray(ESMCI::Attributes* attrs, char* key, int* values, int* count, int& rc) {
+void ESMC_AttributesGetArray(ESMCI::Attributes* attrs, char* key, int* values, int& count, int& count_only, int& rc) {
   rc = ESMF_FAILURE;
   std::string localKey(key);
+
+  cout << "(c) before json retrieval" << endl;
+
   const vector<json>* const ap = attrs->getPointer<const vector<json>* const,
           const json::array_t* const>(localKey, rc);
   //tdk:FIX: check rc code?
-  std::size_t local_count = ap->size();
-  if (count) {
-    *count = (int)local_count;
-  }
-  if (values) {
-    for (auto ii=0; ii<local_count; ii++) {
+
+  cout << "(c) before count assignment" << endl;
+
+  count = (int)ap->size();
+  cout << "(c) count= " << count << endl;
+//  if (count) {
+//    *count = (int)local_count;
+//  }
+  if (count_only == 0) {
+    for (auto ii=0; ii<count; ii++) {
       values[ii] = ap[0][ii];
     }
   }
+
   rc = ESMF_SUCCESS;
   return;
 }

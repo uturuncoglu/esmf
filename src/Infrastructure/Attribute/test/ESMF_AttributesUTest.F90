@@ -328,8 +328,8 @@ program ESMF_AttributesUTest
 
   !----------------------------------------------------------------------------
   !NEX_UTest
-  write(name, *) "ESMF_AttributesSetArray"
-  write(failMsg, *) "Array not set correctly"
+  write(name, *) "ESMF_Attributes Array Setting/Getting"
+  write(failMsg, *) "Array operations failed"
 
   arr_i4(1) = 123
   arr_i4(2) = 456
@@ -344,8 +344,11 @@ program ESMF_AttributesUTest
   call ESMF_AttributesPrint(attrs9, rc=rc) !tdk:p
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-  call ESMF_AttributesGetArray(attrs9, "the-key", values=arr_i4_get, count=arr_i4_get_count, rc=rc)
+  call ESMF_AttributesGetArray(attrs9, "the-key", arr_i4_get, arr_i4_get_count, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  print *, "(f) arr_i4_get=", arr_i4_get
+  print *, "(f) arr_i4_get_count=", arr_i4_get_count
 
   call ESMF_Test((rc==ESMF_SUCCESS), name, failMsg, result, ESMF_SRCLINE)
 

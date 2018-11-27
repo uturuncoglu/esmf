@@ -183,31 +183,30 @@ subroutine ESMF_AttributesGetArray(attrs, key, values, count, rc)
 
   type(ESMF_Attributes), intent(inout) :: attrs
   character(len=*), intent(in) :: key
-  integer(ESMF_KIND_I4), dimension(:), allocatable, intent(inout), optional :: values
-  integer, intent(inout), optional :: count
+  integer(ESMF_KIND_I4), dimension(:), allocatable, intent(inout) :: values
+  integer, intent(inout) :: count
   integer, intent(inout), optional :: rc
 
-  integer :: localrc, n
-  type(C_PTR), pointer :: local_cptr
-  ! integer(C_INT), target :: localdefault
-  ! type(C_PTR) :: localdefault_ptr
+  integer :: localrc, count_only
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
 
-  !tdk:TODO: check for presence?
-  ! if (present(default)) then
-  !   localdefault = default
-  !   localdefault_ptr = C_LOC(localdefault)
-  ! else
-  !   localdefault_ptr = C_NULL_PTR
-  ! end if
+  print *, "(f) before retrieving count"
 
-  ! local_cptr = c_attrs_get_array(attrs%ptr, trim(key)//C_NULL_CHAR, n, localrc)
-  ! if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
-    ! rcToReturn=rc)) return
+  count_only = 1
+  call c_attrs_get_array(attrs%ptr, trim(key)//C_NULL_CHAR, values, count, count_only, localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
+    rcToReturn=rc)) return
 
-  ! call C_F_POINTER(local_cptr, value, [n])
+  print *, "(f) count=", count
+
+  allocate(values(count))
+
+  count_only = 0
+  call c_attrs_get_array(attrs%ptr, trim(key)//C_NULL_CHAR, values, count, count_only, localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
+    rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributesGetArray
