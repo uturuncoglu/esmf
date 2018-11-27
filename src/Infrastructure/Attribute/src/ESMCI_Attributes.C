@@ -502,6 +502,8 @@ int ESMC_AttributesGet(ESMCI::Attributes* attrs, char* key, int& rc, int* def) {
   rc = ESMF_FAILURE;
   std::string localKey(key);
   int ret = attrs->get<int>(localKey, rc, def);
+  if (ESMC_LogDefault.MsgFoundError(rc, "Get failed", ESMC_CONTEXT, &rc))
+    throw(rc);
   return ret;
 }
 
@@ -516,7 +518,7 @@ void ESMC_AttributesGetArray(ESMCI::Attributes* attrs, char* key, int* values,
   const vector<json>* const ap = attrs->getPointer<const vector<json>* const,
           const json::array_t* const>(localKey, rc);
   if (ESMC_LogDefault.MsgFoundError(rc, "Did not get array pointer",
-          ESMC_CONTEXT, &rc)) return;
+          ESMC_CONTEXT, &rc)) throw(rc);
 
   count = (int)ap->size();
   if (count_only == 0) {
@@ -535,6 +537,8 @@ int ESMC_AttributesIsPresent(ESMCI::Attributes* attrs, char* key, int& rc,
         int& isptr) {
   string local_key(key);
   int ret = attrs->hasKey(local_key, rc, isptr);
+  if (ESMC_LogDefault.MsgFoundError(rc, "Did not detect key presence",
+                                    ESMC_CONTEXT, &rc)) throw(rc);
   return ret;
 }
 
@@ -543,6 +547,8 @@ int ESMC_AttributesIsPresent(ESMCI::Attributes* attrs, char* key, int& rc,
 void ESMC_AttributesPrint(ESMCI::Attributes* attrs, int& indent, int& rc) {
   rc = ESMF_FAILURE;
   std::cout << attrs->dump(indent, rc) << std::endl;
+  if (ESMC_LogDefault.MsgFoundError(rc, "Dump failed", ESMC_CONTEXT, &rc))
+    throw(rc);
 }
 
 #undef  ESMC_METHOD
@@ -560,6 +566,8 @@ void ESMC_AttributesSet(ESMCI::Attributes* attrs, char* key, int& value,
 
   std::string localKey(key);
   attrs->set<int>(localKey, value, localforce, rc);
+  if (ESMC_LogDefault.MsgFoundError(rc, "Set failed",  ESMC_CONTEXT, &rc))
+    throw(rc);
 }
 
 #undef  ESMC_METHOD
@@ -577,6 +585,8 @@ void ESMC_AttributesSetArray(ESMCI::Attributes* attrs, char* key, int* values,
 
   std::string localKey(key);
   attrs->set(localKey, values, count, localforce, rc);
+  if (ESMC_LogDefault.MsgFoundError(rc, "Set failed", ESMC_CONTEXT, &rc))
+    throw(rc);
 }
 
 }  // extern "C"
