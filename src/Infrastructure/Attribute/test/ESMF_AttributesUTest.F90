@@ -342,14 +342,8 @@ program ESMF_AttributesUTest
   call ESMF_AttributesSetArray(attrs9, "the-key", arr_i4, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-  call ESMF_AttributesPrint(attrs9, rc=rc) !tdk:p
-  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
-
   call ESMF_AttributesGetArray(attrs9, "the-key", arr_i4_get, arr_i4_get_count, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
-
-  print *, "(f) arr_i4_get=", arr_i4_get
-  print *, "(f) arr_i4_get_count=", arr_i4_get_count
 
   do i=1, 3
     if (arr_i4(i) /= arr_i4_get(i)) then

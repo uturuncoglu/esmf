@@ -192,14 +192,10 @@ subroutine ESMF_AttributesGetArray(attrs, key, values, count, rc)
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
 
-  print *, "(f) before retrieving count"
-
   count_only = 1
   call c_attrs_get_array(attrs%ptr, trim(key)//C_NULL_CHAR, values, count, count_only, localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
     rcToReturn=rc)) return
-
-  print *, "(f) count=", count
 
   allocate(values(count))
 
@@ -339,8 +335,6 @@ subroutine ESMF_AttributesSetArray(attrs, key, values, force, rc)
       localforce = 0
     end if
   end if
-
-  print *, "(f) value (the array)=", values !tdk:p
 
   call c_attrs_set_array(attrs%ptr, trim(key)//C_NULL_CHAR, values, &
       size(values), localforce, localrc)

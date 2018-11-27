@@ -507,23 +507,18 @@ int ESMC_AttributesGet(ESMCI::Attributes* attrs, char* key, int& rc, int* def) {
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_AttributesGetArray()"
-void ESMC_AttributesGetArray(ESMCI::Attributes* attrs, char* key, int* values, int& count, int& count_only, int& rc) {
+void ESMC_AttributesGetArray(ESMCI::Attributes* attrs, char* key, int* values,
+        int& count, int& count_only, int& rc) {
   rc = ESMF_FAILURE;
-  std::string localKey(key);
 
-  cout << "(c) before json retrieval" << endl;
+  std::string localKey(key);
 
   const vector<json>* const ap = attrs->getPointer<const vector<json>* const,
           const json::array_t* const>(localKey, rc);
-  //tdk:FIX: check rc code?
-
-  cout << "(c) before count assignment" << endl;
+  if (ESMC_LogDefault.MsgFoundError(rc, "Did not get array pointer",
+          ESMC_CONTEXT, &rc)) return;
 
   count = (int)ap->size();
-  cout << "(c) count= " << count << endl;
-//  if (count) {
-//    *count = (int)local_count;
-//  }
   if (count_only == 0) {
     for (auto ii=0; ii<count; ii++) {
       values[ii] = ap[0][ii];
@@ -536,7 +531,8 @@ void ESMC_AttributesGetArray(ESMCI::Attributes* attrs, char* key, int* values, i
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_AttributesIsPresent()"
-int ESMC_AttributesIsPresent(ESMCI::Attributes* attrs, char* key, int& rc, int& isptr) {
+int ESMC_AttributesIsPresent(ESMCI::Attributes* attrs, char* key, int& rc,
+        int& isptr) {
   string local_key(key);
   int ret = attrs->hasKey(local_key, rc, isptr);
   return ret;
