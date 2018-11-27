@@ -45,6 +45,20 @@ using json = nlohmann::json;  // Convenience rename for JSON namespace.
 
 namespace ESMCI {
 
+#undef ESMC_METHOD
+#define ESMC_METHOD "handleHasKey"
+bool handleHasKey(const Attributes* attrs, const string& key, int& rc) {
+  bool has_key = attrs->hasKey(key, rc, true);
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+
+  if (has_key) {
+    string msg = "Attribute key \'" + key + "\' already in map and force=false.";
+    ESMF_CHECKERR_STD("ESMC_RC_CANNOT_SET", ESMC_RC_CANNOT_SET, msg, rc);
+  }
+
+  return has_key;
+}
+
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes(json&)"
 Attributes::Attributes(const json& storage){
@@ -258,13 +272,7 @@ void Attributes::set(const string& key, T value, bool force, int& rc) {
   rc = ESMF_FAILURE;
 
   if (!force) {
-    bool has_key = this->hasKey(key, rc, true);
-    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
-
-    if (has_key) {
-      string msg = "Attribute key \'" + key + "\' already in map and force=false.";
-      ESMF_CHECKERR_STD("ESMC_RC_CANNOT_SET", ESMC_RC_CANNOT_SET, msg, rc);
-    }
+    bool has_key = handleHasKey(this, key, rc);
   }
 
   json::json_pointer jp = this->formatKey(key, rc);
@@ -287,14 +295,7 @@ void Attributes::set(const string& key, int values[], int& count, bool force, in
   rc = ESMF_FAILURE;
 
   if (!force) {
-    //tdk:OPTIMIZE: hasKey should be handled by an external function
-    bool has_key = this->hasKey(key, rc, true);
-    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
-
-    if (has_key) {
-      string msg = "Attribute key \'" + key + "\' already in map and force=false.";
-      ESMF_CHECKERR_STD("ESMC_RC_CANNOT_SET", ESMC_RC_CANNOT_SET, msg, rc);
-    }
+    bool has_key = handleHasKey(this, key, rc);
   }
 
   json::json_pointer jp = this->formatKey(key, rc);
