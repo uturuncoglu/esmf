@@ -411,6 +411,15 @@ void testSetGet(int& rc, char failMsg[]) {
     }
   }
 
+  // Test modifying internal storage ==========================================
+
+  Attributes mstore;
+  json& jstore = mstore.getStorageRefWritable();
+  jstore["i am an int"] = 111;
+  if (mstore.get<int>("i am an int", rc) != 111) {
+    return finalizeFailure(rc, failMsg, "Did not modify internal storage");
+  }
+
   return;
 };
 

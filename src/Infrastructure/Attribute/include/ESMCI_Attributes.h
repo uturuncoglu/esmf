@@ -99,6 +99,8 @@ public:
 
   const json& getStorageRef(void) const;
 
+  json& getStorageRefWritable(void);
+
   template <typename T, typename JT>
   T getPointer(const string& key, int& rc) const;
 

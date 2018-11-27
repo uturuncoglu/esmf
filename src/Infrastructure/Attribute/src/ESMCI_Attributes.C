@@ -221,8 +221,14 @@ const json& Attributes::getStorageRef() const{
 };
 
 #undef  ESMC_METHOD
+#define ESMC_METHOD "Attributes::getStorageRefWritable()"
+json& Attributes::getStorageRefWritable() {
+  return this->storage;
+};
+
+#undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::hasKey()"
-bool Attributes::hasKey(const string& key, int& rc, bool isptr) const{
+bool Attributes::hasKey(const string& key, int& rc, bool isptr) const {
   // isptr is optional
   rc = ESMF_FAILURE;
 
