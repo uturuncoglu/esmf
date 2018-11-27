@@ -69,9 +69,9 @@ private:
 
 //-----------------------------------------------------------------------------
 
-class Attributes
-{
-private:
+class Attributes {
+
+protected:
   // JSON object store for keys/values managed by this instance
   json storage = json::object();
 
