@@ -46,4 +46,10 @@ using json = nlohmann::json;  // Convenience rename for JSON namespace.
 
 namespace ESMCI {
 
-}  // extern "C"
+#undef ESMC_METHOD
+#define ESMC_METHOD "<DistGrid*> Metadata::createESMF()"
+DistGrid* Metadata::createESMF(const vector<string> dist_dims, int& rc) const {
+
+};
+
+}  // ESMCI

@@ -27,7 +27,7 @@
 #include "ESMCI_Util.h"
 
 using json = nlohmann::json;  // Convenience rename for JSON namespace.
-using std::string;
+using namespace std;
 
 //-----------------------------------------------------------------------------
 //BOP
@@ -46,7 +46,7 @@ namespace ESMCI {
 class Metadata : Attributes {
 
 public:
-  DistGrid *createESMF(void);
+  DistGrid* createESMF(const vector<string> dist_dims, int& rc) const;
 
 };
 
