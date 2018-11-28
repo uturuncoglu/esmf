@@ -10,21 +10,24 @@ TESTS_BUILD   = $(ESMF_TESTDIR)/ESMC_AttributesUTest \
                 $(ESMF_TESTDIR)/ESMC_NlohmannJSONUTest \
                 $(ESMF_TESTDIR)/ESMF_AttributesUTest \
                 $(ESMF_TESTDIR)/ESMF_AttributesProfileUTest \
-                $(ESMF_TESTDIR)/ESMF_AttributeProfileUTest
+                $(ESMF_TESTDIR)/ESMF_AttributeProfileUTest \
+                $(ESMF_TESTDIR)/ESMC_MetadataUTest
                 #$(ESMF_TESTDIR)/ESMC_PackageFactoryUTest
 
 TESTS_RUN     = RUN_ESMC_AttributesUTest \
                 RUN_ESMC_NlohmannJSONUTest \
                 RUN_ESMF_AttributesUTest \
                 RUN_ESMF_AttributesProfileUTest \
-                RUN_ESMF_AttributeProfileUTest
+                RUN_ESMF_AttributeProfileUTest \
+                RUN_ESMC_MetadataUTest
                 #RUN_ESMC_PackageFactoryUTest
 
 TESTS_RUN_UNI = RUN_ESMC_AttributesUTestUNI \
                 RUN_ESMC_NlohmannJSONUTestUNI \
                 RUN_ESMF_AttributesUTestUNI \
                 RUN_ESMF_AttributesProfileUTest \
-                RUN_ESMF_AttributesProfileUTest
+                RUN_ESMF_AttributesProfileUTest \
+                RUN_ESMC_MetadataUTest
                 #RUN_ESMC_PackageFactoryUTestUNI
 
 
@@ -66,6 +69,12 @@ RUN_ESMF_AttributeProfileUTest:
 
 RUN_ESMF_AttributeProfileUTestUNI:
 	env ESMF_RUNTIME_PROFILE=ON $(MAKE) TNAME=AttributeProfileUNI NP=1 ftest
+
+RUN_ESMC_MetadataUTest:
+	$(MAKE) TNAME=Metadata NP=4 ctest
+
+RUN_ESMC_MetadataUTestUNI:
+	$(MAKE) TNAME=MetadataUNI NP=1 ctest
 
 #RUN_ESMC_PackageFactoryUTest:
 #	$(MAKE) TNAME=PackageFactory NP=4 ctest
