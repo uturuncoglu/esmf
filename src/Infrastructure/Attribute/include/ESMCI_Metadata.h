@@ -18,12 +18,13 @@
 
 //-----------------------------------------------------------------------------
 
-#include <vector>
 #include <fstream>
-
-#include "ESMCI_Util.h"
-#include "ESMCI_Attributes.h"
 #include "json.hpp"
+#include <vector>
+
+#include "ESMCI_Attributes.h"
+#include "ESMCI_DistGrid.h"
+#include "ESMCI_Util.h"
 
 using json = nlohmann::json;  // Convenience rename for JSON namespace.
 using std::string;
@@ -44,7 +45,8 @@ namespace ESMCI {
 
 class Metadata : Attributes {
 
-
+public:
+  DistGrid *createESMF(void);
 
 };
 
