@@ -135,8 +135,8 @@ public:
 
 //-----------------------------------------------------------------------------
 
-  void broadcastAttributes(ESMCI::Attributes* attrs, int rootPet, int& rc); // tdk: FEATURE: non-blocking
-  json createJSONPackage(const string& pkgKey, int& rc);
+void broadcastAttributes(ESMCI::Attributes* attrs, int rootPet, int& rc); // tdk: FEATURE: non-blocking
+json createJSONPackage(const string& pkgKey, int& rc);
 
 //-----------------------------------------------------------------------------
 

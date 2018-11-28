@@ -43,10 +43,12 @@ using namespace std;
 
 namespace ESMCI {
 
-class Metadata : Attributes {
+class Metadata : public Attributes {
+
+using Attributes::Attributes; // Required to inherit constructors
 
 public:
-  DistGrid* createESMF(const vector<string> dist_dims, int& rc) const;
+  DistGrid* createESMF(const vector<string>& dist_dims, int& rc) const;
 
 };
 
