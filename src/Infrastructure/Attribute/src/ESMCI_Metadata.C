@@ -49,21 +49,19 @@ namespace ESMCI {
 #undef ESMC_METHOD
 #define ESMC_METHOD "<DistGrid*> Metadata::createESMF()"
 DistGrid* Metadata::createESMF(const vector<string>& dist_dims, int& rc) const {
- if (dist_dims.size() > 1) {
-  string msg = "Only one distributed dimension allowed";
-  ESMF_CHECKERR_STD("", ESMC_RC_ARG_BAD, msg, rc);
+
+ vector<int> maxIndex_vec(dist_dims.size(), -999);
+ for (auto ii=0; ii<dist_dims.size(); ii++) {
+  string key = "/dimensions/" + dist_dims[ii] + "/size";
+  maxIndex_vec[ii] = this->get<int>(key, rc);
+  ESMF_CHECKERR_STD("", rc, "Did not get distributed dimension", rc);
  }
 
- string key = "/dimensions/" + dist_dims[0] + "/size";
- auto dist_dim_size = this->get<int>(key, rc);
- ESMF_CHECKERR_STD("", rc, "Did not get distributed dimension", rc);
+// cout << "(x) dist_dim_size= " << dist_dim_size << endl;
 
- cout << "(x) dist_dim_size= " << dist_dim_size << endl;
-
- vector<int> minIndex_vec = {1};
+ vector<int> minIndex_vec = vector<int>(dist_dims.size(), 1);
  InterArray<int> minIndex(minIndex_vec);
 
- vector<int> maxIndex_vec = {dist_dim_size};
  InterArray<int> maxIndex(maxIndex_vec);
 
  auto regDecomp = nullptr;

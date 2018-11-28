@@ -119,7 +119,7 @@ void test(int& rc, char failMsg[]) {
   // ==========================================================================
 
   Metadata meta(move(root));
-  vector<string> dist_dims = {"dim_lon"};
+  vector<string> dist_dims = {"dim_lon", "dim_lat"};
   DistGrid* dist_grid = meta.createESMF(dist_dims, rc);
   ESMF_CHECKERR_STD("", rc, "DistGrid creation failed", rc);
 
