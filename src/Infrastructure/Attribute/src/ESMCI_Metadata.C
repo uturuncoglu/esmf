@@ -66,12 +66,28 @@ DistGrid* Metadata::createESMF(const vector<string>& dist_dims, int& rc) const {
  vector<int> maxIndex_vec = {dist_dim_size};
  InterArray<int> maxIndex(maxIndex_vec);
 
- DistGrid* ret = ESMCI::DistGrid::create(&minIndex, &maxIndex, nullptr, nullptr,
-                                         0, nullptr, nullptr, nullptr,
-                                         nullptr, nullptr, nullptr, nullptr,
-                                         &rc, ESMC_TYPEKIND_I4);
+ auto regDecomp = nullptr;
+ auto decompflag = nullptr;
+ int decompflagCount = 0;
+ auto regDecompFirstExtra = nullptr;
+ auto regDecompLastExtra = nullptr;
+ auto deLabelList = nullptr;
+ auto indexflag = nullptr;
+ auto connectionList = nullptr;
+ auto delayout = nullptr;
+ auto vm = nullptr;
+ ESMC_TypeKind_Flag indexTK = ESMF_NOKIND; //tdk:?: is this okay?
+
+ DistGrid *ret = ESMCI::DistGrid::create(&minIndex, &maxIndex, regDecomp,
+                                         decompflag, decompflagCount,
+                                         regDecompFirstExtra,
+                                         regDecompLastExtra, deLabelList,
+                                         indexflag, connectionList, delayout,
+                                         vm, &rc, indexTK);
 
  ret->print();
+
+ return ret;
 
 };
 
