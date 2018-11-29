@@ -48,7 +48,7 @@ class Metadata : public Attributes {
 using Attributes::Attributes; // Required to inherit constructors
 
 public:
-  DistGrid* createESMF(const vector<string>& dist_dims, int& rc) const;
+  DistGrid* createESMF(const json& jsonParms, int& rc) const;
 
 };
 

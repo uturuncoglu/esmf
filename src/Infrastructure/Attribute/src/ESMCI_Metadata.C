@@ -47,51 +47,86 @@ using json = nlohmann::json;  // Convenience rename for JSON namespace.
 namespace ESMCI {
 
 #undef ESMC_METHOD
-#define ESMC_METHOD "<DistGrid*> Metadata::createESMF()"
-DistGrid* Metadata::createESMF(const vector<string>& dist_dims, int& rc) const {
-
-  if (dist_dims.size() == 0) {
-    string msg = "At least one distributed dimension is required";
-    ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD,
-                      "Did not get distributed dimension", rc);
+#define ESMC_METHOD "handleUnsupported"
+void handleUnsupported(const json& j, const string& key, int& rc) {
+  if (j.find(key) != j.end()) {
+    string msg = "'" + key +"' not supported";
+    ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, msg, rc);
+  } else {
+    rc = ESMF_SUCCESS;
   }
+}
 
- vector<int> maxIndex_vec(dist_dims.size(), -999);
- for (auto ii=0; ii<dist_dims.size(); ii++) {
-  string key = "/dimensions/" + dist_dims[ii] + "/size";
-  maxIndex_vec[ii] = this->get<int>(key, rc);
-  ESMF_CHECKERR_STD("", rc, "Did not get distributed dimension", rc);
- }
+#undef ESMC_METHOD
+#define ESMC_METHOD "<DistGrid*> Metadata::createESMF(<JSON Parms>)"
+DistGrid* Metadata::createESMF(const json& jsonParms, int& rc) const {
 
-// cout << "(x) dist_dim_size= " << dist_dim_size << endl;
+  vector<string> v_distDims = jsonParms.value("distDims", json::array());
+  vector<ESMC_I4> v_minIndex = jsonParms.value("minIndex", json::array());
+  vector<ESMC_I4> v_maxIndex = jsonParms.value("maxIndex", json::array());
 
- vector<int> minIndex_vec = vector<int>(dist_dims.size(), 1);
- InterArray<int> minIndex(minIndex_vec);
+  size_t v_distDims_size = v_distDims.size();
+  cout << "(x) " << v_distDims_size << endl;
+  if (v_minIndex.size() == 0) {
+    v_minIndex.resize(v_distDims_size);
+    for (auto ii=0; ii<v_distDims_size; ii++) {
+      v_minIndex[ii] = 1;
+    }
+  }
+  InterArray<ESMC_I4> minIndex(v_minIndex);
 
- InterArray<int> maxIndex(maxIndex_vec);
+  if (v_maxIndex.size() == 0) {
+    v_maxIndex.resize(v_distDims_size);
+    for (auto ii=0; ii<v_distDims_size; ii++) {
+      string key = "/dimensions/" + v_distDims[ii] + "/size";
+      v_maxIndex[ii] = this->get<ESMC_I4>(key, rc);
+      ESMF_CHECKERR_STD("", rc, "Did not get distributed dimension", rc);
+    }
+  }
+  InterArray<ESMC_I4> maxIndex(v_maxIndex);
 
- auto regDecomp = nullptr;
- auto decompflag = nullptr;
- int decompflagCount = 0;
- auto regDecompFirstExtra = nullptr;
- auto regDecompLastExtra = nullptr;
- auto deLabelList = nullptr;
- auto indexflag = nullptr;
- auto connectionList = nullptr;
- auto delayout = nullptr;
- auto vm = nullptr;
- ESMC_TypeKind_Flag indexTK = ESMF_NOKIND; //tdk:?: is this okay?
+  handleUnsupported(jsonParms, "regDecomp", rc);
+  auto regDecomp = nullptr;
 
- DistGrid *ret = ESMCI::DistGrid::create(&minIndex, &maxIndex, regDecomp,
-                                         decompflag, decompflagCount,
-                                         regDecompFirstExtra,
-                                         regDecompLastExtra, deLabelList,
-                                         indexflag, connectionList, delayout,
-                                         vm, &rc, indexTK);
+  handleUnsupported(jsonParms, "decompflag", rc);
+  auto decompflag = nullptr;
 
- ret->print();
+  handleUnsupported(jsonParms, "decompflagCount", rc);
+  int decompflagCount = 0;
 
- return ret;
+  handleUnsupported(jsonParms, "regDecompFirstExtra", rc);
+  auto regDecompFirstExtra = nullptr;
+
+  handleUnsupported(jsonParms, "regDecompLastExtra", rc);
+  auto regDecompLastExtra = nullptr;
+
+  handleUnsupported(jsonParms, "deLabelList", rc);
+  auto deLabelList = nullptr;
+
+  handleUnsupported(jsonParms, "indexflag", rc);
+  auto indexflag = nullptr;
+
+  handleUnsupported(jsonParms, "connectionList", rc);
+  auto connectionList = nullptr;
+
+  handleUnsupported(jsonParms, "delayout", rc);
+  auto delayout = nullptr;
+
+  handleUnsupported(jsonParms, "vm", rc);
+  auto vm = nullptr;
+
+  handleUnsupported(jsonParms, "indexTK", rc);
+  ESMC_TypeKind_Flag indexTK = ESMF_NOKIND; //tdk:?: is this okay?
+
+  DistGrid *ret = ESMCI::DistGrid::create(&minIndex, &maxIndex, regDecomp,
+                                          decompflag, decompflagCount,
+                                          regDecompFirstExtra,
+                                          regDecompLastExtra, deLabelList,
+                                          indexflag, connectionList, delayout,
+                                          vm, &rc, indexTK);
+  ESMF_CHECKERR_STD("", rc, "Did not create DistGrid", rc);
+
+  return ret;
 
 };
 

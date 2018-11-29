@@ -56,12 +56,13 @@ void test(int& rc, char failMsg[]) {
 
   root["attrs"] = "~CF-1.x";
 
-  vector<string> dimnames = {"dim_lon", "dim_lat", "dim_time", "dim_level",
-                             "dim_realization"};
+  vector <string> dimnames = {"dim_lon", "dim_lat", "dim_time", "dim_level",
+                              "dim_realization"};
   vector<long int> sizes = {360, 180, 365, 100, 10};
   auto ctr = 0;
   for (auto name : dimnames) {
-    root["dimensions"][name] = createJSONPackage("ESMF:Metadata:Dimension", rc);
+    root["dimensions"][name] = createJSONPackage("ESMF:Metadata:Dimension",
+                                                 rc);
     ESMF_CHECKERR_STD("", rc, "Package creation failed", rc);
 
     root["dimensions"][name]["name"] = name;
@@ -75,8 +76,8 @@ void test(int& rc, char failMsg[]) {
   root["dimensions"]["dim_time"]["is_unlimited"] = true;
   root["dimensions"]["dim_level"]["is_unlimited"] = true;
 
-  vector<string> varnames = {"the_xc", "the_yc", "the_time", "the_level",
-                          "the_realization", "foo"};
+  vector <string> varnames = {"the_xc", "the_yc", "the_time", "the_level",
+                              "the_realization", "foo"};
   for (auto name : varnames) {
     root["variables"][name] = createJSONPackage("ESMF:Metadata:Variable", rc);
     ESMF_CHECKERR_STD("", rc, "Package creation failed", rc);
@@ -99,7 +100,8 @@ void test(int& rc, char failMsg[]) {
   root["variables"]["the_yc"]["dimensions"].push_back("dim_lat");
   root["variables"]["the_time"]["dimensions"].push_back("dim_time");
   root["variables"]["the_level"]["dimensions"].push_back("dim_level");
-  root["variables"]["the_realization"]["dimensions"].push_back("dim_realization");
+  root["variables"]["the_realization"]["dimensions"].push_back(
+          "dim_realization");
 
   root["variables"]["the_xc"]["attrs"]["axis"] = "X";
   root["variables"]["the_xc"]["attrs"]["units"] = "degrees_east";
@@ -116,13 +118,51 @@ void test(int& rc, char failMsg[]) {
 
 //  cout << root.dump(2) << endl; //tdk:p
 
-  // ==========================================================================
-
   Metadata meta(move(root));
-  vector<string> dist_dims = {"dim_lon", "dim_lat"};
-  DistGrid* dist_grid = meta.createESMF(dist_dims, rc);
+
+  // Test creating with distributed dimension names ===========================
+
+  //tdk:TEST: test error handling with missing required parameter
+  //tdk:TEST: test error handling with unsupported parameter
+  //tdk:TEST: test error handling with unsupported parameter type
+  //tdk:TEST: test error handling with extra parameters
+
+  json jsonParms;
+  jsonParms["distDims"] = {"dim_lon", "dim_lat"};
+  DistGrid *dist_grid2 = meta.createESMF(jsonParms, rc);
   ESMF_CHECKERR_STD("", rc, "DistGrid creation failed", rc);
-  //tdk:TEST: not testing anything on the distgrid creation yet
+
+  ESMC_I8 const *ecount = dist_grid2->getElementCountPTile();
+  if (*ecount != 64800) {
+    return finalizeFailure(rc, failMsg, "Wrong number of elements");
+  }
+
+  rc = ESMCI::DistGrid::destroy(&dist_grid2);
+  ESMF_CHECKERR_STD("", rc, "Did not destroy dist grid", rc);
+
+  // Test with an empty parameters definition =================================
+
+  json jsonParms2 = json::object();
+  try {
+    DistGrid *dist_grid3 = meta.createESMF(jsonParms2, rc);
+    return finalizeFailure(rc, failMsg, "Somehow created DistGrid");
+  }
+  catch (ESMCI::esmf_attrs_error) {
+    if (rc != ESMC_RC_PTR_NULL) {
+      return finalizeFailure(rc, failMsg, "Did not get expected return code");
+    }
+  }
+  rc = ESMF_SUCCESS;
+
+//  ESMF_CHECKERR_STD("", rc, "DistGrid creation failed", rc);
+
+//  ESMC_I8 const* ecount = dist_grid2->getElementCountPTile();
+//  if (*ecount != 64800) {
+//    return finalizeFailure(rc, failMsg, "Wrong number of elements");
+//  }
+
+//  rc = ESMCI::DistGrid::destroy(&dist_grid3);
+//  ESMF_CHECKERR_STD("", rc, "Did not destroy dist grid", rc);
 
   return;
 };
