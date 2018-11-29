@@ -122,6 +122,7 @@ void test(int& rc, char failMsg[]) {
   vector<string> dist_dims = {"dim_lon", "dim_lat"};
   DistGrid* dist_grid = meta.createESMF(dist_dims, rc);
   ESMF_CHECKERR_STD("", rc, "DistGrid creation failed", rc);
+  //tdk:TEST: not testing anything on the distgrid creation yet
 
   return;
 };

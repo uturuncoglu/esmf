@@ -50,6 +50,12 @@ namespace ESMCI {
 #define ESMC_METHOD "<DistGrid*> Metadata::createESMF()"
 DistGrid* Metadata::createESMF(const vector<string>& dist_dims, int& rc) const {
 
+  if (dist_dims.size() == 0) {
+    string msg = "At least one distributed dimension is required";
+    ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD,
+                      "Did not get distributed dimension", rc);
+  }
+
  vector<int> maxIndex_vec(dist_dims.size(), -999);
  for (auto ii=0; ii<dist_dims.size(); ii++) {
   string key = "/dimensions/" + dist_dims[ii] + "/size";
