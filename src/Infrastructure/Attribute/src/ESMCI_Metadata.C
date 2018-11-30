@@ -46,6 +46,8 @@ using json = nlohmann::json;  // Convenience rename for JSON namespace.
 
 namespace ESMCI {
 
+// Local function dependencies ================================================
+
 #undef  ESMC_METHOD
 #define ESMC_METHOD "createJSONPackage()"
 json createJSONPackage(const string& pkgKey, int& rc) {
@@ -89,9 +91,11 @@ void handleUnsupported(const json& j, const string& key, int& rc) {
   }
 }
 
+//=============================================================================
+
 #undef ESMC_METHOD
-#define ESMC_METHOD "<DistGrid*> Metadata::createESMF(<JSON Parms>)"
-DistGrid* Metadata::createESMF(const json& jsonParms, int& rc) const {
+#define ESMC_METHOD "Metadata::createDistGrid()"
+DistGrid* Metadata::createDistGrid(const json& jsonParms, int& rc) const {
 
   vector<string> v_distDims = jsonParms.value("distDims", json::array());
 

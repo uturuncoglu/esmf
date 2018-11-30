@@ -44,8 +44,8 @@ void finalizeFailure(int& rc, char failMsg[], string msg) {
 };
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "test()"
-void test(int& rc, char failMsg[]) {
+#define ESMC_METHOD "testCreateDistGrid()"
+void testCreateDistGrid(int& rc, char failMsg[]) {
   rc = ESMF_FAILURE;
 
   // Create a metadata object mimicking CF-Grid metadata ======================
@@ -129,7 +129,7 @@ void test(int& rc, char failMsg[]) {
 
   json jsonParms;
   jsonParms["distDims"] = {"dim_lon", "dim_lat"};
-  DistGrid *dist_grid2 = meta.createESMF(jsonParms, rc);
+  DistGrid *dist_grid2 = meta.createDistGrid(jsonParms, rc);
   ESMF_CHECKERR_STD("", rc, "DistGrid creation failed", rc);
 
   ESMC_I8 const *ecount = dist_grid2->getElementCountPTile();
@@ -144,7 +144,7 @@ void test(int& rc, char failMsg[]) {
 
   json jsonParms2 = json::object();
   try {
-    DistGrid *dist_grid3 = meta.createESMF(jsonParms2, rc);
+    DistGrid *dist_grid3 = meta.createDistGrid(jsonParms2, rc);
     return finalizeFailure(rc, failMsg, "Somehow created DistGrid");
   }
   catch (ESMCI::esmf_attrs_error) {
@@ -212,14 +212,14 @@ int main(void) {
 
   //---------------------------------------------------------------------------
   //NEX_UTest
-  strcpy(name, "Metadata general tests");
-  test(rc, failMsg);
+  strcpy(name, "Metadata::createDistGrid()");
+  testCreateDistGrid(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //---------------------------------------------------------------------------
 
   //---------------------------------------------------------------------------
   //NEX_UTest
-  strcpy(name, "Metadata createJSONPackage()");
+  strcpy(name, "Metadata::createJSONPackage()");
   testCreateJSONPackage(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //---------------------------------------------------------------------------

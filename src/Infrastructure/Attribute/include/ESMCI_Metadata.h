@@ -22,6 +22,7 @@
 #include "json.hpp"
 #include <vector>
 
+#include "ESMCI_Array.h"
 #include "ESMCI_Attributes.h"
 #include "ESMCI_DistGrid.h"
 #include "ESMCI_Util.h"
@@ -71,7 +72,7 @@ class Metadata : public Attributes {
 using Attributes::Attributes; // Required to inherit constructors
 
 public:
-  DistGrid* createESMF(const json& jsonParms, int& rc) const;
+  DistGrid* createDistGrid(const json& jsonParms, int& rc) const;
 
 };
 
