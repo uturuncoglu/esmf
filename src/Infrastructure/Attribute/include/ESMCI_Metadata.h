@@ -48,6 +48,7 @@ namespace ESMCI {
 namespace MKEY {
   const string K_ATTRS = "attrs";
   const string K_AXIS = "axis";
+  const string K_BNDS = "bounds";
   const string K_CALENDAR = "calendar";
   const string K_DIMS = "dims";
   const string K_DTYPE = "dtype";

@@ -12,15 +12,16 @@
 
 #include <stdlib.h>
 #include <string.h>
+
 #include <stdio.h>
 #include <iostream>
 
 #include "ESMC.h"
 #include "ESMC_Test.h"
 #include "ESMCI_Attributes.h"
+#include "ESMCI_LogErr.h"
 #include "ESMCI_Macros.h"
 #include "ESMCI_Metadata.h"
-#include "ESMCI_LogErr.h"
 #include "ESMCI_Util.h"
 #include "ESMCI_VM.h"
 
@@ -37,25 +38,17 @@ using namespace std;
 //EOP
 //-----------------------------------------------------------------------------
 
-void finalizeFailure(int& rc, char failMsg[], string msg) {
-  rc = ESMF_FAILURE;
-  strcpy(failMsg, msg.c_str());
-  return;
-};
-
 #undef  ESMC_METHOD
-#define ESMC_METHOD "testCreateDistGrid()"
-void testCreateDistGrid(int& rc, char failMsg[]) {
-  rc = ESMF_FAILURE;
+#define ESMC_METHOD "createTestMetadata()"
+json createTestMetadata(int& rc) {
 
   // Create a metadata object mimicking CF-Grid metadata ======================
-  //tdk: replace duplicate strings
-  //tdk: bounds for spatial/time
+  //tdk:TEST: add bounds for spatial/time
 
   json root = createJSONPackage("ESMF:Metadata:Group", rc);
   ESMF_CHECKERR_STD("", rc, "Package creation failed", rc);
 
-  root[K_ATTRS] = "~CF-1.x";
+  root[K_ATTRS]["Convention"] = "~CF-1.x";
 
   vector <string> dimnames = {"dim_lon", "dim_lat", "dim_time", "dim_level",
                               "dim_realization"};
@@ -63,7 +56,7 @@ void testCreateDistGrid(int& rc, char failMsg[]) {
   auto ctr = 0;
   for (auto name : dimnames) {
     root[K_DIMS][name] = createJSONPackage("ESMF:Metadata:Dimension",
-                                                 rc);
+                                           rc);
     ESMF_CHECKERR_STD("", rc, "Package creation failed", rc);
 
     root[K_DIMS][name][K_NAME] = name;
@@ -92,8 +85,8 @@ void testCreateDistGrid(int& rc, char failMsg[]) {
 
   // Add the "data" variable which holds the things we care about in a data file
   root[K_VARS]["foo"][K_DIMS] =
-          json::array({"the_realization", "the_time", "the_level", "the_yc",
-                       "the_xc"});
+    json::array({"the_realization", "the_time", "the_level", "the_yc",
+                 "the_xc"});
   root[K_VARS]["foo"][K_DTYPE] = "double";
   root[K_VARS]["foo"][K_ATTRS]["grid_mapping_name"] = "latitude_longitude";
 
@@ -116,8 +109,23 @@ void testCreateDistGrid(int& rc, char failMsg[]) {
   root[K_VARS]["the_level"][K_ATTRS][K_AXIS] = "Z";
   root[K_VARS]["the_level"][K_ATTRS][K_UNITS] = "meters";
 
+  return root;
+};
+
+void finalizeFailure(int& rc, char failMsg[], string msg) {
+  rc = ESMF_FAILURE;
+  strcpy(failMsg, msg.c_str());
+  return;
+};
+
+#undef  ESMC_METHOD
+#define ESMC_METHOD "testCreateDistGrid()"
+void testCreateDistGrid(int& rc, char failMsg[]) {
+  rc = ESMF_FAILURE;
+
 //  cout << root.dump(2) << endl; //tdk:p
 
+  json root = createTestMetadata(rc);
   Metadata meta(move(root));
 
   // Test creating with distributed dimension names ===========================
