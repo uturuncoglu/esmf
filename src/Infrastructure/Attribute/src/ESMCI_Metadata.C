@@ -53,6 +53,7 @@ json createJSONPackage(const string& pkgKey, int& rc) {
 
   json j;
   j[K_NAME] = json::value_t::null;  // Will be string
+  j[K_UID] = json::value_t::null;  // Will be integer
 
   if (pkgKey == "ESMF:Metadata:Dimension") {
     // Will be int or potentially null if unlimited

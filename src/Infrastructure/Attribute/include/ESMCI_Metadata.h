@@ -55,6 +55,7 @@ namespace MKEY {
   const string K_UNLIM = "is_unlimited";
   const string K_NAME = "name";
   const string K_SIZE = "size";
+  const string K_UID = "uid";
   const string K_URI = "uri";
   const string K_VARS = "vars";
 }
