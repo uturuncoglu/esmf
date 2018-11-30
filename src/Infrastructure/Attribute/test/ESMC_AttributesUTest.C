@@ -137,36 +137,6 @@ void testConstructor(int& rc, char failMsg[]) {
 };
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "testCreateJSONPackage()"
-void testCreateJSONPackage(int& rc, char failMsg[]) {
-  rc = ESMF_FAILURE;
-
-  string pkgKey = "ESMF:Metadata:Group";
-  json jattrs = createJSONPackage(pkgKey, rc);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
-
-  //---------------------------------------------------------------------------
-  // Test an unsupported key
-
-  bool failed = true;
-  string badPkgKey = "Does:Not:Exist";
-  try {
-    json noattrs = createJSONPackage(badPkgKey, rc);
-  }
-  catch (esmf_attrs_error &err) {
-    if (err.getReturnCode() == ESMF_RC_NOT_FOUND) {
-      failed = false;
-    }
-  }
-  if (failed) {
-    return finalizeFailure(rc, failMsg, "Package should not be returned");
-  }
-
-  rc = ESMF_SUCCESS;
-  return;
-}
-
-#undef  ESMC_METHOD
 #define ESMC_METHOD "testGet()"
 void testGet(int& rc, char failMsg[]) {
   rc = ESMF_FAILURE;
@@ -587,13 +557,6 @@ int main(void) {
   //NEX_UTest
   strcpy(name, "Attributes hasKey()");
   testHasKey(rc, failMsg);
-  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
-  //---------------------------------------------------------------------------
-
-  //---------------------------------------------------------------------------
-  //NEX_UTest
-  strcpy(name, "Attributes createJSONPackage()");
-  testCreateJSONPackage(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //---------------------------------------------------------------------------
 

@@ -34,8 +34,8 @@
 #include <vector>
 #include <iostream>
 
+using namespace ESMCI::MKEY;
 using namespace std;
-
 using json = nlohmann::json;  // Convenience rename for JSON namespace.
 
 //-----------------------------------------------------------------------------
@@ -45,6 +45,37 @@ using json = nlohmann::json;  // Convenience rename for JSON namespace.
 //-----------------------------------------------------------------------------
 
 namespace ESMCI {
+
+#undef  ESMC_METHOD
+#define ESMC_METHOD "createJSONPackage()"
+json createJSONPackage(const string& pkgKey, int& rc) {
+  rc = ESMF_FAILURE;
+
+  json j;
+  j[K_NAME] = json::value_t::null;  // Will be string
+
+  if (pkgKey == "ESMF:Metadata:Dimension") {
+    // Will be int or potentially null if unlimited
+    j[K_SIZE] = json::value_t::null;
+    j[K_UNLIM] = json::value_t::null;  // Will be bool
+  } else if (pkgKey == "ESMF:Metadata:Group") {
+    j[K_VARS] = json::object();
+    j[K_DIMS] = json::object();
+    j[K_ATTRS] = json::object();
+    j[K_GROUPS] = json::object();
+    j[K_URI] = json::value_t::null;  // Will be string or rename null
+  } else if (pkgKey == "ESMF:Metadata:Variable") {
+    j[K_DTYPE] = json::value_t::null;  // Will be string
+    j[K_DIMS] = json::array();  // Will append string dimension names
+    j[K_ATTRS] = json::object();
+  } else {
+    string msg = "Package name not found: \'" + pkgKey + "\'";
+    ESMF_CHECKERR_STD("ESMC_RC_NOT_FOUND", ESMF_RC_NOT_FOUND, msg, rc);
+  }
+
+  rc = ESMF_SUCCESS;
+  return j;
+}
 
 #undef ESMC_METHOD
 #define ESMC_METHOD "handleUnsupported"
@@ -62,6 +93,7 @@ void handleUnsupported(const json& j, const string& key, int& rc) {
 DistGrid* Metadata::createESMF(const json& jsonParms, int& rc) const {
 
   vector<string> v_distDims = jsonParms.value("distDims", json::array());
+
   vector<ESMC_I4> v_minIndex = jsonParms.value("minIndex", json::array());
   vector<ESMC_I4> v_maxIndex = jsonParms.value("maxIndex", json::array());
 
@@ -77,9 +109,16 @@ DistGrid* Metadata::createESMF(const json& jsonParms, int& rc) const {
   if (v_maxIndex.size() == 0) {
     v_maxIndex.resize(v_distDims_size);
     for (auto ii=0; ii<v_distDims_size; ii++) {
-      string key = "/dims/" + v_distDims[ii] + "/size";
-      v_maxIndex[ii] = this->get<ESMC_I4>(key, rc);
-      ESMF_CHECKERR_STD("", rc, "Did not get distributed dimension", rc);
+      try {
+        v_maxIndex[ii] = this->storage.at(K_DIMS).at(v_distDims[ii]).at(K_SIZE);
+      }
+      catch (json::out_of_range& e) {
+        ESMF_THROW_JSON(e, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);
+      }
+      catch (...) {
+        ESMF_CHECKERR_STD("ESMF_FAILURE", ESMF_FAILURE,
+          "Did not get max index", rc);
+      }
     }
   }
   InterArray<ESMC_I4> maxIndex(v_maxIndex);
