@@ -162,16 +162,6 @@ void testCreateDistGrid(int& rc, char failMsg[]) {
   }
   rc = ESMF_SUCCESS;
 
-//  ESMF_CHECKERR_STD("", rc, "DistGrid creation failed", rc);
-
-//  ESMC_I8 const* ecount = dist_grid2->getElementCountPTile();
-//  if (*ecount != 64800) {
-//    return finalizeFailure(rc, failMsg, "Wrong number of elements");
-//  }
-
-//  rc = ESMCI::DistGrid::destroy(&dist_grid3);
-//  ESMF_CHECKERR_STD("", rc, "Did not destroy dist grid", rc);
-
   return;
 };
 
