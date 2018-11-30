@@ -66,7 +66,6 @@ DistGrid* Metadata::createESMF(const json& jsonParms, int& rc) const {
   vector<ESMC_I4> v_maxIndex = jsonParms.value("maxIndex", json::array());
 
   size_t v_distDims_size = v_distDims.size();
-  cout << "(x) " << v_distDims_size << endl;
   if (v_minIndex.size() == 0) {
     v_minIndex.resize(v_distDims_size);
     for (auto ii=0; ii<v_distDims_size; ii++) {
@@ -78,7 +77,7 @@ DistGrid* Metadata::createESMF(const json& jsonParms, int& rc) const {
   if (v_maxIndex.size() == 0) {
     v_maxIndex.resize(v_distDims_size);
     for (auto ii=0; ii<v_distDims_size; ii++) {
-      string key = "/dimensions/" + v_distDims[ii] + "/size";
+      string key = "/dims/" + v_distDims[ii] + "/size";
       v_maxIndex[ii] = this->get<ESMC_I4>(key, rc);
       ESMF_CHECKERR_STD("", rc, "Did not get distributed dimension", rc);
     }

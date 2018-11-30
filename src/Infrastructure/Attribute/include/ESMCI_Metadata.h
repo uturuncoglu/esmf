@@ -34,14 +34,30 @@ using namespace std;
 // !CLASS:  Metadata
 //
 // !DESCRIPTION:
-// The code in this file implements the Metadata defined type
-// and methods.
+// The code in this file implements the Metadata defined type and methods.
 //
 //-----------------------------------------------------------------------------
 //
 // !USES:
 
 namespace ESMCI {
+
+//-----------------------------------------------------------------------------
+
+namespace MKEY {
+  const string K_ATTRS = "attrs";
+  const string K_AXIS = "axis";
+  const string K_CALENDAR = "calendar";
+  const string K_DIMS = "dims";
+  const string K_DTYPE = "dtype";
+  const string K_UNITS = "units";
+  const string K_UNLIM = "is_unlimited";
+  const string K_NAME = "name";
+  const string K_SIZE = "size";
+  const string K_VARS = "vars";
+}
+
+//-----------------------------------------------------------------------------
 
 class Metadata : public Attributes {
 
@@ -51,6 +67,8 @@ public:
   DistGrid* createESMF(const json& jsonParms, int& rc) const;
 
 };
+
+//-----------------------------------------------------------------------------
 
 } // namespace
 

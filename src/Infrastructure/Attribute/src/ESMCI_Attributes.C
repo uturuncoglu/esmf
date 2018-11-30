@@ -438,6 +438,7 @@ void broadcastAttributes(ESMCI::Attributes* attrs, int rootPet, int& rc) {
 #undef  ESMC_METHOD
 #define ESMC_METHOD "createJSONPackage()"
 json createJSONPackage(const string& pkgKey, int& rc) {
+  using namespace ESMCI::MKEY;
   rc = ESMF_FAILURE;
 
   json j;

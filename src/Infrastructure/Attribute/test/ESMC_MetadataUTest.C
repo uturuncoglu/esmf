@@ -25,6 +25,7 @@
 #include "ESMCI_VM.h"
 
 using namespace ESMCI;
+using namespace ESMCI::MKEY;  // Contains key vnames for metadata dictionary
 using namespace std;
 
 //=============================================================================
@@ -54,67 +55,66 @@ void test(int& rc, char failMsg[]) {
   json root = createJSONPackage("ESMF:Metadata:Group", rc);
   ESMF_CHECKERR_STD("", rc, "Package creation failed", rc);
 
-  root["attrs"] = "~CF-1.x";
+  root[K_ATTRS] = "~CF-1.x";
 
   vector <string> dimnames = {"dim_lon", "dim_lat", "dim_time", "dim_level",
                               "dim_realization"};
   vector<long int> sizes = {360, 180, 365, 100, 10};
   auto ctr = 0;
   for (auto name : dimnames) {
-    root["dimensions"][name] = createJSONPackage("ESMF:Metadata:Dimension",
+    root[K_DIMS][name] = createJSONPackage("ESMF:Metadata:Dimension",
                                                  rc);
     ESMF_CHECKERR_STD("", rc, "Package creation failed", rc);
 
-    root["dimensions"][name]["name"] = name;
-    root["dimensions"][name]["size"] = sizes[ctr];
-    root["dimensions"][name]["is_unlimited"] = false;
+    root[K_DIMS][name][K_NAME] = name;
+    root[K_DIMS][name][K_SIZE] = sizes[ctr];
+    root[K_DIMS][name][K_UNLIM] = false;
 
     ctr++;
   }
 
   // Time and level are the unlimited dimensions
-  root["dimensions"]["dim_time"]["is_unlimited"] = true;
-  root["dimensions"]["dim_level"]["is_unlimited"] = true;
+  root[K_DIMS]["dim_time"][K_UNLIM] = true;
+  root[K_DIMS]["dim_level"][K_UNLIM] = true;
 
   vector <string> varnames = {"the_xc", "the_yc", "the_time", "the_level",
                               "the_realization", "foo"};
   for (auto name : varnames) {
-    root["variables"][name] = createJSONPackage("ESMF:Metadata:Variable", rc);
+    root[K_VARS][name] = createJSONPackage("ESMF:Metadata:Variable", rc);
     ESMF_CHECKERR_STD("", rc, "Package creation failed", rc);
 
-    root["variables"][name]["name"] = name;
-    root["variables"][name]["dtype"] = "double";
+    root[K_VARS][name][K_NAME] = name;
+    root[K_VARS][name][K_DTYPE] = "double";
   }
 
   // Level has integer meters
-  root["variables"]["the_level"]["dtype"] = "int";
+  root[K_VARS]["the_level"][K_DTYPE] = "int";
 
   // Add the "data" variable which holds the things we care about in a data file
-  root["variables"]["foo"]["dimensions"] =
+  root[K_VARS]["foo"][K_DIMS] =
           json::array({"the_realization", "the_time", "the_level", "the_yc",
                        "the_xc"});
-  root["variables"]["foo"]["dtype"] = "double";
-  root["variables"]["foo"]["attrs"]["grid_mapping_name"] = "latitude_longitude";
+  root[K_VARS]["foo"][K_DTYPE] = "double";
+  root[K_VARS]["foo"][K_ATTRS]["grid_mapping_name"] = "latitude_longitude";
 
-  root["variables"]["the_xc"]["dimensions"].push_back("dim_lon");
-  root["variables"]["the_yc"]["dimensions"].push_back("dim_lat");
-  root["variables"]["the_time"]["dimensions"].push_back("dim_time");
-  root["variables"]["the_level"]["dimensions"].push_back("dim_level");
-  root["variables"]["the_realization"]["dimensions"].push_back(
-          "dim_realization");
+  root[K_VARS]["the_xc"][K_DIMS].push_back("dim_lon");
+  root[K_VARS]["the_yc"][K_DIMS].push_back("dim_lat");
+  root[K_VARS]["the_time"][K_DIMS].push_back("dim_time");
+  root[K_VARS]["the_level"][K_DIMS].push_back("dim_level");
+  root[K_VARS]["the_realization"][K_DIMS].push_back("dim_realization");
 
-  root["variables"]["the_xc"]["attrs"]["axis"] = "X";
-  root["variables"]["the_xc"]["attrs"]["units"] = "degrees_east";
+  root[K_VARS]["the_xc"][K_ATTRS][K_AXIS] = "X";
+  root[K_VARS]["the_xc"][K_ATTRS][K_UNITS] = "degrees_east";
 
-  root["variables"]["the_yc"]["attrs"]["axis"] = "Y";
-  root["variables"]["the_yc"]["attrs"]["units"] = "degrees_north";
+  root[K_VARS]["the_yc"][K_ATTRS][K_AXIS] = "Y";
+  root[K_VARS]["the_yc"][K_ATTRS][K_UNITS] = "degrees_north";
 
-  root["variables"]["the_time"]["attrs"]["axis"] = "T";
-  root["variables"]["the_time"]["attrs"]["units"] = "days since 1900-01-01";
-  root["variables"]["the_time"]["attrs"]["calendar"] = "standard";
+  root[K_VARS]["the_time"][K_ATTRS][K_AXIS] = "T";
+  root[K_VARS]["the_time"][K_ATTRS][K_UNITS] = "days since 1900-01-01";
+  root[K_VARS]["the_time"][K_ATTRS][K_CALENDAR] = "standard";
 
-  root["variables"]["the_level"]["attrs"]["axis"] = "Z";
-  root["variables"]["the_level"]["attrs"]["units"] = "meters";
+  root[K_VARS]["the_level"][K_ATTRS][K_AXIS] = "Z";
+  root[K_VARS]["the_level"][K_ATTRS][K_UNITS] = "meters";
 
 //  cout << root.dump(2) << endl; //tdk:p
 
