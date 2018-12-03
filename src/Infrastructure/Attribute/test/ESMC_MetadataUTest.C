@@ -18,6 +18,7 @@
 
 #include "ESMC.h"
 #include "ESMC_Test.h"
+#include "ESMCI_Array.h"
 #include "ESMCI_Attributes.h"
 #include "ESMCI_LogErr.h"
 #include "ESMCI_Macros.h"
@@ -39,8 +40,18 @@ using namespace std;
 //-----------------------------------------------------------------------------
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "createTestMetadata()"
-json createTestMetadata(int& rc) {
+#define ESMC_METHOD "createTestDistGrid()"
+DistGrid* createTestDistGrid(const Metadata& meta, int& rc) {
+  json jsonParms;
+  jsonParms["distDims"] = {"dim_lon", "dim_lat"};
+  DistGrid* dist_grid = meta.createDistGrid(jsonParms, rc);
+  ESMF_CHECKERR_STD("", rc, "DistGrid creation failed", rc);
+  return dist_grid;
+}
+
+#undef  ESMC_METHOD
+#define ESMC_METHOD "createTestJSONMetadata()"
+json createTestJSONMetadata(int& rc) {
 
   // Create a metadata object mimicking CF-Grid metadata ======================
   //tdk:TEST: add bounds for spatial/time
@@ -119,13 +130,36 @@ void finalizeFailure(int& rc, char failMsg[], string msg) {
 };
 
 #undef  ESMC_METHOD
+#define ESMC_METHOD "testCreateArray()"
+void testCreateArray(int& rc, char failMsg[]) {
+  //tdk:TODO: createArray and associated test are not finished
+  rc = ESMF_FAILURE;
+
+  json root = createTestJSONMetadata(rc);
+  Metadata meta(move(root));
+
+  // Test creation with a DistGrid ============================================
+
+  DistGrid* distGrid = createTestDistGrid(meta, rc);
+
+  json jsonParms = {};
+  meta.createArray(*distGrid, jsonParms, rc);
+  ESMF_CHECKERR_STD("", rc, "Array creation failed", rc);
+
+  rc = ESMCI::DistGrid::destroy(&distGrid);
+  ESMF_CHECKERR_STD("", rc, "Did not destroy dist grid", rc);
+
+  return;
+};
+
+#undef  ESMC_METHOD
 #define ESMC_METHOD "testCreateDistGrid()"
 void testCreateDistGrid(int& rc, char failMsg[]) {
   rc = ESMF_FAILURE;
 
 //  cout << root.dump(2) << endl; //tdk:p
 
-  json root = createTestMetadata(rc);
+  json root = createTestJSONMetadata(rc);
   Metadata meta(move(root));
 
   // Test creating with distributed dimension names ===========================
@@ -135,10 +169,7 @@ void testCreateDistGrid(int& rc, char failMsg[]) {
   //tdk:TEST: test error handling with unsupported parameter type
   //tdk:TEST: test error handling with extra parameters
 
-  json jsonParms;
-  jsonParms["distDims"] = {"dim_lon", "dim_lat"};
-  DistGrid *dist_grid2 = meta.createDistGrid(jsonParms, rc);
-  ESMF_CHECKERR_STD("", rc, "DistGrid creation failed", rc);
+  DistGrid* dist_grid2 = createTestDistGrid(meta, rc);
 
   ESMC_I8 const *ecount = dist_grid2->getElementCountPTile();
   if (*ecount != 64800) {
@@ -206,6 +237,13 @@ int main(void) {
 
   //---------------------------------------------------------------------------
   ESMC_TestStart(__FILE__, __LINE__, 0);
+  //---------------------------------------------------------------------------
+
+  //---------------------------------------------------------------------------
+  //NEX_UTest
+  strcpy(name, "Metadata::createArray()");
+  testCreateArray(rc, failMsg);
+  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //---------------------------------------------------------------------------
 
   //---------------------------------------------------------------------------

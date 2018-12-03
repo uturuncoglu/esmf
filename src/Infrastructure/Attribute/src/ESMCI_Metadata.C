@@ -26,6 +26,7 @@
 #include "ESMCI_Attributes.h"
 #include "ESMCI_Macros.h"
 #include "ESMCI_Metadata.h"
+#include "ESMCI_LocalArray.h"
 #include "ESMCI_LogErr.h"
 #include "ESMCI_Util.h"
 #include "ESMCI_VM.h"
@@ -92,6 +93,33 @@ void handleUnsupported(const json& j, const string& key, int& rc) {
 }
 
 //=============================================================================
+
+#undef ESMC_METHOD
+#define ESMC_METHOD "Metadata::createArray()"
+void Metadata::createArray(const DistGrid& distGrid, const json& jsonParms,
+  int& rc) const {
+
+  ESMC_R8 data[100][365];
+
+  ESMC_TypeKind_Flag tk = ESMC_TYPEKIND_R8;
+  int rank = 2;
+  LocalArrayOrigin oflag = FROM_CPLUSPLUS;
+  const int countsData[] = {100, 365};
+  const int* counts = &countsData[0];
+  void* base_addr = &data[0];
+  CopyFlag docopy = DATA_REF;
+
+//  LocalArray* la = ESMCI::LocalArray::create(tk, rank, &rc);
+  LocalArray* la = ESMCI::LocalArray::create(tk, rank, counts, base_addr,
+          docopy, &rc);
+//  la->print();
+//  la->validate();
+
+//  LocalArray* larrayList[1];
+
+//    return ret;
+
+  };
 
 #undef ESMC_METHOD
 #define ESMC_METHOD "Metadata::createDistGrid()"
