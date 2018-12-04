@@ -73,7 +73,7 @@ class Metadata : public Attributes {
 using Attributes::Attributes; // Required to inherit constructors
 
 public:
-  void createArray(const DistGrid& distGrid, const json& jsonParms,
+  ESMCI::Array* createArray(DistGrid& distGrid, const json& jsonParms,
     int& rc) const;
   DistGrid* createDistGrid(const json& jsonParms, int& rc) const;
 

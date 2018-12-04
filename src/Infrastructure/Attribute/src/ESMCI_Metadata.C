@@ -82,36 +82,160 @@ json createJSONPackage(const string& pkgKey, int& rc) {
 }
 
 #undef ESMC_METHOD
-#define ESMC_METHOD "handleUnsupported"
-void handleUnsupported(const json& j, const string& key, int& rc) {
-  if (j.find(key) != j.end()) {
-    string msg = "'" + key +"' not supported";
-    ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, msg, rc);
+#define ESMC_METHOD "getESMFTypeKind"
+ESMC_TypeKind_Flag getESMFTypeKind(const string& metaType, int& rc) {
+  ESMC_TypeKind_Flag ret;
+  if (metaType == "double") {
+    ret = ESMC_TYPEKIND_R8;
+  } else if (metaType == "int") {
+    ret = ESMC_TYPEKIND_I4;
   } else {
-    rc = ESMF_SUCCESS;
+    string msg = "The type '" + metaType + "' is not supported";
+    ESMF_CHECKERR_STD("ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, msg, rc);
   }
+  return ret;
+}
+
+#undef ESMC_METHOD
+#define ESMC_METHOD "handleUnsupported"
+void handleUnsupported(const json& j, const vector<string>& tokens, int& rc) {
+  for (auto token : tokens) {
+    if (j.find(token) != j.end()) {
+      string msg = "Parameter not supported through JSON: " + token;
+      ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, msg, rc);
+    } else {
+      rc = ESMF_SUCCESS;
+    }
+  }
+}
+
+#undef ESMC_METHOD
+#define ESMC_METHOD "isIn"
+bool isIn(const string& target, const vector<string>& container) {
+  auto it = std::find(container.cbegin(), container.cend(), target);
+  return !(it == container.cend());
 }
 
 //=============================================================================
 
 #undef ESMC_METHOD
 #define ESMC_METHOD "Metadata::createArray()"
-void Metadata::createArray(const DistGrid& distGrid, const json& jsonParms,
+Array* Metadata::createArray(DistGrid& distgrid, const json& jsonParms,
   int& rc) const {
 
-  ESMC_R8 data[100][365];
+  string variableName;
+  try {
+    variableName = jsonParms.at("variableName");
+  }
+  catch (json::out_of_range& e) {
+    ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
+  }
 
-  ESMC_TypeKind_Flag tk = ESMC_TYPEKIND_R8;
-  int rank = 2;
-  LocalArrayOrigin oflag = FROM_CPLUSPLUS;
-  const int countsData[] = {100, 365};
-  const int* counts = &countsData[0];
-  void* base_addr = &data[0];
-  CopyFlag docopy = DATA_REF;
+  vector<string> unsupported = {"decompflagCount", "computationalEdgeUWidthArg",
+                                "computationalLWidthArg", "computationalUWidthArg",
+                                "totalLWidthArg", "totalUWidthArg", "indexflag",
+                                "undistLBoundArg", "undistUBoundArg", "distLBoundArg",
+                                "vm"};
+  handleUnsupported(jsonParms, unsupported, rc);
+
+  //---------------------------------------------------------------------------
+
+  try {
+    const json& var_meta = this->storage.at(K_VARS).at(variableName);
+    vector<string> dim_names = var_meta.at(K_DIMS);
+    vector<string> v_distDims = jsonParms.value("distDims", json::array());
+    int rank = dim_names.size();
+    ESMC_TypeKind_Flag tk = getESMFTypeKind(var_meta[K_DTYPE], rc);
+    ESMF_CHECKERR_STD("", rc, "Did not get TypeKind", rc);
+
+    ArraySpec arrayspec;
+    arrayspec.set(rank, tk);
+
+
+    vector<ESMC_I4> v_distgridToArrayMap(v_distDims.size(), -999);
+    auto ii = 0;
+    for (auto dist_dim_name : v_distDims) {
+      auto it = std::find(dim_names.cbegin(), dim_names.cend(), dist_dim_name);
+      if (it == dim_names.cend()) {
+        auto msg = "Distributed dimension not found: " + dist_dim_name;
+        ESMF_CHECKERR_STD("ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, msg, rc);
+      } else {
+        auto index = std::distance(dim_names.cbegin(), it);
+        v_distgridToArrayMap[ii] = index + 1;  // Use Fortran indexing
+        ii++;
+      }
+    }
+    InterArray<ESMC_I4> distgridToArrayMap(v_distgridToArrayMap);
+//  auto distgridToArrayMap = nullptr;
+
+    auto computationalEdgeLWidthArg = nullptr;
+    auto computationalEdgeUWidthArg = nullptr;
+    auto computationalLWidthArg = nullptr;
+    auto computationalUWidthArg = nullptr;
+    auto totalLWidthArg = nullptr;
+    auto totalUWidthArg = nullptr;
+    ESMC_IndexFlag* indexflag = nullptr;
+    auto distLBoundArg = nullptr;
+
+    size_t n_undist = dim_names.size() - v_distDims.size();
+    vector<ESMC_I4> v_undistLBoundArg(n_undist, 1);
+    InterArray<ESMC_I4> undistLBoundArg(v_undistLBoundArg);
+//  auto undistLBoundArg = nullptr;
+
+//    vector<ESMC_I4> v_undistUBoundArg({4, 20, 3});
+    vector<ESMC_I4> v_undistUBoundArg(n_undist, -999);
+    ii = 0;
+    for (auto dim_name : dim_names) {
+      if (!isIn(dim_name, v_distDims)) {
+        v_undistUBoundArg[ii] = this->storage[K_DIMS][dim_name][K_SIZE];
+        ii++;
+      }
+    }
+    InterArray<ESMC_I4> undistUBoundArg(v_undistUBoundArg);
+//  auto undistUBoundArg = nullptr;
+
+    VM* vm = nullptr;
+
+    ESMCI::Array* arr = ESMCI::Array::create(
+      &arrayspec,
+      &distgrid,
+      &distgridToArrayMap,
+      computationalEdgeLWidthArg,
+      computationalEdgeUWidthArg,
+      computationalLWidthArg,
+      computationalUWidthArg,
+      totalLWidthArg,
+      totalUWidthArg,
+      indexflag,
+      distLBoundArg,
+      &undistLBoundArg,
+      &undistUBoundArg,
+      &rc,
+      vm);
+    ESMF_CHECKERR_STD("", rc, "Array creation failed", rc);
+
+    rc = arr->setName(variableName);
+    ESMF_CHECKERR_STD("", rc, "Setting array name failed", rc);
+
+    return arr;
+  }
+  catch (json::out_of_range& e) {
+    ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
+  }
+
+//  ESMC_R8 data[100][365];
+//
+//  ESMC_TypeKind_Flag tk = ESMC_TYPEKIND_R8;
+//  int rank = 2;
+//  LocalArrayOrigin oflag = FROM_CPLUSPLUS;
+//  const int countsData[] = {100, 365};
+//  const int* counts = &countsData[0];
+//  void* base_addr = &data[0];
+//  CopyFlag docopy = DATA_REF;
 
 //  LocalArray* la = ESMCI::LocalArray::create(tk, rank, &rc);
-  LocalArray* la = ESMCI::LocalArray::create(tk, rank, counts, base_addr,
-          docopy, &rc);
+//  LocalArray* la = ESMCI::LocalArray::create(tk, rank, counts, base_addr,
+//          docopy, &rc);
 //  la->print();
 //  la->validate();
 
@@ -124,6 +248,11 @@ void Metadata::createArray(const DistGrid& distGrid, const json& jsonParms,
 #undef ESMC_METHOD
 #define ESMC_METHOD "Metadata::createDistGrid()"
 DistGrid* Metadata::createDistGrid(const json& jsonParms, int& rc) const {
+
+  vector<string> unsupported = {"regDecomp", "decompflag", "decompflagCount",
+    "regDecompFirstExtra", "regDecompLastExtra", "deLabelList", "indexflag",
+    "connectionList", "delayout", "vm", "indexTK"};
+  handleUnsupported(jsonParms, unsupported, rc);
 
   vector<string> v_distDims = jsonParms.value("distDims", json::array());
 
@@ -156,45 +285,33 @@ DistGrid* Metadata::createDistGrid(const json& jsonParms, int& rc) const {
   }
   InterArray<ESMC_I4> maxIndex(v_maxIndex);
 
-  handleUnsupported(jsonParms, "regDecomp", rc);
   auto regDecomp = nullptr;
-
-  handleUnsupported(jsonParms, "decompflag", rc);
   auto decompflag = nullptr;
-
-  handleUnsupported(jsonParms, "decompflagCount", rc);
   int decompflagCount = 0;
-
-  handleUnsupported(jsonParms, "regDecompFirstExtra", rc);
   auto regDecompFirstExtra = nullptr;
-
-  handleUnsupported(jsonParms, "regDecompLastExtra", rc);
   auto regDecompLastExtra = nullptr;
-
-  handleUnsupported(jsonParms, "deLabelList", rc);
   auto deLabelList = nullptr;
-
-  handleUnsupported(jsonParms, "indexflag", rc);
   auto indexflag = nullptr;
-
-  handleUnsupported(jsonParms, "connectionList", rc);
   auto connectionList = nullptr;
-
-  handleUnsupported(jsonParms, "delayout", rc);
   auto delayout = nullptr;
-
-  handleUnsupported(jsonParms, "vm", rc);
   auto vm = nullptr;
-
-  handleUnsupported(jsonParms, "indexTK", rc);
   ESMC_TypeKind_Flag indexTK = ESMF_NOKIND; //tdk:?: is this okay?
 
-  DistGrid *ret = ESMCI::DistGrid::create(&minIndex, &maxIndex, regDecomp,
-                                          decompflag, decompflagCount,
-                                          regDecompFirstExtra,
-                                          regDecompLastExtra, deLabelList,
-                                          indexflag, connectionList, delayout,
-                                          vm, &rc, indexTK);
+  DistGrid *ret = ESMCI::DistGrid::create(
+    &minIndex,
+    &maxIndex,
+    regDecomp,
+    decompflag,
+    decompflagCount,
+    regDecompFirstExtra,
+    regDecompLastExtra,
+    deLabelList,
+    indexflag,
+    connectionList,
+    delayout,
+    vm,
+    &rc,
+    indexTK);
   ESMF_CHECKERR_STD("", rc, "Did not create DistGrid", rc);
 
   return ret;

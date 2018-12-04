@@ -63,7 +63,7 @@ json createTestJSONMetadata(int& rc) {
 
   vector <string> dimnames = {"dim_lon", "dim_lat", "dim_time", "dim_level",
                               "dim_realization"};
-  vector<long int> sizes = {360, 180, 365, 100, 10};
+  vector<long int> sizes = {360, 180, 4, 20, 3};
   auto ctr = 0;
   for (auto name : dimnames) {
     root[K_DIMS][name] = createJSONPackage("ESMF:Metadata:Dimension",
@@ -96,8 +96,7 @@ json createTestJSONMetadata(int& rc) {
 
   // Add the "data" variable which holds the things we care about in a data file
   root[K_VARS]["foo"][K_DIMS] =
-    json::array({"the_realization", "the_time", "the_level", "the_yc",
-                 "the_xc"});
+    json::array({"dim_realization", "dim_time", "dim_level", "dim_lat", "dim_lon"});
   root[K_VARS]["foo"][K_DTYPE] = "double";
   root[K_VARS]["foo"][K_ATTRS]["grid_mapping_name"] = "latitude_longitude";
 
@@ -132,22 +131,58 @@ void finalizeFailure(int& rc, char failMsg[], string msg) {
 #undef  ESMC_METHOD
 #define ESMC_METHOD "testCreateArray()"
 void testCreateArray(int& rc, char failMsg[]) {
-  //tdk:TODO: createArray and associated test are not finished
   rc = ESMF_FAILURE;
+  bool failed = true;
 
   json root = createTestJSONMetadata(rc);
   Metadata meta(move(root));
 
   // Test creation with a DistGrid ============================================
 
-  DistGrid* distGrid = createTestDistGrid(meta, rc);
+  DistGrid* distgrid = createTestDistGrid(meta, rc);
 
-  json jsonParms = {};
-  meta.createArray(*distGrid, jsonParms, rc);
+  json jsonParms = {{"distDims", {"dim_lon", "dim_lat"}},
+                    {"variableName", "foo"}};
+
+  ESMCI::Array* arr = meta.createArray(*distgrid, jsonParms, rc);
   ESMF_CHECKERR_STD("", rc, "Array creation failed", rc);
 
-  rc = ESMCI::DistGrid::destroy(&distGrid);
-  ESMF_CHECKERR_STD("", rc, "Did not destroy dist grid", rc);
+  const json& smeta = meta.getStorageRef();
+  auto rank_desired = smeta[K_VARS]["foo"][K_DIMS].size();
+  auto rank_actual = arr->getRank();
+  if (rank_desired != rank_actual) {
+    return finalizeFailure(rc, failMsg, "Array is wrong rank");
+  }
+
+  string name_actual(arr->getName());
+  if (name_actual != "foo") {
+    return finalizeFailure(rc, failMsg, "Array has the wrong name");
+  }
+
+  rc = ESMCI::Array::destroy(&arr);
+  ESMF_CHECKERR_STD("", rc, "Problem when destroying array", rc);
+
+  // Test no variable name provided ===========================================
+
+  json badParms = json::object();
+  try {
+    ESMCI::Array *arr2 = meta.createArray(*distgrid, badParms, rc);
+    failed = true;
+  }
+  catch (esmf_attrs_error& e) {
+    if (rc != ESMC_RC_ARG_BAD) {
+      failed = true;
+    } else {
+      failed = false;
+    }
+  }
+
+  if (failed) {
+    return finalizeFailure(rc, failMsg, "Did not handle missing parameter");
+  }
+
+  rc = ESMCI::DistGrid::destroy(&distgrid);
+  ESMF_CHECKERR_STD("", rc, "Problem when destroying distgrid", rc);
 
   return;
 };
