@@ -72,13 +72,14 @@ private:
 class Attributes {
 
 protected:
-  // JSON object store for keys/values managed by this instance
-  json storage = json::object();
+  json storage;  // JSON object store for keys/values managed by this instance
 
   static json::json_pointer formatKey(const string& key, int& rc);
+  virtual void init(void) {this->storage = json::object();}
 
 public:
-  Attributes(void) = default;  // Default constructor
+  Attributes(void) {this->init();}
+//  Attributes(void) = default;  // Default constructor
   ~Attributes(void) = default; // Default destructor
   Attributes(Attributes&&) = delete; // Move constructor
   Attributes(const Attributes&) = delete; // Copy constructor

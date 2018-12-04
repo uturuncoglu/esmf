@@ -74,6 +74,9 @@ using Attributes::Attributes; // Required to inherit constructors
 
 private:
   unsigned int dimCreateCounter = 0;
+
+  virtual void init(void);
+
 public:
   void add(const ESMCI::Array& arr, const json& jsonParms, int& rc);
 
