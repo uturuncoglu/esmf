@@ -182,7 +182,6 @@ Array* Metadata::createArray(DistGrid& distgrid, const json& jsonParms,
     InterArray<ESMC_I4> undistLBoundArg(v_undistLBoundArg);
 //  auto undistLBoundArg = nullptr;
 
-//    vector<ESMC_I4> v_undistUBoundArg({4, 20, 3});
     vector<ESMC_I4> v_undistUBoundArg(n_undist, -999);
     ii = 0;
     for (auto dim_name : dim_names) {
