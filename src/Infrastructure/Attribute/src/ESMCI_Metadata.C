@@ -122,7 +122,7 @@ bool isIn(const string& target, const vector<string>& container) {
 #define ESMC_METHOD "Metadata::createArray()"
 Array* Metadata::createArray(DistGrid& distgrid, const json& jsonParms,
   int& rc) const {
-
+  //tdk:TODO: attributes on array object!
   string variableName;
   try {
     variableName = jsonParms.at("variableName");
@@ -132,10 +132,9 @@ Array* Metadata::createArray(DistGrid& distgrid, const json& jsonParms,
   }
 
   vector<string> unsupported = {"decompflagCount", "computationalEdgeUWidthArg",
-                                "computationalLWidthArg", "computationalUWidthArg",
-                                "totalLWidthArg", "totalUWidthArg", "indexflag",
-                                "undistLBoundArg", "undistUBoundArg", "distLBoundArg",
-                                "vm"};
+    "computationalLWidthArg", "computationalUWidthArg", "totalLWidthArg",
+    "totalUWidthArg", "indexflag", "undistLBoundArg", "undistUBoundArg",
+    "distLBoundArg", "vm"};
   handleUnsupported(jsonParms, unsupported, rc);
 
   //---------------------------------------------------------------------------
@@ -221,28 +220,7 @@ Array* Metadata::createArray(DistGrid& distgrid, const json& jsonParms,
   catch (json::out_of_range& e) {
     ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
   }
-
-//  ESMC_R8 data[100][365];
-//
-//  ESMC_TypeKind_Flag tk = ESMC_TYPEKIND_R8;
-//  int rank = 2;
-//  LocalArrayOrigin oflag = FROM_CPLUSPLUS;
-//  const int countsData[] = {100, 365};
-//  const int* counts = &countsData[0];
-//  void* base_addr = &data[0];
-//  CopyFlag docopy = DATA_REF;
-
-//  LocalArray* la = ESMCI::LocalArray::create(tk, rank, &rc);
-//  LocalArray* la = ESMCI::LocalArray::create(tk, rank, counts, base_addr,
-//          docopy, &rc);
-//  la->print();
-//  la->validate();
-
-//  LocalArray* larrayList[1];
-
-//    return ret;
-
-  };
+}
 
 #undef ESMC_METHOD
 #define ESMC_METHOD "Metadata::createDistGrid()"
@@ -315,6 +293,6 @@ DistGrid* Metadata::createDistGrid(const json& jsonParms, int& rc) const {
 
   return ret;
 
-};
+}
 
 }  // ESMCI
