@@ -119,6 +119,14 @@ bool isIn(const string& target, const vector<string>& container) {
 //=============================================================================
 
 #undef ESMC_METHOD
+#define ESMC_METHOD "add(<Array>)"
+void add(const ESMCI::Array& arr, const Metadata& auxMeta, int& rc) {
+  //tdk:TODO:implement and test
+  string name(arr.getName());
+  auto rank = arr.getRank();
+}
+
+#undef ESMC_METHOD
 #define ESMC_METHOD "Metadata::createArray()"
 Array* Metadata::createArray(DistGrid& distgrid, const json& jsonParms,
   int& rc) const {
