@@ -81,6 +81,59 @@ json createJSONPackage(const string& pkgKey, int& rc) {
   return j;
 }
 
+#undef  ESMC_METHOD
+#define ESMC_METHOD "getArrayShape()"
+vector<unsigned long int> getArrayShape(const Array& arr, int& rc) {
+  // Notes:
+  //   * Returns a C-order vector.
+  //   * Distributed dimension sizes should always come from DistGrid.
+  //tdk:TEST: multiple DEs, multiple PETs
+  rc = ESMF_FAILURE;
+
+  DistGrid* distgrid = arr.getDistGrid();
+//  int dg_dim_count = distgrid->getDimCount();
+  int rank = arr.getRank();
+
+  const int* arr2dg_map = arr.getArrayToDistGridMap(); // F-order & indexing
+//  const int* dg2arr_map = arr.getDistGridToArrayMap(); // F-order & indexing
+
+  const int* undistLBound = arr.getUndistLBound();
+  const int* undistUBound = arr.getUndistUBound();
+//  const int* totalLBound = arr.getTotalLBound();
+//  const int* totalUBound = arr.getTotalUBound();
+
+  int const* maxIndexPDimPTile = distgrid->getMaxIndexPDimPTile();
+
+  vector<unsigned long int> ret(rank, 0);
+  for (auto ii=rank-1; ii>=0; ii--) {
+    if (arr2dg_map[ii] == 0) {
+      ret[ii] = undistUBound[ii];
+    } else {
+      ret[ii] = maxIndexPDimPTile[arr2dg_map[ii]-1];
+    }
+  }
+
+  rc = ESMF_SUCCESS;
+  return ret;
+
+//  for (auto ii=0; ii<dg_dim_count; ii++) {
+//    cout << "(x) totalUBound=" << totalUBound[ii] << "; ii=" << ii << endl;
+//  }
+//  for (auto ii=0; ii<dg_dim_count; ii++) {
+//    cout << "(x) maxIndexPDimPTile=" << maxIndexPDimPTile[ii] << "; ii=" << ii << endl;
+//  }
+//
+//  for (auto ii=0; ii<(rank-dg_dim_count); ii++) {
+//    cout << "(x) undistUBound=" << undistUBound[ii] << "; ii=" << ii << endl;
+//  }
+//  for (auto ii=0; ii<rank; ii++) {
+//    cout << "(x) arr2dg_map=" << arr2dg_map[ii] << "; ii=" << ii << endl;
+//  }
+//  for (auto ii=0; ii<rank; ii++) {
+//    cout << "(x) dg2arr_map=" << dg2arr_map[ii] << "; ii=" << ii << endl;
+//  }
+}
+
 #undef ESMC_METHOD
 #define ESMC_METHOD "getESMFTypeKind"
 ESMC_TypeKind_Flag getESMFTypeKind(const string& metaType, int& rc) {
@@ -126,11 +179,41 @@ void Metadata::init(void) {
 }
 
 #undef ESMC_METHOD
-#define ESMC_METHOD "add(<Array>)"
-void add(const ESMCI::Array& arr, const Metadata& auxMeta, int& rc) {
-  //tdk:TODO:implement and test
+#define ESMC_METHOD "update(<Array>)"
+void Metadata::update(const ESMCI::Array& arr, int& rc) {
+  // Notes:
+  //   * If dimensions do not match the array, then new ones are added.
+  //tdk:ORDER
   string name(arr.getName());
-  auto rank = arr.getRank();
+  int rank = arr.getRank();
+
+  json& var_meta = this->getOrCreateVariable(name, rc);
+  ESMF_CHECKERR_STD("", rc, "Did not get variable metadata", rc);
+
+  auto rank_meta = var_meta[K_DIMS].size();
+  if (rank_meta != rank) {
+    if (rank_meta != 0) {
+      var_meta.erase(var_meta.find(K_DIMS));
+      var_meta[K_DIMS] = json::array();
+    }
+    json& dims = var_meta[K_DIMS];
+    auto dimnum = this->dimCreateCounter;
+    for (auto ii=0; ii<rank; ii++) {
+      dims.push_back("esmf_dim" + to_string(dimnum));
+      this->dimCreateCounter++;
+    }
+    //tdk:RESUME: need to get sizes out of array...
+  }
+
+//  if (has_var && !force) {
+//    auto msg = "Variable already in map and force is false: " + name;
+//    ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, msg, rc);
+//  }
+//  if (!has_var || force) {
+//    this->storage[K_VARS][name] = createJSONPackage("ESMF:Metadata:Variable", rc);
+//    ESMF_CHECKERR_STD("", rc, "Did not get variable package", rc);
+//  }
+
 }
 
 #undef ESMC_METHOD
@@ -308,6 +391,64 @@ DistGrid* Metadata::createDistGrid(const json& jsonParms, int& rc) const {
 
   return ret;
 
+}
+
+#undef ESMC_METHOD
+#define ESMC_METHOD "getDimensionSize()"
+unsigned long int Metadata::getDimensionSize(const string& name, int& rc) {
+  try {
+    unsigned long int ret = this->storage.at(K_DIMS).at(name).at(K_SIZE);
+    rc = ESMF_SUCCESS;
+    return ret;
+  }
+  catch (json::out_of_range& e) {
+    ESMF_THROW_JSON(e, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);
+  }
+}
+
+#undef ESMC_METHOD
+#define ESMC_METHOD "getOrCreateVariable()"
+json& Metadata::getOrCreateVariable(const string& name, int& rc) {
+  rc = ESMF_FAILURE;
+
+  json& vars_meta = this->storage[K_VARS];
+  auto it = vars_meta.find(name);
+  if (it == vars_meta.end()) {
+    vars_meta[name] = createJSONPackage("ESMF:Metadata:Variable", rc);
+    ESMF_CHECKERR_STD("", rc, "Did not create variable package", rc);
+  }
+  json& ret = vars_meta[name];
+
+  rc = ESMF_SUCCESS;
+  return ret;
+}
+
+#undef ESMC_METHOD
+#define ESMC_METHOD "getVariableShape()"
+vector<unsigned long int> Metadata::getVariableShape(const string& name, int& rc) {
+  //tdk:TEST: dimensionless variable
+  rc = ESMF_FAILURE;
+
+  try {
+    json::array_t* dims = this->storage.at(K_VARS).at(name).at(K_DIMS).get_ptr<json::array_t*>();
+    vector<unsigned long int> ret(dims->size(), 0);
+    for (auto ii=0; ii<ret.size(); ii++) {
+      ret[ii] = this->getDimensionSize(dims[0][ii], rc);
+      ESMF_CHECKERR_STD("", rc, "Did not get dimension size", rc);
+    }
+    rc = ESMF_SUCCESS;
+    return ret;
+  }
+  catch (json::out_of_range& e) {
+    ESMF_THROW_JSON(e, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);
+  }
+}
+
+#undef ESMC_METHOD
+#define ESMC_METHOD "hasVariable()"
+bool Metadata::hasVariable(const string& name) {
+  json& vars_meta = this->storage[K_VARS];
+  return vars_meta.find(name) != vars_meta.end();
 }
 
 }  // ESMCI

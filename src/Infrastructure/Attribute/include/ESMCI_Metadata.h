@@ -65,6 +65,7 @@ namespace MKEY {
 //-----------------------------------------------------------------------------
 
 json createJSONPackage(const string& pkgKey, int& rc);
+vector<unsigned long int> getArrayShape(const Array& arr, int& rc);
 
 //-----------------------------------------------------------------------------
 
@@ -78,16 +79,19 @@ private:
   virtual void init(void);
 
 public:
-  void add(const ESMCI::Array& arr, const json& jsonParms, int& rc);
-
   ESMCI::Array* createArray(DistGrid& distGrid, const json& jsonParms,
     int& rc) const;
   DistGrid* createDistGrid(const json& jsonParms, int& rc) const;
 
-  json& getVariable(const string& name, int& rc) {
+  unsigned long int getDimensionSize(const string& name, int& rc);
 
-  }
+  json& getOrCreateVariable(const string& name, int& rc);
 
+  vector<unsigned long int> getVariableShape(const string& name, int& rc);
+
+  bool hasVariable(const string& name);
+
+  void update(const ESMCI::Array& arr, int& rc);
 };
 
 //-----------------------------------------------------------------------------

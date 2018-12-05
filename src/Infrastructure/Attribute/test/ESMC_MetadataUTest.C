@@ -61,9 +61,12 @@ json createTestJSONMetadata(int& rc) {
 
   root[K_ATTRS]["Convention"] = "~CF-1.x";
 
-  vector <string> dimnames = {"dim_lon", "dim_lat", "dim_time", "dim_level",
-                              "dim_realization"};
-  vector<long int> sizes = {360, 180, 4, 20, 3};
+//  vector <string> dimnames = {"dim_lon", "dim_lat", "dim_time", "dim_level",
+//                              "dim_realization"};
+  vector<string> dimnames = {"dim_realization", "dim_time", "dim_level",
+                             "dim_lat", "dim_lon"};
+//  vector<long int> sizes = {360, 180, 4, 20, 3};
+  vector<long int> sizes = {3, 20, 4, 180, 360};
   auto ctr = 0;
   for (auto name : dimnames) {
     root[K_DIMS][name] = createJSONPackage("ESMF:Metadata:Dimension",
@@ -82,7 +85,7 @@ json createTestJSONMetadata(int& rc) {
   root[K_DIMS]["dim_level"][K_UNLIM] = true;
 
   vector <string> varnames = {"the_xc", "the_yc", "the_time", "the_level",
-                              "the_realization", "foo"};
+                              "the_realization", "foo", "dimensionless"};
   for (auto name : varnames) {
     root[K_VARS][name] = createJSONPackage("ESMF:Metadata:Variable", rc);
     ESMF_CHECKERR_STD("", rc, "Package creation failed", rc);
@@ -240,8 +243,7 @@ void testCreateJSONPackage(int& rc, char failMsg[]) {
   json jattrs = createJSONPackage(pkgKey, rc);
   ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 
-  //---------------------------------------------------------------------------
-  // Test an unsupported key
+  // Test an unsupported key ==================================================
 
   bool failed = true;
   string badPkgKey = "Does:Not:Exist";
@@ -260,6 +262,48 @@ void testCreateJSONPackage(int& rc, char failMsg[]) {
   rc = ESMF_SUCCESS;
   return;
 }
+
+#undef  ESMC_METHOD
+#define ESMC_METHOD "testGetArrayShape()"
+void testGetArrayShape(int& rc, char failMsg[]) {
+  rc = ESMF_FAILURE;
+
+  json root = createTestJSONMetadata(rc);
+  Metadata meta(move(root));
+
+  DistGrid* distgrid = createTestDistGrid(meta, rc);
+
+  json jsonParms = {{"distDims", {"dim_lon", "dim_lat"}},
+                    {"variableName", "foo"}};
+
+  ESMCI::Array* arr = meta.createArray(*distgrid, jsonParms, rc);
+  ESMF_CHECKERR_STD("", rc, "Array creation failed", rc);
+
+  auto shp = getArrayShape(*arr, rc);
+  ESMF_CHECKERR_STD("", rc, "Array get shape failed", rc);
+
+  auto actual = meta.getVariableShape("foo", rc);
+  ESMF_CHECKERR_STD("", rc, "Did not get variable shape", rc);
+
+//  for (auto e : shp) {cout << e << endl;}
+//  for (auto e : actual) {cout << e << endl;}
+
+  for (auto ii=0; ii<shp.size(); ii++) {
+    if (shp[ii] != actual[ii]) {
+      return finalizeFailure(rc, failMsg, "Shapes not equal");
+    }
+  }
+
+  rc = ESMCI::Array::destroy(&arr);
+  ESMF_CHECKERR_STD("", rc, "Problem when destroying array", rc);
+  rc = ESMCI::DistGrid::destroy(&distgrid);
+  ESMF_CHECKERR_STD("", rc, "Problem when destroying distgrid", rc);
+
+  rc = ESMF_SUCCESS;
+  return;
+}
+
+//-----------------------------------------------------------------------------
 
 int main(void) {
 
@@ -290,8 +334,15 @@ int main(void) {
 
   //---------------------------------------------------------------------------
   //NEX_UTest
-  strcpy(name, "Metadata::createJSONPackage()");
+  strcpy(name, "createJSONPackage()");
   testCreateJSONPackage(rc, failMsg);
+  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
+  //---------------------------------------------------------------------------
+
+  //---------------------------------------------------------------------------
+  //NEX_UTest
+  strcpy(name, "getArrayShape()");
+  testGetArrayShape(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //---------------------------------------------------------------------------
 
