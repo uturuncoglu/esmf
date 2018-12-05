@@ -97,7 +97,7 @@ vector<unsigned long int> getArrayShape(const Array& arr, int& rc) {
   const int* arr2dg_map = arr.getArrayToDistGridMap(); // F-order & indexing
 //  const int* dg2arr_map = arr.getDistGridToArrayMap(); // F-order & indexing
 
-  const int* undistLBound = arr.getUndistLBound();
+//  const int* undistLBound = arr.getUndistLBound();
   const int* undistUBound = arr.getUndistUBound();
 //  const int* totalLBound = arr.getTotalLBound();
 //  const int* totalUBound = arr.getTotalUBound();
