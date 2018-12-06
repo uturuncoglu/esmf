@@ -418,7 +418,7 @@ json Metadata::getDimensionSizes(int& rc) {
 
 #undef ESMC_METHOD
 #define ESMC_METHOD "getDimensionSize()"
-unsigned long int Metadata::getDimensionSize(const string& name, int& rc) {
+dimsize_t Metadata::getDimensionSize(const string& name, int& rc) {
   try {
     unsigned long int ret = this->storage.at(K_DIMS).at(name).at(K_SIZE);
     rc = ESMF_SUCCESS;
@@ -448,13 +448,13 @@ json& Metadata::getOrCreateVariable(const string& name, int& rc) {
 
 #undef ESMC_METHOD
 #define ESMC_METHOD "getVariableShape()"
-vector<unsigned long int> Metadata::getVariableShape(const string& name, int& rc) {
+vector<dimsize_t> Metadata::getVariableShape(const string& name, int& rc) {
   //tdk:TEST: dimensionless variable
   rc = ESMF_FAILURE;
 
   try {
     json::array_t* dims = this->storage.at(K_VARS).at(name).at(K_DIMS).get_ptr<json::array_t*>();
-    vector<unsigned long int> ret(dims->size(), 0);
+    vector<dimsize_t> ret(dims->size(), 0);
     for (auto ii=0; ii<ret.size(); ii++) {
       ret[ii] = this->getDimensionSize(dims[0][ii], rc);
       ESMF_CHECKERR_STD("", rc, "Did not get dimension size", rc);

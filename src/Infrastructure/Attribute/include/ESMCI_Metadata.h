@@ -45,6 +45,8 @@ namespace ESMCI {
 
 //-----------------------------------------------------------------------------
 
+typedef unsigned long int dimsize_t;
+
 namespace MKEY {
   const string K_ATTRS = "attrs";
   const string K_AXIS = "axis";
@@ -74,24 +76,17 @@ class Metadata : public Attributes {
 using Attributes::Attributes; // Required to inherit constructors
 
 private:
-  unsigned int dimCreateCounter = 0;
-
   virtual void init(void);
 
 public:
   ESMCI::Array* createArray(DistGrid& distGrid, const json& jsonParms,
     int& rc) const;
   DistGrid* createDistGrid(const json& jsonParms, int& rc) const;
-
   json getDimensionSizes(int& rc);
-  unsigned long int getDimensionSize(const string& name, int& rc);
-
+  dimsize_t getDimensionSize(const string& name, int& rc);
   json& getOrCreateVariable(const string& name, int& rc);
-
-  vector<unsigned long int> getVariableShape(const string& name, int& rc);
-
+  vector<dimsize_t> getVariableShape(const string& name, int& rc);
   bool hasVariable(const string& name);
-
   void update(const ESMCI::Array& arr, const vector<string>* dimnames, int& rc);
 };
 
