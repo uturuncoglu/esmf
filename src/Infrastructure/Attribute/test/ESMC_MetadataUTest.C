@@ -321,8 +321,24 @@ void testUpdate(int& rc, char failMsg[]) {
 
   // Essentially an identity operation. The array is being added to the metadata
   // that created it. Nothing should change in the metadata object.
-  meta.update(*arr, rc);
+  auto mref = meta.getStorageRef();
+  vector<string> dimnames = mref[K_VARS]["foo"][K_DIMS];
+  json desired = mref;  // Copy original for comparison.
+  meta.update(*arr, &dimnames, rc);
   ESMF_CHECKERR_STD("", rc, "Update with array failed", rc);
+
+  if (desired != meta.getStorageRef()) {
+    return finalizeFailure(rc, failMsg, "Metadata should be equal");
+  }
+
+  // Test creating dimensions when the array is added =========================
+
+  meta.update(*arr, nullptr, rc);
+  ESMF_CHECKERR_STD("", rc, "Update with array failed", rc);
+
+  if (desired == meta.getStorageRef()) {
+    return finalizeFailure(rc, failMsg, "Metadata should not be equal");
+  }
 
   cout << "(x) " << meta.dump(2, rc) << endl;
 

@@ -92,7 +92,7 @@ public:
 
   bool hasVariable(const string& name);
 
-  void update(const ESMCI::Array& arr, int& rc);
+  void update(const ESMCI::Array& arr, const vector<string>* dimnames, int& rc);
 };
 
 //-----------------------------------------------------------------------------

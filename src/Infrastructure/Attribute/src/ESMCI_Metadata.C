@@ -180,97 +180,49 @@ void Metadata::init(void) {
 
 #undef ESMC_METHOD
 #define ESMC_METHOD "update(<Array>)"
-void Metadata::update(const ESMCI::Array& arr, int& rc) {
+void Metadata::update(const ESMCI::Array& arr, const vector<string>* dimnames, int& rc) {
   // Notes:
   //   * If dimensions do not match the array, then new ones are added.
   //tdk:ORDER
+  rc = ESMF_FAILURE;
+
   string name(arr.getName());
   int rank = arr.getRank();
 
   json& var_meta = this->getOrCreateVariable(name, rc);
   ESMF_CHECKERR_STD("", rc, "Did not get variable metadata", rc);
 
-  // Compare incoming array dimension sizes with any dimensions already on the
-  // metadata object. Add any new dimensions if the size on the array differs
-  // from the dimension size in the metadata. Re-use any existing dimensions
-  // with matching sizes.
-
-  auto varshp = this->getVariableShape(name, rc);
-  ESMF_CHECKERR_STD("", rc, "Did not get variable shape", rc);
-
-  auto arrshp = getArrayShape(arr, rc);
-  ESMF_CHECKERR_STD("", rc, "Did not get array shape", rc);
-
-  json dimsizes = this->getDimensionSizes(rc);
-  ESMF_CHECKERR_STD("", rc, "Did not get array shape", rc);
-
-  //tdk:TODO: typedef the dimension size type
-  vector<unsigned long int> diffindexes;
-  bool isequal = true;
-  if (varshp.size() != arrshp.size()) {
-    isequal = false;
+  if (dimnames) {
+    var_meta[K_DIMS] = *dimnames;
   } else {
-    diffindexes.reserve(varshp.size());
-    for (auto ii=0; ii<varshp.size(); ii++) {
-      if (varshp[ii] != arrshp[ii]) {
-        isequal = false;
-        diffindexes.push_back(ii);
-      }
-    }
-  }
-
-  if (!isequal) {
-    json dimsizes = this->getDimensionSizes(rc);
+    // Generate new dimensions based on the array shape.
+    auto arrshp = getArrayShape(arr, rc);
     ESMF_CHECKERR_STD("", rc, "Did not get array shape", rc);
 
-    vector<string> dimnames(arrshp.size(), "");
-    for (auto ii=0; ii<dimnames.size(); ii++) {
-      // Search for a dimension matching that size.
-
-      for (json::const_iterator it=dimsizes.cbegin(); it!=dimsizes.cend(); it++) {
-        if (it.value() == arrshp[0]) {
-
-        }
-      }
-    }
-
-    for (auto dd : diffindexes) {
-      auto desiredsize = arrshp[dd];
-
-      // Search for a dimension matching that size.
-      string matchingdimname = "";
-      for (json::const_iterator it=dimsizes.cbegin(); it!=dimsizes.cend(); it++) {
-        if (it.value() == desiredsize) {
-          matchingdimname = it.key();
-        }
-      }
-    }
-  }
-
-  auto rank_meta = var_meta[K_DIMS].size();
-  if (rank_meta != rank) {
-    if (rank_meta != 0) {
-      var_meta.erase(var_meta.find(K_DIMS));
+    if (var_meta[K_DIMS].size() != 0) {
       var_meta[K_DIMS] = json::array();
     }
     json& dims = var_meta[K_DIMS];
-    auto dimnum = this->dimCreateCounter;
-    for (auto ii=0; ii<rank; ii++) {
-      dims.push_back("esmf_dim" + to_string(dimnum));
-      this->dimCreateCounter++;
+
+    json& dimsmeta = this->storage[K_DIMS];
+    string newdimname;
+    auto dim_ctr = 0;
+    for (auto ii=0; ii<arrshp.size(); ii++) {
+      //tdk:TODO: turn dimension prefix into constant or parameter
+      newdimname = "esmf_" + name + "_dim" + to_string(dim_ctr);
+      dims.push_back(newdimname);
+      dim_ctr++;
+
+      dimsmeta[newdimname] = createJSONPackage("ESMF:Metadata:Dimension", rc);
+      ESMF_CHECKERR_STD("", rc, "Did not create dimension package", rc);
+
+      json& currdim = dimsmeta[newdimname];
+      currdim[K_NAME] = newdimname;
+      currdim[K_SIZE] = arrshp[ii];
     }
-    //tdk:RESUME: need to get sizes out of array...
   }
 
-//  if (has_var && !force) {
-//    auto msg = "Variable already in map and force is false: " + name;
-//    ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, msg, rc);
-//  }
-//  if (!has_var || force) {
-//    this->storage[K_VARS][name] = createJSONPackage("ESMF:Metadata:Variable", rc);
-//    ESMF_CHECKERR_STD("", rc, "Did not get variable package", rc);
-//  }
-
+  rc = ESMF_SUCCESS;
 }
 
 #undef ESMC_METHOD
