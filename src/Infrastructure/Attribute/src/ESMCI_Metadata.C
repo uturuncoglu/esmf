@@ -466,7 +466,7 @@ vector<dimsize_t> Metadata::getVariableShape(const string& name, int& rc) {
   try {
     json::array_t* dims = this->storage.at(K_VARS).at(name).at(K_DIMS).get_ptr<json::array_t*>();
     vector<dimsize_t> ret(dims->size(), 0);
-    for (auto ii=0; ii<ret.size(); ii++) {
+    for (dimsize_t ii=0; ii<ret.size(); ii++) {
       ret[ii] = this->getDimensionSize(dims[0][ii], rc);
       ESMF_CHECKERR_STD("", rc, "Did not get dimension size", rc);
     }
