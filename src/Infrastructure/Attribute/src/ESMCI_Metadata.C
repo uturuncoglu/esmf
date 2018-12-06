@@ -190,6 +190,63 @@ void Metadata::update(const ESMCI::Array& arr, int& rc) {
   json& var_meta = this->getOrCreateVariable(name, rc);
   ESMF_CHECKERR_STD("", rc, "Did not get variable metadata", rc);
 
+  // Compare incoming array dimension sizes with any dimensions already on the
+  // metadata object. Add any new dimensions if the size on the array differs
+  // from the dimension size in the metadata. Re-use any existing dimensions
+  // with matching sizes.
+
+  auto varshp = this->getVariableShape(name, rc);
+  ESMF_CHECKERR_STD("", rc, "Did not get variable shape", rc);
+
+  auto arrshp = getArrayShape(arr, rc);
+  ESMF_CHECKERR_STD("", rc, "Did not get array shape", rc);
+
+  json dimsizes = this->getDimensionSizes(rc);
+  ESMF_CHECKERR_STD("", rc, "Did not get array shape", rc);
+
+  //tdk:TODO: typedef the dimension size type
+  vector<unsigned long int> diffindexes;
+  bool isequal = true;
+  if (varshp.size() != arrshp.size()) {
+    isequal = false;
+  } else {
+    diffindexes.reserve(varshp.size());
+    for (auto ii=0; ii<varshp.size(); ii++) {
+      if (varshp[ii] != arrshp[ii]) {
+        isequal = false;
+        diffindexes.push_back(ii);
+      }
+    }
+  }
+
+  if (!isequal) {
+    json dimsizes = this->getDimensionSizes(rc);
+    ESMF_CHECKERR_STD("", rc, "Did not get array shape", rc);
+
+    vector<string> dimnames(arrshp.size(), "");
+    for (auto ii=0; ii<dimnames.size(); ii++) {
+      // Search for a dimension matching that size.
+
+      for (json::const_iterator it=dimsizes.cbegin(); it!=dimsizes.cend(); it++) {
+        if (it.value() == arrshp[0]) {
+
+        }
+      }
+    }
+
+    for (auto dd : diffindexes) {
+      auto desiredsize = arrshp[dd];
+
+      // Search for a dimension matching that size.
+      string matchingdimname = "";
+      for (json::const_iterator it=dimsizes.cbegin(); it!=dimsizes.cend(); it++) {
+        if (it.value() == desiredsize) {
+          matchingdimname = it.key();
+        }
+      }
+    }
+  }
+
   auto rank_meta = var_meta[K_DIMS].size();
   if (rank_meta != rank) {
     if (rank_meta != 0) {
@@ -391,6 +448,20 @@ DistGrid* Metadata::createDistGrid(const json& jsonParms, int& rc) const {
 
   return ret;
 
+}
+
+#undef ESMC_METHOD
+#define ESMC_METHOD "getDimensionSizes()"
+json Metadata::getDimensionSizes(int& rc) {
+  rc = ESMF_FAILURE;
+  json ret;
+
+  const json& dims = this->storage[K_DIMS];
+  for (json::const_iterator it = dims.cbegin(); it!=dims.cend(); it++ ) {
+    ret[it.key()] = this->storage[K_DIMS][it.key()][K_SIZE];
+  }
+
+  rc = ESMF_SUCCESS;
 }
 
 #undef ESMC_METHOD

@@ -83,6 +83,7 @@ public:
     int& rc) const;
   DistGrid* createDistGrid(const json& jsonParms, int& rc) const;
 
+  json getDimensionSizes(int& rc);
   unsigned long int getDimensionSize(const string& name, int& rc);
 
   json& getOrCreateVariable(const string& name, int& rc);

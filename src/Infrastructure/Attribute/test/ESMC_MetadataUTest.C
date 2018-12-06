@@ -303,6 +303,38 @@ void testGetArrayShape(int& rc, char failMsg[]) {
   return;
 }
 
+#undef  ESMC_METHOD
+#define ESMC_METHOD "testUpdate()"
+void testUpdate(int& rc, char failMsg[]) {
+  rc = ESMF_FAILURE;
+
+  json root = createTestJSONMetadata(rc);
+  Metadata meta(move(root));
+
+  DistGrid* distgrid = createTestDistGrid(meta, rc);
+
+  json jsonParms = {{"distDims", {"dim_lon", "dim_lat"}},
+                    {"variableName", "foo"}};
+
+  ESMCI::Array* arr = meta.createArray(*distgrid, jsonParms, rc);
+  ESMF_CHECKERR_STD("", rc, "Array creation failed", rc);
+
+  // Essentially an identity operation. The array is being added to the metadata
+  // that created it. Nothing should change in the metadata object.
+  meta.update(*arr, rc);
+  ESMF_CHECKERR_STD("", rc, "Update with array failed", rc);
+
+  cout << "(x) " << meta.dump(2, rc) << endl;
+
+  rc = ESMCI::Array::destroy(&arr);
+  ESMF_CHECKERR_STD("", rc, "Problem when destroying array", rc);
+  rc = ESMCI::DistGrid::destroy(&distgrid);
+  ESMF_CHECKERR_STD("", rc, "Problem when destroying distgrid", rc);
+
+  rc = ESMF_FAILURE;
+  return;
+}
+
 //-----------------------------------------------------------------------------
 
 int main(void) {
@@ -329,6 +361,13 @@ int main(void) {
   //NEX_UTest
   strcpy(name, "Metadata::createDistGrid()");
   testCreateDistGrid(rc, failMsg);
+  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
+  //---------------------------------------------------------------------------
+
+  //---------------------------------------------------------------------------
+  //NEX_UTest
+  strcpy(name, "Metadata::update(<Array>)");
+  testUpdate(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //---------------------------------------------------------------------------
 
