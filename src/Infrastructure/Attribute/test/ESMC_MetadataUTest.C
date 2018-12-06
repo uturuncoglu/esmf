@@ -151,8 +151,8 @@ void testCreateArray(int& rc, char failMsg[]) {
   ESMF_CHECKERR_STD("", rc, "Array creation failed", rc);
 
   const json& smeta = meta.getStorageRef();
-  auto rank_desired = smeta[K_VARS]["foo"][K_DIMS].size();
-  auto rank_actual = arr->getRank();
+  int rank_desired = smeta[K_VARS]["foo"][K_DIMS].size();
+  int rank_actual = arr->getRank();
   if (rank_desired != rank_actual) {
     return finalizeFailure(rc, failMsg, "Array is wrong rank");
   }
@@ -288,7 +288,7 @@ void testGetArrayShape(int& rc, char failMsg[]) {
 //  for (auto e : shp) {cout << e << endl;}
 //  for (auto e : actual) {cout << e << endl;}
 
-  for (auto ii=0; ii<shp.size(); ii++) {
+  for (std::size_t ii=0; ii<shp.size(); ii++) {
     if (shp[ii] != actual[ii]) {
       return finalizeFailure(rc, failMsg, "Shapes not equal");
     }
@@ -340,14 +340,12 @@ void testUpdate(int& rc, char failMsg[]) {
     return finalizeFailure(rc, failMsg, "Metadata should not be equal");
   }
 
-  cout << "(x) " << meta.dump(2, rc) << endl;
-
   rc = ESMCI::Array::destroy(&arr);
   ESMF_CHECKERR_STD("", rc, "Problem when destroying array", rc);
   rc = ESMCI::DistGrid::destroy(&distgrid);
   ESMF_CHECKERR_STD("", rc, "Problem when destroying distgrid", rc);
 
-  rc = ESMF_FAILURE;
+  rc = ESMF_SUCCESS;
   return;
 }
 

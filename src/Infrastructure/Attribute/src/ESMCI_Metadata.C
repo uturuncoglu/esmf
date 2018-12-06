@@ -83,7 +83,7 @@ json createJSONPackage(const string& pkgKey, int& rc) {
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "getArrayShape()"
-vector<unsigned long int> getArrayShape(const Array& arr, int& rc) {
+vector<dimsize_t> getArrayShape(const Array& arr, int& rc) {
   // Notes:
   //   * Returns a C-order vector.
   //   * Distributed dimension sizes should always come from DistGrid.
@@ -104,7 +104,7 @@ vector<unsigned long int> getArrayShape(const Array& arr, int& rc) {
 
   int const* maxIndexPDimPTile = distgrid->getMaxIndexPDimPTile();
 
-  vector<unsigned long int> ret(rank, 0);
+  vector<dimsize_t> ret(rank, 0);
   for (auto ii=rank-1; ii>=0; ii--) {
     if (arr2dg_map[ii] == 0) {
       ret[ii] = undistUBound[ii];
@@ -180,9 +180,8 @@ void Metadata::init(void) {
 
 #undef ESMC_METHOD
 #define ESMC_METHOD "update(<Array>)"
-void Metadata::update(const ESMCI::Array& arr, const vector<string>* dimnames, int& rc) {
-  // Notes:
-  //   * If dimensions do not match the array, then new ones are added.
+void Metadata::update(const ESMCI::Array& arr, const vector<string>* dimnames,
+  int& rc) {
   //tdk:ORDER
   rc = ESMF_FAILURE;
 
@@ -192,27 +191,39 @@ void Metadata::update(const ESMCI::Array& arr, const vector<string>* dimnames, i
   json& var_meta = this->getOrCreateVariable(name, rc);
   ESMF_CHECKERR_STD("", rc, "Did not get variable metadata", rc);
 
+  auto arrshp = getArrayShape(arr, rc);
+  ESMF_CHECKERR_STD("", rc, "Did not get array shape", rc);
+
   if (dimnames) {
+    json dimsizes = this->getDimensionSizes(rc);
+    ESMF_CHECKERR_STD("", rc, "Did not get dimension sizes", rc);
+
+    const vector<string>& r_dimnames = *dimnames;
+    for (auto ii=0; ii<rank; ii++) {
+      if (dimsizes[r_dimnames[ii]] != arrshp[ii]) {
+        auto msg = "Provided dimension names have sizes in current storage that "
+                   "conflict with the array size.";
+        ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, msg, rc);
+      }
+    }
+
     var_meta[K_DIMS] = *dimnames;
   } else {
     // Generate new dimensions based on the array shape.
-    auto arrshp = getArrayShape(arr, rc);
-    ESMF_CHECKERR_STD("", rc, "Did not get array shape", rc);
-
-    if (var_meta[K_DIMS].size() != 0) {
-      var_meta[K_DIMS] = json::array();
-    }
+      if (var_meta[K_DIMS].size() != 0) {
+        var_meta[K_DIMS] = json::array();
+      }
     json& dims = var_meta[K_DIMS];
 
-    json& dimsmeta = this->storage[K_DIMS];
     string newdimname;
     auto dim_ctr = 0;
-    for (auto ii=0; ii<arrshp.size(); ii++) {
+    for (dimsize_t ii=0; ii<arrshp.size(); ii++) {
       //tdk:TODO: turn dimension prefix into constant or parameter
       newdimname = "esmf_" + name + "_dim" + to_string(dim_ctr);
       dims.push_back(newdimname);
       dim_ctr++;
 
+      json& dimsmeta = this->storage[K_DIMS];
       dimsmeta[newdimname] = createJSONPackage("ESMF:Metadata:Dimension", rc);
       ESMF_CHECKERR_STD("", rc, "Did not create dimension package", rc);
 
@@ -256,7 +267,6 @@ Array* Metadata::createArray(DistGrid& distgrid, const json& jsonParms,
 
     ArraySpec arrayspec;
     arrayspec.set(rank, tk);
-
 
     vector<ESMC_I4> v_distgridToArrayMap(v_distDims.size(), -999);
     auto ii = 0;
@@ -346,7 +356,7 @@ DistGrid* Metadata::createDistGrid(const json& jsonParms, int& rc) const {
   size_t v_distDims_size = v_distDims.size();
   if (v_minIndex.size() == 0) {
     v_minIndex.resize(v_distDims_size);
-    for (auto ii=0; ii<v_distDims_size; ii++) {
+    for (dimsize_t ii=0; ii<v_distDims_size; ii++) {
       v_minIndex[ii] = 1;
     }
   }
@@ -354,7 +364,7 @@ DistGrid* Metadata::createDistGrid(const json& jsonParms, int& rc) const {
 
   if (v_maxIndex.size() == 0) {
     v_maxIndex.resize(v_distDims_size);
-    for (auto ii=0; ii<v_distDims_size; ii++) {
+    for (dimsize_t ii=0; ii<v_distDims_size; ii++) {
       try {
         v_maxIndex[ii] = this->storage.at(K_DIMS).at(v_distDims[ii]).at(K_SIZE);
       }
@@ -414,13 +424,14 @@ json Metadata::getDimensionSizes(int& rc) {
   }
 
   rc = ESMF_SUCCESS;
+  return ret;
 }
 
 #undef ESMC_METHOD
 #define ESMC_METHOD "getDimensionSize()"
 dimsize_t Metadata::getDimensionSize(const string& name, int& rc) {
   try {
-    unsigned long int ret = this->storage.at(K_DIMS).at(name).at(K_SIZE);
+    dimsize_t ret = this->storage.at(K_DIMS).at(name).at(K_SIZE);
     rc = ESMF_SUCCESS;
     return ret;
   }

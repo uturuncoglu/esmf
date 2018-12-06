@@ -45,7 +45,7 @@ namespace ESMCI {
 
 //-----------------------------------------------------------------------------
 
-typedef unsigned long int dimsize_t;
+typedef std::size_t dimsize_t;
 
 namespace MKEY {
   const string K_ATTRS = "attrs";
@@ -67,7 +67,7 @@ namespace MKEY {
 //-----------------------------------------------------------------------------
 
 json createJSONPackage(const string& pkgKey, int& rc);
-vector<unsigned long int> getArrayShape(const Array& arr, int& rc);
+vector<dimsize_t > getArrayShape(const Array& arr, int& rc);
 
 //-----------------------------------------------------------------------------
 

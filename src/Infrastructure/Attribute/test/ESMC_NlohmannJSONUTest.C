@@ -66,8 +66,8 @@ void print_vector(vector<int> vec) {
   cout << endl;
 }
 
-const long int * const runGetPointer(const string & key, const json & j){
-  return j.at(key).get_ptr<const json::number_integer_t* const>();
+const long int* runGetPointer(const string& key, const json& j){
+  return j.at(key).get_ptr<const json::number_integer_t*>();
 }
 
 int main(void) {
@@ -281,7 +281,7 @@ int main(void) {
   vector<int> booyah2(booyah[0].size(), -999);
 
   // Copy JSON data into new vector.
-  for (auto ii=0; ii<booyah[0].size(); ++ii) {
+  for (std::size_t ii=0; ii<booyah[0].size(); ++ii) {
     booyah2[ii] = booyah[0][ii];
   }
 
