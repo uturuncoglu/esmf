@@ -364,6 +364,12 @@ int main(void) {
   ESMC_TestStart(__FILE__, __LINE__, 0);
   //---------------------------------------------------------------------------
 
+//  ESMCI::VM *vm = ESMCI::VM::getCurrent(&rc);
+//  ESMF_CHECKERR_STD("", rc, "Did not get current VM", rc);
+//  int localPet = vm->getLocalPet();
+//  int petCount = vm->getPetCount();
+//  cout << localPet << " " << petCount;
+
   //---------------------------------------------------------------------------
   //NEX_UTest
   strcpy(name, "Metadata::createArray()");
