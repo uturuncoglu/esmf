@@ -44,6 +44,7 @@ namespace ESMCI {
 namespace PIOARG {
   const string FILENAME = "filename";
   const string IOSYSID = "iosysid";
+  const string IOTYPE = "iotype";
   const string MODE = "mode";
   const string NCID = "ncid";
 }

@@ -167,16 +167,15 @@ void IOHandle::open(int& rc) {
     iosysid = it_iosysid.value();
   }
 
-  int iotype = static_cast<int>(PIO_IOTYPE_NETCDF);
-  int ncid;
-  auto it_ncid = this->PIOArgs.find(PIOARG::NCID);
+  int iotype = (int)(this->PIOArgs.value(PIOARG::IOTYPE, PIO_IOTYPE_NETCDF));
   int mode = this->PIOArgs.value(PIOARG::MODE, NC_WRITE);
+  auto it_ncid = this->PIOArgs.find(PIOARG::NCID);
+  int ncid;
   if (it_ncid == this->PIOArgs.end()) {
-    int pio_rc = PIOc_createfile(iosysid, &ncid, &iotype, filename.c_str(), mode);
+    int pio_rc = PIOc_createfile(iosysid, &ncid, &iotype, filename.c_str(),
+      mode);
     handlePIOReturnCode(pio_rc, "Could not open filename: " + filename, rc);
     this->PIOArgs[PIOARG::NCID] = ncid;
-  } else {
-    ncid = it_ncid.value();
   }
 
   rc = ESMF_SUCCESS;
