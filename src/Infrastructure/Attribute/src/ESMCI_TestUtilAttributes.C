@@ -114,9 +114,11 @@ json createTestJSONMetadata(int& rc) {
 
   root[K_VARS]["the_xc"][K_ATTRS][K_AXIS] = "X";
   root[K_VARS]["the_xc"][K_ATTRS][K_UNITS] = "degrees_east";
+  root[K_VARS]["the_xc"][K_ATTRS]["meridian"] = 181.1;
 
   root[K_VARS]["the_yc"][K_ATTRS][K_AXIS] = "Y";
   root[K_VARS]["the_yc"][K_ATTRS][K_UNITS] = "degrees_north";
+  root[K_VARS]["the_yc"][K_ATTRS]["modifier_int"] = 400;
 
   root[K_VARS]["the_time"][K_ATTRS][K_AXIS] = "T";
   root[K_VARS]["the_time"][K_ATTRS][K_UNITS] = "days since 1900-01-01";

@@ -79,34 +79,91 @@ void IOHandle::dodef(int& rc) {
   rc = ESMF_FAILURE;
   int ncid = this->PIOArgs.at(PIOARG::NCID);
 
+  //tdk:TODO: add global file attrs
+
   const json& smeta = this->meta.getStorageRef();
   const json& varmeta = smeta.at(K_VARS);
   json& varids = this->PIOArgs[PIOARG::VARIDS];
-  int ndim;
+  json& dimids = this->PIOArgs[PIOARG::DIMIDS];
+  int ndims;
+  int pio_rc;
+  int dimid;
+  int dimctr;
+  int varid;
+  string varname;
   for (json::const_iterator it_var=varmeta.cbegin(); it_var!=varmeta.cend(); it_var++) {
     cout<<"(x) varmeta.key="<<it_var.key()<<endl;
     const auto it_varid = varids.find(it_var.key());
     if (it_varid == varids.end()) {
       cout<<"(x) varid not found"<<endl;
 //      cout<<it_var.value().dump(2)<<endl;
-      ndim = it_var.value()[K_DIMS].size();
-      cout<<"(x) ndim="<<ndim<<endl;
-      if (ndim > 0) {
+      ndims = it_var.value()[K_DIMS].size();
+      int dimidsp[ndims];
+      cout<<"(x) ndims="<<ndims<<endl;
+      if (ndims > 0) {
         cout<<"(x) variable has dimensions"<<endl;
         const json& dims = it_var.value()[K_DIMS];
-        cout<<dims.dump(2)<<endl;
+//        cout<<dims.dump(2)<<endl;
 //        for (json::const_iterator it_dimnames=dims.cbegin(); it_dimnames!=dims.cend(); it_dimnames++) {
+
+        dimctr = 0;
         for (const auto& dimname : dims) {
           cout << "(x) dimname=" << dimname << endl;
+          const auto it_dimid = dimids.find(dimname);
+          if (it_dimid == dimids.end()) {
+            cout<<"(x) dimension NOT found"<<endl;
+            dimsize_t dimsize = this->meta.getDimensionSize(dimname, rc);
+            ESMF_CHECKERR_STD("", rc, "Did not get dimension size: " + dimname.get<string>(), rc);
+
+            pio_rc = PIOc_def_dim(ncid, dimname.get<string>().c_str(), dimsize,
+              &dimid);
+            handlePIOReturnCode(pio_rc, "Could not define dimension", rc);
+
+            dimids[dimname.get<string>()] = dimid;
+          } else {
+            dimid = it_dimid.value();
+          }
+          dimidsp[dimctr] = dimid;
+          dimctr++;
         }
+
       } else {
         cout<<"(x) variable DOES NOT have dimensions"<<endl;
       }
+
+      pio_rc = PIOc_def_var(ncid, it_var.key().c_str(), NC_DOUBLE, ndims,
+        dimidsp, &varid);
+      handlePIOReturnCode(pio_rc, "Could not define variable", rc);
+
+      varids[it_var.key()] = varid;
+
+      const json& attrs = it_var.value().at(K_ATTRS);
+      for (json::const_iterator it_attrs=attrs.cbegin(); it_attrs!=attrs.cend(); it_attrs++) {
+        cout<<"(x) attr="<<it_attrs.key()<<","<<it_attrs.value()<<endl;
+        auto attrname = it_attrs.key().c_str();
+        if (it_attrs.value().is_string()) {
+          string value_string = it_attrs.value().get<string>();
+          pio_rc = PIOc_put_att_text(ncid, varid, attrname,
+            value_string.size(), value_string.c_str());
+        } else if (it_attrs.value().is_number_float()) {
+          double value_double = it_attrs.value().get<double>();
+          pio_rc = PIOc_put_att_double(ncid, varid, attrname, NC_DOUBLE, 1,
+            &value_double);
+        } else {
+            ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD,
+              "Attribute type not supported", rc);
+        }
+        handlePIOReturnCode(pio_rc, "Did not set attribute", rc);
+      }
+
+//        double value = 111.111;
+//      string attname = "fooattr";
+//      pio_rc = PIOc_put_att(ncid, varid, attname.c_str(), NC_DOUBLE, 1, &value);
+//      handlePIOReturnCode(pio_rc, "Did not set attribute", rc);
+//    const json& varattrs
+//    for (json::const_iterator it_attrs)
     }
   }
-
-//  int PIOc_def_dim(int ncid, const char *name, PIO_Offset len, int *idp);
-//  handlePIOReturnCode(pio_rc, "Could not close with PIO", rc);
 
   rc = ESMF_SUCCESS;
 }

@@ -82,7 +82,7 @@ void testOpenClose(int& rc, char failMsg[]) {
   ioh2.finalize(rc);
   ESMF_CHECKERR_STD("", rc, "Did not finalize", rc);
 
-  if (ioh2.PIOArgs.size() != 2) {
+  if (ioh2.PIOArgs.size() != 4) {
     return finalizeFailure(rc, failMsg, "Remaining arg count problem");
   }
 
@@ -90,9 +90,10 @@ void testOpenClose(int& rc, char failMsg[]) {
   ESMF_CHECKERR_STD("", rc, "Did not get current VM", rc);
 
   int localPet = vm->getLocalPet();
-  if (localPet == 0 && remove(filename.c_str()) != 0) {
-    return finalizeFailure(rc, failMsg, "Test file not removed");
-  }
+  //tdk:UNCOMMENT
+//  if (localPet == 0 && remove(filename.c_str()) != 0) {
+//    return finalizeFailure(rc, failMsg, "Test file not removed");
+//  }
 
   rc = ESMF_SUCCESS;
   return;
