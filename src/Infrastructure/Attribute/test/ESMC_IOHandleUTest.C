@@ -10,14 +10,14 @@
 //
 //=============================================================================
 
+#include <iostream>
 #include <stdlib.h>
 #include <string.h>
-
 #include <stdio.h>
-#include <iostream>
 
 #include "ESMC.h"
 #include "ESMC_Test.h"
+#include "ESMCI_IOHandle.h"
 #include "ESMCI_LogErr.h"
 #include "ESMCI_Macros.h"
 #include "ESMCI_Metadata.h"
@@ -44,11 +44,54 @@ void finalizeFailure(int& rc, char failMsg[], string msg) {
 };
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "testCreateArray()"
-void test(int& rc, char failMsg[]) {
+#define ESMC_METHOD "testOpenClose()"
+void testOpenClose(int& rc, char failMsg[]) {
   rc = ESMF_FAILURE;
   bool failed = true;
 
+  // Test failure without URI =================================================
+
+  IOHandle ioh;
+  try {
+    ioh.open(rc);
+    return finalizeFailure(rc, failMsg, "Expected to fail without URI");
+  }
+  catch (esmf_attrs_error& e) {};
+
+  // Test opening/closing a file with a URI ===================================
+
+  IOHandle ioh2;
+  json& meta = ioh2.meta.getStorageRefWritable();
+  string uri = "test_pio_open.nc";
+  meta[K_URI] = uri;
+
+  ioh2.open(rc);
+  ESMF_CHECKERR_STD("", rc, "Did not open", rc);
+
+  ioh2.enddef(rc);
+  ESMF_CHECKERR_STD("", rc, "Did not enddef", rc);
+
+  ioh2.close(rc);
+  ESMF_CHECKERR_STD("", rc, "Did not close", rc);
+
+  ioh2.finalize(rc);
+  ESMF_CHECKERR_STD("", rc, "Did not finalize", rc);
+
+  auto cache = ioh2.getCache();
+//  cout << cache.dump(2) << endl;
+  if (cache.size() != 0) {
+    return finalizeFailure(rc, failMsg, "Cache should be empty after finalizing");
+  }
+
+  ESMCI::VM *vm = ESMCI::VM::getCurrent(&rc);
+  ESMF_CHECKERR_STD("", rc, "Did not get current VM", rc);
+
+  int localPet = vm->getLocalPet();
+  if (localPet == 0 && remove(uri.c_str()) != 0) {
+    return finalizeFailure(rc, failMsg, "Test file not removed");
+  }
+
+  rc = ESMF_SUCCESS;
   return;
 };
 
@@ -69,8 +112,8 @@ int main(void) {
 
   //---------------------------------------------------------------------------
   //NEX_UTest
-  strcpy(name, "IOHandle general");
-  test(rc, failMsg);
+  strcpy(name, "Test opening and closing a netCDF file");
+  testOpenClose(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //---------------------------------------------------------------------------
 

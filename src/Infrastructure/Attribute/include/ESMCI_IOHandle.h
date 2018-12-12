@@ -41,22 +41,26 @@ using namespace std;
 
 namespace ESMCI {
 
+namespace PIOARG {
+  const string IOSYSID = "iosysid";
+  const string MODE = "mode";
+  const string NCID = "ncid";
+}
+
 //-----------------------------------------------------------------------------
 
 class IOHandle {
 
-private:
+public:
   ESMCI::Metadata meta;
+
+private:
   json cache = json::object();
 
-  void close(int& rc);
-  void enddef(int& rc);
-  void finalize(int& rc);
   int getOrCreateGroup(int& rc);
   int getOrCreateDimension(int& rc);
   int getOrCreateVariable(int& rc);
-  void init(int& rc);
-  void open(int& rc);
+  int init(int& rc);
 
 public:
   IOHandle(void) = default;  // Default constructor
@@ -66,6 +70,11 @@ public:
   IOHandle&operator=(const IOHandle&) = delete; // Copy assignment
   IOHandle&operator=(IOHandle&&) = delete; // Move assignment
 
+  void close(int& rc);
+  void enddef(int& rc);
+  void finalize(int& rc);
+  const json& getCache(void) {return this->cache;}
+  void open(int& rc);
   void read(int& rc);
   void write(const Array& arr, int& rc);
 

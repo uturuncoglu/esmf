@@ -23,6 +23,9 @@
 #include <vector>
 #include <iostream>
 
+#include <netcdf.h>
+#include <pio.h>
+
 #include "ESMC.h"
 #include "ESMCI_Attributes.h"
 #include "ESMCI_IOHandle.h"
@@ -47,38 +50,47 @@ namespace ESMCI {
 
 // Local function dependencies ================================================
 
+#undef ESMC_METHOD
+#define ESMC_METHOD "handlePIOReturnCode()"
+void handlePIOReturnCode(const int& pio_rc, const string& pio_msg, int& rc) {
+  if (pio_rc != 0) {
+    string msg = "PIO Error Code: " + to_string(pio_rc) + " - " + pio_msg;
+    ESMF_CHECKERR_STD("ESMC_RC_NETCDF_ERROR", ESMC_RC_NETCDF_ERROR, msg, rc);
+  }
+}
+
 //=============================================================================
 
 #undef ESMC_METHOD
 #define ESMC_METHOD "IOHandle::close()"
 void IOHandle::close(int& rc) {
   rc = ESMF_FAILURE;
-//  pio_rc = PIOc_closefile(ncid);
-//  if (pio_rc != 0){
-//    printf("PIO_TEST:ERROR: %d", pio_rc);
-//    ret = 1;
-//  }
-  //  rc = ESMF_SUCCESS;
+  int ncid = this->cache.at(PIOARG::NCID);
+  int pio_rc = PIOc_closefile(ncid);
+  handlePIOReturnCode(pio_rc, "Could not close with PIO", rc);
+  this->cache.erase(this->cache.find(PIOARG::NCID));
+  rc = ESMF_SUCCESS;
 }
 
 #undef ESMC_METHOD
 #define ESMC_METHOD "IOHandle::enddef()"
 void IOHandle::enddef(int& rc) {
   rc = ESMF_FAILURE;
-//  pio_rc = PIOc_def_dim(ncid, "test_dim", 7, &dimid);
-//  if (pio_rc != 0){
-//    printf("PIO_TEST:ERROR: %d", pio_rc);
-//    ret = 1;
-//  }
-  //  rc = ESMF_SUCCESS;
+  int ncid = this->cache.at(PIOARG::NCID);
+  int pio_rc = PIOc_enddef(ncid);
+  handlePIOReturnCode(pio_rc, "Could not enddef with PIO", rc);
+  rc = ESMF_SUCCESS;
 }
 
 #undef ESMC_METHOD
 #define ESMC_METHOD "finalize()"
-void finalize(int& rc) {
+void IOHandle::finalize(int& rc) {
   rc = ESMF_FAILURE;
-//  pio_rc = PIOc_finalize(iosysid);
-  //  rc = ESMF_SUCCESS;
+  int iosysid = this->cache.at(PIOARG::IOSYSID);
+  int pio_rc = PIOc_finalize(iosysid);
+  handlePIOReturnCode(pio_rc, "Could not finalize PIO", rc);
+  this->cache.erase(this->cache.find(PIOARG::IOSYSID));
+  rc = ESMF_SUCCESS;
 }
 
 #undef ESMC_METHOD
@@ -106,24 +118,70 @@ int IOHandle::getOrCreateVariable(int& rc) {
 }
 
 #undef ESMC_METHOD
-#define ESMC_METHO "IOHandle(void)"
-void IOHandle::init(int& rc) {
+#define ESMC_METHOD "IOHandle::init()"
+int IOHandle::init(int& rc) {
   rc = ESMF_FAILURE;
-  //tdk:FIX: handle pio error
-//  pio_rc = PIOc_Init_Intracomm(MPI_COMM_WORLD, num_iotasks, io_proc_stride, io_proc_start, PIO_REARR_SUBSET, &iosysid);
-//  rc = ESMF_SUCCESS;
+
+  int iosysid;
+  const int io_proc_stride = 1;
+  const int io_proc_start = 0;
+
+  ESMCI::VM *vm = ESMCI::VM::getCurrent(&rc);
+  ESMF_CHECKERR_STD("", rc, "Did not get current VM", rc);
+
+  MPI_Comm comm = vm->getMpi_c();
+
+//  int localPet = vm->getLocalPet();
+  int petCount = vm->getPetCount();
+//  cout << localPet << " " << petCount;
+  const int num_iotasks = petCount;
+
+  int pio_rc = PIOc_Init_Intracomm(comm, num_iotasks, io_proc_stride,
+    io_proc_start, PIO_REARR_SUBSET, &iosysid);
+  handlePIOReturnCode(pio_rc, "Could not start PIO Intracomm", rc);
+
+  this->cache[PIOARG::IOSYSID] = iosysid;
+
+  rc = ESMF_SUCCESS;
+  return iosysid;
 }
 
 #undef ESMC_METHOD
 #define ESMC_METHOD "IOHandle::open()"
 void IOHandle::open(int& rc) {
   rc = ESMF_FAILURE;
-//  pio_rc = PIOc_createfile(iosysid, &ncid, &iotype, "_pio-testing_created_file.nc_", 0x0000);
-//  if (pio_rc != 0){
-//    printf("PIO_TEST:ERROR: %d", pio_rc);
-//    ret = 1;
-//  }
-  //  rc = ESMF_SUCCESS;
+
+  auto meta = this->meta.getStorageRef();
+//  cout << meta.dump(2) << endl;
+  auto juri = meta.at(K_URI);
+  if (juri.is_null()) {
+    ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD,
+      "'uri' may not be null", rc);
+  }
+  const string& uri = juri.get_ref<const string&>();
+
+  int iosysid;
+  auto it_iosysid = this->cache.find(PIOARG::IOSYSID);
+  if (it_iosysid == this->cache.end()) {
+    iosysid = this->init(rc);
+    ESMF_CHECKERR_STD("", rc, "Did not init", rc);
+  } else {
+    iosysid = it_iosysid.value();
+  }
+
+  int iotype = static_cast<int>(PIO_IOTYPE_NETCDF);
+  int ncid;
+  auto it_ncid = this->cache.find(PIOARG::NCID);
+  int mode = this->cache.value(PIOARG::MODE, NC_WRITE);
+  if (it_ncid == this->cache.end()) {
+    int pio_rc = PIOc_createfile(iosysid, &ncid, &iotype, uri.c_str(), mode);
+    handlePIOReturnCode(pio_rc, "Could not open URI: " + uri, rc);
+    this->cache[PIOARG::NCID] = ncid;
+  } else {
+    ncid = it_ncid.value();
+  }
+
+  rc = ESMF_SUCCESS;
 }
 
 #undef ESMC_METHOD

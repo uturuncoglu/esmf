@@ -79,6 +79,11 @@ private:
   virtual void init(void);
 
 public:
+  // Since other constructors are inherited and this is the only
+  // specialization, it needs to be explicitly defined to ensure its init
+  // method is called.
+  Metadata(void) {this->init();}
+
   ESMCI::Array* createArray(DistGrid& distGrid, const json& jsonParms,
     int& rc) const;
   DistGrid* createDistGrid(const json& jsonParms, int& rc) const;
