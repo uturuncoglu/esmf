@@ -79,13 +79,13 @@ void IOHandle::dodef(int& rc) {
   rc = ESMF_FAILURE;
   int ncid = this->PIOArgs.at(PIOARG::NCID);
 
-  json& smeta = this->meta.getStorageRefWritable();
-  json& varmeta = smeta.at(K_VARS);
+  const json& smeta = this->meta.getStorageRef();
+  const json& varmeta = smeta.at(K_VARS);
   json& varids = this->PIOArgs[PIOARG::VARIDS];
   int ndim;
-  for (json::iterator it_var=varmeta.begin(); it_var!=varmeta.end(); it_var++) {
+  for (json::const_iterator it_var=varmeta.cbegin(); it_var!=varmeta.cend(); it_var++) {
     cout<<"(x) varmeta.key="<<it_var.key()<<endl;
-    auto it_varid = varids.find(it_var.key());
+    const auto it_varid = varids.find(it_var.key());
     if (it_varid == varids.end()) {
       cout<<"(x) varid not found"<<endl;
 //      cout<<it_var.value().dump(2)<<endl;
@@ -93,10 +93,10 @@ void IOHandle::dodef(int& rc) {
       cout<<"(x) ndim="<<ndim<<endl;
       if (ndim > 0) {
         cout<<"(x) variable has dimensions"<<endl;
-        json& dims = it_var.value()[K_DIMS];
+        const json& dims = it_var.value()[K_DIMS];
         cout<<dims.dump(2)<<endl;
 //        for (json::const_iterator it_dimnames=dims.cbegin(); it_dimnames!=dims.cend(); it_dimnames++) {
-        for (auto& dimname : dims) {
+        for (const auto& dimname : dims) {
           cout << "(x) dimname=" << dimname << endl;
         }
       } else {
