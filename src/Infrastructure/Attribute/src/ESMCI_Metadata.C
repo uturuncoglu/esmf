@@ -61,7 +61,7 @@ json createJSONPackage(const string& pkgKey, int& rc) {
   if (pkgKey == "ESMF:Metadata:Dimension") {
     // Will be int or potentially null if unlimited
     j[K_SIZE] = json::value_t::null;
-    j[K_UNLIM] = json::value_t::null;  // Will be bool
+    j[K_UNLIM] = false;
   } else if (pkgKey == "ESMF:Metadata:Group") {
     j[K_VARS] = json::object();
     j[K_DIMS] = json::object();
@@ -69,7 +69,7 @@ json createJSONPackage(const string& pkgKey, int& rc) {
     j[K_GROUPS] = json::object();
     j[K_URI] = json::value_t::null;  // Will be string or rename null
   } else if (pkgKey == "ESMF:Metadata:Variable") {
-    j[K_DTYPE] = json::value_t::null;  // Will be string
+    j[K_DTYPE] = json::value_t::null;  // Will be nc_type
     j[K_DIMS] = json::array();  // Will append string dimension names
     j[K_ATTRS] = json::object();
   } else {
@@ -483,6 +483,12 @@ vector<dimsize_t> Metadata::getVariableShape(const string& name, int& rc) {
 bool Metadata::hasVariable(const string& name) {
   json& vars_meta = this->storage[K_VARS];
   return vars_meta.find(name) != vars_meta.end();
+}
+
+#undef ESMC_METHOD
+#define ESMC_METHOD "isUnlimited()"
+bool Metadata::isUnlimited(const string& name) {
+  return this->storage[K_DIMS][name][K_UNLIM];
 }
 
 }  // ESMCI

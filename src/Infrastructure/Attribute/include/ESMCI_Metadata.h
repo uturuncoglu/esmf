@@ -92,6 +92,7 @@ public:
   json& getOrCreateVariable(const string& name, int& rc);
   vector<dimsize_t> getVariableShape(const string& name, int& rc);
   bool hasVariable(const string& name);
+  bool isUnlimited(const string& name);
   void update(const ESMCI::Array& arr, const vector<string>* dimnames, int& rc);
 };
 

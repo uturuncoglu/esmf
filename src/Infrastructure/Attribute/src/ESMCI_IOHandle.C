@@ -109,8 +109,6 @@ void IOHandle::dodef(int& rc) {
   rc = ESMF_FAILURE;
   int ncid = this->PIOArgs.at(PIOARG::NCID);
 
-  //tdk:TODO: add global file attrs
-
   const json& smeta = this->meta.getStorageRef();
   const json& varmeta = smeta.at(K_VARS);
   json& varids = this->PIOArgs[PIOARG::VARIDS];
@@ -142,7 +140,14 @@ void IOHandle::dodef(int& rc) {
           const auto it_dimid = dimids.find(dimname);
           if (it_dimid == dimids.end()) {
             cout<<"(x) dimension NOT found"<<endl;
-            dimsize_t dimsize = this->meta.getDimensionSize(dimname, rc);
+            dimsize_t dimsize;
+            //tdk:?: PIO only handles one unlimited dimension?
+            //tdk:?: PIO has to have unlimited dimension as the first dimension (last in Fortran)?
+            if (this->meta.isUnlimited(dimname)) {
+              dimsize = NC_UNLIMITED;
+            } else {
+              dimsize = this->meta.getDimensionSize(dimname, rc);
+            }
             ESMF_CHECKERR_STD("", rc, "Did not get dimension size: " + dimname.get<string>(), rc);
 
             pio_rc = PIOc_def_dim(ncid, dimname.get<string>().c_str(), dimsize,
@@ -161,7 +166,8 @@ void IOHandle::dodef(int& rc) {
         cout<<"(x) variable DOES NOT have dimensions"<<endl;
       }
 
-      pio_rc = PIOc_def_var(ncid, it_var.key().c_str(), NC_DOUBLE, ndims,
+      nc_type xtype = it_var.value()[K_DTYPE];
+      pio_rc = PIOc_def_var(ncid, it_var.key().c_str(), xtype, ndims,
         dimidsp, &varid);
       handlePIOReturnCode(pio_rc, "Could not define variable", rc);
 

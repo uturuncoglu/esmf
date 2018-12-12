@@ -20,6 +20,8 @@
 //
 //-----------------------------------------------------------------------------
 
+#include <netcdf.h>
+
 #include "ESMC.h"
 #include "ESMCI_DistGrid.h"
 #include "ESMCI_TestUtilAttributes.h"
@@ -78,14 +80,12 @@ json createTestJSONMetadata(int& rc) {
 
     root[K_DIMS][name][K_NAME] = name;
     root[K_DIMS][name][K_SIZE] = sizes[ctr];
-    root[K_DIMS][name][K_UNLIM] = false;
 
     ctr++;
   }
 
-  // Time and level are the unlimited dimensions
+  // Time is the unlimited dimension.
   root[K_DIMS]["dim_time"][K_UNLIM] = true;
-  root[K_DIMS]["dim_level"][K_UNLIM] = true;
 
   vector <string> varnames = {"the_xc", "the_yc", "the_time", "the_level",
                               "the_realization", "foo", "dimensionless"};
@@ -94,16 +94,15 @@ json createTestJSONMetadata(int& rc) {
     ESMF_CHECKERR_STD("", rc, "Package creation failed", rc);
 
     root[K_VARS][name][K_NAME] = name;
-    root[K_VARS][name][K_DTYPE] = "double";
+    root[K_VARS][name][K_DTYPE] = NC_DOUBLE;
   }
 
   // Level has integer meters
-  root[K_VARS]["the_level"][K_DTYPE] = "int";
+  root[K_VARS]["the_level"][K_DTYPE] = NC_INT;
 
   // Add the "data" variable which holds the things we care about in a data file
   root[K_VARS]["foo"][K_DIMS] =
-    json::array({"dim_realization", "dim_time", "dim_level", "dim_lat", "dim_lon"});
-  root[K_VARS]["foo"][K_DTYPE] = "double";
+    json::array({"dim_time", "dim_realization", "dim_level", "dim_lat", "dim_lon"});
   root[K_VARS]["foo"][K_ATTRS]["grid_mapping_name"] = "latitude_longitude";
 
   root[K_VARS]["the_xc"][K_DIMS].push_back("dim_lon");
