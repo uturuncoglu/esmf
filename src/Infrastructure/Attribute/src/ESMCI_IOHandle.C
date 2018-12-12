@@ -175,7 +175,7 @@ void IOHandle::dodef(int& rc) {
 
   const json& attrs_global = smeta.at(K_ATTRS);
   writePIOAttributes(attrs_global, ncid, NC_GLOBAL, rc);
-  ESMF_CHECKERR_STD("", rc, "Did not write attributes with PIO", rc);
+  ESMF_CHECKERR_STD("", rc, "Did not write global attributes with PIO", rc);
 
   rc = ESMF_SUCCESS;
 }
