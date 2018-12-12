@@ -60,6 +60,36 @@ void handlePIOReturnCode(const int& pio_rc, const string& pio_msg, int& rc) {
   }
 }
 
+#undef ESMC_METHOD
+#define ESMC_METHOD "writePIOAttributes()"
+void writePIOAttributes(const json& attrs, int ncid, int varid, int& rc) {
+  rc = ESMF_FAILURE;
+  int pio_rc;
+  for (json::const_iterator it_attrs=attrs.cbegin(); it_attrs!=attrs.cend(); it_attrs++) {
+    cout<<"(x) attr="<<it_attrs.key()<<","<<it_attrs.value()<<endl;
+    auto attrname = it_attrs.key().c_str();
+    if (it_attrs.value().is_string()) {
+      string value_string = it_attrs.value().get<string>();
+      pio_rc = PIOc_put_att_text(ncid, varid, attrname,
+                                 value_string.size(), value_string.c_str());
+    } else if (it_attrs.value().is_number_float()) {
+      double value_double = it_attrs.value().get<double>();
+      pio_rc = PIOc_put_att_double(ncid, varid, attrname, NC_DOUBLE, 1,
+                                   &value_double);
+    } else if (it_attrs.value().is_number_integer()) {
+      int64_t value_long = it_attrs.value().get<int64_t>();
+      pio_rc = PIOc_put_att_long(ncid, varid, attrname, NC_LONG, 1,
+                                 &value_long);
+    } else {
+      ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD,
+                        "Attribute type not supported", rc);
+    }
+    //tdk:TODO: add line number to PIO error handling
+    handlePIOReturnCode(pio_rc, "Did not set attribute", rc);
+  }
+  rc = ESMF_SUCCESS;
+}
+
 //=============================================================================
 
 #undef ESMC_METHOD
@@ -138,36 +168,14 @@ void IOHandle::dodef(int& rc) {
       varids[it_var.key()] = varid;
 
       const json& attrs = it_var.value().at(K_ATTRS);
-      for (json::const_iterator it_attrs=attrs.cbegin(); it_attrs!=attrs.cend(); it_attrs++) {
-        cout<<"(x) attr="<<it_attrs.key()<<","<<it_attrs.value()<<endl;
-        auto attrname = it_attrs.key().c_str();
-        if (it_attrs.value().is_string()) {
-          string value_string = it_attrs.value().get<string>();
-          pio_rc = PIOc_put_att_text(ncid, varid, attrname,
-            value_string.size(), value_string.c_str());
-        } else if (it_attrs.value().is_number_float()) {
-          double value_double = it_attrs.value().get<double>();
-          pio_rc = PIOc_put_att_double(ncid, varid, attrname, NC_DOUBLE, 1,
-            &value_double);
-        } else if (it_attrs.value().is_number_integer()) {
-          int64_t value_long = it_attrs.value().get<int64_t>();
-          pio_rc = PIOc_put_att_long(ncid, varid, attrname, NC_LONG, 1,
-                                       &value_long);
-        } else {
-            ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD,
-              "Attribute type not supported", rc);
-        }
-        handlePIOReturnCode(pio_rc, "Did not set attribute", rc);
-      }
-
-//        double value = 111.111;
-//      string attname = "fooattr";
-//      pio_rc = PIOc_put_att(ncid, varid, attname.c_str(), NC_DOUBLE, 1, &value);
-//      handlePIOReturnCode(pio_rc, "Did not set attribute", rc);
-//    const json& varattrs
-//    for (json::const_iterator it_attrs)
+      writePIOAttributes(attrs, ncid, varid, rc);
+      ESMF_CHECKERR_STD("", rc, "Did not write attributes with PIO", rc);
     }
   }
+
+  const json& attrs_global = smeta.at(K_ATTRS);
+  writePIOAttributes(attrs_global, ncid, NC_GLOBAL, rc);
+  ESMF_CHECKERR_STD("", rc, "Did not write attributes with PIO", rc);
 
   rc = ESMF_SUCCESS;
 }
