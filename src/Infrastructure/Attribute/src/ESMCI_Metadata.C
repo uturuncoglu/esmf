@@ -419,7 +419,7 @@ json Metadata::getDimensionSizes(int& rc) {
   json ret;
 
   const json& dims = this->storage[K_DIMS];
-  for (json::const_iterator it = dims.cbegin(); it!=dims.cend(); it++ ) {
+  for (json::const_iterator it = dims.cbegin(); it!=dims.cend(); it++) {
     ret[it.key()] = this->storage[K_DIMS][it.key()][K_SIZE];
   }
 

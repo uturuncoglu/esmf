@@ -41,6 +41,7 @@ using namespace std;
 #undef  ESMC_METHOD
 #define ESMC_METHOD "testOpenClose()"
 void testOpenClose(int& rc, char failMsg[]) {
+  //tdk:RENAME: just to "test"
   rc = ESMF_FAILURE;
   bool failed = true;
 
@@ -53,15 +54,24 @@ void testOpenClose(int& rc, char failMsg[]) {
   }
   catch (esmf_attrs_error& e) {};
 
-  // Test opening/closing a file with a URI ===================================
+  // Test the basic IO system =================================================
 
   IOHandle ioh2;
+  json jmeta = createTestJSONMetadata(rc);
+  ESMF_CHECKERR_STD("", rc, "Did not create test JSON metadata", rc);
+
+  json& storage = ioh2.meta.getStorageRefWritable();
+  storage = move(jmeta);
+
   string filename = "test_pio_open.nc";
   ioh2.PIOArgs[PIOARG::FILENAME] = filename;
   ioh2.PIOArgs[PIOARG::MODE] = NC_NOWRITE;
 
   ioh2.open(rc);
   ESMF_CHECKERR_STD("", rc, "Did not open", rc);
+
+  ioh2.dodef(rc);
+  ESMF_CHECKERR_STD("", rc, "Did not dodef", rc);
 
   ioh2.enddef(rc);
   ESMF_CHECKERR_STD("", rc, "Did not enddef", rc);

@@ -74,6 +74,44 @@ void IOHandle::close(int& rc) {
 }
 
 #undef ESMC_METHOD
+#define ESMC_METHOD "IOHandle::dodef()"
+void IOHandle::dodef(int& rc) {
+  rc = ESMF_FAILURE;
+  int ncid = this->PIOArgs.at(PIOARG::NCID);
+
+  json& smeta = this->meta.getStorageRefWritable();
+  json& varmeta = smeta.at(K_VARS);
+  json& varids = this->PIOArgs[PIOARG::VARIDS];
+  int ndim;
+  for (json::iterator it_var=varmeta.begin(); it_var!=varmeta.end(); it_var++) {
+    cout<<"(x) varmeta.key="<<it_var.key()<<endl;
+    auto it_varid = varids.find(it_var.key());
+    if (it_varid == varids.end()) {
+      cout<<"(x) varid not found"<<endl;
+//      cout<<it_var.value().dump(2)<<endl;
+      ndim = it_var.value()[K_DIMS].size();
+      cout<<"(x) ndim="<<ndim<<endl;
+      if (ndim > 0) {
+        cout<<"(x) variable has dimensions"<<endl;
+        json& dims = it_var.value()[K_DIMS];
+        cout<<dims.dump(2)<<endl;
+//        for (json::const_iterator it_dimnames=dims.cbegin(); it_dimnames!=dims.cend(); it_dimnames++) {
+        for (auto& dimname : dims) {
+          cout << "(x) dimname=" << dimname << endl;
+        }
+      } else {
+        cout<<"(x) variable DOES NOT have dimensions"<<endl;
+      }
+    }
+  }
+
+//  int PIOc_def_dim(int ncid, const char *name, PIO_Offset len, int *idp);
+//  handlePIOReturnCode(pio_rc, "Could not close with PIO", rc);
+
+  rc = ESMF_SUCCESS;
+}
+
+#undef ESMC_METHOD
 #define ESMC_METHOD "IOHandle::enddef()"
 void IOHandle::enddef(int& rc) {
   rc = ESMF_FAILURE;
@@ -141,7 +179,9 @@ int IOHandle::init(int& rc) {
     io_proc_start, PIO_REARR_SUBSET, &iosysid);
   handlePIOReturnCode(pio_rc, "Could not start PIO Intracomm", rc);
 
+  this->PIOArgs[PIOARG::DIMIDS] = json::object();
   this->PIOArgs[PIOARG::IOSYSID] = iosysid;
+  this->PIOArgs[PIOARG::VARIDS] = json::object();
 
   rc = ESMF_SUCCESS;
   return iosysid;

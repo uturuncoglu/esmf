@@ -42,11 +42,13 @@ using namespace std;
 namespace ESMCI {
 
 namespace PIOARG {
+  const string DIMIDS = "dimids";
   const string FILENAME = "filename";
   const string IOSYSID = "iosysid";
   const string IOTYPE = "iotype";
   const string MODE = "mode";
   const string NCID = "ncid";
+  const string VARIDS = "varids";
 }
 
 //-----------------------------------------------------------------------------
@@ -72,6 +74,7 @@ public:
   IOHandle&operator=(IOHandle&&) = delete; // Move assignment
 
   void close(int& rc);
+  void dodef(int& rc);
   void enddef(int& rc);
   void finalize(int& rc);
   void open(int& rc);
