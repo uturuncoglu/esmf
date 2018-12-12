@@ -21,6 +21,7 @@
 #include "ESMCI_LogErr.h"
 #include "ESMCI_Macros.h"
 #include "ESMCI_Metadata.h"
+#include "ESMCI_TestUtilAttributes.h"
 #include "ESMCI_Util.h"
 #include "ESMCI_VM.h"
 
@@ -36,12 +37,6 @@ using namespace std;
 //
 //EOP
 //-----------------------------------------------------------------------------
-
-void finalizeFailure(int& rc, char failMsg[], string msg) {
-  rc = ESMF_FAILURE;
-  strcpy(failMsg, msg.c_str());
-  return;
-};
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "testOpenClose()"
