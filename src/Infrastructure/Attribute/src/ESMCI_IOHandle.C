@@ -20,6 +20,7 @@
 //
 //-----------------------------------------------------------------------------
 
+#include <assert.h>
 #include <vector>
 #include <iostream>
 
@@ -65,10 +66,10 @@ void handlePIOReturnCode(const int& pio_rc, const string& pio_msg, int& rc) {
 #define ESMC_METHOD "IOHandle::close()"
 void IOHandle::close(int& rc) {
   rc = ESMF_FAILURE;
-  int ncid = this->cache.at(PIOARG::NCID);
+  int ncid = this->PIOArgs.at(PIOARG::NCID);
   int pio_rc = PIOc_closefile(ncid);
   handlePIOReturnCode(pio_rc, "Could not close with PIO", rc);
-  this->cache.erase(this->cache.find(PIOARG::NCID));
+  this->PIOArgs.erase(this->PIOArgs.find(PIOARG::NCID));
   rc = ESMF_SUCCESS;
 }
 
@@ -76,7 +77,7 @@ void IOHandle::close(int& rc) {
 #define ESMC_METHOD "IOHandle::enddef()"
 void IOHandle::enddef(int& rc) {
   rc = ESMF_FAILURE;
-  int ncid = this->cache.at(PIOARG::NCID);
+  int ncid = this->PIOArgs.at(PIOARG::NCID);
   int pio_rc = PIOc_enddef(ncid);
   handlePIOReturnCode(pio_rc, "Could not enddef with PIO", rc);
   rc = ESMF_SUCCESS;
@@ -86,10 +87,10 @@ void IOHandle::enddef(int& rc) {
 #define ESMC_METHOD "finalize()"
 void IOHandle::finalize(int& rc) {
   rc = ESMF_FAILURE;
-  int iosysid = this->cache.at(PIOARG::IOSYSID);
+  int iosysid = this->PIOArgs.at(PIOARG::IOSYSID);
   int pio_rc = PIOc_finalize(iosysid);
   handlePIOReturnCode(pio_rc, "Could not finalize PIO", rc);
-  this->cache.erase(this->cache.find(PIOARG::IOSYSID));
+  this->PIOArgs.erase(this->PIOArgs.find(PIOARG::IOSYSID));
   rc = ESMF_SUCCESS;
 }
 
@@ -140,7 +141,7 @@ int IOHandle::init(int& rc) {
     io_proc_start, PIO_REARR_SUBSET, &iosysid);
   handlePIOReturnCode(pio_rc, "Could not start PIO Intracomm", rc);
 
-  this->cache[PIOARG::IOSYSID] = iosysid;
+  this->PIOArgs[PIOARG::IOSYSID] = iosysid;
 
   rc = ESMF_SUCCESS;
   return iosysid;
@@ -151,18 +152,15 @@ int IOHandle::init(int& rc) {
 void IOHandle::open(int& rc) {
   rc = ESMF_FAILURE;
 
-  auto meta = this->meta.getStorageRef();
-//  cout << meta.dump(2) << endl;
-  auto juri = meta.at(K_URI);
-  if (juri.is_null()) {
+  const string filename = this->PIOArgs.value(PIOARG::FILENAME, "");
+  if (filename == "") {
     ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD,
-      "'uri' may not be null", rc);
+      "PIOArg 'filename' may not be empty", rc);
   }
-  const string& uri = juri.get_ref<const string&>();
 
   int iosysid;
-  auto it_iosysid = this->cache.find(PIOARG::IOSYSID);
-  if (it_iosysid == this->cache.end()) {
+  auto it_iosysid = this->PIOArgs.find(PIOARG::IOSYSID);
+  if (it_iosysid == this->PIOArgs.end()) {
     iosysid = this->init(rc);
     ESMF_CHECKERR_STD("", rc, "Did not init", rc);
   } else {
@@ -171,12 +169,12 @@ void IOHandle::open(int& rc) {
 
   int iotype = static_cast<int>(PIO_IOTYPE_NETCDF);
   int ncid;
-  auto it_ncid = this->cache.find(PIOARG::NCID);
-  int mode = this->cache.value(PIOARG::MODE, NC_WRITE);
-  if (it_ncid == this->cache.end()) {
-    int pio_rc = PIOc_createfile(iosysid, &ncid, &iotype, uri.c_str(), mode);
-    handlePIOReturnCode(pio_rc, "Could not open URI: " + uri, rc);
-    this->cache[PIOARG::NCID] = ncid;
+  auto it_ncid = this->PIOArgs.find(PIOARG::NCID);
+  int mode = this->PIOArgs.value(PIOARG::MODE, NC_WRITE);
+  if (it_ncid == this->PIOArgs.end()) {
+    int pio_rc = PIOc_createfile(iosysid, &ncid, &iotype, filename.c_str(), mode);
+    handlePIOReturnCode(pio_rc, "Could not open filename: " + filename, rc);
+    this->PIOArgs[PIOARG::NCID] = ncid;
   } else {
     ncid = it_ncid.value();
   }

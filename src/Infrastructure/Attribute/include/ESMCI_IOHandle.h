@@ -42,6 +42,7 @@ using namespace std;
 namespace ESMCI {
 
 namespace PIOARG {
+  const string FILENAME = "filename";
   const string IOSYSID = "iosysid";
   const string MODE = "mode";
   const string NCID = "ncid";
@@ -53,10 +54,9 @@ class IOHandle {
 
 public:
   ESMCI::Metadata meta;
+  json PIOArgs = json::object();
 
 private:
-  json cache = json::object();
-
   int getOrCreateGroup(int& rc);
   int getOrCreateDimension(int& rc);
   int getOrCreateVariable(int& rc);
@@ -73,7 +73,6 @@ public:
   void close(int& rc);
   void enddef(int& rc);
   void finalize(int& rc);
-  const json& getCache(void) {return this->cache;}
   void open(int& rc);
   void read(int& rc);
   void write(const Array& arr, int& rc);

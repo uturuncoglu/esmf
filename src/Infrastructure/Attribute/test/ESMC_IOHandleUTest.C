@@ -61,9 +61,9 @@ void testOpenClose(int& rc, char failMsg[]) {
   // Test opening/closing a file with a URI ===================================
 
   IOHandle ioh2;
-  json& meta = ioh2.meta.getStorageRefWritable();
-  string uri = "test_pio_open.nc";
-  meta[K_URI] = uri;
+  string filename = "test_pio_open.nc";
+  ioh2.PIOArgs[PIOARG::FILENAME] = filename;
+  ioh2.PIOArgs[PIOARG::MODE] = NC_NOWRITE;
 
   ioh2.open(rc);
   ESMF_CHECKERR_STD("", rc, "Did not open", rc);
@@ -77,17 +77,15 @@ void testOpenClose(int& rc, char failMsg[]) {
   ioh2.finalize(rc);
   ESMF_CHECKERR_STD("", rc, "Did not finalize", rc);
 
-  auto cache = ioh2.getCache();
-//  cout << cache.dump(2) << endl;
-  if (cache.size() != 0) {
-    return finalizeFailure(rc, failMsg, "Cache should be empty after finalizing");
+  if (ioh2.PIOArgs.size() != 2) {
+    return finalizeFailure(rc, failMsg, "Remaining arg count problem");
   }
 
   ESMCI::VM *vm = ESMCI::VM::getCurrent(&rc);
   ESMF_CHECKERR_STD("", rc, "Did not get current VM", rc);
 
   int localPet = vm->getLocalPet();
-  if (localPet == 0 && remove(uri.c_str()) != 0) {
+  if (localPet == 0 && remove(filename.c_str()) != 0) {
     return finalizeFailure(rc, failMsg, "Test file not removed");
   }
 

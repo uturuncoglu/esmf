@@ -1,4 +1,6 @@
-# $Id$ 
+# $Id$
+
+#tdk:TODO: need to remove netcdf files
 
 ALL:      build_unit_tests
 run:      run_unit_tests
