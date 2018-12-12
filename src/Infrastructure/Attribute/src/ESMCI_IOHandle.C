@@ -149,6 +149,10 @@ void IOHandle::dodef(int& rc) {
           double value_double = it_attrs.value().get<double>();
           pio_rc = PIOc_put_att_double(ncid, varid, attrname, NC_DOUBLE, 1,
             &value_double);
+        } else if (it_attrs.value().is_number_integer()) {
+          int64_t value_long = it_attrs.value().get<int64_t>();
+          pio_rc = PIOc_put_att_long(ncid, varid, attrname, NC_LONG, 1,
+                                       &value_long);
         } else {
             ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD,
               "Attribute type not supported", rc);
