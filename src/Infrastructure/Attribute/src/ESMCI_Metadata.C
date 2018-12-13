@@ -8,7 +8,7 @@
 // NASA Goddard Space Flight Center.
 // Licensed under the University of Illinois-NCSA License.
 
-#define ESMC_FILENAME "./src/Infrastructure/Attribute/src/ESMCI_Attributes.C"
+#define ESMC_FILENAME "./src/Infrastructure/Attribute/src/ESMCI_Metadata.C"
 
 // Metadata implementation class inheriting from attributes
 
@@ -21,6 +21,8 @@
 // !DESCRIPTION:
 //
 //-----------------------------------------------------------------------------
+
+#include <netcdf.h>
 
 #include "ESMC.h"
 #include "ESMCI_Attributes.h"
@@ -136,14 +138,14 @@ vector<dimsize_t> getArrayShape(const Array& arr, int& rc) {
 
 #undef ESMC_METHOD
 #define ESMC_METHOD "getESMFTypeKind"
-ESMC_TypeKind_Flag getESMFTypeKind(const string& metaType, int& rc) {
+ESMC_TypeKind_Flag getESMFTypeKind(const nc_type xtype, int& rc) {
   ESMC_TypeKind_Flag ret;
-  if (metaType == "double") {
+  if (xtype == NC_DOUBLE) {
     ret = ESMC_TYPEKIND_R8;
-  } else if (metaType == "int") {
+  } else if (xtype == NC_INT) {
     ret = ESMC_TYPEKIND_I4;
   } else {
-    string msg = "The type '" + metaType + "' is not supported";
+    string msg = "The type '" + to_string(xtype) + "' is not supported";
     ESMF_CHECKERR_STD("ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, msg, rc);
   }
   return ret;
@@ -251,11 +253,15 @@ Array* Metadata::createArray(DistGrid& distgrid, const json& jsonParms,
   //---------------------------------------------------------------------------
 
   try {
+    // Get array name from internal metadata.
     const json& var_meta = this->storage.at(K_VARS).at(variableName);
+    // Get the dimension names for the array.
     vector<string> dim_names = var_meta.at(K_DIMS);
+    // Get the distributed dimension names having a zero-length array as default.
     vector<string> v_distDims = jsonParms.value(ESMFARG::DISTDIMS,
       json::array());
     int rank = dim_names.size();
+    // Convert the metadata data type to an ESMF TypeKind.
     ESMC_TypeKind_Flag tk = getESMFTypeKind(var_meta[K_DTYPE], rc);
     ESMF_CHECKERR_STD("", rc, "Did not get TypeKind", rc);
 
@@ -263,7 +269,7 @@ Array* Metadata::createArray(DistGrid& distgrid, const json& jsonParms,
     arrayspec.set(rank, tk);
 
     vector<ESMC_I4> v_distgridToArrayMap(v_distDims.size(), -999);
-    auto ii = 0;
+    int ii = 0;
     for (auto dist_dim_name : v_distDims) {
       auto it = std::find(dim_names.cbegin(), dim_names.cend(), dist_dim_name);
       if (it == dim_names.cend()) {

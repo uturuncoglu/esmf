@@ -103,9 +103,43 @@ void testOpenClose(int& rc, char failMsg[]) {
 #define ESMC_METHOD "testWriteArray()"
 void testWriteArray(int& rc, char failMsg[]) {
   rc = ESMF_FAILURE;
-  bool failed = true;
+//  bool failed = true;
 
-//  rc = ESMF_SUCCESS;
+  json root = createTestJSONMetadata(rc);
+  Metadata meta(move(root));
+
+  json dgparms;
+  dgparms[ESMFARG::DISTDIMS] = {"dim_lon"};
+  DistGrid* distgrid = meta.createDistGrid(dgparms, rc);
+  ESMF_CHECKERR_STD("", rc, "DistGrid creation failed", rc);
+
+  json jsonParms;
+  jsonParms[ESMFARG::DISTDIMS] = {"dim_lon"};
+  jsonParms[ESMFARG::VARIABLENAME] = "the_xc";
+
+  ESMCI::Array* arr = meta.createArray(*distgrid, jsonParms, rc);
+  ESMF_CHECKERR_STD("", rc, "Array creation failed", rc);
+
+  ESMC_TypeKind_Flag tk = arr->getTypekind();
+  LocalArray** larrayList = arr->getLocalarrayList();
+  int rank = arr->getRank();
+  int index[rank] = {1};
+  ESMC_R8 data = std::numeric_limits<ESMC_R8>::min();
+
+  rc = larrayList[0]->getData(index, &data);
+  ESMF_CHECKERR_STD("", rc, "Failure when getting data from local array", rc);
+
+  if (data == std::numeric_limits<ESMC_R8>::min()) {
+    return finalizeFailure(rc, failMsg, "Did not get value from local array");
+  }
+
+
+
+  rc = ESMCI::Array::destroy(&arr);
+  rc = ESMCI::DistGrid::destroy(&distgrid);
+  ESMF_CHECKERR_STD("", rc, "Problem when destroying objects", rc);
+
+  rc = ESMF_SUCCESS;
   return;
 }
 

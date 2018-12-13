@@ -47,6 +47,8 @@ void testCreateArray(int& rc, char failMsg[]) {
   bool failed = true;
 
   json root = createTestJSONMetadata(rc);
+  ESMF_CHECKERR_STD("", rc, "Did not create JSON Metadata", rc);
+
   Metadata meta(move(root));
 
   // Test creation with a DistGrid ============================================
