@@ -30,6 +30,7 @@
 #include "ESMCI_VM.h"
 #include "json.hpp"
 
+#include <assert.h>
 #include <vector>
 #include <iostream>
 
@@ -63,6 +64,20 @@ bool handleHasKey(const Attributes* attrs, const string& key, int& rc) {
   }
 
   return has_key;
+}
+
+#undef ESMC_METHOD
+#define ESMC_METHOD "isIn(<string vector>)"
+bool isIn(const string& target, const vector<string>& container) {
+  auto it = std::find(container.cbegin(), container.cend(), target);
+  return !(it == container.cend());
+}
+
+#undef ESMC_METHOD
+#define ESMC_METHOD "isIn(<json>)"
+bool isIn(const string& target, const json& j) {
+  assert(!j.is_null());
+  return j.find(target) != j.end();
 }
 
 #undef  ESMC_METHOD

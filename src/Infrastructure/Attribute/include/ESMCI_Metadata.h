@@ -90,6 +90,7 @@ public:
   // specialization, it needs to be explicitly defined to ensure its init
   // method is called.
   Metadata(void) {this->init();}
+  ~Metadata(void) = default;  // Overload the destructor so we clean-up nicely.
 
   ESMCI::Array* createArray(DistGrid& distGrid, const json& jsonParms,
     int& rc) const;

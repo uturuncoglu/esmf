@@ -162,13 +162,6 @@ void handleUnsupported(const json& j, const vector<string>& tokens, int& rc) {
   }
 }
 
-#undef ESMC_METHOD
-#define ESMC_METHOD "isIn"
-bool isIn(const string& target, const vector<string>& container) {
-  auto it = std::find(container.cbegin(), container.cend(), target);
-  return !(it == container.cend());
-}
-
 //=============================================================================
 
 #undef ESMC_METHOD

@@ -80,7 +80,7 @@ protected:
 public:
   Attributes(void) {this->init();}
 //  Attributes(void) = default;  // Default constructor
-  ~Attributes(void) = default; // Default destructor
+  virtual ~Attributes(void) = default; // Default destructor
   Attributes(Attributes&&) = delete; // Move constructor
   Attributes(const Attributes&) = delete; // Copy constructor
   Attributes&operator=(const Attributes&) = delete; // Copy assignment
@@ -137,6 +137,8 @@ public:
 //-----------------------------------------------------------------------------
 
 void broadcastAttributes(ESMCI::Attributes* attrs, int rootPet, int& rc); // tdk: FEATURE: non-blocking
+bool isIn(const string& target, const std::vector<string>& container);
+bool isIn(const string& target, const json& j);
 void tdklog(const string& msg);
 
 //-----------------------------------------------------------------------------
