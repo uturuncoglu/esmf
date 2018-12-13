@@ -42,6 +42,7 @@ using namespace std;
 #define ESMC_METHOD "testOpenClose()"
 void testOpenClose(int& rc, char failMsg[]) {
   //tdk:RENAME: just to "test"
+  //tdk:TODO: add full circle test once reading is implemented
   rc = ESMF_FAILURE;
   bool failed = true;
 

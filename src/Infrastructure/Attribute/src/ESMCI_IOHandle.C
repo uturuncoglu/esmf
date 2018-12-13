@@ -66,7 +66,6 @@ void writePIOAttributes(const json& attrs, int ncid, int varid, int& rc) {
   rc = ESMF_FAILURE;
   int pio_rc;
   for (json::const_iterator it_attrs=attrs.cbegin(); it_attrs!=attrs.cend(); it_attrs++) {
-    cout<<"(x) attr="<<it_attrs.key()<<","<<it_attrs.value()<<endl;
     auto attrname = it_attrs.key().c_str();
     if (it_attrs.value().is_string()) {
       string value_string = it_attrs.value().get<string>();
@@ -106,6 +105,7 @@ void IOHandle::close(int& rc) {
 #undef ESMC_METHOD
 #define ESMC_METHOD "IOHandle::dodef()"
 void IOHandle::dodef(int& rc) {
+  //tdk:TODO: refactor into functions
   rc = ESMF_FAILURE;
   int ncid = this->PIOArgs.at(PIOARG::NCID);
 
@@ -120,26 +120,17 @@ void IOHandle::dodef(int& rc) {
   int varid;
   string varname;
   for (json::const_iterator it_var=varmeta.cbegin(); it_var!=varmeta.cend(); it_var++) {
-    cout<<"(x) varmeta.key="<<it_var.key()<<endl;
     const auto it_varid = varids.find(it_var.key());
     if (it_varid == varids.end()) {
-      cout<<"(x) varid not found"<<endl;
-//      cout<<it_var.value().dump(2)<<endl;
       ndims = it_var.value()[K_DIMS].size();
       int dimidsp[ndims];
-      cout<<"(x) ndims="<<ndims<<endl;
       if (ndims > 0) {
-        cout<<"(x) variable has dimensions"<<endl;
         const json& dims = it_var.value()[K_DIMS];
-//        cout<<dims.dump(2)<<endl;
-//        for (json::const_iterator it_dimnames=dims.cbegin(); it_dimnames!=dims.cend(); it_dimnames++) {
 
         dimctr = 0;
         for (const auto& dimname : dims) {
-          cout << "(x) dimname=" << dimname << endl;
           const auto it_dimid = dimids.find(dimname);
           if (it_dimid == dimids.end()) {
-            cout<<"(x) dimension NOT found"<<endl;
             dimsize_t dimsize;
             //tdk:?: PIO only handles one unlimited dimension?
             //tdk:?: PIO has to have unlimited dimension as the first dimension (last in Fortran)?
@@ -162,8 +153,6 @@ void IOHandle::dodef(int& rc) {
           dimctr++;
         }
 
-      } else {
-        cout<<"(x) variable DOES NOT have dimensions"<<endl;
       }
 
       nc_type xtype = it_var.value()[K_DTYPE];

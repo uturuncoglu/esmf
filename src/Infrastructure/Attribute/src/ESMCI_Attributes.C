@@ -382,12 +382,6 @@ json PackageFactory::getOrCreateJSON(const string& key, int& rc,
   }
 }
 
-//tdk:REMOVE
-void tdklog(const string& msg) {
-  string localmsg = "tdk: " + msg;
-  ESMC_LogWrite(localmsg.c_str(), ESMC_LOGMSG_INFO);
-}
-
 //-----------------------------------------------------------------------------
 
 #undef  ESMC_METHOD
