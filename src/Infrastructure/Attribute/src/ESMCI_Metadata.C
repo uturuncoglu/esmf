@@ -180,6 +180,15 @@ void Metadata::update(const ESMCI::Array& arr, const vector<string>* dimnames,
   //tdk:ORDER
   rc = ESMF_FAILURE;
 
+  const ESMC_TypeKind_Flag tk = arr.getTypekind();
+  nc_type dtype;
+  if (tk == ESMC_TYPEKIND_R8) {
+    dtype = NC_DOUBLE;
+  } else {
+    ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD,
+      "TypeKind not supported through update: " + to_string(tk) , rc);
+  }
+
   string name(arr.getName());
   int rank = arr.getRank();
 
@@ -195,10 +204,21 @@ void Metadata::update(const ESMCI::Array& arr, const vector<string>* dimnames,
 
     const vector<string>& r_dimnames = *dimnames;
     for (auto ii=0; ii<rank; ii++) {
-      if (dimsizes[r_dimnames[ii]] != arrshp[ii]) {
-        auto msg = "Provided dimension names have sizes in current storage that "
-                   "conflict with the array size.";
-        ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, msg, rc);
+      // If the dimension name exists in the dimension sizes pulled from the
+      // metadata, confirm it has the correct size.
+      if (isIn(r_dimnames[ii], dimsizes)) {
+        if (dimsizes[r_dimnames[ii]] != arrshp[ii]) {
+          auto msg = "Provided dimension names have sizes in current storage that "
+                     "conflict with the array size.";
+          ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, msg, rc);
+        }
+      } else {
+        // Create the dimension as it does not yet exist.
+        this->storage[K_DIMS] = createJSONPackage("ESMF:Metadata:Dimension", rc);
+        ESMF_CHECKERR_STD("", rc, "Did not create dimension package", rc);
+
+        this->storage[K_DIMS][K_NAME] = r_dimnames[ii];
+        this->storage[K_DIMS][K_SIZE] = arrshp[ii];
       }
     }
 
@@ -227,6 +247,12 @@ void Metadata::update(const ESMCI::Array& arr, const vector<string>* dimnames,
       currdim[K_SIZE] = arrshp[ii];
     }
   }
+
+  var_meta[K_NAME] = name;
+  var_meta[K_DTYPE] = dtype;
+
+  assert(!this->storage[K_VARS][name][K_NAME].is_null());
+  assert(!this->storage[K_VARS][name][K_DTYPE].is_null());
 
   rc = ESMF_SUCCESS;
 }

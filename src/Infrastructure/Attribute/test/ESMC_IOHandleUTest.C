@@ -133,6 +133,18 @@ void testWriteArray(int& rc, char failMsg[]) {
     return finalizeFailure(rc, failMsg, "Did not get value from local array");
   }
 
+  const string filename = "test_pio_write_1d_array.nc";
+  IOHandle ioh;
+  ioh.PIOArgs[PIOARG::FILENAME] = filename;
+  const vector<string> dimnames = {"the_longitude"};
+  ioh.meta.update(*arr, &dimnames, rc);
+  ESMF_CHECKERR_STD("", rc, "Metadata not updated", rc);
+
+  json& smeta = ioh.meta.getStorageRefWritable();
+  smeta.at(K_VARS).at("the_xc").at(K_ATTRS)[K_AXIS] = "X";
+
+  cout<<ioh.meta.dump(2,rc)<<endl;  //tdk:p
+
 
 
   rc = ESMCI::Array::destroy(&arr);

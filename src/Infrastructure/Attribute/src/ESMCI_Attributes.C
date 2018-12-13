@@ -76,8 +76,11 @@ bool isIn(const string& target, const vector<string>& container) {
 #undef ESMC_METHOD
 #define ESMC_METHOD "isIn(<json>)"
 bool isIn(const string& target, const json& j) {
-  assert(!j.is_null());
-  return j.find(target) != j.end();
+  if (j.is_null()) {
+    return false;
+  } else {
+    return j.find(target) != j.end();
+  }
 }
 
 #undef  ESMC_METHOD
