@@ -91,10 +91,9 @@ void testOpenClose(int& rc, char failMsg[]) {
   ESMF_CHECKERR_STD("", rc, "Did not get current VM", rc);
 
   int localPet = vm->getLocalPet();
-  //tdk:UNCOMMENT
-//  if (localPet == 0 && remove(filename.c_str()) != 0) {
-//    return finalizeFailure(rc, failMsg, "Test file not removed");
-//  }
+  if (localPet == 0 && remove(filename.c_str()) != 0) {
+    return finalizeFailure(rc, failMsg, "Test file not removed");
+  }
 
   rc = ESMF_SUCCESS;
   return;

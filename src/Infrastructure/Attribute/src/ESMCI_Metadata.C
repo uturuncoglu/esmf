@@ -243,7 +243,7 @@ Array* Metadata::createArray(DistGrid& distgrid, const json& jsonParms,
   //tdk:TODO: attributes on array object!
   string variableName;
   try {
-    variableName = jsonParms.at("variableName");
+    variableName = jsonParms.at(ESMFARG::VARIABLENAME);
   }
   catch (json::out_of_range& e) {
     ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
@@ -260,7 +260,8 @@ Array* Metadata::createArray(DistGrid& distgrid, const json& jsonParms,
   try {
     const json& var_meta = this->storage.at(K_VARS).at(variableName);
     vector<string> dim_names = var_meta.at(K_DIMS);
-    vector<string> v_distDims = jsonParms.value("distDims", json::array());
+    vector<string> v_distDims = jsonParms.value(ESMFARG::DISTDIMS,
+      json::array());
     int rank = dim_names.size();
     ESMC_TypeKind_Flag tk = getESMFTypeKind(var_meta[K_DTYPE], rc);
     ESMF_CHECKERR_STD("", rc, "Did not get TypeKind", rc);
@@ -348,10 +349,13 @@ DistGrid* Metadata::createDistGrid(const json& jsonParms, int& rc) const {
     "connectionList", "delayout", "vm", "indexTK"};
   handleUnsupported(jsonParms, unsupported, rc);
 
-  vector<string> v_distDims = jsonParms.value("distDims", json::array());
+  vector<string> v_distDims = jsonParms.value(ESMFARG::DISTDIMS,
+    json::array());
 
-  vector<ESMC_I4> v_minIndex = jsonParms.value("minIndex", json::array());
-  vector<ESMC_I4> v_maxIndex = jsonParms.value("maxIndex", json::array());
+  vector<ESMC_I4> v_minIndex = jsonParms.value(ESMFARG::MININDEX,
+    json::array());
+  vector<ESMC_I4> v_maxIndex = jsonParms.value(ESMFARG::MAXINDEX,
+    json::array());
 
   size_t v_distDims_size = v_distDims.size();
   if (v_minIndex.size() == 0) {

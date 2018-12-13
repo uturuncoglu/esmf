@@ -137,6 +137,7 @@ public:
 //-----------------------------------------------------------------------------
 
 void broadcastAttributes(ESMCI::Attributes* attrs, int rootPet, int& rc); // tdk: FEATURE: non-blocking
+void tdklog(const string& msg);
 
 //-----------------------------------------------------------------------------
 

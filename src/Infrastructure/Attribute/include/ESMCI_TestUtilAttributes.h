@@ -36,6 +36,7 @@ using json = nlohmann::json;  // Convenience rename for JSON namespace.
 
 namespace ESMCI {
 
+  json createTestDistDims();
   DistGrid* createTestDistGrid(const Metadata& meta, int& rc);
   json createTestJSONMetadata(int& rc);
   void finalizeFailure(int& rc, char failMsg[], string msg);

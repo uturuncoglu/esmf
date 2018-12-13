@@ -45,6 +45,12 @@ using json = nlohmann::json;  // Convenience rename for JSON namespace.
 
 namespace ESMCI {
 
+//tdk:REMOVE
+void tdklog(const string& msg) {
+  string localmsg = "tdk: " + msg;
+  ESMC_LogWrite(localmsg.c_str(), ESMC_LOGMSG_INFO);
+}
+
 #undef ESMC_METHOD
 #define ESMC_METHOD "handleHasKey"
 bool handleHasKey(const Attributes* attrs, const string& key, int& rc) {

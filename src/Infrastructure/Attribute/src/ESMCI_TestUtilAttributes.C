@@ -20,7 +20,7 @@
 //
 //-----------------------------------------------------------------------------
 
-#include <netcdf.h>
+#include <netcdf.h>  //tdk:TODO: why do i not include PIO only?
 
 #include "ESMC.h"
 #include "ESMCI_DistGrid.h"
@@ -43,12 +43,11 @@ using json = nlohmann::json;  // Convenience rename for JSON namespace.
 //-----------------------------------------------------------------------------
 
 namespace ESMCI {
-
+  
 #undef  ESMC_METHOD
 #define ESMC_METHOD "createTestDistGrid()"
 DistGrid* createTestDistGrid(const Metadata& meta, int& rc) {
-  json jsonParms;
-  jsonParms["distDims"] = {"dim_lon", "dim_lat"};
+  json jsonParms = createTestDistDims();
   DistGrid* dist_grid = meta.createDistGrid(jsonParms, rc);
   ESMF_CHECKERR_STD("", rc, "DistGrid creation failed", rc);
   return dist_grid;
@@ -127,6 +126,14 @@ json createTestJSONMetadata(int& rc) {
   root[K_VARS]["the_level"][K_ATTRS][K_UNITS] = "meters";
 
   return root;
+}
+
+#undef ESMC_METHOD
+#define ESMC_METHOD "createTestDistDims()"
+json createTestDistDims() {
+  json j;
+  j[ESMFARG::DISTDIMS] = json::array({"dim_lon", "dim_lat"});
+  return j;
 }
 
 #undef  ESMC_METHOD

@@ -47,6 +47,13 @@ namespace ESMCI {
 
 typedef std::size_t dimsize_t;
 
+namespace ESMFARG {
+  const string DISTDIMS = "distDims";
+  const string MININDEX = "minIndex";
+  const string MAXINDEX = "maxIndex";
+  const string VARIABLENAME = "variableName";
+}
+
 namespace MKEY {
   const string K_ATTRS = "attrs";
   const string K_AXIS = "axis";

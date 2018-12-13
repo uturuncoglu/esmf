@@ -53,8 +53,8 @@ void testCreateArray(int& rc, char failMsg[]) {
 
   DistGrid* distgrid = createTestDistGrid(meta, rc);
 
-  json jsonParms = {{"distDims", {"dim_lon", "dim_lat"}},
-                    {"variableName", "foo"}};
+  json jsonParms = createTestDistDims();
+  jsonParms[ESMFARG::VARIABLENAME] = "foo";
 
   ESMCI::Array* arr = meta.createArray(*distgrid, jsonParms, rc);
   ESMF_CHECKERR_STD("", rc, "Array creation failed", rc);
