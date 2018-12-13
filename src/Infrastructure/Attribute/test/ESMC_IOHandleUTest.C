@@ -97,7 +97,17 @@ void testOpenClose(int& rc, char failMsg[]) {
 
   rc = ESMF_SUCCESS;
   return;
-};
+}
+
+#undef  ESMC_METHOD
+#define ESMC_METHOD "testWriteArray()"
+void testWriteArray(int& rc, char failMsg[]) {
+  rc = ESMF_FAILURE;
+  bool failed = true;
+
+//  rc = ESMF_SUCCESS;
+  return;
+}
 
 //-----------------------------------------------------------------------------
 
@@ -118,6 +128,13 @@ int main(void) {
   //NEX_UTest
   strcpy(name, "Test opening and closing a netCDF file");
   testOpenClose(rc, failMsg);
+  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
+  //---------------------------------------------------------------------------
+
+  //---------------------------------------------------------------------------
+  //NEX_UTest
+  strcpy(name, "Test writing a simple array");
+  testWriteArray(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //---------------------------------------------------------------------------
 
