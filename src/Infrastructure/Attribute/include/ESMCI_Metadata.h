@@ -45,7 +45,8 @@ namespace ESMCI {
 
 //-----------------------------------------------------------------------------
 
-typedef std::size_t dimsize_t;
+// Use the same type as PIO for dimension lengths.
+typedef int dimsize_t;
 
 namespace ESMFARG {
   const string DISTDIMS = "distDims";

@@ -240,7 +240,7 @@ int IOHandle::init(int& rc) {
   const int num_iotasks = petCount;
 
   int pio_rc = PIOc_Init_Intracomm(comm, num_iotasks, io_proc_stride,
-    io_proc_start, PIO_REARR_SUBSET, &iosysid);
+    io_proc_start, PIODEF::REARRANGER, &iosysid);
   handlePIOReturnCode(pio_rc, "Could not start PIO Intracomm", rc);
 
   this->PIOArgs[PIOARG::DIMIDS] = json::object();
@@ -290,21 +290,72 @@ void IOHandle::open(int& rc) {
 void IOHandle::write(const Array& arr, int& rc) {
   rc = ESMF_FAILURE;
 
-  vector<string> jargs = {"filename"};
-  vector<string> jkwargs = {"clobber", "fileOnly", "mode"};
+//  vector<string> jargs = {"filename"};
+//  vector<string> jkwargs = {"clobber", "fileOnly", "mode"};
 
-  // meta.update
-  // init
-  // open
-  // getOrCreateGroup
-  // getOrCreateDimension
-  // getOrCreateVariable
-  // enddef
-  // insert
-  // close
-  // finalize
+  ESMCI::VM *vm = ESMCI::VM::getCurrent(&rc);
+  ESMF_CHECKERR_STD("", rc, "Did not get current VM", rc);
 
-  //  rc = ESMF_SUCCESS;
+  int localPet = vm->getLocalPet();
+  int petCount = vm->getPetCount();
+
+  DistGrid* distgrid = arr.getDistGrid();
+
+  // Only one DE is currently supported.
+  DELayout* de_layout = distgrid->getDELayout();
+  if (de_layout->getLocalDeCount() > 1) {
+    ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD,
+                      "Only one DE supported for writing", rc);
+  }
+
+  try {
+    const int& iosysid = this->PIOArgs.at(PIOARG::IOSYSID).get_ref<json::number_integer_t&>();
+  }
+  catch (json::out_of_range& e) {
+    ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
+  }
+
+  string name(arr.getName());
+  if (!this->meta.hasVariable(name)) {
+    ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD,
+      "Array name not found in variable metadata", rc);
+  }
+
+  const json& varmeta = this->meta.getOrCreateVariable(name, rc);
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+
+  try {
+    const int& pio_type = varmeta.at(K_DTYPE).get_ref<const json::number_integer_t&>();
+  }
+  catch (json::out_of_range& e) {
+    ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
+  }
+
+  const int ndims = arr.getRank();
+
+  const vector<dimsize_t> gdimlen_v = getArrayShape(arr, rc);
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+
+  //tdk:TODO: will need to deal with unlimited dimensions and their location in the length array
+  const int* gdimlen = gdimlen_v.data();
+
+  const int* exclusiveElementCountPDe = arr.getExclusiveElementCountPDe();
+  PIO_Offset maplen = *exclusiveElementCountPDe;
+
+  auto tdkmsg = "maplen=" + to_string(maplen);
+  tdklog(tdkmsg);
+
+  PIO_Offset compmap[maplen];
+  for (auto ii=0; ii<maplen; ii++) {
+    compmap[ii] = localPet * maplen + ii;
+  }
+
+  int ioid = 0;
+  pio_rc = PIOc_init_decomp(iosysid, pio_type, ndims, gdimlen, maplen, compmap,
+    &ioid, PIODEF::REARRANGER, nullptr, nullptr);
+  handlePIOReturnCode(pio_rc, "Did not initialize PIO decomposition", rc);
+
+  rc = ESMF_SUCCESS;
 }
 
 }  // ESMCI

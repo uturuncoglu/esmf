@@ -51,6 +51,10 @@ namespace PIOARG {
   const string VARIDS = "varids";
 }
 
+namespace PIODEF {
+  const int REARRANGER = PIO_REARR_SUBSET;
+}
+
 //-----------------------------------------------------------------------------
 
 class IOHandle {

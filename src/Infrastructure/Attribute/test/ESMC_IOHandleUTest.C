@@ -145,7 +145,21 @@ void testWriteArray(int& rc, char failMsg[]) {
 
   cout<<ioh.meta.dump(2,rc)<<endl;  //tdk:p
 
+  ioh.open(rc);
+  ESMF_CHECKERR_STD("", rc, "Did not open file", rc);
 
+  ioh.dodef(rc);
+  ESMF_CHECKERR_STD("", rc, "Did not define", rc);
+
+  ioh.enddef(rc);
+  ESMF_CHECKERR_STD("", rc, "Did not enddef", rc);
+
+  cout<<ioh.PIOArgs.dump(2)<<endl;  //tdk:p
+
+  ioh.write(*arr, rc);
+  ESMF_CHECKERR_STD("", rc, "Did not write array", rc);
+
+  //tdk:TODO: remove netcdf test file
 
   rc = ESMCI::Array::destroy(&arr);
   rc = ESMCI::DistGrid::destroy(&distgrid);

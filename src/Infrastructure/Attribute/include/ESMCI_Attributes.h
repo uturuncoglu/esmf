@@ -27,6 +27,8 @@
 using json = nlohmann::json;  // Convenience rename for JSON namespace.
 using std::string;
 
+//tdk:LAST: remove all tdk stuff (search for tdk)
+
 // Standard ESMF check error macros
 #define ESMF_CHECKERR_STD(name_rc, actual_rc, msg, update_rc) {\
   esmf_attrs_error local_macro_error(name_rc, actual_rc, msg);\

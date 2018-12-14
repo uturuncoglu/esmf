@@ -214,11 +214,12 @@ void Metadata::update(const ESMCI::Array& arr, const vector<string>* dimnames,
         }
       } else {
         // Create the dimension as it does not yet exist.
-        this->storage[K_DIMS] = createJSONPackage("ESMF:Metadata:Dimension", rc);
+        //tdk:TODO: need a create dimension for json
+        this->storage[K_DIMS][r_dimnames[ii]] = createJSONPackage("ESMF:Metadata:Dimension", rc);
         ESMF_CHECKERR_STD("", rc, "Did not create dimension package", rc);
 
-        this->storage[K_DIMS][K_NAME] = r_dimnames[ii];
-        this->storage[K_DIMS][K_SIZE] = arrshp[ii];
+        this->storage[K_DIMS][r_dimnames[ii]][K_NAME] = r_dimnames[ii];
+        this->storage[K_DIMS][r_dimnames[ii]][K_SIZE] = arrshp[ii];
       }
     }
 
@@ -517,7 +518,7 @@ bool Metadata::hasVariable(const string& name) {
 #undef ESMC_METHOD
 #define ESMC_METHOD "isUnlimited()"
 bool Metadata::isUnlimited(const string& name) {
-  return this->storage[K_DIMS][name][K_UNLIM];
+  return this->storage.at(K_DIMS).at(name).at(K_UNLIM);
 }
 
 }  // ESMCI
