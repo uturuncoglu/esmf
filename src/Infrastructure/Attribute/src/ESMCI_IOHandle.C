@@ -193,8 +193,17 @@ void IOHandle::finalize(int& rc) {
   rc = ESMF_FAILURE;
   int iosysid = this->PIOArgs.at(PIOARG::IOSYSID);
 
-  int pio_rc = PIOc_finalize(iosysid);
+  int pio_rc;
+  if (isIn(PIOARG::IOIDS, this->PIOArgs)) {
+    int ioid = 512;  //tdk:TODO: this should use the value from the dictionary
+    int pio_rc = PIOc_freedecomp(iosysid, ioid);
+    handlePIOReturnCode(pio_rc, "Could not finalize PIO", rc);
+    tdklog("freed ioid="+to_string(ioid));
+  }
+
+  pio_rc = PIOc_finalize(iosysid);
   handlePIOReturnCode(pio_rc, "Could not finalize PIO", rc);
+  tdklog("freed iosysid="+to_string(iosysid));
 
   this->PIOArgs.erase(this->PIOArgs.find(PIOARG::IOSYSID));
 
