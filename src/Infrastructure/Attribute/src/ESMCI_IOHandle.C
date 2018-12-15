@@ -99,6 +99,8 @@ void IOHandle::close(int& rc) {
   int pio_rc = PIOc_closefile(ncid);
   handlePIOReturnCode(pio_rc, "Could not close with PIO", rc);
   this->PIOArgs.erase(this->PIOArgs.find(PIOARG::NCID));
+  this->PIOArgs.erase(this->PIOArgs.find(PIOARG::VARIDS));
+  this->PIOArgs.erase(this->PIOArgs.find(PIOARG::DIMIDS));
   rc = ESMF_SUCCESS;
 }
 
@@ -190,9 +192,12 @@ void IOHandle::enddef(int& rc) {
 void IOHandle::finalize(int& rc) {
   rc = ESMF_FAILURE;
   int iosysid = this->PIOArgs.at(PIOARG::IOSYSID);
+
   int pio_rc = PIOc_finalize(iosysid);
   handlePIOReturnCode(pio_rc, "Could not finalize PIO", rc);
+
   this->PIOArgs.erase(this->PIOArgs.find(PIOARG::IOSYSID));
+
   rc = ESMF_SUCCESS;
 }
 
@@ -309,53 +314,69 @@ void IOHandle::write(const Array& arr, int& rc) {
   }
 
   try {
-    const int& iosysid = this->PIOArgs.at(PIOARG::IOSYSID).get_ref<json::number_integer_t&>();
-  }
-  catch (json::out_of_range& e) {
-    ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
-  }
+    const int &iosysid = this->PIOArgs.at(PIOARG::IOSYSID).get_ref<json::number_integer_t&>();
 
-  string name(arr.getName());
-  if (!this->meta.hasVariable(name)) {
-    ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD,
-      "Array name not found in variable metadata", rc);
-  }
+    string name(arr.getName());
+    if (!this->meta.hasVariable(name)) {
+      ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD,
+                        "Array name not found in variable metadata", rc);
+    }
 
-  const json& varmeta = this->meta.getOrCreateVariable(name, rc);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+    const json &varmeta = this->meta.getOrCreateVariable(name, rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 
-  try {
     const int& pio_type = varmeta.at(K_DTYPE).get_ref<const json::number_integer_t&>();
+
+    const int ndims = arr.getRank();
+
+    const vector <dimsize_t> gdimlen_v = getArrayShape(arr, rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+
+    //tdk:TODO: will need to deal with unlimited dimensions and their location in the length array
+    const int *gdimlen = gdimlen_v.data();
+
+    const int *exclusiveElementCountPDe = arr.getExclusiveElementCountPDe();
+    PIO_Offset maplen = *exclusiveElementCountPDe;
+
+    auto tdkmsg = "maplen=" + to_string(maplen);
+    tdklog(tdkmsg);
+
+    PIO_Offset compmap[maplen];
+    for (auto ii = 0; ii < maplen; ii++) {
+      compmap[ii] = localPet * maplen + ii;
+    }
+
+    int ioid = 0;
+    int pio_rc = PIOc_init_decomp(iosysid, pio_type, ndims, gdimlen, maplen,
+      compmap, &ioid, PIODEF::REARRANGER, nullptr, nullptr);
+    handlePIOReturnCode(pio_rc, "Did not initialize PIO decomposition", rc);
+
+    this->PIOArgs[PIOARG::IOIDS][name] = ioid;
+
+    //-------------------------------------------------------------------------
+
+    void** larrayBaseAddrList =  arr.getLarrayBaseAddrList();
+//    double* buffer = reinterpret_cast<double*>(larrayBaseAddrList[0]);
+    void* buffer = larrayBaseAddrList[0];
+    const int& varid = this->PIOArgs.at(PIOARG::VARIDS).at(name).get_ref<const json::number_integer_t&>();
+    const int& ncid = this->PIOArgs.at(PIOARG::NCID).get_ref<const json::number_integer_t&>();
+    void* fillvalue = nullptr;  //tdk:TODO: not handling fillvalue yet
+    pio_rc = PIOc_write_darray(ncid, varid, ioid, maplen, buffer, fillvalue);
+    handlePIOReturnCode(pio_rc, "Did not write darray", rc);
+
+    pio_rc = PIOc_sync(ncid);
+    handlePIOReturnCode(pio_rc, "Did not sync", rc);
+
+    //-------------------------------------------------------------------------
+
+    rc = ESMF_SUCCESS;
   }
   catch (json::out_of_range& e) {
     ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
   }
-
-  const int ndims = arr.getRank();
-
-  const vector<dimsize_t> gdimlen_v = getArrayShape(arr, rc);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
-
-  //tdk:TODO: will need to deal with unlimited dimensions and their location in the length array
-  const int* gdimlen = gdimlen_v.data();
-
-  const int* exclusiveElementCountPDe = arr.getExclusiveElementCountPDe();
-  PIO_Offset maplen = *exclusiveElementCountPDe;
-
-  auto tdkmsg = "maplen=" + to_string(maplen);
-  tdklog(tdkmsg);
-
-  PIO_Offset compmap[maplen];
-  for (auto ii=0; ii<maplen; ii++) {
-    compmap[ii] = localPet * maplen + ii;
+  catch (...) {
+    ESMF_CHECKERR_STD("", rc, "Uncaught throw", rc);
   }
-
-  int ioid = 0;
-  pio_rc = PIOc_init_decomp(iosysid, pio_type, ndims, gdimlen, maplen, compmap,
-    &ioid, PIODEF::REARRANGER, nullptr, nullptr);
-  handlePIOReturnCode(pio_rc, "Did not initialize PIO decomposition", rc);
-
-  rc = ESMF_SUCCESS;
 }
 
 }  // ESMCI

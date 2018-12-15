@@ -83,7 +83,7 @@ void testOpenClose(int& rc, char failMsg[]) {
   ioh2.finalize(rc);
   ESMF_CHECKERR_STD("", rc, "Did not finalize", rc);
 
-  if (ioh2.PIOArgs.size() != 4) {
+  if (ioh2.PIOArgs.size() != 1) {
     return finalizeFailure(rc, failMsg, "Remaining arg count problem");
   }
 
@@ -104,6 +104,12 @@ void testOpenClose(int& rc, char failMsg[]) {
 void testWriteArray(int& rc, char failMsg[]) {
   rc = ESMF_FAILURE;
 //  bool failed = true;
+
+  ESMCI::VM *vm = ESMCI::VM::getCurrent(&rc);
+  ESMF_CHECKERR_STD("", rc, "Did not get current VM", rc);
+
+  int localPet = vm->getLocalPet();
+  int petCount = vm->getPetCount();
 
   json root = createTestJSONMetadata(rc);
   Metadata meta(move(root));
@@ -133,6 +139,15 @@ void testWriteArray(int& rc, char failMsg[]) {
     return finalizeFailure(rc, failMsg, "Did not get value from local array");
   }
 
+  dimsize_t size = meta.getDimensionSize("dim_lon", rc);
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+
+  void** larrayBaseAddrList =  arr->getLarrayBaseAddrList();
+  double* buffer = reinterpret_cast<double*>(larrayBaseAddrList[0]);
+  for (auto ii=0; ii<size; ii++) {
+    buffer[ii] = (1000 * (localPet + 1)) + ii + 1.5;
+  }
+
   const string filename = "test_pio_write_1d_array.nc";
   IOHandle ioh;
   ioh.PIOArgs[PIOARG::FILENAME] = filename;
@@ -154,10 +169,16 @@ void testWriteArray(int& rc, char failMsg[]) {
   ioh.enddef(rc);
   ESMF_CHECKERR_STD("", rc, "Did not enddef", rc);
 
-  cout<<ioh.PIOArgs.dump(2)<<endl;  //tdk:p
-
   ioh.write(*arr, rc);
   ESMF_CHECKERR_STD("", rc, "Did not write array", rc);
+
+  ioh.close(rc);
+  ESMF_CHECKERR_STD("", rc, "Did not close", rc);
+
+  cout<<ioh.PIOArgs.dump(2)<<endl;  //tdk:p
+
+  ioh.finalize(rc);
+  ESMF_CHECKERR_STD("", rc, "Did not finalize", rc);
 
   //tdk:TODO: remove netcdf test file
 
