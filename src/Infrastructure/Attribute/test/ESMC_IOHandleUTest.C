@@ -139,13 +139,13 @@ void testWriteArray(int& rc, char failMsg[]) {
     return finalizeFailure(rc, failMsg, "Did not get value from local array");
   }
 
-//  dimsize_t size = meta.getDimensionSize("dim_lon", rc);
-  dimsize_t size = 90; //tdk:TODO: should use local size
+  vector<dimsize_t> arrshp = getArrayShape(*arr, ESMC_INDEX_DELOCAL, rc);
+  tdklog("arrshp[0]="+to_string(arrshp[0]));
   ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 
   void** larrayBaseAddrList =  arr->getLarrayBaseAddrList();
   double* buffer = reinterpret_cast<double*>(larrayBaseAddrList[0]);
-  for (auto ii=0; ii<size; ii++) {
+  for (auto ii=0; ii<arrshp[0]; ii++) {
     buffer[ii] = (1000 * (localPet + 1)) + ii + 1.5;
   }
 
@@ -181,11 +181,13 @@ void testWriteArray(int& rc, char failMsg[]) {
   ioh.finalize(rc);
   ESMF_CHECKERR_STD("", rc, "Did not finalize", rc);
 
-  //tdk:TODO: remove netcdf test file
-
   rc = ESMCI::Array::destroy(&arr);
   rc = ESMCI::DistGrid::destroy(&distgrid);
   ESMF_CHECKERR_STD("", rc, "Problem when destroying objects", rc);
+
+  if (localPet == 0 && remove(filename.c_str()) != 0) {
+    return finalizeFailure(rc, failMsg, "Test file not removed");
+  }
 
   rc = ESMF_SUCCESS;
   return;
