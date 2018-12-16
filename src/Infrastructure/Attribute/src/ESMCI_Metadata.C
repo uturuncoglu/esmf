@@ -85,7 +85,8 @@ json createJSONPackage(const string& pkgKey, int& rc) {
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "getArrayShape()"
-vector<dimsize_t> getArrayShape(const Array& arr, int& rc) {
+vector<dimsize_t> getArrayShape(const Array& arr,
+  const ESMC_IndexFlag& idxFlag, int& rc) {
   // Notes:
   //   * Returns a C-order vector.
   //   * Distributed dimension sizes should always come from DistGrid.
@@ -104,7 +105,15 @@ vector<dimsize_t> getArrayShape(const Array& arr, int& rc) {
 //  const int* totalLBound = arr.getTotalLBound();
 //  const int* totalUBound = arr.getTotalUBound();
 
-  int const* maxIndexPDimPTile = distgrid->getMaxIndexPDimPTile();
+  int const* maxIndex;
+  if (idxFlag == ESMC_INDEX_GLOBAL) {
+    maxIndex = distgrid->getMaxIndexPDimPTile();
+  } else if (idxFlag == ESMC_INDEX_DELOCAL) {
+    maxIndex = distgrid->getMaxIndexPDimPDe();
+  } else {
+    ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD,
+      "Index flag not supported: " + to_string(idxFlag), rc);
+  }
 
   vector<dimsize_t> ret(rank, 0);
   for (auto ii=rank-1; ii>=0; ii--) {
@@ -113,7 +122,7 @@ vector<dimsize_t> getArrayShape(const Array& arr, int& rc) {
       ret[ii] = undistUBound[ii];
     } else {
       // Dimension is distributed
-      ret[ii] = maxIndexPDimPTile[arr2dg_map[ii]-1];
+      ret[ii] = maxIndex[arr2dg_map[ii]-1];
     }
   }
 
@@ -197,7 +206,7 @@ void Metadata::update(const ESMCI::Array& arr, const vector<string>* dimnames,
   json& var_meta = this->getOrCreateVariable(name, rc);
   ESMF_CHECKERR_STD("", rc, "Did not get variable metadata", rc);
 
-  auto arrshp = getArrayShape(arr, rc);
+  auto arrshp = getArrayShape(arr, ESMC_INDEX_GLOBAL, rc);
   ESMF_CHECKERR_STD("", rc, "Did not get array shape", rc);
 
   if (dimnames) {

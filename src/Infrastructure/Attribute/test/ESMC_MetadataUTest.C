@@ -190,7 +190,7 @@ void testGetArrayShape(int& rc, char failMsg[]) {
   ESMCI::Array* arr = meta.createArray(*distgrid, jsonParms, rc);
   ESMF_CHECKERR_STD("", rc, "Array creation failed", rc);
 
-  auto shp = getArrayShape(*arr, rc);
+  auto shp = getArrayShape(*arr, ESMC_INDEX_GLOBAL, rc);
   ESMF_CHECKERR_STD("", rc, "Array get shape failed", rc);
 
   auto actual = meta.getVariableShape("foo", rc);
