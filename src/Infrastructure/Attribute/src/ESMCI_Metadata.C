@@ -109,8 +109,10 @@ vector<dimsize_t> getArrayShape(const Array& arr, int& rc) {
   vector<dimsize_t> ret(rank, 0);
   for (auto ii=rank-1; ii>=0; ii--) {
     if (arr2dg_map[ii] == 0) {
+      // Dimension is undistributed
       ret[ii] = undistUBound[ii];
     } else {
+      // Dimension is distributed
       ret[ii] = maxIndexPDimPTile[arr2dg_map[ii]-1];
     }
   }

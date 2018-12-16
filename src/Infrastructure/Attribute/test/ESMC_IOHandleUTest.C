@@ -139,7 +139,8 @@ void testWriteArray(int& rc, char failMsg[]) {
     return finalizeFailure(rc, failMsg, "Did not get value from local array");
   }
 
-  dimsize_t size = meta.getDimensionSize("dim_lon", rc);
+//  dimsize_t size = meta.getDimensionSize("dim_lon", rc);
+  dimsize_t size = 90; //tdk:TODO: should use local size
   ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 
   void** larrayBaseAddrList =  arr->getLarrayBaseAddrList();
