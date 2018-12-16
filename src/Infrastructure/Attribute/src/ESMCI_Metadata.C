@@ -174,7 +174,7 @@ void Metadata::init(void) {
 }
 
 #undef ESMC_METHOD
-#define ESMC_METHOD "update(<Array>)"
+#define ESMC_METHOD "Metadata::update(<Array>)"
 void Metadata::update(const ESMCI::Array& arr, const vector<string>* dimnames,
   int& rc) {
   //tdk:ORDER
