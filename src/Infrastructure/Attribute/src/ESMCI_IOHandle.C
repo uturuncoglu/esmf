@@ -191,23 +191,36 @@ void IOHandle::enddef(int& rc) {
 #define ESMC_METHOD "finalize()"
 void IOHandle::finalize(int& rc) {
   rc = ESMF_FAILURE;
-  int iosysid = this->PIOArgs.at(PIOARG::IOSYSID);
+  try {
+    int iosysid = this->PIOArgs.at(PIOARG::IOSYSID);
 
-  int pio_rc;
-  if (isIn(PIOARG::IOIDS, this->PIOArgs)) {
-    int ioid = 512;  //tdk:TODO: this should use the value from the dictionary
-    int pio_rc = PIOc_freedecomp(iosysid, ioid);
+    int pio_rc;
+    if (isIn(PIOARG::IOIDS, this->PIOArgs)) {
+      const json &ioids = this->PIOArgs[PIOARG::IOIDS];
+      for (json::const_iterator it = ioids.cbegin();
+           it != ioids.cend(); it++) {
+        int ioid = it.value();
+        pio_rc = PIOc_freedecomp(iosysid, ioid);
+        handlePIOReturnCode(pio_rc, "Did not free decomp", rc);
+        tdklog("freed ioid=" + to_string(ioid));
+      }
+      this->PIOArgs.erase(this->PIOArgs.find(PIOARG::IOIDS));
+    }
+
+    pio_rc = PIOc_finalize(iosysid);
     handlePIOReturnCode(pio_rc, "Could not finalize PIO", rc);
-    tdklog("freed ioid="+to_string(ioid));
+    tdklog("freed iosysid=" + to_string(iosysid));
+
+    this->PIOArgs.erase(this->PIOArgs.find(PIOARG::IOSYSID));
+
+    rc = ESMF_SUCCESS;
   }
-
-  pio_rc = PIOc_finalize(iosysid);
-  handlePIOReturnCode(pio_rc, "Could not finalize PIO", rc);
-  tdklog("freed iosysid="+to_string(iosysid));
-
-  this->PIOArgs.erase(this->PIOArgs.find(PIOARG::IOSYSID));
-
-  rc = ESMF_SUCCESS;
+  catch (json::out_of_range& e) {
+    ESMF_THROW_JSON(e, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);
+  }
+  catch (...) {
+    ESMF_CHECKERR_STD("ESMF_FAILURE", ESMF_FAILURE, "Uncaught exception", rc);
+  }
 }
 
 #undef ESMC_METHOD
