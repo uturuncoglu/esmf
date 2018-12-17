@@ -356,11 +356,20 @@ void IOHandle::write(const Array& arr, int& rc) {
 
     //tdk:TODO: will need to deal with unlimited dimensions and their location in the length array
     const int *gdimlen = gdimlen_v.data();
+    for (const int& ii : gdimlen_v) {tdklog("gimdimlen_v[ii]="+to_string(ii));}
 
-    const int *exclusiveElementCountPDe = arr.getExclusiveElementCountPDe();
-    PIO_Offset maplen = *exclusiveElementCountPDe;
+    //tdk:TODO: this does not give the total element count; needs to be total elements on proc
+//    const int *exclusiveElementCountPDe = arr.getExclusiveElementCountPDe();
+//    PIO_Offset maplen = *exclusiveElementCountPDe;
+//    PIO_Offset maplen = 36;
+    auto arrshp = getArrayShape(arr, ESMC_INDEX_DELOCAL, rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 
-    auto tdkmsg = "maplen=" + to_string(maplen); tdklog(tdkmsg);
+    PIO_Offset maplen = 1;
+    for (const auto& ii : arrshp) {
+      maplen *= ii;
+    }
+    tdklog("maplen=" + to_string(maplen));
 
     PIO_Offset compmap[maplen];
     for (auto ii = 0; ii < maplen; ii++) {
@@ -379,6 +388,7 @@ void IOHandle::write(const Array& arr, int& rc) {
     void** larrayBaseAddrList =  arr.getLarrayBaseAddrList();
 //    double* buffer = reinterpret_cast<double*>(larrayBaseAddrList[0]);
     void* buffer = larrayBaseAddrList[0];
+//    double * tdkbuffer = reinterpret_cast<double*>(buffer);for (int jj=0;jj<maplen;jj++){tdklog("buffer["+to_string(jj)+"]="+to_string(tdkbuffer[jj]));}
     const int& varid = this->PIOArgs.at(PIOARG::VARIDS).at(name).get_ref<const json::number_integer_t&>();
     const int& ncid = this->PIOArgs.at(PIOARG::NCID).get_ref<const json::number_integer_t&>();
     void* fillvalue = nullptr;  //tdk:TODO: not handling fillvalue yet

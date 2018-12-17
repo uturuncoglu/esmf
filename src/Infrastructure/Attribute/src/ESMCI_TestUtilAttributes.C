@@ -68,9 +68,9 @@ json createTestJSONMetadata(int& rc) {
 //  vector <string> dimnames = {"dim_lon", "dim_lat", "dim_time", "dim_level",
 //                              "dim_realization"};
   vector<string> dimnames = {"dim_realization", "dim_time", "dim_level",
-                             "dim_lat", "dim_lon"};
+                             "dim_lat", "dim_lon", "dim_other"};
 //  vector<long int> sizes = {360, 180, 4, 20, 3};
-  vector<long int> sizes = {3, 20, 4, 180, 360};
+  vector<long int> sizes = {3, 20, 4, 180, 360, 5};
   auto ctr = 0;
   for (auto name : dimnames) {
     root[K_DIMS][name] = createJSONPackage("ESMF:Metadata:Dimension", rc);
@@ -125,8 +125,8 @@ json createTestJSONMetadata(int& rc) {
   root[K_VARS]["the_level"][K_ATTRS][K_AXIS] = "Z";
   root[K_VARS]["the_level"][K_ATTRS][K_UNITS] = "meters";
 
-  root[K_VARS]["simple_3D"][K_ATTRS]["desc"] = "a test 2d variable";
-  root[K_VARS]["simple_3D"][K_DIMS] = json::array({"dim_realization", "dim_realization", "dim_level"});
+  root[K_VARS]["simple_3D"][K_ATTRS]["desc"] = "a test 3d variable";
+  root[K_VARS]["simple_3D"][K_DIMS] = json::array({"dim_realization", "dim_other", "dim_level"});
 
   return root;
 }
