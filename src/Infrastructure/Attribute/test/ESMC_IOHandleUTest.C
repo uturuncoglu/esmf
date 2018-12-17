@@ -103,8 +103,8 @@ void testOpenClose(int& rc, char failMsg[]) {
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "testWriteArray()"
-void testWriteArray(int& rc, char failMsg[]) {
+#define ESMC_METHOD "testWrite1DArray()"
+void testWrite1DArray(int& rc, char failMsg[]) {
   rc = ESMF_FAILURE;
 //  bool failed = true;
 
@@ -161,6 +161,8 @@ void testWriteArray(int& rc, char failMsg[]) {
 
   json& smeta = ioh.meta.getStorageRefWritable();
   smeta.at(K_VARS).at("the_xc").at(K_ATTRS)[K_AXIS] = "X";
+
+  //tdk:TODO: this test should only call "write" and all these methods should be intelligently called
 
   ioh.open(rc);
   ESMF_CHECKERR_STD("", rc, "Did not open file", rc);
@@ -219,8 +221,8 @@ int main(void) {
 
   //---------------------------------------------------------------------------
   //NEX_UTest
-  strcpy(name, "Test writing a simple array");
-  testWriteArray(rc, failMsg);
+  strcpy(name, "Test writing a 1D array");
+  testWrite1DArray(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //---------------------------------------------------------------------------
 
