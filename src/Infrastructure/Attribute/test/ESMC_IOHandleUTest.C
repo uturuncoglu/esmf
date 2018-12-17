@@ -83,7 +83,10 @@ void testOpenClose(int& rc, char failMsg[]) {
   ioh2.finalize(rc);
   ESMF_CHECKERR_STD("", rc, "Did not finalize", rc);
 
-  if (ioh2.PIOArgs.size() != 1) {
+
+//  cout<<ioh2.PIOArgs.dump(2)<<endl;
+//  cout<<"bleh"<<endl;
+  if (ioh2.PIOArgs.size() != 2) {
     return finalizeFailure(rc, failMsg, "Remaining arg count problem");
   }
 
@@ -176,18 +179,19 @@ void testWriteArray(int& rc, char failMsg[]) {
   ioh.close(rc);
   ESMF_CHECKERR_STD("", rc, "Did not close", rc);
 
-  cout<<ioh.PIOArgs.dump(2)<<endl;  //tdk:p
-
   ioh.finalize(rc);
   ESMF_CHECKERR_STD("", rc, "Did not finalize", rc);
+
+  cout<<ioh.PIOArgs.dump(2)<<endl;  //tdk:p
 
   rc = ESMCI::Array::destroy(&arr);
   rc = ESMCI::DistGrid::destroy(&distgrid);
   ESMF_CHECKERR_STD("", rc, "Problem when destroying objects", rc);
 
-  if (localPet == 0 && remove(filename.c_str()) != 0) {
-    return finalizeFailure(rc, failMsg, "Test file not removed");
-  }
+  //tdk:UNCOMMENT
+//  if (localPet == 0 && remove(filename.c_str()) != 0) {
+//    return finalizeFailure(rc, failMsg, "Test file not removed");
+//  }
 
   rc = ESMF_SUCCESS;
   return;
