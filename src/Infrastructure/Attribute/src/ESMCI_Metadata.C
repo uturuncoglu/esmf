@@ -192,7 +192,7 @@ void Metadata::update(const ESMCI::Array& arr, const vector<string>* dimnames,
   //tdk:ORDER
 
   // Notes:
-  //  * "dimnames" comes in as F-Order but is stored as C-Order
+  //  * "dimnames" comes in as F-Order but is stored as C-Order. It uses F-Order because the Array storage uses a Fortran ordering!
   rc = ESMF_FAILURE;
 
   const ESMC_TypeKind_Flag tk = arr.getTypekind();

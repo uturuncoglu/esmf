@@ -199,10 +199,14 @@ void testWrite1DArray(int& rc, char failMsg[]) {
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "testWrite2DArray()"
-void testWrite2DArray(int& rc, char failMsg[]) {
+#define ESMC_METHOD "testWrite3DArray()"
+void testWrite3DArray(int& rc, char failMsg[]) {
   rc = ESMF_FAILURE;
 //  bool failed = true;
+
+  const vector<string> dimnames = {"dim_level", "dim_realization", "dim_realization"};  //F-order
+  const vector<string> distdims = {"dim_level"};
+  const string varname = "simple_3D";
 
   ESMCI::VM *vm = ESMCI::VM::getCurrent(&rc);
   ESMF_CHECKERR_STD("", rc, "Did not get current VM", rc);
@@ -215,21 +219,21 @@ void testWrite2DArray(int& rc, char failMsg[]) {
 
   json dgparms;
   //tdk:TODO: change to C-Order!! i think this is currently implemented in F-Order
-  dgparms[ESMFARG::DISTDIMS] = {"dim_lon", "dim_lat"};
+  dgparms[ESMFARG::DISTDIMS] = distdims;
   DistGrid* distgrid = meta.createDistGrid(dgparms, rc);
   ESMF_CHECKERR_STD("", rc, "DistGrid creation failed", rc);
 
   json jsonParms;
-  jsonParms[ESMFARG::DISTDIMS] = {"dim_lon", "dim_lat"};
-  jsonParms[ESMFARG::VARIABLENAME] = "simple_2d";
+  jsonParms[ESMFARG::DISTDIMS] = distdims;
+  jsonParms[ESMFARG::VARIABLENAME] = varname;
 
   ESMCI::Array* arr = meta.createArray(*distgrid, jsonParms, rc);
   ESMF_CHECKERR_STD("", rc, "Array creation failed", rc);
 
   vector<dimsize_t> arrshp = getArrayShape(*arr, ESMC_INDEX_DELOCAL, rc);
   std::reverse(arrshp.begin(), arrshp.end());  // Reverse to Fortran order
-  tdklog("2d: arrshp[0]="+to_string(arrshp[0]));
-  tdklog("2d: arrshp[1]="+to_string(arrshp[1]));
+  tdklog("3D: arrshp[0]="+to_string(arrshp[0]));
+  tdklog("3D: arrshp[1]="+to_string(arrshp[1]));
   ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 
   void** larrayBaseAddrList =  arr->getLarrayBaseAddrList();
@@ -238,18 +242,16 @@ void testWrite2DArray(int& rc, char failMsg[]) {
     buffer[ii] = (1000 * (localPet + 1)) + ii + 1.5;
   }
 
-  const string filename = "test_pio_write_2d_array.nc";
+  const string filename = "test_pio_write_3D_array.nc";
   IOHandle ioh;
   ioh.PIOArgs[PIOARG::FILENAME] = filename;
-  //tdk:TODO: standardize dimnames as C or F order
-  const vector<string> dimnames = {"dim_lon", "dim_lat"};
   ioh.meta.update(*arr, &dimnames, rc);
   ESMF_CHECKERR_STD("", rc, "Metadata not updated", rc);
 
   json& smeta = ioh.meta.getStorageRefWritable();
-  smeta.at(K_VARS).at("simple_2d").at(K_ATTRS)["context"] = "testWrite2DArray";
+  smeta.at(K_VARS).at(varname).at(K_ATTRS)["context"] = "testWrite3DArray";
 
-//  cout<<"(x) ioh.meta="<<ioh.meta.dump(2,rc)<<endl;
+  cout<<"(x) ioh.meta="<<ioh.meta.dump(2,rc)<<endl;
 
   ioh.open(rc);
   ESMF_CHECKERR_STD("", rc, "Did not open file", rc);
@@ -260,8 +262,8 @@ void testWrite2DArray(int& rc, char failMsg[]) {
   ioh.enddef(rc);
   ESMF_CHECKERR_STD("", rc, "Did not enddef", rc);
 
-//  ioh.write(*arr, rc);
-//  ESMF_CHECKERR_STD("", rc, "Did not write array", rc);
+  ioh.write(*arr, rc);
+  ESMF_CHECKERR_STD("", rc, "Did not write array", rc);
 
   ioh.close(rc);
   ESMF_CHECKERR_STD("", rc, "Did not close", rc);
@@ -316,8 +318,8 @@ int main(void) {
 
   //---------------------------------------------------------------------------
   //NEX_UTest
-  strcpy(name, "Test writing a 2D array");
-  testWrite2DArray(rc, failMsg);
+  strcpy(name, "Test writing a 3D array");
+  testWrite3DArray(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //---------------------------------------------------------------------------
 
