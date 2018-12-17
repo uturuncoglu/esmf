@@ -73,8 +73,7 @@ json createTestJSONMetadata(int& rc) {
   vector<long int> sizes = {3, 20, 4, 180, 360};
   auto ctr = 0;
   for (auto name : dimnames) {
-    root[K_DIMS][name] = createJSONPackage("ESMF:Metadata:Dimension",
-                                           rc);
+    root[K_DIMS][name] = createJSONPackage("ESMF:Metadata:Dimension", rc);
     ESMF_CHECKERR_STD("", rc, "Package creation failed", rc);
 
     root[K_DIMS][name][K_NAME] = name;
@@ -87,7 +86,8 @@ json createTestJSONMetadata(int& rc) {
   root[K_DIMS]["dim_time"][K_UNLIM] = true;
 
   vector <string> varnames = {"the_xc", "the_yc", "the_time", "the_level",
-                              "the_realization", "foo", "dimensionless"};
+                              "the_realization", "foo", "dimensionless",
+                              "simple_2d"};
   for (auto name : varnames) {
     root[K_VARS][name] = createJSONPackage("ESMF:Metadata:Variable", rc);
     ESMF_CHECKERR_STD("", rc, "Package creation failed", rc);
@@ -124,6 +124,9 @@ json createTestJSONMetadata(int& rc) {
 
   root[K_VARS]["the_level"][K_ATTRS][K_AXIS] = "Z";
   root[K_VARS]["the_level"][K_ATTRS][K_UNITS] = "meters";
+
+  root[K_VARS]["simple_2d"][K_ATTRS]["desc"] = "a test 2d variable";
+  root[K_VARS]["simple_2d"][K_DIMS] = json::array({"dim_lat", "dim_lon"});
 
   return root;
 }

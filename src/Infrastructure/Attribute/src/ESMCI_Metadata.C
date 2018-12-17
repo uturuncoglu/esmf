@@ -34,8 +34,9 @@
 #include "ESMCI_VM.h"
 #include "json.hpp"
 
-#include <vector>
+#include <algorithm>
 #include <iostream>
+#include <vector>
 
 using namespace ESMCI::MKEY;
 using namespace std;
@@ -189,6 +190,9 @@ void Metadata::init(void) {
 void Metadata::update(const ESMCI::Array& arr, const vector<string>* dimnames,
   int& rc) {
   //tdk:ORDER
+
+  // Notes:
+  //  * "dimnames" comes in as F-Order but is stored as C-Order
   rc = ESMF_FAILURE;
 
   const ESMC_TypeKind_Flag tk = arr.getTypekind();
@@ -213,12 +217,15 @@ void Metadata::update(const ESMCI::Array& arr, const vector<string>* dimnames,
     json dimsizes = this->getDimensionSizes(rc);
     ESMF_CHECKERR_STD("", rc, "Did not get dimension sizes", rc);
 
-    const vector<string>& r_dimnames = *dimnames;
+    vector<string> ldimnames(dimnames->size(), "");
+    std::reverse_copy(dimnames->begin(), dimnames->end(), ldimnames.begin());
+    assert((int)ldimnames.size() == rank);
+
     for (auto ii=0; ii<rank; ii++) {
       // If the dimension name exists in the dimension sizes pulled from the
       // metadata, confirm it has the correct size.
-      if (isIn(r_dimnames[ii], dimsizes)) {
-        if (dimsizes[r_dimnames[ii]] != arrshp[ii]) {
+      if (isIn(ldimnames[ii], dimsizes)) {
+        if (dimsizes[ldimnames[ii]] != arrshp[ii]) {
           auto msg = "Provided dimension names have sizes in current storage that "
                      "conflict with the array size.";
           ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, msg, rc);
@@ -226,15 +233,15 @@ void Metadata::update(const ESMCI::Array& arr, const vector<string>* dimnames,
       } else {
         // Create the dimension as it does not yet exist.
         //tdk:TODO: need a create dimension for json
-        this->storage[K_DIMS][r_dimnames[ii]] = createJSONPackage("ESMF:Metadata:Dimension", rc);
+        this->storage[K_DIMS][ldimnames[ii]] = createJSONPackage("ESMF:Metadata:Dimension", rc);
         ESMF_CHECKERR_STD("", rc, "Did not create dimension package", rc);
 
-        this->storage[K_DIMS][r_dimnames[ii]][K_NAME] = r_dimnames[ii];
-        this->storage[K_DIMS][r_dimnames[ii]][K_SIZE] = arrshp[ii];
+        this->storage[K_DIMS][ldimnames[ii]][K_NAME] = ldimnames[ii];
+        this->storage[K_DIMS][ldimnames[ii]][K_SIZE] = arrshp[ii];
       }
     }
 
-    var_meta[K_DIMS] = *dimnames;
+    var_meta[K_DIMS] = ldimnames;
   } else {
     // Generate new dimensions based on the array shape.
       if (var_meta[K_DIMS].size() != 0) {
@@ -380,6 +387,9 @@ Array* Metadata::createArray(DistGrid& distgrid, const json& jsonParms,
 #undef ESMC_METHOD
 #define ESMC_METHOD "Metadata::createDistGrid()"
 DistGrid* Metadata::createDistGrid(const json& jsonParms, int& rc) const {
+  // Notes:
+  //   * DistGrid dimension names must be in the DistGrid dimension creation order
+  //   * DISTDIMS uses F-order
 
   vector<string> unsupported = {"regDecomp", "decompflag", "decompflagCount",
     "regDecompFirstExtra", "regDecompLastExtra", "deLabelList", "indexflag",

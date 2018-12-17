@@ -10,6 +10,7 @@
 //
 //=============================================================================
 
+#include <algorithm>
 #include <iostream>
 #include <stdlib.h>
 #include <string.h>
@@ -197,6 +198,92 @@ void testWrite1DArray(int& rc, char failMsg[]) {
   return;
 }
 
+#undef  ESMC_METHOD
+#define ESMC_METHOD "testWrite2DArray()"
+void testWrite2DArray(int& rc, char failMsg[]) {
+  rc = ESMF_FAILURE;
+//  bool failed = true;
+
+  ESMCI::VM *vm = ESMCI::VM::getCurrent(&rc);
+  ESMF_CHECKERR_STD("", rc, "Did not get current VM", rc);
+
+  int localPet = vm->getLocalPet();
+  int petCount = vm->getPetCount();
+
+  json root = createTestJSONMetadata(rc);
+  Metadata meta(move(root));
+
+  json dgparms;
+  //tdk:TODO: change to C-Order!! i think this is currently implemented in F-Order
+  dgparms[ESMFARG::DISTDIMS] = {"dim_lon", "dim_lat"};
+  DistGrid* distgrid = meta.createDistGrid(dgparms, rc);
+  ESMF_CHECKERR_STD("", rc, "DistGrid creation failed", rc);
+
+  json jsonParms;
+  jsonParms[ESMFARG::DISTDIMS] = {"dim_lon", "dim_lat"};
+  jsonParms[ESMFARG::VARIABLENAME] = "simple_2d";
+
+  ESMCI::Array* arr = meta.createArray(*distgrid, jsonParms, rc);
+  ESMF_CHECKERR_STD("", rc, "Array creation failed", rc);
+
+  vector<dimsize_t> arrshp = getArrayShape(*arr, ESMC_INDEX_DELOCAL, rc);
+  std::reverse(arrshp.begin(), arrshp.end());  // Reverse to Fortran order
+  tdklog("2d: arrshp[0]="+to_string(arrshp[0]));
+  tdklog("2d: arrshp[1]="+to_string(arrshp[1]));
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+
+  void** larrayBaseAddrList =  arr->getLarrayBaseAddrList();
+  double* buffer = reinterpret_cast<double*>(larrayBaseAddrList[0]);
+  for (auto ii=0; ii<arrshp[0]*arrshp[1]; ii++) {
+    buffer[ii] = (1000 * (localPet + 1)) + ii + 1.5;
+  }
+
+  const string filename = "test_pio_write_2d_array.nc";
+  IOHandle ioh;
+  ioh.PIOArgs[PIOARG::FILENAME] = filename;
+  //tdk:TODO: standardize dimnames as C or F order
+  const vector<string> dimnames = {"dim_lon", "dim_lat"};
+  ioh.meta.update(*arr, &dimnames, rc);
+  ESMF_CHECKERR_STD("", rc, "Metadata not updated", rc);
+
+  json& smeta = ioh.meta.getStorageRefWritable();
+  smeta.at(K_VARS).at("simple_2d").at(K_ATTRS)["context"] = "testWrite2DArray";
+
+//  cout<<"(x) ioh.meta="<<ioh.meta.dump(2,rc)<<endl;
+
+  ioh.open(rc);
+  ESMF_CHECKERR_STD("", rc, "Did not open file", rc);
+
+  ioh.dodef(rc);
+  ESMF_CHECKERR_STD("", rc, "Did not define", rc);
+
+  ioh.enddef(rc);
+  ESMF_CHECKERR_STD("", rc, "Did not enddef", rc);
+
+//  ioh.write(*arr, rc);
+//  ESMF_CHECKERR_STD("", rc, "Did not write array", rc);
+
+  ioh.close(rc);
+  ESMF_CHECKERR_STD("", rc, "Did not close", rc);
+
+  ioh.finalize(rc);
+  ESMF_CHECKERR_STD("", rc, "Did not finalize", rc);
+
+  //tdk:TEST: structure of PIOArgs
+
+  rc = ESMCI::Array::destroy(&arr);
+  rc = ESMCI::DistGrid::destroy(&distgrid);
+  ESMF_CHECKERR_STD("", rc, "Problem when destroying objects", rc);
+
+  //tdk:UNCOMMENT
+//  if (localPet == 0 && remove(filename.c_str()) != 0) {
+//    return finalizeFailure(rc, failMsg, "Test file not removed");
+//  }
+
+  rc = ESMF_SUCCESS;
+  return;
+}
+
 //-----------------------------------------------------------------------------
 
 int main(void) {
@@ -212,17 +299,25 @@ int main(void) {
   ESMC_TestStart(__FILE__, __LINE__, 0);
   //---------------------------------------------------------------------------
 
-  //---------------------------------------------------------------------------
-  //NEX_UTest
-  strcpy(name, "Test opening and closing a netCDF file");
-  testOpenClose(rc, failMsg);
-  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
-  //---------------------------------------------------------------------------
+  //tdk:UNCOMMENT
+//  //---------------------------------------------------------------------------
+//  //NEX_UTest
+//  strcpy(name, "Test opening and closing a netCDF file");
+//  testOpenClose(rc, failMsg);
+//  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
+//  //---------------------------------------------------------------------------
+//
+//  //---------------------------------------------------------------------------
+//  //NEX_UTest
+//  strcpy(name, "Test writing a 1D array");
+//  testWrite1DArray(rc, failMsg);
+//  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
+//  //---------------------------------------------------------------------------
 
   //---------------------------------------------------------------------------
   //NEX_UTest
-  strcpy(name, "Test writing a 1D array");
-  testWrite1DArray(rc, failMsg);
+  strcpy(name, "Test writing a 2D array");
+  testWrite2DArray(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //---------------------------------------------------------------------------
 
