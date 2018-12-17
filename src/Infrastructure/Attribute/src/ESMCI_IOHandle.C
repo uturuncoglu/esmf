@@ -360,8 +360,7 @@ void IOHandle::write(const Array& arr, int& rc) {
     const int *exclusiveElementCountPDe = arr.getExclusiveElementCountPDe();
     PIO_Offset maplen = *exclusiveElementCountPDe;
 
-    auto tdkmsg = "maplen=" + to_string(maplen);
-    tdklog(tdkmsg);
+    auto tdkmsg = "maplen=" + to_string(maplen); tdklog(tdkmsg);
 
     PIO_Offset compmap[maplen];
     for (auto ii = 0; ii < maplen; ii++) {

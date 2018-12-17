@@ -162,8 +162,6 @@ void testWriteArray(int& rc, char failMsg[]) {
   json& smeta = ioh.meta.getStorageRefWritable();
   smeta.at(K_VARS).at("the_xc").at(K_ATTRS)[K_AXIS] = "X";
 
-  cout<<ioh.meta.dump(2,rc)<<endl;  //tdk:p
-
   ioh.open(rc);
   ESMF_CHECKERR_STD("", rc, "Did not open file", rc);
 
@@ -182,7 +180,7 @@ void testWriteArray(int& rc, char failMsg[]) {
   ioh.finalize(rc);
   ESMF_CHECKERR_STD("", rc, "Did not finalize", rc);
 
-  cout<<ioh.PIOArgs.dump(2)<<endl;  //tdk:p
+  //tdk:TEST: structure of PIOArgs
 
   rc = ESMCI::Array::destroy(&arr);
   rc = ESMCI::DistGrid::destroy(&distgrid);
