@@ -372,9 +372,26 @@ void IOHandle::write(const Array& arr, int& rc) {
     tdklog("maplen=" + to_string(maplen));
 
     PIO_Offset compmap[maplen];
-    for (auto ii = 0; ii < maplen; ii++) {
+    for (auto ii=0; ii<maplen; ii++) {
       compmap[ii] = localPet * maplen + ii;
     }
+
+//    compmap[0] = 0 + localPet;
+//    compmap[1] = 20 + localPet;
+//    compmap[2] = 40 + localPet;
+//    compmap[3] = 4 + localPet;
+//    compmap[4] = 24 + localPet;
+//    compmap[5] = 44 + localPet;
+//    compmap[6] = 8 + localPet;
+//    compmap[7] = 28 + localPet;
+//    compmap[8] = 48 + localPet;
+//    compmap[9] = 12 + localPet;
+//    compmap[10] = 32 + localPet;
+//    compmap[11] = 52 + localPet;
+//    compmap[12] = 16 + localPet;
+//    compmap[13] = 36 + localPet;
+//    compmap[14] = 56 + localPet;
+//    for (int jj=0;jj<maplen;jj++){tdklog("PIO:compmap["+to_string(jj)+"]="+to_string(compmap[jj]));}
 
     int ioid = 0;
     int pio_rc = PIOc_init_decomp(iosysid, pio_type, ndims, gdimlen, maplen,
@@ -388,7 +405,7 @@ void IOHandle::write(const Array& arr, int& rc) {
     void** larrayBaseAddrList =  arr.getLarrayBaseAddrList();
 //    double* buffer = reinterpret_cast<double*>(larrayBaseAddrList[0]);
     void* buffer = larrayBaseAddrList[0];
-//    double * tdkbuffer = reinterpret_cast<double*>(buffer);for (int jj=0;jj<maplen;jj++){tdklog("buffer["+to_string(jj)+"]="+to_string(tdkbuffer[jj]));}
+//    double * tdkbuffer = reinterpret_cast<double*>(buffer);for (int jj=0;jj<maplen;jj++){tdklog("PIO:buffer["+to_string(jj)+"]="+to_string(tdkbuffer[jj]));}
     const int& varid = this->PIOArgs.at(PIOARG::VARIDS).at(name).get_ref<const json::number_integer_t&>();
     const int& ncid = this->PIOArgs.at(PIOARG::NCID).get_ref<const json::number_integer_t&>();
     void* fillvalue = nullptr;  //tdk:TODO: not handling fillvalue yet
