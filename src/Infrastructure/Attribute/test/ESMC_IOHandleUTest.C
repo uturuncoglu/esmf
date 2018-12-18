@@ -204,8 +204,8 @@ void testWrite3DArray(int& rc, char failMsg[]) {
   rc = ESMF_FAILURE;
 //  bool failed = true;
 
-  const vector<string> dimnames = {"dim_level", "dim_other", "dim_realization"};  //F-order
-  const vector<string> distdims = {"dim_level"};
+  const vector<string> dimnames = {"dim_seven", "dim_other", "dim_realization"};  //F-order
+  const vector<string> distdims = {"dim_seven"};
   const string varname = "simple_3D";
 
   ESMCI::VM *vm = ESMCI::VM::getCurrent(&rc);
@@ -232,16 +232,17 @@ void testWrite3DArray(int& rc, char failMsg[]) {
 
   vector<dimsize_t> arrshp = getArrayShape(*arr, ESMC_INDEX_DELOCAL, rc);
   std::reverse(arrshp.begin(), arrshp.end());  // Reverse to Fortran order
-  for (const int& ii : arrshp) {tdklog("3D: arrshp[ii]="+to_string(ii));}
+  for (int ii=0; ii<arrshp.size(); ii++) {tdklog("3D: arrshp["+to_string(ii)+"]="+to_string(arrshp[ii]));}
   ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+  return;
 
   void** larrayBaseAddrList =  arr->getLarrayBaseAddrList();
   double* buffer = reinterpret_cast<double*>(larrayBaseAddrList[0]);
-  const int stride = arrshp[1] * arrshp[2];  //F-order
-  tdklog("stride="+to_string(stride));
-  int stride_adjust = 0;
-  vector<double> fills = {1000, 2000, 3000, 4000};
-  int fillctr = 0;
+//  const int stride = arrshp[1] * arrshp[2];  //F-order
+//  tdklog("stride="+to_string(stride));
+//  int stride_adjust = 0;
+//  vector<double> fills = {1000, 2000, 3000, 4000};
+//  int fillctr = 0;
   for (auto ii=0; ii<arrshp[0]*arrshp[1]*arrshp[2]; ii++) {
     buffer[ii] = 1000 * (localPet + 1);
 
