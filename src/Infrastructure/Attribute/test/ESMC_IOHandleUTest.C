@@ -240,12 +240,22 @@ void testWrite3DArray(int& rc, char failMsg[]) {
   const int stride = arrshp[1] * arrshp[2];  //F-order
   tdklog("stride="+to_string(stride));
   int stride_adjust = 0;
+  vector<double> fills = {1000, 2000, 3000, 4000};
+  int fillctr = 0;
   for (auto ii=0; ii<arrshp[0]*arrshp[1]*arrshp[2]; ii++) {
-    if (ii == stride * (stride_adjust + 1)) {
-      stride_adjust++;
-    }
-    buffer[ii] = (10000 * (localPet + 1)) + (100 * ii); //+ 0.5 + 100 + (stride_adjust * 100);
-    tdklog("3D: buffer["+to_string(ii)+"]="+to_string(buffer[ii]));
+    buffer[ii] = 1000 * (localPet + 1);
+
+//    buffer[ii] = fills[fillctr];
+//    fillctr ++;
+//    if (fillctr == 4) {
+//      fillctr = 0;
+//    }
+
+//    if (ii == stride * (stride_adjust + 1)) {
+//      stride_adjust++;
+//    }
+//    buffer[ii] = (10000 * (localPet + 1)) + (100 * ii); //+ 0.5 + 100 + (stride_adjust * 100);
+//    tdklog("3D: buffer["+to_string(ii)+"]="+to_string(buffer[ii]));
   }
 //  double * tdkbuffer = reinterpret_cast<double*>(buffer);for (int jj=0;jj<maplen;jj++){tdklog("3D: buffer["+to_string(jj)+"]="+to_string(tdkbuffer[jj]));}
 

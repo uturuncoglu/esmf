@@ -373,7 +373,8 @@ void IOHandle::write(const Array& arr, int& rc) {
 
     PIO_Offset compmap[maplen];
     for (auto ii=0; ii<maplen; ii++) {
-      compmap[ii] = localPet * maplen + ii;
+//      compmap[ii] = localPet * maplen + ii;
+      compmap[ii] = localPet + (ii * 4);
     }
 
 //    compmap[0] = 0 + localPet;
