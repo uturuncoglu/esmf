@@ -73,7 +73,7 @@ void tdklog(const string& msg, const vector<PIO_Offset>& v) {
 }
 
 //tdk:REMOVE
-void tdklog(const string& msg, int const* l, std::size_t size) {
+void tdklog(const string& msg, const int* l, std::size_t size) {
   for (size_t ii = 0; ii < size; ii++) {
     tdklog(msg + "[" + to_string(ii) + "]=" + to_string(l[ii]));
   }

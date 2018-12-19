@@ -103,14 +103,14 @@ vector<dimsize_t> getArrayShape(const Array& arr,
   //---------------------------------------------------------------------------
 
   DistGrid* distgrid = arr.getDistGrid();
-//  int dg_dim_count = distgrid->getDimCount();
   int rank = arr.getRank();
 
   const int* arr2dg_map = arr.getArrayToDistGridMap(); // F-order & indexing
 //  const int* dg2arr_map = arr.getDistGridToArrayMap(); // F-order & indexing
 
-//  const int* undistLBound = arr.getUndistLBound();
-  const int* undistUBound = arr.getUndistUBound();
+  const int* undistLBound = arr.getUndistLBound(); // F-order & indexing
+  const int* undistUBound = arr.getUndistUBound(); // F-order & indexing
+  int dg_dim_count = distgrid->getDimCount(); tdklog("getArrayShape undistUBound=", undistUBound, rank-dg_dim_count);
 //  const int* totalLBound = arr.getTotalLBound();
 //  const int* totalUBound = arr.getTotalUBound();
 
@@ -130,10 +130,10 @@ vector<dimsize_t> getArrayShape(const Array& arr,
   }
 
   vector<dimsize_t> ret(rank, 0);
-  for (auto ii=rank-1; ii>=0; ii--) {
+  for (auto ii=0; ii<rank; ii++) {
     if (arr2dg_map[ii] == 0) {
       // Dimension is undistributed
-      ret[ii] = undistUBound[ii];
+      ret[ii] = undistUBound[ii] - undistLBound[ii] + 1;
     } else {
       // Dimension is distributed
       ret[ii] = maxIndex[arr2dg_map[ii]-1] - minIndex[arr2dg_map[ii]-1] + 1;
@@ -203,6 +203,10 @@ void Metadata::init(void) {
 void Metadata::update(const ESMCI::Array& arr, const vector<string>* dimnames,
   int& rc) {
   //tdk:ORDER
+  //tdk:TODO: standard try/catch
+
+  // Notes:
+  //  * dimnames needs to be F-order
 
   // Notes:
   //  * "dimnames" comes in as F-Order but is stored as C-Order. It uses F-Order because the Array storage uses a Fortran ordering!
@@ -225,13 +229,16 @@ void Metadata::update(const ESMCI::Array& arr, const vector<string>* dimnames,
 
   auto arrshp = getArrayShape(arr, ESMC_INDEX_GLOBAL, rc);
   ESMF_CHECKERR_STD("", rc, "Did not get array shape", rc);
+  tdklog("Metadata::update arrshp", arrshp);
+
 
   if (dimnames) {
     json dimsizes = this->getDimensionSizes(rc);
     ESMF_CHECKERR_STD("", rc, "Did not get dimension sizes", rc);
 
-    vector<string> ldimnames(dimnames->size(), "");
-    std::reverse_copy(dimnames->begin(), dimnames->end(), ldimnames.begin());
+//    vector<string> ldimnames(dimnames->size(), "");
+//    std::reverse_copy(dimnames->begin(), dimnames->end(), ldimnames.begin());
+    const vector<string>& ldimnames = *dimnames;
     assert((int)ldimnames.size() == rank);
 
     for (auto ii=0; ii<rank; ii++) {
@@ -239,6 +246,7 @@ void Metadata::update(const ESMCI::Array& arr, const vector<string>* dimnames,
       // metadata, confirm it has the correct size.
       if (isIn(ldimnames[ii], dimsizes)) {
         if (dimsizes[ldimnames[ii]] != arrshp[ii]) {
+          tdklog("Metadata::update dimsizes=" + dimsizes.dump());
           auto msg = "Provided dimension names have sizes in current storage that "
                      "conflict with the array size.";
           ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, msg, rc);

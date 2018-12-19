@@ -8,7 +8,8 @@ run_uni:  run_unit_tests_uni
 
 LOCDIR	  = src/Infrastructure/Attribute/tests
 
-TESTS_BUILD   = $(ESMF_TESTDIR)/ESMC_IOHandleUTest
+#TESTS_BUILD   = $(ESMF_TESTDIR)/ESMC_IOHandleUTest
+TESTS_BUILD   = $(ESMF_TESTDIR)/ESMC_MetadataUTest
 #TESTS_BUILD   = $(ESMF_TESTDIR)/ESMC_AttributesUTest \
 #                $(ESMF_TESTDIR)/ESMC_NlohmannJSONUTest \
 #                $(ESMF_TESTDIR)/ESMF_AttributesUTest \
@@ -16,9 +17,10 @@ TESTS_BUILD   = $(ESMF_TESTDIR)/ESMC_IOHandleUTest
 #                $(ESMF_TESTDIR)/ESMF_AttributeProfileUTest \
 #                $(ESMF_TESTDIR)/ESMC_MetadataUTest \
 #                $(ESMF_TESTDIR)/ESMC_IOHandleUTest
-#                #$(ESMF_TESTDIR)/ESMC_PackageFactoryUTest
+                #$(ESMF_TESTDIR)/ESMC_PackageFactoryUTest
 
-TESTS_RUN     = RUN_ESMC_IOHandleUTest
+#TESTS_RUN     = RUN_ESMC_IOHandleUTest
+TESTS_RUN     = RUN_ESMC_MetadataUTest
 #TESTS_RUN     = RUN_ESMC_AttributesUTest \
 #                RUN_ESMC_NlohmannJSONUTest \
 #                RUN_ESMF_AttributesUTest \
@@ -26,7 +28,7 @@ TESTS_RUN     = RUN_ESMC_IOHandleUTest
 #                RUN_ESMF_AttributeProfileUTest \
 #                RUN_ESMC_MetadataUTest \
 #                RUN_ESMC_IOHandleUTest
-#                #RUN_ESMC_PackageFactoryUTest
+                #RUN_ESMC_PackageFactoryUTest
 
 #TESTS_RUN_UNI = RUN_ESMC_IOHandleUTestUNI
 TESTS_RUN_UNI = RUN_ESMC_AttributesUTestUNI \

@@ -192,9 +192,11 @@ void testGetArrayShape(int& rc, char failMsg[]) {
 
   auto shp = getArrayShape(*arr, ESMC_INDEX_GLOBAL, rc);
   ESMF_CHECKERR_STD("", rc, "Array get shape failed", rc);
+  tdklog("testGetArrayShape shp=", shp);
 
   auto actual = meta.getVariableShape("foo", rc);
   ESMF_CHECKERR_STD("", rc, "Did not get variable shape", rc);
+  tdklog("testGetArrayShape actual=", actual);
 
 //  for (auto e : shp) {cout << e << endl;}
 //  for (auto e : actual) {cout << e << endl;}
@@ -235,7 +237,9 @@ void testUpdate(int& rc, char failMsg[]) {
   auto mref = meta.getStorageRef();
   vector<string> dimnames = mref[K_VARS]["foo"][K_DIMS];
   json desired = mref;  // Copy original for comparison.
+  tdklog("before meta.update");
   meta.update(*arr, &dimnames, rc);
+  tdklog("after meta.update");
   ESMF_CHECKERR_STD("", rc, "Update with array failed", rc);
 
   if (desired != meta.getStorageRef()) {
