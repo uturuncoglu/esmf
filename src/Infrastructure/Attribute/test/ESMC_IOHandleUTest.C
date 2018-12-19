@@ -204,7 +204,8 @@ void testWrite3DArray(int& rc, char failMsg[]) {
   rc = ESMF_FAILURE;
 //  bool failed = true;
 
-  const vector<string> dimnames = {"dim_seven", "dim_other", "dim_realization"};  //F-order
+//  const vector<string> dimnames = {"dim_seven", "dim_other", "dim_realization"};  //F-order
+  const vector<string> dimnames = {"dim_realization", "dim_other", "dim_seven"};  //C-order
   const vector<string> distdims = {"dim_seven"};
   const string varname = "simple_3D";
 
@@ -231,8 +232,8 @@ void testWrite3DArray(int& rc, char failMsg[]) {
   ESMF_CHECKERR_STD("", rc, "Array creation failed", rc);
 
   vector<dimsize_t> arrshp = getArrayShape(*arr, ESMC_INDEX_DELOCAL, rc);
-  std::reverse(arrshp.begin(), arrshp.end());  // Reverse to Fortran order
-  for (int ii=0; ii<arrshp.size(); ii++) {tdklog("3D: arrshp["+to_string(ii)+"]="+to_string(arrshp[ii]));}
+//  std::reverse(arrshp.begin(), arrshp.end());  // Reverse to Fortran order
+  tdklog("testWrite3DArray arrshp", arrshp);
   ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 
   void** larrayBaseAddrList =  arr->getLarrayBaseAddrList();
