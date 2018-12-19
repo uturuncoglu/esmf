@@ -50,6 +50,8 @@ using json = nlohmann::json;  // Convenience rename for JSON namespace.
 
 namespace ESMCI {
 
+// tdk logging functions ======================================================
+
 //tdk:REMOVE
 void tdklog(const string& msg) {
   string localmsg = "tdk: " + msg;
@@ -83,6 +85,8 @@ void tdklog(const string& msg, PIO_Offset* l, std::size_t size) {
     tdklog(msg + "[" + to_string(ii) + "]=" + to_string(l[ii]));
   }
 }
+
+//=============================================================================
 
 #undef ESMC_METHOD
 #define ESMC_METHOD "handleHasKey"
