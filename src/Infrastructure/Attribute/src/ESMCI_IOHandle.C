@@ -432,6 +432,7 @@ void IOHandle::write(const Array& arr, int& rc) {
       ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD,
                         "Only one DE supported for writing", rc);
     }
+    //tdk:TODO: only one tile supported. add check for this
 
     const int &iosysid = this->PIOArgs.at(PIOARG::IOSYSID).get_ref<json::number_integer_t&>();
 
