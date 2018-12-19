@@ -327,19 +327,19 @@ int main(void) {
 //  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
 //  //---------------------------------------------------------------------------
 //
-//  //---------------------------------------------------------------------------
-//  //NEX_UTest
-//  strcpy(name, "Test writing a 1D array");
-//  testWrite1DArray(rc, failMsg);
-//  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
-//  //---------------------------------------------------------------------------
-
   //---------------------------------------------------------------------------
   //NEX_UTest
-  strcpy(name, "Test writing a 3D array");
-  testWrite3DArray(rc, failMsg);
+  strcpy(name, "Test writing a 1D array");
+  testWrite1DArray(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //---------------------------------------------------------------------------
+//
+//  //---------------------------------------------------------------------------
+//  //NEX_UTest
+//  strcpy(name, "Test writing a 3D array");
+//  testWrite3DArray(rc, failMsg);
+//  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
+//  //---------------------------------------------------------------------------
 
   //---------------------------------------------------------------------------
   ESMC_TestEnd(__FILE__, __LINE__, 0);

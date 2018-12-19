@@ -52,6 +52,41 @@ namespace ESMCI {
 // Local function dependencies ================================================
 
 #undef ESMC_METHOD
+#define ESMC_METHOD "getESMFSeqIndex()"
+vector<PIO_Offset> getESMFSeqIndex(const Array& arr, int& rc) {
+  rc = ESMF_FAILURE;
+  try {
+    vector<PIO_Offset> ret;
+    //tdk:TODO: need to ret.reserve
+    DELayout* delayout = arr.getDELayout();
+    int local_decount = delayout->getLocalDeCount();
+    assert(local_decount == 1);
+
+    for (int i = 0; i < local_decount; i++) {
+      // multi-dim loop object
+      ArrayElement arrayElement(&arr, i, true, false, false);
+      // set up to skip over undistributed, i.e. tensor dimensions
+//        const int *srcArrayToDistGridMap = srcArray->getArrayToDistGridMap();
+//      for (int j = 0; j < arr->getRank(); j++) {
+//          if (srcArrayToDistGridMap[j]==0) arrayElement.setSkipDim(j);
+        // fill in the factorIndexList
+        while (arrayElement.isWithin()) {
+          SeqIndex <PIO_Offset> seqIndex = arrayElement.getSequenceIndex<PIO_Offset>();
+//          factorIndexList[2*jj] = factorIndexList[2*jj+1] =
+//            seqIndex.decompSeqIndex;
+          tdklog(string(ESMC_METHOD) + " seqIndex.decompSeqIndex=" +to_string(seqIndex.decompSeqIndex));
+//          ++jj; // increment counter
+          arrayElement.next();
+        } // end while over all exclusive elements
+    }
+    rc = ESMF_SUCCESS;
+    return ret;
+  }
+  catch (ESMCI::esmf_attrs_error) { throw; }
+  catch (...) { ESMF_CHECKERR_STD("", rc, "Unhandled throw", rc); }
+}
+
+#undef ESMC_METHOD
 #define ESMC_METHOD "handlePIOReturnCode()"
 void handlePIOReturnCode(const int& pio_rc, const string& pio_msg, int& rc) {
   if (pio_rc != 0) {
