@@ -70,11 +70,17 @@ vector<PIO_Offset> getESMFSeqIndex(const Array& arr, int& rc) {
 //      for (int j = 0; j < arr->getRank(); j++) {
 //          if (srcArrayToDistGridMap[j]==0) arrayElement.setSkipDim(j);
         // fill in the factorIndexList
+        PIO_Offset adjust = -1;
         while (arrayElement.isWithin()) {
           SeqIndex <PIO_Offset> seqIndex = arrayElement.getSequenceIndex<PIO_Offset>();
+          if (adjust == -1) {
+            adjust = seqIndex.decompSeqIndex;
+          }
+          PIO_Offset adjusted = seqIndex.decompSeqIndex - adjust;
 //          factorIndexList[2*jj] = factorIndexList[2*jj+1] =
 //            seqIndex.decompSeqIndex;
-          tdklog(string(ESMC_METHOD) + " seqIndex.decompSeqIndex=" +to_string(seqIndex.decompSeqIndex));
+          tdklog(string(ESMC_METHOD) + " seqIndex.decompSeqIndex=" +to_string(adjusted));
+          ret.push_back(adjusted);
 //          ++jj; // increment counter
           arrayElement.next();
         } // end while over all exclusive elements
@@ -493,6 +499,9 @@ void IOHandle::write(const Array& arr, int& rc) {
 
     // Sequence indices =======================================================
 
+    vector<PIO_Offset> si = getESMFSeqIndex(arr, rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+
 //    int dindex[1] = {1};
 //    int* index = &dindex[0];
 //    vector<ESMC_I4> seqIndex;
@@ -506,14 +515,14 @@ void IOHandle::write(const Array& arr, int& rc) {
 
     //=========================================================================
 
-    auto arrshp = getArrayShape(arr, ESMC_INDEX_DELOCAL, rc);
-    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
-
-    PIO_Offset maplen = 1;
-    for (const auto& ii : arrshp) {
-      maplen *= ii;
-    }
-    tdklog("maplen=" + to_string(maplen));
+//    auto arrshp = getArrayShape(arr, ESMC_INDEX_DELOCAL, rc);
+//    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+//
+//    PIO_Offset maplen = 1;
+//    for (const auto& ii : arrshp) {
+//      maplen *= ii;
+//    }
+//    tdklog("maplen=" + to_string(maplen));
 
     // Brute force decomposition mapping ======================================
 
@@ -531,13 +540,16 @@ void IOHandle::write(const Array& arr, int& rc) {
 
     //=========================================================================
 
-    PIO_Offset compmap[maplen];
-    for (auto ii=0; ii<maplen; ii++) {
-      compmap[ii] = localPet * maplen + ii;
-//      compmap[ii] = idx[ii];
-    }
-//    tdklog("compmap", compmap, maplen);
+//    PIO_Offset compmap[maplen];
+//    for (auto ii=0; ii<maplen; ii++) {
+//      compmap[ii] = localPet * maplen + ii;
+////      compmap[ii] = idx[ii];
+//    }
 
+
+    PIO_Offset maplen = si.size();
+    PIO_Offset* compmap = si.data();
+//    tdklog("compmap", compmap, maplen);
     int ioid = 0;
     int pio_rc = PIOc_init_decomp(iosysid, pio_type, ndims, gdimlen, maplen,
       compmap, &ioid, PIODEF::REARRANGER, nullptr, nullptr);
