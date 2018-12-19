@@ -111,13 +111,30 @@ void writePIOAttributes(const json& attrs, int ncid, int varid, int& rc) {
 #define ESMC_METHOD "IOHandle::close()"
 void IOHandle::close(int& rc) {
   rc = ESMF_FAILURE;
-  int ncid = this->PIOArgs.at(PIOARG::NCID);
-  int pio_rc = PIOc_closefile(ncid);
-  handlePIOReturnCode(pio_rc, "Could not close with PIO", rc);
-  this->PIOArgs.erase(this->PIOArgs.find(PIOARG::NCID));
-  this->PIOArgs.erase(this->PIOArgs.find(PIOARG::VARIDS));
-  this->PIOArgs.erase(this->PIOArgs.find(PIOARG::DIMIDS));
-  rc = ESMF_SUCCESS;
+
+  try {
+    int ncid = this->PIOArgs.at(PIOARG::NCID);
+
+    int pio_rc = PIOc_closefile(ncid);
+    handlePIOReturnCode(pio_rc, "Could not close with PIO", rc);
+
+    this->PIOArgs.erase(this->PIOArgs.find(PIOARG::NCID));
+    this->PIOArgs.erase(this->PIOArgs.find(PIOARG::VARIDS));
+    this->PIOArgs.erase(this->PIOArgs.find(PIOARG::DIMIDS));
+    rc = ESMF_SUCCESS;
+  }
+  catch (json::out_of_range &e) {
+    ESMF_THROW_JSON(e, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);
+  }
+  catch (json::type_error &e) {
+    ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
+  }
+  catch (ESMCI::esmf_attrs_error &e) {
+    throw;
+  }
+  catch (...) {
+    ESMF_CHECKERR_STD("", rc, "Unhandled throw", rc);
+  }
 }
 
 #undef ESMC_METHOD
@@ -125,88 +142,118 @@ void IOHandle::close(int& rc) {
 void IOHandle::dodef(int& rc) {
   //tdk:TODO: refactor into functions
   rc = ESMF_FAILURE;
-  int ncid = this->PIOArgs.at(PIOARG::NCID);
 
-  const json& smeta = this->meta.getStorageRef();
-  const json& varmeta = smeta.at(K_VARS);
-  json& varids = this->PIOArgs[PIOARG::VARIDS];
-  json& dimids = this->PIOArgs[PIOARG::DIMIDS];
-  int ndims;
-  int pio_rc;
-  int dimid;
-  int dimctr;
-  int varid;
-  string varname;
-  for (json::const_iterator it_var=varmeta.cbegin(); it_var!=varmeta.cend(); it_var++) {
-    const auto it_varid = varids.find(it_var.key());
-    if (it_varid == varids.end()) {
-      ndims = it_var.value()[K_DIMS].size();
-      int dimidsp[ndims];
-      if (ndims > 0) {
-        const json& dims = it_var.value()[K_DIMS];
+  try {
+    int ncid = this->PIOArgs.at(PIOARG::NCID);
 
-        dimctr = 0;
-        for (const auto& dimname : dims) {
-          const auto it_dimid = dimids.find(dimname);
-          if (it_dimid == dimids.end()) {
-            dimsize_t dimsize;
-            //tdk:?: PIO only handles one unlimited dimension?
-            //tdk:?: PIO has to have unlimited dimension as the first dimension (last in Fortran)?
-            if (this->meta.isUnlimited(dimname)) {
-              dimsize = NC_UNLIMITED;
+    const json& smeta = this->meta.getStorageRef();
+    const json& varmeta = smeta.at(K_VARS);
+    json& varids = this->PIOArgs[PIOARG::VARIDS];
+    json& dimids = this->PIOArgs[PIOARG::DIMIDS];
+    int ndims;
+    int pio_rc;
+    int dimid;
+    int dimctr;
+    int varid;
+    string varname;
+    for (json::const_iterator it_var=varmeta.cbegin(); it_var!=varmeta.cend(); it_var++) {
+      const auto it_varid = varids.find(it_var.key());
+      if (it_varid == varids.end()) {
+        ndims = it_var.value()[K_DIMS].size();
+        int dimidsp[ndims];
+        if (ndims > 0) {
+          const json& dims = it_var.value()[K_DIMS];
+
+          dimctr = 0;
+          for (const auto& dimname : dims) {
+            const auto it_dimid = dimids.find(dimname);
+            if (it_dimid == dimids.end()) {
+              dimsize_t dimsize;
+              //tdk:?: PIO only handles one unlimited dimension?
+              //tdk:?: PIO has to have unlimited dimension as the first dimension (last in Fortran)?
+              if (this->meta.isUnlimited(dimname)) {
+                dimsize = NC_UNLIMITED;
+              } else {
+                dimsize = this->meta.getDimensionSize(dimname, rc);
+              }
+              ESMF_CHECKERR_STD("", rc, "Did not get dimension size: " + dimname.get<string>(), rc);
+
+              pio_rc = PIOc_def_dim(ncid, dimname.get<string>().c_str(), dimsize,
+                                    &dimid);
+              handlePIOReturnCode(pio_rc, "Could not define dimension", rc);
+
+              dimids[dimname.get<string>()] = dimid;
             } else {
-              dimsize = this->meta.getDimensionSize(dimname, rc);
+              dimid = it_dimid.value();
             }
-            ESMF_CHECKERR_STD("", rc, "Did not get dimension size: " + dimname.get<string>(), rc);
-
-            pio_rc = PIOc_def_dim(ncid, dimname.get<string>().c_str(), dimsize,
-              &dimid);
-            handlePIOReturnCode(pio_rc, "Could not define dimension", rc);
-
-            dimids[dimname.get<string>()] = dimid;
-          } else {
-            dimid = it_dimid.value();
+            dimidsp[dimctr] = dimid;
+            dimctr++;
           }
-          dimidsp[dimctr] = dimid;
-          dimctr++;
+
         }
 
+        nc_type xtype = it_var.value()[K_DTYPE];
+        pio_rc = PIOc_def_var(ncid, it_var.key().c_str(), xtype, ndims,
+                              dimidsp, &varid);
+        handlePIOReturnCode(pio_rc, "Could not define variable", rc);
+
+        varids[it_var.key()] = varid;
+
+        const json& attrs = it_var.value().at(K_ATTRS);
+        writePIOAttributes(attrs, ncid, varid, rc);
+        ESMF_CHECKERR_STD("", rc, "Did not write attributes with PIO", rc);
       }
-
-      nc_type xtype = it_var.value()[K_DTYPE];
-      pio_rc = PIOc_def_var(ncid, it_var.key().c_str(), xtype, ndims,
-        dimidsp, &varid);
-      handlePIOReturnCode(pio_rc, "Could not define variable", rc);
-
-      varids[it_var.key()] = varid;
-
-      const json& attrs = it_var.value().at(K_ATTRS);
-      writePIOAttributes(attrs, ncid, varid, rc);
-      ESMF_CHECKERR_STD("", rc, "Did not write attributes with PIO", rc);
     }
+
+    const json& attrs_global = smeta.at(K_ATTRS);
+    writePIOAttributes(attrs_global, ncid, NC_GLOBAL, rc);
+    ESMF_CHECKERR_STD("", rc, "Did not write global attributes with PIO", rc);
+
+    rc = ESMF_SUCCESS;
   }
-
-  const json& attrs_global = smeta.at(K_ATTRS);
-  writePIOAttributes(attrs_global, ncid, NC_GLOBAL, rc);
-  ESMF_CHECKERR_STD("", rc, "Did not write global attributes with PIO", rc);
-
-  rc = ESMF_SUCCESS;
+  catch (json::out_of_range &e) {
+    ESMF_THROW_JSON(e, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);
+  }
+  catch (json::type_error &e) {
+    ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
+  }
+  catch (ESMCI::esmf_attrs_error &e) {
+    throw;
+  }
+  catch (...) {
+    ESMF_CHECKERR_STD("", rc, "Unhandled throw", rc);
+  }
 }
 
 #undef ESMC_METHOD
 #define ESMC_METHOD "IOHandle::enddef()"
 void IOHandle::enddef(int& rc) {
   rc = ESMF_FAILURE;
-  int ncid = this->PIOArgs.at(PIOARG::NCID);
-  int pio_rc = PIOc_enddef(ncid);
-  handlePIOReturnCode(pio_rc, "Could not enddef with PIO", rc);
-  rc = ESMF_SUCCESS;
+  try {
+    int ncid = this->PIOArgs.at(PIOARG::NCID);
+    int pio_rc = PIOc_enddef(ncid);
+    handlePIOReturnCode(pio_rc, "Could not enddef with PIO", rc);
+    rc = ESMF_SUCCESS;
+  }
+  catch (json::out_of_range &e) {
+    ESMF_THROW_JSON(e, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);
+  }
+  catch (json::type_error &e) {
+    ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
+  }
+  catch (ESMCI::esmf_attrs_error &e) {
+    throw;
+  }
+  catch (...) {
+    ESMF_CHECKERR_STD("", rc, "Unhandled throw", rc);
+  }
 }
 
 #undef ESMC_METHOD
 #define ESMC_METHOD "finalize()"
 void IOHandle::finalize(int& rc) {
   rc = ESMF_FAILURE;
+
   try {
     int iosysid = this->PIOArgs.at(PIOARG::IOSYSID);
 
@@ -231,11 +278,17 @@ void IOHandle::finalize(int& rc) {
 
     rc = ESMF_SUCCESS;
   }
-  catch (json::out_of_range& e) {
+  catch (json::out_of_range &e) {
     ESMF_THROW_JSON(e, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);
   }
+  catch (json::type_error &e) {
+    ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
+  }
+  catch (ESMCI::esmf_attrs_error &e) {
+    throw;
+  }
   catch (...) {
-    ESMF_CHECKERR_STD("ESMF_FAILURE", ESMF_FAILURE, "Uncaught exception", rc);
+    ESMF_CHECKERR_STD("", rc, "Unhandled throw", rc);
   }
 }
 
@@ -268,30 +321,44 @@ int IOHandle::getOrCreateVariable(int& rc) {
 int IOHandle::init(int& rc) {
   rc = ESMF_FAILURE;
 
-  int iosysid;
-  const int io_proc_stride = 1;
-  const int io_proc_start = 0;
+  try {
+    int iosysid;
+    const int io_proc_stride = 1;
+    const int io_proc_start = 0;
 
-  ESMCI::VM *vm = ESMCI::VM::getCurrent(&rc);
-  ESMF_CHECKERR_STD("", rc, "Did not get current VM", rc);
+    ESMCI::VM *vm = ESMCI::VM::getCurrent(&rc);
+    ESMF_CHECKERR_STD("", rc, "Did not get current VM", rc);
 
-  MPI_Comm comm = vm->getMpi_c();
+    MPI_Comm comm = vm->getMpi_c();
 
 //  int localPet = vm->getLocalPet();
-  int petCount = vm->getPetCount();
+    int petCount = vm->getPetCount();
 //  cout << localPet << " " << petCount;
-  const int num_iotasks = petCount;
+    const int num_iotasks = petCount;
 
-  int pio_rc = PIOc_Init_Intracomm(comm, num_iotasks, io_proc_stride,
-    io_proc_start, PIODEF::REARRANGER, &iosysid);
-  handlePIOReturnCode(pio_rc, "Could not start PIO Intracomm", rc);
+    int pio_rc = PIOc_Init_Intracomm(comm, num_iotasks, io_proc_stride,
+                                     io_proc_start, PIODEF::REARRANGER, &iosysid);
+    handlePIOReturnCode(pio_rc, "Could not start PIO Intracomm", rc);
 
-  this->PIOArgs[PIOARG::DIMIDS] = json::object();
-  this->PIOArgs[PIOARG::IOSYSID] = iosysid;
-  this->PIOArgs[PIOARG::VARIDS] = json::object();
+    this->PIOArgs[PIOARG::DIMIDS] = json::object();
+    this->PIOArgs[PIOARG::IOSYSID] = iosysid;
+    this->PIOArgs[PIOARG::VARIDS] = json::object();
 
-  rc = ESMF_SUCCESS;
-  return iosysid;
+    rc = ESMF_SUCCESS;
+    return iosysid;
+  }
+  catch (json::out_of_range &e) {
+    ESMF_THROW_JSON(e, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);
+  }
+  catch (json::type_error &e) {
+    ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
+  }
+  catch (ESMCI::esmf_attrs_error &e) {
+    throw;
+  }
+  catch (...) {
+    ESMF_CHECKERR_STD("", rc, "Unhandled throw", rc);
+  }
 }
 
 #undef ESMC_METHOD
@@ -299,33 +366,47 @@ int IOHandle::init(int& rc) {
 void IOHandle::open(int& rc) {
   rc = ESMF_FAILURE;
 
-  const string filename = this->PIOArgs.value(PIOARG::FILENAME, "");
-  if (filename == "") {
-    ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD,
-      "PIOArg 'filename' may not be empty", rc);
-  }
+  try {
+    const string filename = this->PIOArgs.value(PIOARG::FILENAME, "");
+    if (filename == "") {
+      ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD,
+                        "PIOArg 'filename' may not be empty", rc);
+    }
 
-  int iosysid;
-  auto it_iosysid = this->PIOArgs.find(PIOARG::IOSYSID);
-  if (it_iosysid == this->PIOArgs.end()) {
-    iosysid = this->init(rc);
-    ESMF_CHECKERR_STD("", rc, "Did not init", rc);
-  } else {
-    iosysid = it_iosysid.value();
-  }
+    int iosysid;
+    auto it_iosysid = this->PIOArgs.find(PIOARG::IOSYSID);
+    if (it_iosysid == this->PIOArgs.end()) {
+      iosysid = this->init(rc);
+      ESMF_CHECKERR_STD("", rc, "Did not init", rc);
+    } else {
+      iosysid = it_iosysid.value();
+    }
 
-  int iotype = (int)(this->PIOArgs.value(PIOARG::IOTYPE, PIO_IOTYPE_NETCDF));
-  int mode = this->PIOArgs.value(PIOARG::MODE, NC_WRITE);
-  auto it_ncid = this->PIOArgs.find(PIOARG::NCID);
-  int ncid;
-  if (it_ncid == this->PIOArgs.end()) {
-    int pio_rc = PIOc_createfile(iosysid, &ncid, &iotype, filename.c_str(),
-      mode);
-    handlePIOReturnCode(pio_rc, "Could not open filename: " + filename, rc);
-    this->PIOArgs[PIOARG::NCID] = ncid;
-  }
+    int iotype = (int)(this->PIOArgs.value(PIOARG::IOTYPE, PIO_IOTYPE_NETCDF));
+    int mode = this->PIOArgs.value(PIOARG::MODE, NC_WRITE);
+    auto it_ncid = this->PIOArgs.find(PIOARG::NCID);
+    int ncid;
+    if (it_ncid == this->PIOArgs.end()) {
+      int pio_rc = PIOc_createfile(iosysid, &ncid, &iotype, filename.c_str(),
+                                   mode);
+      handlePIOReturnCode(pio_rc, "Could not open filename: " + filename, rc);
+      this->PIOArgs[PIOARG::NCID] = ncid;
+    }
 
-  rc = ESMF_SUCCESS;
+    rc = ESMF_SUCCESS;
+  }
+  catch (json::out_of_range &e) {
+    ESMF_THROW_JSON(e, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);
+  }
+  catch (json::type_error &e) {
+    ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
+  }
+  catch (ESMCI::esmf_attrs_error &e) {
+    throw;
+  }
+  catch (...) {
+    ESMF_CHECKERR_STD("", rc, "Unhandled throw", rc);
+  }
 }
 
 #undef ESMC_METHOD
@@ -336,22 +417,22 @@ void IOHandle::write(const Array& arr, int& rc) {
 //  vector<string> jargs = {"filename"};
 //  vector<string> jkwargs = {"clobber", "fileOnly", "mode"};
 
-  ESMCI::VM *vm = ESMCI::VM::getCurrent(&rc);
-  ESMF_CHECKERR_STD("", rc, "Did not get current VM", rc);
-
-  int localPet = vm->getLocalPet();
-  int petCount = vm->getPetCount();
-
-  DistGrid* distgrid = arr.getDistGrid();
-
-  // Only one DE is currently supported.
-  DELayout* de_layout = distgrid->getDELayout();
-  if (de_layout->getLocalDeCount() > 1) {
-    ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD,
-                      "Only one DE supported for writing", rc);
-  }
-
   try {
+    ESMCI::VM *vm = ESMCI::VM::getCurrent(&rc);
+    ESMF_CHECKERR_STD("", rc, "Did not get current VM", rc);
+
+    int localPet = vm->getLocalPet();
+    int petCount = vm->getPetCount();
+
+    DistGrid* distgrid = arr.getDistGrid();
+
+    // Only one DE is currently supported.
+    DELayout* de_layout = distgrid->getDELayout();
+    if (de_layout->getLocalDeCount() > 1) {
+      ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD,
+                        "Only one DE supported for writing", rc);
+    }
+
     const int &iosysid = this->PIOArgs.at(PIOARG::IOSYSID).get_ref<json::number_integer_t&>();
 
     string name(arr.getName());
@@ -448,10 +529,17 @@ void IOHandle::write(const Array& arr, int& rc) {
     rc = ESMF_SUCCESS;
   }
   catch (json::out_of_range& e) {
+    ESMF_THROW_JSON(e, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);
+  }
+  catch (json::type_error &e) {
     ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
   }
-  catch (ESMCI::esmf_attrs_error) {}
-  catch (...) {ESMF_CHECKERR_STD("", rc, "Uncaught throw", rc);}
+  catch (ESMCI::esmf_attrs_error) {
+    throw;
+  }
+  catch (...) {
+    ESMF_CHECKERR_STD("", rc, "Unhandled throw", rc);
+  }
 }
 
 }  // ESMCI
