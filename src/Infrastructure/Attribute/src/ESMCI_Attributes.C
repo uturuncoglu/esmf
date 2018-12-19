@@ -22,6 +22,10 @@
 //
 //-----------------------------------------------------------------------------
 
+//tdk:REMOVE: only required for tdk prints
+#include <netcdf.h>
+#include <pio.h>
+
 #include "ESMC.h"
 #include "ESMCI_Macros.h"
 #include "ESMCI_Attributes.h"
@@ -50,6 +54,34 @@ namespace ESMCI {
 void tdklog(const string& msg) {
   string localmsg = "tdk: " + msg;
   ESMC_LogWrite(localmsg.c_str(), ESMC_LOGMSG_INFO);
+}
+
+//tdk:REMOVE
+void tdklog(const string& msg, const vector<ESMC_I4>& v) {
+  for (size_t ii = 0; ii < v.size(); ii++) {
+    tdklog(msg + "[" + to_string(ii) + "]=" + to_string(v[ii]));
+  }
+}
+
+//tdk:REMOVE
+void tdklog(const string& msg, const vector<PIO_Offset>& v) {
+  for (size_t ii = 0; ii < v.size(); ii++) {
+    tdklog(msg + "[" + to_string(ii) + "]=" + to_string(v[ii]));
+  }
+}
+
+//tdk:REMOVE
+void tdklog(const string& msg, int const* l, std::size_t size) {
+  for (size_t ii = 0; ii < size; ii++) {
+    tdklog(msg + "[" + to_string(ii) + "]=" + to_string(l[ii]));
+  }
+}
+
+//tdk:REMOVE
+void tdklog(const string& msg, PIO_Offset* l, std::size_t size) {
+  for (size_t ii = 0; ii < size; ii++) {
+    tdklog(msg + "[" + to_string(ii) + "]=" + to_string(l[ii]));
+  }
 }
 
 #undef ESMC_METHOD

@@ -234,7 +234,6 @@ void testWrite3DArray(int& rc, char failMsg[]) {
   std::reverse(arrshp.begin(), arrshp.end());  // Reverse to Fortran order
   for (int ii=0; ii<arrshp.size(); ii++) {tdklog("3D: arrshp["+to_string(ii)+"]="+to_string(arrshp[ii]));}
   ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
-  return;
 
   void** larrayBaseAddrList =  arr->getLarrayBaseAddrList();
   double* buffer = reinterpret_cast<double*>(larrayBaseAddrList[0]);

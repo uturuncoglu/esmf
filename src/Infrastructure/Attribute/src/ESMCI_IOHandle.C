@@ -362,6 +362,24 @@ void IOHandle::write(const Array& arr, int& rc) {
 //    const int *exclusiveElementCountPDe = arr.getExclusiveElementCountPDe();
 //    PIO_Offset maplen = *exclusiveElementCountPDe;
 //    PIO_Offset maplen = 36;
+
+//    template int DistGrid::getSequenceIndexLocalDe<ESMC_I4>(int localDe,
+//                                                            int const *index,
+//                                                            vector<ESMC_I4> &seqIndex,
+//                                                            bool recursive,
+//                                                            bool canonical)
+//    const;
+    int dindex[1] = {1};
+    int* index = &dindex[0];
+//    vector<ESMC_I4> seqIndex;
+    SeqIndex<ESMC_I4> seqIndex;
+//    rc = distgrid->getSequenceIndexLocalDe<ESMC_I4>(0, index, seqIndex);
+    rc = arr.getSequenceIndexExclusive<ESMC_I4>(0, index, &seqIndex);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+    seqIndex.print();
+//    assert(seqIndex.size() > 1);
+//    tdklog("seqIndex", seqIndex);
+
     auto arrshp = getArrayShape(arr, ESMC_INDEX_DELOCAL, rc);
     ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 
@@ -371,28 +389,23 @@ void IOHandle::write(const Array& arr, int& rc) {
     }
     tdklog("maplen=" + to_string(maplen));
 
-    PIO_Offset compmap[maplen];
-    for (auto ii=0; ii<maplen; ii++) {
-      compmap[ii] = localPet * maplen + ii;
-//      compmap[ii] = localPet + (ii * 7);
+    vector<PIO_Offset> idx;
+    if (localPet == 0) {
+      idx = {0,1,7,8,14,15,21,22,28,29,35,36,42,43,49,50,56,57,63,64,70,71,77,78,84,85,91,92,98,99};
+    } else if (localPet == 1) {
+      idx = {2,3,9,10,16,17,23,24,30,31,37,38,44,45,51,52,58,59,65,66,72,73,79,80,86,87,93,94,100,101};
+    } else if (localPet == 2) {
+      idx = {4,5,11,12,18,19,25,26,32,33,39,40,46,47,53,54,60,61,67,68,74,75,81,82,88,89,95,96,102,103};
+    } else {
+      idx = {6,13,20,27,34,41,48,55,62,69,76,83,90,97,104};
     }
 
-//    compmap[0] = 0 + localPet;
-//    compmap[1] = 20 + localPet;
-//    compmap[2] = 40 + localPet;
-//    compmap[3] = 4 + localPet;
-//    compmap[4] = 24 + localPet;
-//    compmap[5] = 44 + localPet;
-//    compmap[6] = 8 + localPet;
-//    compmap[7] = 28 + localPet;
-//    compmap[8] = 48 + localPet;
-//    compmap[9] = 12 + localPet;
-//    compmap[10] = 32 + localPet;
-//    compmap[11] = 52 + localPet;
-//    compmap[12] = 16 + localPet;
-//    compmap[13] = 36 + localPet;
-//    compmap[14] = 56 + localPet;
-//    for (int jj=0;jj<maplen;jj++){tdklog("PIO:compmap["+to_string(jj)+"]="+to_string(compmap[jj]));}
+    PIO_Offset compmap[idx.size()];
+    for (auto ii=0; ii<maplen; ii++) {
+//      compmap[ii] = localPet * maplen + ii;
+      compmap[ii] = idx[ii];
+    }
+    tdklog("compmap", compmap, maplen);
 
     int ioid = 0;
     int pio_rc = PIOc_init_decomp(iosysid, pio_type, ndims, gdimlen, maplen,
@@ -423,9 +436,8 @@ void IOHandle::write(const Array& arr, int& rc) {
   catch (json::out_of_range& e) {
     ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
   }
-  catch (...) {
-    ESMF_CHECKERR_STD("", rc, "Uncaught throw", rc);
-  }
+  catch (ESMCI::esmf_attrs_error) {}
+  catch (...) {ESMF_CHECKERR_STD("", rc, "Uncaught throw", rc);}
 }
 
 }  // ESMCI

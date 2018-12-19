@@ -94,6 +94,14 @@ vector<dimsize_t> getArrayShape(const Array& arr,
   //tdk:TEST: multiple DEs, multiple PETs
   rc = ESMF_FAILURE;
 
+  ESMCI::VM *vm = ESMCI::VM::getCurrent(&rc);
+  ESMF_CHECKERR_STD("", rc, "Did not get current VM", rc);
+
+  int localPet = vm->getLocalPet();
+  int petCount = vm->getPetCount();
+
+  //---------------------------------------------------------------------------
+
   DistGrid* distgrid = arr.getDistGrid();
 //  int dg_dim_count = distgrid->getDimCount();
   int rank = arr.getRank();
@@ -106,11 +114,16 @@ vector<dimsize_t> getArrayShape(const Array& arr,
 //  const int* totalLBound = arr.getTotalLBound();
 //  const int* totalUBound = arr.getTotalUBound();
 
+  int const* minIndex;
   int const* maxIndex;
   if (idxFlag == ESMC_INDEX_GLOBAL) {
+    minIndex = distgrid->getMinIndexPDimPTile();
     maxIndex = distgrid->getMaxIndexPDimPTile();
   } else if (idxFlag == ESMC_INDEX_DELOCAL) {
-    maxIndex = distgrid->getMaxIndexPDimPDe();
+    minIndex = distgrid->getMinIndexPDimPDe(localPet, nullptr);
+    maxIndex = distgrid->getMaxIndexPDimPDe(localPet, nullptr);
+    tdklog("ArrayCreate:minIndex", minIndex, 1);
+    tdklog("ArrayCreate:maxIndex", maxIndex, 1);
   } else {
     ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD,
       "Index flag not supported: " + to_string(idxFlag), rc);
@@ -123,7 +136,7 @@ vector<dimsize_t> getArrayShape(const Array& arr,
       ret[ii] = undistUBound[ii];
     } else {
       // Dimension is distributed
-      ret[ii] = maxIndex[arr2dg_map[ii]-1];
+      ret[ii] = maxIndex[arr2dg_map[ii]-1] - minIndex[arr2dg_map[ii]-1] + 1;
     }
   }
 
@@ -411,6 +424,7 @@ DistGrid* Metadata::createDistGrid(const json& jsonParms, int& rc) const {
       v_minIndex[ii] = 1;
     }
   }
+  tdklog("v_maxIndex", v_minIndex);
   InterArray<ESMC_I4> minIndex(v_minIndex);
 
   if (v_maxIndex.size() == 0) {
@@ -428,6 +442,7 @@ DistGrid* Metadata::createDistGrid(const json& jsonParms, int& rc) const {
       }
     }
   }
+  tdklog("v_maxIndex", v_maxIndex);
   InterArray<ESMC_I4> maxIndex(v_maxIndex);
 
   auto regDecomp = nullptr;
@@ -458,6 +473,8 @@ DistGrid* Metadata::createDistGrid(const json& jsonParms, int& rc) const {
     &rc,
     indexTK);
   ESMF_CHECKERR_STD("", rc, "Did not create DistGrid", rc);
+
+//  ret->print(); //tdk:p
 
   return ret;
 
