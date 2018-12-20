@@ -75,6 +75,8 @@ namespace MKEY {
 //-----------------------------------------------------------------------------
 
 json createJSONPackage(const string& pkgKey, int& rc);
+vector<vector<dimsize_t>> getArrayBounds(const Array& arr,
+  const ESMC_IndexFlag& idxFlag, int& rc);
 vector<dimsize_t> getArrayShape(const Array& arr,
   const ESMC_IndexFlag& idxFlag, int& rc);
 

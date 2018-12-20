@@ -143,8 +143,9 @@ vector<vector<dimsize_t>> getArrayBounds(const Array& arr,
     } else {
       // Dimension is distributed
 //      ret[ii] = maxIndex[arr2dg_map[ii]-1] - minIndex[arr2dg_map[ii]-1] + 1;
-      curr[0] = minIndex[arr2dg_map[ii]-1];
-      curr[1] = maxIndex[arr2dg_map[ii]-1] - 1;
+      curr[0] = minIndex[arr2dg_map[ii]-1] - 1;
+      curr[1] = maxIndex[arr2dg_map[ii]-1];
+      tdklog("getArrayBounds curr", curr);
     }
     assert(curr[0] >= 0);
     assert(curr[1] >= curr[0]);
@@ -167,51 +168,61 @@ vector<dimsize_t> getArrayShape(const Array& arr,
   //tdk:TEST: multiple DEs, multiple PETs
   rc = ESMF_FAILURE;
 
-  ESMCI::VM *vm = ESMCI::VM::getCurrent(&rc);
-  ESMF_CHECKERR_STD("", rc, "Did not get current VM", rc);
+  vector<vector<dimsize_t>> bnds = getArrayBounds(arr, idxFlag, rc);
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 
-  int localPet = vm->getLocalPet();
-  int petCount = vm->getPetCount();
-
-  //---------------------------------------------------------------------------
-
-  DistGrid* distgrid = arr.getDistGrid();
-  int rank = arr.getRank();
-
-  const int* arr2dg_map = arr.getArrayToDistGridMap(); // F-order & indexing
-//  const int* dg2arr_map = arr.getDistGridToArrayMap(); // F-order & indexing
-
-  const int* undistLBound = arr.getUndistLBound(); // F-order & indexing
-  const int* undistUBound = arr.getUndistUBound(); // F-order & indexing
-  int dg_dim_count = distgrid->getDimCount(); tdklog("getArrayShape undistUBound=", undistUBound, rank-dg_dim_count);
-//  const int* totalLBound = arr.getTotalLBound();
-//  const int* totalUBound = arr.getTotalUBound();
-
-  int const* minIndex;
-  int const* maxIndex;
-  if (idxFlag == ESMC_INDEX_GLOBAL) {
-    minIndex = distgrid->getMinIndexPDimPTile();
-    maxIndex = distgrid->getMaxIndexPDimPTile();
-  } else if (idxFlag == ESMC_INDEX_DELOCAL) {
-    minIndex = distgrid->getMinIndexPDimPDe(localPet, nullptr);
-    maxIndex = distgrid->getMaxIndexPDimPDe(localPet, nullptr);
-    tdklog("ArrayCreate:minIndex", minIndex, 1);
-    tdklog("ArrayCreate:maxIndex", maxIndex, 1);
-  } else {
-    ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD,
-      "Index flag not supported: " + to_string(idxFlag), rc);
+  vector<dimsize_t> ret(bnds.size(), 0);
+  for (dimsize_t ii = 0; ii < ret.size(); ++ii) {
+    ret[ii] = bnds[ii][1] - bnds[ii][0];
   }
 
-  vector<dimsize_t> ret(rank, 0);
-  for (auto ii=0; ii<rank; ii++) {
-    if (arr2dg_map[ii] == 0) {
-      // Dimension is undistributed
-      ret[ii] = undistUBound[ii] - undistLBound[ii] + 1;
-    } else {
-      // Dimension is distributed
-      ret[ii] = maxIndex[arr2dg_map[ii]-1] - minIndex[arr2dg_map[ii]-1] + 1;
-    }
-  }
+  tdklog("getArrayShape ret", ret);
+
+//  ESMCI::VM *vm = ESMCI::VM::getCurrent(&rc);
+//  ESMF_CHECKERR_STD("", rc, "Did not get current VM", rc);
+//
+//  int localPet = vm->getLocalPet();
+//  int petCount = vm->getPetCount();
+//
+//  //---------------------------------------------------------------------------
+//
+//  DistGrid* distgrid = arr.getDistGrid();
+//  int rank = arr.getRank();
+//
+//  const int* arr2dg_map = arr.getArrayToDistGridMap(); // F-order & indexing
+////  const int* dg2arr_map = arr.getDistGridToArrayMap(); // F-order & indexing
+//
+//  const int* undistLBound = arr.getUndistLBound(); // F-order & indexing
+//  const int* undistUBound = arr.getUndistUBound(); // F-order & indexing
+//  int dg_dim_count = distgrid->getDimCount(); tdklog("getArrayShape undistUBound=", undistUBound, rank-dg_dim_count);
+////  const int* totalLBound = arr.getTotalLBound();
+////  const int* totalUBound = arr.getTotalUBound();
+//
+//  int const* minIndex;
+//  int const* maxIndex;
+//  if (idxFlag == ESMC_INDEX_GLOBAL) {
+//    minIndex = distgrid->getMinIndexPDimPTile();
+//    maxIndex = distgrid->getMaxIndexPDimPTile();
+//  } else if (idxFlag == ESMC_INDEX_DELOCAL) {
+//    minIndex = distgrid->getMinIndexPDimPDe(localPet, nullptr);
+//    maxIndex = distgrid->getMaxIndexPDimPDe(localPet, nullptr);
+//    tdklog("ArrayCreate:minIndex", minIndex, 1);
+//    tdklog("ArrayCreate:maxIndex", maxIndex, 1);
+//  } else {
+//    ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD,
+//      "Index flag not supported: " + to_string(idxFlag), rc);
+//  }
+//
+//  vector<dimsize_t> ret(rank, 0);
+//  for (auto ii=0; ii<rank; ii++) {
+//    if (arr2dg_map[ii] == 0) {
+//      // Dimension is undistributed
+//      ret[ii] = undistUBound[ii] - undistLBound[ii] + 1;
+//    } else {
+//      // Dimension is distributed
+//      ret[ii] = maxIndex[arr2dg_map[ii]-1] - minIndex[arr2dg_map[ii]-1] + 1;
+//    }
+//  }
 
   rc = ESMF_SUCCESS;
   return ret;
