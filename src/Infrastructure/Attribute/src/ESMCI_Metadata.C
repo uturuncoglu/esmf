@@ -84,6 +84,79 @@ json createJSONPackage(const string& pkgKey, int& rc) {
   return j;
 }
 
+#undef ESMC_METHOD
+#define ESMC_METHOD "getArrayBounds()"
+vector<vector<dimsize_t>> getArrayBounds(const Array& arr,
+  const ESMC_IndexFlag& idxFlag, int& rc) {
+  // Notes:
+  //  * Zero-basis, [bounds), >= and <
+  //  * ret[ii][0] = Lower Bound
+  //  * ret[ii][1] = Upper Bound
+
+  rc = ESMF_FAILURE;
+
+  ESMCI::VM *vm = ESMCI::VM::getCurrent(&rc);
+  ESMF_CHECKERR_STD("", rc, "Did not get current VM", rc);
+
+  int localPet = vm->getLocalPet();
+  int petCount = vm->getPetCount();
+
+  //---------------------------------------------------------------------------
+
+  DistGrid* distgrid = arr.getDistGrid();
+  int rank = arr.getRank();
+
+  const int* arr2dg_map = arr.getArrayToDistGridMap(); // F-order & indexing
+//  const int* dg2arr_map = arr.getDistGridToArrayMap(); // F-order & indexing
+
+  const int* undistLBound = arr.getUndistLBound(); // F-order & indexing
+  const int* undistUBound = arr.getUndistUBound(); // F-order & indexing
+//  int dg_dim_count = distgrid->getDimCount(); tdklog("getArrayShape undistUBound=", undistUBound, rank-dg_dim_count);
+//  const int* totalLBound = arr.getTotalLBound();
+//  const int* totalUBound = arr.getTotalUBound();
+
+  int const* minIndex;
+  int const* maxIndex;
+  if (idxFlag == ESMC_INDEX_GLOBAL) {
+    minIndex = distgrid->getMinIndexPDimPTile();
+    maxIndex = distgrid->getMaxIndexPDimPTile();
+  } else if (idxFlag == ESMC_INDEX_DELOCAL) {
+    minIndex = distgrid->getMinIndexPDimPDe(localPet, nullptr);
+    maxIndex = distgrid->getMaxIndexPDimPDe(localPet, nullptr);
+//    tdklog("ArrayCreate:minIndex", minIndex, 1);
+//    tdklog("ArrayCreate:maxIndex", maxIndex, 1);
+  } else {
+    ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD,
+                      "Index flag not supported: " + to_string(idxFlag), rc);
+  }
+
+//  vector<dimsize_t> ret(rank, 0);
+  vector<vector<dimsize_t>> ret;
+  ret.resize(rank);
+  for (auto ii=0; ii<rank; ii++) {
+    vector<dimsize_t> curr(2, 0);
+    if (arr2dg_map[ii] == 0) {
+      // Dimension is undistributed
+//      ret[ii] = undistUBound[ii] - undistLBound[ii] + 1;
+      curr[0] = undistLBound[ii] - 1;
+      curr[1] = undistUBound[ii];
+    } else {
+      // Dimension is distributed
+//      ret[ii] = maxIndex[arr2dg_map[ii]-1] - minIndex[arr2dg_map[ii]-1] + 1;
+      curr[0] = minIndex[arr2dg_map[ii]-1];
+      curr[1] = maxIndex[arr2dg_map[ii]-1] - 1;
+    }
+    assert(curr[0] >= 0);
+    assert(curr[1] >= curr[0]);
+    ret[ii] = curr;
+  }
+
+  rc = ESMF_SUCCESS;
+  return ret;
+
+  rc = ESMF_SUCCESS;
+}
+
 #undef  ESMC_METHOD
 #define ESMC_METHOD "getArrayShape()"
 vector<dimsize_t> getArrayShape(const Array& arr,
