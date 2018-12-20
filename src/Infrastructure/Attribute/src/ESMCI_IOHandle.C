@@ -62,28 +62,43 @@ vector<PIO_Offset> getESMFSeqIndex(const Array& arr, int& rc) {
     int local_decount = delayout->getLocalDeCount();
     assert(local_decount == 1);
 
+//    arr.print(); //tdk:p
+
     for (int i = 0; i < local_decount; i++) {
       // multi-dim loop object
-      ArrayElement arrayElement(&arr, i, true, false, false);
+      ArrayElement arrayElement(&arr, i, false, true, false, true);
+//      arrayElement.print();
+//      arrayElement.setSkipDim(2);
       // set up to skip over undistributed, i.e. tensor dimensions
 //        const int *srcArrayToDistGridMap = srcArray->getArrayToDistGridMap();
 //      for (int j = 0; j < arr->getRank(); j++) {
 //          if (srcArrayToDistGridMap[j]==0) arrayElement.setSkipDim(j);
         // fill in the factorIndexList
-        PIO_Offset adjust = -1;
-        while (arrayElement.isWithin()) {
-          SeqIndex <PIO_Offset> seqIndex = arrayElement.getSequenceIndex<PIO_Offset>();
-          if (adjust == -1) {
-            adjust = seqIndex.decompSeqIndex;
-          }
-          PIO_Offset adjusted = seqIndex.decompSeqIndex - adjust;
+//        PIO_Offset adjust = -1;
+//        int ctr=0; //tdk:REMOVE
+      while (arrayElement.isWithin()) {
+//        tdklog("getesmfseqindex ctr="+to_string(ctr));
+        SeqIndex <ESMC_I4> seqIndex = arrayElement.getSequenceIndex<ESMC_I4>();  // tdk:TODO: it would be nice to use PIO_Offset type here instead of i4
+//        arrayElement.print();
+//          if (adjust == -1) {
+//            adjust = seqIndex.decompSeqIndex;
+//          }
+//          PIO_Offset adjusted = seqIndex.decompSeqIndex - adjust;
 //          factorIndexList[2*jj] = factorIndexList[2*jj+1] =
 //            seqIndex.decompSeqIndex;
-          tdklog(string(ESMC_METHOD) + " seqIndex.decompSeqIndex=" +to_string(adjusted));
-          ret.push_back(adjusted);
+//          tdklog(string(ESMC_METHOD) + " seqIndex.decompSeqIndex=" +to_string(adjusted));
+//        tdklog("getesmfseqindex idx="+to_string(seqIndex.decompSeqIndex));
+        ret.push_back((PIO_Offset)seqIndex.decompSeqIndex);
 //          ++jj; // increment counter
-          arrayElement.next();
-        } // end while over all exclusive elements
+        arrayElement.next();
+//          ctr++;
+      } // end while over all exclusive elements
+
+//      auto minv = std::min_element(ret.begin(), ret.end());
+//      for (size_t ii=0; ii<ret.size(); ii++) {
+//        ret[ii] = ret[ii] - *minv;
+//      }
+
     }
     rc = ESMF_SUCCESS;
     return ret;
@@ -549,7 +564,7 @@ void IOHandle::write(const Array& arr, int& rc) {
 
     PIO_Offset maplen = si.size();
     PIO_Offset* compmap = si.data();
-//    tdklog("compmap", compmap, maplen);
+    tdklog("compmap", compmap, maplen);
     int ioid = 0;
     int pio_rc = PIOc_init_decomp(iosysid, pio_type, ndims, gdimlen, maplen,
       compmap, &ioid, PIODEF::REARRANGER, nullptr, nullptr);

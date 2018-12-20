@@ -204,9 +204,11 @@ void testWrite3DArray(int& rc, char failMsg[]) {
   rc = ESMF_FAILURE;
 //  bool failed = true;
 
-//  const vector<string> dimnames = {"dim_seven", "dim_other", "dim_realization"};  //F-order
-  const vector<string> dimnames = {"dim_realization", "dim_other", "dim_seven"};  //C-order
-  const vector<string> distdims = {"dim_seven"};
+  vector<string> dimnames = {"dim_seven", "dim_other", "dim_realization"};
+  std::reverse(dimnames.begin(), dimnames.end());
+  vector<string> distdims = {"dim_seven", "dim_other", "dim_realization"};
+  std::reverse(distdims.begin(), distdims.end());
+
   const string varname = "simple_3D";
 
   ESMCI::VM *vm = ESMCI::VM::getCurrent(&rc);
@@ -333,7 +335,7 @@ int main(void) {
   testWrite1DArray(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //---------------------------------------------------------------------------
-//
+
 //  //---------------------------------------------------------------------------
 //  //NEX_UTest
 //  strcpy(name, "Test writing a 3D array");
