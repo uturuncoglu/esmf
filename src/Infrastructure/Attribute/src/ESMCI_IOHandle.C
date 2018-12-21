@@ -611,6 +611,7 @@ void IOHandle::write(const Array& arr, int& rc) {
     // Sequence indices =======================================================
 
 //    vector<PIO_Offset> si = getESMFSeqIndex(arr, rc);
+    //tdk:FEATURE: read in PIO decomposition from file
     vector<PIO_Offset> compmap = createPIOCompmap(arr, rc);
     ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 

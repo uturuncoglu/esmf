@@ -53,6 +53,7 @@ namespace PIOARG {
 }
 
 namespace PIODEF {
+  //tdk:TODO: what should the default write mode be?
   const int REARRANGER = PIO_REARR_SUBSET;
 }
 

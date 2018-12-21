@@ -190,9 +190,9 @@ void testWrite1DArray(int& rc, char failMsg[]) {
   ESMF_CHECKERR_STD("", rc, "Problem when destroying objects", rc);
 
   //tdk:UNCOMMENT
-//  if (localPet == 0 && remove(filename.c_str()) != 0) {
-//    return finalizeFailure(rc, failMsg, "Test file not removed");
-//  }
+  if (localPet == 0 && remove(filename.c_str()) != 0) {
+    return finalizeFailure(rc, failMsg, "Test file not removed");
+  }
 
   rc = ESMF_SUCCESS;
   return;
@@ -205,11 +205,15 @@ void testWrite3DArray(int& rc, char failMsg[]) {
 //  bool failed = true;
 
   vector<string> dimnames = {"dim_realization", "dim_other", "dim_seven"};
-//  std::reverse(dimnames.begin(), dimnames.end());
-//  vector<string> distdims = {"dim_seven"};
-//  vector<string> distdims = {"dim_seven"};
-  vector<string> distdims = {"dim_other","dim_seven"};
-//  std::reverse(distdims.begin(), distdims.end());
+
+  vector<vector<string>> poss_distdims;
+  poss_distdims.push_back(vector<string>({"dim_realization"}));
+  poss_distdims.push_back(vector<string>({"dim_other"}));
+  poss_distdims.push_back(vector<string>({"dim_seven"}));
+  poss_distdims.push_back(vector<string>({"dim_other", "dim_seven"}));
+  poss_distdims.push_back(vector<string>({"dim_realization", "dim_other", "dim_seven"}));
+  poss_distdims.push_back(vector<string>({"dim_realization", "dim_other"}));
+  poss_distdims.push_back(vector<string>({"dim_realization", "dim_seven"}));
 
   const string varname = "simple_3D";
 
@@ -222,34 +226,34 @@ void testWrite3DArray(int& rc, char failMsg[]) {
   json root = createTestJSONMetadata(rc);
   Metadata meta(move(root));
 
-  json dgparms;
-  //tdk:TODO: change to F-Order for consistency
-  dgparms[ESMFARG::DISTDIMS] = distdims;
-  DistGrid* distgrid = meta.createDistGrid(dgparms, rc);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+  for (const auto& distdims : poss_distdims) {
+    json dgparms;
+    dgparms[ESMFARG::DISTDIMS] = distdims;
+    DistGrid *distgrid = meta.createDistGrid(dgparms, rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 
-  json jsonParms;
-  jsonParms[ESMFARG::DISTDIMS] = distdims;
-  jsonParms[ESMFARG::VARIABLENAME] = varname;
+    json jsonParms;
+    jsonParms[ESMFARG::DISTDIMS] = distdims;
+    jsonParms[ESMFARG::VARIABLENAME] = varname;
 
-  ESMCI::Array* arr = meta.createArray(*distgrid, jsonParms, rc);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
-  arr->print(); //tdk:p
+    ESMCI::Array *arr = meta.createArray(*distgrid, jsonParms, rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+//    arr->print(); //tdk:p
 
-  vector<dimsize_t> arrshp = getArrayShape(*arr, ESMC_INDEX_DELOCAL, rc);
+    vector <dimsize_t> arrshp = getArrayShape(*arr, ESMC_INDEX_DELOCAL, rc);
 //  std::reverse(arrshp.begin(), arrshp.end());  // Reverse to Fortran order
-  tdklog("testWrite3DArray arrshp", arrshp);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+    tdklog("testWrite3DArray arrshp", arrshp);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 
-  void** larrayBaseAddrList =  arr->getLarrayBaseAddrList();
-  double* buffer = reinterpret_cast<double*>(larrayBaseAddrList[0]);
+    void **larrayBaseAddrList = arr->getLarrayBaseAddrList();
+    double *buffer = reinterpret_cast<double *>(larrayBaseAddrList[0]);
 //  const int stride = arrshp[1] * arrshp[2];  //F-order
 //  tdklog("stride="+to_string(stride));
 //  int stride_adjust = 0;
 //  vector<double> fills = {1000, 2000, 3000, 4000};
 //  int fillctr = 0;
-  for (auto ii=0; ii<arrshp[0]*arrshp[1]*arrshp[2]; ii++) {
-    buffer[ii] = 1000 * (localPet + 1) + ii + 0.5;
+    for (auto ii = 0; ii < arrshp[0] * arrshp[1] * arrshp[2]; ii++) {
+      buffer[ii] = 1000 * (localPet + 1) + ii + 0.5;
 
 //    buffer[ii] = fills[fillctr];
 //    fillctr ++;
@@ -262,49 +266,49 @@ void testWrite3DArray(int& rc, char failMsg[]) {
 //    }
 //    buffer[ii] = (10000 * (localPet + 1)) + (100 * ii); //+ 0.5 + 100 + (stride_adjust * 100);
 //    tdklog("3D: buffer["+to_string(ii)+"]="+to_string(buffer[ii]));
-  }
+    }
 //  double * tdkbuffer = reinterpret_cast<double*>(buffer);for (int jj=0;jj<maplen;jj++){tdklog("3D: buffer["+to_string(jj)+"]="+to_string(tdkbuffer[jj]));}
 
-  const string filename = "test_pio_write_3D_array.nc";
-  IOHandle ioh;
-  ioh.PIOArgs[PIOARG::FILENAME] = filename;
-  ioh.meta.update(*arr, &dimnames, rc);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+    const string filename = "test_pio_write_3D_array.nc";
+    IOHandle ioh;
+    ioh.PIOArgs[PIOARG::FILENAME] = filename;
+    ioh.meta.update(*arr, &dimnames, rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 
-  json& smeta = ioh.meta.getStorageRefWritable();
-  smeta.at(K_VARS).at(varname).at(K_ATTRS)["context"] = "testWrite3DArray";
+    json &smeta = ioh.meta.getStorageRefWritable();
+    smeta.at(K_VARS).at(varname).at(K_ATTRS)["context"] = "testWrite3DArray";
 
-  cout<<"(x) ioh.meta="<<ioh.meta.dump(2,rc)<<endl;
+//    cout << "(x) ioh.meta=" << ioh.meta.dump(2, rc) << endl;  //tdk:p
 
-  ioh.open(rc);
-  ESMF_CHECKERR_STD("", rc, "Did not open file", rc);
+    ioh.open(rc);
+    ESMF_CHECKERR_STD("", rc, "Did not open file", rc);
 
-  ioh.dodef(rc);
-  ESMF_CHECKERR_STD("", rc, "Did not define", rc);
+    ioh.dodef(rc);
+    ESMF_CHECKERR_STD("", rc, "Did not define", rc);
 
-  ioh.enddef(rc);
-  ESMF_CHECKERR_STD("", rc, "Did not enddef", rc);
+    ioh.enddef(rc);
+    ESMF_CHECKERR_STD("", rc, "Did not enddef", rc);
 
-  ioh.write(*arr, rc);
-  ESMF_CHECKERR_STD("", rc, "Did not write array", rc);
+    ioh.write(*arr, rc);
+    ESMF_CHECKERR_STD("", rc, "Did not write array", rc);
 
-  ioh.close(rc);
-  ESMF_CHECKERR_STD("", rc, "Did not close", rc);
+    ioh.close(rc);
+    ESMF_CHECKERR_STD("", rc, "Did not close", rc);
 
-  ioh.finalize(rc);
-  ESMF_CHECKERR_STD("", rc, "Did not finalize", rc);
+    ioh.finalize(rc);
+    ESMF_CHECKERR_STD("", rc, "Did not finalize", rc);
 
-  //tdk:TEST: structure of PIOArgs
+    //tdk:TEST: structure of PIOArgs
 
-  rc = ESMCI::Array::destroy(&arr);
-  rc = ESMCI::DistGrid::destroy(&distgrid);
-  ESMF_CHECKERR_STD("", rc, "Problem when destroying objects", rc);
+    rc = ESMCI::Array::destroy(&arr);
+    rc = ESMCI::DistGrid::destroy(&distgrid);
+    ESMF_CHECKERR_STD("", rc, "Problem when destroying objects", rc);
 
-  //tdk:UNCOMMENT
-//  if (localPet == 0 && remove(filename.c_str()) != 0) {
-//    return finalizeFailure(rc, failMsg, "Test file not removed");
-//  }
-
+    //tdk:UNCOMMENT
+  if (localPet == 0 && remove(filename.c_str()) != 0) {
+    return finalizeFailure(rc, failMsg, "Test file not removed");
+  }
+  }
   rc = ESMF_SUCCESS;
   return;
 }
@@ -325,19 +329,19 @@ int main(void) {
   //---------------------------------------------------------------------------
 
   //tdk:UNCOMMENT
-//  //---------------------------------------------------------------------------
-//  //NEX_UTest
-//  strcpy(name, "Test opening and closing a netCDF file");
-//  testOpenClose(rc, failMsg);
-//  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
-//  //---------------------------------------------------------------------------
-//
-//  //---------------------------------------------------------------------------
-//  //NEX_UTest
-//  strcpy(name, "Test writing a 1D array");
-//  testWrite1DArray(rc, failMsg);
-//  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
-//  //---------------------------------------------------------------------------
+  //---------------------------------------------------------------------------
+  //NEX_UTest
+  strcpy(name, "Test opening and closing a netCDF file");
+  testOpenClose(rc, failMsg);
+  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
+  //---------------------------------------------------------------------------
+
+  //---------------------------------------------------------------------------
+  //NEX_UTest
+  strcpy(name, "Test writing a 1D array");
+  testWrite1DArray(rc, failMsg);
+  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
+  //---------------------------------------------------------------------------
 
   //---------------------------------------------------------------------------
   //NEX_UTest
