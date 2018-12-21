@@ -136,7 +136,7 @@ vector<vector<dimsize_t>> getArrayBounds(const Array& arr,
 //  vector<dimsize_t> ret(rank, 0);
   vector<vector<dimsize_t>> ret;
   ret.resize(rank);
-  size_t dgctr = 0;
+//  size_t dgct.r = 0;
   size_t udctr = 0;
   for (auto ii=0; ii<rank; ++ii) {
     vector<dimsize_t> curr(2, std::numeric_limits<dimsize_t>::min());
@@ -149,8 +149,9 @@ vector<vector<dimsize_t>> getArrayBounds(const Array& arr,
     } else {
       // Dimension is distributed
 //      ret[ii] = maxIndex[arr2dg_map[ii]-1] - minIndex[arr2dg_map[ii]-1] + 1;
-      curr[0] = minIndex[arr2dg_map[dgctr]-1] - 1;
-      curr[1] = maxIndex[arr2dg_map[dgctr]-1];
+      curr[0] = minIndex[arr2dg_map[ii]-1] - 1;
+      curr[1] = maxIndex[arr2dg_map[ii]-1];
+//      ++dgctr;
     }
     tdklog("getArrayBounds curr", curr);
     assert(curr[0] >= 0);

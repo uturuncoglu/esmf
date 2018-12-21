@@ -207,7 +207,8 @@ void testWrite3DArray(int& rc, char failMsg[]) {
   vector<string> dimnames = {"dim_realization", "dim_other", "dim_seven"};
 //  std::reverse(dimnames.begin(), dimnames.end());
 //  vector<string> distdims = {"dim_seven"};
-  vector<string> distdims = {"dim_realization"};
+//  vector<string> distdims = {"dim_seven"};
+  vector<string> distdims = {"dim_other","dim_seven"};
 //  std::reverse(distdims.begin(), distdims.end());
 
   const string varname = "simple_3D";
@@ -248,7 +249,7 @@ void testWrite3DArray(int& rc, char failMsg[]) {
 //  vector<double> fills = {1000, 2000, 3000, 4000};
 //  int fillctr = 0;
   for (auto ii=0; ii<arrshp[0]*arrshp[1]*arrshp[2]; ii++) {
-    buffer[ii] = 1000 * (localPet + 1);
+    buffer[ii] = 1000 * (localPet + 1) + ii + 0.5;
 
 //    buffer[ii] = fills[fillctr];
 //    fillctr ++;
