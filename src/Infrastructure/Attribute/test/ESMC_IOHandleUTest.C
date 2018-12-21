@@ -204,16 +204,16 @@ void testWrite3DArray(int& rc, char failMsg[]) {
   rc = ESMF_FAILURE;
 //  bool failed = true;
 
-  vector<string> dimnames = {"dim_seven", "dim_other", "dim_realization"};
-  std::reverse(dimnames.begin(), dimnames.end());
+  vector<string> dimnames = {"dim_realization", "dim_other", "dim_seven"};
+//  std::reverse(dimnames.begin(), dimnames.end());
 //  vector<string> distdims = {"dim_seven"};
-  vector<string> distdims = {"dim_other"};
-  std::reverse(distdims.begin(), distdims.end());
+  vector<string> distdims = {"dim_realization"};
+//  std::reverse(distdims.begin(), distdims.end());
 
   const string varname = "simple_3D";
 
   ESMCI::VM *vm = ESMCI::VM::getCurrent(&rc);
-  ESMF_CHECKERR_STD("", rc, "Did not get current VM", rc);
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 
   int localPet = vm->getLocalPet();
   int petCount = vm->getPetCount();
@@ -225,14 +225,15 @@ void testWrite3DArray(int& rc, char failMsg[]) {
   //tdk:TODO: change to F-Order for consistency
   dgparms[ESMFARG::DISTDIMS] = distdims;
   DistGrid* distgrid = meta.createDistGrid(dgparms, rc);
-  ESMF_CHECKERR_STD("", rc, "DistGrid creation failed", rc);
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 
   json jsonParms;
   jsonParms[ESMFARG::DISTDIMS] = distdims;
   jsonParms[ESMFARG::VARIABLENAME] = varname;
 
   ESMCI::Array* arr = meta.createArray(*distgrid, jsonParms, rc);
-  ESMF_CHECKERR_STD("", rc, "Array creation failed", rc);
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+  arr->print(); //tdk:p
 
   vector<dimsize_t> arrshp = getArrayShape(*arr, ESMC_INDEX_DELOCAL, rc);
 //  std::reverse(arrshp.begin(), arrshp.end());  // Reverse to Fortran order
@@ -267,7 +268,7 @@ void testWrite3DArray(int& rc, char failMsg[]) {
   IOHandle ioh;
   ioh.PIOArgs[PIOARG::FILENAME] = filename;
   ioh.meta.update(*arr, &dimnames, rc);
-  ESMF_CHECKERR_STD("", rc, "Metadata not updated", rc);
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 
   json& smeta = ioh.meta.getStorageRefWritable();
   smeta.at(K_VARS).at(varname).at(K_ATTRS)["context"] = "testWrite3DArray";
@@ -330,12 +331,12 @@ int main(void) {
 //  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
 //  //---------------------------------------------------------------------------
 //
-  //---------------------------------------------------------------------------
-  //NEX_UTest
-  strcpy(name, "Test writing a 1D array");
-  testWrite1DArray(rc, failMsg);
-  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
-  //---------------------------------------------------------------------------
+//  //---------------------------------------------------------------------------
+//  //NEX_UTest
+//  strcpy(name, "Test writing a 1D array");
+//  testWrite1DArray(rc, failMsg);
+//  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
+//  //---------------------------------------------------------------------------
 
   //---------------------------------------------------------------------------
   //NEX_UTest

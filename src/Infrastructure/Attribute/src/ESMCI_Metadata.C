@@ -107,20 +107,21 @@ vector<vector<dimsize_t>> getArrayBounds(const Array& arr,
   int rank = arr.getRank();
 
   const int* arr2dg_map = arr.getArrayToDistGridMap(); // F-order & indexing
-//  const int* dg2arr_map = arr.getDistGridToArrayMap(); // F-order & indexing
+  tdklog("getArrayBounds arr2dg_map", arr2dg_map, rank);
 
   const int* undistLBound = arr.getUndistLBound(); // F-order & indexing
   const int* undistUBound = arr.getUndistUBound(); // F-order & indexing
-//  int dg_dim_count = distgrid->getDimCount(); tdklog("getArrayShape undistUBound=", undistUBound, rank-dg_dim_count);
-//  const int* totalLBound = arr.getTotalLBound();
-//  const int* totalUBound = arr.getTotalUBound();
+  tdklog("getArrayBounds undistLBound", undistLBound, rank);
+  tdklog("getArrayBounds undistUBound", undistUBound, rank);
 
   int const* minIndex;
   int const* maxIndex;
   if (idxFlag == ESMC_INDEX_GLOBAL) {
+    tdklog("getArrayBounds using ESMC_INDEX_GLOBAL");
     minIndex = distgrid->getMinIndexPDimPTile();
     maxIndex = distgrid->getMaxIndexPDimPTile();
   } else if (idxFlag == ESMC_INDEX_DELOCAL) {
+    tdklog("getArrayBounds using ESMC_INDEX_DELOCAL");
     minIndex = distgrid->getMinIndexPDimPDe(localPet, nullptr);
     maxIndex = distgrid->getMaxIndexPDimPDe(localPet, nullptr);
 //    tdklog("ArrayCreate:minIndex", minIndex, 1);
@@ -129,24 +130,29 @@ vector<vector<dimsize_t>> getArrayBounds(const Array& arr,
     ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD,
                       "Index flag not supported: " + to_string(idxFlag), rc);
   }
+  tdklog("getArrayBounds minIndex", minIndex, rank);
+  tdklog("getArrayBounds maxIndex", maxIndex, rank);
 
 //  vector<dimsize_t> ret(rank, 0);
   vector<vector<dimsize_t>> ret;
   ret.resize(rank);
-  for (auto ii=0; ii<rank; ii++) {
-    vector<dimsize_t> curr(2, 0);
+  size_t dgctr = 0;
+  size_t udctr = 0;
+  for (auto ii=0; ii<rank; ++ii) {
+    vector<dimsize_t> curr(2, std::numeric_limits<dimsize_t>::min());
     if (arr2dg_map[ii] == 0) {
       // Dimension is undistributed
 //      ret[ii] = undistUBound[ii] - undistLBound[ii] + 1;
-      curr[0] = undistLBound[ii] - 1;
-      curr[1] = undistUBound[ii];
+      curr[0] = undistLBound[udctr] - 1;
+      curr[1] = undistUBound[udctr];
+      ++udctr;
     } else {
       // Dimension is distributed
 //      ret[ii] = maxIndex[arr2dg_map[ii]-1] - minIndex[arr2dg_map[ii]-1] + 1;
-      curr[0] = minIndex[arr2dg_map[ii]-1] - 1;
-      curr[1] = maxIndex[arr2dg_map[ii]-1];
-      tdklog("getArrayBounds curr", curr);
+      curr[0] = minIndex[arr2dg_map[dgctr]-1] - 1;
+      curr[1] = maxIndex[arr2dg_map[dgctr]-1];
     }
+    tdklog("getArrayBounds curr", curr);
     assert(curr[0] >= 0);
     assert(curr[1] >= curr[0]);
     ret[ii] = curr;
@@ -495,7 +501,7 @@ DistGrid* Metadata::createDistGrid(const json& jsonParms, int& rc) const {
   // Notes:
   //   * DistGrid dimension names must be in the DistGrid dimension creation order
   //   * DISTDIMS uses F-order
-
+  //tdk:TODO: standard try/catch
   vector<string> unsupported = {"regDecomp", "decompflag", "decompflagCount",
     "regDecompFirstExtra", "regDecompLastExtra", "deLabelList", "indexflag",
     "connectionList", "delayout", "vm", "indexTK"};
@@ -516,7 +522,6 @@ DistGrid* Metadata::createDistGrid(const json& jsonParms, int& rc) const {
       v_minIndex[ii] = 1;
     }
   }
-  tdklog("v_maxIndex", v_minIndex);
   InterArray<ESMC_I4> minIndex(v_minIndex);
 
   if (v_maxIndex.size() == 0) {
@@ -534,7 +539,6 @@ DistGrid* Metadata::createDistGrid(const json& jsonParms, int& rc) const {
       }
     }
   }
-  tdklog("v_maxIndex", v_maxIndex);
   InterArray<ESMC_I4> maxIndex(v_maxIndex);
 
   auto regDecomp = nullptr;
