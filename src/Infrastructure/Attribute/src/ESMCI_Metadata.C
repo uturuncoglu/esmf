@@ -393,6 +393,7 @@ void Metadata::update(const ESMCI::Array& arr, const vector<string>* dimnames,
 Array* Metadata::createArray(DistGrid& distgrid, const json& jsonParms,
   int& rc) const {
   //tdk:TODO: attributes on array object!
+  //tdk:TODO: standard try/catch
   string variableName;
   try {
     variableName = jsonParms.at(ESMFARG::VARIABLENAME);
