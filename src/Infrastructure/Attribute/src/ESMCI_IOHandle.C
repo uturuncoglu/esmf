@@ -51,57 +51,153 @@ namespace ESMCI {
 
 // Local function dependencies ================================================
 
+//#undef ESMC_METHOD
+//#define ESMC_METHOD "getESMFSeqIndex()"
+//vector<PIO_Offset> getESMFSeqIndex(const Array& arr, int& rc) {
+//  rc = ESMF_FAILURE;
+//  try {
+//    vector<PIO_Offset> ret;
+//    DELayout* delayout = arr.getDELayout();
+//    int local_decount = delayout->getLocalDeCount();
+//    assert(local_decount == 1);
+//
+//
+//    for (int i = 0; i < local_decount; i++) {
+//      // multi-dim loop object
+//      ArrayElement arrayElement(&arr, i, false, true, false, true);
+////      arrayElement.print();
+////      arrayElement.setSkipDim(2);
+//      // set up to skip over undistributed, i.e. tensor dimensions
+////        const int *srcArrayToDistGridMap = srcArray->getArrayToDistGridMap();
+////      for (int j = 0; j < arr->getRank(); j++) {
+////          if (srcArrayToDistGridMap[j]==0) arrayElement.setSkipDim(j);
+//        // fill in the factorIndexList
+////        PIO_Offset adjust = -1;
+//      while (arrayElement.isWithin()) {
+////        tdklog("getesmfseqindex ctr="+to_string(ctr));
+//        SeqIndex <ESMC_I4> seqIndex = arrayElement.getSequenceIndex<ESMC_I4>();
+////        arrayElement.print();
+////          if (adjust == -1) {
+////            adjust = seqIndex.decompSeqIndex;
+////          }
+////          PIO_Offset adjusted = seqIndex.decompSeqIndex - adjust;
+////          factorIndexList[2*jj] = factorIndexList[2*jj+1] =
+////            seqIndex.decompSeqIndex;
+////          tdklog(string(ESMC_METHOD) + " seqIndex.decompSeqIndex=" +to_string(adjusted));
+////        tdklog("getesmfseqindex idx="+to_string(seqIndex.decompSeqIndex));
+//        ret.push_back((PIO_Offset)seqIndex.decompSeqIndex);
+////          ++jj; // increment counter
+//        arrayElement.next();
+////          ctr++;
+//      } // end while over all exclusive elements
+//
+////      auto minv = std::min_element(ret.begin(), ret.end());
+////      for (size_t ii=0; ii<ret.size(); ii++) {
+////        ret[ii] = ret[ii] - *minv;
+////      }
+//
+//    }
+//    rc = ESMF_SUCCESS;
+//    return ret;
+//  }
+//  catch (ESMCI::esmf_attrs_error) { throw; }
+//  catch (...) { ESMF_CHECKERR_STD("", rc, "Unhandled throw", rc); }
+//}
+
 #undef ESMC_METHOD
-#define ESMC_METHOD "getESMFSeqIndex()"
-vector<PIO_Offset> getESMFSeqIndex(const Array& arr, int& rc) {
+#define ESMC_METHOD "allb()"
+bool allb(const vector<bool>& target) {
+  bool ret = true;
+  for (const auto &ii : target) {
+    if (!ii) {
+      ret = false;
+      break;
+    }
+  }
+  return ret;
+}
+
+#undef ESMC_METHOD
+#define ESMC_METHOD "createPIOCompmap(<vector>)"
+vector<PIO_Offset> createPIOCompmap(const vector<vector<dimsize_t>>& globalBounds,
+                                    const vector<vector<dimsize_t>>& localBounds) {
+  assert(globalBounds.size() == localBounds.size());
+  size_t nvectors = globalBounds.size();
+  assert(nvectors >= 1);
+
+  // Holds the current index counter in tuple form
+  vector<int> curr(nvectors, 0);
+
+  // Get the number of global indices
+  PIO_Offset nindices = 1;
+  for (const auto& gbnds : globalBounds) {
+    nindices *= gbnds.at(1) - gbnds.at(0);
+  }
+  assert(nindices > 0);
+
+  // Will hold PIO offsets for the decomposition mapping
+  vector<PIO_Offset> compmap;
+  compmap.reserve(nindices);
+
+  vector<bool> contains;
+  contains.reserve(nvectors);
+
+  // Loop over every possible global index
+  for (PIO_Offset gidx = 0; gidx < nindices; ++gidx) {
+    contains.resize(0);
+    assert(contains.capacity() >= nvectors);
+
+    // Loop over every vector container.
+    for (size_t ctr = 0; ctr < nvectors; ++ctr) {
+      // Identify if the tuple counter is in the local bounds.
+      if (curr[ctr] >= localBounds[ctr].at(0) && curr[ctr] < localBounds[ctr].at(1)) {
+        contains.push_back(true);
+      } else {
+        contains.push_back(false);
+      }
+    }
+    assert(contains.size() == globalBounds.size());
+
+    // Check if global index is in the decomposed portion of the global bounds
+    // defined by the local bounds.
+    if (allb(contains)) {
+//      lprint("gidx="+std::to_string(gidx));
+      compmap.push_back(gidx);
+    }
+
+    // Increment the tuple counters.
+    for (PIO_Offset cii = nvectors - 1; cii >= 0; --cii) {
+      if (curr[cii] < globalBounds[cii].at(1) - 1) {
+        ++curr[cii];
+        break;
+      } else {
+        curr[cii] = 0;
+      }
+    }
+
+  }
+  return compmap;
+}
+
+#undef ESMC_METHOD
+#define ESMC_METHOD "createPIOCompmap(<Array>)"
+vector<PIO_Offset> createPIOCompmap(const Array& arr, int& rc) {
   rc = ESMF_FAILURE;
   try {
-    vector<PIO_Offset> ret;
-    //tdk:TODO: need to ret.reserve
     DELayout* delayout = arr.getDELayout();
     int local_decount = delayout->getLocalDeCount();
     assert(local_decount == 1);
 
-//    arr.print(); //tdk:p
+    auto globalBounds = getArrayBounds(arr, ESMC_INDEX_GLOBAL, rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 
-    for (int i = 0; i < local_decount; i++) {
-      // multi-dim loop object
-      ArrayElement arrayElement(&arr, i, false, true, false, true);
-//      arrayElement.print();
-//      arrayElement.setSkipDim(2);
-      // set up to skip over undistributed, i.e. tensor dimensions
-//        const int *srcArrayToDistGridMap = srcArray->getArrayToDistGridMap();
-//      for (int j = 0; j < arr->getRank(); j++) {
-//          if (srcArrayToDistGridMap[j]==0) arrayElement.setSkipDim(j);
-        // fill in the factorIndexList
-//        PIO_Offset adjust = -1;
-//        int ctr=0; //tdk:REMOVE
-      while (arrayElement.isWithin()) {
-//        tdklog("getesmfseqindex ctr="+to_string(ctr));
-        SeqIndex <ESMC_I4> seqIndex = arrayElement.getSequenceIndex<ESMC_I4>();  // tdk:TODO: it would be nice to use PIO_Offset type here instead of i4
-//        arrayElement.print();
-//          if (adjust == -1) {
-//            adjust = seqIndex.decompSeqIndex;
-//          }
-//          PIO_Offset adjusted = seqIndex.decompSeqIndex - adjust;
-//          factorIndexList[2*jj] = factorIndexList[2*jj+1] =
-//            seqIndex.decompSeqIndex;
-//          tdklog(string(ESMC_METHOD) + " seqIndex.decompSeqIndex=" +to_string(adjusted));
-//        tdklog("getesmfseqindex idx="+to_string(seqIndex.decompSeqIndex));
-        ret.push_back((PIO_Offset)seqIndex.decompSeqIndex);
-//          ++jj; // increment counter
-        arrayElement.next();
-//          ctr++;
-      } // end while over all exclusive elements
+    auto localBounds = getArrayBounds(arr, ESMC_INDEX_DELOCAL, rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 
-//      auto minv = std::min_element(ret.begin(), ret.end());
-//      for (size_t ii=0; ii<ret.size(); ii++) {
-//        ret[ii] = ret[ii] - *minv;
-//      }
+    vector<PIO_Offset> compmap = createPIOCompmap(globalBounds, localBounds);
 
-    }
     rc = ESMF_SUCCESS;
-    return ret;
+    return compmap;
   }
   catch (ESMCI::esmf_attrs_error) { throw; }
   catch (...) { ESMF_CHECKERR_STD("", rc, "Unhandled throw", rc); }
@@ -514,7 +610,8 @@ void IOHandle::write(const Array& arr, int& rc) {
 
     // Sequence indices =======================================================
 
-    vector<PIO_Offset> si = getESMFSeqIndex(arr, rc);
+//    vector<PIO_Offset> si = getESMFSeqIndex(arr, rc);
+    vector<PIO_Offset> compmap = createPIOCompmap(arr, rc);
     ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 
 //    int dindex[1] = {1};
@@ -562,12 +659,12 @@ void IOHandle::write(const Array& arr, int& rc) {
 //    }
 
 
-    PIO_Offset maplen = si.size();
-    PIO_Offset* compmap = si.data();
-    tdklog("compmap", compmap, maplen);
+    PIO_Offset maplen = compmap.size();
+//    PIO_Offset* compmap = si.data();
+//    tdklog("compmap", compmap, maplen);
     int ioid = 0;
     int pio_rc = PIOc_init_decomp(iosysid, pio_type, ndims, gdimlen, maplen,
-      compmap, &ioid, PIODEF::REARRANGER, nullptr, nullptr);
+      compmap.data(), &ioid, PIODEF::REARRANGER, nullptr, nullptr);
     handlePIOReturnCode(pio_rc, "Did not initialize PIO decomposition", rc);
 
     this->PIOArgs[PIOARG::IOIDS][name] = ioid;
