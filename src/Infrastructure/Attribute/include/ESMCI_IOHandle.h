@@ -86,6 +86,7 @@ public:
   void open(int& rc);
   void read(int& rc);
   void write(const Array& arr, int& rc);
+//  void write(const Array& arr, const int frame, int& rc);
 
 };
 

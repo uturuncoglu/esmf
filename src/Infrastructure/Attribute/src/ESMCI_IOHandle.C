@@ -564,7 +564,7 @@ void IOHandle::open(int& rc) {
 }
 
 #undef ESMC_METHOD
-#define ESMC_METHOD "IOHandle::write()"
+#define ESMC_METHOD "IOHandle::write(<Array>)"
 void IOHandle::write(const Array& arr, int& rc) {
   rc = ESMF_FAILURE;
 
@@ -609,7 +609,6 @@ void IOHandle::write(const Array& arr, int& rc) {
     //tdk:TODO: will need to deal with unlimited dimensions and their location in the length array
     const int *gdimlen = gdimlen_v.data();
     tdklog("gdimlen_v", gdimlen_v);
-    return;
 
     // Sequence indices =======================================================
 
@@ -617,6 +616,7 @@ void IOHandle::write(const Array& arr, int& rc) {
     //tdk:FEATURE: read in PIO decomposition from file
     vector<PIO_Offset> compmap = createPIOCompmap(arr, rc);
     ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+//    tdklog("iohandle::write compmap",compmap);
 
 //    int dindex[1] = {1};
 //    int* index = &dindex[0];
@@ -662,7 +662,6 @@ void IOHandle::write(const Array& arr, int& rc) {
 ////      compmap[ii] = idx[ii];
 //    }
 
-
     PIO_Offset maplen = compmap.size();
 //    PIO_Offset* compmap = si.data();
 //    tdklog("compmap", compmap, maplen);
@@ -682,6 +681,10 @@ void IOHandle::write(const Array& arr, int& rc) {
     const int& varid = this->PIOArgs.at(PIOARG::VARIDS).at(name).get_ref<const json::number_integer_t&>();
     const int& ncid = this->PIOArgs.at(PIOARG::NCID).get_ref<const json::number_integer_t&>();
     void* fillvalue = nullptr;  //tdk:TODO: not handling fillvalue yet
+
+    pio_rc = PIOc_setframe(ncid, varid, 0);
+    handlePIOReturnCode(pio_rc, "Did not set frame", rc);
+
     pio_rc = PIOc_write_darray(ncid, varid, ioid, maplen, buffer, fillvalue);
     handlePIOReturnCode(pio_rc, "Did not write darray", rc);
 

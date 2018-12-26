@@ -357,12 +357,12 @@ void testWriteUnlimDimArray(int& rc, char failMsg[]) {
   tdklog("testWriteUnlimDimArray arrshp", arrshp);
   ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 
-  //tdk:TEST: fill with some values
-//  void **larrayBaseAddrList = arr->getLarrayBaseAddrList();
-//  double *buffer = reinterpret_cast<double *>(larrayBaseAddrList[0]);
-//  for (auto ii = 0; ii < arrshp[0] * arrshp[1] * arrshp[2]; ii++) {
-//    buffer[ii] = 1000 * (localPet + 1) + ii + 0.5;
-//  }
+  //tdk:TEST: fill with some meaningful values
+  void **larrayBaseAddrList = arr->getLarrayBaseAddrList();
+  double *buffer = reinterpret_cast<double *>(larrayBaseAddrList[0]);
+  for (auto ii = 0; ii < arrshp[0] * arrshp[1] * arrshp[2] * arrshp[3]; ii++) {
+    buffer[ii] = 1000 * (localPet + 1) + ii + 0.5;
+  }
 
   IOHandle ioh;
   ioh.PIOArgs[PIOARG::FILENAME] = filename;
