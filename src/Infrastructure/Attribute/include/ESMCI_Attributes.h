@@ -146,6 +146,7 @@ void broadcastAttributes(ESMCI::Attributes* attrs, int rootPet, int& rc); // tdk
 bool isIn(const string& target, const std::vector<string>& container);
 bool isIn(const string& target, const json& j);
 void tdklog(const string& msg);
+void tdklog(const string& msg, const std::vector<string>& v);
 void tdklog(const string& msg, const std::vector<ESMC_I4>& v);
 void tdklog(const string& msg, const std::vector<PIO_Offset>& v);
 void tdklog(const string& msg, int const* l, std::size_t size);

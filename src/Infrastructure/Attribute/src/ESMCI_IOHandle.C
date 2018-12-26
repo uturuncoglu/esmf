@@ -327,8 +327,9 @@ void IOHandle::dodef(int& rc) {
                 dimsize = NC_UNLIMITED;
               } else {
                 dimsize = this->meta.getDimensionSize(dimname, rc);
+                ESMF_CHECKERR_STD("", rc, "Did not get dimension size: " +
+                  dimname.get<string>(), rc);
               }
-              ESMF_CHECKERR_STD("", rc, "Did not get dimension size: " + dimname.get<string>(), rc);
 
               pio_rc = PIOc_def_dim(ncid, dimname.get<string>().c_str(), dimsize,
                                     &dimid);
@@ -370,6 +371,7 @@ void IOHandle::dodef(int& rc) {
     ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
   }
   catch (ESMCI::esmf_attrs_error &e) {
+    ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU, rc);
     throw;
   }
   catch (...) {
@@ -607,6 +609,7 @@ void IOHandle::write(const Array& arr, int& rc) {
     //tdk:TODO: will need to deal with unlimited dimensions and their location in the length array
     const int *gdimlen = gdimlen_v.data();
     tdklog("gdimlen_v", gdimlen_v);
+    return;
 
     // Sequence indices =======================================================
 

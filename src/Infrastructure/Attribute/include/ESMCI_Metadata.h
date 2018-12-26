@@ -99,12 +99,12 @@ public:
   ESMCI::Array* createArray(DistGrid& distGrid, const json& jsonParms,
     int& rc) const;
   DistGrid* createDistGrid(const json& jsonParms, int& rc) const;
-  json getDimensionSizes(int& rc);
-  dimsize_t getDimensionSize(const string& name, int& rc);
+  json getDimensionSizes(int& rc) const;
+  dimsize_t getDimensionSize(const string& name, int& rc) const;
   json& getOrCreateVariable(const string& name, int& rc);
-  vector<dimsize_t> getVariableShape(const string& name, int& rc);
-  bool hasVariable(const string& name);
-  bool isUnlimited(const string& name);
+  vector<dimsize_t> getVariableShape(const string& name, int& rc) const;
+  bool hasVariable(const string& name) const;
+  bool isUnlimited(const string& name) const;
   void update(const ESMCI::Array& arr, const vector<string>* dimnames, int& rc);
 };
 

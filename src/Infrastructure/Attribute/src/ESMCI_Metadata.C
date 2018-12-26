@@ -283,7 +283,7 @@ void handleUnsupported(const json& j, const vector<string>& tokens, int& rc) {
 //=============================================================================
 
 #undef ESMC_METHOD
-#define ESMC_METHO "Metadata(void)"
+#define ESMC_METHOD "Metadata(void)"
 void Metadata::init(void) {
   int rc = ESMF_FAILURE;
   this->storage = createJSONPackage("ESMF:Metadata:Group", rc);
@@ -325,7 +325,7 @@ void Metadata::update(const ESMCI::Array& arr, const vector<string>* dimnames,
 
   if (dimnames) {
     json dimsizes = this->getDimensionSizes(rc);
-    ESMF_CHECKERR_STD("", rc, "Did not get dimension sizes", rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 
 //    vector<string> ldimnames(dimnames->size(), "");
 //    std::reverse_copy(dimnames->begin(), dimnames->end(), ldimnames.begin());
@@ -413,8 +413,22 @@ Array* Metadata::createArray(DistGrid& distgrid, const json& jsonParms,
   try {
     // Get array name from internal metadata.
     const json& var_meta = this->storage.at(K_VARS).at(variableName);
-    // Get the dimension names for the array.
-    vector<string> dim_names = var_meta.at(K_DIMS);
+
+    // Get the dimension names for the array. We need to remove any zero-length
+    // unlimited dimensions unless we are always creating unlimited dimensions.
+    vector<string> orig_dim_names = var_meta.at(K_DIMS);
+    vector<string> dim_names;
+    dim_names.reserve(orig_dim_names.size());
+    json dimsizes = this->getDimensionSizes(rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+    for (const auto& dn : orig_dim_names) {
+      if (dimsizes.at(dn) != 0) {
+        dim_names.push_back(dn);
+      }
+    }
+    tdklog("metadata::createarray dim_names",dim_names);
+    tdklog("metadata::createarray dimsizes="+dimsizes.dump());
+
     // Get the distributed dimension names having a zero-length array as default.
     vector<string> v_distDims = jsonParms.value(ESMFARG::DISTDIMS,
       json::array());
@@ -426,6 +440,9 @@ Array* Metadata::createArray(DistGrid& distgrid, const json& jsonParms,
     ArraySpec arrayspec;
     arrayspec.set(rank, tk);
 
+    // Distributed dimensions =================================================
+
+    // Map distributed dimensions to their index in the ESMF Array
     vector<ESMC_I4> v_distgridToArrayMap(v_distDims.size(), -999);
     int ii = 0;
     for (auto dist_dim_name : v_distDims) {
@@ -442,6 +459,8 @@ Array* Metadata::createArray(DistGrid& distgrid, const json& jsonParms,
     InterArray<ESMC_I4> distgridToArrayMap(v_distgridToArrayMap);
 //  auto distgridToArrayMap = nullptr;
 
+    // Unsupported parameters =================================================
+
     auto computationalEdgeLWidthArg = nullptr;
     auto computationalEdgeUWidthArg = nullptr;
     auto computationalLWidthArg = nullptr;
@@ -451,11 +470,19 @@ Array* Metadata::createArray(DistGrid& distgrid, const json& jsonParms,
     ESMC_IndexFlag* indexflag = nullptr;
     auto distLBoundArg = nullptr;
 
-    size_t n_undist = dim_names.size() - v_distDims.size();
+    // Undistributed dimensions ===============================================
+
+    // Undistributed dimension count
+    int n_undist = dim_names.size() - v_distDims.size();
+    assert(n_undist >= 0);
+
+    // Undistributed lower bounds
+    //tdk:TODO: undistriubted lower bound may be non-zero
     vector<ESMC_I4> v_undistLBoundArg(n_undist, 1);
     InterArray<ESMC_I4> undistLBoundArg(v_undistLBoundArg);
 //  auto undistLBoundArg = nullptr;
 
+    // Undistributed upper bounds
     vector<ESMC_I4> v_undistUBoundArg(n_undist, -999);
     ii = 0;
     for (auto dim_name : dim_names) {
@@ -466,6 +493,8 @@ Array* Metadata::createArray(DistGrid& distgrid, const json& jsonParms,
     }
     InterArray<ESMC_I4> undistUBoundArg(v_undistUBoundArg);
 //  auto undistUBoundArg = nullptr;
+
+    // Array creation =========================================================
 
     VM* vm = nullptr;
 
@@ -580,7 +609,8 @@ DistGrid* Metadata::createDistGrid(const json& jsonParms, int& rc) const {
 
 #undef ESMC_METHOD
 #define ESMC_METHOD "getDimensionSizes()"
-json Metadata::getDimensionSizes(int& rc) {
+json Metadata::getDimensionSizes(int& rc) const {
+  //tdk:TODO: add standard try/catch
   rc = ESMF_FAILURE;
   json ret;
 
@@ -595,7 +625,7 @@ json Metadata::getDimensionSizes(int& rc) {
 
 #undef ESMC_METHOD
 #define ESMC_METHOD "getDimensionSize()"
-dimsize_t Metadata::getDimensionSize(const string& name, int& rc) {
+dimsize_t Metadata::getDimensionSize(const string& name, int& rc) const {
   try {
     dimsize_t ret = this->storage.at(K_DIMS).at(name).at(K_SIZE);
     rc = ESMF_SUCCESS;
@@ -625,12 +655,12 @@ json& Metadata::getOrCreateVariable(const string& name, int& rc) {
 
 #undef ESMC_METHOD
 #define ESMC_METHOD "getVariableShape()"
-vector<dimsize_t> Metadata::getVariableShape(const string& name, int& rc) {
+vector<dimsize_t> Metadata::getVariableShape(const string& name, int& rc) const {
   //tdk:TEST: dimensionless variable
   rc = ESMF_FAILURE;
 
   try {
-    json::array_t* dims = this->storage.at(K_VARS).at(name).at(K_DIMS).get_ptr<json::array_t*>();
+    const json::array_t* dims = this->storage.at(K_VARS).at(name).at(K_DIMS).get_ptr<const json::array_t*>();
     vector<dimsize_t> ret(dims->size(), 0);
     for (dimsize_t ii=0; ii<ret.size(); ii++) {
       ret[ii] = this->getDimensionSize(dims[0][ii], rc);
@@ -646,14 +676,14 @@ vector<dimsize_t> Metadata::getVariableShape(const string& name, int& rc) {
 
 #undef ESMC_METHOD
 #define ESMC_METHOD "hasVariable()"
-bool Metadata::hasVariable(const string& name) {
-  json& vars_meta = this->storage[K_VARS];
+bool Metadata::hasVariable(const string& name) const {
+  const json& vars_meta = this->storage[K_VARS];
   return vars_meta.find(name) != vars_meta.end();
 }
 
 #undef ESMC_METHOD
 #define ESMC_METHOD "isUnlimited()"
-bool Metadata::isUnlimited(const string& name) {
+bool Metadata::isUnlimited(const string& name) const {
   return this->storage.at(K_DIMS).at(name).at(K_UNLIM);
 }
 

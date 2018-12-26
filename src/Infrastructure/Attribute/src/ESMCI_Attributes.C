@@ -59,6 +59,13 @@ void tdklog(const string& msg) {
 }
 
 //tdk:REMOVE
+void tdklog(const string& msg, const vector<string>& v) {
+  for (size_t ii = 0; ii < v.size(); ii++) {
+    tdklog(msg + "[" + to_string(ii) + "]=" + v[ii]);
+  }
+}
+
+//tdk:REMOVE
 void tdklog(const string& msg, const vector<ESMC_I4>& v) {
   for (size_t ii = 0; ii < v.size(); ii++) {
     tdklog(msg + "[" + to_string(ii) + "]=" + to_string(v[ii]));
