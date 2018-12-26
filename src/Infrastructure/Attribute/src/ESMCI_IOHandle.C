@@ -596,26 +596,33 @@ void IOHandle::write(const Array& arr, int& rc) {
                         "Array name not found in variable metadata", rc);
     }
 
-    const json &varmeta = this->meta.getOrCreateVariable(name, rc);
-    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+    int ioid = 0;
+    PIO_Offset maplen = 0;
+    int pio_rc = 0;
+    if (!isIn(name, this->PIOArgs[PIOARG::IOIDS])) {
+      const json &varmeta = this->meta.getOrCreateVariable(name, rc);
+      ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 
-    const int& pio_type = varmeta.at(K_DTYPE).get_ref<const json::number_integer_t&>();
+      const int &pio_type = varmeta.at(
+        K_DTYPE).get_ref<const json::number_integer_t &>();
 
-    const int ndims = arr.getRank();
+      const int ndims = arr.getRank();
 
-    const vector <dimsize_t> gdimlen_v = getArrayShape(arr, ESMC_INDEX_GLOBAL, rc);
-    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+      const vector <dimsize_t> gdimlen_v = getArrayShape(arr,
+                                                         ESMC_INDEX_GLOBAL,
+                                                         rc);
+      ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 
-    //tdk:TODO: will need to deal with unlimited dimensions and their location in the length array
-    const int *gdimlen = gdimlen_v.data();
-    tdklog("gdimlen_v", gdimlen_v);
+      //tdk:TODO: will need to deal with unlimited dimensions and their location in the length array
+      const int *gdimlen = gdimlen_v.data();
+      tdklog("gdimlen_v", gdimlen_v);
 
-    // Sequence indices =======================================================
+      // Sequence indices =======================================================
 
 //    vector<PIO_Offset> si = getESMFSeqIndex(arr, rc);
-    //tdk:FEATURE: read in PIO decomposition from file
-    vector<PIO_Offset> compmap = createPIOCompmap(arr, rc);
-    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+      //tdk:FEATURE: read in PIO decomposition from file
+      vector <PIO_Offset> compmap = createPIOCompmap(arr, rc);
+      ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 //    tdklog("iohandle::write compmap",compmap);
 
 //    int dindex[1] = {1};
@@ -629,7 +636,7 @@ void IOHandle::write(const Array& arr, int& rc) {
 //    assert(seqIndex.size() > 1);
 //    tdklog("seqIndex", seqIndex);
 
-    //=========================================================================
+      //=========================================================================
 
 //    auto arrshp = getArrayShape(arr, ESMC_INDEX_DELOCAL, rc);
 //    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
@@ -640,7 +647,7 @@ void IOHandle::write(const Array& arr, int& rc) {
 //    }
 //    tdklog("maplen=" + to_string(maplen));
 
-    // Brute force decomposition mapping ======================================
+      // Brute force decomposition mapping ======================================
 
 //    vector<PIO_Offset> idx;
 //    if (localPet == 0) {
@@ -654,7 +661,7 @@ void IOHandle::write(const Array& arr, int& rc) {
 //    }
 //    PIO_Offset compmap[idx.size()];
 
-    //=========================================================================
+      //=========================================================================
 
 //    PIO_Offset compmap[maplen];
 //    for (auto ii=0; ii<maplen; ii++) {
@@ -662,15 +669,21 @@ void IOHandle::write(const Array& arr, int& rc) {
 ////      compmap[ii] = idx[ii];
 //    }
 
-    PIO_Offset maplen = compmap.size();
+      maplen = compmap.size();
 //    PIO_Offset* compmap = si.data();
 //    tdklog("compmap", compmap, maplen);
-    int ioid = 0;
-    int pio_rc = PIOc_init_decomp(iosysid, pio_type, ndims, gdimlen, maplen,
-      compmap.data(), &ioid, PIODEF::REARRANGER, nullptr, nullptr);
-    handlePIOReturnCode(pio_rc, "Did not initialize PIO decomposition", rc);
+      pio_rc = PIOc_init_decomp(iosysid, pio_type, ndims, gdimlen, maplen,
+                                    compmap.data(), &ioid, PIODEF::REARRANGER,
+                                    nullptr, nullptr);
+      handlePIOReturnCode(pio_rc, "Did not initialize PIO decomposition", rc);
 
-    this->PIOArgs[PIOARG::IOIDS][name] = ioid;
+      this->PIOArgs[PIOARG::IOIDS][name] = ioid;
+      this->PIOArgs[PIOARG::MAPLENS][name] = maplen;
+    } else {
+      //tdk:TODO: attempt to use references here
+      ioid = this->PIOArgs[PIOARG::IOIDS].at(name);
+      maplen = this->PIOArgs[PIOARG::MAPLENS].at(name);
+    }
 
     //-------------------------------------------------------------------------
 
@@ -682,8 +695,13 @@ void IOHandle::write(const Array& arr, int& rc) {
     const int& ncid = this->PIOArgs.at(PIOARG::NCID).get_ref<const json::number_integer_t&>();
     void* fillvalue = nullptr;  //tdk:TODO: not handling fillvalue yet
 
-    pio_rc = PIOc_setframe(ncid, varid, 0);
-    handlePIOReturnCode(pio_rc, "Did not set frame", rc);
+    if (isIn(name, this->PIOArgs[PIOARG::FRAMES])) {
+      int frame = this->PIOArgs.at(PIOARG::FRAMES).at(name);  //tdk:TODO: use reference?
+      pio_rc = PIOc_setframe(ncid, varid, frame);
+      handlePIOReturnCode(pio_rc, "Did not set frame", rc);
+    } else if (false) {
+      //tdk:TODO: if there is an unlimited dimension, then a frame is required. check for this or raise an exception
+    }
 
     pio_rc = PIOc_write_darray(ncid, varid, ioid, maplen, buffer, fillvalue);
     handlePIOReturnCode(pio_rc, "Did not write darray", rc);

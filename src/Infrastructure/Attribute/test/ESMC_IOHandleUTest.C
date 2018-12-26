@@ -360,7 +360,11 @@ void testWriteUnlimDimArray(int& rc, char failMsg[]) {
   //tdk:TEST: fill with some meaningful values
   void **larrayBaseAddrList = arr->getLarrayBaseAddrList();
   double *buffer = reinterpret_cast<double *>(larrayBaseAddrList[0]);
-  for (auto ii = 0; ii < arrshp[0] * arrshp[1] * arrshp[2] * arrshp[3]; ii++) {
+
+  int nelements = 1;
+  for (const auto& s : arrshp) {nelements *= s;}
+
+  for (auto ii = 0; ii < nelements; ii++) {
     buffer[ii] = 1000 * (localPet + 1) + ii + 0.5;
   }
 
@@ -403,8 +407,11 @@ void testWriteUnlimDimArray(int& rc, char failMsg[]) {
   ioh.enddef(rc);
   ESMF_CHECKERR_STD("", rc, "Did not enddef", rc);
 
-  ioh.write(*arr, rc);
-  ESMF_CHECKERR_STD("", rc, "Did not write array", rc);
+  for (auto ii=0; ii<20; ii++) {
+    ioh.PIOArgs[PIOARG::FRAMES][varname] = ii;
+    ioh.write(*arr, rc);
+    ESMF_CHECKERR_STD("", rc, "Did not write array", rc);
+  }
 
   ioh.close(rc);
   ESMF_CHECKERR_STD("", rc, "Did not close", rc);

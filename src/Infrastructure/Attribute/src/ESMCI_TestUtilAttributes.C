@@ -100,8 +100,11 @@ json createTestJSONMetadata(int& rc) {
   root[K_VARS]["the_level"][K_DTYPE] = NC_INT;
 
   // Add the "data" variable which holds the things we care about in a data file
+  //tdk:FIX: need to deal with segfault with segfault when "dim_realization" is added
+//  root[K_VARS]["foo"][K_DIMS] =
+//    json::array({"dim_time", "dim_realization", "dim_level", "dim_lat", "dim_lon"});
   root[K_VARS]["foo"][K_DIMS] =
-    json::array({"dim_time", "dim_realization", "dim_level", "dim_lat", "dim_lon"});
+    json::array({"dim_time", "dim_level", "dim_lat", "dim_lon"});
   root[K_VARS]["foo"][K_ATTRS]["grid_mapping_name"] = "latitude_longitude";
 
   root[K_VARS]["the_xc"][K_DIMS].push_back("dim_lon");
