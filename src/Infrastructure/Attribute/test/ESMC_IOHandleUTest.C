@@ -404,6 +404,8 @@ void testWriteUnlimDimArray(int& rc, char failMsg[]) {
     throw;
   }
 
+  //tdk:TODO: test zero-length on a PET (to many procs for values)
+
   ioh.enddef(rc);
   ESMF_CHECKERR_STD("", rc, "Did not enddef", rc);
 
