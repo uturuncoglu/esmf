@@ -250,6 +250,7 @@ void writePIOAttributes(const json& attrs, int ncid, int varid, int& rc) {
     ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
   }
   catch (ESMCI::esmf_attrs_error &e) {
+    ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU, rc);
     throw;
   }
   catch (...) {
@@ -282,6 +283,7 @@ void IOHandle::close(int& rc) {
     ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
   }
   catch (ESMCI::esmf_attrs_error &e) {
+    ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU, rc);
     throw;
   }
   catch (...) {
@@ -396,6 +398,7 @@ void IOHandle::enddef(int& rc) {
     ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
   }
   catch (ESMCI::esmf_attrs_error &e) {
+    ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU, rc);
     throw;
   }
   catch (...) {
@@ -439,6 +442,7 @@ void IOHandle::finalize(int& rc) {
     ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
   }
   catch (ESMCI::esmf_attrs_error &e) {
+    ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU, rc);
     throw;
   }
   catch (...) {
@@ -485,18 +489,16 @@ int IOHandle::init(int& rc) {
 
     MPI_Comm comm = vm->getMpi_c();
 
-//  int localPet = vm->getLocalPet();
     int petCount = vm->getPetCount();
-//  cout << localPet << " " << petCount;
     const int num_iotasks = petCount;
 
     int pio_rc = PIOc_Init_Intracomm(comm, num_iotasks, io_proc_stride,
                                      io_proc_start, PIODEF::REARRANGER, &iosysid);
     handlePIOReturnCode(pio_rc, "Could not start PIO Intracomm", rc);
 
-    this->PIOArgs[PIOARG::DIMIDS] = json::object();
+    this->PIOArgs[PIOARG::DIMIDS] = json::object();  //tdk:TODO: remove?
     this->PIOArgs[PIOARG::IOSYSID] = iosysid;
-    this->PIOArgs[PIOARG::VARIDS] = json::object();
+    this->PIOArgs[PIOARG::VARIDS] = json::object();  //tdk:TODO: remove?
 
     rc = ESMF_SUCCESS;
     return iosysid;
@@ -508,6 +510,7 @@ int IOHandle::init(int& rc) {
     ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
   }
   catch (ESMCI::esmf_attrs_error &e) {
+    ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU, rc);
     throw;
   }
   catch (...) {
@@ -556,6 +559,7 @@ void IOHandle::open(int& rc) {
     ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
   }
   catch (ESMCI::esmf_attrs_error &e) {
+    ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU, rc);
     throw;
   }
   catch (...) {
