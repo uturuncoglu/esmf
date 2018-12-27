@@ -266,14 +266,23 @@ void IOHandle::close(int& rc) {
   rc = ESMF_FAILURE;
 
   try {
-    int ncid = this->PIOArgs.at(PIOARG::NCID);
+    if (isIn(PIOARG::NCID, this->PIOArgs)) {
+      int ncid = this->PIOArgs.at(PIOARG::NCID);
 
-    int pio_rc = PIOc_closefile(ncid);
-    handlePIOReturnCode(pio_rc, "Could not close with PIO", rc);
+      int pio_rc = PIOc_closefile(ncid);
+      handlePIOReturnCode(pio_rc, "Could not close with PIO", rc);
 
-    this->PIOArgs.erase(this->PIOArgs.find(PIOARG::NCID));
-    this->PIOArgs.erase(this->PIOArgs.find(PIOARG::VARIDS));
-    this->PIOArgs.erase(this->PIOArgs.find(PIOARG::DIMIDS));
+      this->PIOArgs.erase(this->PIOArgs.find(PIOARG::NCID));
+    }
+
+    const vector<string> to_erase = {PIOARG::VARIDS, PIOARG::DIMIDS,
+                                     PIOARG::FRAMES, PIOARG::MAPLENS};
+    for (const auto& key : to_erase) {
+      if (isIn(key, this->PIOArgs)) {
+        this->PIOArgs.erase(this->PIOArgs.find(key));
+      }
+    }
+
     rc = ESMF_SUCCESS;
   }
   catch (json::out_of_range &e) {
@@ -294,6 +303,9 @@ void IOHandle::close(int& rc) {
 #undef ESMC_METHOD
 #define ESMC_METHOD "IOHandle::dodef()"
 void IOHandle::dodef(int& rc) {
+  // Notes:
+  //  * Sets varids & dimids
+
   //tdk:TODO: refactor into functions
   rc = ESMF_FAILURE;
 
@@ -323,8 +335,8 @@ void IOHandle::dodef(int& rc) {
             const auto it_dimid = dimids.find(dimname);
             if (it_dimid == dimids.end()) {
               dimsize_t dimsize;
-              //tdk:?: PIO only handles one unlimited dimension?
-              //tdk:?: PIO has to have unlimited dimension as the first dimension (last in Fortran)?
+              //tdk:TODO: PIO only handles one unlimited dimension?
+              //tdk:TODO: PIO has to have unlimited dimension as the first dimension (last in Fortran)?
               if (this->meta.isUnlimited(dimname)) {
                 dimsize = NC_UNLIMITED;
               } else {
@@ -362,7 +374,7 @@ void IOHandle::dodef(int& rc) {
 
     const json& attrs_global = smeta.at(K_ATTRS);
     writePIOAttributes(attrs_global, ncid, NC_GLOBAL, rc);
-    ESMF_CHECKERR_STD("", rc, "Did not write global attributes with PIO", rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 
     rc = ESMF_SUCCESS;
   }
@@ -412,26 +424,28 @@ void IOHandle::finalize(int& rc) {
   rc = ESMF_FAILURE;
 
   try {
-    int iosysid = this->PIOArgs.at(PIOARG::IOSYSID);
+    if (isIn(PIOARG::IOSYSID, this->PIOArgs)) {
+      int iosysid = this->PIOArgs.at(PIOARG::IOSYSID);
 
-    int pio_rc;
-    if (isIn(PIOARG::IOIDS, this->PIOArgs)) {
-      const json &ioids = this->PIOArgs[PIOARG::IOIDS];
-      for (json::const_iterator it = ioids.cbegin();
-           it != ioids.cend(); it++) {
-        int ioid = it.value();
-        pio_rc = PIOc_freedecomp(iosysid, ioid);
-        handlePIOReturnCode(pio_rc, "Did not free decomp", rc);
-        tdklog("freed ioid=" + to_string(ioid));
+      int pio_rc;
+      if (isIn(PIOARG::IOIDS, this->PIOArgs)) {
+        const json &ioids = this->PIOArgs[PIOARG::IOIDS];
+        for (json::const_iterator it = ioids.cbegin();
+             it != ioids.cend(); it++) {
+          int ioid = it.value();
+          pio_rc = PIOc_freedecomp(iosysid, ioid);
+          handlePIOReturnCode(pio_rc, "Did not free decomp", rc);
+          tdklog("freed ioid=" + to_string(ioid));
+        }
+        this->PIOArgs.erase(this->PIOArgs.find(PIOARG::IOIDS));
       }
-      this->PIOArgs.erase(this->PIOArgs.find(PIOARG::IOIDS));
+
+      pio_rc = PIOc_finalize(iosysid);
+      handlePIOReturnCode(pio_rc, "Could not finalize PIO", rc);
+      tdklog("freed iosysid=" + to_string(iosysid));
+
+      this->PIOArgs.erase(this->PIOArgs.find(PIOARG::IOSYSID));
     }
-
-    pio_rc = PIOc_finalize(iosysid);
-    handlePIOReturnCode(pio_rc, "Could not finalize PIO", rc);
-    tdklog("freed iosysid=" + to_string(iosysid));
-
-    this->PIOArgs.erase(this->PIOArgs.find(PIOARG::IOSYSID));
 
     rc = ESMF_SUCCESS;
   }
@@ -480,7 +494,7 @@ int IOHandle::init(int& rc) {
   rc = ESMF_FAILURE;
 
   try {
-    int iosysidl
+    int iosysid;
     const int io_proc_stride = 1;
     const int io_proc_start = 0;
 
@@ -571,12 +585,12 @@ void IOHandle::open(int& rc) {
 #undef ESMC_METHOD
 #define ESMC_METHOD "IOHandle::write(<Array>)"
 void IOHandle::write(const Array& arr, int& rc) {
-  rc = ESMF_FAILURE;
-
 //  vector<string> jargs = {"filename"};
 //  vector<string> jkwargs = {"clobber", "fileOnly", "mode"};
 
   try {
+    rc = ESMF_FAILURE;
+
     ESMCI::VM *vm = ESMCI::VM::getCurrent(&rc);
     ESMF_CHECKERR_STD("", rc, "Did not get current VM", rc);
 
@@ -593,7 +607,21 @@ void IOHandle::write(const Array& arr, int& rc) {
     }
     //tdk:TODO: only one tile supported. add check for this
 
-    const int &iosysid = this->PIOArgs.at(PIOARG::IOSYSID).get_ref<json::number_integer_t&>();
+    // Get PIO IO System ======================================================
+
+    // If the PIO IO System has not been created, do so. This is equivalent to
+    // not calling "IOHandle::init" before calling write.
+    bool should_finalize = false;
+    if (!isIn(PIOARG::IOSYSID, this->PIOArgs)) {
+      this->init(rc);
+      ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+
+      should_finalize = true;
+    }
+    const int &iosysid = this->PIOArgs.at(
+      PIOARG::IOSYSID).get_ref<json::number_integer_t &>();
+
+    // ========================================================================
 
     string name(arr.getName());
     if (!this->meta.hasVariable(name)) {
@@ -695,10 +723,29 @@ void IOHandle::write(const Array& arr, int& rc) {
     void** larrayBaseAddrList =  arr.getLarrayBaseAddrList();
 //    double* buffer = reinterpret_cast<double*>(larrayBaseAddrList[0]);
     void* buffer = larrayBaseAddrList[0];
-//    double * tdkbuffer = reinterpret_cast<double*>(buffer);for (int jj=0;jj<maplen;jj++){tdklog("PIO:buffer["+to_string(jj)+"]="+to_string(tdkbuffer[jj]));}
-    const int& varid = this->PIOArgs.at(PIOARG::VARIDS).at(name).get_ref<const json::number_integer_t&>();
+
+    // Get or create the netCDF file identifier ===============================
+
+    bool should_close = false;
+    if (!isIn(PIOARG::NCID, this->PIOArgs)) {
+      this->open(rc);
+      ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+
+      should_close = true;
+    }
     const int& ncid = this->PIOArgs.at(PIOARG::NCID).get_ref<const json::number_integer_t&>();
-    void* fillvalue = nullptr;  //tdk:TODO: not handling fillvalue yet
+
+    // Get or create the netCDF variable identifier ===========================
+
+    if (!isIn(name, this->PIOArgs[PIOARG::VARIDS])) {
+      this->dodef(rc);
+      ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+      this->enddef(rc);
+      ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+    }
+    const int& varid = this->PIOArgs.at(PIOARG::VARIDS).at(name).get_ref<const json::number_integer_t&>();
+
+    // Adjust the frame (timeslice counter) if there is a frame counter =======
 
     if (isIn(name, this->PIOArgs[PIOARG::FRAMES])) {
       int frame = this->PIOArgs.at(PIOARG::FRAMES).at(name);  //tdk:TODO: use reference?
@@ -708,13 +755,26 @@ void IOHandle::write(const Array& arr, int& rc) {
       //tdk:TODO: if there is an unlimited dimension, then a frame is required. check for this or raise an exception
     }
 
+    // Write and sync the data to netCDF ======================================
+
+    void* fillvalue = nullptr;  //tdk:TODO: not handling fillvalue yet
     pio_rc = PIOc_write_darray(ncid, varid, ioid, maplen, buffer, fillvalue);
     handlePIOReturnCode(pio_rc, "Did not write darray", rc);
 
+    //tdk:TODO: argument for should_sync?
     pio_rc = PIOc_sync(ncid);
     handlePIOReturnCode(pio_rc, "Did not sync", rc);
 
-    //-------------------------------------------------------------------------
+    if (should_close) {
+      this->close(rc);
+      ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+      tdklog("called this->close");
+    }
+    if (should_finalize) {
+      this->finalize(rc);
+      ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+      tdklog("called this->finalize");
+    }
 
     rc = ESMF_SUCCESS;
   }

@@ -107,21 +107,21 @@ vector<vector<dimsize_t>> getArrayBounds(const Array& arr,
   int rank = arr.getRank();
 
   const int* arr2dg_map = arr.getArrayToDistGridMap(); // F-order & indexing
-  tdklog("getArrayBounds arr2dg_map", arr2dg_map, rank);
+//  tdklog("getArrayBounds arr2dg_map", arr2dg_map, rank);
 
   const int* undistLBound = arr.getUndistLBound(); // F-order & indexing
   const int* undistUBound = arr.getUndistUBound(); // F-order & indexing
-  tdklog("getArrayBounds undistLBound", undistLBound, rank);
-  tdklog("getArrayBounds undistUBound", undistUBound, rank);
+//  tdklog("getArrayBounds undistLBound", undistLBound, rank);
+//  tdklog("getArrayBounds undistUBound", undistUBound, rank);
 
   int const* minIndex;
   int const* maxIndex;
   if (idxFlag == ESMC_INDEX_GLOBAL) {
-    tdklog("getArrayBounds using ESMC_INDEX_GLOBAL");
+//    tdklog("getArrayBounds using ESMC_INDEX_GLOBAL");
     minIndex = distgrid->getMinIndexPDimPTile();
     maxIndex = distgrid->getMaxIndexPDimPTile();
   } else if (idxFlag == ESMC_INDEX_DELOCAL) {
-    tdklog("getArrayBounds using ESMC_INDEX_DELOCAL");
+//    tdklog("getArrayBounds using ESMC_INDEX_DELOCAL");
     minIndex = distgrid->getMinIndexPDimPDe(localPet, nullptr);
     maxIndex = distgrid->getMaxIndexPDimPDe(localPet, nullptr);
 //    tdklog("ArrayCreate:minIndex", minIndex, 1);
@@ -130,8 +130,8 @@ vector<vector<dimsize_t>> getArrayBounds(const Array& arr,
     ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD,
                       "Index flag not supported: " + to_string(idxFlag), rc);
   }
-  tdklog("getArrayBounds minIndex", minIndex, rank);
-  tdklog("getArrayBounds maxIndex", maxIndex, rank);
+//  tdklog("getArrayBounds minIndex", minIndex, rank);
+//  tdklog("getArrayBounds maxIndex", maxIndex, rank);
 
 //  vector<dimsize_t> ret(rank, 0);
   vector<vector<dimsize_t>> ret;
@@ -153,7 +153,7 @@ vector<vector<dimsize_t>> getArrayBounds(const Array& arr,
       curr[1] = maxIndex[arr2dg_map[ii]-1];
 //      ++dgctr;
     }
-    tdklog("getArrayBounds curr", curr);
+//    tdklog("getArrayBounds curr", curr);
     assert(curr[0] >= 0);
     assert(curr[1] >= curr[0]);
     ret[ii] = curr;
@@ -183,7 +183,7 @@ vector<dimsize_t> getArrayShape(const Array& arr,
     ret[ii] = bnds[ii][1] - bnds[ii][0];
   }
 
-  tdklog("getArrayShape ret", ret);
+//  tdklog("getArrayShape ret", ret);
 
 //  ESMCI::VM *vm = ESMCI::VM::getCurrent(&rc);
 //  ESMF_CHECKERR_STD("", rc, "Did not get current VM", rc);

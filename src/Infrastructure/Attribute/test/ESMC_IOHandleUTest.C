@@ -250,25 +250,14 @@ void testWrite1DArrayIsolatedWrite(int& rc, char failMsg[]) {
     json& smeta = ioh.meta.getStorageRefWritable();
     smeta.at(K_VARS).at("the_xc").at(K_ATTRS)[K_AXIS] = "X";
 
-//  ioh.open(rc);
-//  ESMF_CHECKERR_STD("", rc, "Did not open file", rc);
-//
-//  ioh.dodef(rc);
-//  ESMF_CHECKERR_STD("", rc, "Did not define", rc);
-//
-//  ioh.enddef(rc);
-//  ESMF_CHECKERR_STD("", rc, "Did not enddef", rc);
-
     ioh.write(*arr, rc);
     ESMF_CHECKERR_STD("", rc, "Did not write array", rc);
 
-//  ioh.close(rc);
-//  ESMF_CHECKERR_STD("", rc, "Did not close", rc);
-//
-//  ioh.finalize(rc);
-//  ESMF_CHECKERR_STD("", rc, "Did not finalize", rc);
+//    std::cout << ioh.PIOArgs.dump(2) << std::endl;  //tdk:p
 
-    //tdk:TEST: structure of PIOArgs
+    if (ioh.PIOArgs.size() != 1) {
+      return finalizeFailure(rc, failMsg, "PIO args wrong size");
+    }
 
     // Clean-up ===============================================================
 

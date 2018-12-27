@@ -192,11 +192,11 @@ void testGetArrayShape(int& rc, char failMsg[]) {
 
   auto shp = getArrayShape(*arr, ESMC_INDEX_GLOBAL, rc);
   ESMF_CHECKERR_STD("", rc, "Array get shape failed", rc);
-  tdklog("testGetArrayShape shp=", shp);
+//  tdklog("testGetArrayShape shp=", shp);
 
   auto actual = meta.getVariableShape("foo", rc);
   ESMF_CHECKERR_STD("", rc, "Did not get variable shape", rc);
-  tdklog("testGetArrayShape actual=", actual);
+//  tdklog("testGetArrayShape actual=", actual);
 
 //  for (auto e : shp) {cout << e << endl;}
 //  for (auto e : actual) {cout << e << endl;}
