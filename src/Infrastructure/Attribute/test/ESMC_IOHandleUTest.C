@@ -60,10 +60,10 @@ void testOpenClose(int& rc, char failMsg[]) {
 
   IOHandle ioh2;
   json jmeta = createTestJSONMetadata(rc);
-  ESMF_CHECKERR_STD("", rc, "Did not create test JSON metadata", rc);
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 
-  json& storage = ioh2.meta.getStorageRefWritable();
-  storage = move(jmeta);
+  Metadata meta(move(jmeta));
+  ioh2.setMetadata(move(meta));
 
   string filename = "test_pio_open.nc";
   ioh2.PIOArgs[PIOARG::FILENAME] = filename;
@@ -84,9 +84,7 @@ void testOpenClose(int& rc, char failMsg[]) {
   ioh2.finalize(rc);
   ESMF_CHECKERR_STD("", rc, "Did not finalize", rc);
 
-
 //  cout<<ioh2.PIOArgs.dump(2)<<endl;
-//  cout<<"bleh"<<endl;
   if (ioh2.PIOArgs.size() != 2) {
     return finalizeFailure(rc, failMsg, "Remaining arg count problem");
   }
@@ -544,19 +542,19 @@ int main(void) {
   //---------------------------------------------------------------------------
 
   //tdk:UNCOMMENT
-//  //---------------------------------------------------------------------------
-//  //NEX_UTest
-//  strcpy(name, "Test opening and closing a netCDF file");
-//  testOpenClose(rc, failMsg);
-//  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
-//  //---------------------------------------------------------------------------
-//
-//  //---------------------------------------------------------------------------
-//  //NEX_UTest
-//  strcpy(name, "Test writing a 1D array");
-//  testWrite1DArray(rc, failMsg);
-//  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
-//  //---------------------------------------------------------------------------
+  //---------------------------------------------------------------------------
+  //NEX_UTest
+  strcpy(name, "Test opening and closing a netCDF file");
+  testOpenClose(rc, failMsg);
+  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
+  //---------------------------------------------------------------------------
+
+  //---------------------------------------------------------------------------
+  //NEX_UTest
+  strcpy(name, "Test writing a 1D array");
+  testWrite1DArray(rc, failMsg);
+  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
+  //---------------------------------------------------------------------------
 
   //---------------------------------------------------------------------------
   //NEX_UTest
@@ -565,19 +563,19 @@ int main(void) {
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //---------------------------------------------------------------------------
 
-//  //---------------------------------------------------------------------------
-//  //NEX_UTest
-//  strcpy(name, "Test writing a 3D array");
-//  testWrite3DArray(rc, failMsg);
-//  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
-//  //---------------------------------------------------------------------------
-//
-//  //---------------------------------------------------------------------------
-//  //NEX_UTest
-//  strcpy(name, "Test writing an array w/ an unlimited dimension");
-//  testWriteUnlimDimArray(rc, failMsg);
-//  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
-//  //---------------------------------------------------------------------------
+  //---------------------------------------------------------------------------
+  //NEX_UTest
+  strcpy(name, "Test writing a 3D array");
+  testWrite3DArray(rc, failMsg);
+  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
+  //---------------------------------------------------------------------------
+
+  //---------------------------------------------------------------------------
+  //NEX_UTest
+  strcpy(name, "Test writing an array w/ an unlimited dimension");
+  testWriteUnlimDimArray(rc, failMsg);
+  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
+  //---------------------------------------------------------------------------
 
   //---------------------------------------------------------------------------
   ESMC_TestEnd(__FILE__, __LINE__, 0);

@@ -68,9 +68,6 @@ public:
   json PIOArgs = json::object();
 
 private:
-  int getOrCreateGroup(int& rc);
-  int getOrCreateDimension(int& rc);
-  int getOrCreateVariable(int& rc);
   int init(int& rc);
 
 public:
@@ -81,6 +78,10 @@ public:
   IOHandle&operator=(const IOHandle&) = delete; // Copy assignment
   IOHandle&operator=(IOHandle&&) = delete; // Move assignment
 
+  ESMCI::Metadata &getMetadata() { return this->meta; }
+  //tdk:TODO: copy option for setMetadata
+  void setMetadata(ESMCI::Metadata &&meta);
+
   void close(int& rc);
   void dodef(int& rc);
   void enddef(int& rc);
@@ -88,7 +89,6 @@ public:
   void open(int& rc);
   void read(int& rc);
   void write(const Array& arr, int& rc);
-//  void write(const Array& arr, const int frame, int& rc);
 
 };
 

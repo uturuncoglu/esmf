@@ -465,30 +465,6 @@ void IOHandle::finalize(int& rc) {
 }
 
 #undef ESMC_METHOD
-#define ESMC_METHOD "IOHandle::getOrCreateDimension"
-int IOHandle::getOrCreateDimension(int &rc) {
-  rc = ESMF_FAILURE;
-
-  //  rc = ESMF_SUCCESS;
-}
-
-#undef ESMC_METHOD
-#define ESMC_METHOD "IOHandle::getOrCreateGroup()"
-int IOHandle::getOrCreateGroup(int& rc) {
-  rc = ESMF_FAILURE;
-
-//  rc = ESMF_SUCCESS;
-}
-
-#undef ESMC_METHOD
-#define ESMC_METHOD "IOHandle::getOrCreateVariable()"
-int IOHandle::getOrCreateVariable(int& rc) {
-  rc = ESMF_FAILURE;
-
-  //  rc = ESMF_SUCCESS;
-}
-
-#undef ESMC_METHOD
 #define ESMC_METHOD "IOHandle::init()"
 int IOHandle::init(int& rc) {
   rc = ESMF_FAILURE;
@@ -580,6 +556,13 @@ void IOHandle::open(int& rc) {
   catch (...) {
     ESMF_CHECKERR_STD("", rc, "Unhandled throw", rc);
   }
+}
+
+#undef ESMC_METHOD
+#define ESMC_METHOD "IOHandle::setMetadata(<&&Metadata>)"
+void IOHandle::setMetadata(ESMCI::Metadata &&meta) {
+  json& this_meta_storage = this->meta.getStorageRefWritable();
+  this_meta_storage = move(meta.getStorageRefWritable());
 }
 
 #undef ESMC_METHOD
