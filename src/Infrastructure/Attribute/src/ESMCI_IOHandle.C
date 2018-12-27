@@ -480,12 +480,12 @@ int IOHandle::init(int& rc) {
   rc = ESMF_FAILURE;
 
   try {
-    int iosysid;
+    int iosysidl
     const int io_proc_stride = 1;
     const int io_proc_start = 0;
 
     ESMCI::VM *vm = ESMCI::VM::getCurrent(&rc);
-    ESMF_CHECKERR_STD("", rc, "Did not get current VM", rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 
     MPI_Comm comm = vm->getMpi_c();
 
@@ -493,7 +493,8 @@ int IOHandle::init(int& rc) {
     const int num_iotasks = petCount;
 
     int pio_rc = PIOc_Init_Intracomm(comm, num_iotasks, io_proc_stride,
-                                     io_proc_start, PIODEF::REARRANGER, &iosysid);
+                                     io_proc_start, PIODEF::REARRANGER,
+                                     &iosysid);
     handlePIOReturnCode(pio_rc, "Could not start PIO Intracomm", rc);
 
     this->PIOArgs[PIOARG::DIMIDS] = json::object();  //tdk:TODO: remove?
