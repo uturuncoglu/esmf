@@ -121,14 +121,21 @@ bool isIn(const string& target, const vector<string>& container) {
 bool isIn(const vector<string>& target, const vector<string>& container) {
   size_t count = 0;
   size_t required = target.size();
-  bool ret = false;
-  for (const auto& t : target) {
-    if (isIn(t, container)) {
-      ++count;
-    }
-    if (count == required) {
-      ret = true;
-      break;
+  bool ret;
+  if (target.size() == 0) {
+    ret = true;
+  } else {
+    ret = false;
+  }
+  if (!ret) {
+    for (const auto &t : target) {
+      if (isIn(t, container)) {
+        ++count;
+      }
+      if (count == required) {
+        ret = true;
+        break;
+      }
     }
   }
   return ret;
