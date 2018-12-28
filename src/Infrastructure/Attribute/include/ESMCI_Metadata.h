@@ -99,8 +99,8 @@ public:
 
   ESMCI::Array* createArray(DistGrid& distGrid, const json& jsonParms,
     int& rc) const;
-  ESMCI::ArrayBundle* createArrayBundle(DistGrid& distGrid, const json& jsonParms,
-    int& rc) const;
+  ESMCI::ArrayBundle* createArrayBundle(DistGrid& distGrid, vector<Array*>& arrayList,
+    const json& jsonParms, int& rc) const;
   DistGrid* createDistGrid(const json& jsonParms, int& rc) const;
   json getDimensionSizes(int& rc) const;
   dimsize_t getDimensionSize(const string& name, int& rc) const;

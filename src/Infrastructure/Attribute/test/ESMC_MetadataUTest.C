@@ -282,7 +282,9 @@ void testCreateArrayBundle(int& rc, char failMsg[]) {
   json arrParms;
   arrParms[ESMFARG::DISTDIMS] = distDims;
 
-  ESMCI::ArrayBundle* arrb = meta.createArrayBundle(*distgrid, arrParms, rc);
+  vector<ESMCI::Array*> arrayList;
+  ESMCI::ArrayBundle* arrb = meta.createArrayBundle(*distgrid, arrayList, arrParms,
+    rc);
   ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 
 //

@@ -528,8 +528,8 @@ Array* Metadata::createArray(DistGrid& distgrid, const json& jsonParms,
 
 #undef ESMC_METHOD
 #define ESMC_METHOD "Metadata::createArrayBundle()"
-ArrayBundle* Metadata::createArrayBundle(DistGrid& distgrid, const json& jsonParms,
-                                   int& rc) const {
+ArrayBundle* Metadata::createArrayBundle(DistGrid& distgrid, vector<Array*>& arrayList,
+  const json& jsonParms, int& rc) const {
   //tdk:TODO: attributes on array bundle object!
   rc = ESMF_FAILURE;
   try {
@@ -543,15 +543,17 @@ ArrayBundle* Metadata::createArrayBundle(DistGrid& distgrid, const json& jsonPar
       }
     }
     int nvars = varnames.size();
-    Array** arrayList = new Array*[nvars];
+    arrayList.resize(nvars);
     for (auto ii = 0; ii < varnames.size(); ii++) {
       json arrParms;
       arrParms[ESMFARG::VARIABLENAME] = varnames[ii];
       arrayList[ii] = this->createArray(distgrid, arrParms, rc);
       ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
     }
-    ArrayBundle* arrb = ArrayBundle::create(arrayList, nvars, false, false, &rc);
+    ArrayBundle* arrb = ArrayBundle::create(arrayList.data(), nvars, false, false,
+      &rc);
     ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+    return arrb;
   }
   catch (json::out_of_range &e) {
     ESMF_THROW_JSON(e, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);
