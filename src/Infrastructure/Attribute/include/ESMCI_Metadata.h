@@ -23,6 +23,7 @@
 #include <vector>
 
 #include "ESMCI_Array.h"
+#include "ESMCI_ArrayBundle.h"
 #include "ESMCI_Attributes.h"
 #include "ESMCI_DistGrid.h"
 #include "ESMCI_Util.h"
@@ -97,6 +98,8 @@ public:
   ~Metadata(void) = default;  // Overload the destructor so we clean-up nicely.
 
   ESMCI::Array* createArray(DistGrid& distGrid, const json& jsonParms,
+    int& rc) const;
+  ESMCI::ArrayBundle* createArrayBundle(DistGrid& distGrid, const json& jsonParms,
     int& rc) const;
   DistGrid* createDistGrid(const json& jsonParms, int& rc) const;
   json getDimensionSizes(int& rc) const;

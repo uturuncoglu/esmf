@@ -19,6 +19,7 @@
 #include "ESMC.h"
 #include "ESMC_Test.h"
 #include "ESMCI_Array.h"
+#include "ESMCI_ArrayBundle.h"
 #include "ESMCI_Attributes.h"
 #include "ESMCI_LogErr.h"
 #include "ESMCI_Macros.h"
@@ -264,6 +265,62 @@ void testUpdate(int& rc, char failMsg[]) {
   return;
 }
 
+#undef  ESMC_METHOD
+#define ESMC_METHOD "testCreateArrayBundle()"
+void testCreateArrayBundle(int& rc, char failMsg[]) {
+  //tdk:TEST: with limiting list of variable names
+  rc = ESMF_FAILURE;
+
+  const vector<string> distDims = {"dim_lat", "dim_lon"};
+
+  json root = createTestJSONMetadata(rc);
+  Metadata meta(move(root));
+
+  DistGrid* distgrid = createTestDistGrid(meta, rc);
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+
+  json arrParms;
+  arrParms[ESMFARG::DISTDIMS] = distDims;
+
+  ESMCI::ArrayBundle* arrb = meta.createArrayBundle(*distgrid, arrParms, rc);
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+
+//
+//  ESMCI::Array* arr = meta.createArray(*distgrid, jsonParms, rc);
+//  ESMF_CHECKERR_STD("", rc, "Array creation failed", rc);
+//
+//  // Essentially an identity operation. The array is being added to the metadata
+//  // that created it. Nothing should change in the metadata object.
+//  auto mref = meta.getStorageRef();
+//  vector<string> dimnames = mref[K_VARS]["foo"][K_DIMS];
+//  json desired = mref;  // Copy original for comparison.
+//  tdklog("before meta.update");
+//  meta.update(*arr, &dimnames, rc);
+//  tdklog("after meta.update");
+//  ESMF_CHECKERR_STD("", rc, "Update with array failed", rc);
+//
+//  if (desired != meta.getStorageRef()) {
+//    return finalizeFailure(rc, failMsg, "Metadata should be equal");
+//  }
+//
+//  // Test creating dimensions when the array is added =========================
+//
+//  meta.update(*arr, nullptr, rc);
+//  ESMF_CHECKERR_STD("", rc, "Update with array failed", rc);
+//
+//  if (desired == meta.getStorageRef()) {
+//    return finalizeFailure(rc, failMsg, "Metadata should not be equal");
+//  }
+//  tdk:TODO: destroy distgrid,arrays,and array bundle
+//  rc = ESMCI::Array::destroy(&arr);
+//  ESMF_CHECKERR_STD("", rc, "Problem when destroying array", rc);
+//  rc = ESMCI::DistGrid::destroy(&distgrid);
+//  ESMF_CHECKERR_STD("", rc, "Problem when destroying distgrid", rc);
+
+  rc = ESMF_SUCCESS;
+  return;
+}
+
 //-----------------------------------------------------------------------------
 
 int main(void) {
@@ -278,12 +335,6 @@ int main(void) {
   //---------------------------------------------------------------------------
   ESMC_TestStart(__FILE__, __LINE__, 0);
   //---------------------------------------------------------------------------
-
-//  ESMCI::VM *vm = ESMCI::VM::getCurrent(&rc);
-//  ESMF_CHECKERR_STD("", rc, "Did not get current VM", rc);
-//  int localPet = vm->getLocalPet();
-//  int petCount = vm->getPetCount();
-//  cout << localPet << " " << petCount;
 
   //---------------------------------------------------------------------------
   //NEX_UTest
@@ -317,6 +368,13 @@ int main(void) {
   //NEX_UTest
   strcpy(name, "getArrayShape()");
   testGetArrayShape(rc, failMsg);
+  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
+  //---------------------------------------------------------------------------
+
+  //---------------------------------------------------------------------------
+  //NEX_UTest
+  strcpy(name, "createArrayBundle()");
+  testCreateArrayBundle(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //---------------------------------------------------------------------------
 

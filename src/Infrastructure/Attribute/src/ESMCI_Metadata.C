@@ -392,7 +392,7 @@ void Metadata::update(const ESMCI::Array& arr, const vector<string>* dimnames,
 #define ESMC_METHOD "Metadata::createArray()"
 Array* Metadata::createArray(DistGrid& distgrid, const json& jsonParms,
   int& rc) const {
-  //tdk:TODO: attributes on array object!
+  //tdk:TODO: attributes on array bundle object!
   //tdk:TODO: standard try/catch
   string variableName;
   try {
@@ -523,6 +523,48 @@ Array* Metadata::createArray(DistGrid& distgrid, const json& jsonParms,
   }
   catch (json::out_of_range& e) {
     ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
+  }
+}
+
+#undef ESMC_METHOD
+#define ESMC_METHOD "Metadata::createArrayBundle()"
+ArrayBundle* Metadata::createArrayBundle(DistGrid& distgrid, const json& jsonParms,
+                                   int& rc) const {
+  //tdk:TODO: attributes on array bundle object!
+  rc = ESMF_FAILURE;
+  try {
+    vector<string> varname_filter = jsonParms.value(ESMFARG::VARIABLENAME, json::array());
+    const json& jmeta = this->getStorageRef();
+    vector<string> varnames;
+    varnames.reserve(jmeta[K_VARS].size());
+    for (const auto& vn : varnames) {
+      if (!isIn(vn, varname_filter)) {
+        varnames.push_back(vn);
+      }
+    }
+    int nvars = varnames.size();
+    Array** arrayList = new Array*[nvars];
+    for (auto ii = 0; ii < varnames.size(); ii++) {
+      json arrParms;
+      arrParms[ESMFARG::VARIABLENAME] = varnames[ii];
+      arrayList[ii] = this->createArray(distgrid, arrParms, rc);
+      ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+    }
+    ArrayBundle* arrb = ArrayBundle::create(arrayList, nvars, false, false, &rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+  }
+  catch (json::out_of_range &e) {
+    ESMF_THROW_JSON(e, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);
+  }
+  catch (json::type_error &e) {
+    ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
+  }
+  catch (ESMCI::esmf_attrs_error &e) {
+    ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU, rc);
+    throw;
+  }
+  catch (...) {
+    ESMF_CHECKERR_STD("", rc, "Unhandled throw", rc);
   }
 }
 

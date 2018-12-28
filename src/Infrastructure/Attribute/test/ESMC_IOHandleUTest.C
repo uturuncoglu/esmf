@@ -526,6 +526,60 @@ void testWriteUnlimDimArray(int& rc, char failMsg[]) {
   return;
 }
 
+#undef  ESMC_METHOD
+#define ESMC_METHOD "testWriteArrayBundle()"
+void testWriteArrayBundle(int& rc, char failMsg[]) {
+  rc = ESMF_FAILURE;
+
+  const string filename = "test_pio_array_bundle.nc";
+  const vector<string> distdims = {"dim_lat", "dim_lon"};
+
+  ESMCI::VM *vm = ESMCI::VM::getCurrent(&rc);
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+
+  int localPet = vm->getLocalPet();
+  int petCount = vm->getPetCount();
+
+  // --------------------------------------------------------------------------
+
+  json root = createTestJSONMetadata(rc);
+  Metadata meta(move(root));
+  IOHandle ioh;
+  ioh.setMetadata(move(meta));
+  ioh.PIOArgs[PIOARG::FILENAME] = filename;
+
+  ioh.open(rc);
+  ioh.dodef(rc);
+  ioh.enddef(rc);
+  ioh.close(rc);
+  ioh.finalize(rc);
+
+//  json dgparms;
+//  dgparms[ESMFARG::DISTDIMS] = distdims;
+//  DistGrid *distgrid = meta.createDistGrid(dgparms, rc);
+//  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+//
+//  json arrParms;
+//  arrParms[ESMFARG::DISTDIMS] = distdims;
+//
+//  ESMCI::Array *arr = meta.createArray(*distgrid, arrParms, rc);
+//  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+////  arr->print(); //tdk:p
+//
+//  tdk:TODO: add destroys
+//  rc = ESMCI::Array::destroy(&arr);
+//  rc = ESMCI::DistGrid::destroy(&distgrid);
+//  ESMF_CHECKERR_STD("", rc, "Problem when destroying objects", rc);
+
+  //tdk:UNCOMMENT
+//  if (localPet == 0 && remove(filename.c_str()) != 0) {
+//    return finalizeFailure(rc, failMsg, "Test file not removed");
+//  }
+
+  rc = ESMF_FAILURE;
+  return;
+}
+
 //-----------------------------------------------------------------------------
 
 int main(void) {
@@ -542,38 +596,45 @@ int main(void) {
   //---------------------------------------------------------------------------
 
   //tdk:UNCOMMENT
-  //---------------------------------------------------------------------------
-  //NEX_UTest
-  strcpy(name, "Test opening and closing a netCDF file");
-  testOpenClose(rc, failMsg);
-  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
-  //---------------------------------------------------------------------------
+//  //---------------------------------------------------------------------------
+//  //NEX_UTest
+//  strcpy(name, "Test opening and closing a netCDF file");
+//  testOpenClose(rc, failMsg);
+//  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
+//  //---------------------------------------------------------------------------
+//
+//  //---------------------------------------------------------------------------
+//  //NEX_UTest
+//  strcpy(name, "Test writing a 1D array");
+//  testWrite1DArray(rc, failMsg);
+//  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
+//  //---------------------------------------------------------------------------
+//
+//  //---------------------------------------------------------------------------
+//  //NEX_UTest
+//  strcpy(name, "Test writing a 1D array - isolated write");
+//  testWrite1DArrayIsolatedWrite(rc, failMsg);
+//  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
+//  //---------------------------------------------------------------------------
+//
+//  //---------------------------------------------------------------------------
+//  //NEX_UTest
+//  strcpy(name, "Test writing a 3D array");
+//  testWrite3DArray(rc, failMsg);
+//  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
+//  //---------------------------------------------------------------------------
+//
+//  //---------------------------------------------------------------------------
+//  //NEX_UTest
+//  strcpy(name, "Test writing an array w/ an unlimited dimension");
+//  testWriteUnlimDimArray(rc, failMsg);
+//  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
+//  //---------------------------------------------------------------------------
 
   //---------------------------------------------------------------------------
   //NEX_UTest
-  strcpy(name, "Test writing a 1D array");
-  testWrite1DArray(rc, failMsg);
-  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
-  //---------------------------------------------------------------------------
-
-  //---------------------------------------------------------------------------
-  //NEX_UTest
-  strcpy(name, "Test writing a 1D array - isolated write");
-  testWrite1DArrayIsolatedWrite(rc, failMsg);
-  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
-  //---------------------------------------------------------------------------
-
-  //---------------------------------------------------------------------------
-  //NEX_UTest
-  strcpy(name, "Test writing a 3D array");
-  testWrite3DArray(rc, failMsg);
-  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
-  //---------------------------------------------------------------------------
-
-  //---------------------------------------------------------------------------
-  //NEX_UTest
-  strcpy(name, "Test writing an array w/ an unlimited dimension");
-  testWriteUnlimDimArray(rc, failMsg);
+  strcpy(name, "Test writing an array bundle");
+  testWriteArrayBundle(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //---------------------------------------------------------------------------
 
