@@ -273,7 +273,8 @@ void testCreateArrayBundle(int& rc, char failMsg[]) {
   //tdk:TEST: with limiting list of variable names
   rc = ESMF_FAILURE;
 
-  const vector<string> distDims = {"dim_lat", "dim_lon"};
+//  const vector<string> distDims = {"dim_lat", "dim_lon"};
+  const vector<string> distDims;
 
   json root = createTestJSONMetadata(rc);
   Metadata meta(move(root));
@@ -283,6 +284,7 @@ void testCreateArrayBundle(int& rc, char failMsg[]) {
 
   json arrParms;
   arrParms[ESMFARG::DISTDIMS] = distDims;
+  arrParms[ESMFARG::VARIABLENAME] = {"the_xc", "the_yc", "foo", "simple_3D"};
 
   vector<ESMCI::Array*> arrayList;
   ESMCI::ArrayBundle* arrb = meta.createArrayBundle(*distgrid, arrayList, arrParms,
