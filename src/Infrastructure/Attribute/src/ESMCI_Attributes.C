@@ -110,14 +110,32 @@ bool handleHasKey(const Attributes* attrs, const string& key, int& rc) {
 }
 
 #undef ESMC_METHOD
-#define ESMC_METHOD "isIn(<string vector>)"
+#define ESMC_METHOD "isIn(<string,vector>)"
 bool isIn(const string& target, const vector<string>& container) {
   auto it = std::find(container.cbegin(), container.cend(), target);
   return !(it == container.cend());
 }
 
 #undef ESMC_METHOD
-#define ESMC_METHOD "isIn(<json>)"
+#define ESMC_METHOD "isIn(<string vector,vector>)"
+bool isIn(const vector<string>& target, const vector<string>& container) {
+  size_t count = 0;
+  size_t required = target.size();
+  bool ret = false;
+  for (const auto& t : target) {
+    if (isIn(t, container)) {
+      ++count;
+    }
+    if (count == required) {
+      ret = true;
+      break;
+    }
+  }
+  return ret;
+}
+
+#undef ESMC_METHOD
+#define ESMC_METHOD "isIn(<string,json>)"
 bool isIn(const string& target, const json& j) {
   if (j.is_null()) {
     return false;

@@ -144,6 +144,7 @@ public:
 
 void broadcastAttributes(ESMCI::Attributes* attrs, int rootPet, int& rc); // tdk: FEATURE: non-blocking
 bool isIn(const string& target, const std::vector<string>& container);
+bool isIn(const std::vector<string>& target, const std::vector<string>& container);
 bool isIn(const string& target, const json& j);
 void tdklog(const string& msg);
 void tdklog(const string& msg, const std::vector<string>& v);

@@ -44,6 +44,8 @@ using namespace std;
 #undef  ESMC_METHOD
 #define ESMC_METHOD "testCreateArray()"
 void testCreateArray(int& rc, char failMsg[]) {
+  //tdk:TEST: creation with no distributed dimensions
+  //tdk:TODO: should we create empty arrays? essentially just attribute carriers
   rc = ESMF_FAILURE;
   bool failed = true;
 
@@ -286,38 +288,16 @@ void testCreateArrayBundle(int& rc, char failMsg[]) {
   ESMCI::ArrayBundle* arrb = meta.createArrayBundle(*distgrid, arrayList, arrParms,
     rc);
   ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+  arrb->print(); //tdk:p
 
-//
-//  ESMCI::Array* arr = meta.createArray(*distgrid, jsonParms, rc);
-//  ESMF_CHECKERR_STD("", rc, "Array creation failed", rc);
-//
-//  // Essentially an identity operation. The array is being added to the metadata
-//  // that created it. Nothing should change in the metadata object.
-//  auto mref = meta.getStorageRef();
-//  vector<string> dimnames = mref[K_VARS]["foo"][K_DIMS];
-//  json desired = mref;  // Copy original for comparison.
-//  tdklog("before meta.update");
-//  meta.update(*arr, &dimnames, rc);
-//  tdklog("after meta.update");
-//  ESMF_CHECKERR_STD("", rc, "Update with array failed", rc);
-//
-//  if (desired != meta.getStorageRef()) {
-//    return finalizeFailure(rc, failMsg, "Metadata should be equal");
-//  }
-//
-//  // Test creating dimensions when the array is added =========================
-//
-//  meta.update(*arr, nullptr, rc);
-//  ESMF_CHECKERR_STD("", rc, "Update with array failed", rc);
-//
-//  if (desired == meta.getStorageRef()) {
-//    return finalizeFailure(rc, failMsg, "Metadata should not be equal");
-//  }
-//  tdk:TODO: destroy distgrid,arrays,and array bundle
-//  rc = ESMCI::Array::destroy(&arr);
-//  ESMF_CHECKERR_STD("", rc, "Problem when destroying array", rc);
-//  rc = ESMCI::DistGrid::destroy(&distgrid);
-//  ESMF_CHECKERR_STD("", rc, "Problem when destroying distgrid", rc);
+  rc = ESMCI::ArrayBundle::destroy(&arrb);
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+  for (ESMCI::Array* arr : arrayList) {
+    rc = ESMCI::Array::destroy(&arr);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+  }
+  rc = ESMCI::DistGrid::destroy(&distgrid);
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 
   rc = ESMF_SUCCESS;
   return;

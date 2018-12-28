@@ -535,19 +535,29 @@ ArrayBundle* Metadata::createArrayBundle(DistGrid& distgrid, vector<Array*>& arr
   try {
     vector<string> varname_filter = jsonParms.value(ESMFARG::VARIABLENAME, json::array());
     const json& jmeta = this->getStorageRef();
+    const json& varmeta = jmeta.at(K_VARS);
     vector<string> varnames;
-    varnames.reserve(jmeta[K_VARS].size());
-    for (const auto& vn : varnames) {
-      if (!isIn(vn, varname_filter)) {
-        varnames.push_back(vn);
+    varnames.reserve(varmeta.size());
+    vector<string> distdims = jsonParms.value(ESMFARG::DISTDIMS, json::array());
+    for (json::const_iterator it=varmeta.cbegin(); it!=varmeta.cend(); it++) {
+      string curr_varname = it.key();
+      if (varname_filter.size() == 0 || varname_filter.size() > 0 && isIn(curr_varname, varname_filter)) {
+        // Only load arrays from disk that share distributed dimensions with
+        // the distgrid.
+        const vector<string> dims = varmeta.at(curr_varname).at(K_DIMS);
+        if (isIn(distdims, dims)) {
+          varnames.push_back(curr_varname);
+        }
       }
     }
+    tdklog("metadata::createarraybundle varnames", varnames);
     int nvars = varnames.size();
     arrayList.resize(nvars);
+    json local_arrParms = jsonParms;
     for (auto ii = 0; ii < varnames.size(); ii++) {
-      json arrParms;
-      arrParms[ESMFARG::VARIABLENAME] = varnames[ii];
-      arrayList[ii] = this->createArray(distgrid, arrParms, rc);
+      local_arrParms[ESMFARG::VARIABLENAME] = varnames[ii];
+      tdklog("metadata::createarraybundle current varname="+varnames[ii]);
+      arrayList[ii] = this->createArray(distgrid, local_arrParms, rc);
       ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
     }
     ArrayBundle* arrb = ArrayBundle::create(arrayList.data(), nvars, false, false,
