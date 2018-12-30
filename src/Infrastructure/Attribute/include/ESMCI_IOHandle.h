@@ -68,6 +68,7 @@ public:
   json PIOArgs = json::object();
 
 private:
+  int createPIOArrayIO(const Array& arr, int& rc);
   int init(int& rc);
 
 public:
@@ -82,6 +83,7 @@ public:
   //tdk:TODO: copy option for setMetadata
   void setMetadata(ESMCI::Metadata &&meta);
 
+  //tdk:TODO: consider add const qualifier to all io operations is possible; a lot of them modify pioargs
   void close(int& rc);
   void dodef(int& rc);
   void enddef(int& rc);

@@ -628,12 +628,11 @@ void IOHandle::write(const Array& arr, int& rc) {
                                                          ESMC_INDEX_GLOBAL,
                                                          rc);
       ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
-
       //tdk:TODO: will need to deal with unlimited dimensions and their location in the length array
       const int *gdimlen = gdimlen_v.data();
       tdklog("gdimlen_v", gdimlen_v);
 
-      // Sequence indices =======================================================
+      // Sequence indices =====================================================
 
       //tdk:FEATURE: read in PIO decomposition from file
       vector <PIO_Offset> compmap = createPIOCompmap(arr, rc);
