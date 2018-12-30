@@ -635,11 +635,10 @@ void IOHandle::write(const Array& arr, int& rc) {
   try {
     rc = ESMF_FAILURE;
 
-    ESMCI::VM *vm = ESMCI::VM::getCurrent(&rc);
-    ESMF_CHECKERR_STD("", rc, "Did not get current VM", rc);
-
-    int localPet = vm->getLocalPet();
-    int petCount = vm->getPetCount();
+//    ESMCI::VM *vm = ESMCI::VM::getCurrent(&rc);
+//    ESMF_CHECKERR_STD("", rc, "Did not get current VM", rc);
+//    int localPet = vm->getLocalPet();
+//    int petCount = vm->getPetCount();
 
     DistGrid* distgrid = arr.getDistGrid();
 
@@ -673,45 +672,13 @@ void IOHandle::write(const Array& arr, int& rc) {
                         "Array name not found in variable metadata", rc);
     }
 
-    int ioid = 0;
-    PIO_Offset maplen = 0;
-    int pio_rc = 0;
     if (!isIn(name, this->PIOArgs[PIOARG::IOIDS])) {
-      const json &varmeta = this->meta.getOrCreateVariable(name, rc);
+      this->initPIODecomp(arr, rc);
       ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
-
-      const int &pio_type = varmeta.at(
-        K_DTYPE).get_ref<const json::number_integer_t &>();
-
-      const int ndims = arr.getRank();
-
-      const vector <dimsize_t> gdimlen_v = getArrayShape(arr,
-                                                         ESMC_INDEX_GLOBAL,
-                                                         rc);
-      ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
-      //tdk:TODO: will need to deal with unlimited dimensions and their location in the length array
-      const int *gdimlen = gdimlen_v.data();
-      tdklog("gdimlen_v", gdimlen_v);
-
-      // Sequence indices =====================================================
-
-      //tdk:FEATURE: read in PIO decomposition from file
-      vector <PIO_Offset> compmap = createPIOCompmap(arr, rc);
-      ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
-
-      maplen = compmap.size();
-      pio_rc = PIOc_init_decomp(iosysid, pio_type, ndims, gdimlen, maplen,
-                                    compmap.data(), &ioid, PIODEF::REARRANGER,
-                                    nullptr, nullptr);
-      handlePIOReturnCode(pio_rc, "Did not initialize PIO decomposition", rc);
-
-      this->PIOArgs[PIOARG::IOIDS][name] = ioid;
-      this->PIOArgs[PIOARG::MAPLENS][name] = maplen;
-    } else {
-      //tdk:TODO: attempt to use references here
-      ioid = this->PIOArgs[PIOARG::IOIDS].at(name);
-      maplen = this->PIOArgs[PIOARG::MAPLENS].at(name);
     }
+    //tdk:TODO: attempt to use references here
+    int ioid = this->PIOArgs[PIOARG::IOIDS].at(name);
+    PIO_Offset maplen = this->PIOArgs[PIOARG::MAPLENS].at(name);
 
     //-------------------------------------------------------------------------
 
@@ -742,6 +709,7 @@ void IOHandle::write(const Array& arr, int& rc) {
 
     // Adjust the frame (timeslice counter) if there is a frame counter =======
 
+    int pio_rc;
     if (isIn(name, this->PIOArgs[PIOARG::FRAMES])) {
       int frame = this->PIOArgs.at(PIOARG::FRAMES).at(name);  //tdk:TODO: use reference?
       pio_rc = PIOc_setframe(ncid, varid, frame);
@@ -780,6 +748,7 @@ void IOHandle::write(const Array& arr, int& rc) {
     ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
   }
   catch (ESMCI::esmf_attrs_error) {
+    ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU, rc);
     throw;
   }
   catch (...) {
