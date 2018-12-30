@@ -68,8 +68,8 @@ public:
   json PIOArgs = json::object();
 
 private:
-  int createPIOArrayIO(const Array& arr, int& rc);
-  int init(int& rc);
+  int init(int& rc);  //tdk:TODO: init should return void like all other io functions
+  void initPIODecomp(const Array& arr, int& rc);
 
 public:
   IOHandle(void) = default;  // Default constructor

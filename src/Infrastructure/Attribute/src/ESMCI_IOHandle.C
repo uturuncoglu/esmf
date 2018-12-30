@@ -510,6 +510,67 @@ int IOHandle::init(int& rc) {
 }
 
 #undef ESMC_METHOD
+#define ESMC_METHOD "IOHandle::initPIODecomp()"
+void IOHandle::initPIODecomp(const Array& arr, int& rc) {
+  try {
+    const int &iosysid = this->PIOArgs.at(
+      PIOARG::IOSYSID).get_ref<json::number_integer_t &>();
+    const string name = arr.getName();
+
+    // Get variable metadata
+    const json &varmeta = this->meta.getOrCreateVariable(name, rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+
+    // Get PIO type
+    const int &pio_type = varmeta.at(
+      K_DTYPE).get_ref<const json::number_integer_t &>();
+    // Get the dimension count from the ESMF Array
+    const int ndims = arr.getRank();
+    // Use the global dimension length when creating the variable decomposition
+    const vector <dimsize_t> gdimlen_v = getArrayShape(arr,
+                                                       ESMC_INDEX_GLOBAL,
+                                                       rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+    //tdk:TODO: will need to deal with unlimited dimensions and their location in the length array
+    const int *gdimlen = gdimlen_v.data();
+//  tdklog("gdimlen_v", gdimlen_v);
+
+    // Sequence indices =====================================================
+
+    // Create the PIO decomposition mapping. This maps an index location in ESMF
+    // to its index location in the output netCDF file.
+    //tdk:FEATURE: read in PIO decomposition from file
+    vector <PIO_Offset> compmap = createPIOCompmap(arr, rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+
+    PIO_Offset maplen = compmap.size();
+    int ioid;
+    int pio_rc = PIOc_init_decomp(iosysid, pio_type, ndims, gdimlen, maplen,
+                              compmap.data(), &ioid, PIODEF::REARRANGER,
+                              nullptr, nullptr);
+    handlePIOReturnCode(pio_rc, "Did not initialize PIO decomposition", rc);
+
+    // Store the PIO decomposition identifier and array size for future use. For
+    // example, when calling "write(<Array>)".
+    this->PIOArgs[PIOARG::IOIDS][name] = ioid;
+    this->PIOArgs[PIOARG::MAPLENS][name] = maplen;
+  }
+  catch (json::out_of_range &e) {
+    ESMF_THROW_JSON(e, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);
+  }
+  catch (json::type_error &e) {
+    ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
+  }
+  catch (ESMCI::esmf_attrs_error &e) {
+    ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU, rc);
+    throw;
+  }
+  catch (...) {
+    ESMF_CHECKERR_STD("", rc, "Unhandled throw", rc);
+  }
+}
+
+#undef ESMC_METHOD
 #define ESMC_METHOD "IOHandle::open()"
 void IOHandle::open(int& rc) {
   rc = ESMF_FAILURE;
