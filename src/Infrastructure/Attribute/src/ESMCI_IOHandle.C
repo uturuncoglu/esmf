@@ -673,12 +673,6 @@ void IOHandle::readOrWrite(ESMC_RWMode rwmode, const Array& arr, int& rc) {
     int ioid = this->PIOArgs[PIOARG::IOIDS].at(name);
     PIO_Offset maplen = this->PIOArgs[PIOARG::MAPLENS].at(name);
 
-    //-------------------------------------------------------------------------
-
-    void** larrayBaseAddrList =  arr.getLarrayBaseAddrList();
-//    double* buffer = reinterpret_cast<double*>(larrayBaseAddrList[0]);
-    void* buffer = larrayBaseAddrList[0];
-
     // Get or create the netCDF file identifier ===============================
 
     bool should_close = false;
@@ -711,15 +705,35 @@ void IOHandle::readOrWrite(ESMC_RWMode rwmode, const Array& arr, int& rc) {
       //tdk:TODO: if there is an unlimited dimension, then a frame is required. check for this or raise an exception
     }
 
-    // Write and sync the data to netCDF ======================================
+    // Read/Write data to/from netCDF =========================================
 
-    void* fillvalue = nullptr;  //tdk:TODO: not handling fillvalue yet
-    pio_rc = PIOc_write_darray(ncid, varid, ioid, maplen, buffer, fillvalue);
-    handlePIOReturnCode(pio_rc, "Did not write darray", rc);
+    void** larrayBaseAddrList =  arr.getLarrayBaseAddrList();
+//    double* buffer = reinterpret_cast<double*>(larrayBaseAddrList[0]);
+    void* buffer = larrayBaseAddrList[0];
 
-    //tdk:TODO: argument for should_sync?
-    pio_rc = PIOc_sync(ncid);
-    handlePIOReturnCode(pio_rc, "Did not sync", rc);
+    switch (rwmode) {
+      case ESMC_RWMODE_WRITE: {
+        void *fillvalue = nullptr;  //tdk:TODO: not handling fillvalue yet
+        pio_rc = PIOc_write_darray(ncid, varid, ioid, maplen, buffer,
+                                   fillvalue);
+        handlePIOReturnCode(pio_rc, "Did not write darray", rc);
+
+        //tdk:TODO: argument for should_sync?
+        pio_rc = PIOc_sync(ncid);
+        handlePIOReturnCode(pio_rc, "Did not sync", rc);
+        break;
+      }
+      case ESMC_RWMODE_READ: {
+        pio_rc = PIOc_read_darray(ncid, varid, ioid, maplen, buffer);
+        handlePIOReturnCode(pio_rc, "Did not read darray", rc);
+        break;
+      }
+      default:
+        ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, ESMCI_ERR_PASSTHRU,
+          rc);
+    }
+
+    // Close/finalize PIO components ==========================================
 
     if (should_close) {
       this->close(rc);
