@@ -46,6 +46,7 @@ using namespace std;
 void testCreateArray(int& rc, char failMsg[]) {
   //tdk:TEST: creation with no distributed dimensions
   //tdk:TODO: should we create empty arrays? essentially just attribute carriers
+  //tdk:TEST: create an array and distrid in one call to create array
   rc = ESMF_FAILURE;
   bool failed = true;
 
