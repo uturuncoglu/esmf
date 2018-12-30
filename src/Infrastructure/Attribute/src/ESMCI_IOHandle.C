@@ -622,35 +622,7 @@ void IOHandle::open(int& rc) {
 #undef ESMC_METHOD
 #define ESMC_METHOD "IOHandle::readOrWrite()"
 void IOHandle::readOrWrite(ESMC_RWMode rwmode, const Array& arr, int& rc) {
-  try {
-
-  }
-  catch (json::out_of_range &e) {
-    ESMF_THROW_JSON(e, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);
-  }
-  catch (json::type_error &e) {
-    ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
-  }
-  catch (ESMCI::esmf_attrs_error &e) {
-    ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU, rc);
-    throw;
-  }
-  catch (...) {
-    ESMF_CHECKERR_STD("", rc, "Unhandled throw", rc);
-  }
-}
-
-#undef ESMC_METHOD
-#define ESMC_METHOD "IOHandle::setMetadata(<&&Metadata>)"
-void IOHandle::setMetadata(ESMCI::Metadata &&meta) {
-  json& this_meta_storage = this->meta.getStorageRefWritable();
-  this_meta_storage = move(meta.getStorageRefWritable());
-}
-
-#undef ESMC_METHOD
-#define ESMC_METHOD "IOHandle::write(<Array>)"
-void IOHandle::write(const Array& arr, int& rc) {
-//  vector<string> jargs = {"filename"};
+  //  vector<string> jargs = {"filename"};
 //  vector<string> jkwargs = {"clobber", "fileOnly", "mode"};
 
   try {
@@ -774,6 +746,24 @@ void IOHandle::write(const Array& arr, int& rc) {
   }
   catch (...) {
     ESMF_CHECKERR_STD("", rc, "Unhandled throw", rc);
+  }
+}
+
+#undef ESMC_METHOD
+#define ESMC_METHOD "IOHandle::setMetadata(<&&Metadata>)"
+void IOHandle::setMetadata(ESMCI::Metadata &&meta) {
+  json& this_meta_storage = this->meta.getStorageRefWritable();
+  this_meta_storage = move(meta.getStorageRefWritable());
+}
+
+#undef ESMC_METHOD
+#define ESMC_METHOD "IOHandle::write(<Array>)"
+void IOHandle::write(const Array& arr, int& rc) {
+  try {
+    this->readOrWrite(ESMC_RWMODE_WRITE, arr, rc);
+  }
+  catch (...) {
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
   }
 }
 

@@ -41,7 +41,7 @@ using namespace std;
 
 namespace ESMCI {
 
-enum ESMC_RWMode {RWMODE_READ, RWMODE_WRITE};
+enum ESMC_RWMode {ESMC_RWMODE_READ, ESMC_RWMODE_WRITE};
 
 namespace PIOARG {
   const string DIMIDS = "dimids";
