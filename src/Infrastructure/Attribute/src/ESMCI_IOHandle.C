@@ -621,7 +621,11 @@ void IOHandle::open(int& rc) {
 
 #undef ESMC_METHOD
 #define ESMC_METHOD "IOHandle::readOrWrite()"
-void IOHandle::readOrWrite(ESMC_RWMode rwmode, const Array& arr, int& rc) {
+void IOHandle::readOrWrite(ESMC_RWMode rwmode, Array& arr, int& rc) {
+  // Notes:
+  //  * The read functionality technically modifies the array's local array
+  //    value buffer.
+
   //  vector<string> jargs = {"filename"};
 //  vector<string> jkwargs = {"clobber", "fileOnly", "mode"};
 
