@@ -80,6 +80,7 @@ public:
   IOHandle&operator=(IOHandle&&) = delete; // Move assignment
 
   ESMCI::Metadata &getMetadata() { return this->meta; }
+  json& getPIOArgs() { return this->PIOArgs; }
   //tdk:TODO: copy option for setMetadata
   void setMetadata(ESMCI::Metadata &&meta);
 
