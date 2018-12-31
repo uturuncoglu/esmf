@@ -70,7 +70,7 @@ public:
   json PIOArgs = json::object();
 
 private:
-  void readOrWrite(ESMC_RWMode rwmode, Array& arr, int& rc);
+  void readOrWrite(ESMC_RWMode rwmode, const Array& arr, int& rc);
   int init(int& rc);  //tdk:TODO: init should return void like all other io functions
   void initPIODecomp(const Array& arr, int& rc);
 
