@@ -197,8 +197,8 @@ void testWrite1DArray(int& rc, char failMsg[]) {
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "testWrite1DArrayIsolatedWrite()"
-void testWrite1DArrayIsolatedWrite(int& rc, char failMsg[]) {
+#define ESMC_METHOD "testReadWrite1DArrayIsolated()"
+void testReadWrite1DArrayIsolated(int& rc, char failMsg[]) {
   try {
     rc = ESMF_FAILURE;
 
@@ -596,40 +596,40 @@ int main(void) {
   //---------------------------------------------------------------------------
 
   //tdk:UNCOMMENT
-  //---------------------------------------------------------------------------
-  //NEX_UTest
-  strcpy(name, "Test opening and closing a netCDF file");
-  testOpenClose(rc, failMsg);
-  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
-  //---------------------------------------------------------------------------
+//  //---------------------------------------------------------------------------
+//  //NEX_UTest
+//  strcpy(name, "Test opening and closing a netCDF file");
+//  testOpenClose(rc, failMsg);
+//  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
+//  //---------------------------------------------------------------------------
+
+//  //---------------------------------------------------------------------------
+//  //NEX_UTest
+//  strcpy(name, "Test writing a 1D array");
+//  testWrite1DArray(rc, failMsg);
+//  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
+//  //---------------------------------------------------------------------------
 
   //---------------------------------------------------------------------------
   //NEX_UTest
-  strcpy(name, "Test writing a 1D array");
-  testWrite1DArray(rc, failMsg);
+  strcpy(name, "Test reading & writing a 1D array - isolated");
+  testReadWrite1DArrayIsolated(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //---------------------------------------------------------------------------
 
-  //---------------------------------------------------------------------------
-  //NEX_UTest
-  strcpy(name, "Test writing a 1D array - isolated write");
-  testWrite1DArrayIsolatedWrite(rc, failMsg);
-  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
-  //---------------------------------------------------------------------------
-
-  //---------------------------------------------------------------------------
-  //NEX_UTest
-  strcpy(name, "Test writing a 3D array");
-  testWrite3DArray(rc, failMsg);
-  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
-  //---------------------------------------------------------------------------
-
-  //---------------------------------------------------------------------------
-  //NEX_UTest
-  strcpy(name, "Test writing an array w/ an unlimited dimension");
-  testWriteUnlimDimArray(rc, failMsg);
-  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
-  //---------------------------------------------------------------------------
+//  //---------------------------------------------------------------------------
+//  //NEX_UTest
+//  strcpy(name, "Test writing a 3D array");
+//  testWrite3DArray(rc, failMsg);
+//  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
+//  //---------------------------------------------------------------------------
+//
+//  //---------------------------------------------------------------------------
+//  //NEX_UTest
+//  strcpy(name, "Test writing an array w/ an unlimited dimension");
+//  testWriteUnlimDimArray(rc, failMsg);
+//  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
+//  //---------------------------------------------------------------------------
 
 //  //---------------------------------------------------------------------------
 //  //NEX_disabled_UTest
@@ -637,8 +637,6 @@ int main(void) {
 //  testWriteArrayBundle(rc, failMsg);
 //  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
 //  //---------------------------------------------------------------------------
-
-  //tdk:RESUME: add read_darray unit test
 
   //---------------------------------------------------------------------------
   ESMC_TestEnd(__FILE__, __LINE__, 0);
