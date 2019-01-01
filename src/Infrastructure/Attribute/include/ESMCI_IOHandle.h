@@ -57,7 +57,9 @@ namespace PIOARG {
 }
 
 namespace PIODEF {
-  //tdk:TODO: what should the default write mode be?
+  const int IOTYPE = PIO_IOTYPE_NETCDF;
+  const int MODE_READ = NC_NOWRITE;
+  const int MODE_WRITE = NC_WRITE;
   const int REARRANGER = PIO_REARR_SUBSET;
 }
 
@@ -70,6 +72,9 @@ public:
   json PIOArgs = json::object();
 
 private:
+  const int to_remove_reserve_size = 10;
+  vector<string> to_remove_on_close;
+
   void readOrWrite(ESMC_RWMode rwmode, const Array& arr, int& rc);
   int init(int& rc);  //tdk:TODO: init should return void like all other io functions
   void initPIODecomp(const Array& arr, int& rc);
@@ -93,7 +98,7 @@ public:
   void enddef(int& rc);
   void finalize(int& rc);
   void open(int& rc);
-  void read(int& rc);
+  void read(const Array& arr, int& rc);
   void write(const Array& arr, int& rc);
 
 };

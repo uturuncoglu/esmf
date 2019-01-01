@@ -222,7 +222,12 @@ void testReadWrite1DArrayIsolated(int& rc, char failMsg[]) {
     jsonParms[ESMFARG::DISTDIMS] = {"dim_lon"};
     jsonParms[ESMFARG::VARIABLENAME] = "the_xc";
 
+    // Array to write
     ESMCI::Array* arr = meta.createArray(*distgrid, jsonParms, rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+
+    // Array to read (fill)
+    ESMCI::Array* arr2fill = meta.createArray(*distgrid, jsonParms, rc);
     ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 
     // Fill data values =======================================================
@@ -252,6 +257,23 @@ void testReadWrite1DArrayIsolated(int& rc, char failMsg[]) {
     ESMF_CHECKERR_STD("", rc, "Did not write array", rc);
 
 //    std::cout << ioh.PIOArgs.dump(2) << std::endl;  //tdk:p
+
+    if (ioh.PIOArgs.size() != 1) {
+      return finalizeFailure(rc, failMsg, "PIO args wrong size");
+    }
+
+    // Fill the array that is identical to the write array ====================
+
+    std::cout << ioh.PIOArgs.dump() << std::endl;  //tdk:p
+    ioh.read(*arr2fill, rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+
+    double* arr2fill_buffer = reinterpret_cast<double*>(arr2fill->getLarrayBaseAddrList()[0]);
+    for (auto ii=0; ii<arrshp[0]; ii++) {
+      if (buffer[ii] != arr2fill_buffer[ii]) {
+        return finalizeFailure(rc, failMsg, "Buffers not equal");
+      }
+    }
 
     if (ioh.PIOArgs.size() != 1) {
       return finalizeFailure(rc, failMsg, "PIO args wrong size");

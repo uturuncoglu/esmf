@@ -21,8 +21,9 @@
 //-----------------------------------------------------------------------------
 
 #include <assert.h>
-#include <vector>
+#include <fstream>
 #include <iostream>
+#include <vector>
 
 #include <netcdf.h>
 #include <pio.h>
@@ -283,6 +284,17 @@ void IOHandle::close(int& rc) {
       }
     }
 
+    // Remove any automated arguments =========================================
+
+    for (const auto& tr: this->to_remove_on_close) {
+      auto f = this->PIOArgs.find(tr);
+      if (f != this->PIOArgs.end()) {
+        this->PIOArgs.erase(f);
+      }
+    }
+    this->to_remove_on_close.clear();
+    assert(this->to_remove_on_close.size() == 0);
+
     rc = ESMF_SUCCESS;
   }
   catch (json::out_of_range &e) {
@@ -491,6 +503,8 @@ int IOHandle::init(int& rc) {
     this->PIOArgs[PIOARG::IOSYSID] = iosysid;
     this->PIOArgs[PIOARG::VARIDS] = json::object();  //tdk:TODO: remove?
 
+    to_remove_on_close.reserve(this->to_remove_reserve_size); //tdk:TODO: default reserve size?
+
     rc = ESMF_SUCCESS;
     return iosysid;
   }
@@ -591,13 +605,26 @@ void IOHandle::open(int& rc) {
       iosysid = it_iosysid.value();
     }
 
-    int iotype = (int)(this->PIOArgs.value(PIOARG::IOTYPE, PIO_IOTYPE_NETCDF));
-    int mode = this->PIOArgs.value(PIOARG::MODE, NC_WRITE);
+    int iotype = (int)(this->PIOArgs.value(PIOARG::IOTYPE, PIODEF::IOTYPE));
+    int mode = this->PIOArgs.value(PIOARG::MODE, PIODEF::MODE_READ);
+    tdklog("iohandle::open mode="+to_string(mode));
+    tdklog("iohandle::open NC_NOWRITE="+to_string(NC_NOWRITE));
+    tdklog("iohandle::open NC_WRITE="+to_string(NC_WRITE));
     auto it_ncid = this->PIOArgs.find(PIOARG::NCID);
     int ncid;
     if (it_ncid == this->PIOArgs.end()) {
-      int pio_rc = PIOc_createfile(iosysid, &ncid, &iotype, filename.c_str(),
-                                   mode);
+      int pio_rc;
+      std::ifstream ifile(filename.c_str());
+      bool exists = (bool)ifile;
+      ifile.close();
+      if (!exists) {
+        // Create the file if it doesn't exist
+        //tdk:TODO: add clobber option
+        pio_rc = PIOc_createfile(iosysid, &ncid, &iotype, filename.c_str(), mode);
+      } else {
+        // Otherwise just open the file
+        pio_rc = PIOc_openfile(iosysid, &ncid, &iotype, filename.c_str(), mode);
+      }
       handlePIOReturnCode(pio_rc, "Could not open filename: " + filename, rc);
       this->PIOArgs[PIOARG::NCID] = ncid;
     }
@@ -620,22 +647,25 @@ void IOHandle::open(int& rc) {
 }
 
 #undef ESMC_METHOD
+#define ESMC_METHOD "IOHandle::read()"
+void IOHandle::read(const Array& arr, int& rc) {
+  try {
+    this->readOrWrite(ESMC_RWMODE_READ, arr, rc);
+  }
+  catch (...) {
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+  }
+}
+
+#undef ESMC_METHOD
 #define ESMC_METHOD "IOHandle::readOrWrite()"
 void IOHandle::readOrWrite(ESMC_RWMode rwmode, const Array& arr, int& rc) {
   // Notes:
   //  * The read functionality technically modifies the array's local array
   //    value buffer.
 
-  //  vector<string> jargs = {"filename"};
-//  vector<string> jkwargs = {"clobber", "fileOnly", "mode"};
-
   try {
     rc = ESMF_FAILURE;
-
-//    ESMCI::VM *vm = ESMCI::VM::getCurrent(&rc);
-//    ESMF_CHECKERR_STD("", rc, "Did not get current VM", rc);
-//    int localPet = vm->getLocalPet();
-//    int petCount = vm->getPetCount();
 
     DistGrid* distgrid = arr.getDistGrid();
 
@@ -681,6 +711,27 @@ void IOHandle::readOrWrite(ESMC_RWMode rwmode, const Array& arr, int& rc) {
 
     bool should_close = false;
     if (!isIn(PIOARG::NCID, this->PIOArgs)) {
+      // Supply a default mode for reading/writing if a default is not supplied
+      if (!isIn(PIOARG::MODE, this->PIOArgs)) {
+        int piomode;
+        switch (rwmode) {
+          case ESMC_RWMODE_WRITE: {
+            piomode = PIODEF::MODE_WRITE;
+            break;
+          }
+          case ESMC_RWMODE_READ: {
+            piomode = PIODEF::MODE_READ;
+            break;
+          }
+          default: {
+            auto msg = "ESMC_RWMODE_* not supported: " + to_string(rwmode);
+            ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, msg, rc);
+          }
+        }
+        this->PIOArgs[PIOARG::MODE] = piomode;
+        // Remove this argument since it was not added by the user
+        this->to_remove_on_close.push_back(PIOARG::MODE);
+      }
       this->open(rc);
       ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 
@@ -690,17 +741,28 @@ void IOHandle::readOrWrite(ESMC_RWMode rwmode, const Array& arr, int& rc) {
 
     // Get or create the netCDF variable identifier ===========================
 
+    int pio_rc;
     if (!isIn(name, this->PIOArgs[PIOARG::VARIDS])) {
-      this->dodef(rc);
-      ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
-      this->enddef(rc);
-      ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+      if (rwmode == ESMC_RWMODE_WRITE) {
+        // In write mode, do the file definition. The variable identifier is
+        // supplied to PIOArgs during the definition phase.
+        this->dodef(rc);
+        ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+        this->enddef(rc);
+        ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+      } else {
+        // In read mode, retrieve the variable identifier from the netCDf file
+        int lvarid;
+        pio_rc = PIOc_inq_varid(ncid, name.c_str(), &lvarid);
+        handlePIOReturnCode(pio_rc, "Did get variable identifier", rc);
+        this->PIOArgs[PIOARG::VARIDS][name] = lvarid;
+      }
     }
-    const int& varid = this->PIOArgs.at(PIOARG::VARIDS).at(name).get_ref<const json::number_integer_t&>();
+    const int& varid = this->PIOArgs.at(PIOARG::VARIDS).at(name).get_ref<
+      const json::number_integer_t&>();
 
     // Adjust the frame (timeslice counter) if there is a frame counter =======
 
-    int pio_rc;
     if (isIn(name, this->PIOArgs[PIOARG::FRAMES])) {
       int frame = this->PIOArgs.at(PIOARG::FRAMES).at(name);  //tdk:TODO: use reference?
       pio_rc = PIOc_setframe(ncid, varid, frame);
@@ -717,6 +779,7 @@ void IOHandle::readOrWrite(ESMC_RWMode rwmode, const Array& arr, int& rc) {
 
     switch (rwmode) {
       case ESMC_RWMODE_WRITE: {
+        tdklog("iohandle::readorwrite: in WRITE mode");
         void *fillvalue = nullptr;  //tdk:TODO: not handling fillvalue yet
         pio_rc = PIOc_write_darray(ncid, varid, ioid, maplen, buffer,
                                    fillvalue);
@@ -728,6 +791,7 @@ void IOHandle::readOrWrite(ESMC_RWMode rwmode, const Array& arr, int& rc) {
         break;
       }
       case ESMC_RWMODE_READ: {
+        tdklog("iohandle::readorwrite: in READ mode");
         pio_rc = PIOc_read_darray(ncid, varid, ioid, maplen, buffer);
         handlePIOReturnCode(pio_rc, "Did not read darray", rc);
         break;
