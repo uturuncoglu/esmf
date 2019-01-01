@@ -280,6 +280,21 @@ void handleUnsupported(const json& j, const vector<string>& tokens, int& rc) {
   }
 }
 
+#undef ESMC_METHOD
+#define ESMC_METHOD "sizeFromShape()"
+dimsize_t sizeFromShape(const vector<dimsize_t>& shp) {
+  dimsize_t ret;
+  if (shp.size() == 0) {
+    ret = 0;
+  } else {
+    ret = 1;
+    for (const auto& s: shp) {
+      ret *= s;
+    }
+  }
+  return ret;
+}
+
 //=============================================================================
 
 #undef ESMC_METHOD
@@ -394,6 +409,7 @@ Array* Metadata::createArray(DistGrid& distgrid, const json& jsonParms,
   int& rc) const {
   //tdk:TODO: attributes on array bundle object!
   //tdk:TODO: standard try/catch
+  //tdk:TODO: fix all warnings
   string variableName;
   try {
     variableName = jsonParms.at(ESMFARG::VARIABLENAME);

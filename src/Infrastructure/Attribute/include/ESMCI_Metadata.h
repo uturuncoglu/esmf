@@ -80,6 +80,7 @@ vector<vector<dimsize_t>> getArrayBounds(const Array& arr,
   const ESMC_IndexFlag& idxFlag, int& rc);
 vector<dimsize_t> getArrayShape(const Array& arr,
   const ESMC_IndexFlag& idxFlag, int& rc);
+dimsize_t sizeFromShape(const vector<dimsize_t>& shp);
 
 //-----------------------------------------------------------------------------
 
