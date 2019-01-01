@@ -357,27 +357,9 @@ void testWrite3DArray(int& rc, char failMsg[]) {
 
     void **larrayBaseAddrList = arr->getLarrayBaseAddrList();
     double *buffer = reinterpret_cast<double *>(larrayBaseAddrList[0]);
-//  const int stride = arrshp[1] * arrshp[2];  //F-order
-//  tdklog("stride="+to_string(stride));
-//  int stride_adjust = 0;
-//  vector<double> fills = {1000, 2000, 3000, 4000};
-//  int fillctr = 0;
     for (auto ii = 0; ii < arrshp[0] * arrshp[1] * arrshp[2]; ii++) {
       buffer[ii] = 1000 * (localPet + 1) + ii + 0.5;
-
-//    buffer[ii] = fills[fillctr];
-//    fillctr ++;
-//    if (fillctr == 4) {
-//      fillctr = 0;
-//    }
-
-//    if (ii == stride * (stride_adjust + 1)) {
-//      stride_adjust++;
-//    }
-//    buffer[ii] = (10000 * (localPet + 1)) + (100 * ii); //+ 0.5 + 100 + (stride_adjust * 100);
-//    tdklog("3D: buffer["+to_string(ii)+"]="+to_string(buffer[ii]));
     }
-//  double * tdkbuffer = reinterpret_cast<double*>(buffer);for (int jj=0;jj<maplen;jj++){tdklog("3D: buffer["+to_string(jj)+"]="+to_string(tdkbuffer[jj]));}
 
     const string filename = "test_pio_write_3D_array.nc";
     IOHandle ioh;
@@ -387,8 +369,6 @@ void testWrite3DArray(int& rc, char failMsg[]) {
 
     json &smeta = ioh.meta.getStorageRefWritable();
     smeta.at(K_VARS).at(varname).at(K_ATTRS)["context"] = "testWrite3DArray";
-
-//    cout << "(x) ioh.meta=" << ioh.meta.dump(2, rc) << endl;  //tdk:p
 
     ioh.open(rc);
     ESMF_CHECKERR_STD("", rc, "Did not open file", rc);
@@ -502,8 +482,6 @@ void testWriteUnlimDimArray(int& rc, char failMsg[]) {
   smeta.at(K_VARS).at(varname).at(K_DIMS) = dims;
   assert(smeta.at(K_VARS).at(varname).at(K_DIMS)[0] == "dim_time");
 
-//  cout << "(x) ioh.meta=" << ioh.meta.dump(2, rc) << endl;  //tdk:p
-
   ioh.open(rc);
   ESMF_CHECKERR_STD("", rc, "Did not open file", rc);
 
@@ -516,7 +494,6 @@ void testWriteUnlimDimArray(int& rc, char failMsg[]) {
   }
 
   //tdk:TEST: zero-length on a PET (to many procs for values)
-  //tdk:TEST: do the full CF metadata test thingey to netcdf
 
   ioh.enddef(rc);
   ESMF_CHECKERR_STD("", rc, "Did not enddef", rc);
@@ -551,6 +528,7 @@ void testWriteUnlimDimArray(int& rc, char failMsg[]) {
 #undef  ESMC_METHOD
 #define ESMC_METHOD "testWriteArrayBundle()"
 void testWriteArrayBundle(int& rc, char failMsg[]) {
+  //tdk:TEST: finish test
   rc = ESMF_FAILURE;
 
   const string filename = "test_pio_array_bundle.nc";
@@ -618,19 +596,19 @@ int main(void) {
   //---------------------------------------------------------------------------
 
   //tdk:UNCOMMENT
-//  //---------------------------------------------------------------------------
-//  //NEX_UTest
-//  strcpy(name, "Test opening and closing a netCDF file");
-//  testOpenClose(rc, failMsg);
-//  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
-//  //---------------------------------------------------------------------------
+  //---------------------------------------------------------------------------
+  //NEX_UTest
+  strcpy(name, "Test opening and closing a netCDF file");
+  testOpenClose(rc, failMsg);
+  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
+  //---------------------------------------------------------------------------
 
-//  //---------------------------------------------------------------------------
-//  //NEX_UTest
-//  strcpy(name, "Test writing a 1D array");
-//  testWrite1DArray(rc, failMsg);
-//  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
-//  //---------------------------------------------------------------------------
+  //---------------------------------------------------------------------------
+  //NEX_UTest
+  strcpy(name, "Test writing a 1D array");
+  testWrite1DArray(rc, failMsg);
+  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
+  //---------------------------------------------------------------------------
 
   //---------------------------------------------------------------------------
   //NEX_UTest
@@ -639,19 +617,19 @@ int main(void) {
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //---------------------------------------------------------------------------
 
-//  //---------------------------------------------------------------------------
-//  //NEX_UTest
-//  strcpy(name, "Test writing a 3D array");
-//  testWrite3DArray(rc, failMsg);
-//  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
-//  //---------------------------------------------------------------------------
-//
-//  //---------------------------------------------------------------------------
-//  //NEX_UTest
-//  strcpy(name, "Test writing an array w/ an unlimited dimension");
-//  testWriteUnlimDimArray(rc, failMsg);
-//  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
-//  //---------------------------------------------------------------------------
+  //---------------------------------------------------------------------------
+  //NEX_UTest
+  strcpy(name, "Test writing a 3D array");
+  testWrite3DArray(rc, failMsg);
+  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
+  //---------------------------------------------------------------------------
+
+  //---------------------------------------------------------------------------
+  //NEX_UTest
+  strcpy(name, "Test writing an array w/ an unlimited dimension");
+  testWriteUnlimDimArray(rc, failMsg);
+  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
+  //---------------------------------------------------------------------------
 
 //  //---------------------------------------------------------------------------
 //  //NEX_disabled_UTest
