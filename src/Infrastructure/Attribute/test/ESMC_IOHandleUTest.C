@@ -350,19 +350,32 @@ void testWrite3DArray(int& rc, char failMsg[]) {
     ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 //    arr->print(); //tdk:p
 
+    ESMCI::Array *arr2fill = meta.createArray(*distgrid, jsonParms, rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+
     vector <dimsize_t> arrshp = getArrayShape(*arr, ESMC_INDEX_DELOCAL, rc);
 //  std::reverse(arrshp.begin(), arrshp.end());  // Reverse to Fortran order
     tdklog("testWrite3DArray arrshp", arrshp);
     ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 
+    // Fill the buffer to write with some data
     void **larrayBaseAddrList = arr->getLarrayBaseAddrList();
     double *buffer = reinterpret_cast<double *>(larrayBaseAddrList[0]);
-    for (auto ii = 0; ii < arrshp[0] * arrshp[1] * arrshp[2]; ii++) {
+    dimsize_t arrsize = sizeFromShape(arrshp);
+    for (auto ii = 0; ii < arrsize; ii++) {
       buffer[ii] = 1000 * (localPet + 1) + ii + 0.5;
     }
 
-    const string filename = "test_pio_write_3D_array.nc";
+    // Confirm data values are not equal before read...just in case
+    double *buffer2fill = reinterpret_cast<double *>(arr2fill->getLarrayBaseAddrList()[0]);
+    for (auto ii = 0; ii < arrsize; ++ii) {
+      if (buffer[ii] == buffer2fill[ii]) {
+        return finalizeFailure(rc, failMsg, "Buffers should not be equal");
+      }
+    }
+
     IOHandle ioh;
+    const string filename = "test_pio_write_3D_array.nc";
     ioh.PIOArgs[PIOARG::FILENAME] = filename;
     ioh.meta.update(*arr, &dimnames, rc);
     ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
@@ -390,7 +403,17 @@ void testWrite3DArray(int& rc, char failMsg[]) {
 
     //tdk:TEST: structure of PIOArgs
 
+    // Read data back in and confirm it is equivalent.
+    ioh.read(*arr2fill, rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+    for (auto ii = 0; ii < arrsize; ++ii) {
+      if (buffer[ii] != buffer2fill[ii]) {
+        return finalizeFailure(rc, failMsg, "Buffers should be equal");
+      }
+    }
+
     rc = ESMCI::Array::destroy(&arr);
+    rc = ESMCI::Array::destroy(&arr2fill);
     rc = ESMCI::DistGrid::destroy(&distgrid);
     ESMF_CHECKERR_STD("", rc, "Problem when destroying objects", rc);
 
