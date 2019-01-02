@@ -408,26 +408,30 @@ void Metadata::update(const ESMCI::Array& arr, const vector<string>* dimnames,
 Array* Metadata::createArray(DistGrid& distgrid, const json& jsonParms,
   int& rc) const {
   //tdk:TODO: attributes on array object
-  //tdk:TODO: standard try/catch
   //tdk:TODO: fix all warnings
-  string variableName;
   try {
-    variableName = jsonParms.at(ESMFARG::VARIABLENAME);
-  }
-  catch (json::out_of_range& e) {
-    ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
-  }
+    rc = ESMF_FAILURE;
+    // Get the variable name in the metadata used to create the ESMF Array
+    string variableName;
+    try {
+      variableName = jsonParms.at(ESMFARG::VARIABLENAME);
+    }
+    catch (json::out_of_range& e) {
+      ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
+    }
 
-  vector<string> unsupported = {"decompflagCount", "computationalEdgeUWidthArg",
-    "computationalLWidthArg", "computationalUWidthArg", "totalLWidthArg",
-    "totalUWidthArg", "indexflag", "undistLBoundArg", "undistUBoundArg",
-    "distLBoundArg", "vm"};
-  handleUnsupported(jsonParms, unsupported, rc);
+    // Check for unsupported JSON parameters ==================================
 
-  //---------------------------------------------------------------------------
+    vector<string> unsupported = {"decompflagCount", "computationalEdgeUWidthArg",
+                                  "computationalLWidthArg", "computationalUWidthArg",
+                                  "totalLWidthArg", "totalUWidthArg", "indexflag",
+                                  "undistLBoundArg", "undistUBoundArg", "distLBoundArg",
+                                  "vm"};
+    handleUnsupported(jsonParms, unsupported, rc);
 
-  try {
-    // Get array name from internal metadata.
+    //---------------------------------------------------------------------------
+
+    // Get variable metadata used to create the ESMF Array
     const json& var_meta = this->storage.at(K_VARS).at(variableName);
 
     // Get the dimension names for the array. We need to remove any zero-length
@@ -447,11 +451,11 @@ Array* Metadata::createArray(DistGrid& distgrid, const json& jsonParms,
 
     // Get the distributed dimension names having a zero-length array as default.
     vector<string> v_distDims = jsonParms.value(ESMFARG::DISTDIMS,
-      json::array());
+                                                json::array());
     int rank = dim_names.size();
     // Convert the metadata data type to an ESMF TypeKind.
     ESMC_TypeKind_Flag tk = getESMFTypeKind(var_meta[K_DTYPE], rc);
-    ESMF_CHECKERR_STD("", rc, "Did not get TypeKind", rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 
     ArraySpec arrayspec;
     arrayspec.set(rank, tk);
@@ -530,15 +534,25 @@ Array* Metadata::createArray(DistGrid& distgrid, const json& jsonParms,
       &undistUBoundArg,
       &rc,
       vm);
-    ESMF_CHECKERR_STD("", rc, "Array creation failed", rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 
     rc = arr->setName(variableName);
-    ESMF_CHECKERR_STD("", rc, "Setting array name failed", rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 
     return arr;
   }
-  catch (json::out_of_range& e) {
+  catch (json::out_of_range &e) {
+    ESMF_THROW_JSON(e, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);
+  }
+  catch (json::type_error &e) {
     ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
+  }
+  catch (ESMCI::esmf_attrs_error &e) {
+    ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU, rc);
+    throw;
+  }
+  catch (...) {
+    ESMF_CHECKERR_STD("", rc, "Unhandled throw", rc);
   }
 }
 

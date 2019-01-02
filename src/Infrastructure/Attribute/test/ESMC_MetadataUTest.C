@@ -356,12 +356,12 @@ int main(void) {
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //---------------------------------------------------------------------------
 
-  //---------------------------------------------------------------------------
-  //NEX_UTest
-  strcpy(name, "createArrayBundle()");
-  testCreateArrayBundle(rc, failMsg);
-  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
-  //---------------------------------------------------------------------------
+//  //---------------------------------------------------------------------------
+//  //NEX_disabled_UTest
+//  strcpy(name, "createArrayBundle()");
+//  testCreateArrayBundle(rc, failMsg);
+//  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
+//  //---------------------------------------------------------------------------
 
   //---------------------------------------------------------------------------
   ESMC_TestEnd(__FILE__, __LINE__, 0);
