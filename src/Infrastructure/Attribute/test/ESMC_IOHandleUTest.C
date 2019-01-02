@@ -416,6 +416,8 @@ void testWrite3DArray(int& rc, char failMsg[]) {
     ioh.write(*arr, rc);
     ESMF_CHECKERR_STD("", rc, "Did not write array", rc);
 
+//    std::cout << ioh.PIOArgs.dump(2) << std::endl;  //tdk:p
+
     ioh.close(rc);
     ESMF_CHECKERR_STD("", rc, "Did not close", rc);
 
