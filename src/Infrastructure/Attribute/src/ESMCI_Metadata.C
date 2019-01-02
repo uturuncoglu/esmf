@@ -407,7 +407,7 @@ void Metadata::update(const ESMCI::Array& arr, const vector<string>* dimnames,
 #define ESMC_METHOD "Metadata::createArray()"
 Array* Metadata::createArray(DistGrid& distgrid, const json& jsonParms,
   int& rc) const {
-  //tdk:TODO: attributes on array bundle object!
+  //tdk:TODO: attributes on array object
   //tdk:TODO: standard try/catch
   //tdk:TODO: fix all warnings
   string variableName;
@@ -599,89 +599,92 @@ ArrayBundle* Metadata::createArrayBundle(DistGrid& distgrid, vector<Array*>& arr
 #undef ESMC_METHOD
 #define ESMC_METHOD "Metadata::createDistGrid()"
 DistGrid* Metadata::createDistGrid(const json& jsonParms, int& rc) const {
-  //tdk:TODO: standard try/catch
+  try {
+    rc = ESMF_FAILURE;
 
-  // Check for unsupported parameters =========================================
+    // Check for unsupported parameters =======================================
 
-  vector<string> unsupported = {"regDecomp", "decompflag", "decompflagCount",
-    "regDecompFirstExtra", "regDecompLastExtra", "deLabelList", "indexflag",
-    "connectionList", "delayout", "vm", "indexTK"};
-  handleUnsupported(jsonParms, unsupported, rc);
+    vector<string> unsupported = {"regDecomp", "decompflag", "decompflagCount",
+                                  "regDecompFirstExtra", "regDecompLastExtra",
+                                  "deLabelList", "indexflag", "connectionList",
+                                  "delayout", "vm", "indexTK"};
+    handleUnsupported(jsonParms, unsupported, rc);
 
-  // Get argument defaults ====================================================
+    // Get argument defaults ==================================================
 
-  vector<string> v_distDims = jsonParms.value(ESMFARG::DISTDIMS,
-    json::array());
-  vector<ESMC_I4> v_minIndex = jsonParms.value(ESMFARG::MININDEX,
-    json::array());
-  vector<ESMC_I4> v_maxIndex = jsonParms.value(ESMFARG::MAXINDEX,
-    json::array());
+    vector<string> v_distDims = jsonParms.value(ESMFARG::DISTDIMS, json::array());
+    vector<ESMC_I4> v_minIndex = jsonParms.value(ESMFARG::MININDEX, json::array());
+    vector<ESMC_I4> v_maxIndex = jsonParms.value(ESMFARG::MAXINDEX, json::array());
 
-  // Create minIndex ==========================================================
+    // Create minIndex ========================================================
 
-  size_t v_distDims_size = v_distDims.size();
-  if (v_minIndex.size() == 0) {
-    v_minIndex.resize(v_distDims_size);
-    for (dimsize_t ii=0; ii<v_distDims_size; ii++) {
-      v_minIndex[ii] = 1;
+    size_t v_distDims_size = v_distDims.size();
+    if (v_minIndex.size() == 0) {
+      v_minIndex.resize(v_distDims_size);
+      for (dimsize_t ii=0; ii<v_distDims_size; ii++) {
+        v_minIndex[ii] = 1;
+      }
     }
-  }
-  InterArray<ESMC_I4> minIndex(v_minIndex);
+    InterArray<ESMC_I4> minIndex(v_minIndex);
 
-  // Create maxIndex ==========================================================
+    // Create maxIndex ========================================================
 
-  if (v_maxIndex.size() == 0) {
-    v_maxIndex.resize(v_distDims_size);
-    for (dimsize_t ii=0; ii<v_distDims_size; ii++) {
-      try {
+    if (v_maxIndex.size() == 0) {
+      v_maxIndex.resize(v_distDims_size);
+      for (dimsize_t ii=0; ii<v_distDims_size; ii++) {
         v_maxIndex[ii] = this->storage.at(K_DIMS).at(v_distDims[ii]).at(K_SIZE);
       }
-      catch (json::out_of_range& e) {
-        ESMF_THROW_JSON(e, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);
-      }
-      catch (...) {
-        ESMF_CHECKERR_STD("ESMF_FAILURE", ESMF_FAILURE,
-          "Did not get max index", rc);
-      }
     }
+    InterArray<ESMC_I4> maxIndex(v_maxIndex);
+
+    // Defaults for unsupported parameters ====================================
+
+    auto regDecomp = nullptr;
+    auto decompflag = nullptr;
+    int decompflagCount = 0;
+    auto regDecompFirstExtra = nullptr;
+    auto regDecompLastExtra = nullptr;
+    auto deLabelList = nullptr;
+    auto indexflag = nullptr;
+    auto connectionList = nullptr;
+    auto delayout = nullptr;
+    auto vm = nullptr;
+    ESMC_TypeKind_Flag indexTK = ESMF_NOKIND; //tdk:TODO: is this okay?
+
+    // Create DistGrid ========================================================
+
+    DistGrid *ret = ESMCI::DistGrid::create(
+      &minIndex,
+      &maxIndex,
+      regDecomp,
+      decompflag,
+      decompflagCount,
+      regDecompFirstExtra,
+      regDecompLastExtra,
+      deLabelList,
+      indexflag,
+      connectionList,
+      delayout,
+      vm,
+      &rc,
+      indexTK);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+
+    return ret;
   }
-  InterArray<ESMC_I4> maxIndex(v_maxIndex);
-
-  // Defaults for unsupported parameters ======================================
-
-  auto regDecomp = nullptr;
-  auto decompflag = nullptr;
-  int decompflagCount = 0;
-  auto regDecompFirstExtra = nullptr;
-  auto regDecompLastExtra = nullptr;
-  auto deLabelList = nullptr;
-  auto indexflag = nullptr;
-  auto connectionList = nullptr;
-  auto delayout = nullptr;
-  auto vm = nullptr;
-  ESMC_TypeKind_Flag indexTK = ESMF_NOKIND; //tdk:TODO: is this okay?
-
-  // Create DistGrid ==========================================================
-
-  DistGrid *ret = ESMCI::DistGrid::create(
-    &minIndex,
-    &maxIndex,
-    regDecomp,
-    decompflag,
-    decompflagCount,
-    regDecompFirstExtra,
-    regDecompLastExtra,
-    deLabelList,
-    indexflag,
-    connectionList,
-    delayout,
-    vm,
-    &rc,
-    indexTK);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
-
-  return ret;
-
+  catch (json::out_of_range &e) {
+    ESMF_THROW_JSON(e, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);
+  }
+  catch (json::type_error &e) {
+    ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
+  }
+  catch (ESMCI::esmf_attrs_error &e) {
+    ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU, rc);
+    throw;
+  }
+  catch (...) {
+    ESMF_CHECKERR_STD("", rc, "Unhandled throw", rc);
+  }
 }
 
 #undef ESMC_METHOD
