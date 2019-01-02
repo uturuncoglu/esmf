@@ -205,6 +205,15 @@ vector<PIO_Offset> createPIOCompmap(const Array& arr, int& rc) {
 }
 
 #undef ESMC_METHOD
+#define ESMC_METHOD "doesFileExist()"
+bool doesFileExist(const string& filename) {
+  std::ifstream ifile(filename.c_str());
+  bool exists = (bool)ifile;
+  ifile.close();
+  return exists;
+}
+
+#undef ESMC_METHOD
 #define ESMC_METHOD "handlePIOReturnCode()"
 void handlePIOReturnCode(const int& pio_rc, const string& pio_msg, int& rc) {
   if (pio_rc != 0) {
@@ -606,7 +615,7 @@ void IOHandle::open(int& rc) {
     }
 
     int iotype = (int)(this->PIOArgs.value(PIOARG::IOTYPE, PIODEF::IOTYPE));
-    int mode = this->PIOArgs.value(PIOARG::MODE, PIODEF::MODE_READ);
+    int mode = this->PIOArgs.value(PIOARG::MODE, PIODEF::MODE_WRITE);
     tdklog("iohandle::open mode="+to_string(mode));
     tdklog("iohandle::open NC_NOWRITE="+to_string(NC_NOWRITE));
     tdklog("iohandle::open NC_WRITE="+to_string(NC_WRITE));
@@ -614,16 +623,33 @@ void IOHandle::open(int& rc) {
     int ncid;
     if (it_ncid == this->PIOArgs.end()) {
       int pio_rc;
-      std::ifstream ifile(filename.c_str());
-      bool exists = (bool)ifile;
-      ifile.close();
-      if (!exists) {
-        // Create the file if it doesn't exist
-        //tdk:TODO: add clobber option
-        pio_rc = PIOc_createfile(iosysid, &ncid, &iotype, filename.c_str(), mode);
+      bool exists = doesFileExist(filename);
+      bool clobber = this->ESMFArgs.value(ESMFARG::CLOBBER, ESMFDEF::CLOBBER);
+      bool should_create = false;
+      if (mode == PIODEF::MODE_WRITE) {
+        if (exists) {
+          if (clobber) {
+            should_create = true;
+          } else {
+            auto msg = "File exists and 'clobber=false': " + filename;
+            ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, msg, rc);
+          }
+        } else {
+          should_create = true;
+        }
       } else {
-        // Otherwise just open the file
-        pio_rc = PIOc_openfile(iosysid, &ncid, &iotype, filename.c_str(), mode);
+        if (!exists) {
+          auto msg = "File does not exist in read mode. Nothing to do!: "
+            + filename;
+          ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, msg, rc);
+        }
+      }
+      if (should_create) {
+        pio_rc = PIOc_createfile(iosysid, &ncid, &iotype, filename.c_str(),
+                                 mode);
+      } else {
+        pio_rc = PIOc_openfile(iosysid, &ncid, &iotype, filename.c_str(),
+                               mode);
       }
       handlePIOReturnCode(pio_rc, "Could not open filename: " + filename, rc);
       this->PIOArgs[PIOARG::NCID] = ncid;

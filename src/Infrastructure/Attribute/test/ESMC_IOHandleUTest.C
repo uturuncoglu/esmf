@@ -67,7 +67,7 @@ void testOpenClose(int& rc, char failMsg[]) {
 
   string filename = "test_pio_open.nc";
   ioh2.PIOArgs[PIOARG::FILENAME] = filename;
-  ioh2.PIOArgs[PIOARG::MODE] = NC_NOWRITE;
+  ioh2.PIOArgs[PIOARG::MODE] = NC_WRITE;
 
   ioh2.open(rc);
   ESMF_CHECKERR_STD("", rc, "Did not open", rc);
@@ -243,7 +243,7 @@ void testReadWrite1DArrayIsolated(int& rc, char failMsg[]) {
 
     // Write netCDF file ======================================================
 
-    const string filename = "test_pio_write_isolated_1d_array.nc";
+    const string filename = "test_pio_read_write_isolated_1d_array.nc";
     IOHandle ioh;
     ioh.PIOArgs[PIOARG::FILENAME] = filename;
     const vector<string> dimnames = {"the_longitude"};

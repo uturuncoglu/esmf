@@ -43,6 +43,10 @@ namespace ESMCI {
 
 enum ESMC_RWMode {ESMC_RWMODE_READ, ESMC_RWMODE_WRITE};
 
+namespace ESMFDEF {
+  bool CLOBBER = false;
+}
+
 namespace PIOARG {
   const string DIMIDS = "dimids";
   const string FILENAME = "filename";
@@ -69,6 +73,7 @@ class IOHandle {
 
 public:
   ESMCI::Metadata meta;
+  json ESMFArgs = json::object();
   json PIOArgs = json::object();
 
 private:

@@ -50,6 +50,7 @@ namespace ESMCI {
 typedef int dimsize_t;
 
 namespace ESMFARG {
+  const string CLOBBER = "clobber";
   const string DISTDIMS = "distDims";
   const string MININDEX = "minIndex";
   const string MAXINDEX = "maxIndex";
