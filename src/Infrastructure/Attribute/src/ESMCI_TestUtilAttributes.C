@@ -48,6 +48,7 @@ namespace ESMCI {
 #define ESMC_METHOD "createTestDistGrid()"
 DistGrid* createTestDistGrid(const Metadata& meta, int& rc) {
   json jsonParms = createTestDistDims();
+  std::cout << "JSON Parms for DistGrid = " << jsonParms.dump(2) << std::endl; //tdk:p
   DistGrid* dist_grid = meta.createDistGrid(jsonParms, rc);
   ESMF_CHECKERR_STD("", rc, "DistGrid creation failed", rc);
   return dist_grid;

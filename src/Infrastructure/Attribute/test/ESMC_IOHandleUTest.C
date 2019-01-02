@@ -312,10 +312,20 @@ void testReadWrite1DArrayIsolated(int& rc, char failMsg[]) {
 #define ESMC_METHOD "testWrite3DArray()"
 void testWrite3DArray(int& rc, char failMsg[]) {
   rc = ESMF_FAILURE;
-//  bool failed = true;
 
-  vector<string> dimnames = {"dim_realization", "dim_other", "dim_seven"};
+  ESMCI::VM *vm = ESMCI::VM::getCurrent(&rc);
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+  int localPet = vm->getLocalPet();
+  int petCount = vm->getPetCount();
 
+  //---------------------------------------------------------------------------
+
+  // Dimension names for ESMF Array
+  const vector<string> dimnames = {"dim_realization", "dim_other", "dim_seven"};
+  // Variable name in metadata used to create ESMF Array
+  const string varname = "simple_3D";
+
+  // All the distributed dimension combinations to test
   vector<vector<string>> poss_distdims;
   poss_distdims.push_back(vector<string>({"dim_realization"}));
   poss_distdims.push_back(vector<string>({"dim_other"}));
@@ -325,33 +335,34 @@ void testWrite3DArray(int& rc, char failMsg[]) {
   poss_distdims.push_back(vector<string>({"dim_realization", "dim_other"}));
   poss_distdims.push_back(vector<string>({"dim_realization", "dim_seven"}));
 
-  const string varname = "simple_3D";
-
-  ESMCI::VM *vm = ESMCI::VM::getCurrent(&rc);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
-
-  int localPet = vm->getLocalPet();
-  int petCount = vm->getPetCount();
-
   json root = createTestJSONMetadata(rc);
   Metadata meta(move(root));
 
   for (const auto& distdims : poss_distdims) {
+
+    // Create DistGrid ========================================================
+
     json dgparms;
     dgparms[ESMFARG::DISTDIMS] = distdims;
     DistGrid *distgrid = meta.createDistGrid(dgparms, rc);
     ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 
+    // JSON Parameters for Array creation =====================================
+
     json jsonParms;
     jsonParms[ESMFARG::DISTDIMS] = distdims;
     jsonParms[ESMFARG::VARIABLENAME] = varname;
 
-    ESMCI::Array *arr = meta.createArray(*distgrid, jsonParms, rc);
-    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
-//    arr->print(); //tdk:p
+    // Create Array to fill from file =========================================
 
     ESMCI::Array *arr2fill = meta.createArray(*distgrid, jsonParms, rc);
     ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+
+    // Create Array to write ==================================================
+
+    ESMCI::Array *arr = meta.createArray(*distgrid, jsonParms, rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+//    arr->print(); //tdk:p
 
     vector <dimsize_t> arrshp = getArrayShape(*arr, ESMC_INDEX_DELOCAL, rc);
 //  std::reverse(arrshp.begin(), arrshp.end());  // Reverse to Fortran order
@@ -368,21 +379,30 @@ void testWrite3DArray(int& rc, char failMsg[]) {
 
     // Confirm data values are not equal before read...just in case
     double *buffer2fill = reinterpret_cast<double *>(arr2fill->getLarrayBaseAddrList()[0]);
+    for (auto ii = 0; ii < arrsize; ii++) {
+      buffer2fill[ii] = std::numeric_limits<double>::max();
+    }
     for (auto ii = 0; ii < arrsize; ++ii) {
       if (buffer[ii] == buffer2fill[ii]) {
         return finalizeFailure(rc, failMsg, "Buffers should not be equal");
       }
     }
 
+    // Create IOHandle ========================================================
+
     IOHandle ioh;
     const string filename = "test_pio_write_3D_array.nc";
     ioh.PIOArgs[PIOARG::FILENAME] = filename;
     ioh.PIOArgs[PIOARG::CLOBBER] = true;
+
+    // Add the Array-to-write to the output metadata
     ioh.meta.update(*arr, &dimnames, rc);
     ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
-
+    // Add a custom attribute to the metadata for the outgoing array
     json &smeta = ioh.meta.getStorageRefWritable();
     smeta.at(K_VARS).at(varname).at(K_ATTRS)["context"] = "testWrite3DArray";
+
+    // Do a full write operation ==============================================
 
     ioh.open(rc);
     ESMF_CHECKERR_STD("", rc, "Did not open file", rc);
@@ -402,12 +422,13 @@ void testWrite3DArray(int& rc, char failMsg[]) {
     ioh.finalize(rc);
     ESMF_CHECKERR_STD("", rc, "Did not finalize", rc);
 
-    //tdk:TEST: structure of PIOArgs
+    // Confirm the user-provided arguments are all that is left after finalizing
     if (ioh.PIOArgs.size() != 2) {
       return finalizeFailure(rc, failMsg, "Wrong PIOArgs size after write");
     }
 
-    // Read data back in and confirm it is equivalent.
+    // Read netCDF data back in ===============================================
+
     ioh.read(*arr2fill, rc);
     ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
     for (auto ii = 0; ii < arrsize; ++ii) {
@@ -420,16 +441,15 @@ void testWrite3DArray(int& rc, char failMsg[]) {
       return finalizeFailure(rc, failMsg, "Wrong PIOArgs size after read");
     }
 
+    // Clean-Up ===============================================================
+
     rc = ESMCI::Array::destroy(&arr);
     rc = ESMCI::Array::destroy(&arr2fill);
     rc = ESMCI::DistGrid::destroy(&distgrid);
     ESMF_CHECKERR_STD("", rc, "Problem when destroying objects", rc);
 
-    //tdk:UNCOMMENT
-//    if (localPet == 0 && remove(filename.c_str()) != 0) {
-//      return finalizeFailure(rc, failMsg, "Test file not removed");
-//    }
   }
+
 
   rc = ESMF_SUCCESS;
   return;
@@ -439,7 +459,6 @@ void testWrite3DArray(int& rc, char failMsg[]) {
 #define ESMC_METHOD "testWriteUnlimDimArray()"
 void testWriteUnlimDimArray(int& rc, char failMsg[]) {
   rc = ESMF_FAILURE;
-//  bool failed = true
 
   const string filename = "test_pio_unlim_dim_array.nc";
   const string varname = "foo";
@@ -447,7 +466,6 @@ void testWriteUnlimDimArray(int& rc, char failMsg[]) {
 
   ESMCI::VM *vm = ESMCI::VM::getCurrent(&rc);
   ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
-
   int localPet = vm->getLocalPet();
   int petCount = vm->getPetCount();
 
@@ -460,48 +478,50 @@ void testWriteUnlimDimArray(int& rc, char failMsg[]) {
   // size if we were reading the data from netCDF.
   meta.getStorageRefWritable().at(K_DIMS).at("dim_time").at(K_SIZE) = 0;
 
+  // Create DistGrid ==========================================================
+
   json dgparms;
   dgparms[ESMFARG::DISTDIMS] = distdims;
   DistGrid *distgrid = meta.createDistGrid(dgparms, rc);
   ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 
+  // Create Array =============================================================
+
   json arrParms;
   arrParms[ESMFARG::DISTDIMS] = distdims;
   arrParms[ESMFARG::VARIABLENAME] = varname;
-
   //tdk:TODO: add option to always create for unlimited
   ESMCI::Array *arr = meta.createArray(*distgrid, arrParms, rc);
   ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 //  arr->print(); //tdk:p
+
+  // Fill Array with some data ================================================
 
   vector <dimsize_t> arrshp = getArrayShape(*arr, ESMC_INDEX_DELOCAL, rc);
 //  std::reverse(arrshp.begin(), arrshp.end());  // Reverse to Fortran order
   tdklog("testWriteUnlimDimArray arrshp", arrshp);
   ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 
-  //tdk:TEST: fill with some meaningful values
   void **larrayBaseAddrList = arr->getLarrayBaseAddrList();
   double *buffer = reinterpret_cast<double *>(larrayBaseAddrList[0]);
-
-  int nelements = 1;
-  for (const auto& s : arrshp) {nelements *= s;}
-
-  for (auto ii = 0; ii < nelements; ii++) {
+  for (auto ii = 0; ii < sizeFromShape(arrshp); ii++) {
     buffer[ii] = 1000 * (localPet + 1) + ii + 0.5;
   }
+
+  // Create IOHandle ==========================================================
 
   IOHandle ioh;
   ioh.PIOArgs[PIOARG::FILENAME] = filename;
   vector<string> dimnames = meta.getStorageRef().at(K_VARS).at(varname).at(K_DIMS);
   dimnames.erase(dimnames.begin());
   assert(!isIn("dim_time", dimnames));
-
+  // Add Array-to-write to the metadata
   ioh.meta.update(*arr, &dimnames, rc);
   ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 
+  // Add an arbitrary attribute to the output array
   json &smeta = ioh.meta.getStorageRefWritable();
   smeta.at(K_VARS).at(varname).at(K_ATTRS)["context"] = "testWriteUnlimitedDim";
-
   //tdk:TODO: need to configure unlimited dimensions during update call
   smeta.at(K_DIMS)["dim_time"] = createJSONPackage("ESMF:Metadata:Dimension", rc);
   ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
@@ -512,6 +532,8 @@ void testWriteUnlimDimArray(int& rc, char failMsg[]) {
   dims.insert(dims.begin(), "dim_time");
   smeta.at(K_VARS).at(varname).at(K_DIMS) = dims;
   assert(smeta.at(K_VARS).at(varname).at(K_DIMS)[0] == "dim_time");
+
+  // Run the full IOHandle write system =======================================
 
   ioh.open(rc);
   ESMF_CHECKERR_STD("", rc, "Did not open file", rc);
@@ -529,6 +551,8 @@ void testWriteUnlimDimArray(int& rc, char failMsg[]) {
   ioh.enddef(rc);
   ESMF_CHECKERR_STD("", rc, "Did not enddef", rc);
 
+  // Run the unlimited time write loop ========================================
+
   for (auto ii=0; ii<20; ii++) {
     ioh.PIOArgs[PIOARG::FRAMES][varname] = ii;
     ioh.write(*arr, rc);
@@ -542,6 +566,8 @@ void testWriteUnlimDimArray(int& rc, char failMsg[]) {
   ESMF_CHECKERR_STD("", rc, "Did not finalize", rc);
 
   //tdk:TEST: structure of PIOArgs
+
+  // Clean-Up =================================================================
 
   rc = ESMCI::Array::destroy(&arr);
   rc = ESMCI::DistGrid::destroy(&distgrid);

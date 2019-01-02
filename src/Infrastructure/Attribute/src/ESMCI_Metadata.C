@@ -599,22 +599,25 @@ ArrayBundle* Metadata::createArrayBundle(DistGrid& distgrid, vector<Array*>& arr
 #undef ESMC_METHOD
 #define ESMC_METHOD "Metadata::createDistGrid()"
 DistGrid* Metadata::createDistGrid(const json& jsonParms, int& rc) const {
-  // Notes:
-  //   * DistGrid dimension names must be in the DistGrid dimension creation order
-  //   * DISTDIMS uses F-order
   //tdk:TODO: standard try/catch
+
+  // Check for unsupported parameters =========================================
+
   vector<string> unsupported = {"regDecomp", "decompflag", "decompflagCount",
     "regDecompFirstExtra", "regDecompLastExtra", "deLabelList", "indexflag",
     "connectionList", "delayout", "vm", "indexTK"};
   handleUnsupported(jsonParms, unsupported, rc);
 
+  // Get argument defaults ====================================================
+
   vector<string> v_distDims = jsonParms.value(ESMFARG::DISTDIMS,
     json::array());
-
   vector<ESMC_I4> v_minIndex = jsonParms.value(ESMFARG::MININDEX,
     json::array());
   vector<ESMC_I4> v_maxIndex = jsonParms.value(ESMFARG::MAXINDEX,
     json::array());
+
+  // Create minIndex ==========================================================
 
   size_t v_distDims_size = v_distDims.size();
   if (v_minIndex.size() == 0) {
@@ -624,6 +627,8 @@ DistGrid* Metadata::createDistGrid(const json& jsonParms, int& rc) const {
     }
   }
   InterArray<ESMC_I4> minIndex(v_minIndex);
+
+  // Create maxIndex ==========================================================
 
   if (v_maxIndex.size() == 0) {
     v_maxIndex.resize(v_distDims_size);
@@ -642,6 +647,8 @@ DistGrid* Metadata::createDistGrid(const json& jsonParms, int& rc) const {
   }
   InterArray<ESMC_I4> maxIndex(v_maxIndex);
 
+  // Defaults for unsupported parameters ======================================
+
   auto regDecomp = nullptr;
   auto decompflag = nullptr;
   int decompflagCount = 0;
@@ -652,7 +659,9 @@ DistGrid* Metadata::createDistGrid(const json& jsonParms, int& rc) const {
   auto connectionList = nullptr;
   auto delayout = nullptr;
   auto vm = nullptr;
-  ESMC_TypeKind_Flag indexTK = ESMF_NOKIND; //tdk:?: is this okay?
+  ESMC_TypeKind_Flag indexTK = ESMF_NOKIND; //tdk:TODO: is this okay?
+
+  // Create DistGrid ==========================================================
 
   DistGrid *ret = ESMCI::DistGrid::create(
     &minIndex,
@@ -669,9 +678,7 @@ DistGrid* Metadata::createDistGrid(const json& jsonParms, int& rc) const {
     vm,
     &rc,
     indexTK);
-  ESMF_CHECKERR_STD("", rc, "Did not create DistGrid", rc);
-
-//  ret->print(); //tdk:p
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 
   return ret;
 

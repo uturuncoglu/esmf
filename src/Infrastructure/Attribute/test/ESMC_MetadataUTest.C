@@ -61,17 +61,18 @@ void testCreateArray(int& rc, char failMsg[]) {
 
   json jsonParms = createTestDistDims();
   jsonParms[ESMFARG::VARIABLENAME] = "foo";
-
+  std::cout << "JSON Parms for Array = " << jsonParms.dump(2) << std::endl; //tdk:p
   ESMCI::Array* arr = meta.createArray(*distgrid, jsonParms, rc);
   ESMF_CHECKERR_STD("", rc, "Array creation failed", rc);
 
+  // Test Array rank
   const json& smeta = meta.getStorageRef();
   int rank_desired = smeta[K_VARS]["foo"][K_DIMS].size();
   int rank_actual = arr->getRank();
   if (rank_desired != rank_actual) {
     return finalizeFailure(rc, failMsg, "Array is wrong rank");
   }
-
+  // Test Array name
   string name_actual(arr->getName());
   if (name_actual != "foo") {
     return finalizeFailure(rc, failMsg, "Array has the wrong name");
@@ -110,9 +111,8 @@ void testCreateArray(int& rc, char failMsg[]) {
 void testCreateDistGrid(int& rc, char failMsg[]) {
   rc = ESMF_FAILURE;
 
-//  cout << root.dump(2) << endl; //tdk:p
-
   json root = createTestJSONMetadata(rc);
+  std::cout << "JSON Test Metadata = " << root.dump(2) << std::endl; //tdk:p
   Metadata meta(move(root));
 
   // Test creating with distributed dimension names ===========================

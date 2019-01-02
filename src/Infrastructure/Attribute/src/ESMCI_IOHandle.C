@@ -162,7 +162,6 @@ vector<PIO_Offset> createPIOCompmap(const vector<vector<dimsize_t>>& globalBound
     // Check if global index is in the decomposed portion of the global bounds
     // defined by the local bounds.
     if (allb(contains)) {
-//      lprint("gidx="+std::to_string(gidx));
       compmap.push_back(gidx);
     }
 
@@ -216,6 +215,7 @@ bool doesFileExist(const string& filename) {
 #undef ESMC_METHOD
 #define ESMC_METHOD "handlePIOReturnCode()"
 void handlePIOReturnCode(const int& pio_rc, const string& pio_msg, int& rc) {
+  //tdk:TODO: can we avoid having PIO abort on error?
   if (pio_rc != 0) {
     string msg = "PIO Error Code: " + to_string(pio_rc) + " - " + pio_msg;
     ESMF_CHECKERR_STD("ESMC_RC_NETCDF_ERROR", ESMC_RC_NETCDF_ERROR, msg, rc);
