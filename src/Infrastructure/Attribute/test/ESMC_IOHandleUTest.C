@@ -264,7 +264,7 @@ void testReadWrite1DArrayIsolated(int& rc, char failMsg[]) {
 
     // Fill the array that is identical to the write array ====================
 
-    std::cout << ioh.PIOArgs.dump() << std::endl;  //tdk:p
+//    std::cout << ioh.PIOArgs.dump() << std::endl;  //tdk:p
     ioh.read(*arr2fill, rc);
     ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 
@@ -377,6 +377,7 @@ void testWrite3DArray(int& rc, char failMsg[]) {
     IOHandle ioh;
     const string filename = "test_pio_write_3D_array.nc";
     ioh.PIOArgs[PIOARG::FILENAME] = filename;
+    ioh.PIOArgs[PIOARG::CLOBBER] = true;
     ioh.meta.update(*arr, &dimnames, rc);
     ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 
@@ -402,6 +403,9 @@ void testWrite3DArray(int& rc, char failMsg[]) {
     ESMF_CHECKERR_STD("", rc, "Did not finalize", rc);
 
     //tdk:TEST: structure of PIOArgs
+    if (ioh.PIOArgs.size() != 2) {
+      return finalizeFailure(rc, failMsg, "Wrong PIOArgs size after write");
+    }
 
     // Read data back in and confirm it is equivalent.
     ioh.read(*arr2fill, rc);
@@ -412,15 +416,19 @@ void testWrite3DArray(int& rc, char failMsg[]) {
       }
     }
 
+    if (ioh.PIOArgs.size() != 2) {
+      return finalizeFailure(rc, failMsg, "Wrong PIOArgs size after read");
+    }
+
     rc = ESMCI::Array::destroy(&arr);
     rc = ESMCI::Array::destroy(&arr2fill);
     rc = ESMCI::DistGrid::destroy(&distgrid);
     ESMF_CHECKERR_STD("", rc, "Problem when destroying objects", rc);
 
     //tdk:UNCOMMENT
-    if (localPet == 0 && remove(filename.c_str()) != 0) {
-      return finalizeFailure(rc, failMsg, "Test file not removed");
-    }
+//    if (localPet == 0 && remove(filename.c_str()) != 0) {
+//      return finalizeFailure(rc, failMsg, "Test file not removed");
+//    }
   }
 
   rc = ESMF_SUCCESS;

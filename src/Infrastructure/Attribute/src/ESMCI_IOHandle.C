@@ -621,10 +621,19 @@ void IOHandle::open(int& rc) {
     tdklog("iohandle::open NC_WRITE="+to_string(NC_WRITE));
     auto it_ncid = this->PIOArgs.find(PIOARG::NCID);
     int ncid;
+
+    // Avoid any race conditions by blocking
+    ESMCI::VM *vm = ESMCI::VM::getCurrent(&rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+    rc = vm->barrier();
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+    // Check if file exists on the file system. This does not check if the
+    // location is valid.
+    bool exists = doesFileExist(filename);
+
     if (it_ncid == this->PIOArgs.end()) {
       int pio_rc;
-      bool exists = doesFileExist(filename);
-      bool clobber = this->ESMFArgs.value(ESMFARG::CLOBBER, ESMFDEF::CLOBBER);
+      bool clobber = this->PIOArgs.value(PIOARG::CLOBBER, PIODEF::CLOBBER);
       bool should_create = false;
       if (mode == PIODEF::MODE_WRITE) {
         if (exists) {

@@ -43,11 +43,8 @@ namespace ESMCI {
 
 enum ESMC_RWMode {ESMC_RWMODE_READ, ESMC_RWMODE_WRITE};
 
-namespace ESMFDEF {
-  bool CLOBBER = false;
-}
-
 namespace PIOARG {
+  const string CLOBBER = "clobber";
   const string DIMIDS = "dimids";
   const string FILENAME = "filename";
   const string FRAMES = "frames";
@@ -61,6 +58,7 @@ namespace PIOARG {
 }
 
 namespace PIODEF {
+  const bool CLOBBER = false;
   const int IOTYPE = PIO_IOTYPE_NETCDF;
   const int MODE_READ = NC_NOWRITE;
   const int MODE_WRITE = NC_WRITE;
@@ -73,7 +71,6 @@ class IOHandle {
 
 public:
   ESMCI::Metadata meta;
-  json ESMFArgs = json::object();
   json PIOArgs = json::object();
 
 private:

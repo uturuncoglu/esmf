@@ -55,6 +55,7 @@ namespace ESMCI {
 //tdk:REMOVE
 void tdklog(const string& msg) {
   string localmsg = "tdk: " + msg;
+//  std::cout << msg << std::endl; //tdk:p: THIS IS INSIDE tdklog
   ESMC_LogWrite(localmsg.c_str(), ESMC_LOGMSG_INFO);
 }
 
