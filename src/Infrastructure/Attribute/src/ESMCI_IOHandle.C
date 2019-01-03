@@ -615,21 +615,23 @@ void IOHandle::open(int& rc) {
     auto it_ncid = this->PIOArgs.find(PIOARG::NCID);
     int ncid;
 
-    // Avoid any race conditions by blocking
     ESMCI::VM *vm = ESMCI::VM::getCurrent(&rc);
     ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
-    rc = vm->barrier();
-    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+    int localPet = vm->getLocalPet();
     // Check if file exists on the file system. This does not check if the
     // location is valid.
-    bool exists = doesFileExist(filename);
+    int exists[1] = {0};
+    if (localPet == 0) {
+      exists[0] = doesFileExist(filename);
+    }
+    rc = vm->broadcast((void*)exists, 1, 0);
 
     if (it_ncid == this->PIOArgs.end()) {
       int pio_rc;
       bool clobber = this->PIOArgs.value(PIOARG::CLOBBER, PIODEF::CLOBBER);
       bool should_create = false;
       if (mode == PIODEF::MODE_WRITE) {
-        if (exists) {
+        if (exists[0] == 1) {
           if (clobber) {
             should_create = true;
           } else {
@@ -640,7 +642,7 @@ void IOHandle::open(int& rc) {
           should_create = true;
         }
       } else {
-        if (!exists) {
+        if (exists[0] == 0) {
           auto msg = "File does not exist in read mode. Nothing to do!: "
             + filename;
           ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, msg, rc);
