@@ -549,10 +549,9 @@ Array* Metadata::createArray(DistGrid& distgrid, const json& jsonParms,
   }
   catch (ESMCI::esmf_attrs_error &e) {
     ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU, rc);
-    throw;
   }
   catch (...) {
-    ESMF_CHECKERR_STD("", rc, "Unhandled throw", rc);
+    ESMF_CHECKERR_STD("", ESMF_FAILURE, "Unhandled throw", rc);
   }
 }
 
@@ -603,10 +602,9 @@ ArrayBundle* Metadata::createArrayBundle(DistGrid& distgrid, vector<Array*>& arr
   }
   catch (ESMCI::esmf_attrs_error &e) {
     ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU, rc);
-    throw;
   }
   catch (...) {
-    ESMF_CHECKERR_STD("", rc, "Unhandled throw", rc);
+    ESMF_CHECKERR_STD("", ESMF_FAILURE, "Unhandled throw", rc);
   }
 }
 
@@ -694,10 +692,9 @@ DistGrid* Metadata::createDistGrid(const json& jsonParms, int& rc) const {
   }
   catch (ESMCI::esmf_attrs_error &e) {
     ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU, rc);
-    throw;
   }
   catch (...) {
-    ESMF_CHECKERR_STD("", rc, "Unhandled throw", rc);
+    ESMF_CHECKERR_STD("", ESMF_FAILURE, "Unhandled throw", rc);
   }
 }
 
@@ -731,20 +728,70 @@ dimsize_t Metadata::getDimensionSize(const string& name, int& rc) const {
 }
 
 #undef ESMC_METHOD
+#define ESMC_METHOD "getOrCreateDimension()"
+json& Metadata::getOrCreateDimension(const string& name, int& rc) {
+  try {
+    json& ret = this->getOrCreateNamedPackage("ESMF:Metadata:Dimension", K_DIMS,
+      name, rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+    return ret;
+  }
+  catch (esmf_attrs_error& e) {
+    ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU, rc);
+  }
+  catch (...) {
+    ESMF_CHECKERR_STD("", ESMF_FAILURE, ESMCI_ERR_PASSTHRU, rc);
+  }
+}
+
+#undef ESMC_METHOD
+#define ESMC_METHOD "getOrCreateNamedPackage()"
+json& Metadata::getOrCreateNamedPackage(const string& pkgKey, const string& metaKey,
+  const string& name, int& rc) {
+  try {
+    rc = ESMF_FAILURE;
+
+    json& jpkg = this->storage[metaKey];
+    auto it = jpkg.find(name);
+    if (it == jpkg.end()) {
+      jpkg[name] = createJSONPackage(pkgKey, rc);
+      ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+      jpkg[name][ESMCI::MKEY::K_NAME] = name;
+    }
+    json& ret = jpkg[name];
+
+    rc = ESMF_SUCCESS;
+    return ret;
+  }
+  catch (json::out_of_range &e) {
+    ESMF_THROW_JSON(e, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);
+  }
+  catch (json::type_error &e) {
+    ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
+  }
+  catch (ESMCI::esmf_attrs_error &e) {
+    ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU, rc);
+  }
+  catch (...) {
+    ESMF_CHECKERR_STD("", ESMF_FAILURE, "Unhandled throw", rc);
+  }
+}
+
+#undef ESMC_METHOD
 #define ESMC_METHOD "getOrCreateVariable()"
 json& Metadata::getOrCreateVariable(const string& name, int& rc) {
-  rc = ESMF_FAILURE;
-
-  json& vars_meta = this->storage[K_VARS];
-  auto it = vars_meta.find(name);
-  if (it == vars_meta.end()) {
-    vars_meta[name] = createJSONPackage("ESMF:Metadata:Variable", rc);
-    ESMF_CHECKERR_STD("", rc, "Did not create variable package", rc);
+  try {
+    json& ret = this->getOrCreateNamedPackage("ESMF:Metadata:Variable", K_VARS,
+      name, rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+    return ret;
   }
-  json& ret = vars_meta[name];
-
-  rc = ESMF_SUCCESS;
-  return ret;
+  catch (esmf_attrs_error& e) {
+    ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU, rc);
+  }
+  catch (...) {
+    ESMF_CHECKERR_STD("", ESMF_FAILURE, ESMCI_ERR_PASSTHRU, rc);
+  }
 }
 
 #undef ESMC_METHOD

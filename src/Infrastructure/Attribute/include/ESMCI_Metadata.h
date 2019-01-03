@@ -90,6 +90,8 @@ using Attributes::Attributes; // Required to inherit constructors
 
 private:
   virtual void init(void);
+  json& getOrCreateNamedPackage(const string& pkgKey, const string& metaKey,
+                                const string& name, int& rc);
 
 public:
   // Since other constructors are inherited and this is the only
@@ -105,6 +107,7 @@ public:
   DistGrid* createDistGrid(const json& jsonParms, int& rc) const;
   json getDimensionSizes(int& rc) const;
   dimsize_t getDimensionSize(const string& name, int& rc) const;
+  json& getOrCreateDimension(const string& name, int& rc);
   json& getOrCreateVariable(const string& name, int& rc);
   vector<dimsize_t> getVariableShape(const string& name, int& rc) const;
   bool hasVariable(const string& name) const;

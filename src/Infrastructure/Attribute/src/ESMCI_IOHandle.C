@@ -102,7 +102,7 @@ namespace ESMCI {
 //    return ret;
 //  }
 //  catch (ESMCI::esmf_attrs_error) { throw; }
-//  catch (...) { ESMF_CHECKERR_STD("", rc, "Unhandled throw", rc); }
+//  catch (...) { ESMF_CHECKERR_STD("", ESMF_FAILURE, "Unhandled throw", rc); }
 //}
 
 #undef ESMC_METHOD
@@ -200,7 +200,7 @@ vector<PIO_Offset> createPIOCompmap(const Array& arr, int& rc) {
     return compmap;
   }
   catch (ESMCI::esmf_attrs_error) { throw; }
-  catch (...) { ESMF_CHECKERR_STD("", rc, "Unhandled throw", rc); }
+  catch (...) { ESMF_CHECKERR_STD("", ESMF_FAILURE, "Unhandled throw", rc); }
 }
 
 #undef ESMC_METHOD
@@ -261,10 +261,9 @@ void writePIOAttributes(const json& attrs, int ncid, int varid, int& rc) {
   }
   catch (ESMCI::esmf_attrs_error &e) {
     ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU, rc);
-    throw;
   }
   catch (...) {
-    ESMF_CHECKERR_STD("", rc, "Unhandled throw", rc);
+    ESMF_CHECKERR_STD("", ESMF_FAILURE, "Unhandled throw", rc);
   }
 }
 
@@ -314,10 +313,9 @@ void IOHandle::close(int& rc) {
   }
   catch (ESMCI::esmf_attrs_error &e) {
     ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU, rc);
-    throw;
   }
   catch (...) {
-    ESMF_CHECKERR_STD("", rc, "Unhandled throw", rc);
+    ESMF_CHECKERR_STD("", ESMF_FAILURE, "Unhandled throw", rc);
   }
 }
 
@@ -407,10 +405,9 @@ void IOHandle::dodef(int& rc) {
   }
   catch (ESMCI::esmf_attrs_error &e) {
     ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU, rc);
-    throw;
   }
   catch (...) {
-    ESMF_CHECKERR_STD("", rc, "Unhandled throw", rc);
+    ESMF_CHECKERR_STD("", ESMF_FAILURE, "Unhandled throw", rc);
   }
 }
 
@@ -432,10 +429,9 @@ void IOHandle::enddef(int& rc) {
   }
   catch (ESMCI::esmf_attrs_error &e) {
     ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU, rc);
-    throw;
   }
   catch (...) {
-    ESMF_CHECKERR_STD("", rc, "Unhandled throw", rc);
+    ESMF_CHECKERR_STD("", ESMF_FAILURE, "Unhandled throw", rc);
   }
 }
 
@@ -478,10 +474,9 @@ void IOHandle::finalize(int& rc) {
   }
   catch (ESMCI::esmf_attrs_error &e) {
     ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU, rc);
-    throw;
   }
   catch (...) {
-    ESMF_CHECKERR_STD("", rc, "Unhandled throw", rc);
+    ESMF_CHECKERR_STD("", ESMF_FAILURE, "Unhandled throw", rc);
   }
 }
 
@@ -525,10 +520,9 @@ int IOHandle::init(int& rc) {
   }
   catch (ESMCI::esmf_attrs_error &e) {
     ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU, rc);
-    throw;
   }
   catch (...) {
-    ESMF_CHECKERR_STD("", rc, "Unhandled throw", rc);
+    ESMF_CHECKERR_STD("", ESMF_FAILURE, "Unhandled throw", rc);
   }
 }
 
@@ -586,10 +580,9 @@ void IOHandle::initPIODecomp(const Array& arr, int& rc) {
   }
   catch (ESMCI::esmf_attrs_error &e) {
     ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU, rc);
-    throw;
   }
   catch (...) {
-    ESMF_CHECKERR_STD("", rc, "Unhandled throw", rc);
+    ESMF_CHECKERR_STD("", ESMF_FAILURE, "Unhandled throw", rc);
   }
 }
 
@@ -674,10 +667,9 @@ void IOHandle::open(int& rc) {
   }
   catch (ESMCI::esmf_attrs_error &e) {
     ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU, rc);
-    throw;
   }
   catch (...) {
-    ESMF_CHECKERR_STD("", rc, "Unhandled throw", rc);
+    ESMF_CHECKERR_STD("", ESMF_FAILURE, "Unhandled throw", rc);
   }
 }
 
@@ -859,10 +851,9 @@ void IOHandle::readOrWrite(ESMC_RWMode rwmode, const Array& arr, int& rc) {
   }
   catch (ESMCI::esmf_attrs_error& e) {
     ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU, rc);
-    throw;
   }
   catch (...) {
-    ESMF_CHECKERR_STD("", rc, "Unhandled throw", rc);
+    ESMF_CHECKERR_STD("", ESMF_FAILURE, "Unhandled throw", rc);
   }
 }
 
