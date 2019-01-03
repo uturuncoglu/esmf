@@ -588,13 +588,16 @@ void testWriteUnlimDimArray(int& rc, char failMsg[]) {
   //tdk:TODO: add option to always create for unlimited
   ESMCI::Array *arr = meta.createArray(*distgrid, arrParms, rc);
   ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+  const int desired_rank = meta.getStorageRef()[K_VARS][varname][K_DIMS].size();
+  if (arr->getRank() != (desired_rank - 1)) {
+    return finalizeFailure(rc, failMsg, "Wrong rank: 2!="+to_string(arr->getRank()));
+  }
 //  arr->print(); //tdk:p
 
   // Fill Array with some data ================================================
 
   vector <dimsize_t> arrshp = getArrayShape(*arr, ESMC_INDEX_DELOCAL, rc);
 //  std::reverse(arrshp.begin(), arrshp.end());  // Reverse to Fortran order
-  tdklog("testWriteUnlimDimArray arrshp", arrshp);
   ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 
   void **larrayBaseAddrList = arr->getLarrayBaseAddrList();
@@ -638,10 +641,7 @@ void testWriteUnlimDimArray(int& rc, char failMsg[]) {
   }
   catch (esmf_attrs_error& e) {
     ESMF_CHECKERR_STD("", e.getReturnCode(), "Did not define", rc);
-    throw;
   }
-
-  //tdk:TEST: zero-length on a PET (to many procs for values)
 
   ioh.enddef(rc);
   ESMF_CHECKERR_STD("", rc, "Did not enddef", rc);
