@@ -72,7 +72,7 @@ json createJSONPackage(const string& pkgKey, int& rc) {
     j[K_GROUPS] = json::object();
     j[K_URI] = json::value_t::null;  // Will be string or rename null
   } else if (pkgKey == "ESMF:Metadata:Variable") {
-    j[K_DTYPE] = json::value_t::null;  // Will be nc_type
+    j[K_NCTYPE] = json::value_t::null;  // Will be nc_type
     j[K_DIMS] = json::array();  // Will append string dimension names
     j[K_ATTRS] = json::object();
   } else {
@@ -395,10 +395,10 @@ void Metadata::update(const ESMCI::Array& arr, const vector<string>* dimnames,
   }
 
   var_meta[K_NAME] = name;
-  var_meta[K_DTYPE] = dtype;
+  var_meta[K_NCTYPE] = dtype;
 
   assert(!this->storage[K_VARS][name][K_NAME].is_null());
-  assert(!this->storage[K_VARS][name][K_DTYPE].is_null());
+  assert(!this->storage[K_VARS][name][K_NCTYPE].is_null());
 
   rc = ESMF_SUCCESS;
 }
@@ -454,7 +454,7 @@ Array* Metadata::createArray(DistGrid& distgrid, const json& jsonParms,
                                                 json::array());
     int rank = dim_names.size();
     // Convert the metadata data type to an ESMF TypeKind.
-    ESMC_TypeKind_Flag tk = getESMFTypeKind(var_meta[K_DTYPE], rc);
+    ESMC_TypeKind_Flag tk = getESMFTypeKind(var_meta[K_NCTYPE], rc);
     ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 
     ArraySpec arrayspec;

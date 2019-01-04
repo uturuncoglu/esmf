@@ -378,7 +378,7 @@ void IOHandle::dodef(int& rc) {
 
         }
 
-        nc_type xtype = it_var.value()[K_DTYPE];
+        nc_type xtype = it_var.value()[K_NCTYPE];
         pio_rc = PIOc_def_var(ncid, it_var.key().c_str(), xtype, ndims,
                               dimidsp, &varid);
         handlePIOReturnCode(pio_rc, "Could not define variable", rc);
@@ -540,7 +540,7 @@ void IOHandle::initPIODecomp(const Array& arr, int& rc) {
 
     // Get PIO type
     const int &pio_type = varmeta.at(
-      K_DTYPE).get_ref<const json::number_integer_t &>();
+      K_NCTYPE).get_ref<const json::number_integer_t &>();
     // Get the dimension count from the ESMF Array
     const int ndims = arr.getRank();
     // Use the global dimension length when creating the variable decomposition

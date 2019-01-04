@@ -326,7 +326,7 @@ void testReadWrite1DArrayZeroLength(int& rc, char failMsg[]) {
   json& smalls = meta.getOrCreateVariable("smalls", rc);
   ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
   smalls[K_DIMS].push_back("smalldim");
-  smalls[K_DTYPE] = NC_INT;
+  smalls[K_NCTYPE] = NC_INT;
 
   json jsonParms;
   jsonParms[ESMFARG::DISTDIMS] = {"smalldim"};
@@ -594,18 +594,6 @@ void testWriteUnlimDimArray(int& rc, char failMsg[]) {
   }
 //  arr->print(); //tdk:p
 
-  // Fill Array with some data ================================================
-
-  vector <dimsize_t> arrshp = getArrayShape(*arr, ESMC_INDEX_DELOCAL, rc);
-//  std::reverse(arrshp.begin(), arrshp.end());  // Reverse to Fortran order
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
-
-  void **larrayBaseAddrList = arr->getLarrayBaseAddrList();
-  double *buffer = reinterpret_cast<double *>(larrayBaseAddrList[0]);
-  for (auto ii = 0; ii < sizeFromShape(arrshp); ii++) {
-    buffer[ii] = 1000 * (localPet + 1) + ii + 0.5;
-  }
-
   // Create IOHandle ==========================================================
 
   IOHandle ioh;
@@ -648,7 +636,17 @@ void testWriteUnlimDimArray(int& rc, char failMsg[]) {
 
   // Run the unlimited time write loop ========================================
 
+  vector <dimsize_t> arrshp = getArrayShape(*arr, ESMC_INDEX_DELOCAL, rc);
+//  std::reverse(arrshp.begin(), arrshp.end());  // Reverse to Fortran order
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+  auto arrsize = sizeFromShape(arrshp);
+  void **larrayBaseAddrList = arr->getLarrayBaseAddrList();
+  double *buffer = reinterpret_cast<double *>(larrayBaseAddrList[0]);
   for (auto ii=0; ii<20; ii++) {
+    // Fill with time- and PET-varying data
+    for (auto jj=0; jj<arrsize; jj++) {
+      buffer[jj] = (1000 * (ii + 1)) + (100 * (localPet + 1)) + jj + 0.5;
+    }
     ioh.PIOArgs[PIOARG::FRAMES][varname] = ii;
     ioh.write(*arr, rc);
     ESMF_CHECKERR_STD("", rc, "Did not write array", rc);
@@ -748,40 +746,47 @@ int main(void) {
   //---------------------------------------------------------------------------
 
   //tdk:UNCOMMENT
-  //---------------------------------------------------------------------------
-  //NEX_UTest
-  strcpy(name, "Test opening and closing a netCDF file");
-  testOpenClose(rc, failMsg);
-  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
-  //---------------------------------------------------------------------------
+//  //---------------------------------------------------------------------------
+//  //NEX_UTest
+//  strcpy(name, "Test opening and closing a netCDF file");
+//  testOpenClose(rc, failMsg);
+//  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
+//  //---------------------------------------------------------------------------
+//
+//  //---------------------------------------------------------------------------
+//  //NEX_UTest
+//  strcpy(name, "Test writing a 1D array");
+//  testWrite1DArray(rc, failMsg);
+//  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
+//  //---------------------------------------------------------------------------
+//
+//  //---------------------------------------------------------------------------
+//  //NEX_UTest
+//  strcpy(name, "Test reading & writing a 1D array - isolated");
+//  testReadWrite1DArrayIsolated(rc, failMsg);
+//  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
+//  //---------------------------------------------------------------------------
 
-  //---------------------------------------------------------------------------
-  //NEX_UTest
-  strcpy(name, "Test writing a 1D array");
-  testWrite1DArray(rc, failMsg);
-  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
-  //---------------------------------------------------------------------------
-
-  //---------------------------------------------------------------------------
-  //NEX_UTest
-  strcpy(name, "Test reading & writing a 1D array - isolated");
-  testReadWrite1DArrayIsolated(rc, failMsg);
-  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
-  //---------------------------------------------------------------------------
-
-  //---------------------------------------------------------------------------
-  //NEX_UTest
-  strcpy(name, "Test writing a 3D array");
-  testWrite3DArray(rc, failMsg);
-  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
-  //---------------------------------------------------------------------------
-
+//  //---------------------------------------------------------------------------
+//  //NEX_UTest
+//  strcpy(name, "Test writing a 3D array");
+//  testWrite3DArray(rc, failMsg);
+//  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
+//  //---------------------------------------------------------------------------
+//
   //---------------------------------------------------------------------------
   //NEX_UTest
   strcpy(name, "Test writing an array w/ an unlimited dimension");
   testWriteUnlimDimArray(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //---------------------------------------------------------------------------
+//
+//  //---------------------------------------------------------------------------
+//  //NEX_UTest
+//  strcpy(name, "Test writing an array with some empty processes");
+//  testReadWrite1DArrayZeroLength(rc, failMsg);
+//  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
+//  //---------------------------------------------------------------------------
 
 //  //---------------------------------------------------------------------------
 //  //NEX_disabled_UTest
@@ -789,13 +794,6 @@ int main(void) {
 //  testWriteArrayBundle(rc, failMsg);
 //  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
 //  //---------------------------------------------------------------------------
-
-  //---------------------------------------------------------------------------
-  //NEX_UTest
-  strcpy(name, "Test writing an array with some empty processes");
-  testReadWrite1DArrayZeroLength(rc, failMsg);
-  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
-  //---------------------------------------------------------------------------
 
   //---------------------------------------------------------------------------
   ESMC_TestEnd(__FILE__, __LINE__, 0);

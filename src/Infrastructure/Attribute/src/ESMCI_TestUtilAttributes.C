@@ -94,11 +94,11 @@ json createTestJSONMetadata(int& rc) {
     ESMF_CHECKERR_STD("", rc, "Package creation failed", rc);
 
     root[K_VARS][name][K_NAME] = name;
-    root[K_VARS][name][K_DTYPE] = NC_DOUBLE;
+    root[K_VARS][name][K_NCTYPE] = NC_DOUBLE;
   }
 
   // Level has integer meters
-  root[K_VARS]["the_level"][K_DTYPE] = NC_INT;
+  root[K_VARS]["the_level"][K_NCTYPE] = NC_INT;
 
   // Add the "data" variable which holds the things we care about in a data file
   //tdk:FIX: need to deal with segfault with segfault when "dim_realization" is added

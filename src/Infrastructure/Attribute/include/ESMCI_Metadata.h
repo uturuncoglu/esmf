@@ -62,11 +62,11 @@ namespace MKEY {
   const string K_BNDS = "bounds";
   const string K_CALENDAR = "calendar";
   const string K_DIMS = "dims";
-  const string K_DTYPE = "dtype";
   const string K_GROUPS = "groups";
+  const string K_NAME = "name";
+  const string K_NCTYPE = "nctype";
   const string K_UNITS = "units";
   const string K_UNLIM = "is_unlimited";
-  const string K_NAME = "name";
   const string K_SIZE = "size";
   const string K_UID = "uid";
   const string K_URI = "uri";
