@@ -39,6 +39,9 @@ using namespace std;
 //EOP
 //-----------------------------------------------------------------------------
 
+//tdk:LAST: set to true and make sure no netcdf files are left
+const bool DELETE_NCFILES = false;  // Set to true to delete all test NC files
+
 #undef  ESMC_METHOD
 #define ESMC_METHOD "testOpenClose()"
 void testOpenClose(int& rc, char failMsg[]) {
@@ -65,7 +68,7 @@ void testOpenClose(int& rc, char failMsg[]) {
   Metadata meta(move(jmeta));
   ioh2.setMetadata(move(meta));
 
-  string filename = "test_pio_open.nc";
+  const string filename = "test_pio_open.nc";
   ioh2.PIOArgs[PIOARG::FILENAME] = filename;
   ioh2.PIOArgs[PIOARG::MODE] = NC_WRITE;
 
@@ -93,7 +96,7 @@ void testOpenClose(int& rc, char failMsg[]) {
   ESMF_CHECKERR_STD("", rc, "Did not get current VM", rc);
 
   int localPet = vm->getLocalPet();
-  if (localPet == 0 && remove(filename.c_str()) != 0) {
+  if (DELETE_NCFILES && localPet == 0 && (remove(filename.c_str()) != 0)) {
     return finalizeFailure(rc, failMsg, "Test file not removed");
   }
 
@@ -186,10 +189,9 @@ void testWrite1DArray(int& rc, char failMsg[]) {
   rc = ESMCI::DistGrid::destroy(&distgrid);
   ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 
-  //tdk:UNCOMM
-//  if (localPet == 0 && remove(filename.c_str()) != 0) {
-//    return finalizeFailure(rc, failMsg, "Test file not removed");
-//  }
+  if (DELETE_NCFILES && localPet == 0 && (remove(filename.c_str()) != 0)) {
+    return finalizeFailure(rc, failMsg, "Test file not removed");
+  }
 
   rc = ESMF_SUCCESS;
   return;
@@ -284,10 +286,9 @@ void testReadWrite1DArrayIsolated(int& rc, char failMsg[]) {
     rc = ESMCI::DistGrid::destroy(&distgrid);
     ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 
-    //tdk:UNCOMM
-//  if (localPet == 0 && remove(filename.c_str()) != 0) {
-//    return finalizeFailure(rc, failMsg, "Test file not removed");
-//  }
+    if (DELETE_NCFILES && localPet == 0 && (remove(filename.c_str()) != 0)) {
+      return finalizeFailure(rc, failMsg, "Test file not removed");
+    }
 
     rc = ESMF_SUCCESS;
     return;
@@ -398,6 +399,10 @@ void testReadWrite1DArrayZeroLength(int& rc, char failMsg[]) {
   rc = ESMCI::DistGrid::destroy(&distgrid);
   ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 
+  if (DELETE_NCFILES && localPet == 0 && (remove(filename.c_str()) != 0)) {
+    return finalizeFailure(rc, failMsg, "Test file not removed");
+  }
+
   rc = ESMF_SUCCESS;
 }
 
@@ -412,6 +417,8 @@ void testWrite3DArray(int& rc, char failMsg[]) {
   int petCount = vm->getPetCount();
 
   //---------------------------------------------------------------------------
+
+  const string filename = "test_pio_write_3D_array.nc";
 
   // Dimension names for ESMF Array
   const vector<string> dimnames = {"dim_realization", "dim_other", "dim_seven"};
@@ -459,7 +466,6 @@ void testWrite3DArray(int& rc, char failMsg[]) {
 
     vector <dimsize_t> arrshp = getArrayShape(*arr, ESMC_INDEX_DELOCAL, rc);
 //  std::reverse(arrshp.begin(), arrshp.end());  // Reverse to Fortran order
-    tdklog("testWrite3DArray arrshp", arrshp);
     ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 
     // Fill the buffer to write with some data
@@ -484,7 +490,6 @@ void testWrite3DArray(int& rc, char failMsg[]) {
     // Create IOHandle ========================================================
 
     IOHandle ioh;
-    const string filename = "test_pio_write_3D_array.nc";
     ioh.PIOArgs[PIOARG::FILENAME] = filename;
     ioh.PIOArgs[PIOARG::CLOBBER] = true;
 
@@ -542,9 +547,11 @@ void testWrite3DArray(int& rc, char failMsg[]) {
     rc = ESMCI::Array::destroy(&arr2fill);
     rc = ESMCI::DistGrid::destroy(&distgrid);
     ESMF_CHECKERR_STD("", rc, "Problem when destroying objects", rc);
-
   }
 
+  if (DELETE_NCFILES && localPet == 0 && (remove(filename.c_str()) != 0)) {
+    return finalizeFailure(rc, failMsg, "Test file not removed");
+  }
 
   rc = ESMF_SUCCESS;
   return;
@@ -666,10 +673,9 @@ void testWriteUnlimDimArray(int& rc, char failMsg[]) {
   rc = ESMCI::DistGrid::destroy(&distgrid);
   ESMF_CHECKERR_STD("", rc, "Problem when destroying objects", rc);
 
-  //tdk:UNCOMMENT
-//  if (localPet == 0 && remove(filename.c_str()) != 0) {
-//    return finalizeFailure(rc, failMsg, "Test file not removed");
-//  }
+  if (DELETE_NCFILES && localPet == 0 && (remove(filename.c_str()) != 0)) {
+    return finalizeFailure(rc, failMsg, "Test file not removed");
+  }
 
   rc = ESMF_SUCCESS;
   return;
@@ -746,48 +752,49 @@ int main(void) {
   //---------------------------------------------------------------------------
 
   //tdk:UNCOMMENT
-//  //---------------------------------------------------------------------------
-//  //NEX_UTest
-//  strcpy(name, "Test opening and closing a netCDF file");
-//  testOpenClose(rc, failMsg);
-//  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
-//  //---------------------------------------------------------------------------
-//
-//  //---------------------------------------------------------------------------
-//  //NEX_UTest
-//  strcpy(name, "Test writing a 1D array");
-//  testWrite1DArray(rc, failMsg);
-//  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
-//  //---------------------------------------------------------------------------
-//
-//  //---------------------------------------------------------------------------
-//  //NEX_UTest
-//  strcpy(name, "Test reading & writing a 1D array - isolated");
-//  testReadWrite1DArrayIsolated(rc, failMsg);
-//  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
-//  //---------------------------------------------------------------------------
+  //---------------------------------------------------------------------------
+  //NEX_UTest
+  strcpy(name, "Test opening and closing a netCDF file");
+  testOpenClose(rc, failMsg);
+  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
+  //---------------------------------------------------------------------------
 
-//  //---------------------------------------------------------------------------
-//  //NEX_UTest
-//  strcpy(name, "Test writing a 3D array");
-//  testWrite3DArray(rc, failMsg);
-//  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
-//  //---------------------------------------------------------------------------
-//
+  //---------------------------------------------------------------------------
+  //NEX_UTest
+  strcpy(name, "Test writing a 1D array");
+  testWrite1DArray(rc, failMsg);
+  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
+  //---------------------------------------------------------------------------
+
+  //---------------------------------------------------------------------------
+  //NEX_UTest
+  strcpy(name, "Test reading & writing a 1D array - isolated");
+  testReadWrite1DArrayIsolated(rc, failMsg);
+  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
+  //---------------------------------------------------------------------------
+
+  //---------------------------------------------------------------------------
+  //NEX_UTest
+  strcpy(name, "Test writing a 3D array");
+  testWrite3DArray(rc, failMsg);
+  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
+  //---------------------------------------------------------------------------
+
   //---------------------------------------------------------------------------
   //NEX_UTest
   strcpy(name, "Test writing an array w/ an unlimited dimension");
   testWriteUnlimDimArray(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //---------------------------------------------------------------------------
-//
-//  //---------------------------------------------------------------------------
-//  //NEX_UTest
-//  strcpy(name, "Test writing an array with some empty processes");
-//  testReadWrite1DArrayZeroLength(rc, failMsg);
-//  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
-//  //---------------------------------------------------------------------------
 
+  //---------------------------------------------------------------------------
+  //NEX_UTest
+  strcpy(name, "Test writing an array with some empty processes");
+  testReadWrite1DArrayZeroLength(rc, failMsg);
+  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
+  //---------------------------------------------------------------------------
+
+  //tdk:DISABLED
 //  //---------------------------------------------------------------------------
 //  //NEX_disabled_UTest
 //  strcpy(name, "Test writing an array bundle");
