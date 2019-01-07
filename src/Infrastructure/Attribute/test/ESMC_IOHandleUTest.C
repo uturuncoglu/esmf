@@ -42,6 +42,21 @@ using namespace std;
 //tdk:LAST: set to true and make sure no netcdf files are left
 const bool DELETE_NCFILES = false;  // Set to true to delete all test NC files
 
+#undef ESMC_METHOD
+#define ESMC_METHOD "testConstructDestruct()"
+void testConstructDestruct(int& rc, char failMsg[]) {
+  rc = ESMF_FAILURE;
+
+  IOHandle ioh;
+  ioh.PIOArgs["foo"] = "bar";
+  IOHandle ioh2;
+  if (ioh2.PIOArgs.size() != 0) {
+    return finalizeFailure(rc, failMsg, "PIOArgs should be empty");
+  }
+
+  rc = ESMF_SUCCESS;
+}
+
 #undef  ESMC_METHOD
 #define ESMC_METHOD "testOpenClose()"
 void testOpenClose(int& rc, char failMsg[]) {
@@ -736,6 +751,39 @@ void testWriteArrayBundle(int& rc, char failMsg[]) {
   return;
 }
 
+#undef ESMC_METHOD
+#define ESMC_METHOD "testReadMetadata()"
+void testReadMetadata(int& rc, char failMsg[]) {
+  rc = ESMF_FAILURE;
+
+  const string filename = "test_pio_read_metadata.nc";
+
+  IOHandle ioh_create;
+  json jmeta = createTestJSONMetadata(rc);
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+  Metadata meta(move(jmeta));  //tdk:TEST: add some size to the unlimited dimension
+  ioh_create.setMetadata(move(meta));
+  ioh_create.PIOArgs[PIOARG::FILENAME] = filename;
+  ioh_create.PIOArgs[PIOARG::MODE] = PIODEF::MODE_WRITE;
+  ioh_create.PIOArgs[PIOARG::CLOBBER] = true;  //tdk:TEST: remove when file is removed in test
+  ioh_create.open(rc);
+  ioh_create.dodef(rc);
+  ioh_create.enddef(rc);
+  ioh_create.finalize(rc);
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+
+  tdklog("testreadmetadata before call to readMetadata");
+
+  IOHandle ioh;
+  ioh.PIOArgs[PIOARG::FILENAME] = filename;
+  ioh.readMetadata(rc);
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+
+  //tdk:TEST: remove test file
+
+  rc = ESMF_SUCCESS;
+}
+
 //-----------------------------------------------------------------------------
 
 int main(void) {
@@ -752,6 +800,13 @@ int main(void) {
   //---------------------------------------------------------------------------
 
   //tdk:UNCOMMENT
+  //---------------------------------------------------------------------------
+  //NEX_UTest
+  strcpy(name, "Construct/Destruct");
+  testConstructDestruct(rc, failMsg);
+  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
+  //---------------------------------------------------------------------------
+
   //---------------------------------------------------------------------------
   //NEX_UTest
   strcpy(name, "Test opening and closing a netCDF file");
@@ -791,6 +846,13 @@ int main(void) {
   //NEX_UTest
   strcpy(name, "Test writing an array with some empty processes");
   testReadWrite1DArrayZeroLength(rc, failMsg);
+  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
+  //---------------------------------------------------------------------------
+
+  //---------------------------------------------------------------------------
+  //NEX_UTest
+  strcpy(name, "Reading Metadata from a netCDF file");
+  testReadMetadata(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //---------------------------------------------------------------------------
 

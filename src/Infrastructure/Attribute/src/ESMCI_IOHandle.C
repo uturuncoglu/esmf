@@ -609,6 +609,7 @@ void IOHandle::open(int& rc) {
 
     int iotype = (int)(this->PIOArgs.value(PIOARG::IOTYPE, PIODEF::IOTYPE));
     int mode = this->PIOArgs.value(PIOARG::MODE, PIODEF::MODE_WRITE);
+    tdklog("iohandle::open PIOArgs="+this->PIOArgs.dump());
     tdklog("iohandle::open mode="+to_string(mode));
     tdklog("iohandle::open NC_NOWRITE="+to_string(NC_NOWRITE));
     tdklog("iohandle::open NC_WRITE="+to_string(NC_WRITE));
@@ -683,6 +684,115 @@ void IOHandle::read(const Array& arr, int& rc) {
   }
   catch (...) {
     ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+  }
+}
+
+#undef ESMC_METHOD
+#define ESMC_METHOD "IOHandle::readMetadata()"
+void IOHandle::readMetadata(int& rc) {
+  try {
+    Metadata meta;
+    json& smeta = meta.getStorageRefWritable();
+
+    IOHandle ioh_local;
+    ioh_local.PIOArgs[PIOARG::MODE] = PIODEF::MODE_READ;
+    ioh_local.PIOArgs[PIOARG::FILENAME] = this->PIOArgs[PIOARG::FILENAME];
+    ioh_local.open(rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+    int ncid = ioh_local.PIOArgs.at(PIOARG::NCID);
+    smeta[K_URI] = this->PIOArgs.at(PIOARG::FILENAME);
+    int ndims, nvars, ngatts, unlimdimid;
+    int pio_rc = PIOc_inq(ncid, &ndims, &nvars, &ngatts, &unlimdimid);
+    handlePIOReturnCode(pio_rc, "Failed to inq", rc);
+    char name[NC_MAX_NAME+1];
+    PIO_Offset len;
+
+    // Extract Dimensions =====================================================
+
+    json dimid2name;
+    for (auto dimid=0; dimid<ndims; ++dimid) {
+      pio_rc = PIOc_inq_dim(ncid, dimid, name, &len);
+      handlePIOReturnCode(pio_rc, "Failed to inq_dim", rc);
+      const string sdimname(name);
+      json& dim_meta = meta.getOrCreateDimension(sdimname, rc);
+      ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+      if (dimid == unlimdimid) {
+        dim_meta[K_UNLIM] = true;
+      }
+      dim_meta[K_SIZE] = len;
+      dimid2name[dimid] = sdimname;
+    }
+
+    // Extract Variables ======================================================
+
+    nc_type xtype;
+    int dimids[NC_MAX_VAR_DIMS];
+    int natts;
+    for (auto varid=0; varid<nvars; ++varid) {
+      pio_rc = PIOc_inq_var(ncid, varid, name, &xtype, &ndims, dimids, &natts);
+      handlePIOReturnCode(pio_rc, "Failed to inq_dim", rc);
+      const string svarname(name);
+      json& var_meta = meta.getOrCreateVariable(svarname, rc);
+      ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+      var_meta[K_NCTYPE] = xtype;
+      //tdk:TODO: reserve the dimension name size before push_back
+      for (auto ii=0; ii<ndims; ++ii) {
+        var_meta[K_DIMS].push_back(dimid2name[dimids[ii]]);
+      }
+      //tdk:TODO: attribute extraction should occur in a function/method
+      for (auto attnum=0; attnum<natts; ++attnum) {
+        pio_rc = PIOc_inq_attname(ncid, varid, attnum, name);
+        handlePIOReturnCode(pio_rc, "Failed to get att name", rc);
+        pio_rc = PIOc_inq_att(ncid, varid, name, &xtype, &len);
+        const string sattname(name);
+        std::cout << "attname="<<sattname<<","<<xtype<<","<<len << std::endl;  //tdk:p
+
+        //tdk:TODO: support all nc_types or pass through on unsupported
+        switch (xtype) {
+          case NC_CHAR: {
+            char i[NC_MAX_CHAR];
+            pio_rc = PIOc_get_att_text(ncid, varid, name, i);
+            handlePIOReturnCode(pio_rc, "Did not get_att", rc);
+            var_meta[K_ATTRS][string(name)] = string(i, len);
+            break;
+          }
+          case NC_DOUBLE: {
+            double i;
+            pio_rc = PIOc_get_att_double(ncid, varid, name, &i);
+            handlePIOReturnCode(pio_rc, "Did not get_att", rc);
+            var_meta[K_ATTRS][string(name)] = i;
+            break;
+          }
+          case NC_INT: {
+            int i;
+            pio_rc = PIOc_get_att_int(ncid, varid, name, &i);
+            handlePIOReturnCode(pio_rc, "Did not get_att", rc);
+            var_meta[K_ATTRS][string(name)] = i;
+            break;
+          }
+          default: {
+            auto msg = "Attribute NC_TYPE not supported: " + to_string(xtype);
+            ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, msg, rc);
+          }
+        }
+
+
+
+
+//        if (xtype == NC_CHAR) {
+//          const string value(*ip);
+//        }
+      }
+    }
+
+    // Clean-Up ===============================================================
+
+    ioh_local.finalize(rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+    std::cout << "readmetadata meta.dump=" << meta.dump(2, rc) << std::endl;  //tdk:p
+  }
+  catch (...) {
+    ESMF_CHECKERR_STD("ESMF_FAILURE", ESMF_FAILURE, ESMCI_ERR_PASSTHRU, rc);
   }
 }
 
@@ -808,7 +918,6 @@ void IOHandle::readOrWrite(ESMC_RWMode rwmode, const Array& arr, int& rc) {
 
     switch (rwmode) {
       case ESMC_RWMODE_WRITE: {
-        tdklog("iohandle::readorwrite: in WRITE mode");
         void *fillvalue = nullptr;  //tdk:TODO: not handling fillvalue yet
         pio_rc = PIOc_write_darray(ncid, varid, ioid, maplen, buffer,
                                    fillvalue);
@@ -820,7 +929,6 @@ void IOHandle::readOrWrite(ESMC_RWMode rwmode, const Array& arr, int& rc) {
         break;
       }
       case ESMC_RWMODE_READ: {
-        tdklog("iohandle::readorwrite: in READ mode");
         pio_rc = PIOc_read_darray(ncid, varid, ioid, maplen, buffer);
         handlePIOReturnCode(pio_rc, "Did not read darray", rc);
         break;

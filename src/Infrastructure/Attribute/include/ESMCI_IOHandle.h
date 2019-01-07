@@ -82,7 +82,9 @@ private:
   void initPIODecomp(const Array& arr, int& rc);
 
 public:
+//  IOHandle(void);
   IOHandle(void) = default;  // Default constructor
+//  ~IOHandle(void);
   ~IOHandle(void) = default; // Default destructor
   IOHandle(IOHandle&&) = delete; // Move constructor
   IOHandle(const IOHandle&) = delete; // Copy constructor
@@ -91,6 +93,7 @@ public:
 
   ESMCI::Metadata &getMetadata() { return this->meta; }
   json& getPIOArgs() { return this->PIOArgs; }
+  void readMetadata(int& rc);
   //tdk:TODO: copy option for setMetadata
   void setMetadata(ESMCI::Metadata &&meta);
 
