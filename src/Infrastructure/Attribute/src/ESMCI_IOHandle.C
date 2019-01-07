@@ -216,9 +216,69 @@ bool doesFileExist(const string& filename) {
 #define ESMC_METHOD "handlePIOReturnCode()"
 void handlePIOReturnCode(const int& pio_rc, const string& pio_msg, int& rc) {
   //tdk:TODO: can we avoid having PIO abort on error?
+  //tdk:TODO: add line number to PIO error handling
   if (pio_rc != 0) {
     string msg = "PIO Error Code: " + to_string(pio_rc) + " - " + pio_msg;
     ESMF_CHECKERR_STD("ESMC_RC_NETCDF_ERROR", ESMC_RC_NETCDF_ERROR, msg, rc);
+  }
+}
+
+#undef ESMC_METHOD
+#define ESMC_METHOD "readPIOAttributes()"
+void readPIOAttributes(json& var_meta, int natts, int ncid, int varid, int &rc) {
+  try {
+    rc = ESMF_FAILURE;
+    char name[NC_MAX_CHAR];
+    int pio_rc;
+    nc_type xtype;
+    PIO_Offset len;
+    for (auto attnum=0; attnum<natts; ++attnum) {
+      pio_rc = PIOc_inq_attname(ncid, varid, attnum, name);
+      handlePIOReturnCode(pio_rc, "Failed to get att name", rc);
+      pio_rc = PIOc_inq_att(ncid, varid, name, &xtype, &len);
+      const string sattname(name);
+      //tdk:TODO: support all nc_types or pass through on unsupported
+      switch (xtype) {
+        case NC_CHAR: {
+          char i[NC_MAX_CHAR];
+          pio_rc = PIOc_get_att_text(ncid, varid, name, i);
+          handlePIOReturnCode(pio_rc, "Did not get_att", rc);
+          var_meta[K_ATTRS][string(name)] = string(i, len);
+          break;
+        }
+        case NC_DOUBLE: {
+          double i;
+          pio_rc = PIOc_get_att_double(ncid, varid, name, &i);
+          handlePIOReturnCode(pio_rc, "Did not get_att", rc);
+          var_meta[K_ATTRS][string(name)] = i;
+          break;
+        }
+        case NC_INT: {
+          int i;
+          pio_rc = PIOc_get_att_int(ncid, varid, name, &i);
+          handlePIOReturnCode(pio_rc, "Did not get_att", rc);
+          var_meta[K_ATTRS][string(name)] = i;
+          break;
+        }
+        default: {
+          auto msg = "Attribute NC_TYPE not supported: " + to_string(xtype);
+          ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, msg, rc);
+        }
+      }
+    }
+    rc = ESMF_SUCCESS;
+  }
+  catch (json::out_of_range &e) {
+    ESMF_THROW_JSON(e, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);
+  }
+  catch (json::type_error &e) {
+    ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
+  }
+  catch (ESMCI::esmf_attrs_error &e) {
+    ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU, rc);
+  }
+  catch (...) {
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
   }
 }
 
@@ -248,7 +308,6 @@ void writePIOAttributes(const json& attrs, int ncid, int varid, int& rc) {
         ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD,
                           "Attribute type not supported", rc);
       }
-      //tdk:TODO: add line number to PIO error handling
       handlePIOReturnCode(pio_rc, "Did not set attribute", rc);
     }
     rc = ESMF_SUCCESS;
@@ -354,8 +413,6 @@ void IOHandle::dodef(int& rc) {
             const auto it_dimid = dimids.find(dimname);
             if (it_dimid == dimids.end()) {
               dimsize_t dimsize;
-              //tdk:TODO: PIO only handles one unlimited dimension?
-              //tdk:TODO: PIO has to have unlimited dimension as the first dimension (last in Fortran)?
               if (this->meta.isUnlimited(dimname)) {
                 dimsize = NC_UNLIMITED;
               } else {
@@ -739,57 +796,27 @@ void IOHandle::readMetadata(int& rc) {
       for (auto ii=0; ii<ndims; ++ii) {
         var_meta[K_DIMS].push_back(dimid2name[dimids[ii]]);
       }
-      //tdk:TODO: attribute extraction should occur in a function/method
-      for (auto attnum=0; attnum<natts; ++attnum) {
-        pio_rc = PIOc_inq_attname(ncid, varid, attnum, name);
-        handlePIOReturnCode(pio_rc, "Failed to get att name", rc);
-        pio_rc = PIOc_inq_att(ncid, varid, name, &xtype, &len);
-        const string sattname(name);
-        std::cout << "attname="<<sattname<<","<<xtype<<","<<len << std::endl;  //tdk:p
-
-        //tdk:TODO: support all nc_types or pass through on unsupported
-        switch (xtype) {
-          case NC_CHAR: {
-            char i[NC_MAX_CHAR];
-            pio_rc = PIOc_get_att_text(ncid, varid, name, i);
-            handlePIOReturnCode(pio_rc, "Did not get_att", rc);
-            var_meta[K_ATTRS][string(name)] = string(i, len);
-            break;
-          }
-          case NC_DOUBLE: {
-            double i;
-            pio_rc = PIOc_get_att_double(ncid, varid, name, &i);
-            handlePIOReturnCode(pio_rc, "Did not get_att", rc);
-            var_meta[K_ATTRS][string(name)] = i;
-            break;
-          }
-          case NC_INT: {
-            int i;
-            pio_rc = PIOc_get_att_int(ncid, varid, name, &i);
-            handlePIOReturnCode(pio_rc, "Did not get_att", rc);
-            var_meta[K_ATTRS][string(name)] = i;
-            break;
-          }
-          default: {
-            auto msg = "Attribute NC_TYPE not supported: " + to_string(xtype);
-            ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, msg, rc);
-          }
-        }
-
-
-
-
-//        if (xtype == NC_CHAR) {
-//          const string value(*ip);
-//        }
-      }
+      readPIOAttributes(var_meta, natts, ncid, varid, rc);
+      ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
     }
+
+    // Global attributes ======================================================
+
+    pio_rc = PIOc_inq_natts(ncid, &natts);
+    handlePIOReturnCode(pio_rc, "Did not get global attribute count", rc);
+    if (natts > 0) {
+      readPIOAttributes(smeta, natts, ncid, NC_GLOBAL, rc);
+      ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+    }
+
+    // Assign the newly created metadata to the handle ========================
+
+    this->setMetadata(move(meta));
 
     // Clean-Up ===============================================================
 
     ioh_local.finalize(rc);
     ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
-    std::cout << "readmetadata meta.dump=" << meta.dump(2, rc) << std::endl;  //tdk:p
   }
   catch (...) {
     ESMF_CHECKERR_STD("ESMF_FAILURE", ESMF_FAILURE, ESMCI_ERR_PASSTHRU, rc);

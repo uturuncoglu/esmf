@@ -756,30 +756,56 @@ void testWriteArrayBundle(int& rc, char failMsg[]) {
 void testReadMetadata(int& rc, char failMsg[]) {
   rc = ESMF_FAILURE;
 
-  const string filename = "test_pio_read_metadata.nc";
+  try {
+    const string filename = "test_pio_read_metadata.nc";
 
-  IOHandle ioh_create;
-  json jmeta = createTestJSONMetadata(rc);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
-  Metadata meta(move(jmeta));  //tdk:TEST: add some size to the unlimited dimension
-  ioh_create.setMetadata(move(meta));
-  ioh_create.PIOArgs[PIOARG::FILENAME] = filename;
-  ioh_create.PIOArgs[PIOARG::MODE] = PIODEF::MODE_WRITE;
-  ioh_create.PIOArgs[PIOARG::CLOBBER] = true;  //tdk:TEST: remove when file is removed in test
-  ioh_create.open(rc);
-  ioh_create.dodef(rc);
-  ioh_create.enddef(rc);
-  ioh_create.finalize(rc);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+    IOHandle ioh_create;
+    json jmeta = createTestJSONMetadata(rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+    Metadata meta(move(jmeta));
+    ioh_create.setMetadata(move(meta));
+    ioh_create.PIOArgs[PIOARG::FILENAME] = filename;
+    ioh_create.PIOArgs[PIOARG::MODE] = PIODEF::MODE_WRITE;
+    ioh_create.open(rc);
+    ioh_create.dodef(rc);
+    ioh_create.enddef(rc);
+    ioh_create.finalize(rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 
-  tdklog("testreadmetadata before call to readMetadata");
+    IOHandle ioh;
+    ioh.PIOArgs[PIOARG::FILENAME] = filename;
+    ioh.readMetadata(rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 
-  IOHandle ioh;
-  ioh.PIOArgs[PIOARG::FILENAME] = filename;
-  ioh.readMetadata(rc);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+    // Exclude some items from comparison. There is no URI when we write. The
+    // unlimited dimension has zero size when writing and, hence, zero when
+    // reading.
+    ioh.meta.getStorageRefWritable()[K_URI] = json::value_t::null;
+    ioh_create.meta.getStorageRefWritable()[K_DIMS]["dim_time"][K_SIZE] = 0;
 
-  //tdk:TEST: remove test file
+    if (ioh_create.meta.getStorageRef() != ioh.meta.getStorageRef()) {
+      return finalizeFailure(rc, failMsg, "Metadata not equal after read");
+    }
+
+    ESMCI::VM *vm = ESMCI::VM::getCurrent(&rc);
+    ESMF_CHECKERR_STD("", rc, "Did not get current VM", rc);
+    int localPet = vm->getLocalPet();
+    if (DELETE_NCFILES && localPet == 0 && (remove(filename.c_str()) != 0)) {
+      return finalizeFailure(rc, failMsg, "Test file not removed");
+    }
+  }
+  catch (json::out_of_range &e) {
+    ESMF_THROW_JSON(e, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);
+  }
+  catch (json::type_error &e) {
+    ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
+  }
+  catch (ESMCI::esmf_attrs_error &e) {
+    ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU, rc);
+  }
+  catch (...) {
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+  }
 
   rc = ESMF_SUCCESS;
 }

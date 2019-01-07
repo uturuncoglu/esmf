@@ -59,7 +59,7 @@ namespace PIOARG {
 
 namespace PIODEF {
   const bool CLOBBER = false;
-  const int IOTYPE = PIO_IOTYPE_NETCDF;
+  const int IOTYPE = PIO_IOTYPE_NETCDF4P;
   const int MODE_READ = NC_NOWRITE;
   const int MODE_WRITE = NC_WRITE;
   const int REARRANGER = PIO_REARR_SUBSET;
