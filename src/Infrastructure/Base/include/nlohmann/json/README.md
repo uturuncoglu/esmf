@@ -7,7 +7,7 @@
 ## Updating to New Version
 
 1. Run the `git clone` command above in an external directory to get the appropriate release.
-2. Copy `./single_include/nlohmann/json.hpp` and `./LICENSE.MIT` into the ESMF directory `./src/Infrastructure/Attribute/include/nlohmann/json`.
+2. Copy `./single_include/nlohmann/json.hpp` and `./LICENSE.MIT` into the ESMF directory `./src/Infrastructure/Base/include/nlohmann/json`.
 3. Update the `Release` above.
 4. Update the `Change Log` below.
 
