@@ -129,6 +129,9 @@ program ESMF_AttributesProfileUTest
 
   ! Profile checking for attribute presence.
 
+  write(name, *) "ESMF_Attributes Presence Check Profile Test"
+  write(failMsg, *) "Failure during presence profile loop test"
+
   do ii=1, ntests
 
     call ESMF_TraceRegionEnter("JSON_Attributes::IsPresent False", rc=rc)
