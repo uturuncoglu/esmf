@@ -31,11 +31,14 @@
 #include "ESMCI_Mesh.h"
 #include "ESMCI_VM.h"
 #include "ESMCI_CoordSys.h"
+#include "ESMCI_TraceRegion.h"
+
 #include "Mesh/include/ESMCI_Mesh_Glue.h"
 #include "Mesh/include/ESMCI_Mesh_GToM_Glue.h"
 #include "Mesh/include/ESMCI_Mesh_Regrid_Glue.h"
 #include "Mesh/include/ESMCI_Mesh_XGrid_Glue.h"
 #include "Mesh/include/ESMCI_MBMesh.h"
+#include "Mesh/include/ESMCI_MBMesh_Dual.h"
 #include "Mesh/include/ESMCI_MBMesh_Glue.h"
 #include "Mesh/include/ESMCI_MBMesh_Regrid_Glue.h"
 #include "Mesh/include/ESMCI_MBMesh_Util.h"
@@ -708,6 +711,32 @@ void MeshCap::meshwrite(char *fname, int *rc,
   }
 }
 
+void MeshCap::meshwritewarrays(char *fname, ESMCI_FortranStrLenArg nlen,
+                               int num_nodeArrays, ESMCI::Array **nodeArrays,
+                               int num_elemArrays, ESMCI::Array **elemArrays,
+                               int *rc) {
+#undef ESMC_METHOD
+#define ESMC_METHOD "MeshCap::meshwritewarrays()"
+
+  printf("nna=%d\n",num_nodeArrays);
+
+
+  // Call into func. depending on mesh type
+  if (is_esmf_mesh) {
+    ESMCI_meshwritewarrays(&mesh,
+                           fname, nlen,
+                           num_nodeArrays, nodeArrays,
+                           num_elemArrays, elemArrays,
+                           rc);
+  } else {
+    ESMC_LogDefault.MsgFoundError(ESMC_RC_NOT_IMPL,
+          "- this functionality is not currently supported using MOAB",
+                                  ESMC_CONTEXT, rc);
+    return;
+  }
+}
+
+
 void MeshCap::meshaddelements(int *_num_elems, int *elemId, int *elemType, InterArray<int> *_elemMaskII ,
                               int *_areaPresent, double *elemArea,
                               int *_coordsPresent, double *elemCoords,
@@ -963,14 +992,23 @@ void MeshCap::meshfindpnt(int *unmappedaction, int *dimPnts, int *numPnts,
 
 }
 
-void MeshCap::getlocalcoords(double *nodeCoord, int *_orig_sdim, int *rc)
+void MeshCap::geteleminfointoarray(DistGrid *elemDistgrid,
+                                   int numElemArrays,
+                                   int *infoTypeElemArrays,
+                                   Array **elemArrays,
+                                   int *rc)
 {
 #undef ESMC_METHOD
-#define ESMC_METHOD "MeshCap::getlocalcoords()"
+#define ESMC_METHOD "MeshCap::geteleminfointoarray()"
 
   // Call into func. depending on mesh type
   if (is_esmf_mesh) {
-    ESMCI_getlocalcoords(&mesh, nodeCoord, _orig_sdim, rc);
+    ESMCI_geteleminfointoarray(mesh,
+                               elemDistgrid,
+                               numElemArrays,
+                               infoTypeElemArrays,
+                               elemArrays,
+                               rc);
   } else {
     ESMC_LogDefault.MsgFoundError(ESMC_RC_NOT_IMPL,
        "- this functionality is not currently supported using MOAB",
@@ -996,6 +1034,24 @@ void MeshCap::getlocalelemcoords(double *elemCoord, int *_orig_sdim, int *rc)
 #endif
   }
 }
+
+void MeshCap::getlocalcoords(double *nodeCoord, int *_orig_sdim, int *rc)
+{
+#undef ESMC_METHOD
+#define ESMC_METHOD "MeshCap::getlocalcoords()"
+
+  // Call into func. depending on mesh type
+  if (is_esmf_mesh) {
+    ESMCI_getlocalcoords(&mesh, nodeCoord, _orig_sdim, rc);
+  } else {
+    ESMC_LogDefault.MsgFoundError(ESMC_RC_NOT_IMPL,
+       "- this functionality is not currently supported using MOAB",
+                                  ESMC_CONTEXT, rc);
+    return;
+  }
+}
+
+
 
 void MeshCap::meshgetarea(int *num_elem, double *elem_areas, int *rc) {
 #undef ESMC_METHOD
@@ -1399,14 +1455,14 @@ void MeshCap::sphdeg_to_cart(double *lon, double *lat,
 
 
 // This method sets the pole values so a 2D Mesh from a SCRIP grid can still be used in regrid with poles
-void MeshCap::meshsetpoles(int *_pole_val, int *_min_pole_gid, int *_max_pole_gid,
+void MeshCap::meshsetpoles(int *_pole_obj_type, int *_pole_val, int *_min_pole_gid, int *_max_pole_gid,
                            int *rc) {
 #undef ESMC_METHOD
 #define ESMC_METHOD "MeshCap::meshsetpoles()"
 
   // Call into func. depending on mesh type
   if (is_esmf_mesh) {
-    ESMCI_meshsetpoles(&mesh, _pole_val, _min_pole_gid, _max_pole_gid, rc);
+    ESMCI_meshsetpoles(&mesh, _pole_obj_type, _pole_val, _min_pole_gid, _max_pole_gid, rc);
   } else {
     // Not using poles right now, so comment this out, so we can test
     // with logically rectangular meshes
@@ -1423,23 +1479,52 @@ MeshCap *MeshCap::meshcreatedual(MeshCap **src_meshpp, int *rc) {
 #undef ESMC_METHOD
 #define ESMC_METHOD "MeshCap::meshcreatedual()"
 
+  int localrc;
+
  // Get mesh type
   bool is_esmf_mesh=(*src_meshpp)->is_esmf_mesh;
 
   // Call into func. depending on mesh type
   Mesh *mesh;
+  MBMesh *mbmesh;
   // Call into func. depending on mesh type
   if (is_esmf_mesh) {
-    int localrc;
+#ifdef ESMF_PROFILE_INTERNAL
+    ESMCI_REGION_ENTER("Native Dual Mesh Generation", localrc);
+    VM::logMemInfo(std::string("before Native Dual Mesh Generation"));
+#endif
 
     ESMCI_meshcreatedual(&((*src_meshpp)->mesh), &mesh, &localrc);
     if (ESMC_LogDefault.MsgFoundError(localrc, ESMCI_ERR_PASSTHRU,
                                       ESMC_CONTEXT, rc)) return NULL;
+
+#ifdef ESMF_PROFILE_INTERNAL
+    VM::logMemInfo(std::string("after Native Dual Mesh Generation"));
+    ESMCI_REGION_EXIT("Native Dual Mesh Generation", localrc)
+#endif
   } else {
-    ESMC_LogDefault.MsgFoundError(ESMC_RC_NOT_IMPL,
-       "- this functionality is not currently supported using MOAB",
-                                  ESMC_CONTEXT, rc);
-    return NULL;
+#if defined ESMF_MOAB
+    MBMesh *meshin = (MBMesh *)((*src_meshpp)->mbmesh);
+
+#ifdef ESMF_PROFILE_INTERNAL
+    ESMCI_REGION_ENTER("MOAB Dual Mesh Generation", localrc);
+    VM::logMemInfo(std::string("before MOAB Dual Mesh Generation"));
+#endif
+
+    MBMeshDual(meshin, &mbmesh, &localrc);
+    if (ESMC_LogDefault.MsgFoundError(localrc, ESMCI_ERR_PASSTHRU,
+                                      ESMC_CONTEXT, rc)) return NULL;
+
+#ifdef ESMF_PROFILE_INTERNAL
+    VM::logMemInfo(std::string("after MOAB Dual Mesh Generation"));
+    ESMCI_REGION_EXIT("MOAB Dual Mesh Generation", localrc)
+#endif
+
+#else
+   if(ESMC_LogDefault.MsgFoundError(ESMC_RC_LIB_NOT_PRESENT,
+      "This functionality requires ESMF to be built with the MOAB library enabled" ,
+      ESMC_CONTEXT, rc)) return NULL;
+#endif
   }
 
 
@@ -1448,7 +1533,19 @@ MeshCap *MeshCap::meshcreatedual(MeshCap **src_meshpp, int *rc) {
 
   // Set member variables
   mc->is_esmf_mesh=is_esmf_mesh;
-  mc->mesh=mesh;
+  if (mc->is_esmf_mesh) {
+    mc->mesh=mesh;
+    mc->mbmesh=NULL;
+  } else {
+#if defined ESMF_MOAB
+    mc->mesh=NULL;
+    mc->mbmesh=mbmesh;
+#else
+   if(ESMC_LogDefault.MsgFoundError(ESMC_RC_LIB_NOT_PRESENT,
+      "This functionality requires ESMF to be built with the MOAB library enabled" ,
+      ESMC_CONTEXT, rc)) return NULL;
+#endif
+  }
 
   // Output new MeshCap
   return mc;
@@ -1484,7 +1581,8 @@ void MeshCap::destroy(MeshCap **mcpp,int *rc) {
     }
 #else
    if(ESMC_LogDefault.MsgFoundError(ESMC_RC_LIB_NOT_PRESENT,
-      "This functionality requires ESMF to be built with the MOAB library enabled" , ESMC_CONTEXT, rc)) return;
+      "This functionality requires ESMF to be built with the MOAB library enabled" ,
+      ESMC_CONTEXT, rc)) return;
 #endif
   }
 
@@ -1558,7 +1656,7 @@ MeshCap *MeshCap::meshcreate_easy_elems(int *pdim,
 
 // returns NULL if unsuccessful
 MeshCap *MeshCap::meshcreate_from_grid(Grid **gridpp,
-                                       bool _is_esmf_mesh, 
+                                       bool _is_esmf_mesh,
                                        int *rc) {
 #undef ESMC_METHOD
 #define ESMC_METHOD "MeshCap::meshcreate_from_grid()"
@@ -1612,6 +1710,3 @@ MeshCap *MeshCap::meshcreate_from_grid(Grid **gridpp,
   // Output new MeshCap
   return mc;
 }
-
-
-

@@ -30,6 +30,9 @@
 #include "Mesh/include/ESMCI_MeshCap.h"
 #include "Mesh/include/ESMCI_ClumpPnts.h"
 #include "Mesh/include/Legacy/ESMCI_ParEnv.h"
+#include "ESMCI_DistGrid.h"
+#include "ESMCI_Array.h"
+
 //-----------------------------------------------------------------------------
  // leave the following line as-is; it will insert the cvs ident string
  // into the object file for tracking purposes.
@@ -140,6 +143,71 @@ extern "C" void FTN_X(c_esmc_meshwrite)(MeshCap **meshpp, char *fname, int *rc,
 
   // Call into implementation
   (*meshpp)->meshwrite(fname, rc, nlen);
+}
+
+
+extern "C" void FTN_X(c_esmc_meshwritevtk)(MeshCap **meshpp, char *fname, 
+                                           ESMCI::Array **nodeArray1,
+                                           ESMCI::Array **nodeArray2,
+                                           ESMCI::Array **nodeArray3,
+                                           ESMCI::Array **elemArray1,
+                                           ESMCI::Array **elemArray2,
+                                           ESMCI::Array **elemArray3,
+                                           int *rc,
+                                           ESMCI_FortranStrLenArg nlen) {
+
+#define MAX_NUM_NODE_ARRAYS 3
+  int num_nodeArrays;
+  ESMCI::Array *nodeArrays[MAX_NUM_NODE_ARRAYS];
+
+  printf("BOB: nodeArray1 = %d\n",nodeArray1);
+
+
+  int n=0;
+  if (ESMC_NOT_PRESENT_FILTER(nodeArray1) != ESMC_NULL_POINTER) {
+    printf("BOB: nodeArray1 found!\n");
+
+    nodeArrays[n]=*nodeArray1;
+    n++;
+  }
+  if (ESMC_NOT_PRESENT_FILTER(nodeArray2) != ESMC_NULL_POINTER) {
+    nodeArrays[n]=*nodeArray2;
+    n++;
+  }
+  if (ESMC_NOT_PRESENT_FILTER(nodeArray3) != ESMC_NULL_POINTER) {
+    nodeArrays[n]=*nodeArray3;
+    n++;
+  }
+  num_nodeArrays=n;
+
+
+#define MAX_NUM_ELEM_ARRAYS 3
+  int num_elemArrays;
+  ESMCI::Array *elemArrays[MAX_NUM_ELEM_ARRAYS];
+
+  // Use optional arguments to fill arrays
+  int e=0;
+  if (ESMC_NOT_PRESENT_FILTER(elemArray1) != ESMC_NULL_POINTER) {
+    elemArrays[e]=*elemArray1;
+    e++;
+  }
+  if (ESMC_NOT_PRESENT_FILTER(elemArray2) != ESMC_NULL_POINTER) {
+    elemArrays[e]=*elemArray2;
+    e++;
+  }
+  if (ESMC_NOT_PRESENT_FILTER(elemArray3) != ESMC_NULL_POINTER) {
+    elemArrays[e]=*elemArray3;
+    e++;
+  }
+  num_elemArrays=e;
+
+  // Call into implementation
+  (*meshpp)->meshwritewarrays(fname, nlen, 
+                              num_nodeArrays, nodeArrays,
+                              num_elemArrays, elemArrays, rc);
+
+#undef MAX_NUM_NODE_ARRAYS
+#undef MAX_NUM_ELEM_ARRAYS
 }
 
 extern "C" void FTN_X(c_esmc_meshaddelements)(MeshCap **meshpp,
@@ -425,10 +493,11 @@ extern "C" void FTN_X(c_esmc_sphdeg_to_cart)(double *lon, double *lat,
 
 
 // This method sets the pole values so a 2D Mesh from a SCRIP grid can still be used in regrid with poles
-extern "C" void FTN_X(c_esmc_meshsetpoles)(MeshCap **meshpp, int *_pole_val, int *_min_pole_gid, int *_max_pole_gid,
-                                             int *rc) {
+extern "C" void FTN_X(c_esmc_meshsetpoles)(MeshCap **meshpp, int *_pole_obj_type, int *_pole_val, 
+                                           int *_min_pole_gid, int *_max_pole_gid,
+                                           int *rc) {
 
-  (*meshpp)->meshsetpoles(_pole_val, _min_pole_gid, _max_pole_gid,
+  (*meshpp)->meshsetpoles(_pole_obj_type, _pole_val, _min_pole_gid, _max_pole_gid,
                           rc);
 }
 
@@ -523,6 +592,25 @@ extern "C" void FTN_X(c_esmc_meshcreatefromgrid)(MeshCap **meshpp,
   }
 
 } // meshcreate
+
+
+extern "C" void FTN_X(c_esmc_geteleminfointoarray)(MeshCap **meshpp, 
+                                                   DistGrid **elemDistgrid, 
+                                                   int *numElemArrays, 
+                                                   int *infoTypeElemArrays, 
+                                                   Array **elemArrays, 
+                                                   int *rc)
+{
+
+  (*meshpp)->geteleminfointoarray(*elemDistgrid, 
+                                  *numElemArrays, 
+                                  infoTypeElemArrays,
+                                  elemArrays, 
+                                  rc);
+
+}
+
+
 
 
 #if 0

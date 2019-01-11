@@ -91,6 +91,11 @@
     void meshwrite(char *fname, int *rc,
                    ESMCI_FortranStrLenArg nlen);
 
+    void meshwritewarrays(char *fname, ESMCI_FortranStrLenArg nlen,
+                                   int num_nodeArrays, ESMCI::Array **nodeArrays, 
+                                   int num_elemArrays, ESMCI::Array **elemArrays, 
+                                   int *rc);
+
     void meshaddelements(int *_num_elems, int *elemId, int *elemType, InterArray<int> *_elemMaskII ,
                          int *_areaPresent, double *elemArea,
                          int *_coordsPresent, double *elemCoords,
@@ -143,6 +148,11 @@
     void meshfindpnt(int *unmappedaction, int *dimPnts, int *numPnts,
                      double *pnts, int *pets, int *rc);
 
+    void geteleminfointoarray(DistGrid *elemDistgrid, 
+                                   int numElemArrays,
+                                   int *infoTypeElemArrays, 
+                                   Array **elemArrays, 
+                                   int *rc);
 
     void getlocalcoords(double *nodeCoord, int *_orig_sdim, int *rc);
 
@@ -198,8 +208,8 @@
     static void sphdeg_to_cart(double *lon, double *lat,
                         double *x, double *y, double *z, int *rc);
 
-    void meshsetpoles(int *_pole_val, int *_min_pole_gid, int *_max_pole_gid,
-                      int *rc);
+    void meshsetpoles(int *_pole_obj_type, int *_pole_val, int *_min_pole_gid, int *_max_pole_gid,
+                           int *rc);
 
     static MeshCap *meshcreatedual(MeshCap **src_meshpp, int *rc);
 
