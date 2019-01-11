@@ -425,8 +425,8 @@ Array* Metadata::createArray(DistGrid& distgrid, const json& jsonParms,
     vector<string> unsupported = {"decompflagCount", "computationalEdgeUWidthArg",
                                   "computationalLWidthArg", "computationalUWidthArg",
                                   "totalLWidthArg", "totalUWidthArg", "indexflag",
-                                  "undistLBoundArg", "undistUBoundArg", "distLBoundArg",
-                                  "vm"};
+                                  "pinflag", "undistLBoundArg", "undistUBoundArg",
+                                  "distLBoundArg", "vm"};
     handleUnsupported(jsonParms, unsupported, rc);
 
     //---------------------------------------------------------------------------
@@ -488,6 +488,7 @@ Array* Metadata::createArray(DistGrid& distgrid, const json& jsonParms,
     auto totalLWidthArg = nullptr;
     auto totalUWidthArg = nullptr;
     ESMC_IndexFlag* indexflag = nullptr;
+    ESMC_Pin_Flag* pinflag = nullptr;
     auto distLBoundArg = nullptr;
 
     // Undistributed dimensions ===============================================
@@ -529,6 +530,7 @@ Array* Metadata::createArray(DistGrid& distgrid, const json& jsonParms,
       totalLWidthArg,
       totalUWidthArg,
       indexflag,
+      pinflag,
       distLBoundArg,
       &undistLBoundArg,
       &undistUBoundArg,
