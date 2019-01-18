@@ -61,8 +61,8 @@ class ESMC_Base
     char            baseNameF90[ESMF_MAXSTR]; // same name, non-null terminated
     char            className[ESMF_MAXSTR];   // object class
     ESMCI::Attribute* root;
-    ESMCI::Attributes* attrs;  // root_attrs_tdk
     bool            rootalias;
+    ESMCI::Attributes* attrs;  // root_attrs_tdk
 
   private:
 
