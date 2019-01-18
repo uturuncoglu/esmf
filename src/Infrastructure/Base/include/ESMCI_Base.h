@@ -26,6 +26,7 @@ class ESMC_Base;
 
 #include "ESMCI_VM.h"
 #include "ESMCI_Attribute.h"
+#include "ESMCI_Attributes.h"  // root_attrs_tdk
 
 //-----------------------------------------------------------------------------
 //BOP
@@ -60,6 +61,7 @@ class ESMC_Base
     char            baseNameF90[ESMF_MAXSTR]; // same name, non-null terminated
     char            className[ESMF_MAXSTR];   // object class
     ESMCI::Attribute* root;
+    ESMCI::Attributes* attrs;  // root_attrs_tdk
     bool            rootalias;
 
   private:
@@ -77,6 +79,8 @@ class ESMC_Base
     // accessor to root
     ESMCI::Attribute *ESMC_BaseGetRoot(void) const {return root;}
     void ESMC_BaseSetRoot(ESMCI::Attribute *orig) {root = orig; rootalias=true;}
+    ESMCI::Attributes *ESMC_BaseGetAttrs(void) const {return attrs;} // root_attrs_tdk
+    void ESMC_BaseSetAttrs(ESMCI::Attributes *orig) {attrs = orig;} // root_attrs_tdk
 
     // accessors to unique ID
     void ESMC_BaseSetID(int id);
