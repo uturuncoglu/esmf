@@ -750,7 +750,15 @@ extern "C" {
     // return successfully
     if (rc!=NULL) *rc = ESMF_SUCCESS;
   }
-  
+
+  void FTN_X(c_esmc_arraygetattrs)(ESMCI::Array **ptr, ESMCI::Attributes **attrs,
+    int *rc) { //root_attrs_tdk
+#undef  ESMC_METHOD
+#define ESMC_METHOD "c_esmc_arraygetattrs()"
+    *attrs = (*ptr)->ESMC_BaseGetAttrs();
+    if (rc) {*rc = ESMF_SUCCESS;}
+  }
+
   void FTN_X(c_esmc_arraywrite)(ESMCI::Array **array,
                                 char *file,
                                 char *variableName, char *convention, char *purpose,

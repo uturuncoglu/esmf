@@ -52,6 +52,7 @@ module ESMF_ArrayGetMod
   use ESMF_DistGridMod
   use ESMF_RHandleMod
   use ESMF_F90InterfaceMod  ! ESMF Fortran-C++ interface helper
+  use ESMF_AttributesMod
 
   ! class sub modules
   use ESMF_ArrayCreateMod   ! contains the ESMF_Array derived type definition
@@ -134,7 +135,7 @@ contains
     computationalUBound, totalLBound, totalUBound, computationalLWidth, &
     computationalUWidth, totalLWidth, totalUWidth, distgrid, dimCount, &
     tileCount, minIndexPTile, maxIndexPTile, deToTileMap, indexCountPDe, &
-    delayout, deCount, localDeCount, ssiLocalDeCount, localDeToDeMap, &
+    delayout, deCount, localDeCount, ssiLocalDeCount, localDeToDeMap, attrs, &
     localDeList, &    ! DEPRECATED ARGUMENT
     name, rc)
 !
@@ -173,6 +174,7 @@ type(ESMF_KeywordEnforcer), optional:: keywordEnforcer ! must use keywords below
     integer,                       intent(out), optional :: localDeCount
     integer,                       intent(out), optional :: ssiLocalDeCount
     integer,                       intent(out), optional :: localDeToDeMap(:)
+    type(ESMF_Attributes),         intent(out), optional :: attrs !root_attrs_tdk
     integer,                       intent(out), optional :: localDeList(:)     ! DEPRECATED ARGUMENT
     character(len=*),              intent(out), optional :: name
     integer,                       intent(out), optional :: rc  
@@ -461,7 +463,14 @@ type(ESMF_KeywordEnforcer), optional:: keywordEnforcer ! must use keywords below
       totalLWidthArg, totalUWidthArg, localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, &
       ESMF_CONTEXT, rcToReturn=rc)) return
-      
+
+    ! Get attributes if requested root_attrs_tdk
+    if (present(attrs)) then
+      call c_ESMC_ArrayGetAttrs(array, attrs, localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, &
+        ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+
     ! Set init code for deep C++ objects
     call ESMF_DELayoutSetInitCreated(opt_delayout, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, &
