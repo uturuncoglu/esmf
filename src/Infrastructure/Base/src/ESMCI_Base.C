@@ -101,6 +101,14 @@ static const char *const version = "$Id$";
 //EOPI
 
 }  // end ESMC_Base
+
+#undef ESMC_METHOD
+#define ESMC_METHOD "ESMC_Base::constructAttrs()"
+void ESMC_Base::constructAttrs(ESMC_Base& base) { // root_attrs_tdk
+  base.attrs = new ESMCI::Attributes();
+  base.attrsalias = false;
+}
+
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 //
@@ -1121,6 +1129,7 @@ static const char *const version = "$Id$";
   root = new ESMCI::Attribute(ESMF_TRUE);
   root->setBase(this);
   rootalias = false;
+  constructAttrs(*this); // root_attrs_tdk
 
   baseStatus  = ESMF_STATUS_READY;
   status      = ESMF_STATUS_READY;
@@ -1185,10 +1194,12 @@ static const char *const version = "$Id$";
   // setup the root Attribute, passing the address of this
   if (id==-1){
     rootalias = true; // protect root Attribute from being used in delete
+    attrsalias = true; // root_attrs_tdk
   }else{
     root = new ESMCI::Attribute(ESMF_TRUE);
     root->setBase(this);
     rootalias = false;
+    constructAttrs(*this); // root_attrs_tdk
   }
 
   baseStatus  = ESMF_STATUS_READY;
@@ -1255,6 +1266,7 @@ static const char *const version = "$Id$";
   root = new ESMCI::Attribute(ESMF_TRUE);
   root->setBase(this);
   rootalias = false;
+  constructAttrs(*this); // root_attrs_tdk
 
   baseStatus  = ESMF_STATUS_READY;
   status      = ESMF_STATUS_READY;
@@ -1315,6 +1327,8 @@ static const char *const version = "$Id$";
   // delete the root Attribute
   if (!rootalias)
     delete root;
+  if (!attrsalias)// root_attrs_tdk
+    delete attrs;// root_attrs_tdk
 
   // if we have to support reference counts someday,
   // test if (refCount > 0) and do something if true;
