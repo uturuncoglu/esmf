@@ -21,6 +21,7 @@
 //tdk:REMOVE: only required for tdk prints
 #include <netcdf.h>
 #include <pio.h>
+#define PIO_Offset MPI_Offset
 
 #include <vector>
 #include <fstream>
