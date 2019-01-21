@@ -71,7 +71,7 @@ program ESMF_ArrayAttributesUTest
 
   !----------------------------------------------------------------------------
   !NEX_UTest
-  write(name, *) "Get and manipulate Array attributes"
+  write(name, *) "Get and manipulate an Array attribute"
   write(failMsg, *) "Did not set/get attribute"
   rc = ESMF_FAILURE
 
