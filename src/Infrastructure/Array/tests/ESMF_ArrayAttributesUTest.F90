@@ -45,7 +45,7 @@ program ESMF_ArrayAttributesUTest
   character(ESMF_MAXSTR) :: name
 
   character(ESMF_MAXSTR) :: key = "foo"
-  integer               :: rc, petCount, ii
+  integer               :: rc, petCount, ii, nloops = 100
   type(ESMF_VM)         :: vm
   ! cumulative result: count failures; no failures equals "all pass"
   integer               :: result = 0
@@ -75,30 +75,39 @@ program ESMF_ArrayAttributesUTest
   write(failMsg, *) "Did not set/get attribute"
   rc = ESMF_FAILURE
 
-  distgrid = ESMF_DistGridCreate(minIndex=(/1,1/), maxIndex=(/10,10/), rc=rc)
-  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+  failed = .false.
+  do ii=1,nloops
+    distgrid = ESMF_DistGridCreate(minIndex=(/1,1/), maxIndex=(/10,10/), rc=rc)
+    if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-  array = ESMF_ArrayCreate(distgrid, farray2D, ESMF_INDEX_GLOBAL, rc=rc)
-  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+    array = ESMF_ArrayCreate(distgrid, farray2D, ESMF_INDEX_GLOBAL, rc=rc)
+    if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-  call ESMF_ArrayGet(array, attrs=attrs, rc=rc)
-  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+    call ESMF_ArrayGet(array, attrs=attrs, rc=rc)
+    if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-  call ESMF_AttributesSet(attrs, key, desired, rc=rc)
-  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+    call ESMF_AttributesSet(attrs, key, desired, rc=rc)
+    if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-  call ESMF_ArrayGet(array, attrs=attrs2, rc=rc)
-  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+    call ESMF_ArrayGet(array, attrs=attrs2, rc=rc)
+    if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-  call ESMF_AttributesGet(attrs2, key, actual, rc=rc)
-  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+    call ESMF_AttributesGet(attrs2, key, actual, rc=rc)
+    if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-  call ESMF_ArrayDestroy(array, rc=rc)
-  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
-  call ESMF_DistGridDestroy(distgrid, rc=rc)
-  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+    call ESMF_ArrayDestroy(array, noGarbage=.true., rc=rc)
+    if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+    call ESMF_DistGridDestroy(distgrid, noGarbage=.true., rc=rc)
+    if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-  call ESMF_Test((actual == desired), name, failMsg, result, ESMF_SRCLINE)
+    if (actual /= desired) then
+      failed = .true.
+      exit
+    end if
+
+  end do
+
+  call ESMF_Test((.not. failed), name, failMsg, result, ESMF_SRCLINE)
 
   !----------------------------------------------------------------------------
   call ESMF_TestEnd(ESMF_SRCLINE) ! calls ESMF_Finalize() internally
