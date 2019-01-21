@@ -76,6 +76,8 @@ program ESMF_ArrayAttributesUTest
   rc = ESMF_FAILURE
 
   failed = .false.
+
+  ! Do a number of loop to catch memory leaks, etc.
   do ii=1,nloops
     distgrid = ESMF_DistGridCreate(minIndex=(/1,1/), maxIndex=(/10,10/), rc=rc)
     if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
@@ -83,23 +85,29 @@ program ESMF_ArrayAttributesUTest
     array = ESMF_ArrayCreate(distgrid, farray2D, ESMF_INDEX_GLOBAL, rc=rc)
     if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
+    ! Get the attribute object created with the array
     call ESMF_ArrayGet(array, attrs=attrs, rc=rc)
     if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
+    ! Set a key/value on the attributes object
     call ESMF_AttributesSet(attrs, key, desired, rc=rc)
     if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
+    ! Get a different reference to the same attributes object
     call ESMF_ArrayGet(array, attrs=attrs2, rc=rc)
     if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
+    ! Get the attribute value from the second reference
     call ESMF_AttributesGet(attrs2, key, actual, rc=rc)
     if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
+    ! Destroy objects
     call ESMF_ArrayDestroy(array, noGarbage=.true., rc=rc)
     if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
     call ESMF_DistGridDestroy(distgrid, noGarbage=.true., rc=rc)
     if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
+    ! Fail if the retrieved attribute value is bad
     if (actual /= desired) then
       failed = .true.
       exit
