@@ -18,11 +18,6 @@
 
 //-----------------------------------------------------------------------------
 
-//tdk:REMOVE: only required for tdk prints
-#include <netcdf.h>
-#include <pio.h>
-#define PIO_Offset MPI_Offset
-
 #include <vector>
 #include <fstream>
 
@@ -35,14 +30,11 @@ using std::string;
 //tdk:LAST: remove all tdk stuff (search for tdk)
 
 // Standard ESMF check error macros
-#define ESMF_CHECKERR_STD(name_rc, actual_rc, msg, update_rc) {\
-  esmf_attrs_error local_macro_error(name_rc, actual_rc, msg);\
-  if (ESMC_LogDefault.MsgFoundError(actual_rc, local_macro_error.what(), \
-      ESMC_CONTEXT, &update_rc)) throw(local_macro_error);}\
+#define ESMF_CHECKERR_STD(name_rc, actual_rc, msg, update_rc) {if (actual_rc != ESMF_SUCCESS) {esmf_attrs_error local_macro_error(name_rc, actual_rc, msg); if (ESMC_LogDefault.MsgFoundError(actual_rc, local_macro_error.what(), ESMC_CONTEXT, &update_rc)) throw(local_macro_error);}}
 
-#define ESMF_THROW_JSON(json_exc, name_rc, actual_rc, update_rc) {\
-  ESMC_LogDefault.MsgFoundError(actual_rc, json_exc.what(), ESMC_CONTEXT,\
-    &update_rc); throw(esmf_attrs_error(name_rc, actual_rc, json_exc.what()));}\
+#define ESMF_THROW_JSON(json_exc, name_rc, actual_rc, update_rc) {ESMC_LogDefault.MsgFoundError(actual_rc, json_exc.what(), ESMC_CONTEXT, &update_rc); throw(esmf_attrs_error(name_rc, actual_rc, json_exc.what()));}
+
+#define ESMF_CATCH_PASSTHRU(exc_esmf) {ESMC_LogDefault.MsgFoundError(exc_esmf.getReturnCode(), exc_esmf.what(), ESMC_CONTEXT, nullptr); throw(exc_esmf);}
 
 //-----------------------------------------------------------------------------
 //BOP
@@ -147,12 +139,6 @@ void broadcastAttributes(ESMCI::Attributes* attrs, int rootPet, int& rc); // tdk
 bool isIn(const string& target, const std::vector<string>& container);
 bool isIn(const std::vector<string>& target, const std::vector<string>& container);
 bool isIn(const string& target, const json& j);
-void tdklog(const string& msg);
-void tdklog(const string& msg, const std::vector<string>& v);
-void tdklog(const string& msg, const std::vector<ESMC_I4>& v);
-void tdklog(const string& msg, const std::vector<PIO_Offset>& v);
-void tdklog(const string& msg, int const* l, std::size_t size);
-void tdklog(const string& msg, PIO_Offset* l, std::size_t size);
 
 //-----------------------------------------------------------------------------
 

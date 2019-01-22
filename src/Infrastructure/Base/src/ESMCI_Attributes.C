@@ -50,63 +50,22 @@ using json = nlohmann::json;  // Convenience rename for JSON namespace.
 
 namespace ESMCI {
 
-// tdk logging functions ======================================================
-
-//tdk:REMOVE
-void tdklog(const string& msg) {
-  string localmsg = "tdk: " + msg;
-//  std::cout << msg << std::endl; //tdk:p: THIS IS INSIDE tdklog
-  ESMC_LogWrite(localmsg.c_str(), ESMC_LOGMSG_INFO);
-}
-
-//tdk:REMOVE
-void tdklog(const string& msg, const vector<string>& v) {
-  for (size_t ii = 0; ii < v.size(); ii++) {
-    tdklog(msg + "[" + to_string(ii) + "]=" + v[ii]);
-  }
-}
-
-//tdk:REMOVE
-void tdklog(const string& msg, const vector<ESMC_I4>& v) {
-  for (size_t ii = 0; ii < v.size(); ii++) {
-    tdklog(msg + "[" + to_string(ii) + "]=" + to_string(v[ii]));
-  }
-}
-
-//tdk:REMOVE
-void tdklog(const string& msg, const vector<PIO_Offset>& v) {
-  for (size_t ii = 0; ii < v.size(); ii++) {
-    tdklog(msg + "[" + to_string(ii) + "]=" + to_string(v[ii]));
-  }
-}
-
-//tdk:REMOVE
-void tdklog(const string& msg, const int* l, std::size_t size) {
-  for (size_t ii = 0; ii < size; ii++) {
-    tdklog(msg + "[" + to_string(ii) + "]=" + to_string(l[ii]));
-  }
-}
-
-//tdk:REMOVE
-void tdklog(const string& msg, PIO_Offset* l, std::size_t size) {
-  for (size_t ii = 0; ii < size; ii++) {
-    tdklog(msg + "[" + to_string(ii) + "]=" + to_string(l[ii]));
-  }
-}
-
-//=============================================================================
-
 #undef ESMC_METHOD
 #define ESMC_METHOD "handleHasKey"
 bool handleHasKey(const Attributes* attrs, const string& key, int& rc) {
-  bool has_key = attrs->hasKey(key, rc, true);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+  // Exceptions:  ESMCI::esmf_attrs_error
 
+  bool has_key;
+  try {
+    has_key = attrs->hasKey(key, rc, true);
+  }
+  catch (ESMCI::esmf_attrs_error &exc_esmf) {
+    ESMF_CATCH_PASSTHRU(exc_esmf);
+  }
   if (has_key) {
     string msg = "Attribute key \'" + key + "\' already in map and force=false.";
     ESMF_CHECKERR_STD("ESMC_RC_CANNOT_SET", ESMC_RC_CANNOT_SET, msg, rc);
   }
-
   return has_key;
 }
 
@@ -167,7 +126,9 @@ Attributes::Attributes(json&& storage){
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes(string&)"
 Attributes::Attributes(const string& input, int& rc) {
+  // Exceptions: ESMCI::esmf_attrs_error
   // tdk:FEAT: use the parse method on the object!
+
   rc = ESMF_FAILURE;
   try {
     this->storage = json::parse(input);
@@ -181,17 +142,29 @@ Attributes::Attributes(const string& input, int& rc) {
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::dump(int &rc)"
 string Attributes::dump(int& rc) const {
-  rc = ESMF_FAILURE;
-  string ret = this->storage.dump();
-  rc = ESMF_SUCCESS;
+  // Exceptions: ESMCI::esmf_attrs_error
+
+  string ret;
+  try {
+    ret = this->dump(0, rc);
+  } catch (ESMCI::esmf_attrs_error &e) {
+    ESMF_CATCH_PASSTHRU(e);
+  }
   return ret;
 };
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::dump(int indent, int &rc)"
 string Attributes::dump(int indent, int& rc) const {
+  // Exceptions: ESMCI::esmf_attrs_error
+
   rc = ESMF_FAILURE;
-  string ret = this->storage.dump(indent);
+  string ret;
+  try {
+    ret = this->storage.dump(indent);
+  } catch (json::type_error &e) {
+    ESMF_THROW_JSON(e, "ESMC_RC_ARG_INCOMP", ESMC_RC_ARG_INCOMP, rc);
+  }
   rc = ESMF_SUCCESS;
   return ret;
 };
@@ -199,27 +172,26 @@ string Attributes::dump(int indent, int& rc) const {
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::erase()"
 void Attributes::erase(const string& keyParent, const string& keyChild, int& rc) {
+  // Exceptions: ESMCI::esmf_attrs_error
+
   rc = ESMF_FAILURE;
-
-  json::json_pointer jp = this->formatKey(keyParent, rc);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
-
   try {
-    json &target = this->storage.at(jp);
+    json::json_pointer jp = this->formatKey(keyParent, rc);
     try {
-      // Will throw out_of_range if key does not exist.
+      json &target = this->storage.at(jp);
       json &found = target.at(keyChild);
-
       target.erase(keyChild);
     }
-    catch (json::out_of_range& e) {
+    catch (json::out_of_range &e) {
       ESMF_THROW_JSON(e, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);
     }
+    catch (json::type_error& e) {
+      ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
+    }
   }
-  catch (json::out_of_range& e) {
-    ESMF_THROW_JSON(e, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);
+  catch (ESMCI::esmf_attrs_error &exc_esmf) {
+    ESMF_CATCH_PASSTHRU(exc_esmf);
   }
-
   rc = ESMF_SUCCESS;
   return;
 };
@@ -227,6 +199,8 @@ void Attributes::erase(const string& keyParent, const string& keyChild, int& rc)
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::formatKey()"
 json::json_pointer Attributes::formatKey(const string& key, int& rc) {
+  // Exceptions:  ESMCI:esmf_attrs_error
+
   rc = ESMF_FAILURE;
   string localKey;
 
@@ -241,33 +215,43 @@ json::json_pointer Attributes::formatKey(const string& key, int& rc) {
     ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, msg, rc);
   }
 
-  json::json_pointer jp(localKey);
-  rc = ESMF_SUCCESS;
-
-  return jp;
+  try {
+    json::json_pointer jp(localKey);
+    rc = ESMF_SUCCESS;
+    return jp;
+  }
+  catch (json::parse_error &e) {
+    ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
+  }
 };
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::get()"
 template <typename T>
 T Attributes::get(const string& key, int& rc, T* def) const {
+  // Exceptions:  ESMCI:esmf_attrs_error
+
   rc = ESMF_FAILURE;
-
-  json::json_pointer jp = this->formatKey(key, rc);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
-
   T ret;
-  if (def) {
-    ret = this->storage.value(jp, *def);
-  } else {
-    try {
-      ret = this->storage.at(jp);
-    }
-    catch (json::out_of_range& e) {
-      ESMF_THROW_JSON(e, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);
+  try {
+    json::json_pointer jp = this->formatKey(key, rc);
+    if (def) {
+      ret = this->storage.value(jp, *def);
+    } else {
+      try {
+        ret = this->storage.at(jp);
+      }
+      catch (json::out_of_range& e) {
+        ESMF_THROW_JSON(e, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);
+      }
+      catch (json::type_error& e) {
+        ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
+      }
     }
   }
-
+  catch (ESMCI::esmf_attrs_error &exc_esmf) {
+    ESMF_CATCH_PASSTHRU(exc_esmf);
+  }
   return ret;
 }
 template float Attributes::get(const string&, int&, float*) const;
@@ -280,18 +264,25 @@ template string Attributes::get(const string&, int&, string*) const;
 #define ESMC_METHOD "Attributes::getPointer()"
 template <typename T, typename JT>
 T Attributes::getPointer(const string& key, int& rc) const {
+  // Exceptions:  ESMCI:esmf_attrs_error
+
   rc = ESMF_FAILURE;
-
-  json::json_pointer jp = this->formatKey(key, rc);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
-
   try {
-    T ret = this->storage.at(jp).get_ptr<JT>();
-    rc = ESMF_SUCCESS;
-    return ret;
+    json::json_pointer jp = this->formatKey(key, rc);
+    try {
+      T ret = this->storage.at(jp).get_ptr<JT>();
+      rc = ESMF_SUCCESS;
+      return ret;
+    }
+    catch (json::out_of_range& e) {
+      ESMF_THROW_JSON(e, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);
+    }
+    catch (json::type_error& e) {
+      ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
+    }
   }
-  catch (json::out_of_range& e) {
-    ESMF_THROW_JSON(e, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);
+  catch (ESMCI::esmf_attrs_error &exc_esmf) {
+    ESMF_CATCH_PASSTHRU(exc_esmf);
   }
 };
 //  template const float* const Attributes::getPointer<const float* const,
@@ -322,30 +313,34 @@ json& Attributes::getStorageRefWritable() {
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::hasKey()"
 bool Attributes::hasKey(const string& key, int& rc, bool isptr) const {
+  // Exceptions:  ESMCI::esmf_attrs_error
   // isptr is optional
-  rc = ESMF_FAILURE;
 
+  rc = ESMF_FAILURE;
   bool ret;
   if (isptr) {
     // Use JSON pointer syntax. This is slower than just attempting to find
     // the key. JSON pointers do not work with find. See: https://github.com/nlohmann/json/issues/1182#issuecomment-409708389
     // for an explanation.
-    json::json_pointer jp = this->formatKey(key, rc);
-    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
-
     try {
-      this->storage.at(jp);
-      ret = true;
+      json::json_pointer jp = this->formatKey(key, rc);
+      try {
+        this->storage.at(jp);
+        ret = true;
+      }
+      catch (json::out_of_range& e) {
+        ret = false;
+      }
     }
-    catch (json::out_of_range& e) {
-      ret = false;
+    catch (ESMCI::esmf_attrs_error &e) {
+      ESMF_CATCH_PASSTHRU(e);
     }
+
   } else {
     // This is faster because it avoids exceptions. However, it does not work
     // with JSON pointers.
     ret = !(this->storage.find(key) == this->storage.end());
   }
-
   rc = ESMF_SUCCESS;
   return ret;
 }
@@ -353,12 +348,17 @@ bool Attributes::hasKey(const string& key, int& rc, bool isptr) const {
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::parse()"
 void Attributes::parse(const string& input, int& rc) {
+  // Exceptions:  ESMCI:esmf_attrs_error
+
   rc = ESMF_FAILURE;
   try {
     this->storage = json::parse(input);
   }
   catch (json::parse_error& e) {
     ESMF_THROW_JSON(e, "ESMC_RC_OBJ_NOT_CREATED", ESMC_RC_OBJ_NOT_CREATED, rc);
+  }
+  catch (json::type_error& e) {
+    ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
   }
   rc = ESMF_SUCCESS;
   return;
@@ -368,17 +368,32 @@ void Attributes::parse(const string& input, int& rc) {
 #define ESMC_METHOD "Attributes::set()"
 template <typename T>
 void Attributes::set(const string& key, T value, bool force, int& rc) {
+  // Exceptions:  ESMCI:esmf_attrs_error
+
   rc = ESMF_FAILURE;
-
   if (!force) {
-    bool has_key = handleHasKey(this, key, rc);
+    try {
+      bool has_key = handleHasKey(this, key, rc);
+    }
+    catch (ESMCI::esmf_attrs_error &exc_esmf) {
+      ESMF_CATCH_PASSTHRU(exc_esmf);
+    }
   }
-
-  json::json_pointer jp = this->formatKey(key, rc);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
-
-  this->storage[jp] = value;
-
+  try {
+    json::json_pointer jp = this->formatKey(key, rc);
+    try {
+      this->storage[jp] = value;
+    }
+    catch (json::out_of_range &e) {
+      ESMF_THROW_JSON(e, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);
+    }
+    catch (json::type_error &e) {
+      ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
+    }
+  }
+  catch (ESMCI::esmf_attrs_error &exc_esmf) {
+    ESMF_CATCH_PASSTHRU(exc_esmf);
+  }
   rc = ESMF_SUCCESS;
   return;
 };
@@ -391,24 +406,38 @@ template void Attributes::set<string>(const string&, string, bool, int&);
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::set(<array>)"
 void Attributes::set(const string& key, int values[], int& count, bool force, int& rc) {
+  // Exceptions:  ESMCI:esmf_attrs_error
+
   rc = ESMF_FAILURE;
-
   if (!force) {
-    bool has_key = handleHasKey(this, key, rc);
+    try {
+      bool has_key = handleHasKey(this, key, rc);
+    }
+    catch (ESMCI::esmf_attrs_error &exc_esmf) {
+      ESMF_CATCH_PASSTHRU(exc_esmf);
+    }
   }
-
-  json::json_pointer jp = this->formatKey(key, rc);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
-
-  this->storage[jp] = json::array();
-  //tdk:OPTIMIZE: can this "at" be removed?
-  json::array_t* arr_ptr = this->storage.at(jp).get_ptr<json::array_t*>();
-  arr_ptr->reserve(count);
-
-  for (auto ii=0; ii<count; ii++) {
-    arr_ptr->push_back(values[ii]);
+  try {
+    json::json_pointer jp = this->formatKey(key, rc);
+    try {
+      this->storage[jp] = json::array();
+      //tdk:OPTIMIZE: can this "at" be removed?
+      json::array_t *arr_ptr = this->storage.at(jp).get_ptr<json::array_t *>();
+      arr_ptr->reserve(count);
+      for (auto ii = 0; ii < count; ii++) {
+        arr_ptr->push_back(values[ii]);
+      }
+    }
+    catch (json::out_of_range &e) {
+      ESMF_THROW_JSON(e, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);
+    }
+    catch (json::type_error &e) {
+      ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
+    }
   }
-
+  catch (ESMCI::esmf_attrs_error &exc_esmf) {
+    ESMF_CATCH_PASSTHRU(exc_esmf);
+  }
   rc = ESMF_SUCCESS;
   return;
 };
@@ -418,7 +447,15 @@ void Attributes::set(const string& key, int values[], int& count, bool force, in
 void Attributes::update(const Attributes &attrs, int &rc) {
   rc = ESMF_FAILURE;
   const json& r_j = attrs.getStorageRef();
-  this->storage.update(r_j);
+  try {
+    this->storage.update(r_j);
+  }
+  catch (json::out_of_range &e) {
+    ESMF_THROW_JSON(e, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);
+  }
+  catch (json::type_error &e) {
+    ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
+  }
   rc = ESMF_SUCCESS;
   return;
 };
@@ -429,6 +466,7 @@ void Attributes::update(const Attributes &attrs, int &rc) {
 #define ESMC_METHOD "esmf_attrs_error::esmf_attrs_error()"
 esmf_attrs_error::esmf_attrs_error (const string& code_name, int rc,
                                     const string& msg) {
+  assert(rc != ESMF_SUCCESS);
   string the_msg;
   if (code_name != "") {
     the_msg = "Error/Return Code " + std::to_string(rc) + " (" + \
@@ -480,49 +518,51 @@ json PackageFactory::getOrCreateJSON(const string& key, int& rc,
 #undef  ESMC_METHOD
 #define ESMC_METHOD "broadcastAttributes()"
 void broadcastAttributes(ESMCI::Attributes* attrs, int rootPet, int& rc) {
-  rc = ESMF_FAILURE;
+  // Exceptions:  ESMCI:esmf_attrs_error
 
+  rc = ESMF_FAILURE;
   ESMCI::VM *vm = ESMCI::VM::getCurrent(&rc);
   ESMF_CHECKERR_STD("", rc, "Did not get current VM", rc);
-
   int localPet = vm->getLocalPet();
-
   size_t target_size = 0;  // Size of serialized attributes storage
   string target;  // Serialize storage buffer
   if (localPet == rootPet) {
     // If this is the root, serialize the attributes storage to string
-    target = attrs->dump(rc);
-    ESMF_CHECKERR_STD("", rc, "Could not dump attributes", rc);
-
+    try {
+      target = attrs->dump(rc);
+    }
+    catch (ESMCI::esmf_attrs_error &exc_esmf) {
+      ESMF_CATCH_PASSTHRU(exc_esmf);
+    }
     target_size = target.size();
   }
-
   // Broadcast size of the string buffer holding the serialized attributes.
   // Used for allocating destination string buffers on receiving PETs.
   rc = vm->broadcast(&target_size, sizeof(target_size), rootPet);
-  ESMF_CHECKERR_STD("", rc, "Did not broadcast string size", rc);
-
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
   string target_received(target_size, '\0');  // Allocate receive buffer
   if (localPet == rootPet) {
     // If this is root, just move the data to the receive buffer with no copy.
     target_received = move(target);
   }
-
   // Broadcast the string buffer
   rc = vm->broadcast(&target_received[0], target_size, rootPet);
-  ESMF_CHECKERR_STD("", rc, "Did not broadcast string", rc);
-
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
   if (localPet != rootPet) {
-    // If not root, then parse the incoming string buffer into attributes
-    // storage.
-    attrs->parse(target_received, rc);
-    ESMF_CHECKERR_STD("", rc, "Did not parse string", rc);
+    // If not root, then parse the incoming string buffer into attribute storage.
+    try {
+      attrs->parse(target_received, rc);
+    }
+    catch (ESMCI::esmf_attrs_error &exc_esmf) {
+      ESMF_CATCH_PASSTHRU(exc_esmf);
+    }
   }
-
   return;
 }
 
 }  // namespace ESMCI
+
+//=============================================================================
 
 extern "C" {
 

@@ -273,6 +273,23 @@ void testErase(int& rc, char failMsg[]) {
 };
 
 #undef  ESMC_METHOD
+#define ESMC_METHOD "testFormatKey()"
+void testFormatKey(int& rc, char failMsg[]) {
+  rc = ESMF_FAILURE;
+  Attributes attrs;
+  bool has_key;
+  try {
+    has_key = attrs.hasKey("/foo/~", rc, true);
+  }
+  catch (ESMCI::esmf_attrs_error &exc_esmf) {
+    if (exc_esmf.getReturnCode() != ESMC_RC_ARG_BAD) {
+      return finalizeFailure(rc, failMsg, "Did not handle JSON parse error");
+    }
+  }
+  rc = ESMF_SUCCESS;
+}
+
+#undef  ESMC_METHOD
 #define ESMC_METHOD "testSetGet()"
 void testSetGet(int& rc, char failMsg[]) {
   rc = ESMF_FAILURE;
@@ -571,6 +588,13 @@ int main(void) {
   //NEX_UTest
   strcpy(name, "Attributes broadcastAttributes()");
   testBroadcastAttributes(rc, failMsg);
+  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
+  //---------------------------------------------------------------------------
+
+  //---------------------------------------------------------------------------
+  //NEX_UTest
+  strcpy(name, "Attributes formatKey()");
+  testFormatKey(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //---------------------------------------------------------------------------
 
