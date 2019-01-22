@@ -18,10 +18,6 @@
 
 //-----------------------------------------------------------------------------
 
-//tdk:REMOVE: only required for tdk prints
-#include <netcdf.h>
-#include <pio.h>
-
 #include <vector>
 #include <fstream>
 
@@ -143,12 +139,6 @@ void broadcastAttributes(ESMCI::Attributes* attrs, int rootPet, int& rc); // tdk
 bool isIn(const string& target, const std::vector<string>& container);
 bool isIn(const std::vector<string>& target, const std::vector<string>& container);
 bool isIn(const string& target, const json& j);
-void tdklog(const string& msg);
-void tdklog(const string& msg, const std::vector<string>& v);
-void tdklog(const string& msg, const std::vector<ESMC_I4>& v);
-void tdklog(const string& msg, const std::vector<PIO_Offset>& v);
-void tdklog(const string& msg, int const* l, std::size_t size);
-void tdklog(const string& msg, PIO_Offset* l, std::size_t size);
 
 //-----------------------------------------------------------------------------
 

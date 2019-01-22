@@ -50,6 +50,52 @@ using json = nlohmann::json;  // Convenience rename for JSON namespace.
 
 namespace ESMCI {
 
+// tdk logging functions ======================================================
+
+//tdk:REMOVE
+void tdklog(const string& msg) {
+  string localmsg = "tdk: " + msg;
+//  std::cout << msg << std::endl; //tdk:p: THIS IS INSIDE tdklog
+  ESMC_LogWrite(localmsg.c_str(), ESMC_LOGMSG_INFO);
+}
+
+//tdk:REMOVE
+void tdklog(const string& msg, const vector<string>& v) {
+  for (size_t ii = 0; ii < v.size(); ii++) {
+    tdklog(msg + "[" + to_string(ii) + "]=" + v[ii]);
+  }
+}
+
+//tdk:REMOVE
+void tdklog(const string& msg, const vector<ESMC_I4>& v) {
+  for (size_t ii = 0; ii < v.size(); ii++) {
+    tdklog(msg + "[" + to_string(ii) + "]=" + to_string(v[ii]));
+  }
+}
+
+//tdk:REMOVE
+void tdklog(const string& msg, const vector<PIO_Offset>& v) {
+  for (size_t ii = 0; ii < v.size(); ii++) {
+    tdklog(msg + "[" + to_string(ii) + "]=" + to_string(v[ii]));
+  }
+}
+
+//tdk:REMOVE
+void tdklog(const string& msg, const int* l, std::size_t size) {
+  for (size_t ii = 0; ii < size; ii++) {
+    tdklog(msg + "[" + to_string(ii) + "]=" + to_string(l[ii]));
+  }
+}
+
+//tdk:REMOVE
+void tdklog(const string& msg, PIO_Offset* l, std::size_t size) {
+  for (size_t ii = 0; ii < size; ii++) {
+    tdklog(msg + "[" + to_string(ii) + "]=" + to_string(l[ii]));
+  }
+}
+
+//=============================================================================
+
 // Local function dependencies ================================================
 
 //#undef ESMC_METHOD

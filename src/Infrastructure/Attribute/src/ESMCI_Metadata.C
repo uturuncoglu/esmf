@@ -24,6 +24,9 @@
 
 #include <netcdf.h>
 
+//tdk:remove for logging functions only
+#include "ESMCI_IOHandle.h"
+
 #include "ESMC.h"
 #include "ESMCI_Attributes.h"
 #include "ESMCI_Macros.h"
@@ -581,13 +584,11 @@ ArrayBundle* Metadata::createArrayBundle(DistGrid& distgrid, vector<Array*>& arr
         }
       }
     }
-    tdklog("metadata::createarraybundle varnames", varnames);
     int nvars = varnames.size();
     arrayList.resize(nvars);
     json local_arrParms = jsonParms;
     for (auto ii = 0; ii < varnames.size(); ii++) {
       local_arrParms[ESMFARG::VARIABLENAME] = varnames[ii];
-      tdklog("metadata::createarraybundle current varname="+varnames[ii]);
       arrayList[ii] = this->createArray(distgrid, local_arrParms, rc);
       ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
     }

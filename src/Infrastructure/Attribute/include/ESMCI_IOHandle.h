@@ -67,6 +67,15 @@ namespace PIODEF {
 
 //-----------------------------------------------------------------------------
 
+void tdklog(const string& msg);
+void tdklog(const string& msg, const std::vector<string>& v);
+void tdklog(const string& msg, const std::vector<ESMC_I4>& v);
+void tdklog(const string& msg, const std::vector<PIO_Offset>& v);
+void tdklog(const string& msg, int const* l, std::size_t size);
+void tdklog(const string& msg, PIO_Offset* l, std::size_t size);
+
+//-----------------------------------------------------------------------------
+
 class IOHandle {
 
 public:
