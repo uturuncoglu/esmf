@@ -99,8 +99,14 @@ void tdklog(const string& msg, PIO_Offset* l, std::size_t size) {
 #undef ESMC_METHOD
 #define ESMC_METHOD "handleHasKey"
 bool handleHasKey(const Attributes* attrs, const string& key, int& rc) {
-  bool has_key = attrs->hasKey(key, rc, true);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+  // Exceptions:  ESMCI::esmf_attrs_error
+  bool has_key;
+  try {
+    has_key = attrs->hasKey(key, rc, true);
+  }
+  catch (ESMCI::esmf_attrs_error &exc_esmf) {
+    ESMF_CATCH_PASSTHRU(exc_esmf);
+  }
 
   if (has_key) {
     string msg = "Attribute key \'" + key + "\' already in map and force=false.";
@@ -167,6 +173,7 @@ Attributes::Attributes(json&& storage){
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes(string&)"
 Attributes::Attributes(const string& input, int& rc) {
+  // Exceptions: ESMCI::esmf_attrs_error
   // tdk:FEAT: use the parse method on the object!
   rc = ESMF_FAILURE;
   try {
@@ -209,27 +216,25 @@ string Attributes::dump(int indent, int& rc) const {
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::erase()"
 void Attributes::erase(const string& keyParent, const string& keyChild, int& rc) {
+  // Exceptions: ESMCI::esmf_attrs_error
   rc = ESMF_FAILURE;
-
-  json::json_pointer jp = this->formatKey(keyParent, rc);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
-
   try {
-    json &target = this->storage.at(jp);
+    json::json_pointer jp = this->formatKey(keyParent, rc);
     try {
-      // Will throw out_of_range if key does not exist.
+      json &target = this->storage.at(jp);
       json &found = target.at(keyChild);
-
       target.erase(keyChild);
     }
-    catch (json::out_of_range& e) {
+    catch (json::out_of_range &e) {
       ESMF_THROW_JSON(e, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);
     }
+    catch (json::type_error& e) {
+      ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
+    }
   }
-  catch (json::out_of_range& e) {
-    ESMF_THROW_JSON(e, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);
+  catch (ESMCI::esmf_attrs_error &exc_esmf) {
+    ESMF_CATCH_PASSTHRU(exc_esmf);
   }
-
   rc = ESMF_SUCCESS;
   return;
 };
@@ -237,6 +242,7 @@ void Attributes::erase(const string& keyParent, const string& keyChild, int& rc)
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::formatKey()"
 json::json_pointer Attributes::formatKey(const string& key, int& rc) {
+  // Exceptions:  ESMCI:esmf_attrs_error
   rc = ESMF_FAILURE;
   string localKey;
 
@@ -251,33 +257,42 @@ json::json_pointer Attributes::formatKey(const string& key, int& rc) {
     ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, msg, rc);
   }
 
-  json::json_pointer jp(localKey);
-  rc = ESMF_SUCCESS;
-
-  return jp;
+  try {
+    json::json_pointer jp(localKey);
+    rc = ESMF_SUCCESS;
+    return jp;
+  }
+  catch (json::parse_error &e) {
+    ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
+  }
 };
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::get()"
 template <typename T>
 T Attributes::get(const string& key, int& rc, T* def) const {
+  // Exceptions:  ESMCI:esmf_attrs_error
   rc = ESMF_FAILURE;
-
-  json::json_pointer jp = this->formatKey(key, rc);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
-
   T ret;
-  if (def) {
-    ret = this->storage.value(jp, *def);
-  } else {
-    try {
-      ret = this->storage.at(jp);
-    }
-    catch (json::out_of_range& e) {
-      ESMF_THROW_JSON(e, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);
+  try {
+    json::json_pointer jp = this->formatKey(key, rc);
+    if (def) {
+      ret = this->storage.value(jp, *def);
+    } else {
+      try {
+        ret = this->storage.at(jp);
+      }
+      catch (json::out_of_range& e) {
+        ESMF_THROW_JSON(e, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);
+      }
+      catch (json::type_error& e) {
+        ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
+      }
     }
   }
-
+  catch (ESMCI::esmf_attrs_error &exc_esmf) {
+    ESMF_CATCH_PASSTHRU(exc_esmf);
+  }
   return ret;
 }
 template float Attributes::get(const string&, int&, float*) const;
@@ -332,7 +347,9 @@ json& Attributes::getStorageRefWritable() {
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::hasKey()"
 bool Attributes::hasKey(const string& key, int& rc, bool isptr) const {
+  // Exceptions:  ESMCI::esmf_attrs_error
   // isptr is optional
+
   rc = ESMF_FAILURE;
 
   bool ret;
@@ -340,16 +357,20 @@ bool Attributes::hasKey(const string& key, int& rc, bool isptr) const {
     // Use JSON pointer syntax. This is slower than just attempting to find
     // the key. JSON pointers do not work with find. See: https://github.com/nlohmann/json/issues/1182#issuecomment-409708389
     // for an explanation.
-    json::json_pointer jp = this->formatKey(key, rc);
-    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
-
     try {
-      this->storage.at(jp);
-      ret = true;
+      json::json_pointer jp = this->formatKey(key, rc);
+      try {
+        this->storage.at(jp);
+        ret = true;
+      }
+      catch (json::out_of_range& e) {
+        ret = false;
+      }
     }
-    catch (json::out_of_range& e) {
-      ret = false;
+    catch (ESMCI::esmf_attrs_error &e) {
+      ESMF_CATCH_PASSTHRU(e);
     }
+
   } else {
     // This is faster because it avoids exceptions. However, it does not work
     // with JSON pointers.

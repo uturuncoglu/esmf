@@ -44,9 +44,7 @@ using std::string;
   ESMC_LogDefault.MsgFoundError(actual_rc, json_exc.what(), ESMC_CONTEXT,\
     &update_rc); throw(esmf_attrs_error(name_rc, actual_rc, json_exc.what()));}\
 
-#define ESMF_CATCH_PASSTHRU(esmf_exc) {\
-  ESMC_LogDefault.MsgFoundError(esmf_exc.getReturnCode(), esmf_exc.what(), \
-      ESMC_CONTEXT, nullptr); throw(esmf_exc);}\
+#define ESMF_CATCH_PASSTHRU(exc_esmf) {ESMC_LogDefault.MsgFoundError(exc_esmf.getReturnCode(), exc_esmf.what(), ESMC_CONTEXT, nullptr); throw(exc_esmf);}
 
 //-----------------------------------------------------------------------------
 //BOP
