@@ -305,18 +305,24 @@ template string Attributes::get(const string&, int&, string*) const;
 #define ESMC_METHOD "Attributes::getPointer()"
 template <typename T, typename JT>
 T Attributes::getPointer(const string& key, int& rc) const {
+  // Exceptions:  ESMCI:esmf_attrs_error
   rc = ESMF_FAILURE;
-
-  json::json_pointer jp = this->formatKey(key, rc);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
-
   try {
-    T ret = this->storage.at(jp).get_ptr<JT>();
-    rc = ESMF_SUCCESS;
-    return ret;
+    json::json_pointer jp = this->formatKey(key, rc);
+    try {
+      T ret = this->storage.at(jp).get_ptr<JT>();
+      rc = ESMF_SUCCESS;
+      return ret;
+    }
+    catch (json::out_of_range& e) {
+      ESMF_THROW_JSON(e, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);
+    }
+    catch (json::type_error& e) {
+      ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
+    }
   }
-  catch (json::out_of_range& e) {
-    ESMF_THROW_JSON(e, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);
+  catch (ESMCI::esmf_attrs_error &exc_esmf) {
+    ESMF_CATCH_PASSTHRU(exc_esmf);
   }
 };
 //  template const float* const Attributes::getPointer<const float* const,
@@ -351,7 +357,6 @@ bool Attributes::hasKey(const string& key, int& rc, bool isptr) const {
   // isptr is optional
 
   rc = ESMF_FAILURE;
-
   bool ret;
   if (isptr) {
     // Use JSON pointer syntax. This is slower than just attempting to find
@@ -376,7 +381,6 @@ bool Attributes::hasKey(const string& key, int& rc, bool isptr) const {
     // with JSON pointers.
     ret = !(this->storage.find(key) == this->storage.end());
   }
-
   rc = ESMF_SUCCESS;
   return ret;
 }
@@ -391,6 +395,9 @@ void Attributes::parse(const string& input, int& rc) {
   catch (json::parse_error& e) {
     ESMF_THROW_JSON(e, "ESMC_RC_OBJ_NOT_CREATED", ESMC_RC_OBJ_NOT_CREATED, rc);
   }
+  catch (json::type_error& e) {
+    ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
+  }
   rc = ESMF_SUCCESS;
   return;
 }
@@ -399,17 +406,32 @@ void Attributes::parse(const string& input, int& rc) {
 #define ESMC_METHOD "Attributes::set()"
 template <typename T>
 void Attributes::set(const string& key, T value, bool force, int& rc) {
+  // Exceptions:  ESMCI:esmf_attrs_error
+
   rc = ESMF_FAILURE;
-
   if (!force) {
-    bool has_key = handleHasKey(this, key, rc);
+    try {
+      bool has_key = handleHasKey(this, key, rc);
+    }
+    catch (ESMCI::esmf_attrs_error &exc_esmf) {
+      ESMF_CATCH_PASSTHRU(exc_esmf);
+    }
   }
-
-  json::json_pointer jp = this->formatKey(key, rc);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
-
-  this->storage[jp] = value;
-
+  try {
+    json::json_pointer jp = this->formatKey(key, rc);
+    try {
+      this->storage[jp] = value;
+    }
+    catch (json::out_of_range &e) {
+      ESMF_THROW_JSON(e, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);
+    }
+    catch (json::type_error &e) {
+      ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
+    }
+  }
+  catch (ESMCI::esmf_attrs_error &exc_esmf) {
+    ESMF_CATCH_PASSTHRU(exc_esmf);
+  }
   rc = ESMF_SUCCESS;
   return;
 };
