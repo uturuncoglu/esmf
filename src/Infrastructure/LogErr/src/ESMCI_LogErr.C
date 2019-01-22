@@ -584,7 +584,7 @@ bool LogErr::MsgFoundError(
     if (rcToReturn != ESMC_NULL_POINTER) *rcToReturn=ESMF_SUCCESS;
 #endif
     if (trace) {
-        Write(ESMC_METHOD,ESMC_LOGMSG_TRACE
+        Write(ESMC_METHOD,ESMC_LOGMSG_TRACE,
             LINE, FILE, method);
     }
     if (rcToCheck!=ESMF_SUCCESS){
