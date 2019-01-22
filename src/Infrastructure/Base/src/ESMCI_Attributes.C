@@ -182,22 +182,26 @@ Attributes::Attributes(const string& input, int& rc) {
 #define ESMC_METHOD "Attributes::dump(int &rc)"
 string Attributes::dump(int& rc) const {
   // Exceptions: ESMCI::esmf_attrs_error
-  rc = ESMF_FAILURE;
   string ret;
   try {
-    ret = this->storage.dump();
-  } catch (json::type_error &e) {
-    ESMF_THROW_JSON(e, "ESMC_RC_ARG_INCOMP", ESMC_RC_ARG_INCOMP, rc);
+    ret = this->dump(0, rc);
+  } catch (ESMCI::esmf_attrs_error &e) {
+    ESMF_CATCH_PASSTHRU(e);
   }
-  rc = ESMF_SUCCESS;
   return ret;
 };
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::dump(int indent, int &rc)"
 string Attributes::dump(int indent, int& rc) const {
+  // Exceptions: ESMCI::esmf_attrs_error
   rc = ESMF_FAILURE;
-  string ret = this->storage.dump(indent);
+  string ret;
+  try {
+    ret = this->storage.dump(indent);
+  } catch (json::type_error &e) {
+    ESMF_THROW_JSON(e, "ESMC_RC_ARG_INCOMP", ESMC_RC_ARG_INCOMP, rc);
+  }
   rc = ESMF_SUCCESS;
   return ret;
 };
@@ -435,6 +439,7 @@ void Attributes::update(const Attributes &attrs, int &rc) {
 #define ESMC_METHOD "esmf_attrs_error::esmf_attrs_error()"
 esmf_attrs_error::esmf_attrs_error (const string& code_name, int rc,
                                     const string& msg) {
+  assert(rc != ESMF_SUCCESS);
   string the_msg;
   if (code_name != "") {
     the_msg = "Error/Return Code " + std::to_string(rc) + " (" + \

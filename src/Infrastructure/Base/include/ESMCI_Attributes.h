@@ -35,13 +35,18 @@ using std::string;
 
 // Standard ESMF check error macros
 #define ESMF_CHECKERR_STD(name_rc, actual_rc, msg, update_rc) {\
-  esmf_attrs_error local_macro_error(name_rc, actual_rc, msg);\
-  if (ESMC_LogDefault.MsgFoundError(actual_rc, local_macro_error.what(), \
-      ESMC_CONTEXT, &update_rc)) throw(local_macro_error);}\
+  if (actual_rc != ESMF_SUCCESS) {\
+    esmf_attrs_error local_macro_error(name_rc, actual_rc, msg);\
+    if (ESMC_LogDefault.MsgFoundError(actual_rc, local_macro_error.what(), \
+        ESMC_CONTEXT, &update_rc)) throw(local_macro_error);}}\
 
 #define ESMF_THROW_JSON(json_exc, name_rc, actual_rc, update_rc) {\
   ESMC_LogDefault.MsgFoundError(actual_rc, json_exc.what(), ESMC_CONTEXT,\
     &update_rc); throw(esmf_attrs_error(name_rc, actual_rc, json_exc.what()));}\
+
+#define ESMF_CATCH_PASSTHRU(esmf_exc) {\
+  ESMC_LogDefault.MsgFoundError(esmf_exc.getReturnCode(), esmf_exc.what(), \
+      ESMC_CONTEXT, nullptr); throw(esmf_exc);}\
 
 //-----------------------------------------------------------------------------
 //BOP
