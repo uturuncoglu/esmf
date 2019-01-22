@@ -34,15 +34,9 @@ using std::string;
 //tdk:LAST: remove all tdk stuff (search for tdk)
 
 // Standard ESMF check error macros
-#define ESMF_CHECKERR_STD(name_rc, actual_rc, msg, update_rc) {\
-  if (actual_rc != ESMF_SUCCESS) {\
-    esmf_attrs_error local_macro_error(name_rc, actual_rc, msg);\
-    if (ESMC_LogDefault.MsgFoundError(actual_rc, local_macro_error.what(), \
-        ESMC_CONTEXT, &update_rc)) throw(local_macro_error);}}\
+#define ESMF_CHECKERR_STD(name_rc, actual_rc, msg, update_rc) {if (actual_rc != ESMF_SUCCESS) {esmf_attrs_error local_macro_error(name_rc, actual_rc, msg); if (ESMC_LogDefault.MsgFoundError(actual_rc, local_macro_error.what(), ESMC_CONTEXT, &update_rc)) throw(local_macro_error);}}
 
-#define ESMF_THROW_JSON(json_exc, name_rc, actual_rc, update_rc) {\
-  ESMC_LogDefault.MsgFoundError(actual_rc, json_exc.what(), ESMC_CONTEXT,\
-    &update_rc); throw(esmf_attrs_error(name_rc, actual_rc, json_exc.what()));}\
+#define ESMF_THROW_JSON(json_exc, name_rc, actual_rc, update_rc) {ESMC_LogDefault.MsgFoundError(actual_rc, json_exc.what(), ESMC_CONTEXT, &update_rc); throw(esmf_attrs_error(name_rc, actual_rc, json_exc.what()));}
 
 #define ESMF_CATCH_PASSTHRU(exc_esmf) {ESMC_LogDefault.MsgFoundError(exc_esmf.getReturnCode(), exc_esmf.what(), ESMC_CONTEXT, nullptr); throw(exc_esmf);}
 
