@@ -181,8 +181,14 @@ Attributes::Attributes(const string& input, int& rc) {
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::dump(int &rc)"
 string Attributes::dump(int& rc) const {
+  // Exceptions: ESMCI::esmf_attrs_error
   rc = ESMF_FAILURE;
-  string ret = this->storage.dump();
+  string ret;
+  try {
+    ret = this->storage.dump();
+  } catch (json::type_error &e) {
+    ESMF_THROW_JSON(e, "ESMC_RC_ARG_INCOMP", ESMC_RC_ARG_INCOMP, rc);
+  }
   rc = ESMF_SUCCESS;
   return ret;
 };
