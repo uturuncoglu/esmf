@@ -365,6 +365,24 @@ void Attributes::parse(const string& input, int& rc) {
 }
 
 #undef  ESMC_METHOD
+#define ESMC_METHOD "Attributes::serialize()"
+void Attributes::serialize(char *buffer, int *length, int *offset,
+  ESMC_InquireFlag inquireflag, int& rc) {
+  // Exceptions:  ESMCI:esmf_attrs_error
+  rc = ESMF_FAILURE;
+  std::string attrbuffer = this->dump(rc); //tdk:try/catch
+  *length = (int)attrbuffer.length();
+  if (inquireflag != ESMF_INQUIREONLY) {
+    for (int ii; ii=0; ii<attrbuffer.size()) {
+      buffer[*offset] = attrbuffer[ii];
+      *offset++;
+    }
+  }
+  rc = ESMF_SUCCESS;
+  return;
+}
+
+#undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::set()"
 template <typename T>
 void Attributes::set(const string& key, T value, bool force, int& rc) {

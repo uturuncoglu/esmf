@@ -108,6 +108,9 @@ public:
 
   void parse(const string& input, int& rc);
 
+  void serialize(char *buffer, int *length, int *offset,
+    ESMC_InquireFlag inquireflag, int& rc);
+
   template <typename T>
   void set(const string& key, T value, bool force, int& rc);
 
