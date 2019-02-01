@@ -492,6 +492,33 @@ void testSetGetErrorHandling(int& rc, char failMsg[]) {
 };
 
 #undef  ESMC_METHOD
+#define ESMC_METHOD "testSizeof()"
+void testSizeof(int& rc, char failMsg[]) {
+  rc = ESMF_FAILURE;
+  Attributes attrs;
+  std::string attrbuff;
+  try {
+    attrbuff = attrs.dump(rc);
+  }
+  catch (esmf_attrs_error &e) {
+    ESMF_CATCH_PASSTHRU(e);
+  }
+  std::size_t sf = attrbuff.length();
+  try {
+    attrs.set("the_int", 50, false, rc);
+    attrbuff = attrs.dump(rc);
+  }
+  catch (esmf_attrs_error &e) {
+    ESMF_CATCH_PASSTHRU(e);
+  }
+  std::size_t sf2 = attrbuff.length();
+  if (sf2 < sf) {
+    return finalizeFailure(rc, failMsg, "Length too small with int");
+  }
+  return;
+};
+
+#undef  ESMC_METHOD
 #define ESMC_METHOD "testUpdate()"
 void testUpdate(int& rc, char failMsg[]) {
   rc = ESMF_FAILURE;
@@ -595,6 +622,13 @@ int main(void) {
   //NEX_UTest
   strcpy(name, "Attributes formatKey()");
   testFormatKey(rc, failMsg);
+  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
+  //---------------------------------------------------------------------------
+
+  //---------------------------------------------------------------------------
+  //NEX_UTest
+  strcpy(name, "Attributes sizeof()");
+  testSizeof(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //---------------------------------------------------------------------------
 
