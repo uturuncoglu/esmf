@@ -492,8 +492,8 @@ void testSetGetErrorHandling(int& rc, char failMsg[]) {
 };
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "testSizeof()"
-void testSizeof(int& rc, char failMsg[]) {
+#define ESMC_METHOD "testDumpLength()"
+void testDumpLength(int& rc, char failMsg[]) {
   rc = ESMF_FAILURE;
   Attributes attrs;
   std::string attrbuff;
@@ -627,8 +627,8 @@ int main(void) {
 
   //---------------------------------------------------------------------------
   //NEX_UTest
-  strcpy(name, "Attributes sizeof()");
-  testSizeof(rc, failMsg);
+  strcpy(name, "Attributes Dump Length");
+  testDumpLength(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //---------------------------------------------------------------------------
 
