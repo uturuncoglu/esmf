@@ -1,7 +1,7 @@
 // $Id$
 //
 // Earth System Modeling Framework
-// Copyright 2002-2018, University Corporation for Atmospheric Research, 
+// Copyright 2002-2019, University Corporation for Atmospheric Research, 
 // Massachusetts Institute of Technology, Geophysical Fluid Dynamics 
 // Laboratory, University of Michigan, National Centers for Environmental 
 // Prediction, Los Alamos National Laboratory, Argonne National Laboratory, 
@@ -15,7 +15,7 @@
 #include <algorithm>
 #include <iterator>
 
-#include <Mesh/include/sacado/Sacado.hpp>
+#include <Mesh/include/sacado/Sacado_No_Kokkos.hpp>
 
 //-----------------------------------------------------------------------------
 // leave the following line as-is; it will insert the cvs ident string

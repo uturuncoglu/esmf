@@ -1,7 +1,7 @@
 // $Id$
 //
 // Earth System Modeling Framework
-// Copyright 2002-2018, University Corporation for Atmospheric Research, 
+// Copyright 2002-2019, University Corporation for Atmospheric Research, 
 // Massachusetts Institute of Technology, Geophysical Fluid Dynamics 
 // Laboratory, University of Michigan, National Centers for Environmental 
 // Prediction, Los Alamos National Laboratory, Argonne National Laboratory, 
@@ -14,7 +14,7 @@
 #include <Mesh/include/Legacy/ESMCI_MeshObjTopo.h>
 #include <Mesh/include/Regridding/ESMCI_Mapping.h>
 #include <Mesh/include/Legacy/ESMCI_MeshObjConn.h>
-#include <Mesh/include/sacado/Sacado.hpp>
+#include <Mesh/include/sacado/Sacado_No_Kokkos.hpp>
 #include <Mesh/include/Legacy/ESMCI_MEValues.h>
 #include <Mesh/include/Legacy/ESMCI_MeshField.h>
 #include <Mesh/include/Legacy/ESMCI_ParEnv.h>

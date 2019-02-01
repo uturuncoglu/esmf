@@ -320,6 +320,10 @@ ifeq ($(ESMF_MACHINE),ppc64)
 # and ppc64
 export ESMF_ABI = 64
 endif
+ifeq ($(ESMF_MACHINE),ppc64le)
+# and ppc64 little endian
+export ESMF_ABI = 64
+endif
 endif
 
 ifeq ($(ESMF_OS),Darwin)
@@ -1614,7 +1618,7 @@ endif
 endif
 
 ifneq ($(ESMF_CXXSTD),default)
-ESMF_CXXCOMPILEOPTS  += -std=c++$(ESMF_CXXSTD)
+ESMF_CXXCOMPILEOPTS  += -std=c++$(ESMF_CXXSTD) -DESMF_CXXSTD=$(ESMF_CXXSTD)
 endif
 
 #-------------------------------------------------------------------------------
