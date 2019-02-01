@@ -2,7 +2,7 @@
 //==============================================================================
 //
 // Earth System Modeling Framework
-// Copyright 2002-2016, University Corporation for Atmospheric Research,
+// Copyright 2002-2019, University Corporation for Atmospheric Research,
 // Massachusetts Institute of Technology, Geophysical Fluid Dynamics
 // Laboratory, University of Michigan, National Centers for Environmental
 // Prediction, Los Alamos National Laboratory, Argonne National Laboratory,
@@ -37,8 +37,6 @@
 #include <vector>
 #include <cstring>
 
-
-using namespace std;
 
 //==============================================================================
 //BOP
@@ -1175,12 +1173,12 @@ int main(void){
     // nums[i] = (nt)shared_ents.num_of_dimension(i);
     nums[i] = (int)owned_entities.num_of_dimension(i);
     
-  vector<int> rbuf(petCount*4, 0);
+  std::vector<int> rbuf(petCount*4, 0);
   MPI_Gather(nums, 4, MPI_INT, &rbuf[0], 4, MPI_INT, 0, mpi_comm);
   // Print the stats gathered:
   if (0 == localPet) {
     for (int i = 0; i < petCount; i++)
-      cout << " Shared, owned entities on proc " << i << ": " << rbuf[4*i] << " verts, " <<
+      std::cout << " Shared, owned entities on proc " << i << ": " << rbuf[4*i] << " verts, " <<
           rbuf[4*i + 1] << " edges, " << rbuf[4*i + 2] << " faces, " << rbuf[4*i + 3] << " elements" << endl;
   }
   }
@@ -1216,12 +1214,12 @@ int main(void){
     // nums[i] = (nt)shared_ents.num_of_dimension(i);
     nums[i] = (int)owned_entities.num_of_dimension(i);
     
-  vector<int> rbuf(petCount*4, 0);
+  std::vector<int> rbuf(petCount*4, 0);
   MPI_Gather(nums, 4, MPI_INT, &rbuf[0], 4, MPI_INT, 0, mpi_comm);
   // Print the stats gathered:
   if (0 == localPet) {
     for (int i = 0; i < petCount; i++)
-      cout << " Shared, owned entities on proc " << i << ": " << rbuf[4*i] << " verts, " <<
+      std::cout << " Shared, owned entities on proc " << i << ": " << rbuf[4*i] << " verts, " <<
           rbuf[4*i + 1] << " edges, " << rbuf[4*i + 2] << " faces, " << rbuf[4*i + 3] << " elements" << endl;
   }
   }
@@ -1230,8 +1228,8 @@ int main(void){
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-  vector<Tag> node_tags;
-  vector<Tag> elem_tags;
+  std::vector<Tag> node_tags;
+  std::vector<Tag> elem_tags;
   
   node_tags.push_back(mbmesh->gid_tag);
   node_tags.push_back(mbmesh->orig_pos_tag);
