@@ -377,11 +377,14 @@ void Attributes::deserialize(char *buffer, int *offset, int &rc) {
   int length = ibuffer[*offset];
   // Move 4 bytes to the start of the string actual.
   *offset += 4;
-  // tdk:RESUME: do the parse...
-//  std::string attrstr(buffer, (std::size_t)());
-//  this->parse();
-  //tdk:RESUME
-  rc = ESMF_SUCCESS;
+  std::string attrsbuffer(buffer[*offset], length);
+  try {
+    this->parse(attrsbuffer, rc);
+  }
+  catch (esmf_attrs_error &e) {
+    ESMF_CATCH_PASSTHRU(e);
+  }
+  *offset += length;
   return;
 }
 
