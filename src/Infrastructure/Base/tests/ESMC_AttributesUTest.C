@@ -519,6 +519,39 @@ void testDumpLength(int& rc, char failMsg[]) {
 };
 
 #undef  ESMC_METHOD
+#define ESMC_METHOD "testSerializeDeserialize()"
+void testSerializeDeserialize(int& rc, char failMsg[]) {
+  rc = ESMF_FAILURE;
+  Attributes attrs;
+  char *null_buffer = nullptr;
+  int inquire_length = 0;
+  int offset = 0;
+  try {
+    attrs.serialize(null_buffer, &inquire_length, &offset, ESMF_INQUIREONLY, rc);
+  }
+  catch (esmf_attrs_error &e) {
+    ESMF_CATCH_PASSTHRU(e);
+  }
+  if (offset != 0) {
+    return finalizeFailure(rc, failMsg, "Should not have adjusted offset");
+  }
+  std::cout << inquire_length << std::endl; //tdk:p
+  char buffer[inquire_length];
+  int length = 0;
+  try {
+    attrs.serialize(buffer, &length, &offset, ESMF_NOINQUIRE, rc);
+  }
+  catch (esmf_attrs_error &e) {
+    ESMF_CATCH_PASSTHRU(e);
+  }
+  if (offset != length) {
+    return finalizeFailure(rc, failMsg, "Offset and length should be equal");
+  }
+  std::cout << length << "," << offset << std::endl; //tdk:p
+  return;
+};
+
+#undef  ESMC_METHOD
 #define ESMC_METHOD "testUpdate()"
 void testUpdate(int& rc, char failMsg[]) {
   rc = ESMF_FAILURE;
@@ -629,6 +662,13 @@ int main(void) {
   //NEX_UTest
   strcpy(name, "Attributes Dump Length");
   testDumpLength(rc, failMsg);
+  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
+  //---------------------------------------------------------------------------
+
+  //---------------------------------------------------------------------------
+  //NEX_UTest
+  strcpy(name, "Attributes Serialize/Deserialize");
+  testSerializeDeserialize(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //---------------------------------------------------------------------------
 

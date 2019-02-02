@@ -397,6 +397,7 @@ void Attributes::serialize(char *buffer, int *length, int *offset,
   std::string attrbuffer;
   try {
     attrbuffer = this->dump(rc);
+    std::cout << "attrbuffer=" << attrbuffer << std::endl; //tdk:p
   }
   catch (ESMCI::esmf_attrs_error &exc_esmf) {
     ESMF_CATCH_PASSTHRU(exc_esmf);
@@ -412,10 +413,12 @@ void Attributes::serialize(char *buffer, int *length, int *offset,
   if (inquireflag != ESMF_INQUIREONLY) {
     int *ibuffer = reinterpret_cast<int*>(buffer);
     ibuffer[*offset] = n;
-    *offset += 4;
+    (*offset) += 4;
     for (int ii=0; ii<n; ++ii) {
       buffer[*offset] = attrbuffer[ii];
-      *offset++;
+      std::cout << "adjust offset: before=" << *offset << std::endl; //tdk:p
+      (*offset)++;
+      std::cout << "adjust offset: after=" << *offset << std::endl; //tdk:p
     }
   }
   rc = ESMF_SUCCESS;
