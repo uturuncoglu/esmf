@@ -364,16 +364,53 @@ void Attributes::parse(const string& input, int& rc) {
   return;
 }
 
+//tdk: ORDER
+#undef  ESMC_METHOD
+#define ESMC_METHOD "Attributes::deserialize()"
+void Attributes::deserialize(char *buffer, int *offset, int &rc) {
+  // Exceptions:  ESMCI:esmf_attrs_error
+  rc = ESMF_FAILURE;
+
+  // Act like an integer to get the string length.
+  int *ibuffer = reinterpret_cast<int*>(buffer);
+  // Get the serialized string length from the buffer start.
+  int length = ibuffer[*offset];
+  // Move 4 bytes to the start of the string actual.
+  *offset += 4;
+  // tdk:RESUME: do the parse...
+//  std::string attrstr(buffer, (std::size_t)());
+//  this->parse();
+  //tdk:RESUME
+  rc = ESMF_SUCCESS;
+  return;
+}
+
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::serialize()"
 void Attributes::serialize(char *buffer, int *length, int *offset,
   ESMC_InquireFlag inquireflag, int& rc) {
   // Exceptions:  ESMCI:esmf_attrs_error
   rc = ESMF_FAILURE;
-  std::string attrbuffer = this->dump(rc); //tdk:try/catch
-  *length = (int)attrbuffer.length();
+  std::string attrbuffer;
+  try {
+    attrbuffer = this->dump(rc);
+  }
+  catch (ESMCI::esmf_attrs_error &exc_esmf) {
+    ESMF_CATCH_PASSTHRU(exc_esmf);
+  }
+  // Adjust the buffer length to account for string attribute representation.
+  int n = (int)attrbuffer.length();
+  *length += n;
+  // Need 32 bits (4 bytes) to store the length of the string buffer for a
+  // later deserialize.
+  *length += 4;
+  // If this is not an inquire operation, transfer the string attributes dump
+  // into the serialization buffer. Update the offset in the process.
   if (inquireflag != ESMF_INQUIREONLY) {
-    for (int ii; ii=0; ii<attrbuffer.size()) {
+    int *ibuffer = reinterpret_cast<int*>(buffer);
+    ibuffer[*offset] = n;
+    *offset += 4;
+    for (int ii=0; ii<n; ++ii) {
       buffer[*offset] = attrbuffer[ii];
       *offset++;
     }

@@ -108,6 +108,8 @@ public:
 
   void parse(const string& input, int& rc);
 
+  void deserialize(char *buffer, int *offset, int& rc);
+
   void serialize(char *buffer, int *length, int *offset,
     ESMC_InquireFlag inquireflag, int& rc);
 
