@@ -523,6 +523,12 @@ void testDumpLength(int& rc, char failMsg[]) {
 void testSerializeDeserialize(int& rc, char failMsg[]) {
   rc = ESMF_FAILURE;
   Attributes attrs;
+  try {
+    attrs.set("foo", 16, false, rc);
+  }
+  catch (esmf_attrs_error &e) {
+    ESMF_CATCH_PASSTHRU(e);
+  }
   char *null_buffer = nullptr;
   int inquire_length = 0;
   int offset = 0;
@@ -535,7 +541,7 @@ void testSerializeDeserialize(int& rc, char failMsg[]) {
   if (offset != 0) {
     return finalizeFailure(rc, failMsg, "Should not have adjusted offset");
   }
-  std::cout << inquire_length << std::endl; //tdk:p
+  std::cout << "inquire_length=" << inquire_length << std::endl; //tdk:p
   char buffer[inquire_length];
   int length = 0;
   try {
@@ -547,7 +553,21 @@ void testSerializeDeserialize(int& rc, char failMsg[]) {
   if (offset != length) {
     return finalizeFailure(rc, failMsg, "Offset and length should be equal");
   }
-  std::cout << length << "," << offset << std::endl; //tdk:p
+  std::cout << "test:length,offset=" << length << "," << offset << std::endl; //tdk:p
+  Attributes deattrs;
+  int deoffset = 0;
+  try {
+    deattrs.deserialize(buffer, &deoffset, rc);
+  }
+  catch (esmf_attrs_error &e) {
+    ESMF_CATCH_PASSTHRU(e);
+  }
+  if (deoffset != offset) {
+    return finalizeFailure(rc, failMsg, "Deserialize offset incorrect");
+  }
+  if (attrs.getStorageRef() != deattrs.getStorageRef()) {
+    return finalizeFailure(rc, failMsg, "Storage not equal");
+  }
   return;
 };
 

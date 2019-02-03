@@ -374,17 +374,24 @@ void Attributes::deserialize(char *buffer, int *offset, int &rc) {
   // Act like an integer to get the string length.
   int *ibuffer = reinterpret_cast<int*>(buffer);
   // Get the serialized string length from the buffer start.
+  std::cout << "deserialize,offset=" << *offset << std::endl; //tdk:p
   int length = ibuffer[*offset];
+  std::cout << "deserialize,length=" << length << std::endl; //tdk:p
   // Move 4 bytes to the start of the string actual.
-  *offset += 4;
-  std::string attrsbuffer(buffer[*offset], length);
+  (*offset) += 4;
+  std::cout << "deserialize,offset,2=" << *offset << std::endl; //tdk:p
+//  std::string attrsbuffer(length, '\0');
+//  attrsbuffer[0] = buffer[*offset];
+//  attrsbuffer[1] = buffer[(*offset)+1];
+  std::string attrsbuffer(&(buffer[*offset]), length);
+  std::cout << "attrsbuffer=" << attrsbuffer << std::endl; //tdk:p
   try {
     this->parse(attrsbuffer, rc);
   }
   catch (esmf_attrs_error &e) {
     ESMF_CATCH_PASSTHRU(e);
   }
-  *offset += length;
+  (*offset) += length;
   return;
 }
 
@@ -415,8 +422,9 @@ void Attributes::serialize(char *buffer, int *length, int *offset,
     ibuffer[*offset] = n;
     (*offset) += 4;
     for (int ii=0; ii<n; ++ii) {
-      buffer[*offset] = attrbuffer[ii];
       std::cout << "adjust offset: before=" << *offset << std::endl; //tdk:p
+      std::cout << "adjust offset: inserting=" << attrbuffer[ii] << std::endl; //tdk:p
+      buffer[*offset] = attrbuffer[ii];
       (*offset)++;
       std::cout << "adjust offset: after=" << *offset << std::endl; //tdk:p
     }
