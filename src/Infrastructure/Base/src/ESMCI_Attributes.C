@@ -399,6 +399,7 @@ void Attributes::deserialize(char *buffer, int *offset, int &rc) {
     ESMF_CATCH_PASSTHRU(e);
   }
   (*offset) += length;
+  alignOffset(*offset);
   return;
 }
 
@@ -435,6 +436,7 @@ void Attributes::serialize(char *buffer, int *length, int *offset,
       (*offset)++;
       std::cout << "adjust offset: after=" << *offset << std::endl; //tdk:p
     }
+    alignOffset(*offset);
   }
   rc = ESMF_SUCCESS;
   return;

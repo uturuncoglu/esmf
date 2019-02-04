@@ -550,10 +550,12 @@ void testSerializeDeserialize(int& rc, char failMsg[]) {
   catch (esmf_attrs_error &e) {
     ESMF_CATCH_PASSTHRU(e);
   }
-  if (offset != length) {
+  std::cout << "test:length,offset=" << length << "," << offset << std::endl; //tdk:p
+  int aligned_length = length;
+  alignOffset(aligned_length);
+  if (offset != aligned_length) {
     return finalizeFailure(rc, failMsg, "Offset and length should be equal");
   }
-  std::cout << "test:length,offset=" << length << "," << offset << std::endl; //tdk:p
   Attributes deattrs;
   int deoffset = 0;
   try {

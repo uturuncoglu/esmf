@@ -140,6 +140,7 @@ public:
 
 //-----------------------------------------------------------------------------
 
+void alignOffset(int &offset);
 void broadcastAttributes(ESMCI::Attributes* attrs, int rootPet, int& rc); // tdk: FEATURE: non-blocking
 bool isIn(const string& target, const std::vector<string>& container);
 bool isIn(const std::vector<string>& target, const std::vector<string>& container);
