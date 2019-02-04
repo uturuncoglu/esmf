@@ -541,7 +541,6 @@ void testSerializeDeserialize(int& rc, char failMsg[]) {
   if (offset != 0) {
     return finalizeFailure(rc, failMsg, "Should not have adjusted offset");
   }
-  std::cout << "inquire_length=" << inquire_length << std::endl; //tdk:p
   char buffer[inquire_length];
   int length = 0;
   try {
@@ -550,7 +549,6 @@ void testSerializeDeserialize(int& rc, char failMsg[]) {
   catch (esmf_attrs_error &e) {
     ESMF_CATCH_PASSTHRU(e);
   }
-  std::cout << "test:length,offset=" << length << "," << offset << std::endl; //tdk:p
   int aligned_length = length;
   alignOffset(aligned_length);
   if (offset != aligned_length) {

@@ -377,21 +377,13 @@ void Attributes::parse(const string& input, int& rc) {
 void Attributes::deserialize(char *buffer, int *offset, int &rc) {
   // Exceptions:  ESMCI:esmf_attrs_error
   rc = ESMF_FAILURE;
-
   // Act like an integer to get the string length.
   int *ibuffer = reinterpret_cast<int*>(buffer);
   // Get the serialized string length from the buffer start.
-  std::cout << "deserialize,offset=" << *offset << std::endl; //tdk:p
   int length = ibuffer[*offset];
-  std::cout << "deserialize,length=" << length << std::endl; //tdk:p
   // Move 4 bytes to the start of the string actual.
   (*offset) += 4;
-  std::cout << "deserialize,offset,2=" << *offset << std::endl; //tdk:p
-//  std::string attrsbuffer(length, '\0');
-//  attrsbuffer[0] = buffer[*offset];
-//  attrsbuffer[1] = buffer[(*offset)+1];
   std::string attrsbuffer(&(buffer[*offset]), length);
-  std::cout << "attrsbuffer=" << attrsbuffer << std::endl; //tdk:p
   try {
     this->parse(attrsbuffer, rc);
   }
@@ -412,7 +404,6 @@ void Attributes::serialize(char *buffer, int *length, int *offset,
   std::string attrbuffer;
   try {
     attrbuffer = this->dump(rc);
-    std::cout << "attrbuffer=" << attrbuffer << std::endl; //tdk:p
   }
   catch (ESMCI::esmf_attrs_error &exc_esmf) {
     ESMF_CATCH_PASSTHRU(exc_esmf);
@@ -430,11 +421,8 @@ void Attributes::serialize(char *buffer, int *length, int *offset,
     ibuffer[*offset] = n;
     (*offset) += 4;
     for (int ii=0; ii<n; ++ii) {
-      std::cout << "adjust offset: before=" << *offset << std::endl; //tdk:p
-      std::cout << "adjust offset: inserting=" << attrbuffer[ii] << std::endl; //tdk:p
       buffer[*offset] = attrbuffer[ii];
       (*offset)++;
-      std::cout << "adjust offset: after=" << *offset << std::endl; //tdk:p
     }
     alignOffset(*offset);
   }
