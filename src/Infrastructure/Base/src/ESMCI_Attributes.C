@@ -377,6 +377,7 @@ void Attributes::parse(const string& input, int& rc) {
 void Attributes::deserialize(char *buffer, int *offset, int &rc) {
   // Exceptions:  ESMCI:esmf_attrs_error
   rc = ESMF_FAILURE;
+  alignOffset(*offset);
   // Act like an integer to get the string length.
   int *ibuffer = reinterpret_cast<int*>(buffer);
   // Get the serialized string length from the buffer start.
@@ -417,6 +418,7 @@ void Attributes::serialize(char *buffer, int *length, int *offset,
   // If this is not an inquire operation, transfer the string attributes dump
   // into the serialization buffer. Update the offset in the process.
   if (inquireflag != ESMF_INQUIREONLY) {
+    alignOffset(*offset);
     int *ibuffer = reinterpret_cast<int*>(buffer);
     ibuffer[*offset] = n;
     (*offset) += 4;
