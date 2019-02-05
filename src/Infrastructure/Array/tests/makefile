@@ -33,12 +33,14 @@ TESTS_RUN     = RUN_ESMF_ArrayCreateGetUTest \
                 RUN_ESMF_ArrayRedistUTest \
                 RUN_ESMF_ArrayRedistPerfUTest \
                 RUN_ESMF_ArrayHaloUTest \
-                RUN_ESMC_ArrayUTest 
+                RUN_ESMC_ArrayUTest \
+                RUN_ESMF_ArrayAttributesUTest
 
 TESTS_RUN_UNI = RUN_ESMF_ArrayDataUTestUNI \
                 RUN_ESMF_ArraySMMUTestUNI \
                 RUN_ESMF_ArraySMMFromFileUTestUNI \
-                RUN_ESMC_ArrayUTestUNI
+                RUN_ESMC_ArrayUTestUNI \
+                RUN_ESMF_ArrayAttributesUTestUNI
 
 #
 # check ESMF_TESTHARNESS_ARRAY for default, 
