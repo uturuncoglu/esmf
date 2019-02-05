@@ -7,21 +7,21 @@ run_uni:  run_unit_tests_uni
 LOCDIR	  = src/Infrastructure/Array/tests
 
 .NOTPARALLEL:
-TESTS_BUILD = $(ESMF_TESTDIR)/ESMF_ArrayAttributesUTest
-#TESTS_BUILD   = $(ESMF_TESTDIR)/ESMF_ArrayCreateGetUTest \
-#                $(ESMF_TESTDIR)/ESMF_ArrayDataUTest \
-#                $(ESMF_TESTDIR)/ESMF_ArrayScatterUTest \
-#                $(ESMF_TESTDIR)/ESMF_ArrayGatherUTest \
-#                $(ESMF_TESTDIR)/ESMF_ArrayIOUTest \
-#                $(ESMF_TESTDIR)/ESMF_ArraySMMUTest \
-#                $(ESMF_TESTDIR)/ESMF_ArraySMMFromFileUTest \
-#                $(ESMF_TESTDIR)/ESMF_ArrayArbIdxSMMUTest \
-#                $(ESMF_TESTDIR)/ESMF_ArrayRedistUTest \
-#                $(ESMF_TESTDIR)/ESMF_ArrayRedistPerfUTest \
-#                $(ESMF_TESTDIR)/ESMF_ArrayHaloUTest \
-#                $(ESMF_TESTDIR)/ESMC_ArrayUTest \
-#                $(ESMF_TESTDIR)/ESMF_ArrayAttributesUTest
-#tdk: add test targets for ArrayAttributesUTest
+#TESTS_BUILD = $(ESMF_TESTDIR)/ESMF_ArrayAttributesUTest
+TESTS_BUILD   = $(ESMF_TESTDIR)/ESMF_ArrayCreateGetUTest \
+                $(ESMF_TESTDIR)/ESMF_ArrayDataUTest \
+                $(ESMF_TESTDIR)/ESMF_ArrayScatterUTest \
+                $(ESMF_TESTDIR)/ESMF_ArrayGatherUTest \
+                $(ESMF_TESTDIR)/ESMF_ArrayIOUTest \
+                $(ESMF_TESTDIR)/ESMF_ArraySMMUTest \
+                $(ESMF_TESTDIR)/ESMF_ArraySMMFromFileUTest \
+                $(ESMF_TESTDIR)/ESMF_ArrayArbIdxSMMUTest \
+                $(ESMF_TESTDIR)/ESMF_ArrayRedistUTest \
+                $(ESMF_TESTDIR)/ESMF_ArrayRedistPerfUTest \
+                $(ESMF_TESTDIR)/ESMF_ArrayHaloUTest \
+                $(ESMF_TESTDIR)/ESMC_ArrayUTest \
+                $(ESMF_TESTDIR)/ESMF_ArrayAttributesUTest
+
 TESTS_RUN     = RUN_ESMF_ArrayCreateGetUTest \
                 RUN_ESMF_ArrayDataUTest  \
                 RUN_ESMF_ArrayScatterUTest \
@@ -139,6 +139,14 @@ RUN_ESMC_ArrayUTest:
 
 RUN_ESMC_ArrayUTestUNI:
 	$(MAKE) TNAME=Array NP=1 ctest
+
+# ---
+
+RUN_ESMF_ArrayAttributesUTest:
+	$(MAKE) TNAME=ArrayAttributes NP=4 ftest
+
+RUN_ESMF_ArrayAttributesUTestUNI:
+	$(MAKE) TNAME=ArrayAttributesUNI NP=1 ftest
 
 # ---
 #
