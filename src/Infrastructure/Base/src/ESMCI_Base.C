@@ -689,9 +689,13 @@ void ESMC_Base::constructAttrs(ESMC_Base& base) { // root_attrs_tdk
     root = new ESMCI::Attribute(ESMF_TRUE);
     root->setBase(this);
     rootalias = false;
+    constructAttrs(*this); //root_attrs_tdk
 
     // Deserialize the Attribute hierarchy
     if (attreconflag == ESMC_ATTRECONCILE_ON) {
+      attrs->deserialize(buffer, offset, localrc); //root_attrs_tdk
+      if (ESMC_LogDefault.MsgFoundError(localrc, ESMCI_ERR_PASSTHRU,
+            ESMC_CONTEXT, &localrc)) return localrc; //root_attrs_tdk
       if (*offset%8 != 0)
         *offset += 8 - *offset%8;
       localrc = root->ESMC_Deserialize(buffer,offset);
@@ -999,6 +1003,9 @@ void ESMC_Base::constructAttrs(ESMC_Base& base) { // root_attrs_tdk
 
     // Serialize the Attribute hierarchy
     if (attreconflag == ESMC_ATTRECONCILE_ON) {
+      attrs->serialize(buffer, length, offset, inquireflag, localrc); //root_attrs_tdk
+      if (ESMC_LogDefault.MsgFoundError(localrc, ESMCI_ERR_PASSTHRU,
+        ESMC_CONTEXT, &localrc)) return localrc; //root_attrs_tdk
       if (*offset%8 != 0)
         *offset += 8 - *offset%8;
       localrc = root->ESMC_Serialize(buffer,length,offset, inquireflag);
