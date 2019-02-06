@@ -157,17 +157,35 @@ extern "C" {
   void ESMC_AttributesDestroy(ESMCI::Attributes* attrs, int& rc);
   void ESMC_AttributesErase(ESMCI::Attributes* attrs, char* keyParent,
                             char* keyChild, int& rc);
+
+//-----------------------------------------------------------------------------
+
   int ESMC_AttributesGet_C_INT(ESMCI::Attributes* attrs, char* key, int& rc, int* def);
-  long int ESMC_AttributesGet_C_LONG(ESMCI::Attributes* attrs, char* key, int& rc, int* def);
-  float ESMC_AttributesGet_C_FLOAT(ESMCI::Attributes* attrs, char* key, int& rc, int* def);
-  double ESMC_AttributesGet_C_DOUBLE(ESMCI::Attributes* attrs, char* key, int& rc, int* def);
+  long int ESMC_AttributesGet_C_LONG(ESMCI::Attributes* attrs, char* key, int& rc, long int* def);
+  float ESMC_AttributesGet_C_FLOAT(ESMCI::Attributes* attrs, char* key, int& rc, float* def);
+  double ESMC_AttributesGet_C_DOUBLE(ESMCI::Attributes* attrs, char* key, int& rc, double* def);
+
+//-----------------------------------------------------------------------------
+
   void ESMC_AttributesGetArray(ESMCI::Attributes* attrs, char* key, int* values,
           int& count, int& count_only, int& rc);  //tdk:TEMPLATE
   int ESMC_AttributesIsPresent(ESMCI::Attributes* attrs, char* key, int& rc,
           int& isptr);
   void ESMC_AttributesPrint(ESMCI::Attributes* attrs, int& indent, int& rc);
+
+//-----------------------------------------------------------------------------
+
   void ESMC_AttributesSet_C_INT(ESMCI::Attributes* attrs, char* key, int& value,
-                          int& force, int& rc);  //tdk:TEMPLATE
+                          int& force, int& rc);
+  void ESMC_AttributesSet_C_LONG(ESMCI::Attributes* attrs, char* key, long int& value,
+                          int& force, int& rc);
+  void ESMC_AttributesSet_C_FLOAT(ESMCI::Attributes* attrs, char* key, float& value,
+                          int& force, int& rc);
+  void ESMC_AttributesSet_C_DOUBLE(ESMCI::Attributes* attrs, char* key, double& value,
+                          int& force, int& rc);
+
+//-----------------------------------------------------------------------------
+
   void ESMC_AttributesSetArray(ESMCI::Attributes* attrs, char* key, int* value,
                           int& n, int& force, int& rc);  //tdk:TEMPLATE
 

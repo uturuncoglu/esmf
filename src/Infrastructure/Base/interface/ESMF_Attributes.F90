@@ -388,6 +388,68 @@ end subroutine ESMF_AttributesPrint
 !------------------------------------------------------------------------------
 
 #undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_AttributesSetR4()"
+subroutine ESMF_AttributesSetR4(attrs, key, value, force, rc)
+  implicit none
+
+  type(ESMF_Attributes), intent(inout) :: attrs
+  character(len=*), intent(in) :: key
+  real(ESMF_KIND_R4), intent(in) :: value
+  logical, intent(in), optional :: force
+  integer, intent(inout), optional :: rc
+
+  integer :: localrc
+  integer(C_INT) :: localforce
+
+  localrc = ESMF_FAILURE
+  if (present(rc)) rc = ESMF_FAILURE
+
+  localforce = 1
+  if (present(force)) then
+    if (force .eqv. .false.) then
+      localforce = 0
+    end if
+  end if
+
+  call c_attrs_set_C_FLOAT(attrs%ptr, trim(key)//C_NULL_CHAR, value, localforce, localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
+      rcToReturn=rc)) return
+
+  if (present(rc)) rc = ESMF_SUCCESS
+end subroutine ESMF_AttributesSetR4
+
+#undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_AttributesSetR8()"
+subroutine ESMF_AttributesSetR8(attrs, key, value, force, rc)
+  implicit none
+
+  type(ESMF_Attributes), intent(inout) :: attrs
+  character(len=*), intent(in) :: key
+  real(ESMF_KIND_R8), intent(in) :: value
+  logical, intent(in), optional :: force
+  integer, intent(inout), optional :: rc
+
+  integer :: localrc
+  integer(C_INT) :: localforce
+
+  localrc = ESMF_FAILURE
+  if (present(rc)) rc = ESMF_FAILURE
+
+  localforce = 1
+  if (present(force)) then
+    if (force .eqv. .false.) then
+      localforce = 0
+    end if
+  end if
+
+  call c_attrs_set_C_DOUBLE(attrs%ptr, trim(key)//C_NULL_CHAR, value, localforce, localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
+      rcToReturn=rc)) return
+
+  if (present(rc)) rc = ESMF_SUCCESS
+end subroutine ESMF_AttributesSetR8
+
+#undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributesSetI4()"
 subroutine ESMF_AttributesSetI4(attrs, key, value, force, rc)
   implicit none
@@ -417,6 +479,37 @@ subroutine ESMF_AttributesSetI4(attrs, key, value, force, rc)
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributesSetI4
+
+#undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_AttributesSetI8()"
+subroutine ESMF_AttributesSetI8(attrs, key, value, force, rc)
+  implicit none
+
+  type(ESMF_Attributes), intent(inout) :: attrs
+  character(len=*), intent(in) :: key
+  integer(ESMF_KIND_I8), intent(in) :: value
+  logical, intent(in), optional :: force
+  integer, intent(inout), optional :: rc
+
+  integer :: localrc
+  integer(C_INT) :: localforce
+
+  localrc = ESMF_FAILURE
+  if (present(rc)) rc = ESMF_FAILURE
+
+  localforce = 1
+  if (present(force)) then
+    if (force .eqv. .false.) then
+      localforce = 0
+    end if
+  end if
+
+  call c_attrs_set_C_LONG(attrs%ptr, trim(key)//C_NULL_CHAR, value, localforce, localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
+      rcToReturn=rc)) return
+
+  if (present(rc)) rc = ESMF_SUCCESS
+end subroutine ESMF_AttributesSetI8
 
 !------------------------------------------------------------------------------
 

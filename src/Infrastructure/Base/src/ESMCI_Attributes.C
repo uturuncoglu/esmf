@@ -667,6 +667,30 @@ void ESMC_AttributesErase(ESMCI::Attributes* attrs, char* keyParent,
   }
 }
 
+//-----------------------------------------------------------------------------
+
+#undef  ESMC_METHOD
+#define ESMC_METHOD "ESMC_AttributesGet_C_FLOAT()"
+float ESMC_AttributesGet_C_FLOAT(ESMCI::Attributes* attrs, char* key, int& rc, float* def) {
+  rc = ESMF_FAILURE;
+  std::string localKey(key);
+  float ret = attrs->get<float>(localKey, rc, def);
+  if (ESMC_LogDefault.MsgFoundError(rc, "Get failed", ESMC_CONTEXT, &rc))
+    throw(rc);
+  return ret;
+}
+
+#undef  ESMC_METHOD
+#define ESMC_METHOD "ESMC_AttributesGet_C_DOUBLE()"
+double ESMC_AttributesGet_C_DOUBLE(ESMCI::Attributes* attrs, char* key, int& rc, double* def) {
+  rc = ESMF_FAILURE;
+  std::string localKey(key);
+  double ret = attrs->get<double>(localKey, rc, def);
+  if (ESMC_LogDefault.MsgFoundError(rc, "Get failed", ESMC_CONTEXT, &rc))
+    throw(rc);
+  return ret;
+}
+
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_AttributesGet_C_INT()"
 int ESMC_AttributesGet_C_INT(ESMCI::Attributes* attrs, char* key, int& rc, int* def) {
@@ -677,6 +701,19 @@ int ESMC_AttributesGet_C_INT(ESMCI::Attributes* attrs, char* key, int& rc, int* 
     throw(rc);
   return ret;
 }
+
+#undef  ESMC_METHOD
+#define ESMC_METHOD "ESMC_AttributesGet_C_LONG()"
+long int ESMC_AttributesGet_C_LONG(ESMCI::Attributes* attrs, char* key, int& rc, long int* def) {
+  rc = ESMF_FAILURE;
+  std::string localKey(key);
+  long int ret = attrs->get<long int>(localKey, rc, def);
+  if (ESMC_LogDefault.MsgFoundError(rc, "Get failed", ESMC_CONTEXT, &rc))
+    throw(rc);
+  return ret;
+}
+
+//-----------------------------------------------------------------------------
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_AttributesGetArray()"
@@ -722,10 +759,50 @@ void ESMC_AttributesPrint(ESMCI::Attributes* attrs, int& indent, int& rc) {
     throw(rc);
 }
 
+//-----------------------------------------------------------------------------
+
+#undef  ESMC_METHOD
+#define ESMC_METHOD "ESMC_AttributesSet_C_FLOAT()"
+void ESMC_AttributesSet_C_FLOAT(ESMCI::Attributes* attrs, char* key, float &value,
+                                int& force, int& rc) {
+  rc = ESMF_FAILURE;
+  bool localforce = force;
+
+//  if (force == 1) {
+//    localforce = true;
+//  } else {
+//    localforce = false;
+//  }
+
+  std::string localKey(key);
+  attrs->set<float>(localKey, value, localforce, rc);
+  if (ESMC_LogDefault.MsgFoundError(rc, "Set failed",  ESMC_CONTEXT, &rc))
+    throw(rc);
+}
+
+#undef  ESMC_METHOD
+#define ESMC_METHOD "ESMC_AttributesSet_C_DOUBLE()"
+void ESMC_AttributesSet_C_DOUBLE(ESMCI::Attributes* attrs, char* key, double &value,
+                                 int& force, int& rc) {
+  rc = ESMF_FAILURE;
+  bool localforce = force;
+
+//  if (force == 1) {
+//    localforce = true;
+//  } else {
+//    localforce = false;
+//  }
+
+  std::string localKey(key);
+  attrs->set<double>(localKey, value, localforce, rc);
+  if (ESMC_LogDefault.MsgFoundError(rc, "Set failed",  ESMC_CONTEXT, &rc))
+    throw(rc);
+}
+
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_AttributesSet_C_INT()"
-void ESMC_AttributesSet_C_INT(ESMCI::Attributes* attrs, char* key, int& value,
-                        int& force, int& rc) {
+void ESMC_AttributesSet_C_INT(ESMCI::Attributes* attrs, char* key, int &value,
+                              int& force, int& rc) {
   rc = ESMF_FAILURE;
   bool localforce = force;
 
@@ -740,6 +817,27 @@ void ESMC_AttributesSet_C_INT(ESMCI::Attributes* attrs, char* key, int& value,
   if (ESMC_LogDefault.MsgFoundError(rc, "Set failed",  ESMC_CONTEXT, &rc))
     throw(rc);
 }
+
+#undef  ESMC_METHOD
+#define ESMC_METHOD "ESMC_AttributesSet_C_LONG()"
+void ESMC_AttributesSet_C_LONG(ESMCI::Attributes* attrs, char* key, long int &value,
+                               int& force, int& rc) {
+  rc = ESMF_FAILURE;
+  bool localforce = force;
+
+//  if (force == 1) {
+//    localforce = true;
+//  } else {
+//    localforce = false;
+//  }
+
+  std::string localKey(key);
+  attrs->set<long int>(localKey, value, localforce, rc);
+  if (ESMC_LogDefault.MsgFoundError(rc, "Set failed",  ESMC_CONTEXT, &rc))
+    throw(rc);
+}
+
+//-----------------------------------------------------------------------------
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_AttributesSetArray()"

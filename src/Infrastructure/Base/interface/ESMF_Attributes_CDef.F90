@@ -57,7 +57,7 @@ interface
     character(C_CHAR), intent(in) :: key(*)
     integer(C_INT), intent(inout) :: rc
     type(C_PTR), value :: default
-    integer(C_FLOAT) :: c_attrs_get_C_FLOAT
+    real(C_FLOAT) :: c_attrs_get_C_FLOAT
   end function c_attrs_get_C_FLOAT
 
   function c_attrs_get_C_DOUBLE(attrs, key, rc, default) bind(C, name="ESMC_AttributesGet_C_DOUBLE")
@@ -67,7 +67,7 @@ interface
     character(C_CHAR), intent(in) :: key(*)
     integer(C_INT), intent(inout) :: rc
     type(C_PTR), value :: default
-    integer(C_DOUBLE) :: c_attrs_get_C_DOUBLE
+    real(C_DOUBLE) :: c_attrs_get_C_DOUBLE
   end function c_attrs_get_C_DOUBLE
 
   function c_attrs_get_C_INT(attrs, key, rc, default) bind(C, name="ESMC_AttributesGet_C_INT")
@@ -97,7 +97,7 @@ interface
     character(C_CHAR), intent(in) :: key(*)
     integer(C_INT), intent(inout) :: rc
     type(C_PTR), value :: default
-    integer(C_CHAR) :: c_attrs_get_C_CHAR
+    character(C_CHAR) :: c_attrs_get_C_CHAR
   end function c_attrs_get_C_CHAR
 
   !=============================================================================
@@ -120,7 +120,7 @@ interface
     implicit none
     type(C_PTR), value :: attrs
     character(kind=C_CHAR), intent(in) :: key(*)
-    integer(C_FLOAT), intent(in) :: value
+    real(C_FLOAT), intent(in) :: value
     integer(C_INT), intent(in) :: force
     integer(C_INT), intent(inout) :: rc
   end subroutine c_attrs_set_C_FLOAT
@@ -130,7 +130,7 @@ interface
     implicit none
     type(C_PTR), value :: attrs
     character(kind=C_CHAR), intent(in) :: key(*)
-    integer(C_DOUBLE), intent(in) :: value
+    real(C_DOUBLE), intent(in) :: value
     integer(C_INT), intent(in) :: force
     integer(C_INT), intent(inout) :: rc
   end subroutine c_attrs_set_C_DOUBLE
@@ -160,7 +160,7 @@ interface
     implicit none
     type(C_PTR), value :: attrs
     character(kind=C_CHAR), intent(in) :: key(*)
-    integer(C_CHAR), intent(in) :: value
+    character(C_CHAR), intent(in) :: value
     integer(C_INT), intent(in) :: force
     integer(C_INT), intent(inout) :: rc
   end subroutine c_attrs_set_C_CHAR
