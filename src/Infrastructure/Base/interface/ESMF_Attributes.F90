@@ -58,15 +58,15 @@ interface ESMF_AttributesGet
   module procedure ESMF_AttributesGetI8
   module procedure ESMF_AttributesGetR4
   module procedure ESMF_AttributesGetR8
-  module procedure ESMF_AttributesGetCH
+  !module procedure ESMF_AttributesGetCH
 end interface ESMF_AttributesGet
 
 interface ESMF_AttributesSet
   module procedure ESMF_AttributesSetI4
-  module procedure ESMF_AttributesSetI8
-  module procedure ESMF_AttributesSetR4
-  module procedure ESMF_AttributesSetR8
-  module procedure ESMF_AttributesSetCH
+  !module procedure ESMF_AttributesSetI8
+  !module procedure ESMF_AttributesSetR4
+  !module procedure ESMF_AttributesSetR8
+  !module procedure ESMF_AttributesSetCH
 end interface ESMF_AttributesSet
 
 !------------------------------------------------------------------------------
@@ -152,6 +152,70 @@ end subroutine ESMF_AttributesErase
 !------------------------------------------------------------------------------
 
 #undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_AttributesGetR4()"
+subroutine ESMF_AttributesGetR4(attrs, key, value, default, rc)
+  implicit none
+
+  type(ESMF_Attributes), intent(inout) :: attrs
+  character(len=*), intent(in) :: key
+  real(ESMF_KIND_R4), intent(inout) :: value
+  integer, intent(in), optional :: default
+  integer, intent(inout), optional :: rc
+
+  integer :: localrc
+  real(C_FLOAT), target :: localdefault
+  type(C_PTR) :: localdefault_ptr
+
+  localrc = ESMF_FAILURE
+  if (present(rc)) rc = ESMF_FAILURE
+
+  if (present(default)) then
+    localdefault = default
+    localdefault_ptr = C_LOC(localdefault)
+  else
+    localdefault_ptr = C_NULL_PTR
+  end if
+
+  value = c_attrs_get_C_FLOAT(attrs%ptr, trim(key)//C_NULL_CHAR, localrc, localdefault_ptr)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
+    rcToReturn=rc)) return
+
+  if (present(rc)) rc = ESMF_SUCCESS
+end subroutine ESMF_AttributesGetR4
+
+#undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_AttributesGetR8()"
+subroutine ESMF_AttributesGetR8(attrs, key, value, default, rc)
+  implicit none
+
+  type(ESMF_Attributes), intent(inout) :: attrs
+  character(len=*), intent(in) :: key
+  real(ESMF_KIND_R8), intent(inout) :: value
+  integer, intent(in), optional :: default
+  integer, intent(inout), optional :: rc
+
+  integer :: localrc
+  real(C_DOUBLE), target :: localdefault
+  type(C_PTR) :: localdefault_ptr
+
+  localrc = ESMF_FAILURE
+  if (present(rc)) rc = ESMF_FAILURE
+
+  if (present(default)) then
+    localdefault = default
+    localdefault_ptr = C_LOC(localdefault)
+  else
+    localdefault_ptr = C_NULL_PTR
+  end if
+
+  value = c_attrs_get_C_DOUBLE(attrs%ptr, trim(key)//C_NULL_CHAR, localrc, localdefault_ptr)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
+    rcToReturn=rc)) return
+
+  if (present(rc)) rc = ESMF_SUCCESS
+end subroutine ESMF_AttributesGetR8
+
+#undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributesGetI4()"
 subroutine ESMF_AttributesGetI4(attrs, key, value, default, rc)
   implicit none
@@ -182,6 +246,38 @@ subroutine ESMF_AttributesGetI4(attrs, key, value, default, rc)
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributesGetI4
+
+#undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_AttributesGetI8()"
+subroutine ESMF_AttributesGetI8(attrs, key, value, default, rc)
+  implicit none
+
+  type(ESMF_Attributes), intent(inout) :: attrs
+  character(len=*), intent(in) :: key
+  integer(ESMF_KIND_I8), intent(inout) :: value
+  integer, intent(in), optional :: default
+  integer, intent(inout), optional :: rc
+
+  integer :: localrc
+  integer(C_LONG), target :: localdefault
+  type(C_PTR) :: localdefault_ptr
+
+  localrc = ESMF_FAILURE
+  if (present(rc)) rc = ESMF_FAILURE
+
+  if (present(default)) then
+    localdefault = default
+    localdefault_ptr = C_LOC(localdefault)
+  else
+    localdefault_ptr = C_NULL_PTR
+  end if
+
+  value = c_attrs_get_C_LONG(attrs%ptr, trim(key)//C_NULL_CHAR, localrc, localdefault_ptr)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
+    rcToReturn=rc)) return
+
+  if (present(rc)) rc = ESMF_SUCCESS
+end subroutine ESMF_AttributesGetI8
 
 !------------------------------------------------------------------------------
 
