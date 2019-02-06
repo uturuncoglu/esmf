@@ -157,13 +157,13 @@ extern "C" {
   void ESMC_AttributesDestroy(ESMCI::Attributes* attrs, int& rc);
   void ESMC_AttributesErase(ESMCI::Attributes* attrs, char* keyParent,
                             char* keyChild, int& rc);
-  int ESMC_AttributesGet(ESMCI::Attributes* attrs, char* key, int& rc, int* def);  //tdk:TEMPLATE
+  int ESMC_AttributesGet_C_INT(ESMCI::Attributes* attrs, char* key, int& rc, int* def);  //tdk:TEMPLATE
   void ESMC_AttributesGetArray(ESMCI::Attributes* attrs, char* key, int* values,
           int& count, int& count_only, int& rc);  //tdk:TEMPLATE
   int ESMC_AttributesIsPresent(ESMCI::Attributes* attrs, char* key, int& rc,
           int& isptr);
   void ESMC_AttributesPrint(ESMCI::Attributes* attrs, int& indent, int& rc);
-  void ESMC_AttributesSet(ESMCI::Attributes* attrs, char* key, int& value,
+  void ESMC_AttributesSet_C_INT(ESMCI::Attributes* attrs, char* key, int& value,
                           int& force, int& rc);  //tdk:TEMPLATE
   void ESMC_AttributesSetArray(ESMCI::Attributes* attrs, char* key, int* value,
                           int& n, int& force, int& rc);  //tdk:TEMPLATE

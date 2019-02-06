@@ -53,9 +53,21 @@ type ESMF_Attributes
   type(C_PTR) :: ptr
 end type ESMF_Attributes
 
-!interface ESMF_Attributes
-!  procedure ESMF_AttributesCreate
-!end interface ESMF_Attributes
+interface ESMF_AttributesGet
+  module procedure ESMF_AttributesGetI4
+  module procedure ESMF_AttributesGetI8
+  module procedure ESMF_AttributesGetR4
+  module procedure ESMF_AttributesGetR8
+  module procedure ESMF_AttributesGetCH
+end interface ESMF_AttributesGet
+
+interface ESMF_AttributesSet
+  module procedure ESMF_AttributesSetI4
+  module procedure ESMF_AttributesSetI8
+  module procedure ESMF_AttributesSetR4
+  module procedure ESMF_AttributesSetR8
+  module procedure ESMF_AttributesSetCH
+end interface ESMF_AttributesSet
 
 !------------------------------------------------------------------------------
 ! The following line turns the CVS identifier string into a printable variable.
@@ -140,8 +152,8 @@ end subroutine ESMF_AttributesErase
 !------------------------------------------------------------------------------
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributesGet()"
-subroutine ESMF_AttributesGet(attrs, key, value, default, rc)
+#define ESMF_METHOD "ESMF_AttributesGetI4()"
+subroutine ESMF_AttributesGetI4(attrs, key, value, default, rc)
   implicit none
 
   type(ESMF_Attributes), intent(inout) :: attrs
@@ -164,12 +176,12 @@ subroutine ESMF_AttributesGet(attrs, key, value, default, rc)
     localdefault_ptr = C_NULL_PTR
   end if
 
-  value = c_attrs_get(attrs%ptr, trim(key)//C_NULL_CHAR, localrc, localdefault_ptr)
+  value = c_attrs_get_C_INT(attrs%ptr, trim(key)//C_NULL_CHAR, localrc, localdefault_ptr)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
     rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributesGet
+end subroutine ESMF_AttributesGetI4
 
 !------------------------------------------------------------------------------
 
@@ -280,8 +292,8 @@ end subroutine ESMF_AttributesPrint
 !------------------------------------------------------------------------------
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributesSet()"
-subroutine ESMF_AttributesSet(attrs, key, value, force, rc)
+#define ESMF_METHOD "ESMF_AttributesSetI4()"
+subroutine ESMF_AttributesSetI4(attrs, key, value, force, rc)
   implicit none
 
   type(ESMF_Attributes), intent(inout) :: attrs
@@ -303,12 +315,12 @@ subroutine ESMF_AttributesSet(attrs, key, value, force, rc)
     end if
   end if
 
-  call c_attrs_set(attrs%ptr, trim(key)//C_NULL_CHAR, value, localforce, localrc)
+  call c_attrs_set_C_INT(attrs%ptr, trim(key)//C_NULL_CHAR, value, localforce, localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
       rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributesSet
+end subroutine ESMF_AttributesSetI4
 
 !------------------------------------------------------------------------------
 

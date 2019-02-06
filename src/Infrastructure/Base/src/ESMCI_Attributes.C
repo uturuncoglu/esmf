@@ -668,8 +668,8 @@ void ESMC_AttributesErase(ESMCI::Attributes* attrs, char* keyParent,
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_AttributesGet()"
-int ESMC_AttributesGet(ESMCI::Attributes* attrs, char* key, int& rc, int* def) {
+#define ESMC_METHOD "ESMC_AttributesGet_C_INT()"
+int ESMC_AttributesGet_C_INT(ESMCI::Attributes* attrs, char* key, int& rc, int* def) {
   rc = ESMF_FAILURE;
   std::string localKey(key);
   int ret = attrs->get<int>(localKey, rc, def);
@@ -723,8 +723,8 @@ void ESMC_AttributesPrint(ESMCI::Attributes* attrs, int& indent, int& rc) {
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_AttributesSet()"
-void ESMC_AttributesSet(ESMCI::Attributes* attrs, char* key, int& value,
+#define ESMC_METHOD "ESMC_AttributesSet_C_INT()"
+void ESMC_AttributesSet_C_INT(ESMCI::Attributes* attrs, char* key, int& value,
                         int& force, int& rc) {
   rc = ESMF_FAILURE;
   bool localforce = force;
