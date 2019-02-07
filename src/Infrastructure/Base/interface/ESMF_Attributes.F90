@@ -77,6 +77,14 @@ interface ESMF_AttributesSet
   !module procedure ESMF_AttributesSetCH
 end interface ESMF_AttributesSet
 
+interface ESMF_AttributesSetArray
+  module procedure ESMF_AttributesSetArrayI4
+  module procedure ESMF_AttributesSetArrayI8
+  module procedure ESMF_AttributesSetArrayR4
+  module procedure ESMF_AttributesSetArrayR8
+  !module procedure ESMF_AttributesSetArrayCH
+end interface ESMF_AttributesSetArray
+
 !------------------------------------------------------------------------------
 ! The following line turns the CVS identifier string into a printable variable.
 character(*), parameter, private :: version = '$Id$'
@@ -608,8 +616,72 @@ end subroutine ESMF_AttributesSetI8
 !------------------------------------------------------------------------------
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributesSetArray()"
-subroutine ESMF_AttributesSetArray(attrs, key, values, force, rc)
+#define ESMF_METHOD "ESMF_AttributesSetArrayR4()"
+subroutine ESMF_AttributesSetArrayR4(attrs, key, values, force, rc)
+  implicit none
+
+  type(ESMF_Attributes), intent(inout) :: attrs
+  character(len=*), intent(in) :: key
+  real(ESMF_KIND_R4), dimension(:), intent(in) :: values
+  logical, intent(in), optional :: force
+  integer, intent(inout), optional :: rc
+
+  integer :: localrc
+  integer(C_INT) :: localforce
+
+  localrc = ESMF_FAILURE
+  if (present(rc)) rc = ESMF_FAILURE
+
+  localforce = 1
+  if (present(force)) then
+    if (force .eqv. .false.) then
+      localforce = 0
+    end if
+  end if
+
+  call c_attrs_set_array_C_FLOAT(attrs%ptr, trim(key)//C_NULL_CHAR, values, &
+    size(values), localforce, localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
+    rcToReturn=rc)) return
+
+  if (present(rc)) rc = ESMF_SUCCESS
+end subroutine ESMF_AttributesSetArrayR4
+
+#undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_AttributesSetArrayR8()"
+subroutine ESMF_AttributesSetArrayR8(attrs, key, values, force, rc)
+  implicit none
+
+  type(ESMF_Attributes), intent(inout) :: attrs
+  character(len=*), intent(in) :: key
+  real(ESMF_KIND_R8), dimension(:), intent(in) :: values
+  logical, intent(in), optional :: force
+  integer, intent(inout), optional :: rc
+
+  integer :: localrc
+  integer(C_INT) :: localforce
+
+  localrc = ESMF_FAILURE
+  if (present(rc)) rc = ESMF_FAILURE
+
+  localforce = 1
+  if (present(force)) then
+    if (force .eqv. .false.) then
+      localforce = 0
+    end if
+  end if
+
+  call c_attrs_set_array_C_DOUBLE(attrs%ptr, trim(key)//C_NULL_CHAR, values, &
+    size(values), localforce, localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
+    rcToReturn=rc)) return
+
+  if (present(rc)) rc = ESMF_SUCCESS
+end subroutine ESMF_AttributesSetArrayR8
+
+#undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_AttributesSetArrayI4()"
+subroutine ESMF_AttributesSetArrayI4(attrs, key, values, force, rc)
   implicit none
 
   type(ESMF_Attributes), intent(inout) :: attrs
@@ -632,11 +704,43 @@ subroutine ESMF_AttributesSetArray(attrs, key, values, force, rc)
   end if
 
   call c_attrs_set_array_C_INT(attrs%ptr, trim(key)//C_NULL_CHAR, values, &
-      size(values), localforce, localrc)
+    size(values), localforce, localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
-      rcToReturn=rc)) return
+    rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributesSetArray
+end subroutine ESMF_AttributesSetArrayI4
+
+#undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_AttributesSetArrayI8()"
+subroutine ESMF_AttributesSetArrayI8(attrs, key, values, force, rc)
+  implicit none
+
+  type(ESMF_Attributes), intent(inout) :: attrs
+  character(len=*), intent(in) :: key
+  integer(ESMF_KIND_I8), dimension(:), intent(in) :: values
+  logical, intent(in), optional :: force
+  integer, intent(inout), optional :: rc
+
+  integer :: localrc
+  integer(C_INT) :: localforce
+
+  localrc = ESMF_FAILURE
+  if (present(rc)) rc = ESMF_FAILURE
+
+  localforce = 1
+  if (present(force)) then
+    if (force .eqv. .false.) then
+      localforce = 0
+    end if
+  end if
+
+  call c_attrs_set_array_C_LONG(attrs%ptr, trim(key)//C_NULL_CHAR, values, &
+    size(values), localforce, localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
+    rcToReturn=rc)) return
+
+  if (present(rc)) rc = ESMF_SUCCESS
+end subroutine ESMF_AttributesSetArrayI8
 
 end module ESMF_AttributesMod  !===============================================
