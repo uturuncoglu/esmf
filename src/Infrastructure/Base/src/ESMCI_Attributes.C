@@ -716,28 +716,86 @@ long int ESMC_AttributesGet_C_LONG(ESMCI::Attributes* attrs, char* key, int& rc,
 //-----------------------------------------------------------------------------
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_AttributesGetArray()"
-void ESMC_AttributesGetArray(ESMCI::Attributes* attrs, char* key, int* values,
-        int& count, int& count_only, int& rc) {
+#define ESMC_METHOD "ESMC_AttributesGetArray_C_FLOAT()"
+void ESMC_AttributesGetArray_C_FLOAT(ESMCI::Attributes* attrs, char* key,
+                                     float* values, int& count, int& count_only, int& rc) {
   rc = ESMF_FAILURE;
-
   std::string localKey(key);
-
   const vector<json>* const ap = attrs->getPointer<const vector<json>* const,
-          const json::array_t* const>(localKey, rc);
+    const json::array_t* const>(localKey, rc);
   if (ESMC_LogDefault.MsgFoundError(rc, "Did not get array pointer",
-          ESMC_CONTEXT, &rc)) throw(rc);
-
+                                    ESMC_CONTEXT, &rc)) throw(rc);
   count = (int)ap->size();
   if (count_only == 0) {
-    for (auto ii=0; ii<count; ii++) {
+    for (int ii=0; ii<count; ii++) {
       values[ii] = ap[0][ii];
     }
   }
-
   rc = ESMF_SUCCESS;
   return;
 }
+
+#undef  ESMC_METHOD
+#define ESMC_METHOD "ESMC_AttributesGetArray_C_DOUBLE()"
+void ESMC_AttributesGetArray_C_DOUBLE(ESMCI::Attributes* attrs, char* key,
+                                      double* values, int& count, int& count_only, int& rc) {
+  rc = ESMF_FAILURE;
+  std::string localKey(key);
+  const vector<json>* const ap = attrs->getPointer<const vector<json>* const,
+    const json::array_t* const>(localKey, rc);
+  if (ESMC_LogDefault.MsgFoundError(rc, "Did not get array pointer",
+                                    ESMC_CONTEXT, &rc)) throw(rc);
+  count = (int)ap->size();
+  if (count_only == 0) {
+    for (int ii=0; ii<count; ii++) {
+      values[ii] = ap[0][ii];
+    }
+  }
+  rc = ESMF_SUCCESS;
+  return;
+}
+
+#undef  ESMC_METHOD
+#define ESMC_METHOD "ESMC_AttributesGetArray_C_INT()"
+void ESMC_AttributesGetArray_C_INT(ESMCI::Attributes* attrs, char* key,
+                                   int* values, int& count, int& count_only, int& rc) {
+  rc = ESMF_FAILURE;
+  std::string localKey(key);
+  const vector<json>* const ap = attrs->getPointer<const vector<json>* const,
+    const json::array_t* const>(localKey, rc);
+  if (ESMC_LogDefault.MsgFoundError(rc, "Did not get array pointer",
+                                    ESMC_CONTEXT, &rc)) throw(rc);
+  count = (int)ap->size();
+  if (count_only == 0) {
+    for (int ii=0; ii<count; ii++) {
+      values[ii] = ap[0][ii];
+    }
+  }
+  rc = ESMF_SUCCESS;
+  return;
+}
+
+#undef  ESMC_METHOD
+#define ESMC_METHOD "ESMC_AttributesGetArray_C_LONG()"
+void ESMC_AttributesGetArray_C_LONG(ESMCI::Attributes* attrs, char* key,
+                                    long int* values, int& count, int& count_only, int& rc) {
+  rc = ESMF_FAILURE;
+  std::string localKey(key);
+  const vector<json>* const ap = attrs->getPointer<const vector<json>* const,
+    const json::array_t* const>(localKey, rc);
+  if (ESMC_LogDefault.MsgFoundError(rc, "Did not get array pointer",
+                                    ESMC_CONTEXT, &rc)) throw(rc);
+  count = (int)ap->size();
+  if (count_only == 0) {
+    for (int ii=0; ii<count; ii++) {
+      values[ii] = ap[0][ii];
+    }
+  }
+  rc = ESMF_SUCCESS;
+  return;
+}
+
+//-----------------------------------------------------------------------------
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_AttributesIsPresent()"

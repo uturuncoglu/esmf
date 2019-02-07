@@ -167,8 +167,17 @@ extern "C" {
 
 //-----------------------------------------------------------------------------
 
-  void ESMC_AttributesGetArray(ESMCI::Attributes* attrs, char* key, int* values,
-          int& count, int& count_only, int& rc);  //tdk:TEMPLATE
+  void ESMC_AttributesGetArray_C_INT(ESMCI::Attributes* attrs, char* key,
+    int* values, int& count, int& count_only, int& rc);
+  void ESMC_AttributesGetArray_C_LONG(ESMCI::Attributes* attrs, char* key,
+    long int* values, int& count, int& count_only, int& rc);
+  void ESMC_AttributesGetArrayC_FLOAT(ESMCI::Attributes* attrs, char* key,
+    float* values, int& count, int& count_only, int& rc);
+  void ESMC_AttributesGetArray_C_DOUBLE(ESMCI::Attributes* attrs, char* key,
+    double* values, int& count, int& count_only, int& rc);
+
+//-----------------------------------------------------------------------------
+
   int ESMC_AttributesIsPresent(ESMCI::Attributes* attrs, char* key, int& rc,
           int& isptr);
   void ESMC_AttributesPrint(ESMCI::Attributes* attrs, int& indent, int& rc);
