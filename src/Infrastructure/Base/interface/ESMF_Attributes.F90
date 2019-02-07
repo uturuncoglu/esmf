@@ -63,9 +63,9 @@ end interface ESMF_AttributesGet
 
 interface ESMF_AttributesSet
   module procedure ESMF_AttributesSetI4
-  !module procedure ESMF_AttributesSetI8
-  !module procedure ESMF_AttributesSetR4
-  !module procedure ESMF_AttributesSetR8
+  module procedure ESMF_AttributesSetI8
+  module procedure ESMF_AttributesSetR4
+  module procedure ESMF_AttributesSetR8
   !module procedure ESMF_AttributesSetCH
 end interface ESMF_AttributesSet
 
