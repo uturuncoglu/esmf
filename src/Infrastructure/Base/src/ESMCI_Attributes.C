@@ -473,7 +473,8 @@ template void Attributes::set<string>(const string&, string, bool, int&);
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::set(<array>)"
-void Attributes::set(const string& key, int values[], int& count, bool force, int& rc) {
+template <typename T>
+void Attributes::set(const string& key, T values[], int& count, bool force, int& rc) {
   // Exceptions:  ESMCI:esmf_attrs_error
 
   rc = ESMF_FAILURE;
@@ -509,6 +510,11 @@ void Attributes::set(const string& key, int values[], int& count, bool force, in
   rc = ESMF_SUCCESS;
   return;
 };
+template void Attributes::set<float>(const string&, float[], int&, bool, int&);
+template void Attributes::set<double>(const string&, double[], int&, bool, int&);
+template void Attributes::set<int>(const string&, int[], int&, bool, int&);
+template void Attributes::set<long int>(const string&, long int[], int&, bool, int&);
+//template void Attributes::set<std::vector<std::string>>(const string& std::vector<std::string>, int&, bool, int&);
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::update()"
@@ -898,20 +904,69 @@ void ESMC_AttributesSet_C_LONG(ESMCI::Attributes* attrs, char* key, long int &va
 //-----------------------------------------------------------------------------
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_AttributesSetArray()"
-void ESMC_AttributesSetArray(ESMCI::Attributes* attrs, char* key, int* values,
-                        int& count, int& force, int& rc) {
+#define ESMC_METHOD "ESMC_AttributesSetArray_C_FLOAT()"
+void ESMC_AttributesSetArray_C_FLOAT(ESMCI::Attributes* attrs, char* key,
+                                     float* values, int& count, int& force, int& rc) {
   rc = ESMF_FAILURE;
   bool localforce = force;
-
 //  if (force == 1) {
 //    localforce = true;
 //  } else {
 //    localforce = false;
 //  }
-
   std::string localKey(key);
-  attrs->set(localKey, values, count, localforce, rc);
+  attrs->set<float>(localKey, values, count, localforce, rc);
+  if (ESMC_LogDefault.MsgFoundError(rc, "Set failed", ESMC_CONTEXT, &rc))
+    throw(rc);
+}
+
+#undef  ESMC_METHOD
+#define ESMC_METHOD "ESMC_AttributesSetArray_C_DOUBLE()"
+void ESMC_AttributesSetArray_C_DOUBLE(ESMCI::Attributes* attrs, char* key,
+                                      double* values, int& count, int& force, int& rc) {
+  rc = ESMF_FAILURE;
+  bool localforce = force;
+//  if (force == 1) {
+//    localforce = true;
+//  } else {
+//    localforce = false;
+//  }
+  std::string localKey(key);
+  attrs->set<double>(localKey, values, count, localforce, rc);
+  if (ESMC_LogDefault.MsgFoundError(rc, "Set failed", ESMC_CONTEXT, &rc))
+    throw(rc);
+}
+
+#undef  ESMC_METHOD
+#define ESMC_METHOD "ESMC_AttributesSetArray_C_INT()"
+void ESMC_AttributesSetArray_C_INT(ESMCI::Attributes* attrs, char* key,
+                                   int* values, int& count, int& force, int& rc) {
+  rc = ESMF_FAILURE;
+  bool localforce = force;
+//  if (force == 1) {
+//    localforce = true;
+//  } else {
+//    localforce = false;
+//  }
+  std::string localKey(key);
+  attrs->set<int>(localKey, values, count, localforce, rc);
+  if (ESMC_LogDefault.MsgFoundError(rc, "Set failed", ESMC_CONTEXT, &rc))
+    throw(rc);
+}
+
+#undef  ESMC_METHOD
+#define ESMC_METHOD "ESMC_AttributesSetArray_C_LONG()"
+void ESMC_AttributesSetArray_C_LONG(ESMCI::Attributes* attrs, char* key,
+                                    long int* values, int& count, int& force, int& rc) {
+  rc = ESMF_FAILURE;
+  bool localforce = force;
+//  if (force == 1) {
+//    localforce = true;
+//  } else {
+//    localforce = false;
+//  }
+  std::string localKey(key);
+  attrs->set<long int>(localKey, values, count, localforce, rc);
   if (ESMC_LogDefault.MsgFoundError(rc, "Set failed", ESMC_CONTEXT, &rc))
     throw(rc);
 }

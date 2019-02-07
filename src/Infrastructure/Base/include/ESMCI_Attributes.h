@@ -116,7 +116,8 @@ public:
   template <typename T>
   void set(const string& key, T value, bool force, int& rc);
 
-  void set(const string& key, int values[], int& count, bool force, int& rc);
+  template <typename T>
+  void set(const string& key, T values[], int& count, bool force, int& rc);
 
   void update(const Attributes& attrs, int& rc);
 
@@ -195,8 +196,14 @@ extern "C" {
 
 //-----------------------------------------------------------------------------
 
-  void ESMC_AttributesSetArray(ESMCI::Attributes* attrs, char* key, int* value,
-                          int& n, int& force, int& rc);  //tdk:TEMPLATE
+  void ESMC_AttributesSetArray_C_INT(ESMCI::Attributes* attrs, char* key,
+    int* value, int& n, int& force, int& rc);
+  void ESMC_AttributesSetArray_C_LONG(ESMCI::Attributes* attrs, char* key,
+    long int* value, int& n, int& force, int& rc);
+  void ESMC_AttributesSetArray_C_FLOAT(ESMCI::Attributes* attrs, char* key,
+    float* value, int& n, int& force, int& rc);
+  void ESMC_AttributesSetArray_C_DOUBLE(ESMCI::Attributes* attrs, char* key,
+    double* value, int& n, int& force, int& rc);
 
 }  // extern "C"
 
