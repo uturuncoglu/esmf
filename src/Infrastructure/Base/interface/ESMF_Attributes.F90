@@ -61,6 +61,14 @@ interface ESMF_AttributesGet
   !module procedure ESMF_AttributesGetCH
 end interface ESMF_AttributesGet
 
+interface ESMF_AttributesGetArray
+  module procedure ESMF_AttributesGetArrayI4
+  module procedure ESMF_AttributesGetArrayI8
+  module procedure ESMF_AttributesGetArrayR4
+  module procedure ESMF_AttributesGetArrayR8
+  !module procedure ESMF_AttributesGetArrayCH
+end interface ESMF_AttributesGetArray
+
 interface ESMF_AttributesSet
   module procedure ESMF_AttributesSetI4
   module procedure ESMF_AttributesSetI8
@@ -282,13 +290,72 @@ end subroutine ESMF_AttributesGetI8
 !------------------------------------------------------------------------------
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributesGetArray()"
-subroutine ESMF_AttributesGetArray(attrs, key, values, count, rc)
+#define ESMF_METHOD "ESMF_AttributesGetArrayR4()"
+subroutine ESMF_AttributesGetArrayR4(attrs, key, values, count, rc)
   ! Notes:
   !    * Default does not really make sense for getting a JSON array. This
   !      argument is intentionally left out.
   implicit none
+  type(ESMF_Attributes), intent(inout) :: attrs
+  character(len=*), intent(in) :: key
+  real(ESMF_KIND_R4), dimension(:), allocatable, intent(inout) :: values
+  integer, intent(inout) :: count
+  integer, intent(inout), optional :: rc
 
+  integer :: localrc, count_only
+
+  localrc = ESMF_FAILURE
+  if (present(rc)) rc = ESMF_FAILURE
+  count_only = 1
+  call c_attrs_get_array_C_FLOAT(attrs%ptr, trim(key)//C_NULL_CHAR, values, count, count_only, localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
+    rcToReturn=rc)) return
+  allocate(values(count))
+  count_only = 0
+  call c_attrs_get_array_C_FLOAT(attrs%ptr, trim(key)//C_NULL_CHAR, values, count, count_only, localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
+    rcToReturn=rc)) return
+
+  if (present(rc)) rc = ESMF_SUCCESS
+end subroutine ESMF_AttributesGetArrayR4
+
+#undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_AttributesGetArrayR8()"
+subroutine ESMF_AttributesGetArrayR8(attrs, key, values, count, rc)
+  ! Notes:
+  !    * Default does not really make sense for getting a JSON array. This
+  !      argument is intentionally left out.
+  implicit none
+  type(ESMF_Attributes), intent(inout) :: attrs
+  character(len=*), intent(in) :: key
+  real(ESMF_KIND_R8), dimension(:), allocatable, intent(inout) :: values
+  integer, intent(inout) :: count
+  integer, intent(inout), optional :: rc
+
+  integer :: localrc, count_only
+
+  localrc = ESMF_FAILURE
+  if (present(rc)) rc = ESMF_FAILURE
+  count_only = 1
+  call c_attrs_get_array_C_DOUBLE(attrs%ptr, trim(key)//C_NULL_CHAR, values, count, count_only, localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
+    rcToReturn=rc)) return
+  allocate(values(count))
+  count_only = 0
+  call c_attrs_get_array_C_DOUBLE(attrs%ptr, trim(key)//C_NULL_CHAR, values, count, count_only, localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
+    rcToReturn=rc)) return
+
+  if (present(rc)) rc = ESMF_SUCCESS
+end subroutine ESMF_AttributesGetArrayR8
+
+#undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_AttributesGetArrayI4()"
+subroutine ESMF_AttributesGetArrayI4(attrs, key, values, count, rc)
+  ! Notes:
+  !    * Default does not really make sense for getting a JSON array. This
+  !      argument is intentionally left out.
+  implicit none
   type(ESMF_Attributes), intent(inout) :: attrs
   character(len=*), intent(in) :: key
   integer(ESMF_KIND_I4), dimension(:), allocatable, intent(inout) :: values
@@ -299,21 +366,48 @@ subroutine ESMF_AttributesGetArray(attrs, key, values, count, rc)
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
-
   count_only = 1
   call c_attrs_get_array_C_INT(attrs%ptr, trim(key)//C_NULL_CHAR, values, count, count_only, localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
     rcToReturn=rc)) return
-
   allocate(values(count))
-
   count_only = 0
   call c_attrs_get_array_C_INT(attrs%ptr, trim(key)//C_NULL_CHAR, values, count, count_only, localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
     rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributesGetArray
+end subroutine ESMF_AttributesGetArrayI4
+
+#undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_AttributesGetArrayI8()"
+subroutine ESMF_AttributesGetArrayI8(attrs, key, values, count, rc)
+  ! Notes:
+  !    * Default does not really make sense for getting a JSON array. This
+  !      argument is intentionally left out.
+  implicit none
+  type(ESMF_Attributes), intent(inout) :: attrs
+  character(len=*), intent(in) :: key
+  integer(ESMF_KIND_I8), dimension(:), allocatable, intent(inout) :: values
+  integer, intent(inout) :: count
+  integer, intent(inout), optional :: rc
+
+  integer :: localrc, count_only
+
+  localrc = ESMF_FAILURE
+  if (present(rc)) rc = ESMF_FAILURE
+  count_only = 1
+  call c_attrs_get_array_C_LONG(attrs%ptr, trim(key)//C_NULL_CHAR, values, count, count_only, localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
+    rcToReturn=rc)) return
+  allocate(values(count))
+  count_only = 0
+  call c_attrs_get_array_C_LONG(attrs%ptr, trim(key)//C_NULL_CHAR, values, count, count_only, localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
+    rcToReturn=rc)) return
+
+  if (present(rc)) rc = ESMF_SUCCESS
+end subroutine ESMF_AttributesGetArrayI8
 
 !------------------------------------------------------------------------------
 
