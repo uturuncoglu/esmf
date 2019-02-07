@@ -301,14 +301,14 @@ subroutine ESMF_AttributesGetArray(attrs, key, values, count, rc)
   if (present(rc)) rc = ESMF_FAILURE
 
   count_only = 1
-  call c_attrs_get_array(attrs%ptr, trim(key)//C_NULL_CHAR, values, count, count_only, localrc)
+  call c_attrs_get_array_C_INT(attrs%ptr, trim(key)//C_NULL_CHAR, values, count, count_only, localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
     rcToReturn=rc)) return
 
   allocate(values(count))
 
   count_only = 0
-  call c_attrs_get_array(attrs%ptr, trim(key)//C_NULL_CHAR, values, count, count_only, localrc)
+  call c_attrs_get_array_C_INT(attrs%ptr, trim(key)//C_NULL_CHAR, values, count, count_only, localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
     rcToReturn=rc)) return
 
@@ -537,7 +537,7 @@ subroutine ESMF_AttributesSetArray(attrs, key, values, force, rc)
     end if
   end if
 
-  call c_attrs_set_array(attrs%ptr, trim(key)//C_NULL_CHAR, values, &
+  call c_attrs_set_array_C_INT(attrs%ptr, trim(key)//C_NULL_CHAR, values, &
       size(values), localforce, localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
       rcToReturn=rc)) return

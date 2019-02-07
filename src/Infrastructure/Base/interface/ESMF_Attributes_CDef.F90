@@ -102,7 +102,29 @@ interface
 
   !=============================================================================
 
-  subroutine c_attrs_get_array(attrs, key, values, count, count_only, rc) bind(C, name="ESMC_AttributesGetArray")
+  subroutine c_attrs_get_array_C_FLOAT(attrs, key, values, count, count_only, rc) bind(C, name="ESMC_AttributesGetArray_C_FLOAT")
+    use iso_c_binding
+    implicit none
+    type(C_PTR), value :: attrs
+    character(C_CHAR), intent(in) :: key(*)
+    real(C_FLOAT), dimension(*), intent(inout) :: values
+    integer(C_INT), intent(inout) :: count
+    integer(C_INT), intent(inout) :: count_only
+    integer(C_INT), intent(inout) :: rc
+  end subroutine c_attrs_get_array_C_FLOAT
+
+  subroutine c_attrs_get_array_C_DOUBLE(attrs, key, values, count, count_only, rc) bind(C, name="ESMC_AttributesGetArray_C_DOUBLE")
+    use iso_c_binding
+    implicit none
+    type(C_PTR), value :: attrs
+    character(C_CHAR), intent(in) :: key(*)
+    real(C_DOUBLE), dimension(*), intent(inout) :: values
+    integer(C_INT), intent(inout) :: count
+    integer(C_INT), intent(inout) :: count_only
+    integer(C_INT), intent(inout) :: rc
+  end subroutine c_attrs_get_array_C_DOUBLE
+
+  subroutine c_attrs_get_array_C_INT(attrs, key, values, count, count_only, rc) bind(C, name="ESMC_AttributesGetArray_C_INT")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: attrs
@@ -111,7 +133,29 @@ interface
     integer(C_INT), intent(inout) :: count
     integer(C_INT), intent(inout) :: count_only
     integer(C_INT), intent(inout) :: rc
-  end subroutine c_attrs_get_array
+  end subroutine c_attrs_get_array_C_INT
+
+  subroutine c_attrs_get_array_C_LONG(attrs, key, values, count, count_only, rc) bind(C, name="ESMC_AttributesGetArray_C_LONG")
+    use iso_c_binding
+    implicit none
+    type(C_PTR), value :: attrs
+    character(C_CHAR), intent(in) :: key(*)
+    integer(C_LONG), dimension(*), intent(inout) :: values
+    integer(C_INT), intent(inout) :: count
+    integer(C_INT), intent(inout) :: count_only
+    integer(C_INT), intent(inout) :: rc
+  end subroutine c_attrs_get_array_C_LONG
+
+  subroutine c_attrs_get_array_C_CHAR(attrs, key, values, count, count_only, rc) bind(C, name="ESMC_AttributesGetArray_C_CHAR")
+    use iso_c_binding
+    implicit none
+    type(C_PTR), value :: attrs
+    character(C_CHAR), intent(in) :: key(*)
+    character(C_CHAR), dimension(*), intent(inout) :: values
+    integer(C_INT), intent(inout) :: count
+    integer(C_INT), intent(inout) :: count_only
+    integer(C_INT), intent(inout) :: rc
+  end subroutine c_attrs_get_array_C_CHAR
 
   !=============================================================================
 
@@ -167,7 +211,29 @@ interface
 
   !=============================================================================
 
-  subroutine c_attrs_set_array(attrs, key, values, count, force, rc) bind(C, name="ESMC_AttributesSetArray")
+  subroutine c_attrs_set_array_C_FLOAT(attrs, key, values, count, force, rc) bind(C, name="ESMC_AttributesSetArray_C_FLOAT")
+    use iso_c_binding
+    implicit none
+    type(C_PTR), value :: attrs
+    character(kind=C_CHAR), intent(in) :: key(*)
+    real(C_FLOAT), dimension(*), intent(in) :: values
+    integer(C_INT), intent(in) :: count
+    integer(C_INT), intent(in) :: force
+    integer(C_INT), intent(inout) :: rc
+  end subroutine c_attrs_set_array_C_FLOAT
+
+  subroutine c_attrs_set_array_C_DOUBLE(attrs, key, values, count, force, rc) bind(C, name="ESMC_AttributesSetArray_C_DOUBLE")
+    use iso_c_binding
+    implicit none
+    type(C_PTR), value :: attrs
+    character(kind=C_CHAR), intent(in) :: key(*)
+    real(C_DOUBLE), dimension(*), intent(in) :: values
+    integer(C_INT), intent(in) :: count
+    integer(C_INT), intent(in) :: force
+    integer(C_INT), intent(inout) :: rc
+  end subroutine c_attrs_set_array_C_DOUBLE
+
+  subroutine c_attrs_set_array_C_INT(attrs, key, values, count, force, rc) bind(C, name="ESMC_AttributesSetArray_C_INT")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: attrs
@@ -176,5 +242,30 @@ interface
     integer(C_INT), intent(in) :: count
     integer(C_INT), intent(in) :: force
     integer(C_INT), intent(inout) :: rc
-  end subroutine c_attrs_set_array
+  end subroutine c_attrs_set_array_C_INT
+
+  subroutine c_attrs_set_array_C_LONG(attrs, key, values, count, force, rc) bind(C, name="ESMC_AttributesSetArray_C_LONG")
+    use iso_c_binding
+    implicit none
+    type(C_PTR), value :: attrs
+    character(kind=C_CHAR), intent(in) :: key(*)
+    integer(C_LONG), dimension(*), intent(in) :: values
+    integer(C_INT), intent(in) :: count
+    integer(C_INT), intent(in) :: force
+    integer(C_INT), intent(inout) :: rc
+  end subroutine c_attrs_set_array_C_LONG
+
+  subroutine c_attrs_set_array_C_CHAR(attrs, key, values, count, force, rc) bind(C, name="ESMC_AttributesSetArray_C_CHAR")
+    use iso_c_binding
+    implicit none
+    type(C_PTR), value :: attrs
+    character(kind=C_CHAR), intent(in) :: key(*)
+    character(C_CHAR), dimension(*), intent(in) :: values
+    integer(C_INT), intent(in) :: count
+    integer(C_INT), intent(in) :: force
+    integer(C_INT), intent(inout) :: rc
+  end subroutine c_attrs_set_array_C_CHAR
+
+  !=============================================================================
+
 end interface
