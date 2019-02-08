@@ -396,6 +396,29 @@ void Attributes::deserialize(char *buffer, int *offset, int &rc) {
   return;
 }
 
+#undef ESMC_METHOD
+#define ESMC_METHOD "Attributes::get_isoc()"
+void Attributes::get_isoc(ESMCI::ESMC_ISOCType ictype, void *ret, char* key,
+  int& rc, void* def) const {
+  rc = ESMF_FAILURE;
+  std::string localKey(key);
+  try {
+    if (ictype == ESMCI::C_INT) {
+      *(reinterpret_cast<int *>(ret)) = this->get<int>(localKey, rc,
+        reinterpret_cast<int *>(def));
+    } else if (ictype == ESMCI::C_LONG) {
+      *(reinterpret_cast<long int *>(ret)) = this->get<long int>(localKey, rc,
+        reinterpret_cast<long int *>(def));
+    } else {
+      std::string msg = "ESMC_ISOCType not supported: " + std::to_string(ictype);
+      ESMF_CHECKERR_STD("ESMC_RC_NOT_IMPL", ESMC_RC_NOT_IMPL, msg, rc);
+    }
+  }
+  catch (ESMCI::esmf_attrs_error &exc_esmf) {
+    ESMF_CATCH_PASSTHRU(exc_esmf);
+  }
+}
+
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::serialize()"
 void Attributes::serialize(char *buffer, int *length, int *offset,
@@ -675,6 +698,18 @@ void ESMC_AttributesErase(ESMCI::Attributes* attrs, char* keyParent,
 
 //-----------------------------------------------------------------------------
 
+#undef ESMC_METHOD
+#define ESMC_METHOD "ESMC_AttributesGet_VOID()"
+void ESMC_AttributesGet_VOID(ESMCI::ESMC_ISOCType ictype, void *ret,
+                             ESMCI::Attributes* attrs, char* key, int& rc,
+                             void* def) {
+  attrs->get_isoc(ictype, ret, key, rc, def);
+  if (ESMC_LogDefault.MsgFoundError(rc, "Get failed", ESMC_CONTEXT, &rc))
+    throw(rc);
+}
+
+//-----------------------------------------------------------------------------
+
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_AttributesGet_C_FLOAT()"
 float ESMC_AttributesGet_C_FLOAT(ESMCI::Attributes* attrs, char* key, int& rc, float* def) {
@@ -699,10 +734,10 @@ double ESMC_AttributesGet_C_DOUBLE(ESMCI::Attributes* attrs, char* key, int& rc,
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_AttributesGet_C_INT()"
-int ESMC_AttributesGet_C_INT(ESMCI::Attributes* attrs, char* key, int& rc, int* def) {
-  rc = ESMF_FAILURE;
-  std::string localKey(key);
-  int ret = attrs->get<int>(localKey, rc, def);
+int ESMC_AttributesGet_C_INT(ESMCI::Attributes* attrs, char* key, int& rc,
+  int* def) {
+  int ret;
+  ESMC_AttributesGet_VOID(ESMCI::ESMC_ISOCType::C_INT, &ret, attrs, key, rc, def);
   if (ESMC_LogDefault.MsgFoundError(rc, "Get failed", ESMC_CONTEXT, &rc))
     throw(rc);
   return ret;

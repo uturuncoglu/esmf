@@ -50,6 +50,8 @@ using std::string;
 
 namespace ESMCI {
 
+enum ESMC_ISOCType {C_INT, C_LONG, C_FLOAT, C_DOUBLE, C_CHAR};
+
 //-----------------------------------------------------------------------------
 
 class esmf_attrs_error : public std::exception
@@ -96,6 +98,9 @@ public:
 
   template <typename T>
   T get(const string& key, int& rc, T* def = nullptr) const;
+
+  void get_isoc(ESMCI::ESMC_ISOCType ictype, void *ret, char* key, int& rc,
+    void* def = nullptr) const;
 
   const json& getStorageRef(void) const;
 
