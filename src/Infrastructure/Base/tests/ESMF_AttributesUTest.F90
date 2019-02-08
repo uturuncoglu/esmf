@@ -43,7 +43,7 @@ program ESMF_AttributesUTest
   ! individual test failure message
   character(ESMF_MAXSTR) :: failMsg
   character(ESMF_MAXSTR) :: name
-  character(ESMF_MAXSTR) :: key
+  character(ESMF_MAXSTR) :: key, key_i8, key_r4, key_r8
 
   integer               :: rc, petCount, i
   integer, allocatable  :: petList(:)
@@ -53,6 +53,9 @@ program ESMF_AttributesUTest
   integer               :: result = 0
 
   integer(ESMF_KIND_I4) :: value, actual, actual2, actual3, arr_i4_get_count
+  integer(ESMF_KIND_I8) :: desired_i8, value_i8
+  real(ESMF_KIND_R4) :: desired_r4, value_r4
+  real(ESMF_KIND_R8) :: desired_r8, value_r8
   integer(ESMF_KIND_I4), dimension(3) :: arr_i4
   integer(ESMF_KIND_I4), dimension(:), allocatable :: arr_i4_get
   type(ESMF_Attributes) :: attrs, attrs2, attrs3, attrs4, attrs5, attrs6, &
@@ -106,17 +109,65 @@ program ESMF_AttributesUTest
   call ESMF_AttributesSet(attrs2, key, actual, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
+  key_i8 = "testKeyI8"
+  desired_i8 = 92233720
+  call ESMF_AttributesSet(attrs2, key_i8, desired_i8, rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  key_r4 = "testKeyR4"
+  desired_r4 = 333.0 + (1.0/3.0)
+  call ESMF_AttributesSet(attrs2, key_r4, desired_r4, rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  key_r8 = "testKeyR8"
+  desired_r8 = 1.797693e-10
+  call ESMF_AttributesSet(attrs2, key_r8, desired_r8, rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
   call ESMF_Test((rc == ESMF_SUCCESS), name, failMsg, result, ESMF_SRCLINE)
 
   !----------------------------------------------------------------------------
   !NEX_UTest
-  write(name, *) "ESMF_AttributesGet"
+  write(name, *) "ESMF_AttributesGetI4"
   write(failMsg, *) "Did not get key"
 
   call ESMF_AttributesGet(attrs2, key, value, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
   call ESMF_Test((value == actual), name, failMsg, result, ESMF_SRCLINE)
+  !----------------------------------------------------------------------------
+
+  !----------------------------------------------------------------------------
+  !NEX_UTest
+  write(name, *) "ESMF_AttributesGetI8"
+  write(failMsg, *) "Did not get key"
+
+  call ESMF_AttributesGet(attrs2, key_i8, value_i8, rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  call ESMF_Test((value_i8 == desired_i8), name, failMsg, result, ESMF_SRCLINE)
+  !----------------------------------------------------------------------------
+
+  !----------------------------------------------------------------------------
+  !NEX_UTest
+  write(name, *) "ESMF_AttributesGetR4"
+  write(failMsg, *) "Did not get key"
+
+  call ESMF_AttributesGet(attrs2, key_r4, value_r4, rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  call ESMF_Test((ABS(value_r4 - desired_r4) < 1e-16), name, failMsg, result, ESMF_SRCLINE)
+  !----------------------------------------------------------------------------
+
+  !----------------------------------------------------------------------------
+  !NEX_UTest
+  write(name, *) "ESMF_AttributesGetR8"
+  write(failMsg, *) "Did not get key"
+
+  call ESMF_AttributesGet(attrs2, key_r8, value_r8, rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  call ESMF_Test((ABS(value_r8 - desired_r8) < 1e-16), name, failMsg, result, ESMF_SRCLINE)
 
   call ESMF_AttributesDestroy(attrs2, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
