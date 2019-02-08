@@ -256,7 +256,7 @@ subroutine ESMF_AttributesGetI4(attrs, key, value, default, rc)
     localdefault_ptr = C_NULL_PTR
   end if
 
-  value = c_attrs_get_C_INT(attrs%ptr, trim(key)//C_NULL_CHAR, localrc, localdefault_ptr)
+  call c_attrs_get_C_INT(attrs%ptr, trim(key)//C_NULL_CHAR, value, localrc, localdefault_ptr)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
     rcToReturn=rc)) return
 

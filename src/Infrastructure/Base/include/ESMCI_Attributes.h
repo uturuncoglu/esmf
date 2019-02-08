@@ -166,7 +166,7 @@ extern "C" {
 
 //-----------------------------------------------------------------------------
 
-  int ESMC_AttributesGet_C_INT(ESMCI::Attributes* attrs, char* key, int& rc, int* def);
+  void ESMC_AttributesGet_C_INT(ESMCI::Attributes* attrs, char* key, int &value, int& rc, int* def);
   long int ESMC_AttributesGet_C_LONG(ESMCI::Attributes* attrs, char* key, int& rc, long int* def);
   float ESMC_AttributesGet_C_FLOAT(ESMCI::Attributes* attrs, char* key, int& rc, float* def);
   double ESMC_AttributesGet_C_DOUBLE(ESMCI::Attributes* attrs, char* key, int& rc, double* def);

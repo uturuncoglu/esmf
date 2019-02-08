@@ -734,13 +734,11 @@ double ESMC_AttributesGet_C_DOUBLE(ESMCI::Attributes* attrs, char* key, int& rc,
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_AttributesGet_C_INT()"
-int ESMC_AttributesGet_C_INT(ESMCI::Attributes* attrs, char* key, int& rc,
+void ESMC_AttributesGet_C_INT(ESMCI::Attributes* attrs, char* key, int &value, int& rc,
   int* def) {
-  int ret;
-  ESMC_AttributesGet_VOID(ESMCI::ESMC_ISOCType::C_INT, &ret, attrs, key, rc, def);
+  ESMC_AttributesGet_VOID(ESMCI::ESMC_ISOCType::C_INT, &value, attrs, key, rc, def);
   if (ESMC_LogDefault.MsgFoundError(rc, "Get failed", ESMC_CONTEXT, &rc))
     throw(rc);
-  return ret;
 }
 
 #undef  ESMC_METHOD
