@@ -9,19 +9,22 @@ TESTS_BUILD   = $(ESMF_TESTDIR)/ESMF_BaseUTest \
                 $(ESMF_TESTDIR)/ESMC_NlohmannJSONUTest \
                 $(ESMF_TESTDIR)/ESMC_AttributesUTest \
                 $(ESMF_TESTDIR)/ESMF_AttributesUTest \
-                $(ESMF_TESTDIR)/ESMF_AttributesProfileUTest
+                $(ESMF_TESTDIR)/ESMF_AttributesProfileUTest \
+                $(ESMF_TESTDIR)/ESMF_AttributesArrayUTest
 
 TESTS_RUN     = RUN_ESMF_BaseUTest \
                 RUN_ESMC_NlohmannJSONUTest \
                 RUN_ESMC_AttributesUTest \
                 RUN_ESMF_AttributesUTest \
-                RUN_ESMF_AttributesProfileUTest
+                RUN_ESMF_AttributesProfileUTest \
+                RUN_ESMF_AttributesArrayUTest
 
 TESTS_RUN_UNI = RUN_ESMF_BaseUTestUNI \
                 RUN_ESMC_NlohmannJSONUTestUNI \
                 RUN_ESMC_AttributesUTestUNI \
                 RUN_ESMF_AttributesUTestUNI \
-                RUN_ESMF_AttributesProfileUTestUNI
+                RUN_ESMF_AttributesProfileUTestUNI \
+                RUN_ESMF_AttributesArrayUTestUNI
 
 
 include ${ESMF_DIR}/makefile
@@ -68,3 +71,9 @@ RUN_ESMF_AttributesProfileUTest:
 
 RUN_ESMF_AttributesProfileUTestUNI:
 	env ESMF_RUNTIME_PROFILE=ON $(MAKE) TNAME=AttributesProfileUNI NP=1 ftest
+
+RUN_ESMF_AttributesArrayUTest:
+	$(MAKE) TNAME=AttributesArray NP=4 ftest
+
+RUN_ESMF_AttributesArrayUTestUNI:
+	$(MAKE) TNAME=AttributeArrayUNI NP=1 ftest
