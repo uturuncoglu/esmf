@@ -27,9 +27,9 @@ program ESMF_AttributesArrayUTest
 
   character(ESMF_MAXSTR) :: failMsg  ! Test failure message
   character(ESMF_MAXSTR) :: name  ! Test name
-  integer               :: rc, petCount, i
+  integer :: rc, petCount, i
   ! cumulative result: count failures; no failures equals "all pass"
-  integer               :: result = 0
+  integer :: result = 0
   real(ESMF_KIND_R4), parameter :: tol = 1e-16  ! Tolerance for real tests
   type(ESMF_Attributes) :: attrs
   logical :: failed
