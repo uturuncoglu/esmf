@@ -59,7 +59,7 @@ void alignOffset(int &offset) {
 
 #undef ESMC_METHOD
 #define ESMC_METHOD "handleHasKey"
-bool handleHasKey(const Attributes* attrs, const string& key, int& rc) {
+bool handleHasKey(const Attributes* attrs, key_t& key, int& rc) {
   // Exceptions:  ESMCI::esmf_attrs_error
 
   bool has_key;
@@ -78,7 +78,7 @@ bool handleHasKey(const Attributes* attrs, const string& key, int& rc) {
 
 #undef ESMC_METHOD
 #define ESMC_METHOD "isIn(<string,vector>)"
-bool isIn(const string& target, const vector<string>& container) {
+bool isIn(key_t& target, const vector<string>& container) {
   auto it = std::find(container.cbegin(), container.cend(), target);
   return !(it == container.cend());
 }
@@ -110,7 +110,7 @@ bool isIn(const vector<string>& target, const vector<string>& container) {
 
 #undef ESMC_METHOD
 #define ESMC_METHOD "isIn(<string,json>)"
-bool isIn(const string& target, const json& j) {
+bool isIn(key_t& target, const json& j) {
   if (j.is_null()) {
     return false;
   } else {
@@ -132,7 +132,7 @@ Attributes::Attributes(json&& storage){
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes(string&)"
-Attributes::Attributes(const string& input, int& rc) {
+Attributes::Attributes(key_t& input, int& rc) {
   // Exceptions: ESMCI::esmf_attrs_error
   // tdk:FEAT: use the parse method on the object!
 
@@ -178,7 +178,7 @@ string Attributes::dump(int indent, int& rc) const {
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::erase()"
-void Attributes::erase(const string& keyParent, const string& keyChild, int& rc) {
+void Attributes::erase(key_t& keyParent, key_t& keyChild, int& rc) {
   // Exceptions: ESMCI::esmf_attrs_error
 
   rc = ESMF_FAILURE;
@@ -205,7 +205,7 @@ void Attributes::erase(const string& keyParent, const string& keyChild, int& rc)
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::formatKey()"
-json::json_pointer Attributes::formatKey(const string& key, int& rc) {
+json::json_pointer Attributes::formatKey(key_t& key, int& rc) {
   // Exceptions:  ESMCI:esmf_attrs_error
 
   rc = ESMF_FAILURE;
@@ -235,7 +235,7 @@ json::json_pointer Attributes::formatKey(const string& key, int& rc) {
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::get()"
 template <typename T>
-T Attributes::get(const string& key, int& rc, T* def) const {
+T Attributes::get(key_t& key, int& rc, T* def) const {
   // Exceptions:  ESMCI:esmf_attrs_error
 
   rc = ESMF_FAILURE;
@@ -261,16 +261,16 @@ T Attributes::get(const string& key, int& rc, T* def) const {
   }
   return ret;
 }
-template float Attributes::get(const string&, int&, float*) const;
-template double Attributes::get(const string&, int&, double*) const;
-template int Attributes::get(const string&, int&, int*) const;
-template long int Attributes::get(const string&, int&, long int*) const;
-template string Attributes::get(const string&, int&, string*) const;
+template float Attributes::get(key_t&, int&, float*) const;
+template double Attributes::get(key_t&, int&, double*) const;
+template int Attributes::get(key_t&, int&, int*) const;
+template long int Attributes::get(key_t&, int&, long int*) const;
+template string Attributes::get(key_t&, int&, string*) const;
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::getPointer()"
 template <typename T, typename JT>
-T Attributes::getPointer(const string& key, int& rc) const {
+T Attributes::getPointer(key_t& key, int& rc) const {
   // Exceptions:  ESMCI:esmf_attrs_error
 
   rc = ESMF_FAILURE;
@@ -293,17 +293,17 @@ T Attributes::getPointer(const string& key, int& rc) const {
   }
 };
 //  template const float* const Attributes::getPointer<const float* const,
-//          const json::number_float_t* const>(const string&, int&) const;
+//          const json::number_float_t* const>(key_t&, int&) const;
 template const double* const Attributes::getPointer<const double* const,
-        const json::number_float_t* const>(const string&, int&) const;
+        const json::number_float_t* const>(key_t&, int&) const;
 //  template const int* const Attributes::getPointer<const int* const,
-//          const json::number_integer_t* const>(const string&, int&) const;
+//          const json::number_integer_t* const>(key_t&, int&) const;
 template const long int* const Attributes::getPointer<const long int* const,
-        const json::number_integer_t* const>(const string&, int&) const;
-template const string* const Attributes::getPointer<const string* const,
-        const json::string_t* const>(const string&, int&) const;
+        const json::number_integer_t* const>(key_t&, int&) const;
+template key_t* const Attributes::getPointer<key_t* const,
+        const json::string_t* const>(key_t&, int&) const;
 template const vector<json>* const Attributes::getPointer<const vector<json>*
-        const, const json::array_t* const>(const string&, int&) const;
+        const, const json::array_t* const>(key_t&, int&) const;
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::getStorageRef()"
@@ -319,7 +319,7 @@ json& Attributes::getStorageRefWritable() {
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::hasKey()"
-bool Attributes::hasKey(const string& key, int& rc, bool isptr) const {
+bool Attributes::hasKey(key_t& key, int& rc, bool isptr) const {
   // Exceptions:  ESMCI::esmf_attrs_error
   // isptr is optional
 
@@ -354,7 +354,7 @@ bool Attributes::hasKey(const string& key, int& rc, bool isptr) const {
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::parse()"
-void Attributes::parse(const string& input, int& rc) {
+void Attributes::parse(key_t& input, int& rc) {
   // Exceptions:  ESMCI:esmf_attrs_error
 
   rc = ESMF_FAILURE;
@@ -458,7 +458,7 @@ void Attributes::serialize(char *buffer, int *length, int *offset,
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::set()"
 template <typename T>
-void Attributes::set(const string& key, T value, bool force, int& rc) {
+void Attributes::set(key_t& key, T value, bool force, int& rc) {
   // Exceptions:  ESMCI:esmf_attrs_error
 
   rc = ESMF_FAILURE;
@@ -488,16 +488,16 @@ void Attributes::set(const string& key, T value, bool force, int& rc) {
   rc = ESMF_SUCCESS;
   return;
 };
-template void Attributes::set<float>(const string&, float, bool, int&);
-template void Attributes::set<double>(const string&, double, bool, int&);
-template void Attributes::set<int>(const string&, int, bool, int&);
-template void Attributes::set<long int>(const string&, long int, bool, int&);
-template void Attributes::set<string>(const string&, string, bool, int&);
+template void Attributes::set<float>(key_t&, float, bool, int&);
+template void Attributes::set<double>(key_t&, double, bool, int&);
+template void Attributes::set<int>(key_t&, int, bool, int&);
+template void Attributes::set<long int>(key_t&, long int, bool, int&);
+template void Attributes::set<string>(key_t&, string, bool, int&);
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::set(<array>)"
 template <typename T>
-void Attributes::set(const string& key, T values[], int& count, bool force, int& rc) {
+void Attributes::set(key_t& key, T values[], int& count, bool force, int& rc) {
   // Exceptions:  ESMCI:esmf_attrs_error
 
   rc = ESMF_FAILURE;
@@ -533,11 +533,11 @@ void Attributes::set(const string& key, T values[], int& count, bool force, int&
   rc = ESMF_SUCCESS;
   return;
 };
-template void Attributes::set<float>(const string&, float[], int&, bool, int&);
-template void Attributes::set<double>(const string&, double[], int&, bool, int&);
-template void Attributes::set<int>(const string&, int[], int&, bool, int&);
-template void Attributes::set<long int>(const string&, long int[], int&, bool, int&);
-//template void Attributes::set<std::vector<std::string>>(const string& std::vector<std::string>, int&, bool, int&);
+template void Attributes::set<float>(key_t&, float[], int&, bool, int&);
+template void Attributes::set<double>(key_t&, double[], int&, bool, int&);
+template void Attributes::set<int>(key_t&, int[], int&, bool, int&);
+template void Attributes::set<long int>(key_t&, long int[], int&, bool, int&);
+//template void Attributes::set<std::vector<std::string>>(key_t& std::vector<std::string>, int&, bool, int&);
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::update()"
@@ -561,8 +561,8 @@ void Attributes::update(const Attributes &attrs, int &rc) {
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "esmf_attrs_error::esmf_attrs_error()"
-esmf_attrs_error::esmf_attrs_error (const string& code_name, int rc,
-                                    const string& msg) {
+esmf_attrs_error::esmf_attrs_error (key_t& code_name, int rc,
+                                    key_t& msg) {
   assert(rc != ESMF_SUCCESS);
   string the_msg;
   if (code_name != "") {
@@ -579,8 +579,8 @@ esmf_attrs_error::esmf_attrs_error (const string& code_name, int rc,
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "PackageFactory::getOrCreateJSON()"
-json PackageFactory::getOrCreateJSON(const string& key, int& rc,
-                                     const string& uri) {
+json PackageFactory::getOrCreateJSON(key_t& key, int& rc,
+                                     key_t& uri) {
   rc = ESMF_FAILURE;
   try {
     json ret = this->cache.at(key);

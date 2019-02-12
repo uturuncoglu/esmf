@@ -25,7 +25,6 @@
 #include "json.hpp"
 
 using json = nlohmann::json;  // Convenience rename for JSON namespace.
-using std::string;
 
 //tdk:LAST: remove all tdk stuff (search for tdk)
 
@@ -50,6 +49,8 @@ using std::string;
 
 namespace ESMCI {
 
+typedef const std::string key_t;
+
 enum ESMC_ISOCType {C_INT, C_LONG, C_FLOAT, C_DOUBLE, C_CHAR};
 
 //-----------------------------------------------------------------------------
@@ -57,14 +58,14 @@ enum ESMC_ISOCType {C_INT, C_LONG, C_FLOAT, C_DOUBLE, C_CHAR};
 class esmf_attrs_error : public std::exception
 {
 public:
-  esmf_attrs_error(const string &code_name, int rc, const string &msg);
+  esmf_attrs_error(key_t &code_name, int rc, key_t &msg);
 
   int getReturnCode() {return this->rc;}
 
   const char* what() const noexcept {return this->msg.c_str();}
 
 private:
-  string msg;
+  std::string msg;
   int rc;
 };
 
@@ -75,7 +76,7 @@ class Attributes {
 protected:
   json storage;  // JSON object store for keys/values managed by this instance
 
-  static json::json_pointer formatKey(const string& key, int& rc);
+  static json::json_pointer formatKey(key_t& key, int& rc);
   virtual void init(void) {this->storage = json::object();}
 
 public:
@@ -89,15 +90,15 @@ public:
 
   Attributes(const json& storage);
   Attributes(json&& storage);
-  Attributes(const string& input, int& rc);
+  Attributes(key_t& input, int& rc);
 
-  string dump(int& rc) const;
-  string dump(int indent, int& rc) const;
+  std::string dump(int& rc) const;
+  std::string dump(int indent, int& rc) const;
 
-  void erase(const string& key, const string& keyChild, int& rc);
+  void erase(key_t& key, key_t& keyChild, int& rc);
 
   template <typename T>
-  T get(const string& key, int& rc, T* def = nullptr) const;
+  T get(key_t& key, int& rc, T* def = nullptr) const;
 
   void get_isoc(ESMCI::ESMC_ISOCType ictype, void *ret, char* key, int& rc,
     void* def = nullptr) const;
@@ -107,11 +108,11 @@ public:
   json& getStorageRefWritable(void);
 
   template <typename T, typename JT>
-  T getPointer(const string& key, int& rc) const;
+  T getPointer(key_t& key, int& rc) const;
 
-  bool hasKey(const string& key, int& rc, bool isptr = false) const;
+  bool hasKey(key_t& key, int& rc, bool isptr = false) const;
 
-  void parse(const string& input, int& rc);
+  void parse(key_t& input, int& rc);
 
   void deserialize(char *buffer, int *offset, int& rc);
 
@@ -119,10 +120,10 @@ public:
     ESMC_InquireFlag inquireflag, int& rc);
 
   template <typename T>
-  void set(const string& key, T value, bool force, int& rc);
+  void set(key_t& key, T value, bool force, int& rc);
 
   template <typename T>
-  void set(const string& key, T values[], int& count, bool force, int& rc);
+  void set(key_t& key, T values[], int& count, bool force, int& rc);
 
   void update(const Attributes& attrs, int& rc);
 
@@ -141,16 +142,16 @@ public:
   PackageFactory(void) = default;  // Default constructor
   ~PackageFactory(void) = default; // Default destructor
 
-  json getOrCreateJSON(const string& key, int& rc, const string& uri = "");
+  json getOrCreateJSON(key_t& key, int& rc, key_t& uri = "");
 };
 
 //-----------------------------------------------------------------------------
 
 void alignOffset(int &offset);
 void broadcastAttributes(ESMCI::Attributes* attrs, int rootPet, int& rc); // tdk: FEATURE: non-blocking
-bool isIn(const string& target, const std::vector<string>& container);
-bool isIn(const std::vector<string>& target, const std::vector<string>& container);
-bool isIn(const string& target, const json& j);
+bool isIn(key_t& target, const std::vector<std::string>& container);
+bool isIn(const std::vector<std::string>& target, const std::vector<std::string>& container);
+bool isIn(key_t& target, const json& j);
 
 //-----------------------------------------------------------------------------
 
