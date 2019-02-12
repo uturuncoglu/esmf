@@ -6,8 +6,7 @@ SOURCEC	  = ESMCI_Base.C ESMCI_Attributes.C ESMC_AttributesCDef.C
 SOURCEF	  = 
 STOREH    = ESMCI_Base.h \
             nlohmann/json/json.hpp \
-            ESMCI_Attributes.h \
-            ESMC_AttributesCDef.h
+            ESMCI_Attributes.h
 
 OBJSC     = $(addsuffix .o, $(basename $(SOURCEC)))
 OBJSF     = $(addsuffix .o, $(basename $(SOURCEF)))
