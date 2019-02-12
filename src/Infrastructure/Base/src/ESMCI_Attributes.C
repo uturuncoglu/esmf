@@ -38,8 +38,6 @@
 #include <vector>
 #include <iostream>
 
-using namespace std;
-
 using json = nlohmann::json;  // Convenience rename for JSON namespace.
 
 //-----------------------------------------------------------------------------
@@ -70,7 +68,7 @@ bool handleHasKey(const Attributes* attrs, key_t& key, int& rc) {
     ESMF_CATCH_PASSTHRU(exc_esmf);
   }
   if (has_key) {
-    string msg = "Attribute key \'" + key + "\' already in map and force=false.";
+    std::string msg = "Attribute key \'" + key + "\' already in map and force=false.";
     ESMF_CHECKERR_STD("ESMC_RC_CANNOT_SET", ESMC_RC_CANNOT_SET, msg, rc);
   }
   return has_key;
@@ -78,16 +76,16 @@ bool handleHasKey(const Attributes* attrs, key_t& key, int& rc) {
 
 #undef ESMC_METHOD
 #define ESMC_METHOD "isIn(<string,vector>)"
-bool isIn(key_t& target, const vector<string>& container) {
+bool isIn(key_t& target, const std::vector<std::string>& container) {
   auto it = std::find(container.cbegin(), container.cend(), target);
   return !(it == container.cend());
 }
 
 #undef ESMC_METHOD
 #define ESMC_METHOD "isIn(<string vector,vector>)"
-bool isIn(const vector<string>& target, const vector<string>& container) {
-  size_t count = 0;
-  size_t required = target.size();
+bool isIn(const std::vector<std::string>& target, const std::vector<std::string>& container) {
+  std::size_t count = 0;
+  std::size_t required = target.size();
   bool ret;
   if (target.size() == 0) {
     ret = true;
@@ -148,10 +146,10 @@ Attributes::Attributes(key_t& input, int& rc) {
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::dump(int &rc)"
-string Attributes::dump(int& rc) const {
+std::string Attributes::dump(int& rc) const {
   // Exceptions: ESMCI::esmf_attrs_error
 
-  string ret;
+  std::string ret;
   try {
     ret = this->dump(0, rc);
   } catch (ESMCI::esmf_attrs_error &e) {
@@ -162,11 +160,11 @@ string Attributes::dump(int& rc) const {
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::dump(int indent, int &rc)"
-string Attributes::dump(int indent, int& rc) const {
+std::string Attributes::dump(int indent, int& rc) const {
   // Exceptions: ESMCI::esmf_attrs_error
 
   rc = ESMF_FAILURE;
-  string ret;
+  std::string ret;
   try {
     ret = this->storage.dump(indent);
   } catch (json::type_error &e) {
@@ -209,7 +207,7 @@ json::json_pointer Attributes::formatKey(key_t& key, int& rc) {
   // Exceptions:  ESMCI:esmf_attrs_error
 
   rc = ESMF_FAILURE;
-  string localKey;
+  std::string localKey;
 
   if (key != "" && key[0] != '/') {
     localKey = '/' + key;
@@ -217,8 +215,8 @@ json::json_pointer Attributes::formatKey(key_t& key, int& rc) {
     localKey = key;
   }
 
-  if (localKey.find("///") != string::npos){
-    string msg = "Triple forward slashes not allowed in key names";
+  if (localKey.find("///") != std::string::npos){
+    std::string msg = "Triple forward slashes not allowed in key names";
     ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, msg, rc);
   }
 
@@ -265,7 +263,7 @@ template float Attributes::get(key_t&, int&, float*) const;
 template double Attributes::get(key_t&, int&, double*) const;
 template int Attributes::get(key_t&, int&, int*) const;
 template long int Attributes::get(key_t&, int&, long int*) const;
-template string Attributes::get(key_t&, int&, string*) const;
+template std::string Attributes::get(key_t&, int&, std::string*) const;
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::getPointer()"
@@ -302,7 +300,7 @@ template const long int* const Attributes::getPointer<const long int* const,
         const json::number_integer_t* const>(key_t&, int&) const;
 template key_t* const Attributes::getPointer<key_t* const,
         const json::string_t* const>(key_t&, int&) const;
-template const vector<json>* const Attributes::getPointer<const vector<json>*
+template const std::vector<json>* const Attributes::getPointer<const std::vector<json>*
         const, const json::array_t* const>(key_t&, int&) const;
 
 #undef  ESMC_METHOD
@@ -492,7 +490,7 @@ template void Attributes::set<float>(key_t&, float, bool, int&);
 template void Attributes::set<double>(key_t&, double, bool, int&);
 template void Attributes::set<int>(key_t&, int, bool, int&);
 template void Attributes::set<long int>(key_t&, long int, bool, int&);
-template void Attributes::set<string>(key_t&, string, bool, int&);
+template void Attributes::set<std::string>(key_t&, std::string, bool, int&);
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::set(<array>)"
@@ -564,7 +562,7 @@ void Attributes::update(const Attributes &attrs, int &rc) {
 esmf_attrs_error::esmf_attrs_error (key_t& code_name, int rc,
                                     key_t& msg) {
   assert(rc != ESMF_SUCCESS);
-  string the_msg;
+  std::string the_msg;
   if (code_name != "") {
     the_msg = "Error/Return Code " + std::to_string(rc) + " (" + \
                      code_name + ") - " + msg;
@@ -587,7 +585,7 @@ json PackageFactory::getOrCreateJSON(key_t& key, int& rc,
     rc = ESMF_SUCCESS;
     return ret;
   } catch (json::out_of_range& e) {
-    string localuri;
+    std::string localuri;
     if (uri == "") {
       localuri = this->uris.value(key, uri);
     } else {
@@ -595,7 +593,7 @@ json PackageFactory::getOrCreateJSON(key_t& key, int& rc,
     }
     std::ifstream i(localuri, std::ifstream::in);
     if (!i.good()){
-      string errmsg = "File location is bad for key '" + key + "': " + localuri;
+      std::string errmsg = "File location is bad for key '" + key + "': " + localuri;
       ESMF_CHECKERR_STD("ESMC_RC_FILE_READ", ESMC_RC_FILE_READ, errmsg, rc);
     }
     json j;
@@ -621,10 +619,10 @@ void broadcastAttributes(ESMCI::Attributes* attrs, int rootPet, int& rc) {
   ESMCI::VM *vm = ESMCI::VM::getCurrent(&rc);
   ESMF_CHECKERR_STD("", rc, "Did not get current VM", rc);
   int localPet = vm->getLocalPet();
-  size_t target_size = 0;  // Size of serialized attributes storage
-  string target;  // Serialize storage buffer
+  std::size_t target_size = 0;  // Size of serialized attributes storage
+  std::string target;  // Serialize storage buffer
   if (localPet == rootPet) {
-    // If this is the root, serialize the attributes storage to string
+    // If this is the root, serialize the attributes storage to std::string
     try {
       target = attrs->dump(rc);
     }
@@ -637,7 +635,7 @@ void broadcastAttributes(ESMCI::Attributes* attrs, int rootPet, int& rc) {
   // Used for allocating destination string buffers on receiving PETs.
   rc = vm->broadcast(&target_size, sizeof(target_size), rootPet);
   ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
-  string target_received(target_size, '\0');  // Allocate receive buffer
+  std::string target_received(target_size, '\0');  // Allocate receive buffer
   if (localPet == rootPet) {
     // If this is root, just move the data to the receive buffer with no copy.
     target_received = move(target);

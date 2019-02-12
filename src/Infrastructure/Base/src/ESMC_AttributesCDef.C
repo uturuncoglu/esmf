@@ -217,7 +217,7 @@ void ESMC_AttributesGetArray_C_LONG(ESMCI::Attributes* attrs, char* key,
 #define ESMC_METHOD "ESMC_AttributesIsPresent()"
 int ESMC_AttributesIsPresent(ESMCI::Attributes* attrs, char* key, int& rc,
         int& isptr) {
-  string local_key(key);
+  std::string local_key(key);
   int ret = attrs->hasKey(local_key, rc, isptr);
   if (ESMC_LogDefault.MsgFoundError(rc, "Did not detect key presence",
                                     ESMC_CONTEXT, &rc)) throw(rc);
