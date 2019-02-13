@@ -652,7 +652,7 @@ subroutine ESMF_AttributesSetCH(attrs, key, value, force, rc)
 
   type(ESMF_Attributes), intent(inout) :: attrs
   character(len=*), intent(in) :: key
-  character(len=ESMF_MAXSTR), intent(in) :: value
+  character(len=*), intent(in) :: value
   logical, intent(in), optional :: force
   integer, intent(inout), optional :: rc
 
