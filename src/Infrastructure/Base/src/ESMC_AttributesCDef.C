@@ -87,15 +87,24 @@ void ESMC_AttributesGet_VOID(ESMCI::ESMC_ISOCType ictype, void *ret,
 
 //-----------------------------------------------------------------------------
 
+//#undef  ESMC_METHOD
+//#define ESMC_METHOD "ESMC_AttributesGet_C_FLOAT()"
+//float ESMC_AttributesGet_C_FLOAT(ESMCI::Attributes* attrs, char* key, int& rc, float* def) {
+//  rc = ESMF_FAILURE;
+//  std::string localKey(key);
+//  float ret = attrs->get<float>(localKey, rc, def);
+//  if (ESMC_LogDefault.MsgFoundError(rc, "Get failed", ESMC_CONTEXT, &rc))
+//    throw(rc);
+//  return ret;
+//}
+
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_AttributesGet_C_FLOAT()"
-float ESMC_AttributesGet_C_FLOAT(ESMCI::Attributes* attrs, char* key, int& rc, float* def) {
-  rc = ESMF_FAILURE;
-  std::string localKey(key);
-  float ret = attrs->get<float>(localKey, rc, def);
+void ESMC_AttributesGet_C_FLOAT(ESMCI::Attributes* attrs, char* key, float &value, int& rc,
+                              float* def) {
+  ESMC_AttributesGet_VOID(ESMCI::ESMC_ISOCType::C_FLOAT, &value, attrs, key, rc, def);
   if (ESMC_LogDefault.MsgFoundError(rc, "Get failed", ESMC_CONTEXT, &rc))
     throw(rc);
-  return ret;
 }
 
 #undef  ESMC_METHOD

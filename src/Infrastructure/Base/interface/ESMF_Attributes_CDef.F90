@@ -50,15 +50,15 @@ interface
 
   !=============================================================================
 
-  function c_attrs_get_C_FLOAT(attrs, key, rc, default) bind(C, name="ESMC_AttributesGet_C_FLOAT")
+  subroutine c_attrs_get_C_FLOAT(attrs, key, value, rc, default) bind(C, name="ESMC_AttributesGet_C_FLOAT")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: attrs
     character(C_CHAR), intent(in) :: key(*)
+    real(C_FLOAT), intent(inout) :: value
     integer(C_INT), intent(inout) :: rc
     type(C_PTR), value :: default
-    real(C_FLOAT) :: c_attrs_get_C_FLOAT
-  end function c_attrs_get_C_FLOAT
+  end subroutine c_attrs_get_C_FLOAT
 
   function c_attrs_get_C_DOUBLE(attrs, key, rc, default) bind(C, name="ESMC_AttributesGet_C_DOUBLE")
     use iso_c_binding
