@@ -5,12 +5,13 @@ run:  run_unit_tests
 
 LOCDIR	  = src/Infrastructure/Base/tests
 
-TESTS_BUILD   = $(ESMF_TESTDIR)/ESMF_BaseUTest \
-                $(ESMF_TESTDIR)/ESMC_NlohmannJSONUTest \
-                $(ESMF_TESTDIR)/ESMC_AttributesUTest \
-                $(ESMF_TESTDIR)/ESMF_AttributesUTest \
-                $(ESMF_TESTDIR)/ESMF_AttributesProfileUTest \
-                $(ESMF_TESTDIR)/ESMF_AttributesArrayUTest
+TESTS_BUILD   = $(ESMF_TESTDIR)/ESMF_AttributesUTest
+#TESTS_BUILD   = $(ESMF_TESTDIR)/ESMF_BaseUTest \
+#                $(ESMF_TESTDIR)/ESMC_NlohmannJSONUTest \
+#                $(ESMF_TESTDIR)/ESMC_AttributesUTest \
+#                $(ESMF_TESTDIR)/ESMF_AttributesUTest \
+#                $(ESMF_TESTDIR)/ESMF_AttributesProfileUTest \
+#                $(ESMF_TESTDIR)/ESMF_AttributesArrayUTest
 
 TESTS_RUN     = RUN_ESMF_BaseUTest \
                 RUN_ESMC_NlohmannJSONUTest \

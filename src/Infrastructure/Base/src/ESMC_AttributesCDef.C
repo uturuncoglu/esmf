@@ -132,7 +132,7 @@ long int ESMC_AttributesGet_C_LONG(ESMCI::Attributes* attrs, char* key, int& rc,
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_AttributesGet_C_CHAR()"
 void ESMC_AttributesGet_C_CHAR(ESMCI::Attributes* attrs, char* key, char* value,
-  int& rc, int* def) {
+  int& rc, char* def) {
   ESMC_AttributesGet_VOID(ESMCI::ESMC_ISOCType::C_CHAR, value, attrs, key, rc, def);
   if (ESMC_LogDefault.MsgFoundError(rc, "Get failed", ESMC_CONTEXT, &rc)) throw(rc);
 }

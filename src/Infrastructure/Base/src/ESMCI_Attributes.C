@@ -408,27 +408,37 @@ void Attributes::get_isoc(ESMCI::ESMC_ISOCType ictype, void *ret, char* key,
       *(reinterpret_cast<long int *>(ret)) = this->get<long int>(localKey, rc,
         reinterpret_cast<long int *>(def));
     } else if (ictype == ESMCI::C_CHAR) {
+      // Reinterpret casts from void to character types
       char *local_ret = reinterpret_cast<char *>(ret);
       char *local_def = reinterpret_cast<char *>(def);
+      // String pointer used to define the default value if present
+      std::string *local_def_str_ptr;
+      // String object that holds the default if present
+      std::string local_def_str;
+      if (local_def) {
+        // Set the default pointer to the string object created from the char
+        // array from Fortran
+        local_def_str = std::string(local_def);
+        local_def_str_ptr = &local_def_str;
+      } else {
+        local_def_str_ptr = nullptr;
+      }
       std::string as_str;
       try {
-        as_str = this->get<std::string>(localKey, rc);
+        as_str = this->get<std::string>(localKey, rc, local_def_str_ptr);
       }
       catch (ESMCI::esmf_attrs_error &exc_esmf) {
         ESMF_CATCH_PASSTHRU(exc_esmf);
       }
+      // Transfer the string characters into the Fortran character array using
+      // spaces to fill the Fortran array if we are past the max string length.
       for (std::size_t ii = 0; ii < ESMF_MAXSTR; ++ii) {
         if (ii < as_str.size()) {
           local_ret[ii] = as_str[ii];
         } else {
           local_ret[ii] = ' ';
         }
-//        std::cout << "local_ret[ii]=" << local_ret[ii] << std::endl;  //tdk:p
       }
-
-//      std::string localDef(reinterpret_cast<char *>(def));
-//      *(reinterpret_cast<char *>(ret)) = &(this->get<std::string>(localKey, rc,
-//        &localDef)[0]);
     } else {
       std::string msg = "ESMC_ISOCType not supported: " + std::to_string(ictype);
       ESMF_CHECKERR_STD("ESMC_RC_NOT_IMPL", ESMC_RC_NOT_IMPL, msg, rc);

@@ -314,7 +314,7 @@ subroutine ESMF_AttributesGetCH(attrs, key, value, default, rc)
   if (present(rc)) rc = ESMF_FAILURE
 
   if (present(default)) then
-    localdefault = default
+    localdefault = trim(default)//C_NULL_CHAR
     localdefault_ptr = C_LOC(localdefault)
   else
     localdefault_ptr = C_NULL_PTR
@@ -323,7 +323,6 @@ subroutine ESMF_AttributesGetCH(attrs, key, value, default, rc)
   call c_attrs_get_C_CHAR(attrs%ptr, trim(key)//C_NULL_CHAR, value, localrc, localdefault_ptr)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
     rcToReturn=rc)) return
-
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributesGetCH
