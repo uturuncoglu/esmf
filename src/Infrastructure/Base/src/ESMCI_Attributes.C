@@ -407,6 +407,28 @@ void Attributes::get_isoc(ESMCI::ESMC_ISOCType ictype, void *ret, char* key,
     } else if (ictype == ESMCI::C_LONG) {
       *(reinterpret_cast<long int *>(ret)) = this->get<long int>(localKey, rc,
         reinterpret_cast<long int *>(def));
+    } else if (ictype == ESMCI::C_CHAR) {
+      char *local_ret = reinterpret_cast<char *>(ret);
+      char *local_def = reinterpret_cast<char *>(def);
+      std::string as_str;
+      try {
+        as_str = this->get<std::string>(localKey, rc);
+      }
+      catch (ESMCI::esmf_attrs_error &exc_esmf) {
+        ESMF_CATCH_PASSTHRU(exc_esmf);
+      }
+      for (std::size_t ii = 0; ii < ESMF_MAXSTR; ++ii) {
+        if (ii < as_str.size()) {
+          local_ret[ii] = as_str[ii];
+        } else {
+          local_ret[ii] = ' ';
+        }
+//        std::cout << "local_ret[ii]=" << local_ret[ii] << std::endl;  //tdk:p
+      }
+
+//      std::string localDef(reinterpret_cast<char *>(def));
+//      *(reinterpret_cast<char *>(ret)) = &(this->get<std::string>(localKey, rc,
+//        &localDef)[0]);
     } else {
       std::string msg = "ESMC_ISOCType not supported: " + std::to_string(ictype);
       ESMF_CHECKERR_STD("ESMC_RC_NOT_IMPL", ESMC_RC_NOT_IMPL, msg, rc);

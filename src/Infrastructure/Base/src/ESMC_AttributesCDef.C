@@ -129,6 +129,14 @@ long int ESMC_AttributesGet_C_LONG(ESMCI::Attributes* attrs, char* key, int& rc,
   return ret;
 }
 
+#undef  ESMC_METHOD
+#define ESMC_METHOD "ESMC_AttributesGet_C_CHAR()"
+void ESMC_AttributesGet_C_CHAR(ESMCI::Attributes* attrs, char* key, char* value,
+  int& rc, int* def) {
+  ESMC_AttributesGet_VOID(ESMCI::ESMC_ISOCType::C_CHAR, value, attrs, key, rc, def);
+  if (ESMC_LogDefault.MsgFoundError(rc, "Get failed", ESMC_CONTEXT, &rc)) throw(rc);
+}
+
 //-----------------------------------------------------------------------------
 
 #undef  ESMC_METHOD
@@ -307,6 +315,26 @@ void ESMC_AttributesSet_C_LONG(ESMCI::Attributes* attrs, char* key, long int &va
 
   std::string localKey(key);
   attrs->set<long int>(localKey, value, localforce, rc);
+  if (ESMC_LogDefault.MsgFoundError(rc, "Set failed",  ESMC_CONTEXT, &rc))
+    throw(rc);
+}
+
+#undef  ESMC_METHOD
+#define ESMC_METHOD "ESMC_AttributesSet_C_CHAR()"
+void ESMC_AttributesSet_C_CHAR(ESMCI::Attributes* attrs, char* key, const char* value,
+                               int& force, int& rc) {
+  rc = ESMF_FAILURE;
+  bool localforce = force;
+
+//  if (force == 1) {
+//    localforce = true;
+//  } else {
+//    localforce = false;
+//  }
+
+  std::string localKey(key);
+  std::string localValue(value);
+  attrs->set<std::string>(localKey, localValue, localforce, rc);
   if (ESMC_LogDefault.MsgFoundError(rc, "Set failed",  ESMC_CONTEXT, &rc))
     throw(rc);
 }

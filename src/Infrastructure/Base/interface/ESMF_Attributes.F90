@@ -58,7 +58,7 @@ interface ESMF_AttributesGet
   module procedure ESMF_AttributesGetI8
   module procedure ESMF_AttributesGetR4
   module procedure ESMF_AttributesGetR8
-  !module procedure ESMF_AttributesGetCH
+  module procedure ESMF_AttributesGetCH
 end interface ESMF_AttributesGet
 
 interface ESMF_AttributesGetArray
@@ -74,7 +74,7 @@ interface ESMF_AttributesSet
   module procedure ESMF_AttributesSetI8
   module procedure ESMF_AttributesSetR4
   module procedure ESMF_AttributesSetR8
-  !module procedure ESMF_AttributesSetCH
+  module procedure ESMF_AttributesSetCH
 end interface ESMF_AttributesSet
 
 interface ESMF_AttributesSetArray
@@ -294,6 +294,39 @@ subroutine ESMF_AttributesGetI8(attrs, key, value, default, rc)
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributesGetI8
+
+#undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_AttributesGetCH()"
+subroutine ESMF_AttributesGetCH(attrs, key, value, default, rc)
+  implicit none
+
+  type(ESMF_Attributes), intent(inout) :: attrs
+  character(len=*), intent(in) :: key
+  character(len=*), intent(inout), target :: value
+  character(len=*), intent(in), optional :: default
+  integer, intent(inout), optional :: rc
+
+  integer :: localrc
+  character(len=ESMF_MAXSTR), target :: localdefault
+  type(C_PTR) :: localdefault_ptr
+
+  localrc = ESMF_FAILURE
+  if (present(rc)) rc = ESMF_FAILURE
+
+  if (present(default)) then
+    localdefault = default
+    localdefault_ptr = C_LOC(localdefault)
+  else
+    localdefault_ptr = C_NULL_PTR
+  end if
+
+  call c_attrs_get_C_CHAR(attrs%ptr, trim(key)//C_NULL_CHAR, value, localrc, localdefault_ptr)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
+    rcToReturn=rc)) return
+
+
+  if (present(rc)) rc = ESMF_SUCCESS
+end subroutine ESMF_AttributesGetCH
 
 !------------------------------------------------------------------------------
 
@@ -612,6 +645,38 @@ subroutine ESMF_AttributesSetI8(attrs, key, value, force, rc)
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributesSetI8
+
+#undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_AttributesSetCH()"
+subroutine ESMF_AttributesSetCH(attrs, key, value, force, rc)
+  implicit none
+
+  type(ESMF_Attributes), intent(inout) :: attrs
+  character(len=*), intent(in) :: key
+  character(len=ESMF_MAXSTR), intent(in) :: value
+  logical, intent(in), optional :: force
+  integer, intent(inout), optional :: rc
+
+  integer :: localrc
+  integer(C_INT) :: localforce
+
+  localrc = ESMF_FAILURE
+  if (present(rc)) rc = ESMF_FAILURE
+
+  localforce = 1
+  if (present(force)) then
+    if (force .eqv. .false.) then
+      localforce = 0
+    end if
+  end if
+
+  call c_attrs_set_C_CHAR(attrs%ptr, trim(key)//C_NULL_CHAR, trim(value)//C_NULL_CHAR, &
+    localforce, localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
+      rcToReturn=rc)) return
+
+  if (present(rc)) rc = ESMF_SUCCESS
+end subroutine ESMF_AttributesSetCH
 
 !------------------------------------------------------------------------------
 

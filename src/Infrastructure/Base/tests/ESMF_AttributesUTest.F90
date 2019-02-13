@@ -43,8 +43,9 @@ program ESMF_AttributesUTest
   ! individual test failure message
   character(ESMF_MAXSTR) :: failMsg
   character(ESMF_MAXSTR) :: name
-  character(ESMF_MAXSTR) :: key, key_i8, key_r4, key_r8
 
+  character(ESMF_MAXSTR) :: key, key_i8, key_r4, key_r8, key_char, desired_char, &
+                            value_char
   integer               :: rc, petCount, i
   integer, allocatable  :: petList(:)
   type(ESMF_VM)         :: vm
@@ -124,6 +125,11 @@ program ESMF_AttributesUTest
   call ESMF_AttributesSet(attrs2, key_r8, desired_r8, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
+  key_char = "testKeyChar"
+  desired_char = "i am char"
+  call ESMF_AttributesSet(attrs2, key_char, desired_char, rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
   call ESMF_Test((rc == ESMF_SUCCESS), name, failMsg, result, ESMF_SRCLINE)
 
   !----------------------------------------------------------------------------
@@ -168,6 +174,16 @@ program ESMF_AttributesUTest
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
   call ESMF_Test((ABS(value_r8 - desired_r8) < 1e-16), name, failMsg, result, ESMF_SRCLINE)
+
+  !----------------------------------------------------------------------------
+  !NEX_UTest
+  write(name, *) "ESMF_AttributesGetCH"
+  write(failMsg, *) "Did not get key"
+
+  call ESMF_AttributesGet(attrs2, key_char, value_char, rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  call ESMF_Test((desired_char==value_char), name, failMsg, result, ESMF_SRCLINE)
 
   call ESMF_AttributesDestroy(attrs2, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
