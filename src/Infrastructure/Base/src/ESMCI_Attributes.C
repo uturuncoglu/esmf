@@ -407,6 +407,12 @@ void Attributes::get_isoc(ESMCI::ESMC_ISOCType ictype, void *ret, char* key,
     } else if (ictype == ESMCI::C_LONG) {
       *(reinterpret_cast<long int *>(ret)) = this->get<long int>(localKey, rc,
         reinterpret_cast<long int *>(def));
+    } else if (ictype == ESMCI::C_FLOAT) {
+      *(reinterpret_cast<float *>(ret)) = this->get<float>(localKey, rc,
+        reinterpret_cast<float *>(def));
+    } else if (ictype == ESMCI::C_DOUBLE) {
+      *(reinterpret_cast<double *>(ret)) = this->get<double>(localKey, rc,
+        reinterpret_cast<double *>(def));
     } else if (ictype == ESMCI::C_CHAR) {
       // Reinterpret casts from void to character types
       char *local_ret = reinterpret_cast<char *>(ret);
