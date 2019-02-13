@@ -118,13 +118,25 @@ double ESMC_AttributesGet_C_DOUBLE(ESMCI::Attributes* attrs, char* key, int& rc,
   return ret;
 }
 
+//#undef  ESMC_METHOD
+//#define ESMC_METHOD "ESMC_AttributesGet_C_INT()"
+//void ESMC_AttributesGet_C_INT(ESMCI::Attributes* attrs, char* key, int &value, int& rc,
+//  int* def) {
+//  ESMC_AttributesGet_VOID(ESMCI::ESMC_ISOCType::C_INT, &value, attrs, key, rc, def);
+//  if (ESMC_LogDefault.MsgFoundError(rc, "Get failed", ESMC_CONTEXT, &rc))
+//    throw(rc);
+//}
+
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_AttributesGet_C_INT()"
-void ESMC_AttributesGet_C_INT(ESMCI::Attributes* attrs, char* key, int &value, int& rc,
-  int* def) {
-  ESMC_AttributesGet_VOID(ESMCI::ESMC_ISOCType::C_INT, &value, attrs, key, rc, def);
-  if (ESMC_LogDefault.MsgFoundError(rc, "Get failed", ESMC_CONTEXT, &rc))
-    throw(rc);
+void ESMC_AttributesGet_C_INT(ESMCI::Attributes *attrs, char *key, int &value,
+  int &rc, int* def) {
+  rc = ESMF_FAILURE;
+  std::string localKey(key);
+  try {
+    value = attrs->get<int>(localKey, rc, def);
+  }
+  ESMF_CATCH_ISOC;
 }
 
 #undef  ESMC_METHOD
@@ -142,9 +154,6 @@ long int ESMC_AttributesGet_C_LONG(ESMCI::Attributes* attrs, char* key, int& rc,
 #define ESMC_METHOD "ESMC_AttributesGet_C_CHAR()"
 void ESMC_AttributesGet_C_CHAR(ESMCI::Attributes* attrs, char *key, char *value,
   int &vlen, int &rc, char *def) {
-//  // Reinterpret casts from void to character types
-//  char *local_ret = reinterpret_cast<char *>(ret);
-//  char *local_def = reinterpret_cast<char *>(def);
   // String pointer used to define the default value if present
   std::string *def_str_ptr;
   // String object that holds the default if present
@@ -162,9 +171,7 @@ void ESMC_AttributesGet_C_CHAR(ESMCI::Attributes* attrs, char *key, char *value,
   try {
     as_str = attrs->get<std::string>(local_key, rc, def_str_ptr);
   }
-  catch (ESMCI::esmf_attrs_error &exc_esmf) {
-    ESMF_CATCH_PASSTHRU(exc_esmf);
-  }
+  ESMF_CATCH_ISOC;
   // Transfer the string characters into the Fortran character array using
   // spaces to fill the Fortran array if we are past the max string length.
   for (int ii = 0; ii < vlen; ++ii) {
@@ -174,8 +181,6 @@ void ESMC_AttributesGet_C_CHAR(ESMCI::Attributes* attrs, char *key, char *value,
       value[ii] = ' ';
     }
   }
-
-//  if (ESMC_LogDefault.MsgFoundError(rc, "Get failed", ESMC_CONTEXT, &rc)) throw(rc);
 }
 
 //-----------------------------------------------------------------------------
