@@ -306,8 +306,8 @@ subroutine ESMF_AttributesGetCH(attrs, key, value, default, rc)
   character(len=*), intent(in), optional :: default
   integer, intent(inout), optional :: rc
 
-  integer :: localrc
-  character(len=ESMF_MAXSTR), target :: localdefault
+  integer :: localrc, vlen
+  character(len=ESMF_MAXSTR), target :: localdefault !tdk:have to get rid of this ESMF_MAXSTR
   type(C_PTR) :: localdefault_ptr
 
   localrc = ESMF_FAILURE
@@ -320,7 +320,8 @@ subroutine ESMF_AttributesGetCH(attrs, key, value, default, rc)
     localdefault_ptr = C_NULL_PTR
   end if
 
-  call c_attrs_get_C_CHAR(attrs%ptr, trim(key)//C_NULL_CHAR, value, localrc, localdefault_ptr)
+  vlen = LEN(value)
+  call c_attrs_get_C_CHAR(attrs%ptr, trim(key)//C_NULL_CHAR, value, vlen, localrc, localdefault_ptr)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
     rcToReturn=rc)) return
 

@@ -90,13 +90,14 @@ interface
     integer(C_LONG) :: c_attrs_get_C_LONG
   end function c_attrs_get_C_LONG
 
-  subroutine c_attrs_get_C_CHAR(attrs, key, value, rc, default) bind(C, name="ESMC_AttributesGet_C_CHAR")
+  subroutine c_attrs_get_C_CHAR(attrs, key, value, vlen, rc, default) bind(C, name="ESMC_AttributesGet_C_CHAR")
     use iso_c_binding
     use ESMF_UtilTypesMod
     implicit none
     type(C_PTR), value :: attrs
     character(C_CHAR), intent(in) :: key(*)
     character(kind=C_CHAR, len=1), dimension(ESMF_MAXSTR), intent(inout) :: value
+    integer(C_INT) :: vlen
     integer(C_INT), intent(inout) :: rc
     type(C_PTR), value :: default
   end subroutine c_attrs_get_C_CHAR

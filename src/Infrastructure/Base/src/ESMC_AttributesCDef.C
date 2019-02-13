@@ -140,10 +140,42 @@ long int ESMC_AttributesGet_C_LONG(ESMCI::Attributes* attrs, char* key, int& rc,
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_AttributesGet_C_CHAR()"
-void ESMC_AttributesGet_C_CHAR(ESMCI::Attributes* attrs, char* key, char* value,
-  int& rc, char* def) {
-  ESMC_AttributesGet_VOID(ESMCI::ESMC_ISOCType::C_CHAR, value, attrs, key, rc, def);
-  if (ESMC_LogDefault.MsgFoundError(rc, "Get failed", ESMC_CONTEXT, &rc)) throw(rc);
+void ESMC_AttributesGet_C_CHAR(ESMCI::Attributes* attrs, char *key, char *value,
+  int &vlen, int &rc, char *def) {
+//  // Reinterpret casts from void to character types
+//  char *local_ret = reinterpret_cast<char *>(ret);
+//  char *local_def = reinterpret_cast<char *>(def);
+  // String pointer used to define the default value if present
+  std::string *def_str_ptr;
+  // String object that holds the default if present
+  std::string def_str;
+  if (def) {
+    // Set the default pointer to the string object created from the char
+    // array from Fortran
+    def_str = std::string(def);
+    def_str_ptr = &def_str;
+  } else {
+    def_str_ptr = nullptr;
+  }
+  std::string as_str;
+  std::string local_key(key);
+  try {
+    as_str = attrs->get<std::string>(local_key, rc, def_str_ptr);
+  }
+  catch (ESMCI::esmf_attrs_error &exc_esmf) {
+    ESMF_CATCH_PASSTHRU(exc_esmf);
+  }
+  // Transfer the string characters into the Fortran character array using
+  // spaces to fill the Fortran array if we are past the max string length.
+  for (int ii = 0; ii < vlen; ++ii) {
+    if (ii < (int)as_str.size()) {
+      value[ii] = as_str[ii];
+    } else {
+      value[ii] = ' ';
+    }
+  }
+
+//  if (ESMC_LogDefault.MsgFoundError(rc, "Get failed", ESMC_CONTEXT, &rc)) throw(rc);
 }
 
 //-----------------------------------------------------------------------------
