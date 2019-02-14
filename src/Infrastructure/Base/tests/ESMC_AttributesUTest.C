@@ -187,6 +187,54 @@ void testGet(int& rc, char failMsg[]) {
   return;
 }
 
+#undef ESMC_METHOD
+#define ESMC_METHOD "testSetGetIndex()"
+void testSetGetIndex(int& rc, char failMsg[]) {
+  //tdk:order
+  rc = ESMF_FAILURE;
+  Attributes attrs;
+  int n = 25;
+  double values[n];
+  for (int ii = 0; ii < n; ++ii) {
+    values[ii] = (double)ii / (double)n;
+  }
+  std::string key = "the-key";
+  try {
+    attrs.set<double>(key, values, n, false, rc);
+  }
+  catch (ESMCI::esmf_attrs_error &exc_esmf) {
+    ESMF_CATCH_PASSTHRU(exc_esmf);
+  }
+  double diff;
+  double actual;
+  for (int ii = 0; ii < n; ++ii) {
+    try {
+      actual = attrs.get<double>(key, rc, nullptr, &ii);
+    }
+    catch (ESMCI::esmf_attrs_error &exc_esmf) {
+      ESMF_CATCH_PASSTHRU(exc_esmf);
+    }
+    diff = std::abs(values[ii] - actual);
+    if (diff >= 1e-16) {
+      return finalizeFailure(rc, failMsg, "Values are not equal");
+    }
+  }
+
+  // Test vector std::out_of_range is handled =================================
+
+  int jj = 1000;
+  try {
+    actual = attrs.get<double>(key, rc, nullptr, &jj);
+  }
+  catch (ESMCI::esmf_attrs_error &exc_esmf) {
+    if (exc_esmf.getReturnCode() != ESMC_RC_ARG_OUTOFRANGE) {
+      return finalizeFailure(rc, failMsg, "Did not handle out_of_range");
+    } else {
+      rc = ESMF_SUCCESS;
+    }
+  }
+}
+
 #undef  ESMC_METHOD
 #define ESMC_METHOD "testHasKey()"
 void testHasKey(int& rc, char failMsg[]) {
@@ -689,6 +737,13 @@ int main(void) {
   //NEX_UTest
   strcpy(name, "Attributes Serialize/Deserialize");
   testSerializeDeserialize(rc, failMsg);
+  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
+  //---------------------------------------------------------------------------
+
+  //---------------------------------------------------------------------------
+  //NEX_UTest
+  strcpy(name, "Attributes Set/Get with an Index");
+  testSetGetIndex(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //---------------------------------------------------------------------------
 

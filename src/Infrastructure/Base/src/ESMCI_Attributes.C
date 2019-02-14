@@ -246,11 +246,8 @@ T Attributes::get(key_t &key, int &rc, T *def, int *index) const {
       try {
         ret = vj[0].at(*index);
       }
-      catch (json::out_of_range &e) {
-        ESMF_THROW_JSON(e, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);
-      }
-      catch (json::type_error &e) {
-        ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
+      catch (std::out_of_range &e) {
+        ESMF_CHECKERR_STD("ESMC_RC_ARG_OUTOFRANGE", ESMC_RC_ARG_OUTOFRANGE, e.what(), rc)
       }
     }
     catch (ESMCI::esmf_attrs_error &exc_esmf) {
