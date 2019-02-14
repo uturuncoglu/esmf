@@ -233,37 +233,57 @@ json::json_pointer Attributes::formatKey(key_t& key, int& rc) {
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::get()"
 template <typename T>
-T Attributes::get(key_t& key, int& rc, T* def) const {
+T Attributes::get(key_t &key, int &rc, T *def, int *index) const {
   // Exceptions:  ESMCI:esmf_attrs_error
 
   rc = ESMF_FAILURE;
   T ret;
-  try {
-    json::json_pointer jp = this->formatKey(key, rc);
-    if (def) {
-      ret = this->storage.value(jp, *def);
-    } else {
+  if (index) {
+    try {
+      const std::vector<json> *const vj = this->getPointer
+        <const std::vector<json>* const, const json::array_t* const>
+        (key, rc);
       try {
-        ret = this->storage.at(jp);
+        ret = vj[0].at(*index);
       }
-      catch (json::out_of_range& e) {
+      catch (json::out_of_range &e) {
         ESMF_THROW_JSON(e, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);
       }
-      catch (json::type_error& e) {
+      catch (json::type_error &e) {
         ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
       }
     }
-  }
-  catch (ESMCI::esmf_attrs_error &exc_esmf) {
-    ESMF_CATCH_PASSTHRU(exc_esmf);
+    catch (ESMCI::esmf_attrs_error &exc_esmf) {
+      ESMF_CATCH_PASSTHRU(exc_esmf);
+    }
+  } else {
+    try {
+      json::json_pointer jp = this->formatKey(key, rc);
+      if (def) {
+        ret = this->storage.value(jp, *def);
+      } else {
+        try {
+          ret = this->storage.at(jp);
+        }
+        catch (json::out_of_range &e) {
+          ESMF_THROW_JSON(e, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);
+        }
+        catch (json::type_error &e) {
+          ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
+        }
+      }
+    }
+    catch (ESMCI::esmf_attrs_error &exc_esmf) {
+      ESMF_CATCH_PASSTHRU(exc_esmf);
+    }
   }
   return ret;
 }
-template float Attributes::get(key_t&, int&, float*) const;
-template double Attributes::get(key_t&, int&, double*) const;
-template int Attributes::get(key_t&, int&, int*) const;
-template long int Attributes::get(key_t&, int&, long int*) const;
-template std::string Attributes::get(key_t&, int&, std::string*) const;
+template float Attributes::get(key_t&, int&, float*, int*) const;
+template double Attributes::get(key_t&, int&, double*, int*) const;
+template int Attributes::get(key_t&, int&, int*, int*) const;
+template long int Attributes::get(key_t&, int&, long int*, int*) const;
+template std::string Attributes::get(key_t&, int&, std::string*, int*) const;
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::getPointer()"

@@ -100,7 +100,7 @@ public:
   void erase(key_t& key, key_t& keyChild, int& rc);
 
   template <typename T>
-  T get(key_t& key, int& rc, T* def = nullptr) const;
+  T get(key_t &key, int &rc, T *def = nullptr, int *index = nullptr) const;
 
   void get_isoc(ESMCI::ESMC_ISOCType ictype, void *ret, char* key, int& rc,
     void* def = nullptr) const;
