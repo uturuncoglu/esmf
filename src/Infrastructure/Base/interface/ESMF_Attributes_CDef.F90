@@ -96,7 +96,7 @@ interface
     implicit none
     type(C_PTR), value :: attrs
     character(C_CHAR), intent(in) :: key(*)
-    character(kind=C_CHAR, len=1), dimension(ESMF_MAXSTR), intent(inout) :: value
+    character(kind=C_CHAR, len=1), dimension(vlen), intent(inout) :: value
     integer(C_INT) :: vlen
     integer(C_INT), intent(inout) :: rc
     type(C_PTR), value :: default
