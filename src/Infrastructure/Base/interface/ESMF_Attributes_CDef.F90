@@ -92,7 +92,6 @@ interface
 
   subroutine c_attrs_get_C_CHAR(attrs, key, value, vlen, rc, default) bind(C, name="ESMC_AttributesGet_C_CHAR")
     use iso_c_binding
-    use ESMF_UtilTypesMod
     implicit none
     type(C_PTR), value :: attrs
     character(C_CHAR), intent(in) :: key(*)
