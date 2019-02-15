@@ -557,7 +557,7 @@ void Attributes::set(key_t& key, T values[], int count, bool force, int& rc,
   rc = ESMF_FAILURE;
   if (count <= 0) {
     std::string msg = "Count must be >= 1";
-    ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, "Unhandled throw", rc);
+    ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, msg, rc);
   }
   if (index) {
     if (count != 1) {
