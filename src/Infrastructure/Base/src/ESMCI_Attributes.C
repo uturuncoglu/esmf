@@ -550,46 +550,84 @@ template void Attributes::set<std::string>(key_t&, std::string, bool, int&);
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::set(<array>)"
 template <typename T>
-void Attributes::set(key_t& key, T values[], int& count, bool force, int& rc) {
+void Attributes::set(key_t& key, T values[], int count, bool force, int& rc,
+  int *index) {
   // Exceptions:  ESMCI:esmf_attrs_error
 
   rc = ESMF_FAILURE;
-  if (!force) {
+  if (count <= 0) {
+    std::string msg = "Count must be >= 1";
+    ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, "Unhandled throw", rc);
+  }
+  if (index) {
+    if (count != 1) {
+      std::string msg = "When using an index, the count must be 1";
+      ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, msg, rc);
+    }
     try {
-      bool has_key = handleHasKey(this, key, rc);
+      json::json_pointer jp = this->formatKey(key, rc);
+      try {
+        json::array_t *arr_ptr = this->storage.at(jp).get_ptr<json::array_t *>();
+        arr_ptr[0][*index] = values[0];
+      }
+      catch (json::out_of_range &e) {
+        ESMF_THROW_JSON(e, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);
+      }
+      catch (json::type_error &e) {
+        ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
+      }
+    }
+    catch (esmf_attrs_error &e) {
+      ESMF_CATCH_PASSTHRU(e);
+    }
+  } else {
+    if (!force) {
+      try {
+        bool has_key = handleHasKey(this, key, rc);
+      }
+      catch (ESMCI::esmf_attrs_error &exc_esmf) {
+        ESMF_CATCH_PASSTHRU(exc_esmf);
+      }
+    }
+    try {
+      json::json_pointer jp = this->formatKey(key, rc);
+      try {
+        this->storage[jp] = json::array();
+        //tdk:OPTIMIZE: can this "at" be removed?
+        json::array_t *arr_ptr = this->storage.at(jp).get_ptr<json::array_t *>();
+        if (values) {
+          // If values are not null, transfer said values into the JSON array.
+          arr_ptr->reserve(count);
+          for (auto ii = 0; ii < count; ii++) {
+            arr_ptr->push_back(values[ii]);
+          }
+        } else {
+          // If there are no values provided, reserve the space for future
+          // setting by index.
+          arr_ptr->resize(count);
+        }
+      }
+      catch (json::out_of_range &e) {
+        ESMF_THROW_JSON(e, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);
+      }
+      catch (json::type_error &e) {
+        ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
+      }
     }
     catch (ESMCI::esmf_attrs_error &exc_esmf) {
       ESMF_CATCH_PASSTHRU(exc_esmf);
     }
-  }
-  try {
-    json::json_pointer jp = this->formatKey(key, rc);
-    try {
-      this->storage[jp] = json::array();
-      //tdk:OPTIMIZE: can this "at" be removed?
-      json::array_t *arr_ptr = this->storage.at(jp).get_ptr<json::array_t *>();
-      arr_ptr->reserve(count);
-      for (auto ii = 0; ii < count; ii++) {
-        arr_ptr->push_back(values[ii]);
-      }
+    catch (...) {
+      ESMF_CHECKERR_STD("", ESMF_FAILURE, "Unhandled throw", rc);
     }
-    catch (json::out_of_range &e) {
-      ESMF_THROW_JSON(e, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);
-    }
-    catch (json::type_error &e) {
-      ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
-    }
-  }
-  catch (ESMCI::esmf_attrs_error &exc_esmf) {
-    ESMF_CATCH_PASSTHRU(exc_esmf);
   }
   rc = ESMF_SUCCESS;
   return;
 };
-template void Attributes::set<float>(key_t&, float[], int&, bool, int&);
-template void Attributes::set<double>(key_t&, double[], int&, bool, int&);
-template void Attributes::set<int>(key_t&, int[], int&, bool, int&);
-template void Attributes::set<long int>(key_t&, long int[], int&, bool, int&);
+template void Attributes::set<float>(key_t&, float[], int, bool, int&, int*);
+template void Attributes::set<double>(key_t&, double[], int, bool, int&, int*);
+template void Attributes::set<int>(key_t&, int[], int, bool, int&, int*);
+template void Attributes::set<long int>(key_t&, long int[], int, bool, int&, int*);
 //template void Attributes::set<std::vector<std::string>>(key_t& std::vector<std::string>, int&, bool, int&);
 
 #undef  ESMC_METHOD

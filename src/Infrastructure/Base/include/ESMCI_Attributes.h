@@ -125,7 +125,8 @@ public:
   void set(key_t& key, T value, bool force, int& rc);
 
   template <typename T>
-  void set(key_t& key, T values[], int& count, bool force, int& rc);
+  void set(key_t& key, T values[], int count, bool force, int& rc,
+    int *index = nullptr);
 
   void update(const Attributes& attrs, int& rc);
 

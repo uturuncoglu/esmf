@@ -199,8 +199,13 @@ void testSetGetIndex(int& rc, char failMsg[]) {
     values[ii] = (double)ii / (double)n;
   }
   std::string key = "the-key";
+  double setvalue[1];
   try {
-    attrs.set<double>(key, values, n, false, rc);
+    attrs.set<double>(key, nullptr, n, false, rc);
+    for (int ii = 0; ii < n; ++ii) {
+      setvalue[0] = values[ii];
+      attrs.set<double>(key, setvalue, 1, false, rc, &ii);
+    }
   }
   catch (ESMCI::esmf_attrs_error &exc_esmf) {
     ESMF_CATCH_PASSTHRU(exc_esmf);
