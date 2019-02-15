@@ -329,8 +329,8 @@ void ESMC_AttributesSet_C_DOUBLE(ESMCI::Attributes* attrs, char* key, double &va
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_AttributesSet_C_INT()"
-void ESMC_AttributesSet_C_INT(ESMCI::Attributes* attrs, char* key, int &value,
-                              int& force, int& rc) {
+void ESMC_AttributesSet_C_INT(ESMCI::Attributes *attrs, char *key, int &value,
+                              int &force, int &rc, int *index) {
   rc = ESMF_FAILURE;
   bool localforce = force;
 
@@ -341,9 +341,10 @@ void ESMC_AttributesSet_C_INT(ESMCI::Attributes* attrs, char* key, int &value,
 //  }
 
   std::string localKey(key);
-  attrs->set<int>(localKey, value, localforce, rc);
-  if (ESMC_LogDefault.MsgFoundError(rc, "Set failed",  ESMC_CONTEXT, &rc))
-    throw(rc);
+  try {
+    attrs->set<int>(localKey, value, localforce, rc);
+  }
+  ESMF_CATCH_ISOC;
 }
 
 #undef  ESMC_METHOD
