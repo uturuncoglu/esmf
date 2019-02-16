@@ -130,11 +130,11 @@ double ESMC_AttributesGet_C_DOUBLE(ESMCI::Attributes* attrs, char* key, int& rc,
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_AttributesGet_C_INT()"
 void ESMC_AttributesGet_C_INT(ESMCI::Attributes *attrs, char *key, int &value,
-  int &rc, int* def) {
+  int &rc, int *def, int *index) {
   rc = ESMF_FAILURE;
   std::string localKey(key);
   try {
-    value = attrs->get<int>(localKey, rc, def);
+    value = attrs->get<int>(localKey, rc, def, index);
   }
   ESMF_CATCH_ISOC;
 }
@@ -227,20 +227,22 @@ void ESMC_AttributesGetArray_C_DOUBLE(ESMCI::Attributes* attrs, char* key,
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_AttributesGetArray_C_INT()"
-void ESMC_AttributesGetArray_C_INT(ESMCI::Attributes* attrs, char* key,
-                                   int* values, int& count, int& count_only, int& rc) {
+void ESMC_AttributesGetArray_C_INT(ESMCI::Attributes *attrs, char *key,
+                                   int *values, int &count, int &count_only,
+                                   int &rc) {
   rc = ESMF_FAILURE;
   std::string localKey(key);
-  const std::vector<json>* const ap = attrs->getPointer<const std::vector<json>* const,
-    const json::array_t* const>(localKey, rc);
-  if (ESMC_LogDefault.MsgFoundError(rc, "Did not get array pointer",
-                                    ESMC_CONTEXT, &rc)) throw(rc);
-  count = (int)ap->size();
-  if (count_only == 0) {
-    for (int ii=0; ii<count; ii++) {
-      values[ii] = ap[0][ii];
+  try {
+    ESMCI::vecjson_t ap = attrs->getPointer<ESMCI::vecjson_t,
+                                            ESMCI::arrjson_t>(localKey, rc);
+    count = (int)ap->size();
+    if (count_only == 0) {
+      for (int ii=0; ii<count; ii++) {
+        values[ii] = ap[0][ii];
+      }
     }
   }
+  ESMF_CATCH_ISOC;
   rc = ESMF_SUCCESS;
   return;
 }

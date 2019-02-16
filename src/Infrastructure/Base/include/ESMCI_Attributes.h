@@ -52,6 +52,8 @@ using json = nlohmann::json;  // Convenience rename for JSON namespace.
 namespace ESMCI {
 
 typedef const std::string key_t;
+typedef const std::vector<json>* const vecjson_t;
+typedef const json::array_t* const arrjson_t;
 
 enum ESMC_ISOCType {C_INT, C_LONG, C_FLOAT, C_DOUBLE, C_CHAR};
 
@@ -125,7 +127,7 @@ public:
   void set(key_t& key, T value, bool force, int& rc);
 
   template <typename T>
-  void set(key_t& key, T values[], int count, bool force, int& rc,
+  void set(key_t& key, T *values, int count, bool force, int& rc,
     int *index = nullptr);
 
   void update(const Attributes& attrs, int& rc);

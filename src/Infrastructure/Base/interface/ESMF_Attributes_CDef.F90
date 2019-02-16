@@ -70,7 +70,7 @@ interface
     real(C_DOUBLE) :: c_attrs_get_C_DOUBLE
   end function c_attrs_get_C_DOUBLE
 
-  subroutine c_attrs_get_C_INT(attrs, key, value, rc, default) bind(C, name="ESMC_AttributesGet_C_INT")
+  subroutine c_attrs_get_C_INT(attrs, key, value, rc, default, index) bind(C, name="ESMC_AttributesGet_C_INT")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: attrs
@@ -78,6 +78,7 @@ interface
     integer(C_INT), intent(inout) :: value
     integer(C_INT), intent(inout) :: rc
     type(C_PTR), value :: default
+    type(C_PTR), value :: index
   end subroutine c_attrs_get_C_INT
 
   function c_attrs_get_C_LONG(attrs, key, rc, default) bind(C, name="ESMC_AttributesGet_C_LONG")

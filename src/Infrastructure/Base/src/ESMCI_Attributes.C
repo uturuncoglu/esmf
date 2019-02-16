@@ -550,7 +550,7 @@ template void Attributes::set<std::string>(key_t&, std::string, bool, int&);
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::set(<array>)"
 template <typename T>
-void Attributes::set(key_t& key, T values[], int count, bool force, int& rc,
+void Attributes::set(key_t& key, T *values, int count, bool force, int& rc,
   int *index) {
   // Exceptions:  ESMCI:esmf_attrs_error
 
@@ -624,10 +624,10 @@ void Attributes::set(key_t& key, T values[], int count, bool force, int& rc,
   rc = ESMF_SUCCESS;
   return;
 };
-template void Attributes::set<float>(key_t&, float[], int, bool, int&, int*);
-template void Attributes::set<double>(key_t&, double[], int, bool, int&, int*);
-template void Attributes::set<int>(key_t&, int[], int, bool, int&, int*);
-template void Attributes::set<long int>(key_t&, long int[], int, bool, int&, int*);
+template void Attributes::set<float>(key_t&, float*, int, bool, int&, int*);
+template void Attributes::set<double>(key_t&, double*, int, bool, int&, int*);
+template void Attributes::set<int>(key_t&, int*, int, bool, int&, int*);
+template void Attributes::set<long int>(key_t&, long int*, int, bool, int&, int*);
 //template void Attributes::set<std::vector<std::string>>(key_t& std::vector<std::string>, int&, bool, int&);
 
 #undef  ESMC_METHOD

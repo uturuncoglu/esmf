@@ -233,30 +233,43 @@ end subroutine ESMF_AttributesGetR8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributesGetI4()"
-subroutine ESMF_AttributesGetI4(attrs, key, value, default, rc)
+subroutine ESMF_AttributesGetI4(attrs, key, value, default, index, rc)
   implicit none
 
   type(ESMF_Attributes), intent(inout) :: attrs
   character(len=*), intent(in) :: key
   integer(ESMF_KIND_I4), intent(inout) :: value
   integer, intent(in), optional :: default
+  integer, intent(in), optional :: index
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  integer(C_INT), target :: localdefault
-  type(C_PTR) :: localdefault_ptr
+  integer(C_INT), target :: local_default, local_index
+  type(C_PTR) :: local_default_ptr, local_index_ptr
 
+  ! Set up local return code
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
 
+  ! Handle optional arguments for C ===========================================
+
   if (present(default)) then
-    localdefault = default
-    localdefault_ptr = C_LOC(localdefault)
+    local_default = default
+    local_default_ptr = C_LOC(local_default)
   else
-    localdefault_ptr = C_NULL_PTR
+    local_default_ptr = C_NULL_PTR
+  end if
+  if (present(index)) then
+    local_index = index
+    local_index_ptr = C_LOC(local_index)
+  else
+    local_index_ptr = C_NULL_PTR
   end if
 
-  call c_attrs_get_C_INT(attrs%ptr, trim(key)//C_NULL_CHAR, value, localrc, localdefault_ptr)
+  ! Call C ====================================================================
+
+  call c_attrs_get_C_INT(attrs%ptr, trim(key)//C_NULL_CHAR, value, localrc, &
+    local_default_ptr, local_index_ptr)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
     rcToReturn=rc)) return
 
