@@ -1,4 +1,5 @@
 interface
+
   function c_attrs_create(rc) bind(C, name="ESMC_AttributesCreate")
     use iso_c_binding
     implicit none
@@ -50,48 +51,47 @@ interface
 
   !=============================================================================
 
-  subroutine c_attrs_get_C_FLOAT(attrs, key, value, rc, default) bind(C, name="ESMC_AttributesGet_C_FLOAT")
+  subroutine c_attrs_get_R4(attrs, key, value, rc, default, idx) bind(C, name="ESMC_AttributesGetR4")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: attrs
     character(C_CHAR), intent(in) :: key(*)
     real(C_FLOAT), intent(inout) :: value
     integer(C_INT), intent(inout) :: rc
-    type(C_PTR), value :: default
-  end subroutine c_attrs_get_C_FLOAT
+    type(C_PTR), value :: default, idx
+  end subroutine c_attrs_get_R4
 
-  function c_attrs_get_C_DOUBLE(attrs, key, rc, default) bind(C, name="ESMC_AttributesGet_C_DOUBLE")
+  subroutine c_attrs_get_R8(attrs, key, value, rc, default, idx) bind(C, name="ESMC_AttributesGetR8")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: attrs
     character(C_CHAR), intent(in) :: key(*)
+    real(C_DOUBLE), intent(inout) :: value
     integer(C_INT), intent(inout) :: rc
-    type(C_PTR), value :: default
-    real(C_DOUBLE) :: c_attrs_get_C_DOUBLE
-  end function c_attrs_get_C_DOUBLE
+    type(C_PTR), value :: default, idx
+  end subroutine c_attrs_get_R8
 
-  subroutine c_attrs_get_C_INT(attrs, key, value, rc, default, index) bind(C, name="ESMC_AttributesGet_C_INT")
+  subroutine c_attrs_get_I4(attrs, key, value, rc, default, idx) bind(C, name="ESMC_AttributesGetI4")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: attrs
     character(C_CHAR), intent(in) :: key(*)
     integer(C_INT), intent(inout) :: value
     integer(C_INT), intent(inout) :: rc
-    type(C_PTR), value :: default
-    type(C_PTR), value :: index
-  end subroutine c_attrs_get_C_INT
+    type(C_PTR), value :: default, idx
+  end subroutine c_attrs_get_I4
 
-  function c_attrs_get_C_LONG(attrs, key, rc, default) bind(C, name="ESMC_AttributesGet_C_LONG")
+  subroutine c_attrs_get_I8(attrs, key, value, rc, default, idx) bind(C, name="ESMC_AttributesGetI8")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: attrs
     character(C_CHAR), intent(in) :: key(*)
+    integer(C_LONG), intent(inout) :: value
     integer(C_INT), intent(inout) :: rc
-    type(C_PTR), value :: default
-    integer(C_LONG) :: c_attrs_get_C_LONG
-  end function c_attrs_get_C_LONG
+    type(C_PTR), value :: default, idx
+  end subroutine c_attrs_get_I8
 
-  subroutine c_attrs_get_C_CHAR(attrs, key, value, vlen, rc, default, index) bind(C, name="ESMC_AttributesGet_C_CHAR")
+  subroutine c_attrs_get_CH(attrs, key, value, vlen, rc, default, idx) bind(C, name="ESMC_AttributesGetCH")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: attrs
@@ -99,70 +99,50 @@ interface
     character(kind=C_CHAR, len=1), dimension(vlen), intent(inout) :: value
     integer(C_INT) :: vlen
     integer(C_INT), intent(inout) :: rc
-    type(C_PTR), value :: default
-    type(C_PTR), value :: index
-  end subroutine c_attrs_get_C_CHAR
+    type(C_PTR), value :: default, idx
+  end subroutine c_attrs_get_CH
 
   !=============================================================================
 
-  subroutine c_attrs_get_array_C_FLOAT(attrs, key, values, count, count_only, rc) bind(C, name="ESMC_AttributesGetArray_C_FLOAT")
+  subroutine c_attrs_get_array_R4(attrs, key, values, nelements, nelements_only, rc) bind(C, name="ESMC_AttributesGetArrayR4")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: attrs
     character(C_CHAR), intent(in) :: key(*)
     real(C_FLOAT), dimension(*), intent(inout) :: values
-    integer(C_INT), intent(inout) :: count
-    integer(C_INT), intent(inout) :: count_only
-    integer(C_INT), intent(inout) :: rc
-  end subroutine c_attrs_get_array_C_FLOAT
+    integer(C_INT), intent(inout) :: nelements, nelements_only, rc
+  end subroutine c_attrs_get_array_R4
 
-  subroutine c_attrs_get_array_C_DOUBLE(attrs, key, values, count, count_only, rc) bind(C, name="ESMC_AttributesGetArray_C_DOUBLE")
+  subroutine c_attrs_get_array_R8(attrs, key, values, nelements, nelements_only, rc) bind(C, name="ESMC_AttributesGetArrayR8")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: attrs
     character(C_CHAR), intent(in) :: key(*)
     real(C_DOUBLE), dimension(*), intent(inout) :: values
-    integer(C_INT), intent(inout) :: count
-    integer(C_INT), intent(inout) :: count_only
-    integer(C_INT), intent(inout) :: rc
-  end subroutine c_attrs_get_array_C_DOUBLE
+    integer(C_INT), intent(inout) :: nelements, nelements_only, rc
+  end subroutine c_attrs_get_array_R8
 
-  subroutine c_attrs_get_array_C_INT(attrs, key, values, count, count_only, rc) bind(C, name="ESMC_AttributesGetArray_C_INT")
+  subroutine c_attrs_get_array_I4(attrs, key, values, nelements, nelements_only, rc) bind(C, name="ESMC_AttributesGetArrayI4")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: attrs
     character(C_CHAR), intent(in) :: key(*)
     integer(C_INT), dimension(*), intent(inout) :: values
-    integer(C_INT), intent(inout) :: count
-    integer(C_INT), intent(inout) :: count_only
-    integer(C_INT), intent(inout) :: rc
-  end subroutine c_attrs_get_array_C_INT
+    integer(C_INT), intent(inout) :: nelements, nelements_only, rc
+  end subroutine c_attrs_get_array_I4
 
-  subroutine c_attrs_get_array_C_LONG(attrs, key, values, count, count_only, rc) bind(C, name="ESMC_AttributesGetArray_C_LONG")
+  subroutine c_attrs_get_array_I8(attrs, key, values, nelements, nelements_only, rc) bind(C, name="ESMC_AttributesGetArrayI8")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: attrs
     character(C_CHAR), intent(in) :: key(*)
     integer(C_LONG), dimension(*), intent(inout) :: values
-    integer(C_INT), intent(inout) :: count
-    integer(C_INT), intent(inout) :: count_only
-    integer(C_INT), intent(inout) :: rc
-  end subroutine c_attrs_get_array_C_LONG
-
-  subroutine c_attrs_get_array_C_CHAR(attrs, key, values, count, count_only, rc) bind(C, name="ESMC_AttributesGetArray_C_CHAR")
-    use iso_c_binding
-    implicit none
-    type(C_PTR), value :: attrs
-    character(C_CHAR), intent(in) :: key(*)
-    character(C_CHAR), dimension(*), intent(inout) :: values
-    integer(C_INT), intent(inout) :: count
-    integer(C_INT), intent(inout) :: count_only
-    integer(C_INT), intent(inout) :: rc
-  end subroutine c_attrs_get_array_C_CHAR
+    integer(C_INT), intent(inout) :: nelements, nelements_only, rc
+  end subroutine c_attrs_get_array_I8
 
   !=============================================================================
 
-  subroutine c_attrs_set_C_FLOAT(attrs, key, value, force, rc) bind(C, name="ESMC_AttributesSet_C_FLOAT")
+  subroutine c_attrs_set_R4(attrs, key, value, force, rc, idx) bind(C, name="ESMC_AttributesSetR4")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: attrs
@@ -170,9 +150,10 @@ interface
     real(C_FLOAT), intent(in) :: value
     integer(C_INT), intent(in) :: force
     integer(C_INT), intent(inout) :: rc
-  end subroutine c_attrs_set_C_FLOAT
+    type(C_PTR), value :: idx
+  end subroutine c_attrs_set_R4
 
-  subroutine c_attrs_set_C_DOUBLE(attrs, key, value, force, rc) bind(C, name="ESMC_AttributesSet_C_DOUBLE")
+  subroutine c_attrs_set_R8(attrs, key, value, force, rc, idx) bind(C, name="ESMC_AttributesSetR8")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: attrs
@@ -180,9 +161,10 @@ interface
     real(C_DOUBLE), intent(in) :: value
     integer(C_INT), intent(in) :: force
     integer(C_INT), intent(inout) :: rc
-  end subroutine c_attrs_set_C_DOUBLE
+    type(C_PTR), value :: idx
+  end subroutine c_attrs_set_R8
 
-  subroutine c_attrs_set_C_INT(attrs, key, value, force, rc, index) bind(C, name="ESMC_AttributesSet_C_INT")
+  subroutine c_attrs_set_I4(attrs, key, value, force, rc, idx) bind(C, name="ESMC_AttributesSetI4")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: attrs
@@ -190,10 +172,10 @@ interface
     integer(C_INT), intent(in) :: value
     integer(C_INT), intent(in) :: force
     integer(C_INT), intent(inout) :: rc
-    type(C_PTR), value :: index
-  end subroutine c_attrs_set_C_INT
+    type(C_PTR), value :: idx
+  end subroutine c_attrs_set_I4
 
-  subroutine c_attrs_set_C_LONG(attrs, key, value, force, rc) bind(C, name="ESMC_AttributesSet_C_LONG")
+  subroutine c_attrs_set_I8(attrs, key, value, force, rc, idx) bind(C, name="ESMC_AttributesSetI8")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: attrs
@@ -201,9 +183,10 @@ interface
     integer(C_LONG), intent(in) :: value
     integer(C_INT), intent(in) :: force
     integer(C_INT), intent(inout) :: rc
-  end subroutine c_attrs_set_C_LONG
+    type(C_PTR), value :: idx
+  end subroutine c_attrs_set_I8
 
-  subroutine c_attrs_set_C_CHAR(attrs, key, value, force, rc) bind(C, name="ESMC_AttributesSet_C_CHAR")
+  subroutine c_attrs_set_CH(attrs, key, value, force, rc, idx) bind(C, name="ESMC_AttributesSetCH")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: attrs
@@ -211,64 +194,54 @@ interface
     character(C_CHAR), intent(in) :: value
     integer(C_INT), intent(in) :: force
     integer(C_INT), intent(inout) :: rc
-  end subroutine c_attrs_set_C_CHAR
+    type(C_PTR), value :: idx
+  end subroutine c_attrs_set_CH
 
   !=============================================================================
 
-  subroutine c_attrs_set_array_C_FLOAT(attrs, key, values, count, force, rc) bind(C, name="ESMC_AttributesSetArray_C_FLOAT")
+  subroutine c_attrs_set_array_R4(attrs, key, values, nelements, force, rc) bind(C, name="ESMC_AttributesSetArrayR4")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: attrs
     character(kind=C_CHAR), intent(in) :: key(*)
     real(C_FLOAT), dimension(*), intent(in) :: values
-    integer(C_INT), intent(in) :: count
+    integer(C_INT), intent(in) :: nelements
     integer(C_INT), intent(in) :: force
     integer(C_INT), intent(inout) :: rc
-  end subroutine c_attrs_set_array_C_FLOAT
+  end subroutine c_attrs_set_array_R4
 
-  subroutine c_attrs_set_array_C_DOUBLE(attrs, key, values, count, force, rc) bind(C, name="ESMC_AttributesSetArray_C_DOUBLE")
+  subroutine c_attrs_set_array_R8(attrs, key, values, nelements, force, rc) bind(C, name="ESMC_AttributesSetArrayR8")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: attrs
     character(kind=C_CHAR), intent(in) :: key(*)
     real(C_DOUBLE), dimension(*), intent(in) :: values
-    integer(C_INT), intent(in) :: count
+    integer(C_INT), intent(in) :: nelements
     integer(C_INT), intent(in) :: force
     integer(C_INT), intent(inout) :: rc
-  end subroutine c_attrs_set_array_C_DOUBLE
+  end subroutine c_attrs_set_array_R8
 
-  subroutine c_attrs_set_array_C_INT(attrs, key, values, count, force, rc) bind(C, name="ESMC_AttributesSetArray_C_INT")
+  subroutine c_attrs_set_array_I4(attrs, key, values, nelements, force, rc) bind(C, name="ESMC_AttributesSetArrayI4")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: attrs
     character(kind=C_CHAR), intent(in) :: key(*)
     integer(C_INT), dimension(*), intent(in) :: values
-    integer(C_INT), intent(in) :: count
+    integer(C_INT), intent(in) :: nelements
     integer(C_INT), intent(in) :: force
     integer(C_INT), intent(inout) :: rc
-  end subroutine c_attrs_set_array_C_INT
+  end subroutine c_attrs_set_array_I4
 
-  subroutine c_attrs_set_array_C_LONG(attrs, key, values, count, force, rc) bind(C, name="ESMC_AttributesSetArray_C_LONG")
+  subroutine c_attrs_set_array_I8(attrs, key, values, nelements, force, rc) bind(C, name="ESMC_AttributesSetArrayI8")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: attrs
     character(kind=C_CHAR), intent(in) :: key(*)
     integer(C_LONG), dimension(*), intent(in) :: values
-    integer(C_INT), intent(in) :: count
+    integer(C_INT), intent(in) :: nelements
     integer(C_INT), intent(in) :: force
     integer(C_INT), intent(inout) :: rc
-  end subroutine c_attrs_set_array_C_LONG
-
-  subroutine c_attrs_set_array_C_CHAR(attrs, key, values, count, force, rc) bind(C, name="ESMC_AttributesSetArray_C_CHAR")
-    use iso_c_binding
-    implicit none
-    type(C_PTR), value :: attrs
-    character(kind=C_CHAR), intent(in) :: key(*)
-    character(C_CHAR), dimension(*), intent(in) :: values
-    integer(C_INT), intent(in) :: count
-    integer(C_INT), intent(in) :: force
-    integer(C_INT), intent(inout) :: rc
-  end subroutine c_attrs_set_array_C_CHAR
+  end subroutine c_attrs_set_array_I8
 
   !=============================================================================
 
