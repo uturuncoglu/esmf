@@ -310,31 +310,44 @@ end subroutine ESMF_AttributesGetI8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributesGetCH()"
-subroutine ESMF_AttributesGetCH(attrs, key, value, default, rc)
+subroutine ESMF_AttributesGetCH(attrs, key, value, default, index, rc)
   implicit none
 
   type(ESMF_Attributes), intent(inout) :: attrs
   character(len=*), intent(in) :: key
   character(len=*), intent(inout), target :: value
   character(len=*), intent(in), optional :: default
+  integer, intent(in), optional :: index
   integer, intent(inout), optional :: rc
 
   integer :: localrc, vlen
-  character(len=ESMF_MAXSTR), target :: localdefault !tdk:have to get rid of this ESMF_MAXSTR
-  type(C_PTR) :: localdefault_ptr
+  integer(C_INT), target :: local_index
+  character(len=ESMF_MAXSTR), target :: local_default
+  type(C_PTR) :: local_default_ptr, local_index_ptr
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
 
+  ! Handle optional arguments for C ============================================
+
   if (present(default)) then
-    localdefault = trim(default)//C_NULL_CHAR
-    localdefault_ptr = C_LOC(localdefault)
+    local_default = default
+    local_default_ptr = C_LOC(local_default)
   else
-    localdefault_ptr = C_NULL_PTR
+    local_default_ptr = C_NULL_PTR
+  end if
+  if (present(index)) then
+    local_index = index
+    local_index_ptr = C_LOC(local_index)
+  else
+    local_index_ptr = C_NULL_PTR
   end if
 
+  ! Call C =====================================================================
+
   vlen = LEN(value)
-  call c_attrs_get_C_CHAR(attrs%ptr, trim(key)//C_NULL_CHAR, value, vlen, localrc, localdefault_ptr)
+  call c_attrs_get_C_CHAR(attrs%ptr, trim(key)//C_NULL_CHAR, value, vlen, &
+    localrc, local_default_ptr, local_index_ptr)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
     rcToReturn=rc)) return
 
@@ -405,30 +418,35 @@ end subroutine ESMF_AttributesGetArrayR8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributesGetArrayI4()"
-subroutine ESMF_AttributesGetArrayI4(attrs, key, values, count, rc)
-  ! Notes:
-  !    * Default does not really make sense for getting a JSON array. This
-  !      argument is intentionally left out.
+subroutine ESMF_AttributesGetArrayI4(attrs, key, count, values, rc)
   implicit none
   type(ESMF_Attributes), intent(inout) :: attrs
   character(len=*), intent(in) :: key
-  integer(ESMF_KIND_I4), dimension(:), allocatable, intent(inout) :: values
   integer, intent(inout) :: count
+  integer(ESMF_KIND_I4), dimension(:), allocatable, intent(inout), optional :: values
   integer, intent(inout), optional :: rc
 
   integer :: localrc, count_only
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
+
+  ! Get the array size from the attributes store
   count_only = 1
   call c_attrs_get_array_C_INT(attrs%ptr, trim(key)//C_NULL_CHAR, values, count, count_only, localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
     rcToReturn=rc)) return
-  allocate(values(count))
-  count_only = 0
-  call c_attrs_get_array_C_INT(attrs%ptr, trim(key)//C_NULL_CHAR, values, count, count_only, localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
-    rcToReturn=rc)) return
+
+  ! If we are returning values, allocate the outgoing storage array and call
+  ! into C to fill the array
+  if (present(values)) then
+    allocate(values(count))
+    count_only = 0
+    call c_attrs_get_array_C_INT(attrs%ptr, trim(key)//C_NULL_CHAR, values, &
+      count, count_only, localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
+      rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributesGetArrayI4
@@ -599,17 +617,20 @@ end subroutine ESMF_AttributesSetR8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributesSetI4()"
-subroutine ESMF_AttributesSetI4(attrs, key, value, force, rc)
+subroutine ESMF_AttributesSetI4(attrs, key, value, force, index, rc)
   implicit none
 
   type(ESMF_Attributes), intent(inout) :: attrs
   character(len=*), intent(in) :: key
   integer(ESMF_KIND_I4), intent(in) :: value
   logical, intent(in), optional :: force
+  integer, intent(in), optional :: index
   integer, intent(inout), optional :: rc
 
   integer :: localrc
   integer(C_INT) :: localforce
+  integer(C_INT), target :: local_index
+  type(C_PTR) :: local_index_ptr
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
@@ -620,8 +641,15 @@ subroutine ESMF_AttributesSetI4(attrs, key, value, force, rc)
       localforce = 0
     end if
   end if
+  if (present(index)) then
+    local_index = index
+    local_index_ptr = C_LOC(local_index)
+  else
+    local_index_ptr = C_NULL_PTR
+  end if
 
-  call c_attrs_set_C_INT(attrs%ptr, trim(key)//C_NULL_CHAR, value, localforce, localrc)
+  call c_attrs_set_C_INT(attrs%ptr, trim(key)//C_NULL_CHAR, value, localforce, &
+    localrc, local_index_ptr)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
       rcToReturn=rc)) return
 

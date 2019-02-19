@@ -91,7 +91,7 @@ interface
     integer(C_LONG) :: c_attrs_get_C_LONG
   end function c_attrs_get_C_LONG
 
-  subroutine c_attrs_get_C_CHAR(attrs, key, value, vlen, rc, default) bind(C, name="ESMC_AttributesGet_C_CHAR")
+  subroutine c_attrs_get_C_CHAR(attrs, key, value, vlen, rc, default, index) bind(C, name="ESMC_AttributesGet_C_CHAR")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: attrs
@@ -100,6 +100,7 @@ interface
     integer(C_INT) :: vlen
     integer(C_INT), intent(inout) :: rc
     type(C_PTR), value :: default
+    type(C_PTR), value :: index
   end subroutine c_attrs_get_C_CHAR
 
   !=============================================================================
@@ -181,7 +182,7 @@ interface
     integer(C_INT), intent(inout) :: rc
   end subroutine c_attrs_set_C_DOUBLE
 
-  subroutine c_attrs_set_C_INT(attrs, key, value, force, rc) bind(C, name="ESMC_AttributesSet_C_INT")
+  subroutine c_attrs_set_C_INT(attrs, key, value, force, rc, index) bind(C, name="ESMC_AttributesSet_C_INT")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: attrs
@@ -189,6 +190,7 @@ interface
     integer(C_INT), intent(in) :: value
     integer(C_INT), intent(in) :: force
     integer(C_INT), intent(inout) :: rc
+    type(C_PTR), value :: index
   end subroutine c_attrs_set_C_INT
 
   subroutine c_attrs_set_C_LONG(attrs, key, value, force, rc) bind(C, name="ESMC_AttributesSet_C_LONG")

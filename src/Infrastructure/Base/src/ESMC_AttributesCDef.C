@@ -153,7 +153,7 @@ long int ESMC_AttributesGet_C_LONG(ESMCI::Attributes* attrs, char* key, int& rc,
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_AttributesGet_C_CHAR()"
 void ESMC_AttributesGet_C_CHAR(ESMCI::Attributes* attrs, char *key, char *value,
-  int &vlen, int &rc, char *def) {
+  int &vlen, int &rc, char *def, int *index) {
   // String pointer used to define the default value if present
   std::string *def_str_ptr;
   // String object that holds the default if present
@@ -169,7 +169,7 @@ void ESMC_AttributesGet_C_CHAR(ESMCI::Attributes* attrs, char *key, char *value,
   std::string as_str;
   std::string local_key(key);
   try {
-    as_str = attrs->get<std::string>(local_key, rc, def_str_ptr);
+    as_str = attrs->get<std::string>(local_key, rc, def_str_ptr, index);
   }
   ESMF_CATCH_ISOC;
   // Transfer the string characters into the Fortran character array using
@@ -236,6 +236,7 @@ void ESMC_AttributesGetArray_C_INT(ESMCI::Attributes *attrs, char *key,
     ESMCI::vecjson_t ap = attrs->getPointer<ESMCI::vecjson_t,
                                             ESMCI::arrjson_t>(localKey, rc);
     count = (int)ap->size();
+    // Only fill the outgoing array if we are not getting the count only
     if (count_only == 0) {
       for (int ii=0; ii<count; ii++) {
         values[ii] = ap[0][ii];
@@ -243,7 +244,6 @@ void ESMC_AttributesGetArray_C_INT(ESMCI::Attributes *attrs, char *key,
     }
   }
   ESMF_CATCH_ISOC;
-  rc = ESMF_SUCCESS;
   return;
 }
 
@@ -334,17 +334,19 @@ void ESMC_AttributesSet_C_DOUBLE(ESMCI::Attributes* attrs, char* key, double &va
 void ESMC_AttributesSet_C_INT(ESMCI::Attributes *attrs, char *key, int &value,
                               int &force, int &rc, int *index) {
   rc = ESMF_FAILURE;
-  bool localforce = force;
-
-//  if (force == 1) {
-//    localforce = true;
-//  } else {
-//    localforce = false;
-//  }
-
+  bool localforce;
+  if (force == 1) {
+    localforce = true;
+  } else {
+    localforce = false;
+  }
   std::string localKey(key);
   try {
-    attrs->set<int>(localKey, value, localforce, rc);
+    if (index) {
+      attrs->set<int>(localKey, nullptr, 1, localforce, rc, index);
+    } else {
+      attrs->set<int>(localKey, value, localforce, rc);
+    }
   }
   ESMF_CATCH_ISOC;
 }
@@ -429,16 +431,17 @@ void ESMC_AttributesSetArray_C_DOUBLE(ESMCI::Attributes* attrs, char* key,
 void ESMC_AttributesSetArray_C_INT(ESMCI::Attributes* attrs, char* key,
                                    int* values, int& count, int& force, int& rc) {
   rc = ESMF_FAILURE;
-  bool localforce = force;
-//  if (force == 1) {
-//    localforce = true;
-//  } else {
-//    localforce = false;
-//  }
+  bool localforce;
+  if (force == 1) {
+    localforce = true;
+  } else {
+    localforce = false;
+  }
   std::string localKey(key);
-  attrs->set<int>(localKey, values, count, localforce, rc);
-  if (ESMC_LogDefault.MsgFoundError(rc, "Set failed", ESMC_CONTEXT, &rc))
-    throw(rc);
+  try {
+    attrs->set<int>(localKey, values, count, localforce, rc);
+  }
+  ESMF_CATCH_ISOC;
 }
 
 #undef  ESMC_METHOD
