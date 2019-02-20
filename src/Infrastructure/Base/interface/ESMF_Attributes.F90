@@ -526,8 +526,7 @@ subroutine ESMF_AttributesGetArrayR4(attrs, key, values, nelements, rc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
     rcToReturn=rc)) return
 
-  ! If we are returning values, allocate the outgoing storage array and call
-  ! into C to fill the array
+  ! Allocate the outgoing storage array and call into C to fill the array
   allocate(values(nelements))
   nelements_only = 0
   call c_attrs_get_array_R4(attrs%ptr, trim(key)//C_NULL_CHAR, values, &
@@ -560,8 +559,7 @@ subroutine ESMF_AttributesGetArrayR8(attrs, key, values, nelements, rc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
     rcToReturn=rc)) return
 
-  ! If we are returning values, allocate the outgoing storage array and call
-  ! into C to fill the array
+  ! Allocate the outgoing storage array and call into C to fill the array
   allocate(values(nelements))
   nelements_only = 0
   call c_attrs_get_array_R8(attrs%ptr, trim(key)//C_NULL_CHAR, values, &
@@ -594,8 +592,7 @@ subroutine ESMF_AttributesGetArrayI4(attrs, key, values, nelements, rc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
     rcToReturn=rc)) return
 
-  ! If we are returning values, allocate the outgoing storage array and call
-  ! into C to fill the array
+  ! Allocate the outgoing storage array and call into C to fill the array
   allocate(values(nelements))
   nelements_only = 0
   call c_attrs_get_array_I4(attrs%ptr, trim(key)//C_NULL_CHAR, values, &
@@ -628,8 +625,7 @@ subroutine ESMF_AttributesGetArrayI8(attrs, key, values, nelements, rc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
     rcToReturn=rc)) return
 
-  ! If we are returning values, allocate the outgoing storage array and call
-  ! into C to fill the array
+  ! Allocate the outgoing storage array and call into C to fill the array
   allocate(values(nelements))
   nelements_only = 0
   call c_attrs_get_array_I8(attrs%ptr, trim(key)//C_NULL_CHAR, values, &
