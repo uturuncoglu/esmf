@@ -113,16 +113,20 @@ public:
   json& getStorageRefWritable(void);
 
   template <typename T, typename JT>
-  T getPointer(key_t& key, int& rc) const;
+  T getPointer(key_t &key, int &rc) const;
 
-  bool hasKey(key_t& key, int& rc, bool isptr = false) const;
+  bool hasKey(key_t &key, int &rc, bool isptr = false) const;
 
-  void parse(key_t& input, int& rc);
+  bool isSetNull(key_t &key, int &rc) const;
+
+  void parse(key_t &input, int &rc);
 
   void deserialize(char *buffer, int *offset, int& rc);
 
   void serialize(char *buffer, int *length, int *offset,
-    ESMC_InquireFlag inquireflag, int& rc);
+    ESMC_InquireFlag inquireflag, int &rc);
+
+  void set(key_t &key, bool force, int &rc);
 
   template <typename T>
   void set(key_t& key, T value, bool force, int& rc, int *index = nullptr);

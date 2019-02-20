@@ -75,6 +75,7 @@ interface ESMF_AttributesSet
   module procedure ESMF_AttributesSetR4
   module procedure ESMF_AttributesSetR8
   module procedure ESMF_AttributesSetCH
+  module procedure ESMF_AttributesSetNULL
 end interface ESMF_AttributesSet
 
 interface ESMF_AttributesSetArray
@@ -198,8 +199,8 @@ function ESMF_AttributesIsPresent(attrs, key, isPointer, rc) result(is_present)
     isPointer_forC = 0
   end if
 
-  is_present_c = c_attrs_is_present(attrs%ptr, trim(key)//C_NULL_CHAR, localrc, &
-    isPointer_forC)
+  is_present_c = c_attrs_is_present(attrs%ptr, trim(key)//C_NULL_CHAR, &
+    localrc, isPointer_forC)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
     rcToReturn=rc)) return
 
@@ -209,6 +210,36 @@ function ESMF_AttributesIsPresent(attrs, key, isPointer, rc) result(is_present)
 
   if (present(rc)) rc = ESMF_SUCCESS
 end function ESMF_AttributesIsPresent
+
+!------------------------------------------------------------------------------
+
+#undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_AttributesIsSet()"
+function ESMF_AttributesIsSet(attrs, key, rc) result(is_set)
+  implicit none
+
+  type(ESMF_Attributes), intent(in) :: attrs
+  character(len=*), intent(in) :: key
+  integer, intent(inout), optional :: rc
+  logical :: is_set
+
+  integer :: localrc
+  integer(C_INT) :: is_set_c
+
+  is_set = .false.
+  localrc = ESMF_FAILURE
+  if (present(rc)) rc = ESMF_FAILURE
+
+  call c_attrs_is_set(attrs%ptr, trim(key)//C_NULL_CHAR, is_set_c, localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
+    rcToReturn=rc)) return
+
+  if (is_set_c == 1) then
+    is_set = .true.
+  end if
+
+  if (present(rc)) rc = ESMF_SUCCESS
+end function ESMF_AttributesIsSet
 
 !------------------------------------------------------------------------------
 
@@ -815,6 +846,36 @@ subroutine ESMF_AttributesSetCH(attrs, key, value, force, idx, rc)
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributesSetCH
+
+#undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_AttributesSetNULL()"
+subroutine ESMF_AttributesSetNULL(attrs, key, force, rc)
+  implicit none
+
+  type(ESMF_Attributes), intent(inout) :: attrs
+  character(len=*), intent(in) :: key
+  logical, intent(in), optional :: force
+  integer, intent(inout), optional :: rc
+
+  integer :: localrc
+  integer(C_INT) :: localforce
+
+  localrc = ESMF_FAILURE
+  if (present(rc)) rc = ESMF_FAILURE
+
+  localforce = 1
+  if (present(force)) then
+    if (force .eqv. .false.) then
+      localforce = 0
+    end if
+  end if
+
+  call c_attrs_set_NULL(attrs%ptr, trim(key)//C_NULL_CHAR, localforce, localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
+    rcToReturn=rc)) return
+
+  if (present(rc)) rc = ESMF_SUCCESS
+end subroutine ESMF_AttributesSetNULL
 
 !------------------------------------------------------------------------------
 

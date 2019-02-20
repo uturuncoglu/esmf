@@ -29,15 +29,26 @@ interface
 
   !=============================================================================
 
-  function c_attrs_is_present(attrs, key, isptr, rc) bind(C, name="ESMC_AttributesIsPresent")
+  function c_attrs_is_present(attrs, key, rc, isptr) bind(C, name="ESMC_AttributesIsPresent")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: attrs
     character(C_CHAR), intent(in) :: key(*)
-    integer(C_INT), intent(in) :: isptr
     integer(C_INT), intent(inout) :: rc
+    integer(C_INT), intent(in) :: isptr
     integer(C_INT) :: c_attrs_is_present
   end function c_attrs_is_present
+
+  !=============================================================================
+
+  subroutine c_attrs_is_set(attrs, key, is_set_c, rc) bind(C, name="ESMC_AttributesIsSet")
+    use iso_c_binding
+    implicit none
+    type(C_PTR), value :: attrs
+    character(C_CHAR), intent(in) :: key(*)
+    integer(C_INT), intent(inout) :: is_set_c
+    integer(C_INT), intent(inout) :: rc
+  end subroutine c_attrs_is_set
 
   !=============================================================================
 
@@ -196,6 +207,15 @@ interface
     integer(C_INT), intent(inout) :: rc
     type(C_PTR), value :: idx
   end subroutine c_attrs_set_CH
+
+  subroutine c_attrs_set_NULL(attrs, key, force, rc) bind(C, name="ESMC_AttributesSetNULL")
+    use iso_c_binding
+    implicit none
+    type(C_PTR), value :: attrs
+    character(kind=C_CHAR), intent(in) :: key(*)
+    integer(C_INT), intent(in) :: force
+    integer(C_INT), intent(inout) :: rc
+  end subroutine c_attrs_set_NULL
 
   !=============================================================================
 

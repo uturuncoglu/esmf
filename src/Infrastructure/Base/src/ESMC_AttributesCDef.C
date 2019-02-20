@@ -28,9 +28,12 @@
 #include "ESMCI_LogErr.h"
 #include "ESMCI_Util.h"
 #include "ESMCI_VM.h"
+#include "json.hpp"
 
 #include <iostream>
 #include <vector>
+
+using json = nlohmann::json;
 
 //-----------------------------------------------------------------------------
  // leave the following line as-is; it will insert the cvs ident string
@@ -82,6 +85,18 @@ int ESMC_AttributesIsPresent(ESMCI::Attributes* attrs, char* key, int& rc,
   if (ESMC_LogDefault.MsgFoundError(rc, "Did not detect key presence",
                                     ESMC_CONTEXT, &rc)) throw(rc);
   return ret;
+}
+
+#undef  ESMC_METHOD
+#define ESMC_METHOD "ESMC_AttributesIsSet()"
+void ESMC_AttributesIsSet(ESMCI::Attributes *attrs, char *key, int &isSet, int &rc) {
+  std::string local_key(key);
+  try {
+    isSet = attrs->isSetNull(local_key, rc);
+  }
+  catch (ESMCI::esmf_attrs_error &exc_esmf) {
+    ESMF_CATCH_PASSTHRU(exc_esmf);
+  }
 }
 
 #undef  ESMC_METHOD
@@ -355,6 +370,24 @@ void ESMC_AttributesSetCH(ESMCI::Attributes *attrs, char *key, char *value,
   std::string localValue(value);
   try {
     attrs->set<std::string>(localKey, localValue, localforce, rc, index);
+  }
+  ESMF_CATCH_ISOC;
+}
+
+#undef  ESMC_METHOD
+#define ESMC_METHOD "ESMC_AttributesSetNULL()"
+void ESMC_AttributesSetNULL(ESMCI::Attributes *attrs, char *key, int &force,
+  int &rc) {
+  rc = ESMF_FAILURE;
+  bool localforce;
+  if (force == 1) {
+    localforce = true;
+  } else {
+    localforce = false;
+  }
+  std::string localKey(key);
+  try {
+    attrs->set(localKey, localforce, rc);
   }
   ESMF_CATCH_ISOC;
 }

@@ -472,6 +472,29 @@ void Attributes::get_isoc(ESMCI::ESMC_ISOCType ictype, void *ret, char* key,
   }
 }
 
+#undef ESMC_METHOD
+#define ESMC_METHOD "Attributes::isSetNull()"
+bool Attributes::isSetNull(key_t &key, int &rc) const {
+  rc = ESMF_FAILURE;
+  bool ret;
+  try {
+    json::json_pointer jp = this->formatKey(key, rc);
+    try {
+      ret = !(this->storage.at(jp).is_null());
+    }
+    catch (json::out_of_range &e) {
+      ESMF_THROW_JSON(e, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);
+    }
+    catch (json::type_error &e) {
+      ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
+    }
+  }
+  catch (ESMCI::esmf_attrs_error &exc_esmf) {
+    ESMF_CATCH_PASSTHRU(exc_esmf);
+  }
+  return ret;
+}
+
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::serialize()"
 void Attributes::serialize(char *buffer, int *length, int *offset,
@@ -508,8 +531,42 @@ void Attributes::serialize(char *buffer, int *length, int *offset,
   return;
 }
 
+#undef ESMC_METHOD
+#define ESMC_METHOD "Attributes::set(<null>)"
+void Attributes::set(key_t &key, bool force, int &rc) {
+  rc = ESMF_FAILURE;
+  if (!force) {
+    try {
+      bool has_key = handleHasKey(this, key, rc);
+    }
+    catch (ESMCI::esmf_attrs_error &exc_esmf) {
+      ESMF_CATCH_PASSTHRU(exc_esmf);
+    }
+  }
+  try {
+    json::json_pointer jp = this->formatKey(key, rc);
+    try {
+      this->storage[jp] = json::value_t::null;
+    }
+    catch (json::out_of_range &e) {
+      ESMF_THROW_JSON(e, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);
+    }
+    catch (json::type_error &e) {
+      ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
+    }
+  }
+  catch (ESMCI::esmf_attrs_error &exc_esmf) {
+    ESMF_CATCH_PASSTHRU(exc_esmf);
+  }
+  catch (...) {
+    ESMF_CHECKERR_STD("", ESMF_FAILURE, "Unhandled throw", rc);
+  }
+  rc = ESMF_SUCCESS;
+  return;
+}
+
 #undef  ESMC_METHOD
-#define ESMC_METHOD "Attributes::set()"
+#define ESMC_METHOD "Attributes::set(<scalar>)"
 template <typename T>
 void Attributes::set(key_t &key, T value, bool force, int &rc, int *index) {
   // Exceptions:  ESMCI:esmf_attrs_error

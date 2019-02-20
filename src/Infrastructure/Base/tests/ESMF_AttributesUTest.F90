@@ -64,9 +64,9 @@ program ESMF_AttributesUTest
   integer(ESMF_KIND_I4), dimension(3) :: arr_i4
   integer(ESMF_KIND_I4), dimension(:), allocatable :: arr_i4_get
   type(ESMF_Attributes) :: attrs, attrs2, attrs3, attrs4, attrs5, attrs6, &
-                           attrs7, attrs8, attrs9
+                           attrs7, attrs8, attrs9, attrs10
 
-  logical :: is_present, failed
+  logical :: is_present, failed, is_set
 
   !----------------------------------------------------------------------------
   call ESMF_TestStart(ESMF_SRCLINE, rc=rc)  ! calls ESMF_Initialize() internally
@@ -458,6 +458,43 @@ program ESMF_AttributesUTest
 
   call ESMF_AttributesDestroy(attrs9, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+  !----------------------------------------------------------------------------
+
+  !----------------------------------------------------------------------------
+  !NEX_UTest
+  write(name, *) "ESMF_AttributesSetNULL and ESMF_AttributesIsSet"
+  write(failMsg, *) "Did not return ESMF_SUCCESS"
+  failed = .false.
+
+  attrs10 = ESMF_AttributesCreate(rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  call ESMF_AttributesSet(attrs10, "is-the-null", rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  is_set = ESMF_AttributesIsSet(attrs10, "is-the-null", rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  if (is_set) then
+    failed = .true.
+  end if
+
+  call ESMF_AttributesSet(attrs10, "is-the-null", 5, rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  is_set = ESMF_AttributesIsSet(attrs10, "is-the-null", rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  if (.not. is_set) then
+    failed = .true.
+  end if
+
+!  call ESMF_AttributesPrint(attrs10, rc=rc) !tdk:p
+
+  call ESMF_AttributesDestroy(attrs10, rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  call ESMF_Test((.not. failed), name, failMsg, result, ESMF_SRCLINE)
   !----------------------------------------------------------------------------
 
   !----------------------------------------------------------------------------
