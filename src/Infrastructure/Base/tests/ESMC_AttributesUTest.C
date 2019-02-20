@@ -199,12 +199,10 @@ void testSetGetIndex(int& rc, char failMsg[]) {
     values[ii] = (double)ii / (double)n;
   }
   std::string key = "the-key";
-  double setvalue[1];
   try {
     attrs.set<double>(key, nullptr, n, false, rc);
     for (int ii = 0; ii < n; ++ii) {
-      setvalue[0] = values[ii];
-      attrs.set<double>(key, setvalue, 1, false, rc, &ii);
+      attrs.set<double>(key, values[ii], false, rc, &ii);
     }
   }
   catch (ESMCI::esmf_attrs_error &exc_esmf) {
@@ -236,6 +234,21 @@ void testSetGetIndex(int& rc, char failMsg[]) {
       return finalizeFailure(rc, failMsg, "Did not handle out_of_range");
     } else {
       rc = ESMF_SUCCESS;
+    }
+  }
+
+  // Test a key has to exist when using an index ==============================
+
+  std::string not_there = "not_there";
+  int noidx = 5;
+  try {
+    attrs.set<int>(not_there, 111, false, rc, &noidx);
+  }
+  catch (ESMCI::esmf_attrs_error &exc_esmf) {
+    if (exc_esmf.getReturnCode() == ESMC_RC_NOT_FOUND) {
+      rc = ESMF_SUCCESS;
+    } else {
+      return finalizeFailure(rc, failMsg, "Key must exist with an index");
     }
   }
 }

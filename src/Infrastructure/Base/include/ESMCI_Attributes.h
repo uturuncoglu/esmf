@@ -104,6 +104,7 @@ public:
   template <typename T>
   T get(key_t &key, int &rc, T *def = nullptr, int *index = nullptr) const;
 
+  //tdk:remove this interface
   void get_isoc(ESMCI::ESMC_ISOCType ictype, void *ret, char* key, int& rc,
     void* def = nullptr) const;
 
@@ -124,11 +125,10 @@ public:
     ESMC_InquireFlag inquireflag, int& rc);
 
   template <typename T>
-  void set(key_t& key, T value, bool force, int& rc);
+  void set(key_t& key, T value, bool force, int& rc, int *index = nullptr);
 
   template <typename T>
-  void set(key_t& key, T *values, int count, bool force, int& rc,
-    int *index = nullptr);
+  void set(key_t& key, T *values, int count, bool force, int& rc);
 
   void update(const Attributes& attrs, int& rc);
 
