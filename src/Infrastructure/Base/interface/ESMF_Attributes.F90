@@ -180,8 +180,9 @@ function ESMF_AttributesIsPresent(attrs, key, isPointer, rc) result(is_present)
 
   logical :: local_isPointer
   integer :: localrc
-  integer(C_INT) :: isPointer_forC
+  integer(C_INT) :: isPointer_forC, is_present_c
 
+  is_present = .false.
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
 
@@ -197,11 +198,14 @@ function ESMF_AttributesIsPresent(attrs, key, isPointer, rc) result(is_present)
     isPointer_forC = 0
   end if
 
-  !tdk:FIX: this conversion throws a compiler warning.
-  is_present = c_attrs_is_present(attrs%ptr, trim(key)//C_NULL_CHAR, localrc, &
+  is_present_c = c_attrs_is_present(attrs%ptr, trim(key)//C_NULL_CHAR, localrc, &
     isPointer_forC)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
     rcToReturn=rc)) return
+
+  if (is_present_c == 1) then
+    is_present = .true.
+  end if
 
   if (present(rc)) rc = ESMF_SUCCESS
 end function ESMF_AttributesIsPresent
