@@ -440,10 +440,10 @@ program ESMF_AttributesUTest
   attrs9 = ESMF_AttributesCreate(rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-  call ESMF_AttributesSetArray(attrs9, "the-key", arr_i4, rc=rc)
+  call ESMF_AttributesSet(attrs9, "the-key", arr_i4, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-  call ESMF_AttributesGetArray(attrs9, "the-key", arr_i4_get, arr_i4_get_count, rc=rc)
+  call ESMF_AttributesGet(attrs9, "the-key", arr_i4_get, arr_i4_get_count, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
   do i=1, 3

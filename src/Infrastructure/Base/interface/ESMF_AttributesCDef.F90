@@ -29,6 +29,17 @@ interface
 
   !=============================================================================
 
+  subroutine c_attrs_inquire(attrs, key, rc, nelements) bind(C, name="ESMC_AttributesInquire")
+    use iso_c_binding
+    implicit none
+    type(C_PTR), value :: attrs
+    character(C_CHAR), intent(in) :: key(*)
+    integer(C_INT), intent(inout) :: rc
+    type(C_PTR), value :: nelements
+  end subroutine c_attrs_inquire
+
+  !=============================================================================
+
   function c_attrs_is_present(attrs, key, rc, isptr) bind(C, name="ESMC_AttributesIsPresent")
     use iso_c_binding
     implicit none
@@ -263,6 +274,15 @@ interface
     integer(C_INT), intent(inout) :: rc
   end subroutine c_attrs_set_array_I8
 
+  subroutine c_attrs_set_array_CH(attrs, key, nelements, force, rc) bind(C, name="ESMC_AttributesSetArrayCH")
+    use iso_c_binding
+    implicit none
+    type(C_PTR), value :: attrs
+    character(kind=C_CHAR), intent(in) :: key(*)
+    integer(C_INT), intent(in) :: nelements
+    integer(C_INT), intent(in) :: force
+    integer(C_INT), intent(inout) :: rc
+  end subroutine c_attrs_set_array_CH
   !=============================================================================
 
 end interface

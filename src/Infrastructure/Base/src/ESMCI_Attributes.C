@@ -667,7 +667,7 @@ template void Attributes::set<float>(key_t&, float*, int, bool, int&);
 template void Attributes::set<double>(key_t&, double*, int, bool, int&);
 template void Attributes::set<int>(key_t&, int*, int, bool, int&);
 template void Attributes::set<long int>(key_t&, long int*, int, bool, int&);
-//template void Attributes::set<std::vector<std::string>>(key_t& std::vector<std::string>, int&, bool, int&);
+template void Attributes::set<std::vector<std::string>>(key_t&, std::vector<std::string>*, int, bool, int&);
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::update()"

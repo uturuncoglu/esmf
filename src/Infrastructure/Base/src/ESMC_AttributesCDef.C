@@ -76,6 +76,21 @@ void ESMC_AttributesErase(ESMCI::Attributes* attrs, char* keyParent,
   }
 }
 
+#undef ESMC_METHOD
+#define ESMC_METHOD "ESMC_AttributesInquire()"
+void ESMC_AttributesInquire(ESMCI::Attributes *attrs, char *key, int &rc, int *count) {
+  rc = ESMF_FAILURE;
+  std::string localKey(key);
+  try {
+    if (count) {
+      const std::vector <json> *value = attrs->getPointer<const std::vector<json>* const,
+        const json::array_t* const>(localKey, rc);
+      *count = value->size();
+    }
+  }
+  ESMF_CATCH_ISOC;
+}
+
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_AttributesIsPresent()"
 int ESMC_AttributesIsPresent(ESMCI::Attributes* attrs, char* key, int& rc,
@@ -462,6 +477,26 @@ void ESMC_AttributesSetArrayI8(ESMCI::Attributes *attrs, char *key,
   std::string localKey(key);
   try {
     attrs->set<long int>(localKey, values, count, localforce, rc);
+  }
+  ESMF_CATCH_ISOC;
+}
+
+#undef  ESMC_METHOD
+#define ESMC_METHOD "ESMC_AttributesSetArrayCH()"
+void ESMC_AttributesSetArrayCH(ESMCI::Attributes *attrs, char *key, int &count,
+  int &force, int &rc) {
+  // Notes:
+  //  * Only allocates storage. Does not actually insert anything!
+  rc = ESMF_FAILURE;
+  bool localforce;
+  if (force == 1) {
+    localforce = true;
+  } else {
+    localforce = false;
+  }
+  std::string localKey(key);
+  try {
+    attrs->set<std::vector<std::string>>(localKey, nullptr, count, localforce, rc);
   }
   ESMF_CATCH_ISOC;
 }
