@@ -193,7 +193,7 @@ function ESMF_AttributesIsPresent(attrs, key, isPointer, rc) result(is_present)
     isPointer_forC = 0
   end if
 
-  is_present_c = c_attrs_is_present(attrs%ptr, trim(key)//C_NULL_CHAR, &
+  call c_attrs_is_present(attrs%ptr, trim(key)//C_NULL_CHAR, is_present_c, &
     localrc, isPointer_forC)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
     rcToReturn=rc)) return

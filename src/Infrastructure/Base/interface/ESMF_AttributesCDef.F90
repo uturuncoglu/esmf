@@ -40,15 +40,15 @@ interface
 
   !=============================================================================
 
-  function c_attrs_is_present(attrs, key, rc, isptr) bind(C, name="ESMC_AttributesIsPresent")
+  subroutine c_attrs_is_present(attrs, key, res, rc, isptr) bind(C, name="ESMC_AttributesIsPresent")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: attrs
     character(C_CHAR), intent(in) :: key(*)
+    integer(C_INT), intent(inout) :: res
     integer(C_INT), intent(inout) :: rc
     integer(C_INT), intent(in) :: isptr
-    integer(C_INT) :: c_attrs_is_present
-  end function c_attrs_is_present
+  end subroutine c_attrs_is_present
 
   !=============================================================================
 

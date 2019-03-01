@@ -176,7 +176,7 @@ std::string Attributes::dump(int indent, int& rc) const {
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::erase()"
-void Attributes::erase(key_t& keyParent, key_t& keyChild, int& rc) {
+void Attributes::erase(key_t &keyParent, key_t &keyChild, int &rc) {
   // Exceptions: ESMCI::esmf_attrs_error
 
   rc = ESMF_FAILURE;
@@ -196,6 +196,9 @@ void Attributes::erase(key_t& keyParent, key_t& keyChild, int& rc) {
   }
   catch (ESMCI::esmf_attrs_error &exc_esmf) {
     ESMF_CATCH_PASSTHRU(exc_esmf);
+  }
+  catch (...) {
+    ESMF_CHECKERR_STD("", ESMF_FAILURE, "Unhandled throw", rc);
   }
   rc = ESMF_SUCCESS;
   return;

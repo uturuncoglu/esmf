@@ -69,11 +69,14 @@ void ESMC_AttributesErase(ESMCI::Attributes* attrs, char* keyParent,
   // interface to avoid passing "" as the parent key when you want to delete
   // from the root. Otherwise a parent and child key are always required which
   // seems redundant.
-  if (localkeyChild == "") {
-    return attrs->erase(localkeyChild, localkeyParent, rc);
-  } else {
-    return attrs->erase(localkeyParent, localkeyChild, rc);
+  try {
+    if (localkeyChild == "") {
+      attrs->erase(localkeyChild, localkeyParent, rc);
+    } else {
+      attrs->erase(localkeyParent, localkeyChild, rc);
+    }
   }
+  ESMF_CATCH_ISOC;
 }
 
 #undef ESMC_METHOD
@@ -93,13 +96,13 @@ void ESMC_AttributesInquire(ESMCI::Attributes *attrs, char *key, int &rc, int *c
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_AttributesIsPresent()"
-int ESMC_AttributesIsPresent(ESMCI::Attributes* attrs, char* key, int& rc,
-        int& isptr) {
+void ESMC_AttributesIsPresent(ESMCI::Attributes *attrs, char *key, int &res, int &rc,
+        int &isptr) {
   std::string local_key(key);
-  int ret = attrs->hasKey(local_key, rc, isptr);
-  if (ESMC_LogDefault.MsgFoundError(rc, "Did not detect key presence",
-                                    ESMC_CONTEXT, &rc)) throw(rc);
-  return ret;
+  try {
+    res = attrs->hasKey(local_key, rc, isptr);
+  }
+  ESMF_CATCH_ISOC;
 }
 
 #undef  ESMC_METHOD
@@ -109,18 +112,17 @@ void ESMC_AttributesIsSet(ESMCI::Attributes *attrs, char *key, int &isSet, int &
   try {
     isSet = attrs->isSetNull(local_key, rc);
   }
-  catch (ESMCI::esmf_attrs_error &exc_esmf) {
-    ESMF_CATCH_PASSTHRU(exc_esmf);
-  }
+  ESMF_CATCH_ISOC;
 }
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_AttributesPrint()"
-void ESMC_AttributesPrint(ESMCI::Attributes* attrs, int& indent, int& rc) {
+void ESMC_AttributesPrint(ESMCI::Attributes *attrs, int &indent, int &rc) {
   rc = ESMF_FAILURE;
-  std::cout << attrs->dump(indent, rc) << std::endl;
-  if (ESMC_LogDefault.MsgFoundError(rc, "Dump failed", ESMC_CONTEXT, &rc))
-    throw(rc);
+  try {
+    std::cout << attrs->dump(indent, rc) << std::endl;
+  }
+  ESMF_CATCH_ISOC;
 }
 
 //-----------------------------------------------------------------------------
