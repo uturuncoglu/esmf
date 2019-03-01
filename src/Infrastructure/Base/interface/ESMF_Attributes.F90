@@ -90,8 +90,6 @@ contains  !====================================================================
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributesCreate()"
 function ESMF_AttributesCreate(rc) result(attrs)
-  implicit none
-
   integer, intent(inout), optional :: rc
   integer :: localrc
   type(ESMF_Attributes) :: attrs
@@ -111,8 +109,6 @@ end function ESMF_AttributesCreate
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributesDestroy()"
 subroutine ESMF_AttributesDestroy(attrs, rc)
-  implicit none
-
   type(ESMF_Attributes), intent(inout) :: attrs
   integer, intent(inout), optional :: rc
   integer :: localrc
@@ -133,8 +129,6 @@ end subroutine ESMF_AttributesDestroy
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributesErase()"
 subroutine ESMF_AttributesErase(attrs, keyParent, keyChild, rc)
-  implicit none
-
   type(ESMF_Attributes), intent(inout) :: attrs
   character(len=*), intent(in) :: keyParent
   character(len=*), intent(in), optional :: keyChild
@@ -165,8 +159,6 @@ end subroutine ESMF_AttributesErase
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributesIsPresent()"
 function ESMF_AttributesIsPresent(attrs, key, isPointer, rc) result(is_present)
-  implicit none
-
   type(ESMF_Attributes), intent(in) :: attrs
   character(len=*), intent(in) :: key
   logical, intent(in), optional :: isPointer
@@ -210,8 +202,6 @@ end function ESMF_AttributesIsPresent
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributesIsSet()"
 function ESMF_AttributesIsSet(attrs, key, rc) result(is_set)
-  implicit none
-
   type(ESMF_Attributes), intent(in) :: attrs
   character(len=*), intent(in) :: key
   integer, intent(inout), optional :: rc
@@ -240,8 +230,6 @@ end function ESMF_AttributesIsSet
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributesPrint()"
 subroutine ESMF_AttributesPrint(attrs, indent, rc)
-  implicit none
-
   type(ESMF_Attributes), intent(in) :: attrs
   integer, intent(in), optional :: indent
   integer, intent(inout), optional :: rc
@@ -269,8 +257,6 @@ end subroutine ESMF_AttributesPrint
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributesGetR4()"
 subroutine ESMF_AttributesGetR4(attrs, key, value, default, idx, rc)
-  implicit none
-
   type(ESMF_Attributes), intent(inout) :: attrs
   character(len=*), intent(in) :: key
   real(ESMF_KIND_R4), intent(inout) :: value
@@ -315,8 +301,6 @@ end subroutine ESMF_AttributesGetR4
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributesGetR8()"
 subroutine ESMF_AttributesGetR8(attrs, key, value, default, idx, rc)
-  implicit none
-
   type(ESMF_Attributes), intent(inout) :: attrs
   character(len=*), intent(in) :: key
   real(ESMF_KIND_R8), intent(inout) :: value
@@ -361,8 +345,6 @@ end subroutine ESMF_AttributesGetR8
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributesGetI4()"
 subroutine ESMF_AttributesGetI4(attrs, key, value, default, idx, rc)
-  implicit none
-
   type(ESMF_Attributes), intent(inout) :: attrs
   character(len=*), intent(in) :: key
   integer(ESMF_KIND_I4), intent(inout) :: value
@@ -407,8 +389,6 @@ end subroutine ESMF_AttributesGetI4
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributesGetI8()"
 subroutine ESMF_AttributesGetI8(attrs, key, value, default, idx, rc)
-  implicit none
-
   type(ESMF_Attributes), intent(inout) :: attrs
   character(len=*), intent(in) :: key
   integer(ESMF_KIND_I8), intent(inout) :: value
@@ -453,8 +433,6 @@ end subroutine ESMF_AttributesGetI8
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributesGetCH()"
 subroutine ESMF_AttributesGetCH(attrs, key, value, default, idx, rc)
-  implicit none
-
   type(ESMF_Attributes), intent(inout) :: attrs
   character(len=*), intent(in) :: key
   character(len=*), intent(inout), target :: value
@@ -501,7 +479,6 @@ end subroutine ESMF_AttributesGetCH
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributesGetArrayR4()"
 subroutine ESMF_AttributesGetArrayR4(attrs, key, values, nelements, rc)
-  implicit none
   type(ESMF_Attributes), intent(inout) :: attrs
   character(len=*), intent(in) :: key
   real(ESMF_KIND_R4), dimension(:), allocatable, intent(inout) :: values
@@ -534,7 +511,6 @@ end subroutine ESMF_AttributesGetArrayR4
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributesGetArrayR8()"
 subroutine ESMF_AttributesGetArrayR8(attrs, key, values, nelements, rc)
-  implicit none
   type(ESMF_Attributes), intent(inout) :: attrs
   character(len=*), intent(in) :: key
   real(ESMF_KIND_R8), dimension(:), allocatable, intent(inout) :: values
@@ -567,7 +543,6 @@ end subroutine ESMF_AttributesGetArrayR8
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributesGetArrayI4()"
 subroutine ESMF_AttributesGetArrayI4(attrs, key, values, nelements, rc)
-  implicit none
   type(ESMF_Attributes), intent(inout) :: attrs
   character(len=*), intent(in) :: key
   integer(ESMF_KIND_I4), dimension(:), allocatable, intent(inout) :: values
@@ -600,7 +575,6 @@ end subroutine ESMF_AttributesGetArrayI4
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributesGetArrayI8()"
 subroutine ESMF_AttributesGetArrayI8(attrs, key, values, nelements, rc)
-  implicit none
   type(ESMF_Attributes), intent(inout) :: attrs
   character(len=*), intent(in) :: key
   integer(ESMF_KIND_I8), dimension(:), allocatable, intent(inout) :: values
@@ -630,13 +604,43 @@ subroutine ESMF_AttributesGetArrayI8(attrs, key, values, nelements, rc)
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributesGetArrayI8
 
+#undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_AttributesGetArrayCH()"
+subroutine ESMF_AttributesGetArrayCH(attrs, key, values, nelements, rc)
+  type(ESMF_Attributes), intent(inout) :: attrs
+  character(len=*), intent(in) :: key
+  character(len=*), dimension(:), allocatable, intent(inout) :: values
+  integer(C_INT), target, intent(inout) :: nelements
+  integer, intent(inout), optional :: rc
+
+  integer :: localrc, ii
+  type(C_PTR) :: nelements_ptr
+
+  localrc = ESMF_FAILURE
+  if (present(rc)) rc = ESMF_FAILURE
+
+  ! Get the array size from the attributes store
+  nelements_ptr = C_LOC(nelements)
+  call c_attrs_inquire(attrs%ptr, trim(key)//C_NULL_CHAR, localrc, nelements_ptr)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
+    rcToReturn=rc)) return
+
+  ! Allocate the outgoing storage array and call into C to fill the array
+  allocate(values(nelements))
+  do ii=1,nelements
+    call ESMF_AttributesGetCH(attrs, key, values(ii), idx=ii, rc=localrc)
+  enddo
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
+    rcToReturn=rc)) return
+
+  if (present(rc)) rc = ESMF_SUCCESS
+end subroutine ESMF_AttributesGetArrayCH
+
 !------------------------------------------------------------------------------
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributesSetR4()"
 subroutine ESMF_AttributesSetR4(attrs, key, value, force, idx, rc)
-  implicit none
-
   type(ESMF_Attributes), intent(inout) :: attrs
   character(len=*), intent(in) :: key
   real(ESMF_KIND_R4), intent(in) :: value
@@ -681,8 +685,6 @@ end subroutine ESMF_AttributesSetR4
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributesSetR8()"
 subroutine ESMF_AttributesSetR8(attrs, key, value, force, idx, rc)
-  implicit none
-
   type(ESMF_Attributes), intent(inout) :: attrs
   character(len=*), intent(in) :: key
   real(ESMF_KIND_R8), intent(in) :: value
@@ -727,8 +729,6 @@ end subroutine ESMF_AttributesSetR8
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributesSetI4()"
 subroutine ESMF_AttributesSetI4(attrs, key, value, force, idx, rc)
-  implicit none
-
   type(ESMF_Attributes), intent(inout) :: attrs
   character(len=*), intent(in) :: key
   integer(ESMF_KIND_I4), intent(in) :: value
@@ -773,8 +773,6 @@ end subroutine ESMF_AttributesSetI4
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributesSetI8()"
 subroutine ESMF_AttributesSetI8(attrs, key, value, force, idx, rc)
-  implicit none
-
   type(ESMF_Attributes), intent(inout) :: attrs
   character(len=*), intent(in) :: key
   integer(ESMF_KIND_I8), intent(in) :: value
@@ -819,8 +817,6 @@ end subroutine ESMF_AttributesSetI8
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributesSetCH()"
 subroutine ESMF_AttributesSetCH(attrs, key, value, force, idx, rc)
-  implicit none
-
   type(ESMF_Attributes), intent(inout) :: attrs
   character(len=*), intent(in) :: key
   character(len=*), intent(in) :: value
@@ -865,8 +861,6 @@ end subroutine ESMF_AttributesSetCH
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributesSetNULL()"
 subroutine ESMF_AttributesSetNULL(attrs, key, force, rc)
-  implicit none
-
   type(ESMF_Attributes), intent(inout) :: attrs
   character(len=*), intent(in) :: key
   logical, intent(in), optional :: force
@@ -897,8 +891,6 @@ end subroutine ESMF_AttributesSetNULL
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributesSetArrayR4()"
 subroutine ESMF_AttributesSetArrayR4(attrs, key, values, force, rc)
-  implicit none
-
   type(ESMF_Attributes), intent(inout) :: attrs
   character(len=*), intent(in) :: key
   real(ESMF_KIND_R4), dimension(:), intent(in) :: values
@@ -929,8 +921,6 @@ end subroutine ESMF_AttributesSetArrayR4
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributesSetArrayR8()"
 subroutine ESMF_AttributesSetArrayR8(attrs, key, values, force, rc)
-  implicit none
-
   type(ESMF_Attributes), intent(inout) :: attrs
   character(len=*), intent(in) :: key
   real(ESMF_KIND_R8), dimension(:), intent(in) :: values
@@ -961,8 +951,6 @@ end subroutine ESMF_AttributesSetArrayR8
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributesSetArrayI4()"
 subroutine ESMF_AttributesSetArrayI4(attrs, key, values, force, rc)
-  implicit none
-
   type(ESMF_Attributes), intent(inout) :: attrs
   character(len=*), intent(in) :: key
   integer(ESMF_KIND_I4), dimension(:), intent(in) :: values
@@ -993,8 +981,6 @@ end subroutine ESMF_AttributesSetArrayI4
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributesSetArrayI8()"
 subroutine ESMF_AttributesSetArrayI8(attrs, key, values, force, rc)
-  implicit none
-
   type(ESMF_Attributes), intent(inout) :: attrs
   character(len=*), intent(in) :: key
   integer(ESMF_KIND_I8), dimension(:), intent(in) :: values
@@ -1025,9 +1011,6 @@ end subroutine ESMF_AttributesSetArrayI8
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributesSetArrayCH()"
 subroutine ESMF_AttributesSetArrayCH(attrs, key, values, force, rc)
-  !tdk:test
-  implicit none
-
   type(ESMF_Attributes), intent(inout) :: attrs
   character(len=*), intent(in) :: key
   character(len=*), dimension(:), intent(in) :: values
@@ -1062,40 +1045,5 @@ subroutine ESMF_AttributesSetArrayCH(attrs, key, values, force, rc)
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributesSetArrayCH
-
-#undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributesGetArrayCH()"
-subroutine ESMF_AttributesGetArrayCH(attrs, key, values, nelements, rc)
-  !tdk:test
-  !tdk:order
-  implicit none
-  type(ESMF_Attributes), intent(inout) :: attrs
-  character(len=*), intent(in) :: key
-  character(len=*), dimension(:), allocatable, intent(inout) :: values
-  integer(C_INT), target, intent(inout) :: nelements
-  integer, intent(inout), optional :: rc
-
-  integer :: localrc, ii
-  type(C_PTR) :: nelements_ptr
-
-  localrc = ESMF_FAILURE
-  if (present(rc)) rc = ESMF_FAILURE
-
-  ! Get the array size from the attributes store
-  nelements_ptr = C_LOC(nelements)
-  call c_attrs_inquire(attrs%ptr, trim(key)//C_NULL_CHAR, localrc, nelements_ptr)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
-    rcToReturn=rc)) return
-
-  ! Allocate the outgoing storage array and call into C to fill the array
-  allocate(values(nelements))
-  do ii=1,nelements
-    call ESMF_AttributesGetCH(attrs, key, values(ii), idx=ii, rc=localrc)
-  enddo
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
-    rcToReturn=rc)) return
-
-  if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributesGetArrayCH
 
 end module ESMF_AttributesMod  !===============================================
