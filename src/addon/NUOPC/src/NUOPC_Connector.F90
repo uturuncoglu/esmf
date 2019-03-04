@@ -2466,7 +2466,7 @@ call ESMF_LogSet(trace=.true.)
               line=__LINE__, file=trim(name)//":"//FILENAME)) return  ! bail out
             !TODO: make sure that this FieldCreate() sets total widths correctly
             if (fieldDimCount - gridDimCount > 0) then
-              acceptorField=ESMF_FieldCreate(grid=grid, array=array, &
+                acceptorField=ESMF_FieldCreate(grid=grid, array=array, &
                 datacopyflag=ESMF_DATACOPY_REFERENCE, staggerloc=staggerloc, &
                 gridToFieldMap=gridToFieldMap, name=fieldName, &
                 ungriddedLBound=ungriddedLBound, &
@@ -2493,6 +2493,13 @@ call ESMF_LogSet(trace=.true.)
             if (ESMF_LogFoundError(rcToCheck=rc, msg=ESMF_LOGERR_PASSTHRU, &
               line=__LINE__, file=trim(name)//":"//FILENAME)) return  ! bail out
           endif
+
+          ! Copy all the attributes from the providerfield to the acceptorfield
+          call ESMF_AttributeCopy(providerField, acceptorField, rc=rc)               
+          if (ESMF_LogFoundError(rcToCheck=rc, msg=ESMF_LOGERR_PASSTHRU, &
+              line=__LINE__, &
+              file=FILENAME)) &
+              return  ! bail out
           
           ! clean-up
           deallocate(minIndex, maxIndex, stat=rc)

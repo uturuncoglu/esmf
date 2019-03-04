@@ -1102,12 +1102,14 @@ type(ESMF_KeywordEnforcer), optional:: keywordEnforcer ! must use keywords below
        endif
     endif
 
+#if 0
     if (.not.(arrayIndexFlag .eq. gridIndexFlag)) then
         call ESMF_LogSetError(rcToCheck=ESMF_RC_ARG_VALUE, &
           msg="- Array indexflag must be the same as the Grid indexflag", &
           ESMF_CONTEXT, rcToReturn=rc)
         return
     endif
+#endif
 
     if (present(datacopyflag)) then
         l_datacopyflag = datacopyflag
