@@ -64,9 +64,10 @@ program ESMF_AttributesUTest
   integer(ESMF_KIND_I4), dimension(3) :: arr_i4
   integer(ESMF_KIND_I4), dimension(:), allocatable :: arr_i4_get
   type(ESMF_Attributes) :: attrs, attrs2, attrs3, attrs4, attrs5, attrs6, &
-                           attrs7, attrs8, attrs9, attrs10
+                           attrs7, attrs8, attrs9, attrs10, attrs_copy_src, &
+                           attrs_copy_dst
 
-  logical :: is_present, failed, is_set
+  logical :: is_present, failed, is_set, is_present_copy_test
 
   !----------------------------------------------------------------------------
   call ESMF_TestStart(ESMF_SRCLINE, rc=rc)  ! calls ESMF_Initialize() internally
@@ -496,6 +497,26 @@ program ESMF_AttributesUTest
 
   call ESMF_Test((.not. failed), name, failMsg, result, ESMF_SRCLINE)
   !----------------------------------------------------------------------------
+
+  !----------------------------------------------------------------------------
+  !NEX_UTest
+  write(name, *) "ESMF_AttributesCopy"
+  write(failMsg, *) "Did not copy Attributes"
+  rc = ESMF_FAILURE
+
+  attrs_copy_src = ESMF_AttributesCreate(rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  attrs_copy_dst = ESMF_AttributesCopy(attrs_copy_src, rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  call ESMF_AttributesSet(attrs_copy_dst, "a-key", 22, rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  is_present_copy_test = ESMF_AttributesIsPresent(attrs_copy_src, "a-key", rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  call ESMF_Test((is_present_copy_test .eqv. .false.), name, failMsg, result, ESMF_SRCLINE)
 
   !----------------------------------------------------------------------------
   call ESMF_TestEnd(ESMF_SRCLINE) ! calls ESMF_Finalize() internally

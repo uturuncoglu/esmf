@@ -88,6 +88,27 @@ character(*), parameter, private :: version = '$Id$'
 contains  !====================================================================
 
 #undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_AttributesCopy()"
+function ESMF_AttributesCopy(attrs, rc) result(attrs_copy)
+  type(ESMF_Attributes), intent(in) :: attrs
+  integer, intent(inout), optional :: rc
+  type(ESMF_Attributes) :: attrs_copy
+
+  integer :: localrc
+
+  localrc = ESMF_FAILURE
+  if (present(rc)) rc = ESMF_FAILURE
+
+  attrs_copy%ptr = c_attrs_copy(attrs%ptr, localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
+                         rcToReturn=rc)) return
+
+  if (present(rc)) rc = ESMF_SUCCESS
+end function ESMF_AttributesCopy
+
+!------------------------------------------------------------------------------
+
+#undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributesCreate()"
 function ESMF_AttributesCreate(rc) result(attrs)
   integer, intent(inout), optional :: rc

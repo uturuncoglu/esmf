@@ -44,6 +44,13 @@ using json = nlohmann::json;
 extern "C" {
 
 #undef  ESMC_METHOD
+#define ESMC_METHOD "ESMC_AttributesCopy()"
+ESMCI::Attributes* ESMC_AttributesCopy(ESMCI::Attributes *attrs, int &rc) {
+  rc = ESMF_SUCCESS;
+  return new ESMCI::Attributes(attrs->getStorageRef());
+}
+
+#undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_AttributesCreate()"
 ESMCI::Attributes* ESMC_AttributesCreate(int& rc) {
   rc = ESMF_SUCCESS;

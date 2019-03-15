@@ -1,5 +1,15 @@
 interface
 
+  function c_attrs_copy(attrs, rc) bind(C, name="ESMC_AttributesCopy")
+    use iso_c_binding
+    implicit none
+    type(C_PTR), intent(in) :: attrs
+    integer(C_INT), intent(inout) :: rc
+    type(C_PTR) :: c_attrs_copy
+  end function c_attrs_copy
+
+  !=============================================================================
+
   function c_attrs_create(rc) bind(C, name="ESMC_AttributesCreate")
     use iso_c_binding
     implicit none
