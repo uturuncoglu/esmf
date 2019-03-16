@@ -276,6 +276,52 @@ end subroutine ESMF_AttributesPrint
 !------------------------------------------------------------------------------
 
 #undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_AttributesReadJSON()"
+function ESMF_AttributesReadJSON(filename, rc) result(attrs_r)
+  character(len=*), intent(in) :: filename
+  integer, intent(inout), optional :: rc
+  type(ESMF_Attributes) :: attrs_r
+
+  integer :: localrc
+
+  localrc = ESMF_FAILURE
+  if (present(rc)) rc = ESMF_FAILURE
+
+  attrs_r = ESMF_AttributesCreate(rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
+    rcToReturn=rc)) return
+
+  call c_attrs_read_json(attrs_r%ptr, trim(filename)//C_NULL_CHAR, localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
+    rcToReturn=rc)) return
+
+  if (present(rc)) rc = ESMF_SUCCESS
+end function ESMF_AttributesReadJSON
+
+!------------------------------------------------------------------------------
+
+#undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_AttributesWriteJSON()"
+subroutine ESMF_AttributesWriteJSON(attrs, filename, rc)
+  type(ESMF_Attributes), intent(in) :: attrs
+  character(len=*), intent(in) :: filename
+  integer, intent(inout), optional :: rc
+
+  integer :: localrc
+
+  localrc = ESMF_FAILURE
+  if (present(rc)) rc = ESMF_FAILURE
+
+  call c_attrs_write_json(attrs%ptr, trim(filename)//C_NULL_CHAR, localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
+      rcToReturn=rc)) return
+
+  if (present(rc)) rc = ESMF_SUCCESS
+end subroutine ESMF_AttributesWriteJSON
+
+!------------------------------------------------------------------------------
+
+#undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributesGetR4()"
 subroutine ESMF_AttributesGetR4(attrs, key, value, default, idx, rc)
   type(ESMF_Attributes), intent(inout) :: attrs

@@ -59,13 +59,14 @@ program ESMF_AttributesUTest
 
   integer(ESMF_KIND_I4) :: value, actual, actual2, actual3, arr_i4_get_count
   integer(ESMF_KIND_I8) :: desired_i8, value_i8
+  real :: actual_rw_val, desired_rw_val
   real(ESMF_KIND_R4) :: desired_r4, value_r4
   real(ESMF_KIND_R8) :: desired_r8, value_r8
   integer(ESMF_KIND_I4), dimension(3) :: arr_i4
   integer(ESMF_KIND_I4), dimension(:), allocatable :: arr_i4_get
   type(ESMF_Attributes) :: attrs, attrs2, attrs3, attrs4, attrs5, attrs6, &
                            attrs7, attrs8, attrs9, attrs10, attrs_copy_src, &
-                           attrs_copy_dst
+                           attrs_copy_dst, attrs_w, attrs_r
 
   logical :: is_present, failed, is_set, is_present_copy_test
 
@@ -516,7 +517,40 @@ program ESMF_AttributesUTest
   is_present_copy_test = ESMF_AttributesIsPresent(attrs_copy_src, "a-key", rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
+  call ESMF_AttributesDestroy(attrs_copy_src, rc=rc)
+  call ESMF_AttributesDestroy(attrs_copy_dst, rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
   call ESMF_Test((is_present_copy_test .eqv. .false.), name, failMsg, result, ESMF_SRCLINE)
+  !----------------------------------------------------------------------------
+
+  !----------------------------------------------------------------------------
+  !NEX_UTest
+  write(name, *) "ESMF_AttributesWrite & ESMF_AttributesRead"
+  write(failMsg, *) "Did not read/write Attributes"
+  rc = ESMF_FAILURE
+
+  attrs_w = ESMF_AttributesCreate(rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  desired_rw_val = 22.3
+  call ESMF_AttributesSet(attrs_w, "a-key", desired_rw_val, rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  call ESMF_AttributesWriteJSON(attrs_w, "test-esmf-attrs-write.json", rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  attrs_r = ESMF_AttributesReadJSON("test-esmf-attrs-write.json", rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  call ESMF_AttributesGet(attrs_r, "a-key", actual_rw_val, rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  call ESMF_AttributesDestroy(attrs_w, rc=rc)
+  call ESMF_AttributesDestroy(attrs_r, rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  call ESMF_Test((ABS(actual_rw_val-desired_rw_val) < 1e-16), name, failMsg, result, ESMF_SRCLINE)
 
   !----------------------------------------------------------------------------
   call ESMF_TestEnd(ESMF_SRCLINE) ! calls ESMF_Finalize() internally

@@ -3,7 +3,7 @@ interface
   function c_attrs_copy(attrs, rc) bind(C, name="ESMC_AttributesCopy")
     use iso_c_binding
     implicit none
-    type(C_PTR), intent(in) :: attrs
+    type(C_PTR), value :: attrs
     integer(C_INT), intent(inout) :: rc
     type(C_PTR) :: c_attrs_copy
   end function c_attrs_copy
@@ -80,6 +80,26 @@ interface
     integer(C_INT), intent(in) :: indent
     integer(C_INT), intent(inout) :: rc
   end subroutine c_attrs_print
+
+  !=============================================================================
+
+  subroutine c_attrs_read_json(attrs, filename, rc) bind(C, name="ESMC_AttributesReadJSON")
+    use iso_c_binding
+    implicit none
+    type(C_PTR), value :: attrs
+    character(C_CHAR), intent(in) :: filename(*)
+    integer(C_INT), intent(inout) :: rc
+  end subroutine c_attrs_read_json
+
+  !=============================================================================
+
+  subroutine c_attrs_write_json(attrs, filename, rc) bind(C, name="ESMC_AttributesWriteJSON")
+    use iso_c_binding
+    implicit none
+    type(C_PTR), value :: attrs
+    character(C_CHAR), intent(in) :: filename(*)
+    integer(C_INT), intent(inout) :: rc
+  end subroutine c_attrs_write_json
 
   !=============================================================================
 

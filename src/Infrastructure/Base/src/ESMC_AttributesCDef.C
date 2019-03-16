@@ -132,6 +132,52 @@ void ESMC_AttributesPrint(ESMCI::Attributes *attrs, int &indent, int &rc) {
   ESMF_CATCH_ISOC;
 }
 
+#undef  ESMC_METHOD
+#define ESMC_METHOD "ESMC_AttributesReadJSON()"
+void ESMC_AttributesReadJSON(ESMCI::Attributes *attrs, char *filename,
+                             int &rc) {
+  rc = ESMF_FAILURE;
+  std::string filename2(filename);
+  try {
+    std::ifstream i(filename2, std::ifstream::in);
+    if (!i.good()){
+      std::string errmsg = "File location not working: " + filename2;
+      ESMF_CHECKERR_STD("ESMC_RC_FILE_READ", ESMC_RC_FILE_READ, errmsg, rc);
+    }
+    json j;
+    try {
+      i >> j;
+    } catch (json::parse_error& e) {
+      ESMF_THROW_JSON(e, "ESMC_RC_FILE_READ", ESMC_RC_FILE_READ, rc);
+    }
+    i.close();
+    json &out = attrs->getStorageRefWritable();
+    out = move(j);
+    rc = ESMF_SUCCESS;
+  }
+  ESMF_CATCH_ISOC;
+}
+
+#undef  ESMC_METHOD
+#define ESMC_METHOD "ESMC_AttributesWriteJSON()"
+void ESMC_AttributesWriteJSON(ESMCI::Attributes *attrs, char *filename,
+  int &rc) {
+  rc = ESMF_FAILURE;
+  std::string filename2(filename);
+  try {
+    std::ofstream file;
+    file.open(filename2);
+    if (!file.is_open()) {
+      std::string errmsg = "Error opening output file: " + filename2;
+      ESMF_CHECKERR_STD("ESMC_RC_FILE_OPEN", ESMC_RC_FILE_OPEN, errmsg, rc);
+    }
+    file << attrs->getStorageRef();
+    file.close();
+    rc = ESMF_SUCCESS;
+  }
+  ESMF_CATCH_ISOC;
+}
+
 //-----------------------------------------------------------------------------
 
 #undef  ESMC_METHOD
