@@ -66,9 +66,11 @@ program ESMF_AttributesUTest
   integer(ESMF_KIND_I4), dimension(:), allocatable :: arr_i4_get
   type(ESMF_Attributes) :: attrs, attrs2, attrs3, attrs4, attrs5, attrs6, &
                            attrs7, attrs8, attrs9, attrs10, attrs_copy_src, &
-                           attrs_copy_dst, attrs_w, attrs_r
+                           attrs_copy_dst, attrs_w, attrs_r, attrs_logical, &
+                           attrs_types
 
-  logical :: is_present, failed, is_set, is_present_copy_test
+  logical :: is_present, failed, is_set, is_present_copy_test, actual_logical, &
+             desired_logical
 
   !----------------------------------------------------------------------------
   call ESMF_TestStart(ESMF_SRCLINE, rc=rc)  ! calls ESMF_Initialize() internally
@@ -471,7 +473,7 @@ program ESMF_AttributesUTest
   attrs10 = ESMF_AttributesCreate(rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-  call ESMF_AttributesSet(attrs10, "is-the-null", rc=rc)
+  call ESMF_AttributesSetNULL(attrs10, "is-the-null", rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
   is_set = ESMF_AttributesIsSet(attrs10, "is-the-null", rc=rc)
@@ -551,6 +553,53 @@ program ESMF_AttributesUTest
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
   call ESMF_Test((ABS(actual_rw_val-desired_rw_val) < 1e-16), name, failMsg, result, ESMF_SRCLINE)
+  !----------------------------------------------------------------------------
+
+  !----------------------------------------------------------------------------
+  !NEX_UTest
+  write(name, *) "ESMF_Attributes Logical Scalar"
+  write(failMsg, *) "Did not set/get logical type"
+  rc = ESMF_FAILURE
+
+  attrs_logical = ESMF_AttributesCreate(rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  desired_logical = .false.
+  call ESMF_AttributesSet(attrs_logical, "logical-key", desired_logical, rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+!  call ESMF_AttributesPrint(attrs_logical, 2)
+
+  actual_logical = .true.  ! Set to true to make sure it is updated in the call
+  call ESMF_AttributesGet(attrs_logical, "logical-key", actual_logical, rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  call ESMF_AttributesDestroy(attrs_logical, rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  call ESMF_Test((actual_logical .eqv. .false.), name, failMsg, result, ESMF_SRCLINE)
+
+  !----------------------------------------------------------------------------
+  !disable_NEX_UTest
+!  write(name, *) "ESMF_Attributes Test Type Checking"
+!  write(failMsg, *) "Did not catch type error"
+!  rc = ESMF_FAILURE
+!
+!  attrs_types = ESMF_AttributesCreate(rc=rc)
+!  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+!
+!  call ESMF_AttributesSet(attrs_types, "key", 111, rc=rc)
+!  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+!
+!!  call ESMF_AttributesPrint(attrs_types, 2)
+!
+!  call ESMF_AttributesSet(attrs_types, "key", 111.0, rc=rc)
+!  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+!
+!  call ESMF_AttributesDestroy(attrs_types, rc=rc)
+!  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+!
+!  call ESMF_Test((actual_logical .eqv. .false.), name, failMsg, result, ESMF_SRCLINE)
 
   !----------------------------------------------------------------------------
   call ESMF_TestEnd(ESMF_SRCLINE) ! calls ESMF_Finalize() internally

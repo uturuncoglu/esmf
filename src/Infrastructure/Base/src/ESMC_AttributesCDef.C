@@ -229,6 +229,18 @@ void ESMC_AttributesGetI8(ESMCI::Attributes *attrs, char *key, long int &value,
 }
 
 #undef  ESMC_METHOD
+#define ESMC_METHOD "ESMC_AttributesGetLG()"
+void ESMC_AttributesGetLG(ESMCI::Attributes *attrs, char *key, bool &value,
+  int &rc, bool *def, int *index) {
+  rc = ESMF_FAILURE;
+  std::string localKey(key);
+  try {
+    value = attrs->get<bool>(localKey, rc, def, index);
+  }
+  ESMF_CATCH_ISOC;
+}
+
+#undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_AttributesGetCH()"
 void ESMC_AttributesGetCH(ESMCI::Attributes* attrs, char *key, char *value,
   int &vlen, int &rc, char *def, int *index) {
@@ -351,6 +363,28 @@ void ESMC_AttributesGetArrayI8(ESMCI::Attributes *attrs, char *key,
   return;
 }
 
+#undef  ESMC_METHOD
+#define ESMC_METHOD "ESMC_AttributesGetArrayLG()"
+void ESMC_AttributesGetArrayLG(ESMCI::Attributes *attrs, char *key,
+                               bool *values, int &count, int &count_only,
+                               int &rc) {
+  rc = ESMF_FAILURE;
+  std::string localKey(key);
+  try {
+    ESMCI::vecjson_t ap = attrs->getPointer<ESMCI::vecjson_t,
+                                            ESMCI::arrjson_t>(localKey, rc);
+    count = (int)ap->size();
+    // Only fill the outgoing array if we are not getting the count only
+    if (count_only == 0) {
+      for (int ii=0; ii<count; ii++) {
+        values[ii] = ap[0][ii];
+      }
+    }
+  }
+  ESMF_CATCH_ISOC;
+  return;
+}
+
 //-----------------------------------------------------------------------------
 
 #undef  ESMC_METHOD
@@ -421,6 +455,24 @@ void ESMC_AttributesSetI8(ESMCI::Attributes *attrs, char *key, long int &value,
   std::string localKey(key);
   try {
     attrs->set<long int>(localKey, value, localforce, rc, index);
+  }
+  ESMF_CATCH_ISOC;
+}
+
+#undef  ESMC_METHOD
+#define ESMC_METHOD "ESMC_AttributesSetLG()"
+void ESMC_AttributesSetLG(ESMCI::Attributes *attrs, char *key, bool &value,
+                              int &force, int &rc, int *index) {
+  rc = ESMF_FAILURE;
+  bool localforce;
+  if (force == 1) {
+    localforce = true;
+  } else {
+    localforce = false;
+  }
+  std::string localKey(key);
+  try {
+    attrs->set<bool>(localKey, value, localforce, rc, index);
   }
   ESMF_CATCH_ISOC;
 }
@@ -532,6 +584,24 @@ void ESMC_AttributesSetArrayI8(ESMCI::Attributes *attrs, char *key,
   std::string localKey(key);
   try {
     attrs->set<long int>(localKey, values, count, localforce, rc);
+  }
+  ESMF_CATCH_ISOC;
+}
+
+#undef  ESMC_METHOD
+#define ESMC_METHOD "ESMC_AttributesSetArrayLG()"
+void ESMC_AttributesSetArrayLG(ESMCI::Attributes *attrs, char *key,
+                               bool *values, int &count, int &force, int &rc) {
+  rc = ESMF_FAILURE;
+  bool localforce;
+  if (force == 1) {
+    localforce = true;
+  } else {
+    localforce = false;
+  }
+  std::string localKey(key);
+  try {
+    attrs->set<bool>(localKey, values, count, localforce, rc);
   }
   ESMF_CATCH_ISOC;
 }

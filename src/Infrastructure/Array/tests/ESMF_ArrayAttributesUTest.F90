@@ -89,12 +89,12 @@ program ESMF_ArrayAttributesUTest
     call ESMF_ArrayGet(array, attrs=attrs, rc=rc)
     if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-    ! Set a key/value on the attributes object
-    call ESMF_AttributesSet(attrs, key, desired, rc=rc)
-    if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
-
     ! Get a different reference to the same attributes object
     call ESMF_ArrayGet(array, attrs=attrs2, rc=rc)
+    if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+    ! Set a key/value on the attributes object
+    call ESMF_AttributesSet(attrs, key, desired, rc=rc)
     if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
     ! Get the attribute value from the second reference

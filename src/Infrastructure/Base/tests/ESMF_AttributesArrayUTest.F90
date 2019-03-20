@@ -27,7 +27,7 @@ program ESMF_AttributesArrayUTest
 
   character(ESMF_MAXSTR) :: failMsg  ! Test failure message
   character(ESMF_MAXSTR) :: name  ! Test name
-  integer :: rc, petCount, i, charcount
+  integer :: rc, petCount, i, charcount, logical_count
   ! cumulative result: count failures; no failures equals "all pass"
   integer :: result = 0
   real(ESMF_KIND_R4), parameter :: tol = 1e-16  ! Tolerance for real tests
@@ -35,6 +35,8 @@ program ESMF_AttributesArrayUTest
   logical :: failed
   character(len=22), dimension(5) :: desired_char
   character(len=22), dimension(:), allocatable :: actual_char
+  logical, dimension(5) :: desired_logical
+  logical, dimension(:), allocatable :: actual_logical
 
   real(ESMF_KIND_R4), dimension(3) :: arr_R4  ! Desired array values
   ! Actual array values retrieved from attributes
@@ -245,6 +247,37 @@ program ESMF_AttributesArrayUTest
     exit
     end if
   end do
+
+  call ESMF_Test((.not. failed), name, failMsg, result, ESMF_SRCLINE)
+  !----------------------------------------------------------------------------
+
+  !----------------------------------------------------------------------------
+  !NEX_UTest
+  write(name, *) "ESMF_Attributes Array Setting/Getting Logical"
+  write(failMsg, *) "Attribute logical array operation failed"
+  failed = .false.
+
+  desired_logical(1) = .true.
+  desired_logical(2) = .false.
+  desired_logical(3) = .false.
+  desired_logical(4) = .true.
+  desired_logical(5) = .true.
+
+  call ESMF_AttributesSet(attrs, "logicalkey", desired_logical, rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  !call ESMF_AttributesPrint(attrs, rc=rc)
+  !if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  call ESMF_AttributesGet(attrs, "logicalkey", actual_logical, logical_count, rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+  do i=1,logical_count
+    if (desired_logical(i) .neqv. actual_logical(i)) then
+      failed = .true.
+      exit
+    endif
+  enddo
+  deallocate(actual_logical)
 
   call ESMF_Test((.not. failed), name, failMsg, result, ESMF_SRCLINE)
   !----------------------------------------------------------------------------

@@ -283,6 +283,7 @@ template float Attributes::get(key_t&, int&, float*, int*) const;
 template double Attributes::get(key_t&, int&, double*, int*) const;
 template int Attributes::get(key_t&, int&, int*, int*) const;
 template long int Attributes::get(key_t&, int&, long int*, int*) const;
+template bool Attributes::get(key_t&, int&, bool*, int*) const;
 template std::string Attributes::get(key_t&, int&, std::string*, int*) const;
 
 #undef  ESMC_METHOD
@@ -589,6 +590,14 @@ void Attributes::set(key_t &key, T value, bool force, int &rc, int *index) {
         json::array_t *arr_ptr = this->storage.at(jp).get_ptr<json::array_t *>();
         arr_ptr[0][*index] = value;
       } else {
+        if (this->hasKey(key, rc, true)) {
+          auto jat = this->storage.at(jp);
+          json jvalue = value;
+          if (!jat.is_null() && jvalue.type() != jat.type()) {
+            std::string errmsg = "Types not equivalent. Set force=true to skip type checking. The key is: " + key;
+            ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, errmsg, rc);
+          }
+        }
         this->storage[jp] = value;
       }
     }
@@ -613,6 +622,7 @@ template void Attributes::set<double>(key_t&, double, bool, int&, int*);
 template void Attributes::set<int>(key_t&, int, bool, int&, int*);
 template void Attributes::set<long int>(key_t&, long int, bool, int&, int*);
 template void Attributes::set<std::string>(key_t&, std::string, bool, int&, int*);
+template void Attributes::set<bool>(key_t&, bool, bool, int&, int*);
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::set(<array>)"
@@ -670,6 +680,7 @@ template void Attributes::set<float>(key_t&, float*, int, bool, int&);
 template void Attributes::set<double>(key_t&, double*, int, bool, int&);
 template void Attributes::set<int>(key_t&, int*, int, bool, int&);
 template void Attributes::set<long int>(key_t&, long int*, int, bool, int&);
+template void Attributes::set<bool>(key_t&, bool*, int, bool, int&);
 template void Attributes::set<std::vector<std::string>>(key_t&, std::vector<std::string>*, int, bool, int&);
 
 #undef  ESMC_METHOD
