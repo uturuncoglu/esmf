@@ -315,6 +315,40 @@ program ESMF_AttributesArrayUTest
   call ESMF_Test((.not. failed), name, failMsg, result, ESMF_SRCLINE)
   !----------------------------------------------------------------------------
 
+  !----------------------------------------------------------------------------
+  !NEX_UTest
+  write(name, *) "ESMF_Attributes Array Bad Set-By-Index"
+  write(failMsg, *) "Attribute set by index error not handled"
+  failed = .false.
+
+  call ESMF_AttributesSet(attrs, "logicalkey", .false., idx=55, rc=rc)
+  call ESMF_Test((rc==ESMF_RC_ARG_OUTOFRANGE), name, failMsg, result, ESMF_SRCLINE)
+  !----------------------------------------------------------------------------
+
+  !----------------------------------------------------------------------------
+  !NEX_UTest
+  write(name, *) "ESMF_Attributes Array Bad Set-By-Index Type"
+  write(failMsg, *) "Attribute set by index error not handled"
+  failed = .false.
+
+  call ESMF_AttributesSet(attrs, "logicalkey", 55, idx=1, rc=rc)
+  !if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+  call ESMF_Test((rc==ESMC_RC_ARG_BAD), name, failMsg, result, ESMF_SRCLINE)
+  !----------------------------------------------------------------------------
+
+  !----------------------------------------------------------------------------
+  !NEX_UTest
+  write(name, *) "ESMF_Attributes Array Bad Key Overload Type"
+  write(failMsg, *) "Attribute set error not handled"
+  failed = .false.
+
+  call ESMF_AttributesSet(attrs, "charkey", 55, rc=rc)
+  !if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+  call ESMF_Test((rc==ESMC_RC_ARG_BAD), name, failMsg, result, ESMF_SRCLINE)
+
+  !call ESMF_AttributesPrint(attrs, rc=rc)
+  !----------------------------------------------------------------------------
+
   ! Destroy the attributes object used by the array set/get tests
   call ESMF_AttributesDestroy(attrs, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)

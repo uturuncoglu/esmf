@@ -593,7 +593,7 @@ program ESMF_AttributesUTest
 
 !  call ESMF_AttributesPrint(attrs_types, 2)
 
-  call ESMF_AttributesSet(attrs_types, "key", 111.0, force=.false., rc=rc)
+  call ESMF_AttributesSet(attrs_types, "key", 111.0, rc=rc)
   call ESMF_Test((rc==ESMC_RC_ARG_BAD), name, failMsg, result, ESMF_SRCLINE)
 
   call ESMF_AttributesDestroy(attrs_types, rc=rc)

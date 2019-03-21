@@ -578,25 +578,40 @@ void Attributes::set(key_t &key, T value, bool force, int &rc, int *index) {
   try {
     bool has_key = false;
     json jvalue = value;
-    if (!force && !index) {
+    if (!index) {
       try {
         has_key = this->hasKey(key, rc, true);
       }
       catch (ESMCI::esmf_attrs_error &exc_esmf) {
         ESMF_CATCH_PASSTHRU(exc_esmf);
       }
+      if (has_key && !force) {
+        std::string msg = "Attribute key \'" + key + "\' already in map and "
+                          "force=false.";
+        ESMF_CHECKERR_STD("ESMC_RC_CANNOT_SET", ESMC_RC_CANNOT_SET, msg, rc);
+      }
     }
     json::json_pointer jp = this->formatKey(key, rc);
     try {
       if (index) {
         json::array_t *arr_ptr = this->storage.at(jp).get_ptr<json::array_t *>();
-        arr_ptr[0][*index] = value;
+        try {
+          auto jat = arr_ptr[0].at(*index);
+          if (!jat.is_null() && jvalue.type() != jat.type()) {
+            std::string errmsg = "Types not equivalent. The key is: " + key;
+            ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, errmsg, rc);
+          }
+          arr_ptr[0].at(*index) = value;
+        }
+        catch (std::out_of_range &exc) {
+          ESMF_CHECKERR_STD("ESMF_RC_ARG_OUTOFRANGE", ESMF_RC_ARG_OUTOFRANGE,
+            std::string(exc.what()), rc);
+        }
       } else {
         if (has_key) {
           auto jat = this->storage.at(jp);
           if (!jat.is_null() && jvalue.type() != jat.type()) {
-            std::string errmsg = "Types not equivalent. Set force=true to "
-                                 "skip type checking. The key is: " + key;
+            std::string errmsg = "Types not equivalent. The key is: " + key;
             ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, errmsg, rc);
           }
         }
