@@ -575,30 +575,32 @@ template <typename T>
 void Attributes::set(key_t &key, T value, bool force, int &rc, int *index) {
   // Exceptions:  ESMCI:esmf_attrs_error
   rc = ESMF_FAILURE;
-  if (!force && !index) {
-    try {
-      bool has_key = handleHasKey(this, key, rc);
-    }
-    catch (ESMCI::esmf_attrs_error &exc_esmf) {
-      ESMF_CATCH_PASSTHRU(exc_esmf);
-    }
-  }
   try {
+    bool has_key = false;
+    json jvalue = value;
+    if (!force && !index) {
+      try {
+        has_key = this->hasKey(key, rc, true);
+      }
+      catch (ESMCI::esmf_attrs_error &exc_esmf) {
+        ESMF_CATCH_PASSTHRU(exc_esmf);
+      }
+    }
     json::json_pointer jp = this->formatKey(key, rc);
     try {
       if (index) {
         json::array_t *arr_ptr = this->storage.at(jp).get_ptr<json::array_t *>();
         arr_ptr[0][*index] = value;
       } else {
-        if (this->hasKey(key, rc, true)) {
+        if (has_key) {
           auto jat = this->storage.at(jp);
-          json jvalue = value;
           if (!jat.is_null() && jvalue.type() != jat.type()) {
-            std::string errmsg = "Types not equivalent. Set force=true to skip type checking. The key is: " + key;
+            std::string errmsg = "Types not equivalent. Set force=true to "
+                                 "skip type checking. The key is: " + key;
             ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, errmsg, rc);
           }
         }
-        this->storage[jp] = value;
+        this->storage[jp] = jvalue;
       }
     }
     catch (json::out_of_range &e) {

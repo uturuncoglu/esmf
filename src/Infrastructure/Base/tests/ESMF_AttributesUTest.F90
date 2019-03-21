@@ -580,26 +580,24 @@ program ESMF_AttributesUTest
   call ESMF_Test((actual_logical .eqv. .false.), name, failMsg, result, ESMF_SRCLINE)
 
   !----------------------------------------------------------------------------
-  !disable_NEX_UTest
-!  write(name, *) "ESMF_Attributes Test Type Checking"
-!  write(failMsg, *) "Did not catch type error"
-!  rc = ESMF_FAILURE
-!
-!  attrs_types = ESMF_AttributesCreate(rc=rc)
-!  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
-!
-!  call ESMF_AttributesSet(attrs_types, "key", 111, rc=rc)
-!  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
-!
-!!  call ESMF_AttributesPrint(attrs_types, 2)
-!
-!  call ESMF_AttributesSet(attrs_types, "key", 111.0, rc=rc)
-!  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
-!
-!  call ESMF_AttributesDestroy(attrs_types, rc=rc)
-!  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
-!
-!  call ESMF_Test((actual_logical .eqv. .false.), name, failMsg, result, ESMF_SRCLINE)
+  !NEX_UTest
+  write(name, *) "ESMF_Attributes Test Type Checking"
+  write(failMsg, *) "Did not catch type error"
+  rc = ESMF_FAILURE
+
+  attrs_types = ESMF_AttributesCreate(rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  call ESMF_AttributesSet(attrs_types, "key", 111, rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+!  call ESMF_AttributesPrint(attrs_types, 2)
+
+  call ESMF_AttributesSet(attrs_types, "key", 111.0, force=.false., rc=rc)
+  call ESMF_Test((rc==ESMC_RC_ARG_BAD), name, failMsg, result, ESMF_SRCLINE)
+
+  call ESMF_AttributesDestroy(attrs_types, rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
   !----------------------------------------------------------------------------
   call ESMF_TestEnd(ESMF_SRCLINE) ! calls ESMF_Finalize() internally
