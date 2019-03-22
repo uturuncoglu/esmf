@@ -75,6 +75,15 @@ bool handleHasKey(const Attributes* attrs, key_t& key, int& rc) {
 }
 
 #undef ESMC_METHOD
+#define ESMC_METHOD "handleJSONTypeCheck()"
+void handleJSONTypeCheck(key_t &key, const json &src, const json &dst, int &rc) {
+  if (!src.is_null() && src.type() != dst.type()) {
+    std::string errmsg = "Types not equivalent. The key is: " + key;
+    ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, errmsg, rc);
+  }
+}
+
+#undef ESMC_METHOD
 #define ESMC_METHOD "isIn(<string,vector>)"
 bool isIn(key_t& target, const std::vector<std::string>& container) {
   auto it = std::find(container.cbegin(), container.cend(), target);
@@ -587,43 +596,35 @@ void Attributes::set(key_t &key, T value, bool force, int &rc, int *index) {
       }
       if (has_key && !force) {
         std::string msg = "Attribute key \'" + key + "\' already in map and "
-                          "force=false.";
+                                                     "force=false.";
         ESMF_CHECKERR_STD("ESMC_RC_CANNOT_SET", ESMC_RC_CANNOT_SET, msg, rc);
       }
     }
     json::json_pointer jp = this->formatKey(key, rc);
-    try {
-      if (index) {
-        json::array_t *arr_ptr = this->storage.at(jp).get_ptr<json::array_t *>();
-        try {
-          auto jat = arr_ptr[0].at(*index);
-          if (!jat.is_null() && jvalue.type() != jat.type()) {
-            std::string errmsg = "Types not equivalent. The key is: " + key;
-            ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, errmsg, rc);
-          }
-          arr_ptr[0].at(*index) = value;
-        }
-        catch (std::out_of_range &exc) {
-          ESMF_CHECKERR_STD("ESMF_RC_ARG_OUTOFRANGE", ESMF_RC_ARG_OUTOFRANGE,
-            std::string(exc.what()), rc);
-        }
-      } else {
-        if (has_key) {
-          auto jat = this->storage.at(jp);
-          if (!jat.is_null() && jvalue.type() != jat.type()) {
-            std::string errmsg = "Types not equivalent. The key is: " + key;
-            ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, errmsg, rc);
-          }
-        }
-        this->storage[jp] = jvalue;
+    if (index) {
+      json::array_t *arr_ptr = this->storage.at(jp).get_ptr<json::array_t *>();
+      try {
+        json jat = arr_ptr[0].at(*index);
+        handleJSONTypeCheck(key, jat, jvalue, rc);
+        arr_ptr[0].at(*index) = value;
       }
+      catch (std::out_of_range &exc) {
+        ESMF_CHECKERR_STD("ESMF_RC_ARG_OUTOFRANGE", ESMF_RC_ARG_OUTOFRANGE,
+                          std::string(exc.what()), rc);
+      }
+    } else {
+      if (has_key) {
+        json jat = this->storage.at(jp);
+        handleJSONTypeCheck(key, jat, jvalue, rc);
+      }
+      this->storage[jp] = jvalue;
     }
-    catch (json::out_of_range &e) {
-      ESMF_THROW_JSON(e, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);
-    }
-    catch (json::type_error &e) {
-      ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
-    }
+  }
+  catch (json::out_of_range &e) {
+    ESMF_THROW_JSON(e, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);
+  }
+  catch (json::type_error &e) {
+    ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
   }
   catch (ESMCI::esmf_attrs_error &exc_esmf) {
     ESMF_CATCH_PASSTHRU(exc_esmf);
