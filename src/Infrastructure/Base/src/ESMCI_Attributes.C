@@ -134,6 +134,11 @@ Attributes::Attributes(const json& storage){
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes(json&&)"
 Attributes::Attributes(json&& storage){
+  if (!storage.is_object()) {
+    std::string msg = "Can only create Attributes from JSON value_t::object_t types";
+    int rc;
+    ESMF_CHECKERR_STD("ESMC_RC_OBJ_NOT_CREATED", ESMC_RC_OBJ_NOT_CREATED, msg, rc);
+  }
   this->storage = move(storage);
 };
 
@@ -294,6 +299,7 @@ template int Attributes::get(key_t&, int&, int*, int*) const;
 template long int Attributes::get(key_t&, int&, long int*, int*) const;
 template bool Attributes::get(key_t&, int&, bool*, int*) const;
 template std::string Attributes::get(key_t&, int&, std::string*, int*) const;
+template json Attributes::get(key_t&, int&, json*, int*) const;
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::getPointer()"
@@ -545,6 +551,28 @@ void Attributes::serialize(char *buffer, int *length, int *offset,
 }
 
 #undef ESMC_METHOD
+#define ESMC_METHOD "Attributes::set(<Attributes>)"
+void Attributes::set(key_t &key, const ESMCI::Attributes &attrs, bool force,
+  int &rc) {
+  //tdk:todo: type-safe overload?
+  //tdk:test: in c++
+  rc = ESMF_FAILURE;
+  if (!force) {
+    try {
+      bool has_key = handleHasKey(this, key, rc);
+    }
+    catch (ESMCI::esmf_attrs_error &exc_esmf) {
+      ESMF_CATCH_PASSTHRU(exc_esmf);
+    }
+  }
+  try {
+    json::json_pointer jp = this->formatKey(key, rc);
+    this->storage[jp] = attrs.getStorageRef();
+  }
+  ESMF_CATCH_ATTRS;
+}
+
+#undef ESMC_METHOD
 #define ESMC_METHOD "Attributes::set(<null>)"
 void Attributes::set(key_t &key, bool force, int &rc) {
   rc = ESMF_FAILURE;
@@ -558,22 +586,9 @@ void Attributes::set(key_t &key, bool force, int &rc) {
   }
   try {
     json::json_pointer jp = this->formatKey(key, rc);
-    try {
-      this->storage[jp] = json::value_t::null;
-    }
-    catch (json::out_of_range &e) {
-      ESMF_THROW_JSON(e, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);
-    }
-    catch (json::type_error &e) {
-      ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
-    }
+    this->storage[jp] = json::value_t::null;
   }
-  catch (ESMCI::esmf_attrs_error &exc_esmf) {
-    ESMF_CATCH_PASSTHRU(exc_esmf);
-  }
-  catch (...) {
-    ESMF_CHECKERR_STD("", ESMF_FAILURE, "Unhandled throw", rc);
-  }
+  ESMF_CATCH_ATTRS;
   rc = ESMF_SUCCESS;
   return;
 }

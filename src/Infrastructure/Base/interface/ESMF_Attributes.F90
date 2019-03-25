@@ -53,6 +53,11 @@ type ESMF_Attributes
   type(C_PTR) :: ptr
 end type ESMF_Attributes
 
+interface ESMF_AttributesCreate
+  module procedure ESMF_AttributesCreateEmpty
+  module procedure ESMF_AttributesCreateByKey
+end interface ESMF_AttributesCreate
+
 interface ESMF_AttributesGet
   module procedure ESMF_AttributesGetI4
   module procedure ESMF_AttributesGetI8
@@ -75,6 +80,7 @@ interface ESMF_AttributesSet
   module procedure ESMF_AttributesSetR8
   module procedure ESMF_AttributesSetLG
   module procedure ESMF_AttributesSetCH
+  module procedure ESMF_AttributesSetATTRS
   module procedure ESMF_AttributesSetArrayI4
   module procedure ESMF_AttributesSetArrayI8
   module procedure ESMF_AttributesSetArrayR4
@@ -112,8 +118,8 @@ end function ESMF_AttributesCopy
 !------------------------------------------------------------------------------
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributesCreate()"
-function ESMF_AttributesCreate(rc) result(attrs)
+#define ESMF_METHOD "ESMF_AttributesCreateEmpty()"
+function ESMF_AttributesCreateEmpty(rc) result(attrs)
   integer, intent(inout), optional :: rc
   integer :: localrc
   type(ESMF_Attributes) :: attrs
@@ -126,7 +132,28 @@ function ESMF_AttributesCreate(rc) result(attrs)
                          rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
-end function ESMF_AttributesCreate
+end function ESMF_AttributesCreateEmpty
+
+#undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_AttributesCreateByKey()"
+function ESMF_AttributesCreateByKey(srcAttrs, key, rc) result(attrs)
+  type(ESMF_Attributes), intent(in) :: srcAttrs
+  character(len=*), intent(in) :: key
+  integer, intent(inout), optional :: rc
+  type(ESMF_Attributes) :: attrs
+
+  integer :: localrc
+
+  localrc = ESMF_FAILURE
+  if (present(rc)) rc = ESMF_FAILURE
+
+  attrs%ptr = c_attrs_create_by_key(srcAttrs%ptr, trim(key)//C_NULL_CHAR, &
+    localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
+    rcToReturn=rc)) return
+
+  if (present(rc)) rc = ESMF_SUCCESS
+end function ESMF_AttributesCreateByKey
 
 !------------------------------------------------------------------------------
 
@@ -1173,6 +1200,42 @@ subroutine ESMF_AttributesSetLG(attrs, key, value, force, idx, rc)
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributesSetLG
+
+!------------------------------------------------------------------------------
+
+#undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_AttributesSetATTRS()"
+subroutine ESMF_AttributesSetATTRS(attrs, key, value, force, rc)
+  type(ESMF_Attributes), intent(inout) :: attrs
+  character(len=*), intent(in) :: key
+  type(ESMF_Attributes), intent(in) :: value
+  logical, intent(in), optional :: force
+  integer, intent(inout), optional :: rc
+
+  integer :: localrc
+  integer(C_INT) :: localforce
+
+  localrc = ESMF_FAILURE
+  if (present(rc)) rc = ESMF_FAILURE
+
+  localforce = 1
+  if (present(force)) then
+    if (force .eqv. .false.) then
+      localforce = 0
+    end if
+  end if
+
+  call c_attrs_set_ATTRS(&
+    attrs%ptr, &
+    trim(key)//C_NULL_CHAR, &
+    value%ptr, &
+    localforce, &
+    localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
+    rcToReturn=rc)) return
+
+  if (present(rc)) rc = ESMF_SUCCESS
+end subroutine ESMF_AttributesSetATTRS
 
 !------------------------------------------------------------------------------
 

@@ -37,6 +37,8 @@ using json = nlohmann::json;  // Convenience rename for JSON namespace.
 
 #define ESMF_CATCH_ISOC catch (ESMCI::esmf_attrs_error &exc_esmf) {ESMC_LogDefault.MsgFoundError(exc_esmf.getReturnCode(), exc_esmf.what(), ESMC_CONTEXT, nullptr); rc = exc_esmf.getReturnCode();} catch(...) {std::string msg;if (rc == ESMF_SUCCESS) {msg = "Unhandled throw and return code is ESMF_SUCCESS(?). Changing return code to ESMF_FAILURE";rc = ESMF_FAILURE;} else {msg = "Unhandled throw";}ESMC_LogDefault.MsgFoundError(rc, msg, ESMC_CONTEXT, nullptr);}
 
+#define ESMF_CATCH_ATTRS catch (json::out_of_range &exc_json) {ESMF_THROW_JSON(exc_json, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);} catch (json::type_error &exc_json) {ESMF_THROW_JSON(exc_json, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);} catch (ESMCI::esmf_attrs_error &exc_esmf) {ESMF_CATCH_PASSTHRU(exc_esmf);} catch (...) {ESMF_CHECKERR_STD("", ESMF_FAILURE, "Unhandled throw", rc);}
+
 //-----------------------------------------------------------------------------
 //BOP
 // !CLASS:  Attributes
@@ -92,9 +94,9 @@ public:
   Attributes&operator=(const Attributes&) = delete; // Copy assignment
   Attributes&operator=(Attributes&&) = delete; // Move assignment
 
-  Attributes(const json& storage);
-  Attributes(json&& storage);
-  Attributes(key_t& input, int& rc);
+  Attributes(const json& storage); // Copy constructor from JSON
+  Attributes(json&& storage); // Move constructor from JSON
+  Attributes(key_t& input, int& rc); // Parse JSON string constructor
 
   std::string dump(int& rc) const;
   std::string dump(int indent, int& rc) const;
@@ -126,7 +128,8 @@ public:
   void serialize(char *buffer, int *length, int *offset,
     ESMC_InquireFlag inquireflag, int &rc);
 
-  void set(key_t &key, bool force, int &rc);
+  void set(key_t &key, const ESMCI::Attributes &attrs, bool force, int &rc);
+  void set(key_t &key, bool force, int &rc);  // set null
 
   template <typename T>
   void set(key_t& key, T value, bool force, int& rc, int *index = nullptr);

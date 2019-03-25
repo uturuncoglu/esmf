@@ -67,10 +67,12 @@ program ESMF_AttributesUTest
   type(ESMF_Attributes) :: attrs, attrs2, attrs3, attrs4, attrs5, attrs6, &
                            attrs7, attrs8, attrs9, attrs10, attrs_copy_src, &
                            attrs_copy_dst, attrs_w, attrs_r, attrs_logical, &
-                           attrs_types
+                           attrs_types, attrs_obj_dst, attrs_obj_src, &
+                           attrs_obj_new
 
   logical :: is_present, failed, is_set, is_present_copy_test, actual_logical, &
              desired_logical
+  logical, dimension(2) :: fails_obj
 
   !----------------------------------------------------------------------------
   call ESMF_TestStart(ESMF_SRCLINE, rc=rc)  ! calls ESMF_Initialize() internally
@@ -578,6 +580,7 @@ program ESMF_AttributesUTest
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
   call ESMF_Test((actual_logical .eqv. .false.), name, failMsg, result, ESMF_SRCLINE)
+  !----------------------------------------------------------------------------
 
   !----------------------------------------------------------------------------
   !NEX_UTest
@@ -598,6 +601,51 @@ program ESMF_AttributesUTest
 
   call ESMF_AttributesDestroy(attrs_types, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+  !----------------------------------------------------------------------------
+
+  !----------------------------------------------------------------------------
+  !NEX_UTest
+  write(name, *) "ESMF_Attributes Set/Get Object"
+  write(failMsg, *) "Did not set/get Attributes object"
+  rc = ESMF_FAILURE
+  failed = .false.
+
+  attrs_obj_dst = ESMF_AttributesCreate(rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+  attrs_obj_src = ESMF_AttributesCreate(rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  call ESMF_AttributesSet(attrs_obj_src, "src-key", 11167, rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  call ESMF_AttributesSet(attrs_obj_dst, "dst-key", attrs_obj_src, rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  attrs_obj_new = ESMF_AttributesCreate(attrs_obj_dst, "dst-key", rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+!  call ESMF_AttributesPrint(attrs_obj_dst, 2)
+!  call ESMF_AttributesPrint(attrs_obj_new, 2)
+
+  fails_obj(1) = ESMF_AttributesIsPresent(attrs_obj_new, "dst-key", rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  call ESMF_AttributesSet(attrs_obj_src, "another-key", 44, rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  fails_obj(2) = ESMF_AttributesIsPresent(attrs_obj_new, "another-key", rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  call ESMF_Test((.not. any(fails_obj)), name, failMsg, result, ESMF_SRCLINE)
+
+!  call ESMF_AttributesPrint(attrs_obj_dst, 2)
+!  call ESMF_AttributesPrint(attrs_obj_new, 2)
+!  print *, fails_obj
+
+  call ESMF_AttributesDestroy(attrs_obj_dst, rc=rc)
+  call ESMF_AttributesDestroy(attrs_obj_src, rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+  !----------------------------------------------------------------------------
 
   !----------------------------------------------------------------------------
   call ESMF_TestEnd(ESMF_SRCLINE) ! calls ESMF_Finalize() internally

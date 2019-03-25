@@ -58,6 +58,21 @@ ESMCI::Attributes* ESMC_AttributesCreate(int& rc) {
 }
 
 #undef  ESMC_METHOD
+#define ESMC_METHOD "ESMC_AttributesCreateByKey()"
+ESMCI::Attributes* ESMC_AttributesCreateByKey(ESMCI::Attributes *srcAttrs,
+  char* key, int& rc) {
+  rc = ESMF_FAILURE;
+  ESMCI::Attributes *attrs;
+  try {
+    std::string local_key(key);
+    json new_storage = srcAttrs->get<json>(local_key, rc);
+    attrs = new ESMCI::Attributes(std::move(new_storage));
+  }
+  ESMF_CATCH_ISOC;
+  return attrs;
+}
+
+#undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_AttributesDestroy()"
 void ESMC_AttributesDestroy(ESMCI::Attributes* attrs, int& rc) {
   delete attrs;
@@ -492,6 +507,24 @@ void ESMC_AttributesSetCH(ESMCI::Attributes *attrs, char *key, char *value,
   std::string localValue(value);
   try {
     attrs->set<std::string>(localKey, localValue, localforce, rc, index);
+  }
+  ESMF_CATCH_ISOC;
+}
+
+#undef  ESMC_METHOD
+#define ESMC_METHOD "ESMC_AttributesSetATTRS()"
+void ESMC_AttributesSetATTRS(ESMCI::Attributes *attrs, char *key,
+  ESMCI::Attributes *value, int &force, int &rc) {
+  rc = ESMF_FAILURE;
+  bool localforce;  //tdk:todo: use C_BOOL type to avoid this logic
+  if (force == 1) {
+    localforce = true;
+  } else {
+    localforce = false;
+  }
+  std::string localKey(key);
+  try {
+    attrs->set(localKey, *value, localforce, rc);
   }
   ESMF_CATCH_ISOC;
 }

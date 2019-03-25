@@ -17,6 +17,15 @@ interface
     type(C_PTR) :: c_attrs_create
   end function c_attrs_create
 
+  function c_attrs_create_by_key(srcAttrs, key, rc) bind(C, name="ESMC_AttributesCreateByKey")
+    use iso_c_binding
+    implicit none
+    type(C_PTR), value, intent(in) :: srcAttrs
+    character(C_CHAR), intent(in) :: key(*)
+    integer(C_INT), intent(inout) :: rc
+    type(C_PTR) :: c_attrs_create_by_key
+  end function c_attrs_create_by_key
+
   !=============================================================================
 
   subroutine c_attrs_destroy(attrs, rc) bind(C, name="ESMC_AttributesDestroy")
@@ -278,6 +287,16 @@ interface
     integer(C_INT), intent(inout) :: rc
     type(C_PTR), value :: idx
   end subroutine c_attrs_set_LG
+
+  subroutine c_attrs_set_ATTRS(attrs, key, value, force, rc) bind(C, name="ESMC_AttributesSetATTRS")
+    use iso_c_binding
+    implicit none
+    type(C_PTR), value :: attrs
+    character(kind=C_CHAR), intent(in) :: key(*)
+    type(C_PTR), value :: value
+    integer(C_INT), intent(in) :: force
+    integer(C_INT), intent(inout) :: rc
+  end subroutine c_attrs_set_ATTRS
 
   subroutine c_attrs_set_NULL(attrs, key, force, rc) bind(C, name="ESMC_AttributesSetNULL")
     use iso_c_binding
