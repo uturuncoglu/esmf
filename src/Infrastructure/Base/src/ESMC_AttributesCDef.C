@@ -73,6 +73,19 @@ ESMCI::Attributes* ESMC_AttributesCreateByKey(ESMCI::Attributes *srcAttrs,
 }
 
 #undef  ESMC_METHOD
+#define ESMC_METHOD "ESMC_AttributesCreateByParse()"
+ESMCI::Attributes* ESMC_AttributesCreateByParse(char *payload, int& rc) {
+  rc = ESMF_FAILURE;
+  ESMCI::Attributes *attrs;
+  try {
+    std::string local_payload(payload);
+    attrs = new ESMCI::Attributes(payload, rc);
+  }
+  ESMF_CATCH_ISOC;
+  return attrs;
+}
+
+#undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_AttributesDestroy()"
 void ESMC_AttributesDestroy(ESMCI::Attributes* attrs, int& rc) {
   delete attrs;

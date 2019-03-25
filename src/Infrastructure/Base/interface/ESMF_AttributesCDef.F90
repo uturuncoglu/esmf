@@ -26,6 +26,14 @@ interface
     type(C_PTR) :: c_attrs_create_by_key
   end function c_attrs_create_by_key
 
+  function c_attrs_create_by_parse(payload, rc) bind(C, name="ESMC_AttributesCreateByParse")
+    use iso_c_binding
+    implicit none
+    character(C_CHAR), intent(in) :: payload(*)
+    integer(C_INT), intent(inout) :: rc
+    type(C_PTR) :: c_attrs_create_by_parse
+  end function c_attrs_create_by_parse
+
   !=============================================================================
 
   subroutine c_attrs_destroy(attrs, rc) bind(C, name="ESMC_AttributesDestroy")

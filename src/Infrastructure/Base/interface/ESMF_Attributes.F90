@@ -56,6 +56,7 @@ end type ESMF_Attributes
 interface ESMF_AttributesCreate
   module procedure ESMF_AttributesCreateEmpty
   module procedure ESMF_AttributesCreateByKey
+  module procedure ESMF_AttributesCreateByParse
 end interface ESMF_AttributesCreate
 
 interface ESMF_AttributesGet
@@ -154,6 +155,25 @@ function ESMF_AttributesCreateByKey(srcAttrs, key, rc) result(attrs)
 
   if (present(rc)) rc = ESMF_SUCCESS
 end function ESMF_AttributesCreateByKey
+
+#undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_AttributesCreateByParse()"
+function ESMF_AttributesCreateByParse(payload, rc) result(attrs)
+  character(len=*), intent(in) :: payload
+  integer, intent(inout), optional :: rc
+  type(ESMF_Attributes) :: attrs
+
+  integer :: localrc
+
+  localrc = ESMF_FAILURE
+  if (present(rc)) rc = ESMF_FAILURE
+
+  attrs%ptr = c_attrs_create_by_parse(trim(payload)//C_NULL_CHAR, localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
+    rcToReturn=rc)) return
+
+  if (present(rc)) rc = ESMF_SUCCESS
+end function ESMF_AttributesCreateByParse
 
 !------------------------------------------------------------------------------
 

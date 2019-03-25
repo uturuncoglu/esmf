@@ -50,6 +50,7 @@ program ESMF_AttributesUTest
   character(len=33) :: def_value_char
   character(len=22) :: key_empty_char
   character(len=2) :: desired_empty_char, empty_value_char
+  character(ESMF_MAXSTR) :: to_parse
   integer               :: rc, petCount, i
   integer, allocatable  :: petList(:)
   type(ESMF_VM)         :: vm
@@ -57,7 +58,8 @@ program ESMF_AttributesUTest
   ! cumulative result: count failures; no failures equals "all pass"
   integer               :: result = 0
 
-  integer(ESMF_KIND_I4) :: value, actual, actual2, actual3, arr_i4_get_count
+  integer(ESMF_KIND_I4) :: value, actual, actual2, actual3, arr_i4_get_count, &
+                           actual4
   integer(ESMF_KIND_I8) :: desired_i8, value_i8
   real :: actual_rw_val, desired_rw_val
   real(ESMF_KIND_R4) :: desired_r4, value_r4
@@ -68,7 +70,7 @@ program ESMF_AttributesUTest
                            attrs7, attrs8, attrs9, attrs10, attrs_copy_src, &
                            attrs_copy_dst, attrs_w, attrs_r, attrs_logical, &
                            attrs_types, attrs_obj_dst, attrs_obj_src, &
-                           attrs_obj_new
+                           attrs_obj_new, attrs_parse
 
   logical :: is_present, failed, is_set, is_present_copy_test, actual_logical, &
              desired_logical
@@ -644,6 +646,27 @@ program ESMF_AttributesUTest
 
   call ESMF_AttributesDestroy(attrs_obj_dst, rc=rc)
   call ESMF_AttributesDestroy(attrs_obj_src, rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+  !----------------------------------------------------------------------------
+
+  !----------------------------------------------------------------------------
+  !NEX_UTest
+  write(name, *) "ESMF_Attributes Create By Parse"
+  write(failMsg, *) "Did not create Attributes by parse"
+  rc = ESMF_FAILURE
+  failed = .false.
+
+  to_parse = '{"hello": "fortran parser", "multiple-types": 55}'
+
+  attrs_parse = ESMF_AttributesCreate(to_parse, rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  call ESMF_AttributesGet(attrs_parse, "multiple-types", actual4, rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  call ESMF_Test((actual4==55), name, failMsg, result, ESMF_SRCLINE)
+
+  call ESMF_AttributesDestroy(attrs_parse, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
   !----------------------------------------------------------------------------
 
