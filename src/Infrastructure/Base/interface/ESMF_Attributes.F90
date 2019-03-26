@@ -238,7 +238,8 @@ function ESMF_AttributesIsPresent(attrs, key, isPointer, rc) result(is_present)
 
   logical :: local_isPointer
   integer :: localrc
-  integer(C_INT) :: isPointer_forC, is_present_c
+  integer(C_INT) :: isPointer_forC
+  logical(C_BOOL) :: local_is_present
 
   is_present = .false.
   localrc = ESMF_FAILURE
@@ -256,14 +257,12 @@ function ESMF_AttributesIsPresent(attrs, key, isPointer, rc) result(is_present)
     isPointer_forC = 0
   end if
 
-  call c_attrs_is_present(attrs%ptr, trim(key)//C_NULL_CHAR, is_present_c, &
+  call c_attrs_is_present(attrs%ptr, trim(key)//C_NULL_CHAR, local_is_present, &
     localrc, isPointer_forC)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
     rcToReturn=rc)) return
 
-  if (is_present_c == 1) then
-    is_present = .true.
-  end if
+  is_present = local_is_present
 
   if (present(rc)) rc = ESMF_SUCCESS
 end function ESMF_AttributesIsPresent

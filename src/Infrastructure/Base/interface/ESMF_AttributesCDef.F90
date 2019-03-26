@@ -72,7 +72,7 @@ interface
     implicit none
     type(C_PTR), value :: attrs
     character(C_CHAR), intent(in) :: key(*)
-    integer(C_INT), intent(inout) :: res
+    logical(C_BOOL), intent(inout) :: res
     integer(C_INT), intent(inout) :: rc
     integer(C_INT), intent(in) :: isptr
   end subroutine c_attrs_is_present

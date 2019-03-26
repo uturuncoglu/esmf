@@ -131,7 +131,7 @@ void ESMC_AttributesInquire(ESMCI::Attributes *attrs, char *key, int &rc, int *c
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_AttributesIsPresent()"
-void ESMC_AttributesIsPresent(ESMCI::Attributes *attrs, char *key, int &res, int &rc,
+void ESMC_AttributesIsPresent(ESMCI::Attributes *attrs, char *key, bool &res, int &rc,
         int &isptr) {
   std::string local_key(key);
   try {
