@@ -418,17 +418,11 @@ void ESMC_AttributesGetArrayLG(ESMCI::Attributes *attrs, char *key,
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_AttributesSetR4()"
 void ESMC_AttributesSetR4(ESMCI::Attributes *attrs, char *key, float &value,
-                              int &force, int &rc, int *index) {
+                              bool &force, int &rc, int *index) {
   rc = ESMF_FAILURE;
-  bool localforce;
-  if (force == 1) {
-    localforce = true;
-  } else {
-    localforce = false;
-  }
   std::string localKey(key);
   try {
-    attrs->set<float>(localKey, value, localforce, rc, index);
+    attrs->set<float>(localKey, value, force, rc, index);
   }
   ESMF_CATCH_ISOC;
 }
@@ -436,17 +430,11 @@ void ESMC_AttributesSetR4(ESMCI::Attributes *attrs, char *key, float &value,
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_AttributesSetR8()"
 void ESMC_AttributesSetR8(ESMCI::Attributes *attrs, char *key, double &value,
-                              int &force, int &rc, int *index) {
+                              bool &force, int &rc, int *index) {
   rc = ESMF_FAILURE;
-  bool localforce;
-  if (force == 1) {
-    localforce = true;
-  } else {
-    localforce = false;
-  }
   std::string localKey(key);
   try {
-    attrs->set<double>(localKey, value, localforce, rc, index);
+    attrs->set<double>(localKey, value, force, rc, index);
   }
   ESMF_CATCH_ISOC;
 }
@@ -454,17 +442,11 @@ void ESMC_AttributesSetR8(ESMCI::Attributes *attrs, char *key, double &value,
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_AttributesSetI4()"
 void ESMC_AttributesSetI4(ESMCI::Attributes *attrs, char *key, int &value,
-                              int &force, int &rc, int *index) {
+                              bool &force, int &rc, int *index) {
   rc = ESMF_FAILURE;
-  bool localforce;
-  if (force == 1) {
-    localforce = true;
-  } else {
-    localforce = false;
-  }
   std::string localKey(key);
   try {
-    attrs->set<int>(localKey, value, localforce, rc, index);
+    attrs->set<int>(localKey, value, force, rc, index);
   }
   ESMF_CATCH_ISOC;
 }
@@ -472,17 +454,11 @@ void ESMC_AttributesSetI4(ESMCI::Attributes *attrs, char *key, int &value,
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_AttributesSetI8()"
 void ESMC_AttributesSetI8(ESMCI::Attributes *attrs, char *key, long int &value,
-                              int &force, int &rc, int *index) {
+                              bool &force, int &rc, int *index) {
   rc = ESMF_FAILURE;
-  bool localforce;
-  if (force == 1) {
-    localforce = true;
-  } else {
-    localforce = false;
-  }
   std::string localKey(key);
   try {
-    attrs->set<long int>(localKey, value, localforce, rc, index);
+    attrs->set<long int>(localKey, value, force, rc, index);
   }
   ESMF_CATCH_ISOC;
 }
@@ -490,17 +466,11 @@ void ESMC_AttributesSetI8(ESMCI::Attributes *attrs, char *key, long int &value,
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_AttributesSetLG()"
 void ESMC_AttributesSetLG(ESMCI::Attributes *attrs, char *key, bool &value,
-                              int &force, int &rc, int *index) {
+                              bool &force, int &rc, int *index) {
   rc = ESMF_FAILURE;
-  bool localforce;
-  if (force == 1) {
-    localforce = true;
-  } else {
-    localforce = false;
-  }
   std::string localKey(key);
   try {
-    attrs->set<bool>(localKey, value, localforce, rc, index);
+    attrs->set<bool>(localKey, value, force, rc, index);
   }
   ESMF_CATCH_ISOC;
 }
@@ -508,18 +478,12 @@ void ESMC_AttributesSetLG(ESMCI::Attributes *attrs, char *key, bool &value,
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_AttributesSetCH()"
 void ESMC_AttributesSetCH(ESMCI::Attributes *attrs, char *key, char *value,
-                              int &force, int &rc, int *index) {
+                              bool &force, int &rc, int *index) {
   rc = ESMF_FAILURE;
-  bool localforce;
-  if (force == 1) {
-    localforce = true;
-  } else {
-    localforce = false;
-  }
   std::string localKey(key);
   std::string localValue(value);
   try {
-    attrs->set<std::string>(localKey, localValue, localforce, rc, index);
+    attrs->set<std::string>(localKey, localValue, force, rc, index);
   }
   ESMF_CATCH_ISOC;
 }
@@ -527,35 +491,23 @@ void ESMC_AttributesSetCH(ESMCI::Attributes *attrs, char *key, char *value,
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_AttributesSetATTRS()"
 void ESMC_AttributesSetATTRS(ESMCI::Attributes *attrs, char *key,
-  ESMCI::Attributes *value, int &force, int &rc) {
+  ESMCI::Attributes *value, bool &force, int &rc) {
   rc = ESMF_FAILURE;
-  bool localforce;  //tdk:todo: use C_BOOL type to avoid this logic
-  if (force == 1) {
-    localforce = true;
-  } else {
-    localforce = false;
-  }
   std::string localKey(key);
   try {
-    attrs->set(localKey, *value, localforce, rc);
+    attrs->set(localKey, *value, force, rc);
   }
   ESMF_CATCH_ISOC;
 }
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_AttributesSetNULL()"
-void ESMC_AttributesSetNULL(ESMCI::Attributes *attrs, char *key, int &force,
+void ESMC_AttributesSetNULL(ESMCI::Attributes *attrs, char *key, bool &force,
   int &rc) {
   rc = ESMF_FAILURE;
-  bool localforce;
-  if (force == 1) {
-    localforce = true;
-  } else {
-    localforce = false;
-  }
   std::string localKey(key);
   try {
-    attrs->set(localKey, localforce, rc);
+    attrs->set(localKey, force, rc);
   }
   ESMF_CATCH_ISOC;
 }
@@ -565,17 +517,11 @@ void ESMC_AttributesSetNULL(ESMCI::Attributes *attrs, char *key, int &force,
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_AttributesSetArrayR4()"
 void ESMC_AttributesSetArrayR4(ESMCI::Attributes *attrs, char *key,
-                               float *values, int &count, int &force, int &rc) {
+                               float *values, int &count, bool &force, int &rc) {
   rc = ESMF_FAILURE;
-  bool localforce;
-  if (force == 1) {
-    localforce = true;
-  } else {
-    localforce = false;
-  }
   std::string localKey(key);
   try {
-    attrs->set<float>(localKey, values, count, localforce, rc);
+    attrs->set<float>(localKey, values, count, force, rc);
   }
   ESMF_CATCH_ISOC;
 }
@@ -583,17 +529,11 @@ void ESMC_AttributesSetArrayR4(ESMCI::Attributes *attrs, char *key,
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_AttributesSetArrayR8()"
 void ESMC_AttributesSetArrayR8(ESMCI::Attributes *attrs, char *key,
-                               double *values, int &count, int &force, int &rc) {
+                               double *values, int &count, bool &force, int &rc) {
   rc = ESMF_FAILURE;
-  bool localforce;
-  if (force == 1) {
-    localforce = true;
-  } else {
-    localforce = false;
-  }
   std::string localKey(key);
   try {
-    attrs->set<double>(localKey, values, count, localforce, rc);
+    attrs->set<double>(localKey, values, count, force, rc);
   }
   ESMF_CATCH_ISOC;
 }
@@ -601,17 +541,11 @@ void ESMC_AttributesSetArrayR8(ESMCI::Attributes *attrs, char *key,
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_AttributesSetArrayI4()"
 void ESMC_AttributesSetArrayI4(ESMCI::Attributes *attrs, char *key,
-                               int *values, int &count, int &force, int &rc) {
+                               int *values, int &count, bool &force, int &rc) {
   rc = ESMF_FAILURE;
-  bool localforce;
-  if (force == 1) {
-    localforce = true;
-  } else {
-    localforce = false;
-  }
   std::string localKey(key);
   try {
-    attrs->set<int>(localKey, values, count, localforce, rc);
+    attrs->set<int>(localKey, values, count, force, rc);
   }
   ESMF_CATCH_ISOC;
 }
@@ -619,17 +553,11 @@ void ESMC_AttributesSetArrayI4(ESMCI::Attributes *attrs, char *key,
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_AttributesSetArrayI8()"
 void ESMC_AttributesSetArrayI8(ESMCI::Attributes *attrs, char *key,
-                               long int *values, int &count, int &force, int &rc) {
+                               long int *values, int &count, bool &force, int &rc) {
   rc = ESMF_FAILURE;
-  bool localforce;
-  if (force == 1) {
-    localforce = true;
-  } else {
-    localforce = false;
-  }
   std::string localKey(key);
   try {
-    attrs->set<long int>(localKey, values, count, localforce, rc);
+    attrs->set<long int>(localKey, values, count, force, rc);
   }
   ESMF_CATCH_ISOC;
 }
@@ -637,17 +565,11 @@ void ESMC_AttributesSetArrayI8(ESMCI::Attributes *attrs, char *key,
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_AttributesSetArrayLG()"
 void ESMC_AttributesSetArrayLG(ESMCI::Attributes *attrs, char *key,
-                               bool *values, int &count, int &force, int &rc) {
+                               bool *values, int &count, bool &force, int &rc) {
   rc = ESMF_FAILURE;
-  bool localforce;
-  if (force == 1) {
-    localforce = true;
-  } else {
-    localforce = false;
-  }
   std::string localKey(key);
   try {
-    attrs->set<bool>(localKey, values, count, localforce, rc);
+    attrs->set<bool>(localKey, values, count, force, rc);
   }
   ESMF_CATCH_ISOC;
 }
@@ -655,19 +577,13 @@ void ESMC_AttributesSetArrayLG(ESMCI::Attributes *attrs, char *key,
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_AttributesSetArrayCH()"
 void ESMC_AttributesSetArrayCH(ESMCI::Attributes *attrs, char *key, int &count,
-  int &force, int &rc) {
+  bool &force, int &rc) {
   // Notes:
   //  * Only allocates storage. Does not actually insert anything!
   rc = ESMF_FAILURE;
-  bool localforce;
-  if (force == 1) {
-    localforce = true;
-  } else {
-    localforce = false;
-  }
   std::string localKey(key);
   try {
-    attrs->set<std::vector<std::string>>(localKey, nullptr, count, localforce, rc);
+    attrs->set<std::vector<std::string>>(localKey, nullptr, count, force, rc);
   }
   ESMF_CATCH_ISOC;
 }

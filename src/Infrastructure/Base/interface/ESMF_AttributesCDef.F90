@@ -236,7 +236,7 @@ interface
     type(C_PTR), value :: attrs
     character(kind=C_CHAR), intent(in) :: key(*)
     real(C_FLOAT), intent(in) :: value
-    integer(C_INT), intent(in) :: force
+    logical(C_BOOL), intent(in) :: force
     integer(C_INT), intent(inout) :: rc
     type(C_PTR), value :: idx
   end subroutine c_attrs_set_R4
@@ -247,7 +247,7 @@ interface
     type(C_PTR), value :: attrs
     character(kind=C_CHAR), intent(in) :: key(*)
     real(C_DOUBLE), intent(in) :: value
-    integer(C_INT), intent(in) :: force
+    logical(C_BOOL), intent(in) :: force
     integer(C_INT), intent(inout) :: rc
     type(C_PTR), value :: idx
   end subroutine c_attrs_set_R8
@@ -258,7 +258,7 @@ interface
     type(C_PTR), value :: attrs
     character(kind=C_CHAR), intent(in) :: key(*)
     integer(C_INT), intent(in) :: value
-    integer(C_INT), intent(in) :: force
+    logical(C_BOOL), intent(in) :: force
     integer(C_INT), intent(inout) :: rc
     type(C_PTR), value :: idx
   end subroutine c_attrs_set_I4
@@ -269,7 +269,7 @@ interface
     type(C_PTR), value :: attrs
     character(kind=C_CHAR), intent(in) :: key(*)
     integer(C_LONG), intent(in) :: value
-    integer(C_INT), intent(in) :: force
+    logical(C_BOOL), intent(in) :: force
     integer(C_INT), intent(inout) :: rc
     type(C_PTR), value :: idx
   end subroutine c_attrs_set_I8
@@ -280,7 +280,7 @@ interface
     type(C_PTR), value :: attrs
     character(kind=C_CHAR), intent(in) :: key(*)
     character(C_CHAR), intent(in) :: value
-    integer(C_INT), intent(in) :: force
+    logical(C_BOOL), intent(in) :: force
     integer(C_INT), intent(inout) :: rc
     type(C_PTR), value :: idx
   end subroutine c_attrs_set_CH
@@ -291,7 +291,7 @@ interface
     type(C_PTR), value :: attrs
     character(kind=C_CHAR), intent(in) :: key(*)
     logical(C_BOOL), intent(in) :: value
-    integer(C_INT), intent(in) :: force
+    logical(C_BOOL), intent(in) :: force
     integer(C_INT), intent(inout) :: rc
     type(C_PTR), value :: idx
   end subroutine c_attrs_set_LG
@@ -302,7 +302,7 @@ interface
     type(C_PTR), value :: attrs
     character(kind=C_CHAR), intent(in) :: key(*)
     type(C_PTR), value :: value
-    integer(C_INT), intent(in) :: force
+    logical(C_BOOL), intent(in) :: force
     integer(C_INT), intent(inout) :: rc
   end subroutine c_attrs_set_ATTRS
 
@@ -311,7 +311,7 @@ interface
     implicit none
     type(C_PTR), value :: attrs
     character(kind=C_CHAR), intent(in) :: key(*)
-    integer(C_INT), intent(in) :: force
+    logical(C_BOOL), intent(in) :: force
     integer(C_INT), intent(inout) :: rc
   end subroutine c_attrs_set_NULL
 
@@ -324,7 +324,7 @@ interface
     character(kind=C_CHAR), intent(in) :: key(*)
     real(C_FLOAT), dimension(*), intent(in) :: values
     integer(C_INT), intent(in) :: nelements
-    integer(C_INT), intent(in) :: force
+    logical(C_BOOL), intent(in) :: force
     integer(C_INT), intent(inout) :: rc
   end subroutine c_attrs_set_array_R4
 
@@ -335,7 +335,7 @@ interface
     character(kind=C_CHAR), intent(in) :: key(*)
     real(C_DOUBLE), dimension(*), intent(in) :: values
     integer(C_INT), intent(in) :: nelements
-    integer(C_INT), intent(in) :: force
+    logical(C_BOOL), intent(in) :: force
     integer(C_INT), intent(inout) :: rc
   end subroutine c_attrs_set_array_R8
 
@@ -346,7 +346,7 @@ interface
     character(kind=C_CHAR), intent(in) :: key(*)
     integer(C_INT), dimension(*), intent(in) :: values
     integer(C_INT), intent(in) :: nelements
-    integer(C_INT), intent(in) :: force
+    logical(C_BOOL), intent(in) :: force
     integer(C_INT), intent(inout) :: rc
   end subroutine c_attrs_set_array_I4
 
@@ -357,7 +357,7 @@ interface
     character(kind=C_CHAR), intent(in) :: key(*)
     integer(C_LONG), dimension(*), intent(in) :: values
     integer(C_INT), intent(in) :: nelements
-    integer(C_INT), intent(in) :: force
+    logical(C_BOOL), intent(in) :: force
     integer(C_INT), intent(inout) :: rc
   end subroutine c_attrs_set_array_I8
 
@@ -368,7 +368,7 @@ interface
     character(kind=C_CHAR), intent(in) :: key(*)
     logical(C_BOOL), dimension(*), intent(in) :: values
     integer(C_INT), intent(in) :: nelements
-    integer(C_INT), intent(in) :: force
+    logical(C_BOOL), intent(in) :: force
     integer(C_INT), intent(inout) :: rc
   end subroutine c_attrs_set_array_LG
 
@@ -378,7 +378,7 @@ interface
     type(C_PTR), value :: attrs
     character(kind=C_CHAR), intent(in) :: key(*)
     integer(C_INT), intent(in) :: nelements
-    integer(C_INT), intent(in) :: force
+    logical(C_BOOL), intent(in) :: force
     integer(C_INT), intent(inout) :: rc
   end subroutine c_attrs_set_array_CH
   !=============================================================================

@@ -924,19 +924,18 @@ subroutine ESMF_AttributesSetNULL(attrs, key, force, rc)
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  integer(C_INT) :: localforce
+  logical(C_BOOL) :: local_force
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
 
-  localforce = 1
   if (present(force)) then
-    if (force .eqv. .false.) then
-      localforce = 0
-    end if
+    local_force = force
+  else
+    local_force = .true.
   end if
 
-  call c_attrs_set_NULL(attrs%ptr, trim(key)//C_NULL_CHAR, localforce, localrc)
+  call c_attrs_set_NULL(attrs%ptr, trim(key)//C_NULL_CHAR, local_force, localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
     rcToReturn=rc)) return
 
@@ -956,19 +955,17 @@ subroutine ESMF_AttributesSetR4(attrs, key, value, force, idx, rc)
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  integer(C_INT) :: localforce
+  logical(C_BOOL) :: local_force
   integer(C_INT), target :: local_idx
   type(C_PTR) :: local_idx_ptr
-  
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
 
-  localforce = 1
   if (present(force)) then
-    if (force .eqv. .false.) then
-      localforce = 0
-    end if
+    local_force = force
+  else
+    local_force = .true.
   end if
   if (present(idx)) then
     local_idx = idx - 1  ! Shift to C (zero-based) indexing
@@ -977,12 +974,11 @@ subroutine ESMF_AttributesSetR4(attrs, key, value, force, idx, rc)
     local_idx_ptr = C_NULL_PTR
   end if
 
-  
   call c_attrs_set_R4(&
     attrs%ptr, &
     trim(key)//C_NULL_CHAR, &
     value, &
-    localforce, &
+    local_force, &
     localrc, &
     local_idx_ptr)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
@@ -1002,19 +998,17 @@ subroutine ESMF_AttributesSetR8(attrs, key, value, force, idx, rc)
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  integer(C_INT) :: localforce
+  logical(C_BOOL) :: local_force
   integer(C_INT), target :: local_idx
   type(C_PTR) :: local_idx_ptr
-  
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
 
-  localforce = 1
   if (present(force)) then
-    if (force .eqv. .false.) then
-      localforce = 0
-    end if
+    local_force = force
+  else
+    local_force = .true.
   end if
   if (present(idx)) then
     local_idx = idx - 1  ! Shift to C (zero-based) indexing
@@ -1023,12 +1017,11 @@ subroutine ESMF_AttributesSetR8(attrs, key, value, force, idx, rc)
     local_idx_ptr = C_NULL_PTR
   end if
 
-  
   call c_attrs_set_R8(&
     attrs%ptr, &
     trim(key)//C_NULL_CHAR, &
     value, &
-    localforce, &
+    local_force, &
     localrc, &
     local_idx_ptr)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
@@ -1048,19 +1041,17 @@ subroutine ESMF_AttributesSetI4(attrs, key, value, force, idx, rc)
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  integer(C_INT) :: localforce
+  logical(C_BOOL) :: local_force
   integer(C_INT), target :: local_idx
   type(C_PTR) :: local_idx_ptr
-  
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
 
-  localforce = 1
   if (present(force)) then
-    if (force .eqv. .false.) then
-      localforce = 0
-    end if
+    local_force = force
+  else
+    local_force = .true.
   end if
   if (present(idx)) then
     local_idx = idx - 1  ! Shift to C (zero-based) indexing
@@ -1069,12 +1060,11 @@ subroutine ESMF_AttributesSetI4(attrs, key, value, force, idx, rc)
     local_idx_ptr = C_NULL_PTR
   end if
 
-  
   call c_attrs_set_I4(&
     attrs%ptr, &
     trim(key)//C_NULL_CHAR, &
     value, &
-    localforce, &
+    local_force, &
     localrc, &
     local_idx_ptr)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
@@ -1094,19 +1084,17 @@ subroutine ESMF_AttributesSetI8(attrs, key, value, force, idx, rc)
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  integer(C_INT) :: localforce
+  logical(C_BOOL) :: local_force
   integer(C_INT), target :: local_idx
   type(C_PTR) :: local_idx_ptr
-  
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
 
-  localforce = 1
   if (present(force)) then
-    if (force .eqv. .false.) then
-      localforce = 0
-    end if
+    local_force = force
+  else
+    local_force = .true.
   end if
   if (present(idx)) then
     local_idx = idx - 1  ! Shift to C (zero-based) indexing
@@ -1115,12 +1103,11 @@ subroutine ESMF_AttributesSetI8(attrs, key, value, force, idx, rc)
     local_idx_ptr = C_NULL_PTR
   end if
 
-  
   call c_attrs_set_I8(&
     attrs%ptr, &
     trim(key)//C_NULL_CHAR, &
     value, &
-    localforce, &
+    local_force, &
     localrc, &
     local_idx_ptr)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
@@ -1140,19 +1127,17 @@ subroutine ESMF_AttributesSetCH(attrs, key, value, force, idx, rc)
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  integer(C_INT) :: localforce
+  logical(C_BOOL) :: local_force
   integer(C_INT), target :: local_idx
   type(C_PTR) :: local_idx_ptr
-  
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
 
-  localforce = 1
   if (present(force)) then
-    if (force .eqv. .false.) then
-      localforce = 0
-    end if
+    local_force = force
+  else
+    local_force = .true.
   end if
   if (present(idx)) then
     local_idx = idx - 1  ! Shift to C (zero-based) indexing
@@ -1161,12 +1146,11 @@ subroutine ESMF_AttributesSetCH(attrs, key, value, force, idx, rc)
     local_idx_ptr = C_NULL_PTR
   end if
 
-  
   call c_attrs_set_CH(&
     attrs%ptr, &
     trim(key)//C_NULL_CHAR, &
     trim(value)//C_NULL_CHAR, &
-    localforce, &
+    local_force, &
     localrc, &
     local_idx_ptr)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
@@ -1186,19 +1170,17 @@ subroutine ESMF_AttributesSetLG(attrs, key, value, force, idx, rc)
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  integer(C_INT) :: localforce
+  logical(C_BOOL) :: local_force, local_value
   integer(C_INT), target :: local_idx
   type(C_PTR) :: local_idx_ptr
-  logical(C_BOOL) :: local_value
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
 
-  localforce = 1
   if (present(force)) then
-    if (force .eqv. .false.) then
-      localforce = 0
-    end if
+    local_force = force
+  else
+    local_force = .true.
   end if
   if (present(idx)) then
     local_idx = idx - 1  ! Shift to C (zero-based) indexing
@@ -1212,7 +1194,7 @@ subroutine ESMF_AttributesSetLG(attrs, key, value, force, idx, rc)
     attrs%ptr, &
     trim(key)//C_NULL_CHAR, &
     local_value, &
-    localforce, &
+    local_force, &
     localrc, &
     local_idx_ptr)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
@@ -1233,23 +1215,22 @@ subroutine ESMF_AttributesSetATTRS(attrs, key, value, force, rc)
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  integer(C_INT) :: localforce
+  logical(C_BOOL) :: local_force
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
 
-  localforce = 1
   if (present(force)) then
-    if (force .eqv. .false.) then
-      localforce = 0
-    end if
+    local_force = force
+  else
+    local_force = .true.
   end if
 
   call c_attrs_set_ATTRS(&
     attrs%ptr, &
     trim(key)//C_NULL_CHAR, &
     value%ptr, &
-    localforce, &
+    local_force, &
     localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
     rcToReturn=rc)) return
@@ -1269,23 +1250,22 @@ subroutine ESMF_AttributesSetArrayR4(attrs, key, values, force, rc)
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  integer(C_INT) :: localforce
+  logical(C_BOOL) :: local_force
   
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
 
-  localforce = 1
   if (present(force)) then
-    if (force .eqv. .false.) then
-      localforce = 0
-    end if
+    local_force = force
+  else
+    local_force = .true.
   end if
   call c_attrs_set_array_R4(&
     attrs%ptr, &
     trim(key)//C_NULL_CHAR, &
     values, &
     SIZE(values), &
-    localforce, &
+    local_force, &
     localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
     rcToReturn=rc)) return
@@ -1303,23 +1283,22 @@ subroutine ESMF_AttributesSetArrayR8(attrs, key, values, force, rc)
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  integer(C_INT) :: localforce
+  logical(C_BOOL) :: local_force
   
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
 
-  localforce = 1
   if (present(force)) then
-    if (force .eqv. .false.) then
-      localforce = 0
-    end if
+    local_force = force
+  else
+    local_force = .true.
   end if
   call c_attrs_set_array_R8(&
     attrs%ptr, &
     trim(key)//C_NULL_CHAR, &
     values, &
     SIZE(values), &
-    localforce, &
+    local_force, &
     localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
     rcToReturn=rc)) return
@@ -1337,23 +1316,22 @@ subroutine ESMF_AttributesSetArrayI4(attrs, key, values, force, rc)
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  integer(C_INT) :: localforce
+  logical(C_BOOL) :: local_force
   
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
 
-  localforce = 1
   if (present(force)) then
-    if (force .eqv. .false.) then
-      localforce = 0
-    end if
+    local_force = force
+  else
+    local_force = .true.
   end if
   call c_attrs_set_array_I4(&
     attrs%ptr, &
     trim(key)//C_NULL_CHAR, &
     values, &
     SIZE(values), &
-    localforce, &
+    local_force, &
     localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
     rcToReturn=rc)) return
@@ -1371,23 +1349,22 @@ subroutine ESMF_AttributesSetArrayI8(attrs, key, values, force, rc)
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  integer(C_INT) :: localforce
+  logical(C_BOOL) :: local_force
   
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
 
-  localforce = 1
   if (present(force)) then
-    if (force .eqv. .false.) then
-      localforce = 0
-    end if
+    local_force = force
+  else
+    local_force = .true.
   end if
   call c_attrs_set_array_I8(&
     attrs%ptr, &
     trim(key)//C_NULL_CHAR, &
     values, &
     SIZE(values), &
-    localforce, &
+    local_force, &
     localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
     rcToReturn=rc)) return
@@ -1405,18 +1382,17 @@ subroutine ESMF_AttributesSetArrayLG(attrs, key, values, force, rc)
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  integer(C_INT) :: localforce
+  logical(C_BOOL) :: local_force
   integer :: ii
   logical(C_BOOL), dimension(:), allocatable :: local_values
   
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
 
-  localforce = 1
   if (present(force)) then
-    if (force .eqv. .false.) then
-      localforce = 0
-    end if
+    local_force = force
+  else
+    local_force = .true.
   end if
   
   allocate(local_values(SIZE(values)))
@@ -1428,7 +1404,7 @@ subroutine ESMF_AttributesSetArrayLG(attrs, key, values, force, rc)
     trim(key)//C_NULL_CHAR, &
     local_values, &
     SIZE(values), &
-    localforce, &
+    local_force, &
     localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
     rcToReturn=rc)) return
@@ -1446,21 +1422,21 @@ subroutine ESMF_AttributesSetArrayCH(attrs, key, values, force, rc)
   integer, intent(inout), optional :: rc
 
   integer :: localrc, ii
-  integer(C_INT) :: localforce, idx
+  integer(C_INT) :: idx
+  logical(C_BOOL) :: local_force
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
 
-  localforce = 1
   if (present(force)) then
-    if (force .eqv. .false.) then
-      localforce = 0
-    end if
+    local_force = force
+  else
+    local_force = .true.
   end if
 
   ! Allocate storage in C
   call c_attrs_set_array_CH(attrs%ptr, trim(key)//C_NULL_CHAR, &
-    SIZE(values), localforce, localrc)
+    SIZE(values), local_force, localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
     rcToReturn=rc)) return
 
