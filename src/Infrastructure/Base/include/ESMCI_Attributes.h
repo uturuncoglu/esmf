@@ -39,6 +39,8 @@ using json = nlohmann::json;  // Convenience rename for JSON namespace.
 
 #define ESMF_CATCH_ATTRS catch (json::out_of_range &exc_json) {ESMF_THROW_JSON(exc_json, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);} catch (json::type_error &exc_json) {ESMF_THROW_JSON(exc_json, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);} catch (ESMCI::esmf_attrs_error &exc_esmf) {ESMF_CATCH_PASSTHRU(exc_esmf);} catch (...) {ESMF_CHECKERR_STD("", ESMF_FAILURE, "Unhandled throw", rc);}
 
+#define ESMF_CATCH_JSON catch (json::out_of_range &e) {ESMF_THROW_JSON(e, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);} catch (json::type_error &e) {ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);}
+
 //-----------------------------------------------------------------------------
 //BOP
 // !CLASS:  Attributes

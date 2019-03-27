@@ -724,12 +724,7 @@ void Attributes::update(const Attributes &attrs, int &rc) {
   try {
     this->storage.update(r_j);
   }
-  catch (json::out_of_range &e) {
-    ESMF_THROW_JSON(e, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);
-  }
-  catch (json::type_error &e) {
-    ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
-  }
+  ESMF_CATCH_JSON;
   rc = ESMF_SUCCESS;
   return;
 };

@@ -100,6 +100,16 @@ interface
 
   !=============================================================================
 
+  subroutine c_attrs_update(lhs, rhs, rc) bind(C, name="ESMC_AttributesUpdate")
+    use iso_c_binding
+    implicit none
+    type(C_PTR), value :: lhs
+    type(C_PTR), value :: rhs
+    integer(C_INT), intent(inout) :: rc
+  end subroutine c_attrs_update
+
+  !=============================================================================
+
   subroutine c_attrs_read_json(attrs, filename, rc) bind(C, name="ESMC_AttributesReadJSON")
     use iso_c_binding
     implicit none

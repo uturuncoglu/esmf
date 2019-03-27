@@ -325,6 +325,27 @@ end subroutine ESMF_AttributesPrint
 !------------------------------------------------------------------------------
 
 #undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_AttributesUpdate()"
+subroutine ESMF_AttributesUpdate(lhs, rhs, rc)
+  type(ESMF_Attributes), intent(inout) :: lhs
+  type(ESMF_Attributes), intent(in) :: rhs
+  integer, intent(inout), optional :: rc
+
+  integer :: localrc
+
+  localrc = ESMF_FAILURE
+  if (present(rc)) rc = ESMF_FAILURE
+
+  call c_attrs_update(lhs%ptr, rhs%ptr, localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
+      rcToReturn=rc)) return
+
+  if (present(rc)) rc = ESMF_SUCCESS
+end subroutine ESMF_AttributesUpdate
+
+!------------------------------------------------------------------------------
+
+#undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributesReadJSON()"
 function ESMF_AttributesReadJSON(filename, rc) result(attrs_r)
   character(len=*), intent(in) :: filename

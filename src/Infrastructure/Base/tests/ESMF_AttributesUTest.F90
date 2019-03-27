@@ -70,7 +70,8 @@ program ESMF_AttributesUTest
                            attrs7, attrs8, attrs9, attrs10, attrs_copy_src, &
                            attrs_copy_dst, attrs_w, attrs_r, attrs_logical, &
                            attrs_types, attrs_obj_dst, attrs_obj_src, &
-                           attrs_obj_new, attrs_parse
+                           attrs_obj_new, attrs_parse, attrs_update_lhs, &
+                           attrs_update_rhs
 
   logical :: is_present, failed, is_set, is_present_copy_test, actual_logical, &
              desired_logical
@@ -667,6 +668,34 @@ program ESMF_AttributesUTest
   call ESMF_Test((actual4==55), name, failMsg, result, ESMF_SRCLINE)
 
   call ESMF_AttributesDestroy(attrs_parse, rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+  !----------------------------------------------------------------------------
+
+  !----------------------------------------------------------------------------
+  !NEX_UTest
+  write(name, *) "ESMF_AttributesUpdate"
+  write(failMsg, *) "Did not update"
+  rc = ESMF_FAILURE
+  failed = .false.
+
+  to_parse = '{"please": "update-me"}'
+  attrs_update_lhs = ESMF_AttributesCreate(to_parse, rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  to_parse = '{"i-am-new": 111}'
+  attrs_update_rhs = ESMF_AttributesCreate(to_parse, rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  call ESMF_AttributesUpdate(attrs_update_lhs, attrs_update_rhs, rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  call ESMF_AttributesGet(attrs_update_lhs, "i-am-new", actual, rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  call ESMF_Test((actual==111), name, failMsg, result, ESMF_SRCLINE)
+
+  call ESMF_AttributesDestroy(attrs_update_lhs, rc=rc)
+  call ESMF_AttributesDestroy(attrs_update_rhs, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
   !----------------------------------------------------------------------------
 

@@ -161,6 +161,16 @@ void ESMC_AttributesPrint(ESMCI::Attributes *attrs, int &indent, int &rc) {
 }
 
 #undef  ESMC_METHOD
+#define ESMC_METHOD "ESMC_AttributesUpdate()"
+void ESMC_AttributesUpdate(ESMCI::Attributes *lhs, ESMCI::Attributes *rhs, int &rc) {
+  rc = ESMF_FAILURE;
+  try {
+    lhs->update(*rhs, rc);
+  }
+  ESMF_CATCH_ISOC;
+}
+
+#undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_AttributesReadJSON()"
 void ESMC_AttributesReadJSON(ESMCI::Attributes *attrs, char *filename,
                              int &rc) {
