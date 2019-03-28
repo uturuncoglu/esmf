@@ -81,6 +81,9 @@ private:
 
 class Attributes {
 
+private:
+  bool dirty = false;
+
 protected:
   json storage;  // JSON object store for keys/values managed by this instance
 
@@ -120,6 +123,8 @@ public:
   T getPointer(key_t &key, int &rc) const;
 
   bool hasKey(key_t &key, int &rc, bool isptr = false) const;
+
+  bool isDirty() const {return this->dirty;}
 
   bool isSetNull(key_t &key, int &rc) const;
 

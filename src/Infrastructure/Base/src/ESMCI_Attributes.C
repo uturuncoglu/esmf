@@ -214,6 +214,7 @@ void Attributes::erase(key_t &keyParent, key_t &keyChild, int &rc) {
   catch (...) {
     ESMF_CHECKERR_STD("", ESMF_FAILURE, "Unhandled throw", rc);
   }
+  this->dirty = true;
   rc = ESMF_SUCCESS;
   return;
 };
@@ -570,6 +571,7 @@ void Attributes::set(key_t &key, const ESMCI::Attributes &attrs, bool force,
     this->storage[jp] = attrs.getStorageRef();
   }
   ESMF_CATCH_ATTRS;
+  this->dirty = true;
 }
 
 #undef ESMC_METHOD
@@ -589,8 +591,7 @@ void Attributes::set(key_t &key, bool force, int &rc) {
     this->storage[jp] = json::value_t::null;
   }
   ESMF_CATCH_ATTRS;
-  rc = ESMF_SUCCESS;
-  return;
+  this->dirty = true;
 }
 
 #undef  ESMC_METHOD
@@ -635,18 +636,8 @@ void Attributes::set(key_t &key, T value, bool force, int &rc, int *index) {
       this->storage[jp] = jvalue;
     }
   }
-  catch (json::out_of_range &e) {
-    ESMF_THROW_JSON(e, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);
-  }
-  catch (json::type_error &e) {
-    ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
-  }
-  catch (ESMCI::esmf_attrs_error &exc_esmf) {
-    ESMF_CATCH_PASSTHRU(exc_esmf);
-  }
-  catch (...) {
-    ESMF_CHECKERR_STD("", ESMF_FAILURE, "Unhandled throw", rc);
-  }
+  ESMF_CATCH_ATTRS;
+  this->dirty = true;
   rc = ESMF_SUCCESS;
   return;
 };
@@ -677,37 +668,24 @@ void Attributes::set(key_t &key, T *values, int count, bool force, int &rc) {
   }
   try {
     json::json_pointer jp = this->formatKey(key, rc);
-    try {
-      this->storage[jp] = json::array();
-      //tdk:OPTIMIZE: can this "at" be removed?
-      json::array_t *arr_ptr = this->storage.at(jp).get_ptr<json::array_t *>();
-      if (values) {
-        // If values are not null, transfer said values into the JSON array.
-        arr_ptr->reserve(count);
-        for (auto ii = 0; ii < count; ii++) {
-          arr_ptr->push_back(values[ii]);
-        }
-      } else {
-        // If there are no values provided, reserve the space for future
-        // setting by index.
-        arr_ptr->resize(count);
+    this->storage[jp] = json::array();
+    //tdk:OPTIMIZE: can this "at" be removed?
+    json::array_t *arr_ptr = this->storage.at(jp).get_ptr<json::array_t *>();
+    if (values) {
+      // If values are not null, transfer said values into the JSON array.
+      arr_ptr->reserve(count);
+      for (auto ii = 0; ii < count; ii++) {
+        arr_ptr->push_back(values[ii]);
       }
-    }
-    catch (json::out_of_range &e) {
-      ESMF_THROW_JSON(e, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);
-    }
-    catch (json::type_error &e) {
-      ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
+    } else {
+      // If there are no values provided, reserve the space for future
+      // setting by index.
+      arr_ptr->resize(count);
     }
   }
-  catch (ESMCI::esmf_attrs_error &exc_esmf) {
-    ESMF_CATCH_PASSTHRU(exc_esmf);
-  }
-  catch (...) {
-    ESMF_CHECKERR_STD("", ESMF_FAILURE, "Unhandled throw", rc);
-  }
+  ESMF_CATCH_ATTRS;
+  this->dirty = true;
   rc = ESMF_SUCCESS;
-  return;
 };
 template void Attributes::set<float>(key_t&, float*, int, bool, int&);
 template void Attributes::set<double>(key_t&, double*, int, bool, int&);
@@ -725,8 +703,8 @@ void Attributes::update(const Attributes &attrs, int &rc) {
     this->storage.update(r_j);
   }
   ESMF_CATCH_JSON;
+  this->dirty = true;
   rc = ESMF_SUCCESS;
-  return;
 };
 
 //-----------------------------------------------------------------------------
