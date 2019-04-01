@@ -387,6 +387,35 @@ bool Attributes::hasKey(key_t& key, int& rc, bool isptr) const {
   return ret;
 }
 
+#undef ESMC_METHOD
+#define ESMC_METHOD "Attributes::inquire()"
+json Attributes::inquire(key_t& key, int& rc) const {
+  rc = ESMF_FAILURE;
+  json j = json::object();
+  try {
+    std::string local_key(key);
+    j["isDirty"] = this->isDirty();
+    json::json_pointer jp = this->formatKey(local_key, rc);
+    const json &s = this->getStorageRef();
+    const json &sk = s.at(jp);
+    j["count"] = sk.size();
+    std::string json_typename;
+    bool is_array = false;
+    if (sk.is_array()) {
+      is_array = true;
+      const json &e = sk[0];
+      json_typename = e.type_name();
+    } else {
+      json_typename = sk.type_name();
+    }
+    j["jsonType"] = json_typename;
+    j["isArray"] = is_array;
+  }
+  ESMF_CATCH_ATTRS;
+  rc = ESMF_SUCCESS;
+  return j;
+}
+
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::parse()"
 void Attributes::parse(key_t& input, int& rc) {

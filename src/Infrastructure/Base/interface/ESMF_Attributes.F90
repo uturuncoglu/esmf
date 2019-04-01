@@ -228,6 +228,68 @@ end subroutine ESMF_AttributesErase
 !------------------------------------------------------------------------------
 
 #undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_AttributesInquire()"
+subroutine ESMF_AttributesInquire(attrs, key, count, jsonType, isArray, isDirty, rc)
+  type(ESMF_Attributes), intent(in) :: attrs
+  character(len=*), intent(in), optional :: key
+  integer(C_INT), intent(inout), optional :: count
+  character(len=*), intent(inout), optional :: jsonType
+  logical, intent(inout), optional :: isArray
+  logical, intent(inout), optional :: isDirty
+  integer, intent(inout), optional :: rc
+
+  integer :: localrc
+  type(ESMF_Attributes) :: inq
+  character(len=ESMF_MAXSTR) :: local_key
+
+  localrc = ESMF_FAILURE
+  if (present(rc)) rc = ESMF_FAILURE
+
+  if (present(key)) then
+    local_key = key
+  else
+    local_key = ""
+  end if
+
+  inq = ESMF_AttributesCreate(rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
+    rcToReturn=rc)) return
+
+  call c_attrs_inquire(attrs%ptr, inq%ptr, trim(local_key)//C_NULL_CHAR, localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
+    rcToReturn=rc)) return
+
+  if (present(count)) then
+    call ESMF_AttributesGet(inq, "count", count, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
+      rcToReturn=rc)) return
+  end if
+  if (present(jsonType)) then
+    call ESMF_AttributesGet(inq, "jsonType", jsonType, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
+      rcToReturn=rc)) return
+  end if
+  if (present(isArray)) then
+    call ESMF_AttributesGet(inq, "isArray", isArray, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
+      rcToReturn=rc)) return
+  end if
+  if (present(isDirty)) then
+    call ESMF_AttributesGet(inq, "isDirty", isDirty, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
+      rcToReturn=rc)) return
+  end if
+
+  call ESMF_AttributesDestroy(inq, rc=rc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
+    rcToReturn=rc)) return
+
+  if (present(rc)) rc = ESMF_SUCCESS
+end subroutine ESMF_AttributesInquire
+
+!------------------------------------------------------------------------------
+
+#undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributesIsPresent()"
 function ESMF_AttributesIsPresent(attrs, key, isPointer, rc) result(is_present)
   type(ESMF_Attributes), intent(in) :: attrs
@@ -911,14 +973,13 @@ subroutine ESMF_AttributesGetArrayCH(attrs, key, values, nelements, rc)
   integer, intent(inout), optional :: rc
 
   integer :: localrc, ii
-  type(C_PTR) :: nelements_ptr
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
 
   ! Get the array size from the attributes store
-  nelements_ptr = C_LOC(nelements)
-  call c_attrs_inquire(attrs%ptr, trim(key)//C_NULL_CHAR, localrc, nelements_ptr)
+  call ESMF_AttributesInquire(attrs, key=trim(key)//C_NULL_CHAR, count=nelements, &
+                              rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
     rcToReturn=rc)) return
 

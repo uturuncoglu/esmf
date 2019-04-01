@@ -116,15 +116,14 @@ void ESMC_AttributesErase(ESMCI::Attributes* attrs, char* keyParent,
 
 #undef ESMC_METHOD
 #define ESMC_METHOD "ESMC_AttributesInquire()"
-void ESMC_AttributesInquire(ESMCI::Attributes *attrs, char *key, int &rc, int *count) {
+void ESMC_AttributesInquire(ESMCI::Attributes *attrs, ESMCI::Attributes *inq,
+                            char *key, int &rc) {
   rc = ESMF_FAILURE;
-  std::string localKey(key);
   try {
-    if (count) {
-      const std::vector <json> *value = attrs->getPointer<const std::vector<json>* const,
-        const json::array_t* const>(localKey, rc);
-      *count = value->size();
-    }
+    std::string localKey(key);
+    json jinq = attrs->inquire(localKey, rc);
+    json &inqref = inq->getStorageRefWritable();
+    inqref = std::move(jinq);
   }
   ESMF_CATCH_ISOC;
 }

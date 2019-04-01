@@ -124,6 +124,8 @@ public:
 
   bool hasKey(key_t &key, int &rc, bool isptr = false) const;
 
+  json inquire(key_t& key, int& rc) const;
+
   bool isDirty() const {return this->dirty;}
 
   bool isSetNull(key_t &key, int &rc) const;

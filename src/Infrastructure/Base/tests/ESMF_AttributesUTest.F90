@@ -46,7 +46,7 @@ program ESMF_AttributesUTest
 
   character(ESMF_MAXSTR) :: key, key_i8, key_r4, key_r8
   character(len=55) :: key_char, value_char, desired_char, def_desired_char, &
-                       def_key_char
+                       def_key_char, jsonType
   character(len=33) :: def_value_char
   character(len=22) :: key_empty_char
   character(len=2) :: desired_empty_char, empty_value_char
@@ -56,7 +56,7 @@ program ESMF_AttributesUTest
   type(ESMF_VM)         :: vm
   type(ESMF_GridComp)   :: gcomp
   ! cumulative result: count failures; no failures equals "all pass"
-  integer               :: result = 0
+  integer               :: result = 0, count
 
   integer(ESMF_KIND_I4) :: value, actual, actual2, actual3, arr_i4_get_count, &
                            actual4
@@ -71,10 +71,10 @@ program ESMF_AttributesUTest
                            attrs_copy_dst, attrs_w, attrs_r, attrs_logical, &
                            attrs_types, attrs_obj_dst, attrs_obj_src, &
                            attrs_obj_new, attrs_parse, attrs_update_lhs, &
-                           attrs_update_rhs
+                           attrs_update_rhs, attrs_inq
 
   logical :: is_present, failed, is_set, is_present_copy_test, actual_logical, &
-             desired_logical
+             desired_logical, isArray, isDirty
   logical, dimension(2) :: fails_obj
 
   !----------------------------------------------------------------------------
@@ -696,6 +696,30 @@ program ESMF_AttributesUTest
 
   call ESMF_AttributesDestroy(attrs_update_lhs, rc=rc)
   call ESMF_AttributesDestroy(attrs_update_rhs, rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+  !----------------------------------------------------------------------------
+
+  !----------------------------------------------------------------------------
+  !NEX_UTest
+  write(name, *) "ESMF_AttributesInquire"
+  write(failMsg, *) "Did not inquire right"
+  rc = ESMF_FAILURE
+  failed = .false.
+
+  to_parse = '{"ask": "questions please", "number": 1}'
+  attrs_inq = ESMF_AttributesCreate(to_parse, rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  call ESMF_AttributesInquire(attrs_inq, count=count, isArray=isArray, &
+    isDirty=isDirty, jsonType=jsonType, rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  call ESMF_Test((trim(jsonType)=="object" .and. &
+                 (count==2) .and. &
+                 (isArray .eqv. .false.) .and. &
+                 (isDirty .eqv. .false.)), name, failMsg, result, ESMF_SRCLINE)
+
+  call ESMF_AttributesDestroy(attrs_inq, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
   !----------------------------------------------------------------------------
 
