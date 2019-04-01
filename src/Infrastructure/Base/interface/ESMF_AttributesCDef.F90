@@ -67,6 +67,17 @@ interface
 
   !=============================================================================
 
+  subroutine c_attrs_is_equal(lhs, rhs, is_equal, localrc) bind (C, name="ESMC_AttributesIsEqual")
+    use iso_c_binding
+    implicit none
+    type(C_PTR), value :: lhs
+    type(C_PTR), value :: rhs
+    logical(C_BOOL), intent(inout) :: is_equal
+    integer(C_INT), intent(inout) :: localrc
+  end subroutine c_attrs_is_equal
+
+  !=============================================================================
+
   subroutine c_attrs_is_present(attrs, key, res, rc, isptr) bind(C, name="ESMC_AttributesIsPresent")
     use iso_c_binding
     implicit none

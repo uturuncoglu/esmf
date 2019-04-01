@@ -129,6 +129,18 @@ void ESMC_AttributesInquire(ESMCI::Attributes *attrs, ESMCI::Attributes *inq,
 }
 
 #undef  ESMC_METHOD
+#define ESMC_METHOD "ESMC_AttributesIsEqual()"
+void ESMC_AttributesIsEqual(ESMCI::Attributes *lhs, ESMCI::Attributes *rhs,
+  bool &res, int &rc) {
+  rc = ESMF_FAILURE;
+  try {
+    res = lhs->getStorageRef() == rhs->getStorageRef();
+  }
+  ESMF_CATCH_ISOC;
+  rc = ESMF_SUCCESS;
+}
+
+#undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_AttributesIsPresent()"
 void ESMC_AttributesIsPresent(ESMCI::Attributes *attrs, char *key, bool &res, int &rc,
         int &isptr) {

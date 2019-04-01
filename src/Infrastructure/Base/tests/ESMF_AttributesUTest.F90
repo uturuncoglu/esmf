@@ -71,7 +71,8 @@ program ESMF_AttributesUTest
                            attrs_copy_dst, attrs_w, attrs_r, attrs_logical, &
                            attrs_types, attrs_obj_dst, attrs_obj_src, &
                            attrs_obj_new, attrs_parse, attrs_update_lhs, &
-                           attrs_update_rhs, attrs_inq
+                           attrs_update_rhs, attrs_inq, attrs_eq_lhs, &
+                           attrs_eq_rhs
 
   logical :: is_present, failed, is_set, is_present_copy_test, actual_logical, &
              desired_logical, isArray, isDirty
@@ -720,6 +721,25 @@ program ESMF_AttributesUTest
                  (isDirty .eqv. .false.)), name, failMsg, result, ESMF_SRCLINE)
 
   call ESMF_AttributesDestroy(attrs_inq, rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+  !----------------------------------------------------------------------------
+
+  !----------------------------------------------------------------------------
+  !NEX_UTest
+  write(name, *) "ESMF_AttributesEqual Operator"
+  write(failMsg, *) "Did not evaluate equality"
+  rc = ESMF_FAILURE
+  failed = .false.
+
+  to_parse = '{"ask": "questions please", "number": 1}'
+  attrs_eq_lhs = ESMF_AttributesCreate(to_parse, rc=rc)
+  attrs_eq_rhs = ESMF_AttributesCreate(to_parse, rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  call ESMF_Test((attrs_eq_lhs==attrs_eq_rhs), name, failMsg, result, ESMF_SRCLINE)
+
+  call ESMF_AttributesDestroy(attrs_eq_lhs, rc=rc)
+  call ESMF_AttributesDestroy(attrs_eq_rhs, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
   !----------------------------------------------------------------------------
 

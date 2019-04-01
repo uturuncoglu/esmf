@@ -90,6 +90,10 @@ interface ESMF_AttributesSet
   module procedure ESMF_AttributesSetArrayCH
 end interface ESMF_AttributesSet
 
+interface operator(==)
+  procedure ESMF_AttributesEqual
+end interface operator(==)
+
 !------------------------------------------------------------------------------
 ! The following line turns the CVS identifier string into a printable variable.
 character(*), parameter, private :: version = '$Id$'
@@ -194,6 +198,25 @@ subroutine ESMF_AttributesDestroy(attrs, rc)
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributesDestroy
+
+!------------------------------------------------------------------------------
+
+#undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_AttributesEqual()"
+function ESMF_AttributesEqual(lhs, rhs) result(is_equal)
+  type(ESMF_Attributes), intent(in) :: lhs
+  type(ESMF_Attributes), intent(in) :: rhs
+  logical :: is_equal
+
+  integer :: localrc
+  logical(C_BOOL) :: local_is_equal
+
+  is_equal = .false.
+  call c_attrs_is_equal(lhs%ptr, rhs%ptr, local_is_equal, localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT)) return
+
+  is_equal = local_is_equal
+end function ESMF_AttributesEqual
 
 !------------------------------------------------------------------------------
 
