@@ -93,6 +93,9 @@ end interface ESMF_AttributesSet
 interface operator(==)
   procedure ESMF_AttributesEqual
 end interface operator(==)
+interface operator(/=)
+  procedure ESMF_AttributesNotEqual
+end interface operator(/=)
 
 !------------------------------------------------------------------------------
 ! The following line turns the CVS identifier string into a printable variable.
@@ -217,6 +220,15 @@ function ESMF_AttributesEqual(lhs, rhs) result(is_equal)
 
   is_equal = local_is_equal
 end function ESMF_AttributesEqual
+
+#undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_AttributesNotEqual()"
+function ESMF_AttributesNotEqual(lhs, rhs) result(is_equal)
+  type(ESMF_Attributes), intent(in) :: lhs
+  type(ESMF_Attributes), intent(in) :: rhs
+  logical :: is_equal
+  is_equal = .not. ESMF_AttributesEqual(lhs, rhs)
+end function ESMF_AttributesNotEqual
 
 !------------------------------------------------------------------------------
 
