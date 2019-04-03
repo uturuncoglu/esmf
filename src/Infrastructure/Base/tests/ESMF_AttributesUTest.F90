@@ -336,7 +336,7 @@ program ESMF_AttributesUTest
 
   !----------------------------------------------------------------------------
   !NEX_UTest
-  write(name, *) "ESMF_AttributesErase Child From Parent"
+  write(name, *) "ESMF_AttributesRemove Child From Parent"
   write(failMsg, *) "Child not erased from parent"
 
   rc = ESMF_FAILURE
@@ -347,7 +347,7 @@ program ESMF_AttributesUTest
   call ESMF_AttributesSet(attrs7, "this/is/erase/test", 111, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-  call ESMF_AttributesErase(attrs7, "this/is/erase", keyChild="test", rc=rc)
+  call ESMF_AttributesRemove(attrs7, "this/is/erase", keyChild="test", rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
   call ESMF_AttributesGet(attrs7, "/this/is/erase/test", actual3, &
@@ -361,10 +361,10 @@ program ESMF_AttributesUTest
 
   !----------------------------------------------------------------------------
   !NEX_UTest
-  write(name, *) "ESMF_AttributesErase Root"
+  write(name, *) "ESMF_AttributesRemove Root"
   write(failMsg, *) "Did not erase from root"
 
-  call ESMF_AttributesErase(attrs7, "this", rc=rc)
+  call ESMF_AttributesRemove(attrs7, "this", rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
 !  call ESMF_AttributesPrint(attrs7, rc=rc)

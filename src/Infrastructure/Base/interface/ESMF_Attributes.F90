@@ -233,8 +233,8 @@ end function ESMF_AttributesNotEqual
 !------------------------------------------------------------------------------
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributesErase()"
-subroutine ESMF_AttributesErase(attrs, keyParent, keyChild, rc)
+#define ESMF_METHOD "ESMF_AttributesRemove()"
+subroutine ESMF_AttributesRemove(attrs, keyParent, keyChild, rc)
   type(ESMF_Attributes), intent(inout) :: attrs
   character(len=*), intent(in) :: keyParent
   character(len=*), intent(in), optional :: keyChild
@@ -258,7 +258,7 @@ subroutine ESMF_AttributesErase(attrs, keyParent, keyChild, rc)
                          rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributesErase
+end subroutine ESMF_AttributesRemove
 
 !------------------------------------------------------------------------------
 
