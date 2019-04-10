@@ -7,13 +7,15 @@ LOCDIR	  = src/Infrastructure/Base/tests
 
 TESTS_BUILD   = $(ESMF_TESTDIR)/ESMF_AttributesUTest \
                 $(ESMF_TESTDIR)/ESMC_AttributesUTest \
-                $(ESMF_TESTDIR)/ESMF_AttributesArrayUTest
+                $(ESMF_TESTDIR)/ESMF_AttributesArrayUTest \
+                $(ESMF_TESTDIR)/ESMF_AttributesUpdateUTest
 #TESTS_BUILD   = $(ESMF_TESTDIR)/ESMF_BaseUTest \
 #                $(ESMF_TESTDIR)/ESMC_NlohmannJSONUTest \
 #                $(ESMF_TESTDIR)/ESMC_AttributesUTest \
 #                $(ESMF_TESTDIR)/ESMF_AttributesUTest \
 #                $(ESMF_TESTDIR)/ESMF_AttributesProfileUTest \
-#                $(ESMF_TESTDIR)/ESMF_AttributesArrayUTest
+#                $(ESMF_TESTDIR)/ESMF_AttributesArrayUTest \
+#                $(ESMF_TESTDIR)/ESMF_AttributesUpdateUTest
 
 TESTS_RUN     = RUN_ESMF_BaseUTest \
                 RUN_ESMC_NlohmannJSONUTest \
@@ -79,4 +81,10 @@ RUN_ESMF_AttributesArrayUTest:
 	$(MAKE) TNAME=AttributesArray NP=4 ftest
 
 RUN_ESMF_AttributesArrayUTestUNI:
-	$(MAKE) TNAME=AttributeArrayUNI NP=1 ftest
+	$(MAKE) TNAME=AttributesArrayUNI NP=1 ftest
+
+RUN_ESMF_AttributesUpdateUTest:
+	$(MAKE) TNAME=AttributesUpdate NP=4 ftest
+
+RUN_ESMF_AttributesUpdateUTestUNI:
+	$(MAKE) TNAME=AttributesUpdateUNI NP=1 ftest
