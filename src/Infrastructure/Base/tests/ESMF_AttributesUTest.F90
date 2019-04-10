@@ -736,7 +736,8 @@ program ESMF_AttributesUTest
   attrs_eq_rhs = ESMF_AttributesCreate(to_parse, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-  call ESMF_Test(((attrs_eq_lhs==attrs_eq_rhs) .and. (.not. attrs_eq_lhs/=attrs_eq_rhs)), name, failMsg, result, ESMF_SRCLINE)
+  call ESMF_Test(((attrs_eq_lhs==attrs_eq_rhs) .and. &
+    (.not. attrs_eq_lhs/=attrs_eq_rhs)), name, failMsg, result, ESMF_SRCLINE)
 
   call ESMF_AttributesDestroy(attrs_eq_lhs, rc=rc)
   call ESMF_AttributesDestroy(attrs_eq_rhs, rc=rc)
