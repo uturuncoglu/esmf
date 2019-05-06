@@ -1,5 +1,14 @@
 interface
 
+  function c_attrs_base_get(base_address) bind(C, name="ESMC_BaseGetAttributes")
+    use iso_c_binding
+    implicit none
+    integer(C_LONG), intent(in) :: base_address
+    type(C_PTR) :: c_attrs_base_get
+  end function c_attrs_base_get
+
+  !=============================================================================
+
   function c_attrs_copy(attrs, rc) bind(C, name="ESMC_AttributesCopy")
     use iso_c_binding
     implicit none
@@ -33,6 +42,16 @@ interface
     integer(C_INT), intent(inout) :: rc
     type(C_PTR) :: c_attrs_create_by_parse
   end function c_attrs_create_by_parse
+
+  !=============================================================================
+
+  subroutine c_attrs_broadcast(attrs, rootPet, rc) bind(C, name="ESMC_AttributesBroadcast")
+    use iso_c_binding
+    implicit none
+    type(C_PTR), value :: attrs
+    integer(C_INT), intent(in) :: rootPet
+    integer(C_INT), intent(inout) :: rc
+  end subroutine
 
   !=============================================================================
 
@@ -118,6 +137,16 @@ interface
     type(C_PTR), value :: rhs
     integer(C_INT), intent(inout) :: rc
   end subroutine c_attrs_update
+
+  !=============================================================================
+
+  subroutine c_attrs_base_sync(inqstate, rootPet, rc) bind(C, name="ESMC_AttributesBaseSync")
+    use iso_c_binding
+    implicit none
+    type(C_PTR), value :: inqstate
+    integer(C_INT), intent(in) :: rootPet
+    integer(C_INT), intent(inout) :: rc
+  end subroutine
 
   !=============================================================================
 

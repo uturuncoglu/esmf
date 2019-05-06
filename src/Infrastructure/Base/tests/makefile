@@ -1,42 +1,45 @@
-# $Id$ 
+# $Id$
 
 ALL:  build_unit_tests
 run:  run_unit_tests
 
 LOCDIR	  = src/Infrastructure/Base/tests
 
-TESTS_BUILD   = $(ESMF_TESTDIR)/ESMF_AttributesUTest \
-                $(ESMF_TESTDIR)/ESMC_AttributesUTest \
-                $(ESMF_TESTDIR)/ESMF_AttributesArrayUTest \
-                $(ESMF_TESTDIR)/ESMF_AttributesUpdateUTest
-#TESTS_BUILD   = $(ESMF_TESTDIR)/ESMF_BaseUTest \
-#                $(ESMF_TESTDIR)/ESMC_NlohmannJSONUTest \
+#TESTS_BUILD   = $(ESMF_TESTDIR)/ESMF_AttributesUTest \
 #                $(ESMF_TESTDIR)/ESMC_AttributesUTest \
-#                $(ESMF_TESTDIR)/ESMF_AttributesUTest \
-#                $(ESMF_TESTDIR)/ESMF_AttributesProfileUTest \
 #                $(ESMF_TESTDIR)/ESMF_AttributesArrayUTest \
-#                $(ESMF_TESTDIR)/ESMF_AttributesUpdateUTest
+#                $(ESMF_TESTDIR)/ESMF_AttributesSyncUTest
+#TESTS_BUILD = $(ESMF_TESTDIR)/ESMF_AttributesSyncUTest
+TESTS_BUILD   = $(ESMF_TESTDIR)/ESMF_BaseUTest \
+                $(ESMF_TESTDIR)/ESMC_NlohmannJSONUTest \
+                $(ESMF_TESTDIR)/ESMC_AttributesUTest \
+                $(ESMF_TESTDIR)/ESMF_AttributesUTest \
+                $(ESMF_TESTDIR)/ESMF_AttributesProfileUTest \
+                $(ESMF_TESTDIR)/ESMF_AttributesArrayUTest \
+                $(ESMF_TESTDIR)/ESMF_AttributesSyncUTest
 
 TESTS_RUN     = RUN_ESMF_BaseUTest \
                 RUN_ESMC_NlohmannJSONUTest \
                 RUN_ESMC_AttributesUTest \
                 RUN_ESMF_AttributesUTest \
                 RUN_ESMF_AttributesProfileUTest \
-                RUN_ESMF_AttributesArrayUTest
+                RUN_ESMF_AttributesArrayUTest \
+                RUN_ESMF_AttributesSyncUTest
 
 TESTS_RUN_UNI = RUN_ESMF_BaseUTestUNI \
                 RUN_ESMC_NlohmannJSONUTestUNI \
                 RUN_ESMC_AttributesUTestUNI \
                 RUN_ESMF_AttributesUTestUNI \
                 RUN_ESMF_AttributesProfileUTestUNI \
-                RUN_ESMF_AttributesArrayUTestUNI
+                RUN_ESMF_AttributesArrayUTestUNI \
+                RUN_ESMF_AttributesSyncUTestUNI
 
 
 include ${ESMF_DIR}/makefile
 
 DIRS        =
 
-CLEANDIRS   = 
+CLEANDIRS   =
 CLEANFILES  = $(TESTS_BUILD)
 CLOBBERDIRS =
 
@@ -83,8 +86,8 @@ RUN_ESMF_AttributesArrayUTest:
 RUN_ESMF_AttributesArrayUTestUNI:
 	$(MAKE) TNAME=AttributesArrayUNI NP=1 ftest
 
-RUN_ESMF_AttributesUpdateUTest:
-	$(MAKE) TNAME=AttributesUpdate NP=4 ftest
+RUN_ESMF_AttributesSyncUTest:
+	$(MAKE) TNAME=AttributesSync NP=4 ftest
 
-RUN_ESMF_AttributesUpdateUTestUNI:
-	$(MAKE) TNAME=AttributesUpdateUNI NP=1 ftest
+RUN_ESMF_AttributesSyncUTestUNI:
+	$(MAKE) TNAME=AttributesSyncUNI NP=1 ftest

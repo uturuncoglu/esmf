@@ -49,7 +49,6 @@ implicit none
 include "ESMF_AttributesCDef.F90"
 
 type ESMF_Attributes
-  private
   type(C_PTR) :: ptr
 end type ESMF_Attributes
 
@@ -104,6 +103,22 @@ character(*), parameter, private :: version = '$Id$'
 
 contains  !====================================================================
 
+#undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_AttributesBaseGet()"
+function ESMF_AttributesBaseGet(base) result(attrs)
+  type(ESMF_Base), intent(in) :: base
+  type(ESMF_Attributes) :: attrs
+  attrs%ptr = c_attrs_base_get(base%this%ptr)
+end function ESMF_AttributesBaseGet
+
+#undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_AttributesPointerGet()"
+function ESMF_AttributesPointerGet(ptr) result(attrs)
+  type(ESMF_Pointer), intent(in) :: ptr
+  type(ESMF_Attributes) :: attrs
+  attrs%ptr = c_attrs_base_get(ptr%ptr)
+
+end function ESMF_AttributesPointerGet
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributesCopy()"
 function ESMF_AttributesCopy(attrs, rc) result(attrs_copy)
@@ -181,6 +196,25 @@ function ESMF_AttributesCreateByParse(payload, rc) result(attrs)
 
   if (present(rc)) rc = ESMF_SUCCESS
 end function ESMF_AttributesCreateByParse
+
+!------------------------------------------------------------------------------
+
+#undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_AttributesBroadcast()"
+subroutine ESMF_AttributesBroadcast(attrs, rootPet, rc)
+  type(ESMF_Attributes), intent(inout) :: attrs
+  integer, intent(in) :: rootPet
+  integer, intent(inout), optional :: rc
+  integer :: localrc=ESMF_FAILURE
+
+  if (present(rc)) rc = ESMF_FAILURE
+
+  call c_attrs_broadcast(attrs%ptr, rootPet, localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
+                         rcToReturn=rc)) return
+
+  if (present(rc)) rc = ESMF_SUCCESS
+end subroutine ESMF_AttributesBroadcast
 
 !------------------------------------------------------------------------------
 
