@@ -268,29 +268,17 @@ T Attributes::get(key_t &key, int &rc, T *def, int *index) const {
         ESMF_CHECKERR_STD("ESMC_RC_ARG_OUTOFRANGE", ESMC_RC_ARG_OUTOFRANGE, e.what(), rc)
       }
     }
-    catch (ESMCI::esmf_attrs_error &exc_esmf) {
-      ESMF_CATCH_PASSTHRU(exc_esmf);
-    }
+    ESMF_CATCH_ATTRS
   } else {
     try {
       json::json_pointer jp = this->formatKey(key, rc);
       if (def) {
         ret = this->storage.value(jp, *def);
       } else {
-        try {
-          ret = this->storage.at(jp);
-        }
-        catch (json::out_of_range &e) {
-          ESMF_THROW_JSON(e, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);
-        }
-        catch (json::type_error &e) {
-          ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
-        }
+        ret = this->storage.at(jp);
       }
     }
-    catch (ESMCI::esmf_attrs_error &exc_esmf) {
-      ESMF_CATCH_PASSTHRU(exc_esmf);
-    }
+    ESMF_CATCH_ATTRS
   }
   return ret;
 }

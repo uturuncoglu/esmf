@@ -23,11 +23,16 @@ module ESMF_AttributesSyncMod
 
 use ESMF_StateMod
 use ESMF_StateItemMod
+use ESMF_DistGridMod
 use ESMF_FieldMod
 use ESMF_FieldGetMod
 use ESMF_FieldBundleMod
+use ESMF_CompMod
+use ESMF_GridCompMod
+use ESMF_CplCompMod
+use ESMF_SciCompMod
 use ESMF_ArrayMod
-use ESMf_ArrayBundleMod
+use ESMF_ArrayBundleMod
 use ESMF_AttributesMod
 use ESMF_UtilTypesMod
 use ESMF_GeomBaseMod
@@ -41,15 +46,18 @@ implicit none
 
 type ESMF_Inquire
     type(ESMF_Attributes), pointer :: info
-    logical :: addBaseAddress
-    logical :: addObjectInfo
+    logical :: addBaseAddress = .false.
+    logical :: addObjectInfo = .false.
+    logical :: is_initialized = .false.
 contains
   procedure, private :: updateWithState, updateWithArray, updateWithArrayBundle, &
    updateWithField, updateWithFieldBundle, updateWithLocStream, updateWithGrid, &
-   updateWithXGrid, updateWithMesh, updateWithRouteHandle
+   updateWithXGrid, updateWithMesh, updateWithRouteHandle, updateWithDistGrid, &
+   updateWithGridComp, updateWithCplComp, updateWithSciComp
   generic :: Update => updateWithState, updateWithArray, updateWithArrayBundle, &
    updateWithField, updateWithFieldBundle, updateWithLocStream, updateWithGrid, &
-   updateWithXGrid, updateWithMesh, updateWithRouteHandle
+   updateWithXGrid, updateWithMesh, updateWithRouteHandle, updateWithDistGrid, &
+   updateWithGridComp, updateWithCplComp, updateWithSciComp
   procedure, private :: fillMembersState, fillMembersArrayBundle, fillMembersField, &
    fillMembersFieldBundle
   generic :: FillMembers => fillMembersState, fillMembersArrayBundle, fillMembersField, &
@@ -69,26 +77,17 @@ function Create(addBaseAddress, addObjectInfo, rc) result(newinq)
   integer, intent(inout), optional :: rc
   type(ESMF_Inquire) :: newinq
   integer :: localrc=ESMF_FAILURE
-  logical :: l_addBaseAddress, l_addObjectInfo
   type(ESMF_Attributes), target, save :: info
 
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
-  if (present(addBaseAddress)) then
-    l_addBaseAddress = addBaseAddress
-  else
-    l_addBaseAddress = .false.
-  end if
-  if (present(addObjectInfo)) then
-    l_addObjectInfo = addObjectInfo
-  else
-    l_addObjectInfo = .false.
-  end if
 
+  if (present(addBaseAddress)) newinq%addBaseAddress = addBaseAddress
+  if (present(addObjectInfo)) newinq%addObjectInfo = addObjectInfo
+  nullify(newinq%info)
   info = ESMF_AttributesCreate(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   newinq%info => info
-  newinq%addBaseAddress = l_addBaseAddress
-  newinq%addObjectInfo = l_addObjectInfo
+  newinq%is_initialized = .true.
 
   if (present(rc)) rc = ESMF_SUCCESS
 end function Create
@@ -101,8 +100,10 @@ subroutine Destroy(self, rc)
   integer :: localrc=ESMF_FAILURE
 
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
-  call ESMF_AttributesDestroy(self%info, rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  if (self%is_initialized) then
+    call ESMF_AttributesDestroy(self%info, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
   nullify(self%info)
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -207,6 +208,11 @@ subroutine updateGeneric(self, root_key, name, etype, base, base_is_valid, uname
   integer :: localrc=ESMF_FAILURE
   logical :: l_base_is_valid
   type(ESMF_Attributes) :: object_info
+
+  if (.not. self%is_initialized) then
+    if (ESMF_LogFoundError(ESMF_RC_OBJ_NOT_CREATED, msg="ESMF_Inquire is not initialized", &
+     ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   if (present(base_is_valid)) then
@@ -337,6 +343,31 @@ subroutine updateWithArrayBundle(self, target, root_key, rc)
 end subroutine updateWithArrayBundle
 
 #undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_Inquire%updateWithDistGrid()"
+subroutine updateWithDistGrid(self, target, root_key, rc)
+  class(ESMF_Inquire), intent(inout) :: self
+  type(ESMF_DistGrid), intent(in) :: target
+  character(*), intent(in) :: root_key
+  integer, intent(inout), optional :: rc
+  integer :: localrc
+  type(ESMF_Base) :: newbase
+  type(ESMF_Pointer) :: this
+  character(*), parameter :: etype = "DistGrid"
+
+  if (present(rc)) rc = ESMF_RC_NOT_IMPL
+
+  call ESMF_DistGridGetThis(target, this, rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  newbase%this = this
+
+  call self%updateGeneric(root_key, "__DistGrid__", etype, newbase, rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  if (present(rc)) rc = ESMF_SUCCESS
+end subroutine updateWithDistGrid
+
+#undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_Inquire%updateWithState()"
 subroutine updateWithState(self, state, root_key, rc)
   class(ESMF_Inquire), intent(inout) :: self
@@ -390,6 +421,72 @@ subroutine updateWithField(self, target, root_key, rc)
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine updateWithField
+
+#undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_Inquire%updateWithGridComp()"
+subroutine updateWithGridComp(self, target, root_key, rc)
+  class(ESMF_Inquire), intent(inout) :: self
+  type(ESMF_GridComp), intent(in) :: target
+  character(*), intent(in) :: root_key
+  integer, intent(inout), optional :: rc
+  character(ESMF_MAXSTR) :: name
+  integer :: localrc
+  character(*), parameter :: etype="GridComp"
+
+  if (present(rc)) rc = ESMF_RC_NOT_IMPL
+
+  call ESMF_GridCompGet(target, name=name, rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  call self%updateGeneric(root_key, name, etype, target%compp%base, rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  if (present(rc)) rc = ESMF_SUCCESS
+end subroutine updateWithGridComp
+
+#undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_Inquire%updateWithCplComp()"
+subroutine updateWithCplComp(self, target, root_key, rc)
+  class(ESMF_Inquire), intent(inout) :: self
+  type(ESMF_CplComp), intent(in) :: target
+  character(*), intent(in) :: root_key
+  integer, intent(inout), optional :: rc
+  character(ESMF_MAXSTR) :: name
+  integer :: localrc
+  character(*), parameter :: etype="CplComp"
+
+  if (present(rc)) rc = ESMF_RC_NOT_IMPL
+
+  call ESMF_CplCompGet(target, name=name, rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  call self%updateGeneric(root_key, name, etype, target%compp%base, rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  if (present(rc)) rc = ESMF_SUCCESS
+end subroutine updateWithCplComp
+
+#undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_Inquire%updateWithSciComp()"
+subroutine updateWithSciComp(self, target, root_key, rc)
+  class(ESMF_Inquire), intent(inout) :: self
+  type(ESMF_SciComp), intent(in) :: target
+  character(*), intent(in) :: root_key
+  integer, intent(inout), optional :: rc
+  character(ESMF_MAXSTR) :: name
+  integer :: localrc
+  character(*), parameter :: etype="SciComp"
+
+  if (present(rc)) rc = ESMF_RC_NOT_IMPL
+
+  call ESMF_SciCompGet(target, name=name, rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  call self%updateGeneric(root_key, name, etype, target%compp%base, rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  if (present(rc)) rc = ESMF_SUCCESS
+end subroutine updateWithSciComp
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_Inquire%updateWithLocStream()"
