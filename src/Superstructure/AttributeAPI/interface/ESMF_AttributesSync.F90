@@ -45,10 +45,13 @@ use ESMF_RHandleMod
 implicit none
 
 type ESMF_Inquire
-    type(ESMF_Attributes), pointer :: info
-    logical :: addBaseAddress = .false.
-    logical :: addObjectInfo = .false.
-    logical :: is_initialized = .false.
+  type(ESMF_Attributes), pointer :: info
+  logical :: addBaseAddress = .false.  ! If true, add the object's base address
+  logical :: addObjectInfo = .false.  ! If true, add ESMF_Info map for each object
+  logical :: createInfo = .true.  ! If true, also recurse objects with members (i.e. ArrayBundle)
+  logical :: is_initialized = .false.  ! If true, the object is initialized
+  logical :: curr_base_is_valid = .false.  ! If true, the object's base is valid (i.e. can be reinterpret casted)
+  type(ESMF_Base) :: curr_base  ! Holds a reference to the current update object's base. Will change when recursively updating
 contains
   procedure, private :: updateWithState, updateWithArray, updateWithArrayBundle, &
    updateWithField, updateWithFieldBundle, updateWithLocStream, updateWithGrid, &
@@ -62,7 +65,7 @@ contains
    fillMembersFieldBundle
   generic :: FillMembers => fillMembersState, fillMembersArrayBundle, fillMembersField, &
    fillMembersFieldBundle
-  procedure, public, pass :: Destroy, Print
+  procedure, public, pass :: Destroy, Print, GetCurrentBase, GetCurrentInfo
   procedure, public, nopass :: Create
   procedure, private :: updateGeneric
 end type ESMF_Inquire
@@ -71,9 +74,10 @@ contains
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_Inquire%Create()"
-function Create(addBaseAddress, addObjectInfo, rc) result(newinq)
+function Create(addBaseAddress, addObjectInfo, createInfo, rc) result(newinq)
   logical, intent(in), optional :: addBaseAddress
   logical, intent(in), optional :: addObjectInfo
+  logical, intent(in), optional :: createInfo
   integer, intent(inout), optional :: rc
   type(ESMF_Inquire) :: newinq
   integer :: localrc=ESMF_FAILURE
@@ -83,10 +87,13 @@ function Create(addBaseAddress, addObjectInfo, rc) result(newinq)
 
   if (present(addBaseAddress)) newinq%addBaseAddress = addBaseAddress
   if (present(addObjectInfo)) newinq%addObjectInfo = addObjectInfo
+  if (present(createInfo)) newinq%createInfo = createInfo
   nullify(newinq%info)
-  info = ESMF_AttributesCreate(rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
-  newinq%info => info
+  if (newinq%createInfo) then
+    info = ESMF_AttributesCreate(rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    newinq%info => info
+  endif
   newinq%is_initialized = .true.
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -108,6 +115,39 @@ subroutine Destroy(self, rc)
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine Destroy
+
+#undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_Inquire%GetCurrentBase()"
+function GetCurrentBase(self, rc) result(base)
+  class(ESMF_Inquire), intent(in) :: self
+  integer, intent(inout), optional :: rc
+  type(ESMF_Base) :: base
+  integer :: localrc=ESMF_FAILURE
+  if (present(rc)) rc = ESMF_RC_NOT_IMPL
+  if (self%curr_base_is_valid) then
+    base = self%curr_base
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="Base is not valid", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
+  if (present(rc)) rc = ESMF_SUCCESS
+end function GetCurrentBase
+
+#undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_Inquire%GetCurrentInfo()"
+function GetCurrentInfo(self, rc) result(info)
+  use iso_c_binding, only : C_NULL_PTR
+  class(ESMF_Inquire), intent(in) :: self
+  integer, intent(inout), optional :: rc
+  type(ESMF_Base) :: base
+  type(ESMF_Attributes) :: info
+  integer :: localrc=ESMF_FAILURE
+  if (present(rc)) rc = ESMF_RC_NOT_IMPL
+  info%ptr = C_NULL_PTR
+  base = self%GetCurrentBase(rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  info = ESMF_AttributesBaseGet(base)
+  if (present(rc)) rc = ESMF_SUCCESS
+end function GetCurrentInfo
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_Inquire%Print()"
@@ -220,61 +260,65 @@ subroutine updateGeneric(self, root_key, name, etype, base, base_is_valid, uname
   else
     l_base_is_valid = .true.
   end if
+  self%curr_base_is_valid = l_base_is_valid
+  self%curr_base = base
 
-  if (l_base_is_valid) then
-    call ESMF_BaseGetId(base, id_base, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
-    call itoa(id_base, c_id_base)
-    allocate(character(len(c_id_base)+len(trim(name))+1)::l_uname)
-    l_uname = c_id_base//"-"//trim(name)
-    deallocate(c_id_base)
-  else
-    allocate(character(len(trim(name)))::l_uname)
-    l_uname = trim(name)
-  end if
-
-  allocate(character(len(trim(root_key))+len(l_uname)+1)::local_root_key)
-  local_root_key = trim(root_key)//"/"//l_uname
-
-  call ESMF_AttributesSet(self%info, local_root_key//"/esmf_type", etype, force=.false., rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
-
-  call ESMF_AttributesSet(self%info, local_root_key//"/base_is_valid", l_base_is_valid, force=.false., rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
-
-  call ESMF_AttributesSetNULL(self%info, local_root_key//"/members", force=.false., rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
-
-  if (self%addBaseAddress) then
-    call ESMF_AttributesSet(self%info, local_root_key//"/base_address", base%this%ptr, force=.false., rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
-  end if
-
-  if (l_base_is_valid) then
-    call ESMF_AttributesSet(self%info, local_root_key//"/base_id", id_base, force=.false., rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
-  else
-    call ESMF_AttributesSetNULL(self%info, local_root_key//"/base_id", force=.false., rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
-  end if
-
-  if (self%addObjectInfo) then
+  if (self%createInfo) then
     if (l_base_is_valid) then
-      object_info = ESMF_AttributesBaseGet(base)
-      call ESMF_AttributesSet(self%info, local_root_key//"/info", object_info, force=.false., rc=localrc)
+      call ESMF_BaseGetId(base, id_base, rc=localrc)
       if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+      call itoa(id_base, c_id_base)
+      allocate(character(len(c_id_base)+len(trim(name))+1)::l_uname)
+      l_uname = c_id_base//"-"//trim(name)
+      deallocate(c_id_base)
     else
-      call ESMF_AttributesSetNULL(self%info, local_root_key//"/info", force=.false., rc=localrc)
+      allocate(character(len(trim(name)))::l_uname)
+      l_uname = trim(name)
+    end if
+
+    allocate(character(len(trim(root_key))+len(l_uname)+1)::local_root_key)
+    local_root_key = trim(root_key)//"/"//l_uname
+
+    call ESMF_AttributesSet(self%info, local_root_key//"/esmf_type", etype, force=.false., rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    call ESMF_AttributesSet(self%info, local_root_key//"/base_is_valid", l_base_is_valid, force=.false., rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    call ESMF_AttributesSetNULL(self%info, local_root_key//"/members", force=.false., rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    if (self%addBaseAddress) then
+      call ESMF_AttributesSet(self%info, local_root_key//"/base_address", base%this%ptr, force=.false., rc=localrc)
       if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     end if
-  end if
 
-  if (present(uname)) then
-    allocate(character(len(l_uname))::uname)
-    uname = l_uname
-  end if
+    if (l_base_is_valid) then
+      call ESMF_AttributesSet(self%info, local_root_key//"/base_id", id_base, force=.false., rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      call ESMF_AttributesSetNULL(self%info, local_root_key//"/base_id", force=.false., rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    end if
 
-  deallocate(local_root_key, l_uname)
+    if (self%addObjectInfo) then
+      if (l_base_is_valid) then
+        object_info = ESMF_AttributesBaseGet(base)
+        call ESMF_AttributesSet(self%info, local_root_key//"/info", object_info, force=.false., rc=localrc)
+        if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+      else
+        call ESMF_AttributesSetNULL(self%info, local_root_key//"/info", force=.false., rc=localrc)
+        if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+      end if
+    end if
+
+    if (present(uname)) then
+      allocate(character(len(l_uname))::uname)
+      uname = l_uname
+    end if
+
+    deallocate(local_root_key, l_uname)
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine updateGeneric
@@ -334,8 +378,10 @@ subroutine updateWithArrayBundle(self, target, root_key, rc)
   call self%updateGeneric(root_key, name, etype, newbase, uname=uname, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call self%FillMembers(target, root_key//"/"//uname//"/members", rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  if (self%createInfo) then
+    call self%FillMembers(target, root_key//"/"//uname//"/members", rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   deallocate(uname)
 
@@ -386,8 +432,10 @@ subroutine updateWithState(self, state, root_key, rc)
   call self%updateGeneric(root_key, name, "State", state%statep%base, uname=uname, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call self%FillMembers(state, root_key//"/"//uname//"/members", rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  if (self%createInfo) then
+    call self%FillMembers(state, root_key//"/"//uname//"/members", rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
 
   deallocate(uname)
 
@@ -414,8 +462,10 @@ subroutine updateWithField(self, target, root_key, rc)
   call self%updateGeneric(root_key, name, etype, target%ftypep%base, uname=uname, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call self%FillMembers(target, root_key//"/"//uname//"/members", rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  if (self%createInfo) then
+    call self%FillMembers(target, root_key//"/"//uname//"/members", rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   deallocate(uname)
 
@@ -626,8 +676,10 @@ subroutine updateWithFieldBundle(self, target, root_key, rc)
   call self%updateGeneric(root_key, name, etype, target%this%base, uname=uname, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call self%FillMembers(target, root_key//"/"//uname//"/members", rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  if (self%createInfo) then
+    call self%FillMembers(target, root_key//"/"//uname//"/members", rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   deallocate(uname)
 
