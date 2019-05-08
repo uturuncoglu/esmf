@@ -68,6 +68,12 @@ contains
   procedure, public, pass :: Destroy, Print, GetCurrentBase, GetCurrentInfo
   procedure, public, nopass :: Create
   procedure, private :: updateGeneric
+  procedure, private, nopass :: getInfoArray, getInfoArrayBundle, getInfoCplComp, &
+   getInfoGridComp, getInfoSciComp, getInfoDistGrid, getInfoField, getInfoFieldBundle, &
+   getInfoGrid, getInfoState, getInfoLocStream
+  generic :: GetInfo => getInfoArray, getInfoArrayBundle, getInfoCplComp, getInfoGridComp, &
+   getInfoSciComp, getInfoDistGrid, getInfoField, getInfoFieldBundle, getInfoGrid, &
+   getInfoState, getInfoLocStream
 end type ESMF_Inquire
 
 contains
@@ -108,8 +114,10 @@ subroutine Destroy(self, rc)
 
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   if (self%is_initialized) then
-    call ESMF_AttributesDestroy(self%info, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    if (self%createInfo) then
+      call ESMF_AttributesDestroy(self%info, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   endif
   nullify(self%info)
 
@@ -381,9 +389,8 @@ subroutine updateWithArrayBundle(self, target, root_key, rc)
   if (self%createInfo) then
     call self%FillMembers(target, root_key//"/"//uname//"/members", rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    deallocate(uname)
   endif
-
-  deallocate(uname)
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine updateWithArrayBundle
@@ -435,9 +442,8 @@ subroutine updateWithState(self, state, root_key, rc)
   if (self%createInfo) then
     call self%FillMembers(state, root_key//"/"//uname//"/members", rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    deallocate(uname)
   end if
-
-  deallocate(uname)
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine updateWithState
@@ -465,9 +471,8 @@ subroutine updateWithField(self, target, root_key, rc)
   if (self%createInfo) then
     call self%FillMembers(target, root_key//"/"//uname//"/members", rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    deallocate(uname)
   endif
-
-  deallocate(uname)
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine updateWithField
@@ -679,9 +684,8 @@ subroutine updateWithFieldBundle(self, target, root_key, rc)
   if (self%createInfo) then
     call self%FillMembers(target, root_key//"/"//uname//"/members", rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    deallocate(uname)
   endif
-
-  deallocate(uname)
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine updateWithFieldBundle
@@ -807,6 +811,263 @@ subroutine itoa(i, res)
   res = trim(tmp)
   deallocate(tmp)
 end subroutine
+
+#undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_Inquire%getInfoArray()"
+function getInfoArray(target, rc) result(info)
+  use iso_c_binding, only : C_NULL_PTR
+  type(ESMF_Array), intent(in) :: target
+  integer, intent(inout), optional :: rc
+  type(ESMF_Attributes) :: info
+  type(ESMF_Inquire) :: einq
+  integer :: localrc=ESMF_FAILURE
+
+  if (present(rc)) rc = ESMF_RC_NOT_IMPL
+  info%ptr = C_NULL_PTR
+  einq = einq%Create(createInfo=.false., rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  call einq%Update(target, "", rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  info = einq%GetCurrentInfo(rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  call einq%Destroy(rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  if (present(rc)) rc = ESMF_SUCCESS
+end function getInfoArray
+
+#undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_Inquire%getInfoArrayBundle()"
+function getInfoArrayBundle(target, rc) result(info)
+  use iso_c_binding, only : C_NULL_PTR
+  type(ESMF_ArrayBundle), intent(in) :: target
+  integer, intent(inout), optional :: rc
+  type(ESMF_Attributes) :: info
+  type(ESMF_Inquire) :: einq
+  integer :: localrc=ESMF_FAILURE
+
+  if (present(rc)) rc = ESMF_RC_NOT_IMPL
+  info%ptr = C_NULL_PTR
+  einq = einq%Create(createInfo=.false., rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  call einq%Update(target, "", rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  info = einq%GetCurrentInfo(rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  call einq%Destroy(rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  if (present(rc)) rc = ESMF_SUCCESS
+end function getInfoArrayBundle
+
+#undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_Inquire%getInfoCplComp()"
+function getInfoCplComp(target, rc) result(info)
+  use iso_c_binding, only : C_NULL_PTR
+  type(ESMF_CplComp), intent(in) :: target
+  integer, intent(inout), optional :: rc
+  type(ESMF_Attributes) :: info
+  type(ESMF_Inquire) :: einq
+  integer :: localrc=ESMF_FAILURE
+
+  if (present(rc)) rc = ESMF_RC_NOT_IMPL
+  info%ptr = C_NULL_PTR
+  einq = einq%Create(createInfo=.false., rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  call einq%Update(target, "", rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  info = einq%GetCurrentInfo(rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  call einq%Destroy(rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  if (present(rc)) rc = ESMF_SUCCESS
+end function getInfoCplComp
+
+#undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_Inquire%getInfoGridComp()"
+function getInfoGridComp(target, rc) result(info)
+  use iso_c_binding, only : C_NULL_PTR
+  type(ESMF_GridComp), intent(in) :: target
+  integer, intent(inout), optional :: rc
+  type(ESMF_Attributes) :: info
+  type(ESMF_Inquire) :: einq
+  integer :: localrc=ESMF_FAILURE
+
+  if (present(rc)) rc = ESMF_RC_NOT_IMPL
+  info%ptr = C_NULL_PTR
+  einq = einq%Create(createInfo=.false., rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  call einq%Update(target, "", rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  info = einq%GetCurrentInfo(rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  call einq%Destroy(rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  if (present(rc)) rc = ESMF_SUCCESS
+end function getInfoGridComp
+
+#undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_Inquire%getInfoSciComp()"
+function getInfoSciComp(target, rc) result(info)
+  use iso_c_binding, only : C_NULL_PTR
+  type(ESMF_SciComp), intent(in) :: target
+  integer, intent(inout), optional :: rc
+  type(ESMF_Attributes) :: info
+  type(ESMF_Inquire) :: einq
+  integer :: localrc=ESMF_FAILURE
+
+  if (present(rc)) rc = ESMF_RC_NOT_IMPL
+  info%ptr = C_NULL_PTR
+  einq = einq%Create(createInfo=.false., rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  call einq%Update(target, "", rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  info = einq%GetCurrentInfo(rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  call einq%Destroy(rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  if (present(rc)) rc = ESMF_SUCCESS
+end function getInfoSciComp
+
+#undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_Inquire%getInfoDistGrid()"
+function getInfoDistGrid(target, rc) result(info)
+  use iso_c_binding, only : C_NULL_PTR
+  type(ESMF_DistGrid), intent(in) :: target
+  integer, intent(inout), optional :: rc
+  type(ESMF_Attributes) :: info
+  type(ESMF_Inquire) :: einq
+  integer :: localrc=ESMF_FAILURE
+
+  if (present(rc)) rc = ESMF_RC_NOT_IMPL
+  info%ptr = C_NULL_PTR
+  einq = einq%Create(createInfo=.false., rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  call einq%Update(target, "", rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  info = einq%GetCurrentInfo(rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  call einq%Destroy(rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  if (present(rc)) rc = ESMF_SUCCESS
+end function getInfoDistGrid
+
+#undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_Inquire%getInfoField()"
+function getInfoField(target, rc) result(info)
+  use iso_c_binding, only : C_NULL_PTR
+  type(ESMF_Field), intent(in) :: target
+  integer, intent(inout), optional :: rc
+  type(ESMF_Attributes) :: info
+  type(ESMF_Inquire) :: einq
+  integer :: localrc=ESMF_FAILURE
+
+  if (present(rc)) rc = ESMF_RC_NOT_IMPL
+  info%ptr = C_NULL_PTR
+  einq = einq%Create(createInfo=.false., rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  call einq%Update(target, "", rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  info = einq%GetCurrentInfo(rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  call einq%Destroy(rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  if (present(rc)) rc = ESMF_SUCCESS
+end function getInfoField
+
+#undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_Inquire%getInfoFieldBundle()"
+function getInfoFieldBundle(target, rc) result(info)
+  use iso_c_binding, only : C_NULL_PTR
+  type(ESMF_FieldBundle), intent(in) :: target
+  integer, intent(inout), optional :: rc
+  type(ESMF_Attributes) :: info
+  type(ESMF_Inquire) :: einq
+  integer :: localrc=ESMF_FAILURE
+
+  if (present(rc)) rc = ESMF_RC_NOT_IMPL
+  info%ptr = C_NULL_PTR
+  einq = einq%Create(createInfo=.false., rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  call einq%Update(target, "", rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  info = einq%GetCurrentInfo(rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  call einq%Destroy(rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  if (present(rc)) rc = ESMF_SUCCESS
+end function getInfoFieldBundle
+
+#undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_Inquire%getInfoGrid()"
+function getInfoGrid(target, rc) result(info)
+  use iso_c_binding, only : C_NULL_PTR
+  type(ESMF_Grid), intent(in) :: target
+  integer, intent(inout), optional :: rc
+  type(ESMF_Attributes) :: info
+  type(ESMF_Inquire) :: einq
+  integer :: localrc=ESMF_FAILURE
+
+  if (present(rc)) rc = ESMF_RC_NOT_IMPL
+  info%ptr = C_NULL_PTR
+  einq = einq%Create(createInfo=.false., rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  call einq%Update(target, "", rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  info = einq%GetCurrentInfo(rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  call einq%Destroy(rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  if (present(rc)) rc = ESMF_SUCCESS
+end function getInfoGrid
+
+#undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_Inquire%getInfoState()"
+function getInfoState(target, rc) result(info)
+  use iso_c_binding, only : C_NULL_PTR
+  type(ESMF_State), intent(in) :: target
+  integer, intent(inout), optional :: rc
+  type(ESMF_Attributes) :: info
+  type(ESMF_Inquire) :: einq
+  integer :: localrc=ESMF_FAILURE
+
+  if (present(rc)) rc = ESMF_RC_NOT_IMPL
+  info%ptr = C_NULL_PTR
+  einq = einq%Create(createInfo=.false., rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  call einq%Update(target, "", rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  info = einq%GetCurrentInfo(rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  call einq%Destroy(rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  if (present(rc)) rc = ESMF_SUCCESS
+end function getInfoState
+
+#undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_Inquire%getInfoLocStream()"
+function getInfoLocStream(target, rc) result(info)
+  use iso_c_binding, only : C_NULL_PTR
+  type(ESMF_LocStream), intent(in) :: target
+  integer, intent(inout), optional :: rc
+  type(ESMF_Attributes) :: info
+  type(ESMF_Inquire) :: einq
+  integer :: localrc=ESMF_FAILURE
+
+  if (present(rc)) rc = ESMF_RC_NOT_IMPL
+  info%ptr = C_NULL_PTR
+  einq = einq%Create(createInfo=.false., rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  call einq%Update(target, "", rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  info = einq%GetCurrentInfo(rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  call einq%Destroy(rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  if (present(rc)) rc = ESMF_SUCCESS
+end function getInfoLocStream
+
+!===============================================================================
+!===============================================================================
+!===============================================================================
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributesStateSync()"

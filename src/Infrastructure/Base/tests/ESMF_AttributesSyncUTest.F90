@@ -61,7 +61,7 @@ program ESMF_AttributesSyncUTest
   type(ESMF_LocStream) :: locstream
   type(ESMF_RouteHandle) :: rh
   type(ESMF_State) :: state, nested_state, nested_state2
-  type(ESMF_Inquire) :: einq, desired_einq
+  type(ESMF_Inquire) :: einq, desired_einq, ainq
   integer :: rootPet=0
   integer(ESMF_KIND_I8), dimension(:), allocatable :: bases
 
@@ -129,30 +129,41 @@ program ESMF_AttributesSyncUTest
   !----------------------------------------------------------------------------
 
   if (localPet == rootPet) then
-    attrsp = ESMF_AttributesBaseGet(state%statep%base)
+    ! attrsp = ESMF_AttributesBaseGet(state%statep%base)
+    ! ainq = ainq%Create(createInfo=.false.)
+    ! call ainq%Update(state, "")
+    ! attrsp = ainq%GetCurrentInfo()
+    attrsp = ainq%GetInfo(state)
     call ESMF_AttributesSet(attrsp, "fvarname", "state")
 
-    attrsp = ESMF_AttributesBaseGet(nested_state2%statep%base)
+    attrsp = ainq%GetInfo(nested_state2)
+    ! attrsp = ESMF_AttributesBaseGet(nested_state2%statep%base)
     call ESMF_AttributesSet(attrsp, "fvarname", "nested_state2")
 
-    attrsp = ESMF_AttributesBaseGet(field%ftypep%base)
+    ! attrsp = ESMF_AttributesBaseGet(field%ftypep%base)
+    attrsp = ainq%GetInfo(field)
     call ESMF_AttributesSet(attrsp, "fvarname", "field")
 
-    attrsp = ESMF_AttributesBaseGet(field2%ftypep%base)
+    attrsp = ainq%GetInfo(field2)
+    ! attrsp = ESMF_AttributesBaseGet(field2%ftypep%base)
     call ESMF_AttributesSet(attrsp, "fvarname", "field2")
 
-    attrsp = ESMF_AttributesBaseGet(field3%ftypep%base)
+    ! attrsp = ESMF_AttributesBaseGet(field3%ftypep%base)
+    attrsp = ainq%GetInfo(field3)
     call ESMF_AttributesSet(attrsp, "fvarname", "field3")
 
-    call ESMF_ArrayGetThis(arr, eptr)
-    attrsp = ESMF_AttributesPointerGet(eptr)
+    ! call ESMF_ArrayGetThis(arr, eptr)
+    ! attrsp = ESMF_AttributesPointerGet(eptr)
+    attrsp = ainq%GetInfo(arr)
     call ESMF_AttributesSet(attrsp, "fvarname", "arr")
 
-    call ESMF_ArrayBundleGetThis(ab, eptr)
-    attrsp = ESMF_AttributesPointerGet(eptr)
+    ! call ESMF_ArrayBundleGetThis(ab, eptr)
+    ! attrsp = ESMF_AttributesPointerGet(eptr)
+    attrsp = ainq%GetInfo(ab)
     call ESMF_AttributesSet(attrsp, "fvarname", "ab")
 
-    attrsp = ESMF_AttributesBaseGet(locstream%lstypep%base)
+    attrsp = ainq%GetInfo(locstream)
+    ! attrsp = ESMF_AttributesBaseGet(locstream%lstypep%base)
     call ESMF_AttributesSet(attrsp, "fvarname", "locstream")
   end if
 
@@ -172,7 +183,7 @@ program ESMF_AttributesSyncUTest
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
   call einq%Update(state, "", rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
-  !call einq%Print() !tdk:p
+  call einq%Print() !tdk:p
 
   call ESMF_Test((einq%info == desired_attrs), name, failMsg, result, ESMF_SRCLINE)
 
