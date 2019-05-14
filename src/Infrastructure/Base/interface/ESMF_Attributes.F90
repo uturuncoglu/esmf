@@ -563,8 +563,7 @@ subroutine ESMF_AttributesGetCH(attrs, key, value, default, idx, rc)
   vlen = LEN(value)
   call c_attrs_get_CH(attrs%ptr, trim(key)//C_NULL_CHAR, value, vlen, &
     localrc, local_default_ptr, local_idx_ptr)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
-    rcToReturn=rc)) return
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributesGetCH
@@ -574,7 +573,35 @@ end subroutine ESMF_AttributesGetCH
 subroutine ESMF_AttributesGetArrayCH(attrs, key, values, nelements, rc)
   type(ESMF_Attributes), intent(inout) :: attrs
   character(len=*), intent(in) :: key
-  character(len=*), dimension(:), allocatable, intent(inout) :: values
+  character(len=*), dimension(:), allocatable, intent(out) :: values
+  integer(C_INT), target, intent(inout) :: nelements
+  integer, intent(inout), optional :: rc
+
+  integer :: localrc, ii
+
+  localrc = ESMF_FAILURE
+  if (present(rc)) rc = ESMF_FAILURE
+
+  ! Get the array size from the attributes store
+  call ESMF_AttributesInquire(attrs, key=trim(key)//C_NULL_CHAR, count=nelements, rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  ! Allocate the outgoing storage array and call into C to fill the array
+  if (.not. allocated(values)) allocate(values(nelements))
+  do ii=1,nelements
+    call ESMF_AttributesGetCH(attrs, key, values(ii), idx=ii, rc=localrc)
+  enddo
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  if (present(rc)) rc = ESMF_SUCCESS
+end subroutine ESMF_AttributesGetArrayCH
+
+#undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_AttributesGetArrayCHAlloc()"
+subroutine ESMF_AttributesGetArrayCHAlloc(attrs, key, values, nelements, rc)
+  type(ESMF_Attributes), intent(inout) :: attrs
+  character(len=*), intent(in) :: key
+  character(len=*), dimension(:), allocatable, intent(out) :: values
   integer(C_INT), target, intent(inout) :: nelements
   integer, intent(inout), optional :: rc
 
@@ -586,19 +613,17 @@ subroutine ESMF_AttributesGetArrayCH(attrs, key, values, nelements, rc)
   ! Get the array size from the attributes store
   call ESMF_AttributesInquire(attrs, key=trim(key)//C_NULL_CHAR, count=nelements, &
                               rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
-    rcToReturn=rc)) return
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   ! Allocate the outgoing storage array and call into C to fill the array
   allocate(values(nelements))
   do ii=1,nelements
     call ESMF_AttributesGetCH(attrs, key, values(ii), idx=ii, rc=localrc)
   enddo
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
-    rcToReturn=rc)) return
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributesGetArrayCH
+end subroutine ESMF_AttributesGetArrayCHAlloc
 
 !------------------------------------------------------------------------------
 
@@ -623,8 +648,7 @@ subroutine ESMF_AttributesSetNULL(attrs, key, force, rc)
   end if
 
   call c_attrs_set_NULL(attrs%ptr, trim(key)//C_NULL_CHAR, local_force, localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
-    rcToReturn=rc)) return
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributesSetNULL

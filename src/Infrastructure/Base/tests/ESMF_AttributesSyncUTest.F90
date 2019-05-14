@@ -183,7 +183,7 @@ program ESMF_AttributesSyncUTest
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
   call einq%Update(state, "", rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
-  call einq%Print() !tdk:p
+  ! call einq%Print() !tdk:p
 
   call ESMF_Test((einq%info == desired_attrs), name, failMsg, result, ESMF_SRCLINE)
 
