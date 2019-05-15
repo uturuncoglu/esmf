@@ -48,11 +48,39 @@ using json = nlohmann::json;  // Convenience rename for JSON namespace.
 
 namespace ESMCI {
 
+//-----------------------------------------------------------------------------
+// Helper Functions -----------------------------------------------------------
+//-----------------------------------------------------------------------------
+
 #undef ESMC_METHOD
 #define ESMC_METHOD "alignOffset()"
 void alignOffset(int &offset) {
   int nbytes = offset % 8;
   if (nbytes!=0) offset += (8 - nbytes);
+}
+
+#undef ESMC_METHOD
+#define ESMC_METHOD "get_recursive_json_object()"
+void get_recursive_json_object(key_t &key, json &j, json::object_t *jout) {
+  // Notes: no JSON pointer syntax for key; if jout is still nullptr at return
+  //        then the object has not been found
+  if (!j.is_object()) {
+    throw(ESMCI::esmf_attrs_error("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, "JSON type must be an object"));
+  }
+  for (std::size_t ii = 0; ii < key.size(); ++ii) {
+    if (key[ii] == '/') {
+      throw(ESMCI::esmf_attrs_error("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, "JSON pointer syntax not allowed"));
+    }
+  }
+  if (isIn(key, j)) {
+    jout = j[key].get_ptr<json::object_t*>();
+  } else {
+    for (auto it=j.begin(); it!=j.end(); it++) {
+      if (it.value().is_object()) {
+        get_recursive_json_object(key, it.value(), jout);
+      }
+    }
+  }
 }
 
 #undef ESMC_METHOD
@@ -124,6 +152,10 @@ bool isIn(key_t& target, const json& j) {
     return j.find(target) != j.end();
   }
 }
+
+//-----------------------------------------------------------------------------
+// Info Implementations -------------------------------------------------------
+//-----------------------------------------------------------------------------
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes(json&)"
