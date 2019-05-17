@@ -337,6 +337,33 @@ int main(void) {
   ESMC_Test(!failed, name, failMsg, &result, __FILE__, __LINE__, 0);
 
   //----------------------------------------------------------------------------
+  //NEX_UTest
+  strcpy(name, "Pointer to internal information");
+  strcpy(failMsg, "Pointer result bad");
+  failed = false;
+
+  json jjp;
+  jjp = json::object();
+  json::object_t& refjjp = jjp.get_ref<json::object_t&>();
+  jjp["ESMF"]["General"]["woohoo"] = 33;
+  jjp["NUOPC"]["Special"]["woohoo"] = 99;
+
+  json::object_t *jjpp = jjp.at("NUOPC").at("Special").get_ptr<json::object_t*>();
+//  std::cout << *jjpp << std::endl;
+
+  (*jjpp)["woohoo"] = 111;
+  json jnest = {{"woot", 768}, {"now", "is the time"}};
+  (*jjpp)["nest"] = jnest;
+  json::object_t &refj = *jjpp;
+  refj["weather"] = 45;
+  json jdump = refj;
+  jdump.dump();
+//  std::cout << jjp << std::endl;
+
+  if (refj.at("woohoo") != 111 && refj.at("nest").at("woot") != 768 && refj.at("weather") == 45) failed = true;
+  ESMC_Test(!failed, name, failMsg, &result, __FILE__, __LINE__, 0);
+
+  //----------------------------------------------------------------------------
   ESMC_TestEnd(__FILE__, __LINE__, 0);
   //----------------------------------------------------------------------------
 

@@ -83,9 +83,11 @@ class Attributes {
 
 private:
   bool dirty = false;
+  bool view = false;
 
 protected:
   json storage;  // JSON object store for keys/values managed by this instance
+  json::object_t *view_storage = nullptr;
 
   static json::json_pointer formatKey(key_t& key, int& rc);
   virtual void init(void) {this->storage = json::object();}
@@ -110,6 +112,8 @@ public:
 
   template <typename T>
   T get(key_t &key, int &rc, T *def = nullptr, int *index = nullptr) const;
+//  template <typename T>
+//  T get_conv_purp(key_t &conv, key_t &purp, key_t &key, int &rc, T *def = nullptr, int *index = nullptr, bool global = false) const;
 
   //tdk:remove this interface
   void get_isoc(ESMCI::ESMC_ISOCType ictype, void *ret, char* key, int& rc,
@@ -118,6 +122,8 @@ public:
   const json& getStorageRef(void) const;
 
   json& getStorageRefWritable(void);
+
+  const json::object_t& getStorageObjectRef(void) const;
 
   template <typename T, typename JT>
   T getPointer(key_t &key, int &rc) const;
@@ -139,10 +145,8 @@ public:
 
   void set(key_t &key, const ESMCI::Attributes &attrs, bool force, int &rc);
   void set(key_t &key, bool force, int &rc);  // set null
-
   template <typename T>
   void set(key_t& key, T value, bool force, int& rc, int *index = nullptr);
-
   template <typename T>
   void set(key_t& key, T *values, int count, bool force, int& rc);
 
