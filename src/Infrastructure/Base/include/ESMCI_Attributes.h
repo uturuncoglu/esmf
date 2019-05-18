@@ -84,10 +84,11 @@ class Attributes {
 private:
   bool dirty = false;
   bool view = false;
+//  std::string prefix = std::string();
+//  json *storagep = nullptr;
 
 protected:
-  json storage;  // JSON object store for keys/values managed by this instance
-  json::object_t *view_storage = nullptr;
+  json storage;  // JSON object store for keys/values managed by this instance //tdk:todo: make this private
 
   static json::json_pointer formatKey(key_t& key, int& rc);
   virtual void init(void) {this->storage = json::object();}
@@ -112,18 +113,13 @@ public:
 
   template <typename T>
   T get(key_t &key, int &rc, T *def = nullptr, int *index = nullptr) const;
-//  template <typename T>
-//  T get_conv_purp(key_t &conv, key_t &purp, key_t &key, int &rc, T *def = nullptr, int *index = nullptr, bool global = false) const;
 
   //tdk:remove this interface
   void get_isoc(ESMCI::ESMC_ISOCType ictype, void *ret, char* key, int& rc,
     void* def = nullptr) const;
 
-  const json& getStorageRef(void) const;
-
-  json& getStorageRefWritable(void);
-
-  const json::object_t& getStorageObjectRef(void) const;
+  virtual const json& getStorageRef(void) const { return this->storage; }
+  virtual json& getStorageRefWritable(void) { return this->storage; }
 
   template <typename T, typename JT>
   T getPointer(key_t &key, int &rc) const;
@@ -152,6 +148,26 @@ public:
 
   void update(const Attributes& attrs, int& rc);
 
+};
+
+//-----------------------------------------------------------------------------
+
+class AttPack : public Attributes {
+private:
+  json *storagep = nullptr;
+  std::string convention;
+  std::string purpose;
+public:
+  AttPack(Attributes &info, key_t &convention, key_t &purpose, int &rc);
+  AttPack(void) = delete; // Default constructor
+  ~AttPack(void) = default; // Default destructor
+  AttPack(AttPack&&) = delete; // Move constructor
+  AttPack(const AttPack&) = delete; // Copy constructor
+  AttPack&operator=(const AttPack&) = delete; // Copy assignment
+  AttPack&operator=(AttPack&&) = delete; // Move assignment
+
+  const json& getStorageRef(void) const   {return *(this->storagep);}
+        json& getStorageRefWritable(void) {return *(this->storagep);}
 };
 
 //-----------------------------------------------------------------------------

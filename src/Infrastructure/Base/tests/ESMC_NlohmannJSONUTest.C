@@ -346,21 +346,27 @@ int main(void) {
   jjp = json::object();
   json::object_t& refjjp = jjp.get_ref<json::object_t&>();
   jjp["ESMF"]["General"]["woohoo"] = 33;
+  jjp["ESMF"]["General"]["huh"] = "boom";
+  jjp["ESMF"]["General"]["life"] = true;
   jjp["NUOPC"]["Special"]["woohoo"] = 99;
 
   json::object_t *jjpp = jjp.at("NUOPC").at("Special").get_ptr<json::object_t*>();
-//  std::cout << *jjpp << std::endl;
 
   (*jjpp)["woohoo"] = 111;
   json jnest = {{"woot", 768}, {"now", "is the time"}};
   (*jjpp)["nest"] = jnest;
   json::object_t &refj = *jjpp;
   refj["weather"] = 45;
-  json jdump = refj;
-  jdump.dump();
-//  std::cout << jjp << std::endl;
 
-  if (refj.at("woohoo") != 111 && refj.at("nest").at("woot") != 768 && refj.at("weather") == 45) failed = true;
+  json *storagep = nullptr;
+  json &egen = jjp["ESMF"]["General"];
+  storagep = &egen;
+  std::cout << storagep->dump() << std::endl;  //tdk:p
+
+  if (refj.at("woohoo") != 111 &&
+      refj.at("nest").at("woot") != 768 &&
+      refj.at("weather") == 45 &&
+      (*storagep).value("woohoo", 777) != 33) failed = true;
   ESMC_Test(!failed, name, failMsg, &result, __FILE__, __LINE__, 0);
 
   //----------------------------------------------------------------------------

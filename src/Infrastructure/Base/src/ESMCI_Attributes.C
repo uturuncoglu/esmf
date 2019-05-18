@@ -304,11 +304,11 @@ T Attributes::get(key_t &key, int &rc, T *def, int *index) const {
   } else {
     try {
       json::json_pointer jp = this->formatKey(key, rc);
-//      const json::object_t &sp = this->getStorageObjectRef();
+      const json &storage = this->getStorageRef();
       if (def) {
-        ret = this->storage.value(jp, *def);
+        ret = storage.value(jp, *def);
       } else {
-        ret = this->storage.at(jp);
+        ret = storage.at(jp);
       }
     }
     ESMF_CATCH_ATTRS
@@ -323,74 +323,6 @@ template bool Attributes::get(key_t&, int&, bool*, int*) const;
 template std::string Attributes::get(key_t&, int&, std::string*, int*) const;
 template json Attributes::get(key_t&, int&, json*, int*) const;
 
-#undef ESMC_METHOD
-#define ESMC_METHOD "Attributes::getStorageObjectRef()"
-const json::object_t& Attributes::getStorageObjectRef() const {
-  //tdk:order
-  const json::object_t *ret = nullptr;
-  if (this->view) {
-    ret = this->view_storage;
-  } else {
-    ret = this->storage.get_ptr<const json::object_t*>();
-  }
-  return *ret;
-}
-//#undef ESMC_METHOD
-//#define ESMC_METHOD "Attributes::get_from_object_type()"
-// get_from_object_type(json::object_t &jobj, int *out, int &rc) {
-//  //tdk:try/catch
-//  rc = ESMF_FAILURE;
-//
-//  rc = ESMF_SUCCESS;
-//}
-
-//#undef  ESMC_METHOD
-//#define ESMC_METHOD "Attributes::get_conv_purp()"
-//template <typename T>
-//T Attributes::get_conv_purp(key_t &conv, key_t &purp, key_t &key, int &rc, T *def, int *index, bool global) const {
-//  // Exceptions:  ESMCI:esmf_attrs_error
-//
-//  rc = ESMF_FAILURE;
-//  T ret;
-//  try {
-//    const json::object_t &j = ((this->storage.at(conv)).at(purp)).get_ref<const json::object_t&>();
-//    bool has_key = !(j.find(key) == j.end());
-//    if (has_key) {
-//      ret = j.at(key);
-//    }
-//  }
-//  ESMF_CATCH_ATTRS
-//
-//
-//
-////  if (index) {
-////    try {
-////      const std::vector<json> *const vj = local_info.getPointer
-////        <const std::vector<json>* const, const json::array_t* const>
-////        (key, rc);
-////      try {
-////        ret = vj[0].at(*index);
-////      }
-////      catch (std::out_of_range &e) {
-////        ESMF_CHECKERR_STD("ESMC_RC_ARG_OUTOFRANGE", ESMC_RC_ARG_OUTOFRANGE, e.what(), rc)
-////      }
-////    }
-////    ESMF_CATCH_ATTRS
-////  } else {
-////    try {
-////      json::json_pointer jp = local_info->formatKey(key, rc);
-////      if (def) {
-////        ret = local_info->storage.value(jp, *def);
-////      } else {
-////        ret = local_info->storage.at(jp);
-////      }
-////    }
-////    ESMF_CATCH_ATTRS
-////  }
-////  return ret;
-//}
-//template int Attributes::get_conv_purp(key_t&, key_t&, key_t&, int&, int*, int*, bool) const;
-
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::getPointer()"
 template <typename T, typename JT>
@@ -401,7 +333,8 @@ T Attributes::getPointer(key_t& key, int& rc) const {
   try {
     json::json_pointer jp = this->formatKey(key, rc);
     try {
-      T ret = this->storage.at(jp).get_ptr<JT>();
+      const json &storage = this->getStorageRef();
+      T ret = storage.at(jp).get_ptr<JT>();
       rc = ESMF_SUCCESS;
       return ret;
     }
@@ -416,30 +349,14 @@ T Attributes::getPointer(key_t& key, int& rc) const {
     ESMF_CATCH_PASSTHRU(exc_esmf);
   }
 };
-//  template const float* const Attributes::getPointer<const float* const,
-//          const json::number_float_t* const>(key_t&, int&) const;
 template const double* const Attributes::getPointer<const double* const,
         const json::number_float_t* const>(key_t&, int&) const;
-//  template const int* const Attributes::getPointer<const int* const,
-//          const json::number_integer_t* const>(key_t&, int&) const;
 template const long int* const Attributes::getPointer<const long int* const,
         const json::number_integer_t* const>(key_t&, int&) const;
 template key_t* const Attributes::getPointer<key_t* const,
         const json::string_t* const>(key_t&, int&) const;
 template const std::vector<json>* const Attributes::getPointer<const std::vector<json>*
         const, const json::array_t* const>(key_t&, int&) const;
-
-#undef  ESMC_METHOD
-#define ESMC_METHOD "Attributes::getStorageRef()"
-const json& Attributes::getStorageRef() const{
-  return this->storage;
-};
-
-#undef  ESMC_METHOD
-#define ESMC_METHOD "Attributes::getStorageRefWritable()"
-json& Attributes::getStorageRefWritable() {
-  return this->storage;
-};
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::hasKey()"
@@ -824,6 +741,26 @@ void Attributes::update(const Attributes &attrs, int &rc) {
   this->dirty = true;
   rc = ESMF_SUCCESS;
 };
+
+//-----------------------------------------------------------------------------
+
+#undef ESMC_METHOD
+#define ESMC_METHOD "AttPack(ESMCI::Attributes &info, key_t &convention, key_t &purpose, int &rc)"
+AttPack::AttPack(ESMCI::Attributes &info, key_t &convention, key_t &purpose, int &rc) {
+  rc = ESMF_FAILURE;
+  try {
+    std::string key = "/" + convention + "/" + purpose;
+    json &infor = info.getStorageRefWritable();
+    if (!info.hasKey(key, rc, true)) {
+      infor[convention][purpose] = json::object();
+    }
+    this->storagep = &(infor[convention][purpose]);
+    this->convention = convention;
+    this->purpose = purpose;
+  }
+  ESMF_CATCH_ATTRS
+  rc = ESMF_SUCCESS;
+}
 
 //-----------------------------------------------------------------------------
 
