@@ -212,7 +212,7 @@ std::string Attributes::dump(int indent, int& rc) const {
   rc = ESMF_FAILURE;
   std::string ret;
   try {
-    ret = this->storage.dump(indent);
+    ret = this->getStorageRef().dump(indent);
   } catch (json::type_error &e) {
     ESMF_THROW_JSON(e, "ESMC_RC_ARG_INCOMP", ESMC_RC_ARG_INCOMP, rc);
   }
@@ -229,7 +229,7 @@ void Attributes::erase(key_t &keyParent, key_t &keyChild, int &rc) {
   try {
     json::json_pointer jp = this->formatKey(keyParent, rc);
     try {
-      json &target = this->storage.at(jp);
+      json &target = this->getStorageRefWritable().at(jp);
       json &found = target.at(keyChild);
       target.erase(keyChild);
     }
@@ -366,6 +366,7 @@ bool Attributes::hasKey(key_t& key, int& rc, bool isptr) const {
 
   rc = ESMF_FAILURE;
   bool ret;
+  const json &storage = this->getStorageRef();
   if (isptr) {
     // Use JSON pointer syntax. This is slower than just attempting to find
     // the key. JSON pointers do not work with find. See: https://github.com/nlohmann/json/issues/1182#issuecomment-409708389
@@ -373,7 +374,7 @@ bool Attributes::hasKey(key_t& key, int& rc, bool isptr) const {
     try {
       json::json_pointer jp = this->formatKey(key, rc);
       try {
-        this->storage.at(jp);
+        storage.at(jp);
         ret = true;
       }
       catch (json::out_of_range& e) {
@@ -387,7 +388,7 @@ bool Attributes::hasKey(key_t& key, int& rc, bool isptr) const {
   } else {
     // This is faster because it avoids exceptions. However, it does not work
     // with JSON pointers.
-    ret = !(this->storage.find(key) == this->storage.end());
+    ret = !(storage.find(key) == storage.end());
   }
   rc = ESMF_SUCCESS;
   return ret;
@@ -429,14 +430,9 @@ void Attributes::parse(key_t& input, int& rc) {
 
   rc = ESMF_FAILURE;
   try {
-    this->storage = json::parse(input);
+    this->getStorageRefWritable() = json::parse(input);
   }
-  catch (json::parse_error& e) {
-    ESMF_THROW_JSON(e, "ESMC_RC_OBJ_NOT_CREATED", ESMC_RC_OBJ_NOT_CREATED, rc);
-  }
-  catch (json::type_error& e) {
-    ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
-  }
+  ESMF_CATCH_JSON
   rc = ESMF_SUCCESS;
   return;
 }
@@ -535,14 +531,9 @@ bool Attributes::isSetNull(key_t &key, int &rc) const {
   try {
     json::json_pointer jp = this->formatKey(key, rc);
     try {
-      ret = !(this->storage.at(jp).is_null());
+      ret = !(this->getStorageRef().at(jp).is_null());
     }
-    catch (json::out_of_range &e) {
-      ESMF_THROW_JSON(e, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);
-    }
-    catch (json::type_error &e) {
-      ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
-    }
+    ESMF_CATCH_JSON
   }
   catch (ESMCI::esmf_attrs_error &exc_esmf) {
     ESMF_CATCH_PASSTHRU(exc_esmf);
@@ -603,7 +594,7 @@ void Attributes::set(key_t &key, const ESMCI::Attributes &attrs, bool force,
   }
   try {
     json::json_pointer jp = this->formatKey(key, rc);
-    this->storage[jp] = attrs.getStorageRef();
+    this->getStorageRefWritable()[jp] = attrs.getStorageRef();
   }
   ESMF_CATCH_ATTRS;
   this->dirty = true;
@@ -623,7 +614,7 @@ void Attributes::set(key_t &key, bool force, int &rc) {
   }
   try {
     json::json_pointer jp = this->formatKey(key, rc);
-    this->storage[jp] = json::value_t::null;
+    this->getStorageRefWritable()[jp] = json::value_t::null;
   }
   ESMF_CATCH_ATTRS;
   this->dirty = true;
@@ -653,7 +644,8 @@ void Attributes::set(key_t &key, T value, bool force, int &rc, int *index) {
     }
     json::json_pointer jp = this->formatKey(key, rc);
     if (index) {
-      json::array_t *arr_ptr = this->storage.at(jp).get_ptr<json::array_t *>();
+      json &storage = this->getStorageRefWritable();
+      json::array_t *arr_ptr = storage.at(jp).get_ptr<json::array_t *>();
       try {
         json jat = arr_ptr[0].at(*index);
         handleJSONTypeCheck(key, jat, jvalue, rc);
@@ -665,10 +657,10 @@ void Attributes::set(key_t &key, T value, bool force, int &rc, int *index) {
       }
     } else {
       if (has_key) {
-        json jat = this->storage.at(jp);
+        json jat = storage.at(jp);
         handleJSONTypeCheck(key, jat, jvalue, rc);
       }
-      this->storage[jp] = jvalue;
+      storage[jp] = jvalue;
     }
   }
   ESMF_CATCH_ATTRS;
@@ -703,9 +695,9 @@ void Attributes::set(key_t &key, T *values, int count, bool force, int &rc) {
   }
   try {
     json::json_pointer jp = this->formatKey(key, rc);
-    this->storage[jp] = json::array();
+    this->getStorageRefWritable()[jp] = json::array();
     //tdk:OPTIMIZE: can this "at" be removed?
-    json::array_t *arr_ptr = this->storage.at(jp).get_ptr<json::array_t *>();
+    json::array_t *arr_ptr = this->getStorageRefWritable().at(jp).get_ptr<json::array_t *>();
     if (values) {
       // If values are not null, transfer said values into the JSON array.
       arr_ptr->reserve(count);
@@ -735,7 +727,7 @@ void Attributes::update(const Attributes &attrs, int &rc) {
   rc = ESMF_FAILURE;
   const json& r_j = attrs.getStorageRef();
   try {
-    this->storage.update(r_j);
+    this->getStorageRefWritable().update(r_j);
   }
   ESMF_CATCH_JSON;
   this->dirty = true;
