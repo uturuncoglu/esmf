@@ -353,7 +353,7 @@ void ESMC_InfoGetAttPack(ESMCI::Attributes *info, ESMCI::AttPack *attpack,
     std::string conv(convention);
     std::string purp(purpose);
     attpack = new ESMCI::AttPack(*info, conv, purp, rc);
-    info->addAttPack(reinterpret_cast<void**>(&attpack));
+//    info->addAttPack(reinterpret_cast<void**>(&attpack));
   }
   ESMF_CATCH_ISOC
 }

@@ -83,7 +83,7 @@ class Attributes {
 
 private:
   bool dirty = false;
-  std::vector<void**> packs;
+//  std::vector<void**> packs;
 
 protected:
   json storage;  // JSON object store for keys/values managed by this instance //tdk:todo: make this private
@@ -94,8 +94,8 @@ protected:
 public:
   Attributes(void) {this->init();}
 //  Attributes(void) = default;  // Default constructor
-  virtual ~Attributes(void) {this->prologue();}
-//  ~Attributes(void) = default;  // Default destructor
+//  virtual ~Attributes(void) {this->prologue();}
+  ~Attributes(void) = default;  // Default destructor
   Attributes(Attributes&&) = delete; // Move constructor
   Attributes(const Attributes&) = delete; // Copy constructor
   Attributes&operator=(const Attributes&) = delete; // Copy assignment
@@ -105,7 +105,7 @@ public:
   Attributes(json&& storage); // Move constructor from JSON
   Attributes(key_t& input, int& rc); // Parse JSON string constructor
 
-  void addAttPack(void **attpack) {this->packs.push_back(attpack);}
+//  void addAttPack(void **attpack) {this->packs.push_back(attpack);}
 
   void prologue(void);
 

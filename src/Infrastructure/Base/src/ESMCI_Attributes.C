@@ -545,10 +545,10 @@ bool Attributes::isSetNull(key_t &key, int &rc) const {
 #define ESMC_METHOD "Attributes::prologue()"
 void Attributes::prologue(void) {
   ESMCI::AttPack **attpack;
-  for (std::size_t ii = 0; ii < this->packs.size(); ++ii) {
-    attpack = reinterpret_cast<ESMCI::AttPack**>(this->packs.at(ii));
-    delete *attpack;
-  }
+//  for (std::size_t ii = 0; ii < this->packs.size(); ++ii) {
+//    attpack = reinterpret_cast<ESMCI::AttPack**>(this->packs.at(ii));
+//    delete *attpack;
+//  }
 }
 
 #undef  ESMC_METHOD
