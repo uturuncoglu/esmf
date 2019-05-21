@@ -60,6 +60,49 @@ void alignOffset(int &offset) {
 }
 
 #undef ESMC_METHOD
+#define ESMC_METHOD "is_attpack()"
+bool is_attpack(const json &j) {
+  bool ret = false;
+  if (j.is_object() && j.size()==1 && j.cbegin().value().is_object()) {
+    ret = true;
+  }
+  return ret;
+}
+
+#undef ESMC_METHOD
+#define ESMC_METHOD "get_attpack_count()"
+std::size_t get_attpack_count(const json &j) {
+  // Test: test_get_attpack_count
+  assert(j.is_object());
+  std::size_t ret = 0;
+  for (json::const_iterator it=j.cbegin(); it!=j.cend(); it++) {
+    if (is_attpack(it.value())) {ret++;}
+  }
+  return ret;
+}
+
+#undef ESMC_METHOD
+#define ESMC_METHOD "update_json_count()"
+void update_json_count(std::size_t &count, const json &j, bool recursive) {
+  // Test: test_update_json_count
+  // Notes: if recursive, then attpacks and any other nested objects will be traversed
+  assert(j.is_object());
+  std::size_t ctr = 0;
+  for (json::const_iterator it=j.cbegin(); it!=j.cend(); it++) {
+    if (is_attpack(it.value())) {
+      if (ctr>0 && !recursive) {break;}
+      update_json_count(count, it.value().cbegin().value(), recursive);
+    } else {
+      count++;
+      if (it.value().is_object() && recursive) {
+        update_json_count(count, it.value(), recursive);
+      }
+    }
+    ctr++;
+  }
+}
+
+#undef ESMC_METHOD
 #define ESMC_METHOD "get_recursive_json_object()"
 void get_recursive_json_object(key_t &key, json &j, json::object_t *jout) {
   // Notes: no JSON pointer syntax for key; if jout is still nullptr at return
@@ -400,9 +443,8 @@ json Attributes::inquire(key_t& key, int& rc) const {
   rc = ESMF_FAILURE;
   json j = json::object();
   try {
-    std::string local_key(key);
     j["isDirty"] = this->isDirty();
-    json::json_pointer jp = this->formatKey(local_key, rc);
+    json::json_pointer jp = this->formatKey(key, rc);
     const json &s = this->getStorageRef();
     const json &sk = s.at(jp);
     j["count"] = sk.size();
@@ -418,7 +460,7 @@ json Attributes::inquire(key_t& key, int& rc) const {
     j["jsonType"] = json_typename;
     j["isArray"] = is_array;
   }
-  ESMF_CATCH_ATTRS;
+  ESMF_CATCH_ATTRS
   rc = ESMF_SUCCESS;
   return j;
 }

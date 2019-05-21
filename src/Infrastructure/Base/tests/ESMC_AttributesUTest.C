@@ -355,6 +355,47 @@ void testFormatKey(int& rc, char failMsg[]) {
   rc = ESMF_SUCCESS;
 }
 
+#undef ESMC_METHOD
+#define ESMC_METHOD "test_get_attpack_count()"
+void test_get_attpack_count(int& rc, char failMsg[]) {
+  rc = ESMF_FAILURE;
+  json j;
+  j["ESMF"]["General"]["foo"] = 5;
+  j["ESMF"]["General"]["fool"] = 55;
+  j["NUOPC"]["General"]["foo2"] = 3;
+  j["NUOPC"]["General"]["fool2"] = 33;
+  std::size_t c = get_attpack_count(j);
+  if (c!=2) {return finalizeFailure(rc, failMsg, "AttPack count incorrect");}
+
+  json j2;
+  j2["what"] = "nothing";
+  std::size_t c2 = get_attpack_count(j2);
+  if (c2!=0) {return finalizeFailure(rc, failMsg, "AttPack count incorrect");}
+  rc = ESMF_SUCCESS;
+}
+
+#undef ESMC_METHOD
+#define ESMC_METHOD "test_update_json_count()"
+void test_update_json_count(int& rc, char failMsg[]) {
+  rc = ESMF_FAILURE;
+
+  json j;
+  j["ESMF"]["General"]["foo"] = 5;
+  j["ESMF"]["General"]["fool"] = 55;
+  j["NUOPC"]["General"]["foo2"] = 3;
+  j["NUOPC"]["General"]["fool2"] = 33;
+
+  std::size_t c = 0;
+  update_json_count(c, j, false);
+  if (c!=2) {return finalizeFailure(rc, failMsg, "Recursive count incorrect");}
+  c = 0;
+
+  update_json_count(c, j, true);
+  if (c!=4) {return finalizeFailure(rc, failMsg, "Recursive count incorrect");}
+
+  rc = ESMF_SUCCESS;
+}
+
 #undef  ESMC_METHOD
 #define ESMC_METHOD "testSetGet()"
 void testSetGet(int& rc, char failMsg[]) {
@@ -762,6 +803,20 @@ int main(void) {
   //NEX_UTest
   strcpy(name, "Attributes Set/Get with an Index");
   testSetGetIndex(rc, failMsg);
+  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
+  //---------------------------------------------------------------------------
+
+  //---------------------------------------------------------------------------
+  //NEX_UTest
+  strcpy(name, "Attributes counting AttPacks");
+  test_get_attpack_count(rc, failMsg);
+  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
+  //---------------------------------------------------------------------------
+
+  //---------------------------------------------------------------------------
+  //NEX_UTest
+  strcpy(name, "Attributes recursive counting");
+  test_update_json_count(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //---------------------------------------------------------------------------
 
