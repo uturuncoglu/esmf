@@ -50,7 +50,7 @@ include "ESMF_AttributesCDef.F90"
 include "ESMF_AttributesCDefGeneric.F90"
 
 type ESMF_Attributes
-  type(C_PTR) :: ptr
+  type(C_PTR) :: ptr = C_NULL_PTR
 end type ESMF_Attributes
 
 interface ESMF_AttributesCreate

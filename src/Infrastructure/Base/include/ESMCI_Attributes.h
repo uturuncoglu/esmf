@@ -83,10 +83,10 @@ class Attributes {
 
 private:
   bool dirty = false;
-//  std::vector<void**> packs;
 
 protected:
   json storage;  // JSON object store for keys/values managed by this instance //tdk:todo: make this private
+  json *storagep = nullptr;
 
   static json::json_pointer formatKey(key_t& key, int& rc);
   virtual void init(void) {this->storage = json::object();}
@@ -94,8 +94,7 @@ protected:
 public:
   Attributes(void) {this->init();}
 //  Attributes(void) = default;  // Default constructor
-//  virtual ~Attributes(void) {this->prologue();}
-  ~Attributes(void) = default;  // Default destructor
+  virtual ~Attributes(void) = default;  // Default destructor
   Attributes(Attributes&&) = delete; // Move constructor
   Attributes(const Attributes&) = delete; // Copy constructor
   Attributes&operator=(const Attributes&) = delete; // Copy assignment
@@ -104,10 +103,6 @@ public:
   Attributes(const json& storage); // Copy constructor from JSON
   Attributes(json&& storage); // Move constructor from JSON
   Attributes(key_t& input, int& rc); // Parse JSON string constructor
-
-//  void addAttPack(void **attpack) {this->packs.push_back(attpack);}
-
-  void prologue(void);
 
   std::string dump(int& rc) const;
   std::string dump(int indent, int& rc) const;
@@ -155,23 +150,21 @@ public:
 
 //-----------------------------------------------------------------------------
 
-class AttPack : public Attributes {
-private:
-  json *storagep = nullptr;
-  std::string convention;
-  std::string purpose;
-public:
-  AttPack(Attributes &info, key_t &convention, key_t &purpose, int &rc);
-  AttPack(void) = delete; // Default constructor
-  ~AttPack(void) = default; // Default destructor
-  AttPack(AttPack&&) = delete; // Move constructor
-  AttPack(const AttPack&) = delete; // Copy constructor
-  AttPack&operator=(const AttPack&) = delete; // Copy assignment
-  AttPack&operator=(AttPack&&) = delete; // Move assignment
-
-  const json& getStorageRef(void) const   {return *(this->storagep);}
-        json& getStorageRefWritable(void) {return *(this->storagep);}
-};
+//class AttPack : public Attributes {
+//private:
+//  json *storage = nullptr;
+//public:
+//  AttPack(json *infop) {this->storage = infop;}
+//  AttPack(void) = delete; // Default constructor
+//  ~AttPack(void) = default; // Default destructor
+//  AttPack(AttPack&&) = delete; // Move constructor
+//  AttPack(const AttPack&) = delete; // Copy constructor
+//  AttPack&operator=(const AttPack&) = delete; // Copy assignment
+//  AttPack&operator=(AttPack&&) = delete; // Move assignment
+//
+//  const json& getStorageRef(void) const   {return *(this->storage);}
+//        json& getStorageRefWritable(void) {return *(this->storage);}
+//};
 
 //-----------------------------------------------------------------------------
 

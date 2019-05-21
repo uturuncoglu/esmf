@@ -541,16 +541,6 @@ bool Attributes::isSetNull(key_t &key, int &rc) const {
   return ret;
 }
 
-#undef ESMC_METHOD
-#define ESMC_METHOD "Attributes::prologue()"
-void Attributes::prologue(void) {
-  ESMCI::AttPack **attpack;
-//  for (std::size_t ii = 0; ii < this->packs.size(); ++ii) {
-//    attpack = reinterpret_cast<ESMCI::AttPack**>(this->packs.at(ii));
-//    delete *attpack;
-//  }
-}
-
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::serialize()"
 void Attributes::serialize(char *buffer, int *length, int *offset,
@@ -746,23 +736,23 @@ void Attributes::update(const Attributes &attrs, int &rc) {
 
 //-----------------------------------------------------------------------------
 
-#undef ESMC_METHOD
-#define ESMC_METHOD "AttPack(ESMCI::Attributes &info, key_t &convention, key_t &purpose, int &rc)"
-AttPack::AttPack(ESMCI::Attributes &info, key_t &convention, key_t &purpose, int &rc) {
-  rc = ESMF_FAILURE;
-  try {
-    std::string key = "/" + convention + "/" + purpose;
-    json &infor = info.getStorageRefWritable();
-    if (!info.hasKey(key, rc, true)) {
-      infor[convention][purpose] = json::object();
-    }
-    this->storagep = &(infor[convention][purpose]);
-    this->convention = convention;
-    this->purpose = purpose;
-  }
-  ESMF_CATCH_ATTRS
-  rc = ESMF_SUCCESS;
-}
+//#undef ESMC_METHOD
+//#define ESMC_METHOD "AttPack(ESMCI::Attributes &info, key_t &convention, key_t &purpose, int &rc)"
+//AttPack::AttPack(ESMCI::Attributes &info, key_t &convention, key_t &purpose, int &rc) {
+//  rc = ESMF_FAILURE;
+//  try {
+//    std::string key = "/" + convention + "/" + purpose;
+//    json &infor = info.getStorageRefWritable();
+//    if (!info.hasKey(key, rc, true)) {
+//      infor[convention][purpose] = json::object();
+//    }
+//    this->storage = &(infor[convention][purpose]);
+//    this->convention = convention;
+//    this->purpose = purpose;
+//  }
+//  ESMF_CATCH_ATTRS
+//  rc = ESMF_SUCCESS;
+//}
 
 //-----------------------------------------------------------------------------
 

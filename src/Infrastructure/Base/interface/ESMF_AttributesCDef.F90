@@ -168,15 +168,15 @@ interface
 
   !=============================================================================
 
-  subroutine c_info_get_attpack(infop, attpackp, convention, purpose, rc) bind(C, name="ESMC_InfoGetAttPack")
-    use iso_c_binding
-    implicit none
-    type(C_PTR), value :: infop
-    type(C_PTR), value :: attpackp
-    character(C_CHAR), intent(in) :: convention(*)
-    character(C_CHAR), intent(in) :: purpose(*)
-    integer(C_INT), intent(inout) :: rc
-  end subroutine c_info_get_attpack
+!  subroutine c_info_get_attpack(infop, attpackp, convention, purpose, rc) bind(C, name="ESMC_InfoGetAttPack")
+!    use iso_c_binding
+!    implicit none
+!    type(C_PTR), value :: infop
+!    type(C_PTR), value :: attpackp
+!    character(C_CHAR), intent(in) :: convention(*)
+!    character(C_CHAR), intent(in) :: purpose(*)
+!    integer(C_INT), intent(inout) :: rc
+!  end subroutine c_info_get_attpack
 
   !=============================================================================
 

@@ -344,19 +344,19 @@ void ESMC_AttributesWriteJSON(ESMCI::Attributes *attrs, char *filename,
 
 //-----------------------------------------------------------------------------
 
-#undef ESMC_METHOD
-#define ESMC_METHOD "ESMC_InfoGetAttPack()"
-void ESMC_InfoGetAttPack(ESMCI::Attributes *info, ESMCI::AttPack *attpack,
-  char *convention, char *purpose, int &rc) {
-  rc = ESMF_FAILURE;
-  try {
-    std::string conv(convention);
-    std::string purp(purpose);
-    attpack = new ESMCI::AttPack(*info, conv, purp, rc);
-//    info->addAttPack(reinterpret_cast<void**>(&attpack));
-  }
-  ESMF_CATCH_ISOC
-}
+//#undef ESMC_METHOD
+//#define ESMC_METHOD "ESMC_InfoGetAttPack()"
+//void ESMC_InfoGetAttPack(ESMCI::Attributes *info, ESMCI::AttPack *attpack,
+//  char *convention, char *purpose, int &rc) {
+//  rc = ESMF_FAILURE;
+//  try {
+//    std::string conv(convention);
+//    std::string purp(purpose);
+//    attpack = new ESMCI::AttPack(*info, conv, purp, rc);
+////    info->addAttPack(reinterpret_cast<void**>(&attpack));
+//  }
+//  ESMF_CATCH_ISOC
+//}
 
 //-----------------------------------------------------------------------------
 
