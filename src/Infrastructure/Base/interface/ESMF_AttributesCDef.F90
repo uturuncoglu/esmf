@@ -75,12 +75,14 @@ interface
 
   !=============================================================================
 
-  subroutine c_attrs_inquire(attrs, inq, key, rc) bind(C, name="ESMC_AttributesInquire")
+  subroutine c_attrs_inquire(attrs, inq, key, recursive, idx, rc) bind(C, name="ESMC_AttributesInquire")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: attrs
     type(C_PTR), value :: inq
     character(C_CHAR), intent(in) :: key(*)
+    logical(C_BOOL), intent(in) :: recursive
+    type(C_PTR), value :: idx
     integer(C_INT), intent(inout) :: rc
   end subroutine c_attrs_inquire
 

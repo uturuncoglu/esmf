@@ -206,7 +206,7 @@ void testSetGetIndex(int& rc, char failMsg[]) {
     }
   }
   catch (ESMCI::esmf_attrs_error &exc_esmf) {
-    ESMF_CATCH_PASSTHRU(exc_esmf);
+    ESMF_HANDLE_PASSTHRU(exc_esmf);
   }
   double diff;
   double actual;
@@ -215,7 +215,7 @@ void testSetGetIndex(int& rc, char failMsg[]) {
       actual = attrs.get<double>(key, rc, nullptr, &ii);
     }
     catch (ESMCI::esmf_attrs_error &exc_esmf) {
-      ESMF_CATCH_PASSTHRU(exc_esmf);
+      ESMF_HANDLE_PASSTHRU(exc_esmf);
     }
     diff = std::abs(values[ii] - actual);
     if (diff >= 1e-16) {
@@ -386,11 +386,13 @@ void test_update_json_count(int& rc, char failMsg[]) {
   j["NUOPC"]["General"]["fool2"] = 33;
 
   std::size_t c = 0;
-  update_json_count(c, j, false);
+  std::size_t ct = 0;
+  update_json_count(c, ct, j, false);
   if (c!=2) {return finalizeFailure(rc, failMsg, "Recursive count incorrect");}
-  c = 0;
 
-  update_json_count(c, j, true);
+  c = 0;
+  ct = 0;
+  update_json_count(c, ct, j, true);
   if (c!=4) {return finalizeFailure(rc, failMsg, "Recursive count incorrect");}
 
   rc = ESMF_SUCCESS;
@@ -608,7 +610,7 @@ void testDumpLength(int& rc, char failMsg[]) {
     attrbuff = attrs.dump(rc);
   }
   catch (esmf_attrs_error &e) {
-    ESMF_CATCH_PASSTHRU(e);
+    ESMF_HANDLE_PASSTHRU(e);
   }
   std::size_t sf = attrbuff.length();
   try {
@@ -616,7 +618,7 @@ void testDumpLength(int& rc, char failMsg[]) {
     attrbuff = attrs.dump(rc);
   }
   catch (esmf_attrs_error &e) {
-    ESMF_CATCH_PASSTHRU(e);
+    ESMF_HANDLE_PASSTHRU(e);
   }
   std::size_t sf2 = attrbuff.length();
   if (sf2 < sf) {
@@ -634,7 +636,7 @@ void testSerializeDeserialize(int& rc, char failMsg[]) {
     attrs.set("foo", 16, false, rc);
   }
   catch (esmf_attrs_error &e) {
-    ESMF_CATCH_PASSTHRU(e);
+    ESMF_HANDLE_PASSTHRU(e);
   }
   char *null_buffer = nullptr;
   int inquire_length = 0;
@@ -643,7 +645,7 @@ void testSerializeDeserialize(int& rc, char failMsg[]) {
     attrs.serialize(null_buffer, &inquire_length, &offset, ESMF_INQUIREONLY, rc);
   }
   catch (esmf_attrs_error &e) {
-    ESMF_CATCH_PASSTHRU(e);
+    ESMF_HANDLE_PASSTHRU(e);
   }
   if (offset != 0) {
     return finalizeFailure(rc, failMsg, "Should not have adjusted offset");
@@ -654,7 +656,7 @@ void testSerializeDeserialize(int& rc, char failMsg[]) {
     attrs.serialize(buffer, &length, &offset, ESMF_NOINQUIRE, rc);
   }
   catch (esmf_attrs_error &e) {
-    ESMF_CATCH_PASSTHRU(e);
+    ESMF_HANDLE_PASSTHRU(e);
   }
   int aligned_length = length;
   alignOffset(aligned_length);
@@ -667,7 +669,7 @@ void testSerializeDeserialize(int& rc, char failMsg[]) {
     deattrs.deserialize(buffer, &deoffset, rc);
   }
   catch (esmf_attrs_error &e) {
-    ESMF_CATCH_PASSTHRU(e);
+    ESMF_HANDLE_PASSTHRU(e);
   }
   if (deoffset != offset) {
     return finalizeFailure(rc, failMsg, "Deserialize offset incorrect");
@@ -677,6 +679,52 @@ void testSerializeDeserialize(int& rc, char failMsg[]) {
   }
   return;
 };
+
+#undef  ESMC_METHOD
+#define ESMC_METHOD "testInquire()"
+void testInquire(int& rc, char failMsg[]) {
+  rc = ESMF_FAILURE;
+  json j;
+  j["ESMF"]["General"]["n"] = 100;
+  j["ESMF"]["General"]["x"] = 1000;
+  j["NUOPC"]["General"]["a"] = 111;
+  j["NUOPC"]["General"]["b"] = 1111;
+  ESMCI::Attributes info(std::move(j));
+  json inq;
+  try {
+    inq = info.inquire("", rc);
+  }
+  ESMF_CATCH_PASSTHRU
+  if(inq.at("attPackCount")!=2) {
+    return finalizeFailure(rc, failMsg, "Wrong inquire count");
+  }
+
+  try {
+    inq = info.inquire("/ESMF/General", rc);
+  }
+  ESMF_CATCH_PASSTHRU
+  if(inq.at("count")!=2) {
+    return finalizeFailure(rc, failMsg, "Wrong inquire count with key");
+  }
+
+  try {
+    inq = info.inquire("", rc, true);
+  }
+  ESMF_CATCH_PASSTHRU
+  if(inq.at("count")!=4) {
+    return finalizeFailure(rc, failMsg, "Wrong inquire count with recursive");
+  }
+
+  info.getStorageRefWritable()["NUOPC"]["General"]["foobar"] = {3, 4, 5};
+  try {
+    int idx = 1;
+    inq = info.inquire("/NUOPC/General/foobar", rc, false, &idx);
+  }
+  ESMF_CATCH_PASSTHRU
+  if(inq.at("jsonType")!="number") {
+    return finalizeFailure(rc, failMsg, "Wrong inquire count with recursive");
+  }
+}
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "testUpdate()"
@@ -817,6 +865,13 @@ int main(void) {
   //NEX_UTest
   strcpy(name, "Attributes recursive counting");
   test_update_json_count(rc, failMsg);
+  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
+  //---------------------------------------------------------------------------
+
+  //---------------------------------------------------------------------------
+  //NEX_UTest
+  strcpy(name, "Attributes inquire");
+  testInquire(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //---------------------------------------------------------------------------
 

@@ -301,60 +301,80 @@ end subroutine ESMF_AttributesRemove
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributesInquire()"
-subroutine ESMF_AttributesInquire(attrs, key, count, jsonType, isArray, isDirty, rc)
+subroutine ESMF_AttributesInquire(attrs, key, count, countTotal, jsonType, isArray, isDirty, attPackCount, attnestflag, idx, rc)
   type(ESMF_Attributes), intent(in) :: attrs
   character(len=*), intent(in), optional :: key
   integer(C_INT), intent(inout), optional :: count
+  integer(C_INT), intent(inout), optional :: countTotal
   character(len=*), intent(inout), optional :: jsonType
   logical, intent(inout), optional :: isArray
   logical, intent(inout), optional :: isDirty
+  integer(C_INT), intent(inout), optional :: attPackCount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
+  integer(C_INT), intent(in), optional :: idx
   integer, intent(inout), optional :: rc
 
   integer :: localrc
   type(ESMF_Attributes) :: inq
-  character(len=ESMF_MAXSTR) :: local_key
+  character(:), allocatable :: local_key
+  logical(C_BOOL) :: recursive=.true.
+  integer(C_INT), target :: local_idx
+  type(C_PTR) :: local_idx_ptr
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
 
   if (present(key)) then
-    local_key = key
+    allocate(character(len(trim(key)))::local_key)
+    local_key = trim(key)
   else
+    allocate(character(0)::local_key)
     local_key = ""
+  end if
+  if (present(attnestflag)) then
+    if (attnestflag%value==ESMF_ATTNEST_OFF%value) recursive = .false.
+  end if
+  if (present(idx)) then
+    local_idx = idx - 1  ! Shift to C (zero-based) indexing
+    local_idx_ptr = C_LOC(local_idx)
+  else
+    local_idx_ptr = C_NULL_PTR
   end if
 
   inq = ESMF_AttributesCreate(rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
-    rcToReturn=rc)) return
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call c_attrs_inquire(attrs%ptr, inq%ptr, trim(local_key)//C_NULL_CHAR, localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
-    rcToReturn=rc)) return
+  call c_attrs_inquire(attrs%ptr, inq%ptr, local_key//C_NULL_CHAR, recursive, &
+   local_idx_ptr, localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(count)) then
     call ESMF_AttributesGet(inq, "count", count, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
-      rcToReturn=rc)) return
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   end if
   if (present(jsonType)) then
     call ESMF_AttributesGet(inq, "jsonType", jsonType, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
-      rcToReturn=rc)) return
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   end if
   if (present(isArray)) then
     call ESMF_AttributesGet(inq, "isArray", isArray, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
-      rcToReturn=rc)) return
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   end if
   if (present(isDirty)) then
     call ESMF_AttributesGet(inq, "isDirty", isDirty, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
-      rcToReturn=rc)) return
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+  if (present(attPackCount)) then
+    call ESMF_AttributesGet(inq, "attPackCount", attPackCount, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+  if (present(countTotal)) then
+    call ESMF_AttributesGet(inq, "countTotal", countTotal, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   end if
 
   call ESMF_AttributesDestroy(inq, rc=rc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
-    rcToReturn=rc)) return
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributesInquire

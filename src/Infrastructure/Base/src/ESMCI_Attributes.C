@@ -83,19 +83,24 @@ std::size_t get_attpack_count(const json &j) {
 
 #undef ESMC_METHOD
 #define ESMC_METHOD "update_json_count()"
-void update_json_count(std::size_t &count, const json &j, bool recursive) {
+void update_json_count(std::size_t &count, std::size_t &count_total, const json &j, bool recursive) {
   // Test: test_update_json_count
   // Notes: if recursive, then attpacks and any other nested objects will be traversed
+  //  - "count" is only single-valued attributes
+  //  - "countTotal" includes objects and arrays
   assert(j.is_object());
   std::size_t ctr = 0;
   for (json::const_iterator it=j.cbegin(); it!=j.cend(); it++) {
     if (is_attpack(it.value())) {
       if (ctr>0 && !recursive) {break;}
-      update_json_count(count, it.value().cbegin().value(), recursive);
+      update_json_count(count, count_total, it.value().cbegin().value(), recursive);
     } else {
-      count++;
+      count_total++;
+      if (!it.value().is_structured()) {
+        count++;
+      }
       if (it.value().is_object() && recursive) {
-        update_json_count(count, it.value(), recursive);
+        update_json_count(count, count_total, it.value(), recursive);
       }
     }
     ctr++;
@@ -136,7 +141,7 @@ bool handleHasKey(const Attributes* attrs, key_t& key, int& rc) {
     has_key = attrs->hasKey(key, rc, true);
   }
   catch (ESMCI::esmf_attrs_error &exc_esmf) {
-    ESMF_CATCH_PASSTHRU(exc_esmf);
+    ESMF_HANDLE_PASSTHRU(exc_esmf);
   }
   if (has_key) {
     std::string msg = "Attribute key \'" + key + "\' already in map and force=false.";
@@ -242,7 +247,7 @@ std::string Attributes::dump(int& rc) const {
   try {
     ret = this->dump(0, rc);
   } catch (ESMCI::esmf_attrs_error &e) {
-    ESMF_CATCH_PASSTHRU(e);
+    ESMF_HANDLE_PASSTHRU(e);
   }
   return ret;
 };
@@ -284,7 +289,7 @@ void Attributes::erase(key_t &keyParent, key_t &keyChild, int &rc) {
     }
   }
   catch (ESMCI::esmf_attrs_error &exc_esmf) {
-    ESMF_CATCH_PASSTHRU(exc_esmf);
+    ESMF_HANDLE_PASSTHRU(exc_esmf);
   }
   catch (...) {
     ESMF_CHECKERR_STD("", ESMF_FAILURE, "Unhandled throw", rc);
@@ -389,7 +394,7 @@ T Attributes::getPointer(key_t& key, int& rc) const {
     }
   }
   catch (ESMCI::esmf_attrs_error &exc_esmf) {
-    ESMF_CATCH_PASSTHRU(exc_esmf);
+    ESMF_HANDLE_PASSTHRU(exc_esmf);
   }
 };
 template const double* const Attributes::getPointer<const double* const,
@@ -425,7 +430,7 @@ bool Attributes::hasKey(key_t& key, int& rc, bool isptr) const {
       }
     }
     catch (ESMCI::esmf_attrs_error &e) {
-      ESMF_CATCH_PASSTHRU(e);
+      ESMF_HANDLE_PASSTHRU(e);
     }
 
   } else {
@@ -439,15 +444,36 @@ bool Attributes::hasKey(key_t& key, int& rc, bool isptr) const {
 
 #undef ESMC_METHOD
 #define ESMC_METHOD "Attributes::inquire()"
-json Attributes::inquire(key_t& key, int& rc) const {
+json Attributes::inquire(key_t &key, int &rc, bool recursive, const int *idx) const {
+  // Test: testInquire
+  // Notes: if key="" then the base storage object is used; recursive=true is
+  //  equivalent to turning on the attnestflag
   rc = ESMF_FAILURE;
   json j = json::object();
   try {
     j["isDirty"] = this->isDirty();
-    json::json_pointer jp = this->formatKey(key, rc);
-    const json &s = this->getStorageRef();
-    const json &sk = s.at(jp);
-    j["count"] = sk.size();
+    const json *sp = &(this->getStorageRef());
+    std::size_t attPackCount = 0;
+    if (key!="") {
+      json::json_pointer jp = this->formatKey(key, rc);
+      sp = &(this->getStorageRef().at(jp));
+    } else {
+      attPackCount = get_attpack_count(*sp);
+    }
+    if (idx) {
+      sp = &(sp->at(*idx));
+    }
+    const json &sk = *sp;
+    std::size_t count = 0;
+    std::size_t count_total = 0;
+    if (!sp->is_array() && recursive) {
+      update_json_count(count, count_total, sk, true);
+    } else {
+      count = sk.size();
+    }
+    j["count"] = count;
+    j["countTotal"] = count_total;
+    j["attPackCount"] = attPackCount;
     std::string json_typename;
     bool is_array = false;
     if (sk.is_array()) {
@@ -497,7 +523,7 @@ void Attributes::deserialize(char *buffer, int *offset, int &rc) {
     this->parse(attrsbuffer, rc);
   }
   catch (esmf_attrs_error &e) {
-    ESMF_CATCH_PASSTHRU(e);
+    ESMF_HANDLE_PASSTHRU(e);
   }
   (*offset) += length;
   alignOffset(*offset);
@@ -544,7 +570,7 @@ void Attributes::get_isoc(ESMCI::ESMC_ISOCType ictype, void *ret, char* key,
         as_str = this->get<std::string>(localKey, rc, local_def_str_ptr);
       }
       catch (ESMCI::esmf_attrs_error &exc_esmf) {
-        ESMF_CATCH_PASSTHRU(exc_esmf);
+        ESMF_HANDLE_PASSTHRU(exc_esmf);
       }
       // Transfer the string characters into the Fortran character array using
       // spaces to fill the Fortran array if we are past the max string length.
@@ -561,7 +587,7 @@ void Attributes::get_isoc(ESMCI::ESMC_ISOCType ictype, void *ret, char* key,
     }
   }
   catch (ESMCI::esmf_attrs_error &exc_esmf) {
-    ESMF_CATCH_PASSTHRU(exc_esmf);
+    ESMF_HANDLE_PASSTHRU(exc_esmf);
   }
 }
 
@@ -578,7 +604,7 @@ bool Attributes::isSetNull(key_t &key, int &rc) const {
     ESMF_CATCH_JSON
   }
   catch (ESMCI::esmf_attrs_error &exc_esmf) {
-    ESMF_CATCH_PASSTHRU(exc_esmf);
+    ESMF_HANDLE_PASSTHRU(exc_esmf);
   }
   return ret;
 }
@@ -594,7 +620,7 @@ void Attributes::serialize(char *buffer, int *length, int *offset,
     attrbuffer = this->dump(rc);
   }
   catch (ESMCI::esmf_attrs_error &exc_esmf) {
-    ESMF_CATCH_PASSTHRU(exc_esmf);
+    ESMF_HANDLE_PASSTHRU(exc_esmf);
   }
   // Adjust the buffer length to account for string attribute representation.
   int n = (int)attrbuffer.length();
@@ -631,7 +657,7 @@ void Attributes::set(key_t &key, const ESMCI::Attributes &attrs, bool force,
       bool has_key = handleHasKey(this, key, rc);
     }
     catch (ESMCI::esmf_attrs_error &exc_esmf) {
-      ESMF_CATCH_PASSTHRU(exc_esmf);
+      ESMF_HANDLE_PASSTHRU(exc_esmf);
     }
   }
   try {
@@ -651,7 +677,7 @@ void Attributes::set(key_t &key, bool force, int &rc) {
       bool has_key = handleHasKey(this, key, rc);
     }
     catch (ESMCI::esmf_attrs_error &exc_esmf) {
-      ESMF_CATCH_PASSTHRU(exc_esmf);
+      ESMF_HANDLE_PASSTHRU(exc_esmf);
     }
   }
   try {
@@ -676,7 +702,7 @@ void Attributes::set(key_t &key, T value, bool force, int &rc, int *index) {
         has_key = this->hasKey(key, rc, true);
       }
       catch (ESMCI::esmf_attrs_error &exc_esmf) {
-        ESMF_CATCH_PASSTHRU(exc_esmf);
+        ESMF_HANDLE_PASSTHRU(exc_esmf);
       }
       if (has_key && !force) {
         std::string msg = "Attribute key \'" + key + "\' already in map and "
@@ -732,7 +758,7 @@ void Attributes::set(key_t &key, T *values, int count, bool force, int &rc) {
       bool has_key = handleHasKey(this, key, rc);
     }
     catch (ESMCI::esmf_attrs_error &exc_esmf) {
-      ESMF_CATCH_PASSTHRU(exc_esmf);
+      ESMF_HANDLE_PASSTHRU(exc_esmf);
     }
   }
   try {
@@ -868,7 +894,7 @@ void broadcastAttributes(ESMCI::Attributes* attrs, int rootPet, int& rc) {
       target = attrs->dump(rc);
     }
     catch (ESMCI::esmf_attrs_error &exc_esmf) {
-      ESMF_CATCH_PASSTHRU(exc_esmf);
+      ESMF_HANDLE_PASSTHRU(exc_esmf);
     }
     target_size = target.size();
   }
@@ -890,7 +916,7 @@ void broadcastAttributes(ESMCI::Attributes* attrs, int rootPet, int& rc) {
       attrs->parse(target_received, rc);
     }
     catch (ESMCI::esmf_attrs_error &exc_esmf) {
-      ESMF_CATCH_PASSTHRU(exc_esmf);
+      ESMF_HANDLE_PASSTHRU(exc_esmf);
     }
   }
   return;

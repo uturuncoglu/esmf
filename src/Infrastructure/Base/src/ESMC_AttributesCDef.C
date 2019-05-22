@@ -161,11 +161,11 @@ void ESMC_AttributesErase(ESMCI::Attributes* attrs, char* keyParent,
 #undef ESMC_METHOD
 #define ESMC_METHOD "ESMC_AttributesInquire()"
 void ESMC_AttributesInquire(ESMCI::Attributes *attrs, ESMCI::Attributes *inq,
-                            char *key, int &rc) {
+                            char *key, bool recursive, int *idx, int &rc) {
   rc = ESMF_FAILURE;
   try {
     std::string localKey(key);
-    json jinq = attrs->inquire(localKey, rc);
+    json jinq = attrs->inquire(localKey, rc, recursive, idx);
     json &inqref = inq->getStorageRefWritable();
     inqref = std::move(jinq);
   }
