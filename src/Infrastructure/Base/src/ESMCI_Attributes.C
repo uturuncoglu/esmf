@@ -466,7 +466,7 @@ json Attributes::inquire(key_t &key, int &rc, bool recursive, const int *idx) co
     const json &sk = *sp;
     std::size_t count = 0;
     std::size_t count_total = 0;
-    if (!sp->is_array() && recursive) {
+    if (!sk.is_array() && recursive) {
       update_json_count(count, count_total, sk, true);
     } else {
       count = sk.size();
