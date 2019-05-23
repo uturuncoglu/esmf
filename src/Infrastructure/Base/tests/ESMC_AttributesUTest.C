@@ -26,9 +26,6 @@
 using namespace ESMCI;
 using namespace std;
 
-typedef const long int* const attr_int_ptr_t;
-typedef const json::number_integer_t* const json_int_ptr_t;
-
 //=============================================================================
 //BOP
 // !PROGRAM: ESMC_AttributesUTest - Internal Attribute JSON functionality
@@ -49,8 +46,11 @@ void finalizeFailure(int& rc, char failMsg[], string msg) {
 void testBroadcastAttributes(int& rc, char failMsg[]) {
   rc = ESMF_FAILURE;
 
-  ESMCI::VM *vm = ESMCI::VM::getCurrent(&rc);
-  ESMF_CHECKERR_STD("", rc, "Did not get current VM", rc);
+  ESMCI::VM *vm = nullptr;
+  try {
+    vm = ESMCI::VM::getCurrent(&rc);
+  }
+  ESMF_CATCH_PASSTHRU
 
   int localPet = vm->getLocalPet();
   int petCount = vm->getPetCount();
@@ -67,21 +67,24 @@ void testBroadcastAttributes(int& rc, char failMsg[]) {
 
   int desired = 5;
   if (localPet == rootPet) {
-    attrs.set("foo", desired, false, rc);
-    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+  try {
+      attrs.set("foo", desired, false, rc);
+  }
+  ESMF_CATCH_PASSTHRU
   }
 
-  ESMCI::broadcastAttributes(&attrs, rootPet, rc);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
-
-  int actual = attrs.get<int>("foo", rc);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
-
-  if (actual != desired) {
-    return finalizeFailure(rc, failMsg, "Value not broadcast");
+  try {
+    ESMCI::broadcastAttributes(&attrs, rootPet, rc);
   }
+  ESMF_CATCH_PASSTHRU
 
-  return;
+  try {
+    int actual = attrs.get<int>("foo", rc);
+    if (actual != desired) {
+      return finalizeFailure(rc, failMsg, "Value not broadcast");
+    }
+  }
+  ESMF_CATCH_PASSTHRU
 };
 
 #undef  ESMC_METHOD
@@ -96,18 +99,22 @@ void testConstructor(int& rc, char failMsg[]) {
   Attributes a(root);
   root["foo"] = 10;
 
-  auto actual = a.getPointer<attr_int_ptr_t, json_int_ptr_t>("/foo", rc);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
-
-  if (*actual != desired){
-    return finalizeFailure(rc, failMsg, "JSON object changed value");
+  try {
+    auto actual = a.getPointer("/foo", rc);
+    if (*actual != desired){
+      return finalizeFailure(rc, failMsg, "JSON object changed value");
+    }
   }
+  ESMF_CATCH_PASSTHRU
 
   root.clear();
-  auto actual2 = a.getPointer<attr_int_ptr_t, json_int_ptr_t>("/foo", rc);
-  if (*actual2 != desired){
-    return finalizeFailure(rc, failMsg, "Clear removed desired value");
+  try {
+    auto actual2 = a.getPointer("/foo", rc);
+    if (*actual2 != desired){
+      return finalizeFailure(rc, failMsg, "Clear removed desired value");
+    }
   }
+  ESMF_CATCH_PASSTHRU
 
   //---------------------------------------------------------------------------
   // Test move constructor
@@ -123,17 +130,16 @@ void testConstructor(int& rc, char failMsg[]) {
     return finalizeFailure(rc, failMsg, "JSON object not moved");
   }
 
-  auto actual3 = dst.getPointer<attr_int_ptr_t , json_int_ptr_t>("foo", rc);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
-
-  if (*actual3 != 112) {
-    return finalizeFailure(rc, failMsg, "Value bad after move");
+  try {
+    const long int *actual3 = dst.getPointer("foo", rc)->get_ptr<const long int *>();
+    if (*actual3 != 112) {
+      return finalizeFailure(rc, failMsg, "Value bad after move");
+    }
+    if (&*actual3 != &*srcPtr) {
+      return finalizeFailure(rc, failMsg, "Pointer addresses not equal after move");
+    }
   }
-  if (&*actual3 != &*srcPtr) {
-    return finalizeFailure(rc, failMsg, "Pointer addresses not equal after move");
-  }
-
-  return;
+  ESMF_CATCH_PASSTHRU
 };
 
 #undef  ESMC_METHOD
@@ -143,24 +149,27 @@ void testGet(int& rc, char failMsg[]) {
 
   Attributes attrs;
 
-  attrs.set("target", 50, false, rc);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
-
-  auto actual = attrs.get<int>("target", rc);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
-
-  if (actual != 50) {
-    return finalizeFailure(rc, failMsg, "Could not get target");
+  try {
+    attrs.set("target", 50, false, rc);
   }
+  ESMF_CATCH_PASSTHRU
 
-  auto actual_ptr = attrs.getPointer<attr_int_ptr_t,json_int_ptr_t>("target", rc);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+  try {
+    auto actual = attrs.get<int>("target", rc);
 
-  std::size_t addr1 = (std::size_t)&actual;
-  std::size_t addr2 = (std::size_t)&*actual_ptr;
-  if (addr1 == addr2) {
-    return finalizeFailure(rc, failMsg, "Addresses should not be equal");
+    if (actual != 50) {
+      return finalizeFailure(rc, failMsg, "Could not get target");
+    }
+
+    auto actual_ptr = attrs.getPointer("target", rc);
+
+    std::size_t addr1 = (std::size_t)&actual;
+    std::size_t addr2 = (std::size_t)&*actual_ptr;
+    if (addr1 == addr2) {
+      return finalizeFailure(rc, failMsg, "Addresses should not be equal");
+    }
   }
+  ESMF_CATCH_PASSTHRU
 
   try {
     attrs.get<int>("blah", rc);
@@ -176,15 +185,13 @@ void testGet(int& rc, char failMsg[]) {
   Attributes attrs2;
   rc = ESMF_FAILURE;
   int def = 3000;
-  auto actual2 = attrs2.get<int>("blah-dee-blah", rc, &def);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
-
-  if (actual2 != def) {
-    return finalizeFailure(rc, failMsg, "Did not get default value");
+  try {
+    auto actual2 = attrs2.get<int>("blah-dee-blah", rc, &def);
+    if (actual2 != def) {
+      return finalizeFailure(rc, failMsg, "Did not get default value");
+    }
   }
-
-  rc = ESMF_SUCCESS;
-  return;
+  ESMF_CATCH_PASSTHRU
 }
 
 #undef ESMC_METHOD
@@ -260,8 +267,10 @@ void testHasKey(int& rc, char failMsg[]) {
 
   Attributes attrs;
 
-  attrs.set("/neverEver", 13, false, rc);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+  try {
+    attrs.set("/neverEver", 13, false, rc);
+  }
+  ESMF_CATCH_PASSTHRU
 
   bool actual = attrs.hasKey("/hello", rc, true);
   if (actual){
@@ -290,11 +299,15 @@ void testErase(int& rc, char failMsg[]) {
   Attributes attrs;
 
   string key = "/something/nested";
-  attrs.set(key, 10, false, rc);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+  try {
+    attrs.set(key, 10, false, rc);
+  }
+  ESMF_CATCH_PASSTHRU
 
-  attrs.erase("/something", "nested", rc);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+  try {
+    attrs.erase("/something", "nested", rc);
+  }
+  ESMF_CATCH_PASSTHRU
 
   const json &storage = attrs.getStorageRef();
   const json &actual = storage["something"];
@@ -409,8 +422,10 @@ void testSetGet(int& rc, char failMsg[]) {
 
   int value = 10;
   string key = "theKey";
-  attrs.set(key, value, false, rc);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+  try {
+    attrs.set(key, value, false, rc);
+  }
+  ESMF_CATCH_PASSTHRU
 
   const json& storage = attrs.getStorageRef();
 
@@ -419,44 +434,53 @@ void testSetGet(int& rc, char failMsg[]) {
   }
 
   rc = ESMF_FAILURE;
-  attr_int_ptr_t actual = attrs.getPointer<attr_int_ptr_t, json_int_ptr_t>(key, rc);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+  try {
+    auto actual = attrs.getPointer(key, rc);
 
-  if (*actual != value){
-    return finalizeFailure(rc, failMsg, "Did not get pointer key correctly");
+    if (*actual != value){
+      return finalizeFailure(rc, failMsg, "Did not get pointer key correctly");
+    }
   }
+  ESMF_CATCH_PASSTHRU
 
   //---------------------------------------------------------------------------
 
   int value2 = 33;
   string keyp = "/root/group1/group2";
   rc = ESMF_FAILURE;
-  attrs.set(keyp, value2, false, rc);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+try {
+      attrs.set(keyp, value2, false, rc);
+  }
+ESMF_CATCH_PASSTHRU
 
   if (storage["root"]["group1"]["group2"] != value2){
     return finalizeFailure(rc, failMsg, "Did not set nested key correctly");
   }
 
   rc = ESMF_FAILURE;
-  auto actual2 = attrs.getPointer<attr_int_ptr_t, json_int_ptr_t>(keyp, rc);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
-
-  if (*actual2 != value2){
-    return finalizeFailure(rc, failMsg, "Did not get nested key correctly");
+  try {
+    auto actual2 = attrs.getPointer(keyp, rc);
+    if (*actual2 != value2){
+      return finalizeFailure(rc, failMsg, "Did not get nested key correctly");
+    }
   }
+  ESMF_CATCH_PASSTHRU
 
   //---------------------------------------------------------------------------
 
   key = "/twiceSet";
-  attrs.set(key, 10, false, rc);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+  try {
+    attrs.set(key, 10, false, rc);
+  }
+  ESMF_CATCH_PASSTHRU
 
   value = 12;
-  attrs.set(key, value, true, rc);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+  try {
+    attrs.set(key, value, true, rc);
+  }
+  ESMF_CATCH_PASSTHRU
 
-  if (*attrs.getPointer<attr_int_ptr_t, json_int_ptr_t>(key, rc) != value){
+  if (*attrs.getPointer(key, rc) != value){
     return finalizeFailure(rc, failMsg, "Did not overload existing key correctly");
   }
 
@@ -464,15 +488,18 @@ void testSetGet(int& rc, char failMsg[]) {
 
   key = "hello";
   string value3 = "world";
-  attrs.set(key, value3, false, rc);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
-
-  string actual3 = attrs.get<string>(key, rc);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
-
-  if (actual3 != value3) {
-    return finalizeFailure(rc, failMsg, "Did not get string value");
+  try {
+    attrs.set(key, value3, false, rc);
   }
+  ESMF_CATCH_PASSTHRU
+
+  try {
+    string actual3 = attrs.get<string>(key, rc);
+    if (actual3 != value3) {
+      return finalizeFailure(rc, failMsg, "Did not get string value");
+    }
+  }
+  ESMF_CATCH_PASSTHRU
 
   // Test using a JSON Pointer with an array ==================================
 
@@ -482,12 +509,13 @@ void testSetGet(int& rc, char failMsg[]) {
   ja["foo"] = j_vec;
   Attributes attrsvec(ja);
 
-  auto actual4 = attrsvec.get<int>("/foo/2", rc);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
-
-  if (actual4 != c_vector[2]) {
-    return finalizeFailure(rc, failMsg, "Did not get array element value");
+  try {
+    auto actual4 = attrsvec.get<int>("/foo/2", rc);
+    if (actual4 != c_vector[2]) {
+      return finalizeFailure(rc, failMsg, "Did not get array element value");
+    }
   }
+  ESMF_CATCH_PASSTHRU
 
   // Test with an array pointer ===============================================
 
@@ -496,8 +524,10 @@ void testSetGet(int& rc, char failMsg[]) {
 
   Attributes attrs2;
 
-  attrs2.set("the-key", c_int_arr, count, false, rc);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+  try {
+    attrs2.set("the-key", c_int_arr, count, false, rc);
+  }
+  ESMF_CATCH_PASSTHRU
 
   json::array_t apref = attrs2.getStorageRef()["the-key"];
 
@@ -543,7 +573,7 @@ void testSetGetErrorHandling(int& rc, char failMsg[]) {
   bool failed = true;
   string key = "/theKey";
   try {
-    auto actual = attrs.getPointer<attr_int_ptr_t, json_int_ptr_t>(key, rc);
+    auto actual = attrs.getPointer(key, rc);
   }
   catch (esmf_attrs_error& err) {
     if (rc == ESMC_RC_NOT_FOUND){
@@ -561,8 +591,10 @@ void testSetGetErrorHandling(int& rc, char failMsg[]) {
   // created.
 
   string key2 = "/theKey2";
-  attrs.set(key2, 111, false, rc);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+  try {
+    attrs.set(key2, 111, false, rc);
+  }
+  ESMF_CATCH_PASSTHRU
 
   failed = true;
   try {
@@ -745,8 +777,10 @@ void testUpdate(int& rc, char failMsg[]) {
   }
 
   rc = ESMF_FAILURE;
-  update_target_attrs.update(used_to_update_attrs, rc);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+  try {
+    update_target_attrs.update(used_to_update_attrs, rc);
+  }
+  ESMF_CATCH_PASSTHRU
 
   const json desired = R"( {"color": "blue", "price": 17.99, "speed": 100} )"_json;
 

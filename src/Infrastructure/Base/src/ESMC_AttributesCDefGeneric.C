@@ -114,13 +114,19 @@ void ESMC_AttributesGetArrayR4(ESMCI::Attributes *attrs, char *key,
   rc = ESMF_FAILURE;
   std::string localKey(key);
   try {
-    ESMCI::vecjson_t ap = attrs->getPointer<ESMCI::vecjson_t,
-                                            ESMCI::arrjson_t>(localKey, rc);
+    const json *j = attrs->getPointer(localKey, rc);
+    const json::array_t *ap = j->get_ptr<const json::array_t *>();
+
     count = (int)ap->size();
     // Only fill the outgoing array if we are not getting the count only
     if (count_only == 0) {
       for (int ii=0; ii<count; ii++) {
-        values[ii] = ap[0][ii];
+        try {
+          values[ii] = ap->at(ii);
+        }
+        catch (std::out_of_range &exc) {
+          ESMF_CHECKERR_STD("ESMF_RC_ARG_OUTOFRANGE", ESMF_RC_ARG_OUTOFRANGE, std::string(exc.what()), rc);
+        }
       }
     }
   }
@@ -136,13 +142,19 @@ void ESMC_AttributesGetArrayR8(ESMCI::Attributes *attrs, char *key,
   rc = ESMF_FAILURE;
   std::string localKey(key);
   try {
-    ESMCI::vecjson_t ap = attrs->getPointer<ESMCI::vecjson_t,
-                                            ESMCI::arrjson_t>(localKey, rc);
+    const json *j = attrs->getPointer(localKey, rc);
+    const json::array_t *ap = j->get_ptr<const json::array_t *>();
+
     count = (int)ap->size();
     // Only fill the outgoing array if we are not getting the count only
     if (count_only == 0) {
       for (int ii=0; ii<count; ii++) {
-        values[ii] = ap[0][ii];
+        try {
+          values[ii] = ap->at(ii);
+        }
+        catch (std::out_of_range &exc) {
+          ESMF_CHECKERR_STD("ESMF_RC_ARG_OUTOFRANGE", ESMF_RC_ARG_OUTOFRANGE, std::string(exc.what()), rc);
+        }
       }
     }
   }
@@ -158,13 +170,19 @@ void ESMC_AttributesGetArrayI4(ESMCI::Attributes *attrs, char *key,
   rc = ESMF_FAILURE;
   std::string localKey(key);
   try {
-    ESMCI::vecjson_t ap = attrs->getPointer<ESMCI::vecjson_t,
-                                            ESMCI::arrjson_t>(localKey, rc);
+    const json *j = attrs->getPointer(localKey, rc);
+    const json::array_t *ap = j->get_ptr<const json::array_t *>();
+
     count = (int)ap->size();
     // Only fill the outgoing array if we are not getting the count only
     if (count_only == 0) {
       for (int ii=0; ii<count; ii++) {
-        values[ii] = ap[0][ii];
+        try {
+          values[ii] = ap->at(ii);
+        }
+        catch (std::out_of_range &exc) {
+          ESMF_CHECKERR_STD("ESMF_RC_ARG_OUTOFRANGE", ESMF_RC_ARG_OUTOFRANGE, std::string(exc.what()), rc);
+        }
       }
     }
   }
@@ -180,13 +198,19 @@ void ESMC_AttributesGetArrayI8(ESMCI::Attributes *attrs, char *key,
   rc = ESMF_FAILURE;
   std::string localKey(key);
   try {
-    ESMCI::vecjson_t ap = attrs->getPointer<ESMCI::vecjson_t,
-                                            ESMCI::arrjson_t>(localKey, rc);
+    const json *j = attrs->getPointer(localKey, rc);
+    const json::array_t *ap = j->get_ptr<const json::array_t *>();
+
     count = (int)ap->size();
     // Only fill the outgoing array if we are not getting the count only
     if (count_only == 0) {
       for (int ii=0; ii<count; ii++) {
-        values[ii] = ap[0][ii];
+        try {
+          values[ii] = ap->at(ii);
+        }
+        catch (std::out_of_range &exc) {
+          ESMF_CHECKERR_STD("ESMF_RC_ARG_OUTOFRANGE", ESMF_RC_ARG_OUTOFRANGE, std::string(exc.what()), rc);
+        }
       }
     }
   }
@@ -202,13 +226,19 @@ void ESMC_AttributesGetArrayLG(ESMCI::Attributes *attrs, char *key,
   rc = ESMF_FAILURE;
   std::string localKey(key);
   try {
-    ESMCI::vecjson_t ap = attrs->getPointer<ESMCI::vecjson_t,
-                                            ESMCI::arrjson_t>(localKey, rc);
+    const json *j = attrs->getPointer(localKey, rc);
+    const json::array_t *ap = j->get_ptr<const json::array_t *>();
+
     count = (int)ap->size();
     // Only fill the outgoing array if we are not getting the count only
     if (count_only == 0) {
       for (int ii=0; ii<count; ii++) {
-        values[ii] = ap[0][ii];
+        try {
+          values[ii] = ap->at(ii);
+        }
+        catch (std::out_of_range &exc) {
+          ESMF_CHECKERR_STD("ESMF_RC_ARG_OUTOFRANGE", ESMF_RC_ARG_OUTOFRANGE, std::string(exc.what()), rc);
+        }
       }
     }
   }

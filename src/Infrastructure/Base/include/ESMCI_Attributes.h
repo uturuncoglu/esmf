@@ -58,8 +58,8 @@ using json = nlohmann::json;  // Convenience rename for JSON namespace.
 namespace ESMCI {
 
 typedef const std::string key_t;
-typedef const std::vector<json>* const vecjson_t;
-typedef const json::array_t* const arrjson_t;
+typedef std::vector<json> const *vecjson_t;
+typedef json::array_t const *arrjson_t;
 
 enum ESMC_ISOCType {C_INT, C_LONG, C_FLOAT, C_DOUBLE, C_CHAR};
 
@@ -121,8 +121,7 @@ public:
   virtual const json& getStorageRef(void) const { return this->storage; }
   virtual json& getStorageRefWritable(void) { return this->storage; }
 
-  template <typename T, typename JT>
-  T getPointer(key_t &key, int &rc) const;
+  json const * getPointer(key_t &key, int &rc, bool recursive = false) const;
 
   bool hasKey(key_t &key, int &rc, bool isptr = false) const;
 

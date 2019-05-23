@@ -404,38 +404,22 @@ template json Attributes::get(key_t&, int&, const json*, const int*, bool recurs
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::getPointer()"
-template <typename T, typename JT>
-T Attributes::getPointer(key_t& key, int& rc) const {
+json const * Attributes::getPointer(key_t& key, int& rc, bool recursive) const {
   // Exceptions:  ESMCI:esmf_attrs_error
 
   rc = ESMF_FAILURE;
+  json const *ret = nullptr;
   try {
-    json::json_pointer jp = this->formatKey(key, rc);
+    json::json_pointer jpath = this->formatKey(key, rc);
     try {
-      const json &storage = this->getStorageRef();
-      T ret = storage.at(jp).get_ptr<JT>();
-      rc = ESMF_SUCCESS;
-      return ret;
+      update_json_pointer(this->getStorageRef(), &ret, jpath, recursive);
+      assert(ret);
     }
-    catch (json::out_of_range& e) {
-      ESMF_THROW_JSON(e, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);
-    }
-    catch (json::type_error& e) {
-      ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
-    }
+    ESMF_CATCH_JSON
   }
-  catch (ESMCI::esmf_attrs_error &exc_esmf) {
-    ESMF_HANDLE_PASSTHRU(exc_esmf);
-  }
+  ESMF_CATCH_ATTRS
+  return ret;
 };
-template const double* const Attributes::getPointer<const double* const,
-        const json::number_float_t* const>(key_t&, int&) const;
-template const long int* const Attributes::getPointer<const long int* const,
-        const json::number_integer_t* const>(key_t&, int&) const;
-template key_t* const Attributes::getPointer<key_t* const,
-        const json::string_t* const>(key_t&, int&) const;
-template const std::vector<json>* const Attributes::getPointer<const std::vector<json>*
-        const, const json::array_t* const>(key_t&, int&) const;
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::hasKey()"
