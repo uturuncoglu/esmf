@@ -257,7 +257,7 @@ subroutine ESMF_AttributesGetArrayR4(attrs, key, values, nelements, rc)
   integer, intent(inout) :: nelements
   integer, intent(inout), optional :: rc
 
-  integer :: localrc, nelements_only=0
+  integer :: localrc
   
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
@@ -273,7 +273,6 @@ subroutine ESMF_AttributesGetArrayR4(attrs, key, values, nelements, rc)
     trim(key)//C_NULL_CHAR, &
     values, &
     nelements, &
-    nelements_only, &
     localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   
@@ -289,7 +288,7 @@ subroutine ESMF_AttributesGetArrayR8(attrs, key, values, nelements, rc)
   integer, intent(inout) :: nelements
   integer, intent(inout), optional :: rc
 
-  integer :: localrc, nelements_only=0
+  integer :: localrc
   
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
@@ -305,7 +304,6 @@ subroutine ESMF_AttributesGetArrayR8(attrs, key, values, nelements, rc)
     trim(key)//C_NULL_CHAR, &
     values, &
     nelements, &
-    nelements_only, &
     localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   
@@ -321,7 +319,7 @@ subroutine ESMF_AttributesGetArrayI4(attrs, key, values, nelements, rc)
   integer, intent(inout) :: nelements
   integer, intent(inout), optional :: rc
 
-  integer :: localrc, nelements_only=0
+  integer :: localrc
   
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
@@ -337,7 +335,6 @@ subroutine ESMF_AttributesGetArrayI4(attrs, key, values, nelements, rc)
     trim(key)//C_NULL_CHAR, &
     values, &
     nelements, &
-    nelements_only, &
     localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   
@@ -353,7 +350,7 @@ subroutine ESMF_AttributesGetArrayI8(attrs, key, values, nelements, rc)
   integer, intent(inout) :: nelements
   integer, intent(inout), optional :: rc
 
-  integer :: localrc, nelements_only=0
+  integer :: localrc
   
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
@@ -369,7 +366,6 @@ subroutine ESMF_AttributesGetArrayI8(attrs, key, values, nelements, rc)
     trim(key)//C_NULL_CHAR, &
     values, &
     nelements, &
-    nelements_only, &
     localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   
@@ -385,7 +381,7 @@ subroutine ESMF_AttributesGetArrayLG(attrs, key, values, nelements, rc)
   integer, intent(inout) :: nelements
   integer, intent(inout), optional :: rc
 
-  integer :: localrc, nelements_only=0
+  integer :: localrc
   integer :: ii
   logical(C_BOOL), dimension(:), allocatable :: local_values
   
@@ -403,7 +399,6 @@ subroutine ESMF_AttributesGetArrayLG(attrs, key, values, nelements, rc)
     trim(key)//C_NULL_CHAR, &
     local_values, &
     nelements, &
-    nelements_only, &
     localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   

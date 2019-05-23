@@ -52,49 +52,49 @@ interface
 
   !=============================================================================
 
-  subroutine c_attrs_get_array_R4(attrs, key, values, nelements, nelements_only, rc) bind(C, name="ESMC_AttributesGetArrayR4")
+  subroutine c_attrs_get_array_R4(attrs, key, values, nelements, rc) bind(C, name="ESMC_AttributesGetArrayR4")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: attrs
     character(C_CHAR), intent(in) :: key(*)
     real(C_FLOAT), dimension(*), intent(inout) :: values
-    integer(C_INT), intent(inout) :: nelements, nelements_only, rc
+    integer(C_INT), intent(inout) :: nelements, rc
   end subroutine c_attrs_get_array_R4
 
-  subroutine c_attrs_get_array_R8(attrs, key, values, nelements, nelements_only, rc) bind(C, name="ESMC_AttributesGetArrayR8")
+  subroutine c_attrs_get_array_R8(attrs, key, values, nelements, rc) bind(C, name="ESMC_AttributesGetArrayR8")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: attrs
     character(C_CHAR), intent(in) :: key(*)
     real(C_DOUBLE), dimension(*), intent(inout) :: values
-    integer(C_INT), intent(inout) :: nelements, nelements_only, rc
+    integer(C_INT), intent(inout) :: nelements, rc
   end subroutine c_attrs_get_array_R8
 
-  subroutine c_attrs_get_array_I4(attrs, key, values, nelements, nelements_only, rc) bind(C, name="ESMC_AttributesGetArrayI4")
+  subroutine c_attrs_get_array_I4(attrs, key, values, nelements, rc) bind(C, name="ESMC_AttributesGetArrayI4")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: attrs
     character(C_CHAR), intent(in) :: key(*)
     integer(C_INT), dimension(*), intent(inout) :: values
-    integer(C_INT), intent(inout) :: nelements, nelements_only, rc
+    integer(C_INT), intent(inout) :: nelements, rc
   end subroutine c_attrs_get_array_I4
 
-  subroutine c_attrs_get_array_I8(attrs, key, values, nelements, nelements_only, rc) bind(C, name="ESMC_AttributesGetArrayI8")
+  subroutine c_attrs_get_array_I8(attrs, key, values, nelements, rc) bind(C, name="ESMC_AttributesGetArrayI8")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: attrs
     character(C_CHAR), intent(in) :: key(*)
     integer(C_LONG), dimension(*), intent(inout) :: values
-    integer(C_INT), intent(inout) :: nelements, nelements_only, rc
+    integer(C_INT), intent(inout) :: nelements, rc
   end subroutine c_attrs_get_array_I8
 
-  subroutine c_attrs_get_array_LG(attrs, key, values, nelements, nelements_only, rc) bind(C, name="ESMC_AttributesGetArrayLG")
+  subroutine c_attrs_get_array_LG(attrs, key, values, nelements, rc) bind(C, name="ESMC_AttributesGetArrayLG")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: attrs
     character(C_CHAR), intent(in) :: key(*)
     logical(C_BOOL), dimension(*), intent(inout) :: values
-    integer(C_INT), intent(inout) :: nelements, nelements_only, rc
+    integer(C_INT), intent(inout) :: nelements, rc
   end subroutine c_attrs_get_array_LG
 
   !=============================================================================
