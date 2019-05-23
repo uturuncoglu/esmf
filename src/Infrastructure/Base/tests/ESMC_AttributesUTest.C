@@ -757,6 +757,126 @@ void testUpdate(int& rc, char failMsg[]) {
   return;
 };
 
+#undef  ESMC_METHOD
+#define ESMC_METHOD "test_update_json_pointer()"
+void test_update_json_pointer(int& rc, char failMsg[]) {
+  rc = ESMF_FAILURE;
+
+  json j;
+  j["foo"] = 5;
+  j["nest"]["twice"]["foobar"] = "bingo";
+  j["nest"]["twice"]["an_array"] = {44, 55, 66};
+  j["nest"]["once"]["once_again"]["deeper"] = 77;
+
+  //---------------------------------------------------------------------------
+
+  json *jp = nullptr;
+  json::json_pointer *keyjp = nullptr;
+  ESMCI::key_t *key = nullptr;
+  const int *idx = nullptr;
+  json *def = nullptr;
+  bool recursive = false;
+  update_json_pointer(j, &jp, keyjp, key, idx, def, recursive);
+  if (&*jp!=&j) {
+    return finalizeFailure(rc, failMsg, "Pointer should be updated with null keys");
+  }
+
+  //---------------------------------------------------------------------------
+
+  std::string thekey = "foo";
+
+  jp = nullptr;
+  keyjp = nullptr;
+  key = &thekey;
+  idx = nullptr;
+  def = nullptr;
+  recursive = false;
+  update_json_pointer(j, &jp, keyjp, key, idx, def, recursive);
+  if (&(*jp)!=&j.at("foo")) {
+    return finalizeFailure(rc, failMsg, "Pointer not updated with key");
+  }
+
+  //---------------------------------------------------------------------------
+
+  json::json_pointer thekeyjp2("/foo");
+
+  jp = nullptr;
+  keyjp = &thekeyjp2;
+  key = nullptr;
+  idx = nullptr;
+  def = nullptr;
+  recursive = false;
+  update_json_pointer(j, &jp, keyjp, key, idx, def, recursive);
+  if (&(*jp)!=&j.at("foo")) {
+    return finalizeFailure(rc, failMsg, "Pointer not updated using JSON Pointer");
+  }
+
+  //---------------------------------------------------------------------------
+
+  json::json_pointer thekeyjp("/nest/twice");
+  thekey = "foobar";
+
+  jp = nullptr;
+  keyjp = &thekeyjp;
+  key = &thekey;
+  idx = nullptr;
+  def = nullptr;
+  recursive = false;
+  update_json_pointer(j, &jp, keyjp, key, idx, def, recursive);
+  if (&(*jp)!=&j.at("nest").at("twice").at("foobar")) {
+    return finalizeFailure(rc, failMsg, "Pointer not updated using JSON Pointer");
+  }
+
+  //---------------------------------------------------------------------------
+
+  thekey = "does not exist";
+  json thedef = 666;
+
+  jp = nullptr;
+  keyjp = nullptr;
+  key = &thekey;
+  idx = nullptr;
+  def = &thedef;
+  recursive = false;
+  update_json_pointer(j, &jp, keyjp, key, idx, def, recursive);
+  if (&(*jp)!=&thedef) {
+    return finalizeFailure(rc, failMsg, "Pointer not updated to point to default");
+  }
+
+  //---------------------------------------------------------------------------
+
+  json::json_pointer thekeyjp3("/nest/twice/an_array");
+  int theidx = 1;
+
+  jp = nullptr;
+  keyjp = &thekeyjp3;
+  key = nullptr;
+  idx = &theidx;
+  def = nullptr;
+  recursive = false;
+  update_json_pointer(j, &jp, keyjp, key, idx, def, recursive);
+  if (&(*jp)!=&(j.at("nest").at("twice").at("an_array").get_ptr<json::array_t*>()->at(theidx))) {
+    return finalizeFailure(rc, failMsg, "Pointer not updated with index");
+  }
+
+  //---------------------------------------------------------------------------
+
+  thekey = "deeper";
+
+  jp = nullptr;
+  keyjp = nullptr;
+  key = &thekey;
+  idx = nullptr;
+  def = nullptr;
+  recursive = true;
+  update_json_pointer(j, &jp, keyjp, key, idx, def, recursive);
+  if (&*jp!=&j["nest"]["once"]["once_again"]["deeper"]) {
+    return finalizeFailure(rc, failMsg, "Pointer not updated with recursive");
+  }
+
+  rc = ESMF_SUCCESS;
+};
+
 int main(void) {
 
   char name[80];
@@ -872,6 +992,13 @@ int main(void) {
   //NEX_UTest
   strcpy(name, "Attributes inquire");
   testInquire(rc, failMsg);
+  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
+  //---------------------------------------------------------------------------
+
+  //---------------------------------------------------------------------------
+  //NEX_UTest
+  strcpy(name, "Attributes update_json_pointer");
+  test_update_json_pointer(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //---------------------------------------------------------------------------
 

@@ -108,25 +108,41 @@ void update_json_count(std::size_t &count, std::size_t &count_total, const json 
 }
 
 #undef ESMC_METHOD
-#define ESMC_METHOD "get_recursive_json_object()"
-void get_recursive_json_object(key_t &key, json &j, json::object_t *jout) {
-  // Notes: no JSON pointer syntax for key; if jout is still nullptr at return
-  //        then the object has not been found
-  if (!j.is_object()) {
-    throw(ESMCI::esmf_attrs_error("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, "JSON type must be an object"));
-  }
-  for (std::size_t ii = 0; ii < key.size(); ++ii) {
-    if (key[ii] == '/') {
-      throw(ESMCI::esmf_attrs_error("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, "JSON pointer syntax not allowed"));
-    }
-  }
-  if (isIn(key, j)) {
-    jout = j[key].get_ptr<json::object_t*>();
-  } else {
-    for (auto it=j.begin(); it!=j.end(); it++) {
-      if (it.value().is_object()) {
-        get_recursive_json_object(key, it.value(), jout);
+#define ESMC_METHOD "update_json_pointer()"
+void update_json_pointer(json &j, json **jp, const json::json_pointer *keyjp,
+  key_t *key, const int *idx, json *def, bool recursive) {
+  // Test: test_update_json_pointer
+  // Notes:
+  json *l_jp = nullptr;
+  try {
+    if (keyjp || key) {
+      if (keyjp) {
+        l_jp = &(j.at(*keyjp));
+      } else {
+        l_jp = &j;
       }
+      if (key) {
+        l_jp = &(l_jp->at(*key));
+      }
+      if (l_jp) {
+        *jp = &(*l_jp);
+      }
+      if (*jp && idx) {
+        *jp = &((*jp)->get_ptr<json::array_t*>()->at(*idx));
+      }
+    } else {
+      *jp = &j;
+    }
+  } catch (json::out_of_range &e) {
+    if (recursive) {
+      for (json::iterator it=j.begin(); it!=j.end(); it++) {
+        if (it.value().is_object()) {
+          update_json_pointer(it.value(), jp, nullptr, key, idx, def, true);
+        }
+      }
+    }
+    if (!*jp && def) {
+      *jp = &(*def);
     }
   }
 }
