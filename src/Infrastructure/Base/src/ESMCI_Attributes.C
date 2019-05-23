@@ -141,7 +141,7 @@ json* get_base(json &j, key_t &key, int &rc, json *def, const int *index, bool r
 
 #undef ESMC_METHOD
 #define ESMC_METHOD "update_json_pointer()"
-void update_json_pointer(json &j, json **jdp, const json::json_pointer &key, bool recursive) {
+void update_json_pointer(const json &j, json const **jdp, const json::json_pointer &key, bool recursive) {
   // Test: test_update_json_pointer
   // Notes:
   // Throws: json::out_of_range when key not found
@@ -149,7 +149,7 @@ void update_json_pointer(json &j, json **jdp, const json::json_pointer &key, boo
     *jdp = &(j.at(key));
   } catch (json::out_of_range &e) {
     if (recursive) {
-      for (json::iterator it=j.begin(); it!=j.end(); it++) {
+      for (json::const_iterator it=j.cbegin(); it!=j.cend(); it++) {
         if (it.value().is_object()) {
           update_json_pointer(it.value(), jdp, key, true);
         }
@@ -365,36 +365,33 @@ T Attributes::get(key_t &key, int &rc, const T *def, const int *index, bool recu
   // Exceptions:  ESMCI:esmf_attrs_error
 
   rc = ESMF_FAILURE;
-//  json *jdef = nullptr;
-//  if (def) *jdef = *def;
-//  json *as_json = get_base(this->getStorageRefWritable(), key, rc, jdef, index);
-//  T ret = *as_json;
   T ret;
-  if (index) {
+  try {
+    json::json_pointer jpath = this->formatKey(key, rc);
     try {
-      const std::vector<json> *const vj = this->getPointer
-        <const std::vector<json>* const, const json::array_t* const>
-        (key, rc);
-      try {
-        ret = vj[0].at(*index);
-      }
-      catch (std::out_of_range &e) {
-        ESMF_CHECKERR_STD("ESMC_RC_ARG_OUTOFRANGE", ESMC_RC_ARG_OUTOFRANGE, e.what(), rc)
-      }
-    }
-    ESMF_CATCH_ATTRS
-  } else {
-    try {
-      json::json_pointer jp = this->formatKey(key, rc);
-      const json &storage = this->getStorageRef();
-      if (def) {
-        ret = storage.value(jp, *def);
+      json const *jp = nullptr;
+      update_json_pointer(this->getStorageRef(), &jp, jpath, recursive);
+      assert(jp);
+      if (index) {
+        json::array_t const *jarr = jp->get_ptr<json::array_t const *>();
+        try {
+          ret = jarr->at(*index);
+        }
+        catch (std::out_of_range &e) {
+          ESMF_CHECKERR_STD("ESMC_RC_ARG_OUTOFRANGE", ESMC_RC_ARG_OUTOFRANGE, e.what(), rc)
+        }
       } else {
-        ret = storage.at(jp);
+        ret = *jp;
+      }
+    } catch (json::out_of_range &e) {
+      if (def) {
+        ret = *def;
+      } else {
+        ESMF_THROW_JSON(e, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc)
       }
     }
-    ESMF_CATCH_ATTRS
   }
+  ESMF_CATCH_ATTRS
   return ret;
 }
 template float Attributes::get(key_t&, int&, const float*, const int*, bool recursive = false) const;

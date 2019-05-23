@@ -189,7 +189,7 @@ public:
 void alignOffset(int &offset);
 void broadcastAttributes(ESMCI::Attributes* attrs, int rootPet, int& rc);
 std::size_t get_attpack_count(const json &j);
-void update_json_pointer(json &j, json **jdp, const json::json_pointer &key, bool recursive);
+void update_json_pointer(const json &j, json const **jdp, const json::json_pointer &key, bool recursive);
 void update_json_count(std::size_t &count, std::size_t &count_total, const json &j, bool recursive);
 bool isIn(key_t& target, const std::vector<std::string>& container);
 bool isIn(const std::vector<std::string>& target, const std::vector<std::string>& container);

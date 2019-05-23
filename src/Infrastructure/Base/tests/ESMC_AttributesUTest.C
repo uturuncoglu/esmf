@@ -771,7 +771,7 @@ void test_update_json_pointer(int& rc, char failMsg[]) {
 
   //---------------------------------------------------------------------------
 
-  json *jdp = nullptr;
+  json const *jdp = nullptr;
   json::json_pointer key("/wonderbar");
   bool recursive = false;
   try {
@@ -859,7 +859,7 @@ int main(void) {
   testSetGet(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //---------------------------------------------------------------------------
-  
+
   //---------------------------------------------------------------------------
   //NEX_UTest
   strcpy(name, "Attributes Set/Get Error Handling");
