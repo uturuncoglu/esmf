@@ -111,67 +111,52 @@ void update_json_count(std::size_t &count, std::size_t &count_total, const json 
 #define ESMC_METHOD "get_base()"
 json* get_base(json &j, key_t &key, int &rc, json *def, const int *index, bool recursive) {
   // Notes:
-  json::json_pointer *keyjp = nullptr;
-  key_t *keyp = nullptr;
-  if (!recursive) {
-    try {
-      json::json_pointer jp = ESMCI::Attributes::formatKey(key, rc);
-      keyjp = &jp;
-    }
-    ESMF_CATCH_PASSTHRU
-  } else {
-    keyp = &key;
-  }
-  if (recursive) {
-    assert(!keyjp);
-  } else {
-    assert(keyjp);
-  }
-
-  json *ret = nullptr;
-  try {
-    update_json_pointer(j, &ret, keyjp, keyp, index, def, recursive);
-  }
-  catch (std::out_of_range &e) {
-    ESMF_CHECKERR_STD("ESMC_RC_ARG_OUTOFRANGE", ESMC_RC_ARG_OUTOFRANGE, e.what(), rc)
-  }
-  ESMF_CATCH_ATTRS
-  rc = ESMF_SUCCESS;
+//  json::json_pointer *keyjp = nullptr;
+//  key_t *keyp = nullptr;
+//  if (!recursive) {
+//    try {
+//      json::json_pointer jp = ESMCI::Attributes::formatKey(key, rc);
+//      keyjp = &jp;
+//    }
+//    ESMF_CATCH_PASSTHRU
+//  } else {
+//    keyp = &key;
+//  }
+//  if (recursive) {
+//    assert(!keyjp);
+//  } else {
+//    assert(keyjp);
+//  }
+//
+//  json *ret = nullptr;
+//  try {
+//    update_json_pointer(j, &ret, keyjp, keyp, index, def, recursive);
+//  }
+//  catch (std::out_of_range &e) {
+//    ESMF_CHECKERR_STD("ESMC_RC_ARG_OUTOFRANGE", ESMC_RC_ARG_OUTOFRANGE, e.what(), rc)
+//  }
+//  ESMF_CATCH_ATTRS
+//  rc = ESMF_SUCCESS;
 }
 
 #undef ESMC_METHOD
 #define ESMC_METHOD "update_json_pointer()"
-void update_json_pointer(json &j, json **jp, const json::json_pointer *keyjp,
-  key_t *key, const int *idx, json *def, bool recursive) {
+void update_json_pointer(json &j, json **jdp, const json::json_pointer &key, bool recursive) {
   // Test: test_update_json_pointer
   // Notes:
-  json *l_jp = nullptr;
+  // Throws: json::out_of_range when key not found
   try {
-    if (keyjp || key) {
-      if (keyjp) {
-        l_jp = &(j.at(*keyjp));
-      } else {
-        l_jp = &j;
-      }
-      if (key) {
-        l_jp = &(l_jp->at(*key));
-      }
-      if (l_jp) {
-        *jp = &(*l_jp);
-      }
-      if (*jp && idx) {
-        *jp = &((*jp)->get_ptr<json::array_t*>()->at(*idx));
-      }
+    *jdp = &(j.at(key));
   } catch (json::out_of_range &e) {
     if (recursive) {
       for (json::iterator it=j.begin(); it!=j.end(); it++) {
         if (it.value().is_object()) {
-          update_json_pointer(it.value(), jp, nullptr, key, idx, def, true);
+          update_json_pointer(it.value(), jdp, key, true);
         }
       }
     }
-    if (!*jp && def) {
-      *jp = &(*def);
+    if (!*jdp) {
+      throw(e);
     }
   }
 }

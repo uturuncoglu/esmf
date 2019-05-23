@@ -761,6 +761,7 @@ void testUpdate(int& rc, char failMsg[]) {
 #define ESMC_METHOD "test_update_json_pointer()"
 void test_update_json_pointer(int& rc, char failMsg[]) {
   rc = ESMF_FAILURE;
+  bool failed = false;
 
   json j;
   j["foo"] = 5;
@@ -770,108 +771,56 @@ void test_update_json_pointer(int& rc, char failMsg[]) {
 
   //---------------------------------------------------------------------------
 
-  json *jp = nullptr;
-  json::json_pointer *keyjp = nullptr;
-  ESMCI::key_t *key = nullptr;
-  const int *idx = nullptr;
-  json *def = nullptr;
+  json *jdp = nullptr;
+  json::json_pointer key("/wonderbar");
   bool recursive = false;
-  update_json_pointer(j, &jp, keyjp, key, idx, def, recursive);
-  if (&*jp!=&j) {
-    return finalizeFailure(rc, failMsg, "Pointer should be updated with null keys");
+  try {
+    update_json_pointer(j, &jdp, key, recursive);
+    failed = true;
+  } catch (json::out_of_range &e) {
+    if (jdp) {
+      return finalizeFailure(rc, failMsg, "Pointer should be null with missing key");
+    }
+  }
+  if (failed) {
+    return finalizeFailure(rc, failMsg, "Did not catch exception");
   }
 
   //---------------------------------------------------------------------------
 
-  std::string thekey = "foo";
-
-  jp = nullptr;
-  keyjp = nullptr;
-  key = &thekey;
-  idx = nullptr;
-  def = nullptr;
-  recursive = false;
-  update_json_pointer(j, &jp, keyjp, key, idx, def, recursive);
-  if (&(*jp)!=&j.at("foo")) {
-    return finalizeFailure(rc, failMsg, "Pointer not updated with key");
-  }
-
-  //---------------------------------------------------------------------------
-
-  json::json_pointer thekeyjp2("/foo");
-
-  jp = nullptr;
-  keyjp = &thekeyjp2;
-  key = nullptr;
-  idx = nullptr;
-  def = nullptr;
-  recursive = false;
-  update_json_pointer(j, &jp, keyjp, key, idx, def, recursive);
-  if (&(*jp)!=&j.at("foo")) {
-    return finalizeFailure(rc, failMsg, "Pointer not updated using JSON Pointer");
-  }
-
-  //---------------------------------------------------------------------------
-
-  json::json_pointer thekeyjp("/nest/twice");
-  thekey = "foobar";
-
-  jp = nullptr;
-  keyjp = &thekeyjp;
-  key = &thekey;
-  idx = nullptr;
-  def = nullptr;
-  recursive = false;
-  update_json_pointer(j, &jp, keyjp, key, idx, def, recursive);
-  if (&(*jp)!=&j.at("nest").at("twice").at("foobar")) {
-    return finalizeFailure(rc, failMsg, "Pointer not updated using JSON Pointer");
-  }
-
-  //---------------------------------------------------------------------------
-
-  thekey = "does not exist";
-  json thedef = 666;
-
-  jp = nullptr;
-  keyjp = nullptr;
-  key = &thekey;
-  idx = nullptr;
-  def = &thedef;
-  recursive = false;
-  update_json_pointer(j, &jp, keyjp, key, idx, def, recursive);
-  if (&(*jp)!=&thedef) {
-    return finalizeFailure(rc, failMsg, "Pointer not updated to point to default");
-  }
-
-  //---------------------------------------------------------------------------
-
-  json::json_pointer thekeyjp3("/nest/twice/an_array");
-  int theidx = 1;
-
-  jp = nullptr;
-  keyjp = &thekeyjp3;
-  key = nullptr;
-  idx = &theidx;
-  def = nullptr;
-  recursive = false;
-  update_json_pointer(j, &jp, keyjp, key, idx, def, recursive);
-  if (&(*jp)!=&(j.at("nest").at("twice").at("an_array").get_ptr<json::array_t*>()->at(theidx))) {
-    return finalizeFailure(rc, failMsg, "Pointer not updated with index");
-  }
-
-  //---------------------------------------------------------------------------
-
-  thekey = "deeper";
-
-  jp = nullptr;
-  keyjp = nullptr;
-  key = &thekey;
-  idx = nullptr;
-  def = nullptr;
+  jdp = nullptr;
+  json::json_pointer key2("/deeper");
   recursive = true;
-  update_json_pointer(j, &jp, keyjp, key, idx, def, recursive);
-  if (&*jp!=&j["nest"]["once"]["once_again"]["deeper"]) {
+  update_json_pointer(j, &jdp, key2, recursive);
+  if (&*jdp!=&j["nest"]["once"]["once_again"]["deeper"]) {
     return finalizeFailure(rc, failMsg, "Pointer not updated with recursive");
+  }
+
+  //---------------------------------------------------------------------------
+
+  jdp = nullptr;
+  json::json_pointer key21("/not there");
+  recursive = true;
+  try {
+    update_json_pointer(j, &jdp, key21, recursive);
+    failed = true;
+  } catch (json::out_of_range &e) {
+    if (jdp) {
+      return finalizeFailure(rc, failMsg, "Pointer should be null with missing key & recursive");
+    }
+  }
+  if (failed) {
+    return finalizeFailure(rc, failMsg, "Did not catch exception");
+  }
+
+  //---------------------------------------------------------------------------
+
+  jdp = nullptr;
+  json::json_pointer key3("/nest/twice/an_array");
+  recursive = true;
+  update_json_pointer(j, &jdp, key3, recursive);
+  if (&*jdp!=&j["nest"]["twice"]["an_array"]) {
+    return finalizeFailure(rc, failMsg, "Pointer not updated to array");
   }
 
   rc = ESMF_SUCCESS;
