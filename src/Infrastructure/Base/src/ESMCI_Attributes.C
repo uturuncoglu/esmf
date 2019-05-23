@@ -107,6 +107,38 @@ void update_json_count(std::size_t &count, std::size_t &count_total, const json 
   }
 }
 
+#undef  ESMC_METHOD
+#define ESMC_METHOD "get_base()"
+json* get_base(json &j, key_t &key, int &rc, json *def, const int *index, bool recursive) {
+  // Notes:
+  json::json_pointer *keyjp = nullptr;
+  key_t *keyp = nullptr;
+  if (!recursive) {
+    try {
+      json::json_pointer jp = ESMCI::Attributes::formatKey(key, rc);
+      keyjp = &jp;
+    }
+    ESMF_CATCH_PASSTHRU
+  } else {
+    keyp = &key;
+  }
+  if (recursive) {
+    assert(!keyjp);
+  } else {
+    assert(keyjp);
+  }
+
+  json *ret = nullptr;
+  try {
+    update_json_pointer(j, &ret, keyjp, keyp, index, def, recursive);
+  }
+  catch (std::out_of_range &e) {
+    ESMF_CHECKERR_STD("ESMC_RC_ARG_OUTOFRANGE", ESMC_RC_ARG_OUTOFRANGE, e.what(), rc)
+  }
+  ESMF_CATCH_ATTRS
+  rc = ESMF_SUCCESS;
+}
+
 #undef ESMC_METHOD
 #define ESMC_METHOD "update_json_pointer()"
 void update_json_pointer(json &j, json **jp, const json::json_pointer *keyjp,
@@ -347,10 +379,14 @@ json::json_pointer Attributes::formatKey(key_t& key, int& rc) {
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::get()"
 template <typename T>
-T Attributes::get(key_t &key, int &rc, T *def, int *index) const {
+T Attributes::get(key_t &key, int &rc, const T *def, const int *index, bool recursive) const {
   // Exceptions:  ESMCI:esmf_attrs_error
 
   rc = ESMF_FAILURE;
+//  json *jdef = nullptr;
+//  if (def) *jdef = *def;
+//  json *as_json = get_base(this->getStorageRefWritable(), key, rc, jdef, index);
+//  T ret = *as_json;
   T ret;
   if (index) {
     try {
@@ -379,13 +415,13 @@ T Attributes::get(key_t &key, int &rc, T *def, int *index) const {
   }
   return ret;
 }
-template float Attributes::get(key_t&, int&, float*, int*) const;
-template double Attributes::get(key_t&, int&, double*, int*) const;
-template int Attributes::get(key_t&, int&, int*, int*) const;
-template long int Attributes::get(key_t&, int&, long int*, int*) const;
-template bool Attributes::get(key_t&, int&, bool*, int*) const;
-template std::string Attributes::get(key_t&, int&, std::string*, int*) const;
-template json Attributes::get(key_t&, int&, json*, int*) const;
+template float Attributes::get(key_t&, int&, const float*, const int*, bool recursive = false) const;
+template double Attributes::get(key_t&, int&, const double*, const int*, bool recursive = false) const;
+template int Attributes::get(key_t&, int&, const int*, const int*, bool recursive = false) const;
+template long int Attributes::get(key_t&, int&, const long int*, const int*, bool recursive = false) const;
+template bool Attributes::get(key_t&, int&, const bool*, const int*, bool recursive = false) const;
+template std::string Attributes::get(key_t&, int&, const std::string*, const int*, bool recursive = false) const;
+template json Attributes::get(key_t&, int&, const json*, const int*, bool recursive = false) const;
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::getPointer()"

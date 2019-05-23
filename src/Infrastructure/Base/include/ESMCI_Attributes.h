@@ -88,9 +88,7 @@ private:
 
 protected:
   json storage;  // JSON object store for keys/values managed by this instance //tdk:todo: make this private
-  json *storagep = nullptr;
 
-  static json::json_pointer formatKey(key_t& key, int& rc);
   virtual void init(void) {this->storage = json::object();}
 
 public:
@@ -111,8 +109,10 @@ public:
 
   void erase(key_t& key, key_t& keyChild, int& rc);
 
+  static json::json_pointer formatKey(key_t &key, int &rc);
+
   template <typename T>
-  T get(key_t &key, int &rc, T *def = nullptr, int *index = nullptr) const;
+  T get(key_t &key, int &rc, const T *def = nullptr, const int *index = nullptr, bool recursive = false) const;
 
   //tdk:remove this interface
   void get_isoc(ESMCI::ESMC_ISOCType ictype, void *ret, char* key, int& rc,
