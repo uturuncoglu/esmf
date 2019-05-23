@@ -162,9 +162,6 @@ void update_json_pointer(json &j, json **jp, const json::json_pointer *keyjp,
       if (*jp && idx) {
         *jp = &((*jp)->get_ptr<json::array_t*>()->at(*idx));
       }
-    } else {
-      *jp = &j;
-    }
   } catch (json::out_of_range &e) {
     if (recursive) {
       for (json::iterator it=j.begin(); it!=j.end(); it++) {
