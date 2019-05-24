@@ -107,36 +107,26 @@ void update_json_count(std::size_t &count, std::size_t &count_total, const json 
   }
 }
 
-#undef  ESMC_METHOD
-#define ESMC_METHOD "get_base()"
-json* get_base(json &j, key_t &key, int &rc, json *def, const int *index, bool recursive) {
-  // Notes:
-//  json::json_pointer *keyjp = nullptr;
-//  key_t *keyp = nullptr;
-//  if (!recursive) {
-//    try {
-//      json::json_pointer jp = ESMCI::Attributes::formatKey(key, rc);
-//      keyjp = &jp;
-//    }
-//    ESMF_CATCH_PASSTHRU
-//  } else {
-//    keyp = &key;
-//  }
-//  if (recursive) {
-//    assert(!keyjp);
-//  } else {
-//    assert(keyjp);
-//  }
-//
-//  json *ret = nullptr;
-//  try {
-//    update_json_pointer(j, &ret, keyjp, keyp, index, def, recursive);
-//  }
-//  catch (std::out_of_range &e) {
-//    ESMF_CHECKERR_STD("ESMC_RC_ARG_OUTOFRANGE", ESMC_RC_ARG_OUTOFRANGE, e.what(), rc)
-//  }
-//  ESMF_CATCH_ATTRS
-//  rc = ESMF_SUCCESS;
+#undef ESMC_METHOD
+#define ESMC_METHOD "get_json_pointer()"
+json const* get_json_pointer(const json &j, const json::json_pointer &key, bool recursive) {
+  // Throws: see update_json_pointer
+  json const *ret = nullptr;
+  try {
+    ret = &(j.at(key));
+  } catch (json::out_of_range &e) {
+    if (recursive) {
+      for (json::const_iterator it=j.cbegin(); it!=j.cend(); it++) {
+        if (it.value().is_object()) {
+          update_json_pointer(it.value(), &ret, key, true);
+        }
+      }
+    }
+    if (!ret) {
+      throw(e);
+    }
+  }
+  return ret;
 }
 
 #undef ESMC_METHOD
@@ -471,7 +461,7 @@ json Attributes::inquire(key_t &key, int &rc, bool recursive, const int *idx) co
     std::size_t attPackCount = 0;
     if (key!="") {
       json::json_pointer jp = this->formatKey(key, rc);
-      sp = &(this->getStorageRef().at(jp));
+      update_json_pointer(this->getStorageRef(), &sp, jp, recursive);
     } else {
       attPackCount = get_attpack_count(*sp);
     }
