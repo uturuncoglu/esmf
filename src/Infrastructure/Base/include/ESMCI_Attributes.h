@@ -162,6 +162,7 @@ public:
 
   InfoView(json &j) {this->storage = &j;}
 
+  void update_storage_ptr(json &j) {this->storage = &j;}
   void update_storage_ptr(const json::json_pointer *key, const int *idx, bool recursive);
 
   template<typename T>

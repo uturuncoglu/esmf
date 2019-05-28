@@ -849,9 +849,13 @@ template json InfoView::copy<json>();
 #define ESMC_METHOD "InfoView::copy(<list>)"
 template<typename T>
 void InfoView::copy(T target, const int &count) {
+  // Throws: esmf_attrs_error
   json::array_t *jarr = nullptr;
   this->update_ptr(&jarr);
-  assert(count==(int)jarr->size()); //tdk:try/catch out of range
+  if (count==(int)jarr->size()) {
+    std::string msg = "JSON array size not equal to count";
+    throw(esmf_attrs_error("ESMC_RC_ARG_OUTOFRANGE", ESMC_RC_ARG_OUTOFRANGE, msg));
+  }
   for (int ii = 0; ii < count; ++ii) {
     target[ii] = jarr->at(ii);
   }
@@ -866,18 +870,39 @@ template void InfoView::copy<std::vector<std::string>>(std::vector<std::string>,
 #undef  ESMC_METHOD
 #define ESMC_METHOD "InfoView::update_ptr()"
 void InfoView::update_ptr(bool **ptr) {
+  // Test: test_infoview_update_ptr
+  if (!this->storage->is_boolean()) {
+    std::string msg = "JSON boolean type expected";
+    throw(esmf_attrs_error("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, msg));
+  }
   *ptr = &(*this->storage->get_ptr<json::boolean_t*>());
 }
 void InfoView::update_ptr(long int **ptr) {
+  if (!this->storage->is_number_integer()) {
+    std::string msg = "JSON integer type expected";
+    throw(esmf_attrs_error("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, msg));
+  }
   *ptr = &(*this->storage->get_ptr<json::number_integer_t*>());
 }
 void InfoView::update_ptr(double **ptr) {
+  if (!this->storage->is_number_float()) {
+    std::string msg = "JSON float type expected";
+    throw(esmf_attrs_error("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, msg));
+  }
   *ptr = &(*this->storage->get_ptr<json::number_float_t*>());
 }
 void InfoView::update_ptr(std::string **ptr) {
+  if (!this->storage->is_string()) {
+    std::string msg = "JSON string type expected";
+    throw(esmf_attrs_error("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, msg));
+  }
   *ptr = &(*this->storage->get_ptr<json::string_t*>());
 }
 void InfoView::update_ptr(json::array_t **ptr) {
+  if (!this->storage->is_array()) {
+    std::string msg = "JSON array type expected";
+    throw(esmf_attrs_error("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, msg));
+  }
   *ptr = &(*this->storage->get_ptr<json::array_t*>());
 }
 
@@ -886,11 +911,19 @@ void InfoView::update_ptr(json::array_t **ptr) {
 void InfoView::update_storage_ptr(const json::json_pointer *key, const int *idx, bool recursive) {
   // Throws: json::out_of_range when key not found
   //         std::out_of_range when index not found
-  json *lj = this->storage;
+  //         esmf_attrs_error if "idx" and target is not an array
+  json *lj = nullptr;
   if (key) {
     update_json_pointer(*this->storage, &lj, *key, recursive);
   }
   if (idx) {
+    if (!lj) {
+      lj = this->storage;
+    }
+    if (!lj->is_array()) {
+      throw(esmf_attrs_error("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD,
+        "Attempted to index into non-array type"));
+    }
     lj = &(lj->get_ptr<json::array_t*>()->at(*idx));
   }
   this->storage = &(*lj);

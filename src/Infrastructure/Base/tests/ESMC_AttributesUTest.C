@@ -860,6 +860,71 @@ void test_update_json_pointer(int& rc, char failMsg[]) {
   rc = ESMF_SUCCESS;
 };
 
+#undef  ESMC_METHOD
+#define ESMC_METHOD "test_infoview_update_ptr()"
+void test_infoview_update_ptr(int& rc, char failMsg[]) {
+  rc = ESMF_FAILURE;
+  bool failed = false;
+
+  json j = {{"a", 5}, {"b", 6}, {"c", {"rainbow", 555, 66.6}}};
+  InfoView iview(j);
+
+  json::json_pointer jp("/a");
+  iview.update_storage_ptr(&jp, nullptr, false);
+  long int *jip = nullptr;
+  iview.update_ptr(&jip);
+  int newi = 9999;
+  *jip = newi;
+  if (j["a"]!=newi) {
+    return finalizeFailure(rc, failMsg, "update_ptr failed");
+  }
+
+  json::json_pointer jp2("/c");
+  iview.update_storage_ptr(j);
+  int idx = 2;
+  iview.update_storage_ptr(&jp2, &idx, false);
+  double *jdp = nullptr;
+  iview.update_ptr(&jdp);
+  *jdp = 77.99;
+  if (j["c"].at(2)!=77.99) {
+    return finalizeFailure(rc, failMsg, "update_ptr failed");
+  }
+
+  json::json_pointer jp3("/foobar");
+  try {
+    iview.update_storage_ptr(&jp3, nullptr, true);
+    return finalizeFailure(rc, failMsg, "did not hit JSON out of range error");
+  }
+  catch (json::out_of_range &e) {}
+
+  try {
+    int idx = 55;
+    iview.update_storage_ptr(j);
+    iview.update_storage_ptr(&jp2, &idx, false);
+    return finalizeFailure(rc, failMsg, "did not hit std out of range error");
+  }
+  catch (std::out_of_range &e) {}
+
+  try {
+    iview.update_storage_ptr(j);
+    iview.update_storage_ptr(&jp, &idx, true);
+    return finalizeFailure(rc, failMsg, "did not hit type error with idx");
+  }
+  catch (ESMCI::esmf_attrs_error &e) {}
+
+  iview.update_storage_ptr(j);
+  json::json_pointer jp4("/b");
+  iview.update_storage_ptr(&jp4, nullptr, true);
+  double *incompatp = nullptr;
+  try {
+    iview.update_ptr(&incompatp);
+    return finalizeFailure(rc, failMsg, "did not hit type error with update_ptr");
+  }
+  catch (ESMCI::esmf_attrs_error &e) {}
+
+  rc = ESMF_SUCCESS;
+};
+
 int main(void) {
 
   char name[80];
@@ -982,6 +1047,13 @@ int main(void) {
   //NEX_UTest
   strcpy(name, "Attributes update_json_pointer");
   test_update_json_pointer(rc, failMsg);
+  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
+  //---------------------------------------------------------------------------
+
+  //---------------------------------------------------------------------------
+  //NEX_UTest
+  strcpy(name, "InfoView update_ptr");
+  test_infoview_update_ptr(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //---------------------------------------------------------------------------
 
