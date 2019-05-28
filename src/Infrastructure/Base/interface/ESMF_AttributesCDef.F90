@@ -182,7 +182,7 @@ interface
 
   !=============================================================================
 
-  subroutine c_attrs_get_CH(attrs, key, value, vlen, rc, default, idx) bind(C, name="ESMC_AttributesGetCH")
+  subroutine c_attrs_get_CH(attrs, key, value, vlen, rc, default, idx, recursive) bind(C, name="ESMC_AttributesGetCH")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: attrs
@@ -191,6 +191,7 @@ interface
     integer(C_INT) :: vlen
     integer(C_INT), intent(inout) :: rc
     type(C_PTR), value :: default, idx
+    logical(C_BOOL), intent(in) :: recursive
   end subroutine c_attrs_get_CH
 
   !=============================================================================

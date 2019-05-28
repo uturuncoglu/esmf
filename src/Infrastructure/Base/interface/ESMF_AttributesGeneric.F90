@@ -16,6 +16,7 @@ subroutine ESMF_AttributesGetR4(attrs, key, value, default, idx, rc)
   real(C_FLOAT), target :: local_default
   integer(C_INT), target :: local_idx
   type(C_PTR) :: local_default_ptr, local_idx_ptr
+  logical(C_BOOL), parameter :: recursive=.false.
 
   ! Set up local return code
   localrc = ESMF_FAILURE
@@ -44,7 +45,8 @@ subroutine ESMF_AttributesGetR4(attrs, key, value, default, idx, rc)
     value, &
     localrc, &
     local_default_ptr, &
-    local_idx_ptr)
+    local_idx_ptr, &
+    recursive)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   
   if (present(rc)) rc = ESMF_SUCCESS
@@ -64,6 +66,7 @@ subroutine ESMF_AttributesGetR8(attrs, key, value, default, idx, rc)
   real(C_DOUBLE), target :: local_default
   integer(C_INT), target :: local_idx
   type(C_PTR) :: local_default_ptr, local_idx_ptr
+  logical(C_BOOL), parameter :: recursive=.false.
 
   ! Set up local return code
   localrc = ESMF_FAILURE
@@ -92,7 +95,8 @@ subroutine ESMF_AttributesGetR8(attrs, key, value, default, idx, rc)
     value, &
     localrc, &
     local_default_ptr, &
-    local_idx_ptr)
+    local_idx_ptr, &
+    recursive)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   
   if (present(rc)) rc = ESMF_SUCCESS
@@ -112,6 +116,7 @@ subroutine ESMF_AttributesGetI4(attrs, key, value, default, idx, rc)
   integer(C_INT), target :: local_default
   integer(C_INT), target :: local_idx
   type(C_PTR) :: local_default_ptr, local_idx_ptr
+  logical(C_BOOL), parameter :: recursive=.false.
 
   ! Set up local return code
   localrc = ESMF_FAILURE
@@ -140,7 +145,8 @@ subroutine ESMF_AttributesGetI4(attrs, key, value, default, idx, rc)
     value, &
     localrc, &
     local_default_ptr, &
-    local_idx_ptr)
+    local_idx_ptr, &
+    recursive)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   
   if (present(rc)) rc = ESMF_SUCCESS
@@ -160,6 +166,7 @@ subroutine ESMF_AttributesGetI8(attrs, key, value, default, idx, rc)
   integer(C_LONG), target :: local_default
   integer(C_INT), target :: local_idx
   type(C_PTR) :: local_default_ptr, local_idx_ptr
+  logical(C_BOOL), parameter :: recursive=.false.
 
   ! Set up local return code
   localrc = ESMF_FAILURE
@@ -188,7 +195,8 @@ subroutine ESMF_AttributesGetI8(attrs, key, value, default, idx, rc)
     value, &
     localrc, &
     local_default_ptr, &
-    local_idx_ptr)
+    local_idx_ptr, &
+    recursive)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   
   if (present(rc)) rc = ESMF_SUCCESS
@@ -209,6 +217,7 @@ subroutine ESMF_AttributesGetLG(attrs, key, value, default, idx, rc)
   logical(C_BOOL) :: local_value
   integer(C_INT), target :: local_idx
   type(C_PTR) :: local_default_ptr, local_idx_ptr
+  logical(C_BOOL), parameter :: recursive=.false.
 
   ! Set up local return code
   localrc = ESMF_FAILURE
@@ -237,7 +246,8 @@ subroutine ESMF_AttributesGetLG(attrs, key, value, default, idx, rc)
     local_value, &
     localrc, &
     local_default_ptr, &
-    local_idx_ptr)
+    local_idx_ptr, &
+    recursive)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   value = local_value
   if (present(rc)) rc = ESMF_SUCCESS
@@ -258,6 +268,7 @@ subroutine ESMF_AttributesGetArrayR4(attrs, key, values, nelements, rc)
   integer, intent(inout), optional :: rc
 
   integer :: localrc
+  logical(C_BOOL), parameter :: recursive=.false.
   
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
@@ -273,7 +284,8 @@ subroutine ESMF_AttributesGetArrayR4(attrs, key, values, nelements, rc)
     trim(key)//C_NULL_CHAR, &
     values, &
     nelements, &
-    localrc)
+    localrc, &
+    recursive)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   
   if (present(rc)) rc = ESMF_SUCCESS
@@ -289,6 +301,7 @@ subroutine ESMF_AttributesGetArrayR8(attrs, key, values, nelements, rc)
   integer, intent(inout), optional :: rc
 
   integer :: localrc
+  logical(C_BOOL), parameter :: recursive=.false.
   
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
@@ -304,7 +317,8 @@ subroutine ESMF_AttributesGetArrayR8(attrs, key, values, nelements, rc)
     trim(key)//C_NULL_CHAR, &
     values, &
     nelements, &
-    localrc)
+    localrc, &
+    recursive)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   
   if (present(rc)) rc = ESMF_SUCCESS
@@ -320,6 +334,7 @@ subroutine ESMF_AttributesGetArrayI4(attrs, key, values, nelements, rc)
   integer, intent(inout), optional :: rc
 
   integer :: localrc
+  logical(C_BOOL), parameter :: recursive=.false.
   
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
@@ -335,7 +350,8 @@ subroutine ESMF_AttributesGetArrayI4(attrs, key, values, nelements, rc)
     trim(key)//C_NULL_CHAR, &
     values, &
     nelements, &
-    localrc)
+    localrc, &
+    recursive)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   
   if (present(rc)) rc = ESMF_SUCCESS
@@ -351,6 +367,7 @@ subroutine ESMF_AttributesGetArrayI8(attrs, key, values, nelements, rc)
   integer, intent(inout), optional :: rc
 
   integer :: localrc
+  logical(C_BOOL), parameter :: recursive=.false.
   
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
@@ -366,7 +383,8 @@ subroutine ESMF_AttributesGetArrayI8(attrs, key, values, nelements, rc)
     trim(key)//C_NULL_CHAR, &
     values, &
     nelements, &
-    localrc)
+    localrc, &
+    recursive)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   
   if (present(rc)) rc = ESMF_SUCCESS
@@ -382,6 +400,7 @@ subroutine ESMF_AttributesGetArrayLG(attrs, key, values, nelements, rc)
   integer, intent(inout), optional :: rc
 
   integer :: localrc
+  logical(C_BOOL), parameter :: recursive=.false.
   integer :: ii
   logical(C_BOOL), dimension(:), allocatable :: local_values
   
@@ -399,7 +418,8 @@ subroutine ESMF_AttributesGetArrayLG(attrs, key, values, nelements, rc)
     trim(key)//C_NULL_CHAR, &
     local_values, &
     nelements, &
-    localrc)
+    localrc, &
+    recursive)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   
   if (.not. allocated(values)) allocate(values(nelements))

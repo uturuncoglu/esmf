@@ -559,6 +559,7 @@ subroutine ESMF_AttributesGetCH(attrs, key, value, default, idx, rc)
   integer(C_INT), target :: local_idx
   character(len=ESMF_MAXSTR), target :: local_default
   type(C_PTR) :: local_default_ptr, local_idx_ptr
+  logical(C_BOOL), parameter :: recursive=.false.
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
@@ -582,7 +583,7 @@ subroutine ESMF_AttributesGetCH(attrs, key, value, default, idx, rc)
 
   vlen = LEN(value)
   call c_attrs_get_CH(attrs%ptr, trim(key)//C_NULL_CHAR, value, vlen, &
-    localrc, local_default_ptr, local_idx_ptr)
+    localrc, local_default_ptr, local_idx_ptr, recursive)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
