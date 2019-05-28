@@ -4,19 +4,20 @@
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributesGetR4()"
-subroutine ESMF_AttributesGetR4(attrs, key, value, default, idx, rc)
+subroutine ESMF_AttributesGetR4(attrs, key, value, default, idx, attnestflag, rc)
   type(ESMF_Attributes), intent(inout) :: attrs
   character(len=*), intent(in) :: key
   real(ESMF_KIND_R4), intent(out) :: value
   real(ESMF_KIND_R4), intent(in), optional :: default
   integer, intent(in), optional :: idx
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
   real(C_FLOAT), target :: local_default
   integer(C_INT), target :: local_idx
   type(C_PTR) :: local_default_ptr, local_idx_ptr
-  logical(C_BOOL), parameter :: recursive=.false.
+  logical(C_BOOL) :: recursive=.false.
 
   ! Set up local return code
   localrc = ESMF_FAILURE
@@ -35,6 +36,9 @@ subroutine ESMF_AttributesGetR4(attrs, key, value, default, idx, rc)
     local_idx_ptr = C_LOC(local_idx)
   else
     local_idx_ptr = C_NULL_PTR
+  end if
+  if (present(attnestflag)) then
+    if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = .true.
   end if
 
   ! Call C ####################################################################
@@ -54,19 +58,20 @@ end subroutine ESMF_AttributesGetR4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributesGetR8()"
-subroutine ESMF_AttributesGetR8(attrs, key, value, default, idx, rc)
+subroutine ESMF_AttributesGetR8(attrs, key, value, default, idx, attnestflag, rc)
   type(ESMF_Attributes), intent(inout) :: attrs
   character(len=*), intent(in) :: key
   real(ESMF_KIND_R8), intent(out) :: value
   real(ESMF_KIND_R8), intent(in), optional :: default
   integer, intent(in), optional :: idx
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
   real(C_DOUBLE), target :: local_default
   integer(C_INT), target :: local_idx
   type(C_PTR) :: local_default_ptr, local_idx_ptr
-  logical(C_BOOL), parameter :: recursive=.false.
+  logical(C_BOOL) :: recursive=.false.
 
   ! Set up local return code
   localrc = ESMF_FAILURE
@@ -85,6 +90,9 @@ subroutine ESMF_AttributesGetR8(attrs, key, value, default, idx, rc)
     local_idx_ptr = C_LOC(local_idx)
   else
     local_idx_ptr = C_NULL_PTR
+  end if
+  if (present(attnestflag)) then
+    if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = .true.
   end if
 
   ! Call C ####################################################################
@@ -104,19 +112,20 @@ end subroutine ESMF_AttributesGetR8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributesGetI4()"
-subroutine ESMF_AttributesGetI4(attrs, key, value, default, idx, rc)
+subroutine ESMF_AttributesGetI4(attrs, key, value, default, idx, attnestflag, rc)
   type(ESMF_Attributes), intent(inout) :: attrs
   character(len=*), intent(in) :: key
   integer(ESMF_KIND_I4), intent(out) :: value
   integer(ESMF_KIND_I4), intent(in), optional :: default
   integer, intent(in), optional :: idx
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
   integer(C_INT), target :: local_default
   integer(C_INT), target :: local_idx
   type(C_PTR) :: local_default_ptr, local_idx_ptr
-  logical(C_BOOL), parameter :: recursive=.false.
+  logical(C_BOOL) :: recursive=.false.
 
   ! Set up local return code
   localrc = ESMF_FAILURE
@@ -135,6 +144,9 @@ subroutine ESMF_AttributesGetI4(attrs, key, value, default, idx, rc)
     local_idx_ptr = C_LOC(local_idx)
   else
     local_idx_ptr = C_NULL_PTR
+  end if
+  if (present(attnestflag)) then
+    if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = .true.
   end if
 
   ! Call C ####################################################################
@@ -154,19 +166,20 @@ end subroutine ESMF_AttributesGetI4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributesGetI8()"
-subroutine ESMF_AttributesGetI8(attrs, key, value, default, idx, rc)
+subroutine ESMF_AttributesGetI8(attrs, key, value, default, idx, attnestflag, rc)
   type(ESMF_Attributes), intent(inout) :: attrs
   character(len=*), intent(in) :: key
   integer(ESMF_KIND_I8), intent(out) :: value
   integer(ESMF_KIND_I8), intent(in), optional :: default
   integer, intent(in), optional :: idx
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
   integer(C_LONG), target :: local_default
   integer(C_INT), target :: local_idx
   type(C_PTR) :: local_default_ptr, local_idx_ptr
-  logical(C_BOOL), parameter :: recursive=.false.
+  logical(C_BOOL) :: recursive=.false.
 
   ! Set up local return code
   localrc = ESMF_FAILURE
@@ -185,6 +198,9 @@ subroutine ESMF_AttributesGetI8(attrs, key, value, default, idx, rc)
     local_idx_ptr = C_LOC(local_idx)
   else
     local_idx_ptr = C_NULL_PTR
+  end if
+  if (present(attnestflag)) then
+    if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = .true.
   end if
 
   ! Call C ####################################################################
@@ -204,12 +220,13 @@ end subroutine ESMF_AttributesGetI8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributesGetLG()"
-subroutine ESMF_AttributesGetLG(attrs, key, value, default, idx, rc)
+subroutine ESMF_AttributesGetLG(attrs, key, value, default, idx, attnestflag, rc)
   type(ESMF_Attributes), intent(inout) :: attrs
   character(len=*), intent(in) :: key
   logical, intent(inout) :: value
   logical, intent(in), optional :: default
   integer, intent(in), optional :: idx
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
@@ -217,7 +234,7 @@ subroutine ESMF_AttributesGetLG(attrs, key, value, default, idx, rc)
   logical(C_BOOL) :: local_value
   integer(C_INT), target :: local_idx
   type(C_PTR) :: local_default_ptr, local_idx_ptr
-  logical(C_BOOL), parameter :: recursive=.false.
+  logical(C_BOOL) :: recursive=.false.
 
   ! Set up local return code
   localrc = ESMF_FAILURE
@@ -236,6 +253,9 @@ subroutine ESMF_AttributesGetLG(attrs, key, value, default, idx, rc)
     local_idx_ptr = C_LOC(local_idx)
   else
     local_idx_ptr = C_NULL_PTR
+  end if
+  if (present(attnestflag)) then
+    if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = .true.
   end if
 
   ! Call C ####################################################################
@@ -260,21 +280,26 @@ end subroutine ESMF_AttributesGetLG
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributesGetArrayR4()"
-subroutine ESMF_AttributesGetArrayR4(attrs, key, values, nelements, rc)
+subroutine ESMF_AttributesGetArrayR4(attrs, key, values, nelements, attnestflag, rc)
   type(ESMF_Attributes), intent(inout) :: attrs
   character(len=*), intent(in) :: key
   real(ESMF_KIND_R4), dimension(:), allocatable, intent(out) :: values
   integer, intent(inout) :: nelements
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  logical(C_BOOL), parameter :: recursive=.false.
+  logical(C_BOOL) :: recursive=.false.
   
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
 
+  if (present(attnestflag)) then
+    if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = .true.
+  end if
+
   ! Get the array size from the attributes store
-  call ESMF_AttributesInquire(attrs, key=key, count=nelements, rc=localrc)
+  call ESMF_AttributesInquire(attrs, key=key, count=nelements, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   ! Allocate the outgoing storage array and call into C to fill the array
@@ -293,21 +318,26 @@ end subroutine ESMF_AttributesGetArrayR4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributesGetArrayR8()"
-subroutine ESMF_AttributesGetArrayR8(attrs, key, values, nelements, rc)
+subroutine ESMF_AttributesGetArrayR8(attrs, key, values, nelements, attnestflag, rc)
   type(ESMF_Attributes), intent(inout) :: attrs
   character(len=*), intent(in) :: key
   real(ESMF_KIND_R8), dimension(:), allocatable, intent(out) :: values
   integer, intent(inout) :: nelements
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  logical(C_BOOL), parameter :: recursive=.false.
+  logical(C_BOOL) :: recursive=.false.
   
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
 
+  if (present(attnestflag)) then
+    if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = .true.
+  end if
+
   ! Get the array size from the attributes store
-  call ESMF_AttributesInquire(attrs, key=key, count=nelements, rc=localrc)
+  call ESMF_AttributesInquire(attrs, key=key, count=nelements, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   ! Allocate the outgoing storage array and call into C to fill the array
@@ -326,21 +356,26 @@ end subroutine ESMF_AttributesGetArrayR8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributesGetArrayI4()"
-subroutine ESMF_AttributesGetArrayI4(attrs, key, values, nelements, rc)
+subroutine ESMF_AttributesGetArrayI4(attrs, key, values, nelements, attnestflag, rc)
   type(ESMF_Attributes), intent(inout) :: attrs
   character(len=*), intent(in) :: key
   integer(ESMF_KIND_I4), dimension(:), allocatable, intent(out) :: values
   integer, intent(inout) :: nelements
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  logical(C_BOOL), parameter :: recursive=.false.
+  logical(C_BOOL) :: recursive=.false.
   
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
 
+  if (present(attnestflag)) then
+    if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = .true.
+  end if
+
   ! Get the array size from the attributes store
-  call ESMF_AttributesInquire(attrs, key=key, count=nelements, rc=localrc)
+  call ESMF_AttributesInquire(attrs, key=key, count=nelements, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   ! Allocate the outgoing storage array and call into C to fill the array
@@ -359,21 +394,26 @@ end subroutine ESMF_AttributesGetArrayI4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributesGetArrayI8()"
-subroutine ESMF_AttributesGetArrayI8(attrs, key, values, nelements, rc)
+subroutine ESMF_AttributesGetArrayI8(attrs, key, values, nelements, attnestflag, rc)
   type(ESMF_Attributes), intent(inout) :: attrs
   character(len=*), intent(in) :: key
   integer(ESMF_KIND_I8), dimension(:), allocatable, intent(out) :: values
   integer, intent(inout) :: nelements
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  logical(C_BOOL), parameter :: recursive=.false.
+  logical(C_BOOL) :: recursive=.false.
   
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
 
+  if (present(attnestflag)) then
+    if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = .true.
+  end if
+
   ! Get the array size from the attributes store
-  call ESMF_AttributesInquire(attrs, key=key, count=nelements, rc=localrc)
+  call ESMF_AttributesInquire(attrs, key=key, count=nelements, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   ! Allocate the outgoing storage array and call into C to fill the array
@@ -392,23 +432,28 @@ end subroutine ESMF_AttributesGetArrayI8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributesGetArrayLG()"
-subroutine ESMF_AttributesGetArrayLG(attrs, key, values, nelements, rc)
+subroutine ESMF_AttributesGetArrayLG(attrs, key, values, nelements, attnestflag, rc)
   type(ESMF_Attributes), intent(inout) :: attrs
   character(len=*), intent(in) :: key
   logical, dimension(:), allocatable, intent(out) :: values
   integer, intent(inout) :: nelements
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  logical(C_BOOL), parameter :: recursive=.false.
+  logical(C_BOOL) :: recursive=.false.
   integer :: ii
   logical(C_BOOL), dimension(:), allocatable :: local_values
   
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
 
+  if (present(attnestflag)) then
+    if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = .true.
+  end if
+
   ! Get the array size from the attributes store
-  call ESMF_AttributesInquire(attrs, key=key, count=nelements, rc=localrc)
+  call ESMF_AttributesInquire(attrs, key=key, count=nelements, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   ! Allocate the outgoing storage array and call into C to fill the array

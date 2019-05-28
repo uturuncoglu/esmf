@@ -59,7 +59,7 @@ program ESMF_AttributesUTest
   integer               :: result = 0, count
 
   integer(ESMF_KIND_I4) :: value, actual, actual2, actual3, arr_i4_get_count, &
-                           actual4
+                           actual4, ir4=0
   integer(ESMF_KIND_I8) :: desired_i8, value_i8
   real :: actual_rw_val, desired_rw_val
   real(ESMF_KIND_R4) :: desired_r4, value_r4
@@ -72,7 +72,7 @@ program ESMF_AttributesUTest
                            attrs_types, attrs_obj_dst, attrs_obj_src, &
                            attrs_obj_new, attrs_parse, attrs_update_lhs, &
                            attrs_update_rhs, attrs_inq, attrs_eq_lhs, &
-                           attrs_eq_rhs
+                           attrs_eq_rhs, irecurse
 
   logical :: is_present, failed, is_set, is_present_copy_test, actual_logical, &
              desired_logical, isArray, isDirty
@@ -741,6 +741,26 @@ program ESMF_AttributesUTest
 
   call ESMF_AttributesDestroy(attrs_eq_lhs, rc=rc)
   call ESMF_AttributesDestroy(attrs_eq_rhs, rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+  !----------------------------------------------------------------------------
+  
+  !----------------------------------------------------------------------------
+  !NEX_UTest
+  write(name, *) "ESMF_AttributesGet Recursive"
+  write(failMsg, *) "Did not get recursive"
+  rc = ESMF_FAILURE
+  failed = .false.
+
+  to_parse = '{"ask": "questions please", "number": 1, "nest": {"a": 5}}'
+  irecurse = ESMF_AttributesCreate(to_parse, rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+  
+  call ESMF_AttributesGet(irecurse, "a", ir4, attnestflag=ESMF_ATTNEST_ON, rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  call ESMF_Test(ir4==5, name, failMsg, result, ESMF_SRCLINE)
+
+  call ESMF_AttributesDestroy(irecurse, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
   !----------------------------------------------------------------------------
 

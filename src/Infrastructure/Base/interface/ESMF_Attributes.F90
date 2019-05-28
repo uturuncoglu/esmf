@@ -317,7 +317,7 @@ subroutine ESMF_AttributesInquire(attrs, key, count, countTotal, jsonType, isArr
   integer :: localrc
   type(ESMF_Attributes) :: inq
   character(:), allocatable :: local_key
-  logical(C_BOOL) :: recursive=.true.
+  logical(C_BOOL) :: recursive=.false.
   integer(C_INT), target :: local_idx
   type(C_PTR) :: local_idx_ptr
 
@@ -332,7 +332,7 @@ subroutine ESMF_AttributesInquire(attrs, key, count, countTotal, jsonType, isArr
     local_key = ""
   end if
   if (present(attnestflag)) then
-    if (attnestflag%value==ESMF_ATTNEST_OFF%value) recursive = .false.
+    if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = .true.
   end if
   if (present(idx)) then
     local_idx = idx - 1  ! Shift to C (zero-based) indexing
@@ -547,19 +547,20 @@ end subroutine ESMF_AttributesWriteJSON
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributesGetCH()"
-subroutine ESMF_AttributesGetCH(attrs, key, value, default, idx, rc)
+subroutine ESMF_AttributesGetCH(attrs, key, value, default, idx, attnestflag, rc)
   type(ESMF_Attributes), intent(inout) :: attrs
   character(len=*), intent(in) :: key
   character(len=*), intent(inout), target :: value
   character(len=*), intent(in), optional :: default
   integer, intent(in), optional :: idx
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc, vlen
   integer(C_INT), target :: local_idx
   character(len=ESMF_MAXSTR), target :: local_default
   type(C_PTR) :: local_default_ptr, local_idx_ptr
-  logical(C_BOOL), parameter :: recursive=.false.
+  logical(C_BOOL) :: recursive=.false.
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
@@ -578,6 +579,9 @@ subroutine ESMF_AttributesGetCH(attrs, key, value, default, idx, rc)
   else
     local_idx_ptr = C_NULL_PTR
   end if
+  if (present(attnestflag)) then
+    if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = .true.
+  end if
 
   ! Call C ####################################################################
 
@@ -591,11 +595,12 @@ end subroutine ESMF_AttributesGetCH
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributesGetArrayCH()"
-subroutine ESMF_AttributesGetArrayCH(attrs, key, values, nelements, rc)
+subroutine ESMF_AttributesGetArrayCH(attrs, key, values, nelements, attnestflag, rc)
   type(ESMF_Attributes), intent(inout) :: attrs
   character(len=*), intent(in) :: key
   character(len=*), dimension(:), allocatable, intent(out) :: values
   integer(C_INT), target, intent(inout) :: nelements
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc, ii
@@ -604,13 +609,15 @@ subroutine ESMF_AttributesGetArrayCH(attrs, key, values, nelements, rc)
   if (present(rc)) rc = ESMF_FAILURE
 
   ! Get the array size from the attributes store
-  call ESMF_AttributesInquire(attrs, key=trim(key)//C_NULL_CHAR, count=nelements, rc=localrc)
+  call ESMF_AttributesInquire(attrs, key=trim(key)//C_NULL_CHAR, count=nelements, &
+    attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   ! Allocate the outgoing storage array and call into C to fill the array
   if (.not. allocated(values)) allocate(values(nelements))
   do ii=1,nelements
-    call ESMF_AttributesGetCH(attrs, key, values(ii), idx=ii, rc=localrc)
+    call ESMF_AttributesGetCH(attrs, key, values(ii), idx=ii, attnestflag=attnestflag, &
+      rc=localrc)
   enddo
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
