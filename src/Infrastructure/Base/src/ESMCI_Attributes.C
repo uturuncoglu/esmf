@@ -130,7 +130,7 @@ json const* get_json_pointer(const json &j, const json::json_pointer &key, bool 
 }
 
 #undef ESMC_METHOD
-#define ESMC_METHOD "update_json_pointer()"
+#define ESMC_METHOD "update_json_pointer(<const>)"
 void update_json_pointer(const json &j, json const **jdp, const json::json_pointer &key, bool recursive) {
   // Test: test_update_json_pointer
   // Notes:
@@ -140,6 +140,28 @@ void update_json_pointer(const json &j, json const **jdp, const json::json_point
   } catch (json::out_of_range &e) {
     if (recursive) {
       for (json::const_iterator it=j.cbegin(); it!=j.cend(); it++) {
+        if (it.value().is_object()) {
+          update_json_pointer(it.value(), jdp, key, true);
+        }
+      }
+    }
+    if (!*jdp) {
+      throw(e);
+    }
+  }
+}
+
+#undef ESMC_METHOD
+#define ESMC_METHOD "update_json_pointer(<non-const>)"
+void update_json_pointer(json &j, json **jdp, const json::json_pointer &key, bool recursive) {
+  // Test: test_update_json_pointer (for const overload)
+  // Notes:
+  // Throws: json::out_of_range when key not found
+  try {
+    *jdp = &(j.at(key));
+  } catch (json::out_of_range &e) {
+    if (recursive) {
+      for (json::iterator it=j.begin(); it!=j.end(); it++) {
         if (it.value().is_object()) {
           update_json_pointer(it.value(), jdp, key, true);
         }
@@ -809,6 +831,74 @@ void Attributes::update(const Attributes &attrs, int &rc) {
 
 //-----------------------------------------------------------------------------
 
+#undef  ESMC_METHOD
+#define ESMC_METHOD "InfoView::copy(<scalar>)"
+template<typename T>
+T InfoView::copy(void) {
+  return this->get_ivref();
+}
+template bool InfoView::copy<bool>();
+template int InfoView::copy<int>();
+template long int InfoView::copy<long int>();
+template float InfoView::copy<float>();
+template double InfoView::copy<double>();
+template std::string InfoView::copy<std::string>();
+template json InfoView::copy<json>();
+
+#undef  ESMC_METHOD
+#define ESMC_METHOD "InfoView::copy(<list>)"
+template<typename T>
+void InfoView::copy(T target, const int &count) {
+  json::array_t *jarr = nullptr;
+  this->update_ptr(&jarr);
+  assert(count==(int)jarr->size()); //tdk:try/catch out of range
+  for (int ii = 0; ii < count; ++ii) {
+    target[ii] = jarr->at(ii);
+  }
+}
+template void InfoView::copy<bool*>(bool*, const int &count);
+template void InfoView::copy<int*>(int*, const int &count);
+template void InfoView::copy<long int*>(long int*, const int &count);
+template void InfoView::copy<float*>(float*, const int &count);
+template void InfoView::copy<double*>(double*, const int &count);
+template void InfoView::copy<std::vector<std::string>>(std::vector<std::string>, const int &count);
+
+#undef  ESMC_METHOD
+#define ESMC_METHOD "InfoView::update_ptr()"
+void InfoView::update_ptr(bool **ptr) {
+  *ptr = &(*this->storage->get_ptr<json::boolean_t*>());
+}
+void InfoView::update_ptr(long int **ptr) {
+  *ptr = &(*this->storage->get_ptr<json::number_integer_t*>());
+}
+void InfoView::update_ptr(double **ptr) {
+  *ptr = &(*this->storage->get_ptr<json::number_float_t*>());
+}
+void InfoView::update_ptr(std::string **ptr) {
+  *ptr = &(*this->storage->get_ptr<json::string_t*>());
+}
+void InfoView::update_ptr(json::array_t **ptr) {
+  *ptr = &(*this->storage->get_ptr<json::array_t*>());
+}
+
+#undef  ESMC_METHOD
+#define ESMC_METHOD "InfoView::update_storage_ptr()"
+void InfoView::update_storage_ptr(const json::json_pointer *key, const int *idx, bool recursive) {
+  // Throws: json::out_of_range when key not found
+  //         std::out_of_range when index not found
+  json *lj = this->storage;
+  if (key) {
+    update_json_pointer(*this->storage, &lj, *key, recursive);
+  }
+  if (idx) {
+    lj = &(lj->get_ptr<json::array_t*>()->at(*idx));
+  }
+  this->storage = &(*lj);
+}
+
+//-----------------------------------------------------------------------------
+
+//tdk:rm
 //#undef ESMC_METHOD
 //#define ESMC_METHOD "AttPack(ESMCI::Attributes &info, key_t &convention, key_t &purpose, int &rc)"
 //AttPack::AttPack(ESMCI::Attributes &info, key_t &convention, key_t &purpose, int &rc) {

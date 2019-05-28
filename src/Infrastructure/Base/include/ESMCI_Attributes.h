@@ -149,8 +149,38 @@ public:
 
 };
 
+class InfoView {
+private:
+  json *storage = nullptr;
+public:
+  InfoView(void) = delete; // Default constructor
+  ~InfoView(void) = default;  // Default destructor
+  InfoView(InfoView&&) = delete; // Move constructor
+  InfoView(const InfoView&) = delete; // Copy constructor
+  InfoView&operator=(const InfoView&) = delete; // Copy assignment
+  InfoView&operator=(InfoView&&) = delete; // Move assignment
+
+  InfoView(json &j) {this->storage = &j;}
+
+  void update_storage_ptr(const json::json_pointer *key, const int *idx, bool recursive);
+
+  template<typename T>
+  T copy(void);
+
+  template<typename T>
+  void copy(T target, const int &count);
+
+  void update_ptr(bool **ptr);
+  void update_ptr(long int **ptr);
+  void update_ptr(double **ptr);
+  void update_ptr(std::string **ptr);
+  void update_ptr(json::array_t **ptr);
+
+  json &get_ivref(void) {return *this->storage;}
+};
 //-----------------------------------------------------------------------------
 
+//tdk:rm
 //class AttPack : public Attributes {
 //private:
 //  json *storage = nullptr;
