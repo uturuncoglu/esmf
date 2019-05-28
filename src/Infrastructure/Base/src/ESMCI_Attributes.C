@@ -469,6 +469,30 @@ bool Attributes::hasKey(key_t& key, int& rc, bool isptr) const {
   return ret;
 }
 
+#undef  ESMC_METHOD
+#define ESMC_METHOD "Attributes::hasKey()"
+bool Attributes::hasKey(const json::json_pointer &jp, int& rc) const {
+  // Exceptions:  ESMCI::esmf_attrs_error
+  rc = ESMF_FAILURE;
+  bool ret;
+  const json &storage = this->getStorageRef();
+  // Use JSON pointer syntax. This is slower than just attempting to find
+  // the key. JSON pointers do not work with find. See: https://github.com/nlohmann/json/issues/1182#issuecomment-409708389
+  // for an explanation.
+  try {
+    try {
+      storage.at(jp);
+      ret = true;
+    }
+    catch (json::out_of_range& e) {
+      ret = false;
+    }
+  }
+  ESMF_CATCH_PASSTHRU
+  rc = ESMF_SUCCESS;
+  return ret;
+}
+
 #undef ESMC_METHOD
 #define ESMC_METHOD "Attributes::inquire()"
 json Attributes::inquire(key_t &key, int &rc, bool recursive, const int *idx) const {
@@ -711,33 +735,31 @@ void Attributes::set(key_t &key, bool force, int &rc) {
     json::json_pointer jp = this->formatKey(key, rc);
     this->getStorageRefWritable()[jp] = json::value_t::null;
   }
-  ESMF_CATCH_ATTRS;
+  ESMF_CATCH_ATTRS
   this->dirty = true;
 }
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::set(<scalar>)"
 template <typename T>
-void Attributes::set(key_t &key, T value, bool force, int &rc, int *index) {
+void Attributes::set(key_t &key, T value, bool force, int &rc, int *index) { //tdk:todo: change int *index to const int *index
   // Exceptions:  ESMCI:esmf_attrs_error
   rc = ESMF_FAILURE;
   try {
+    json::json_pointer jp = this->formatKey(key, rc);
     bool has_key = false;
     json jvalue = value;
     if (!index) {
       try {
-        has_key = this->hasKey(key, rc, true);
+        has_key = this->hasKey(jp, rc);
       }
-      catch (ESMCI::esmf_attrs_error &exc_esmf) {
-        ESMF_HANDLE_PASSTHRU(exc_esmf);
-      }
+      ESMF_CATCH_PASSTHRU
       if (has_key && !force) {
         std::string msg = "Attribute key \'" + key + "\' already in map and "
                                                      "force=false.";
         ESMF_CHECKERR_STD("ESMC_RC_CANNOT_SET", ESMC_RC_CANNOT_SET, msg, rc);
       }
     }
-    json::json_pointer jp = this->formatKey(key, rc);
     if (index) {
       json &storage = this->getStorageRefWritable();
       json::array_t *arr_ptr = storage.at(jp).get_ptr<json::array_t *>();
@@ -758,10 +780,9 @@ void Attributes::set(key_t &key, T value, bool force, int &rc, int *index) {
       storage[jp] = jvalue;
     }
   }
-  ESMF_CATCH_ATTRS;
+  ESMF_CATCH_ATTRS
   this->dirty = true;
   rc = ESMF_SUCCESS;
-  return;
 };
 template void Attributes::set<float>(key_t&, float, bool, int&, int*);
 template void Attributes::set<double>(key_t&, double, bool, int&, int*);

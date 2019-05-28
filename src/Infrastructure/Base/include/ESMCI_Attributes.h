@@ -124,6 +124,7 @@ public:
   json const * getPointer(key_t &key, int &rc, bool recursive = false) const;
 
   bool hasKey(key_t &key, int &rc, bool isptr = false) const;
+  bool hasKey(const json::json_pointer &jp, int& rc) const;
 
   json inquire(key_t& key, int& rc, bool recursive = true, const int *idx = nullptr) const;
 
