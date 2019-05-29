@@ -52,14 +52,14 @@ namespace ESMCI {
 // Helper Functions -----------------------------------------------------------
 //-----------------------------------------------------------------------------
 
-#undef ESMC_METHOD
+#undef  ESMC_METHOD
 #define ESMC_METHOD "alignOffset()"
 void alignOffset(int &offset) {
   int nbytes = offset % 8;
   if (nbytes!=0) offset += (8 - nbytes);
 }
 
-#undef ESMC_METHOD
+#undef  ESMC_METHOD
 #define ESMC_METHOD "is_attpack()"
 bool is_attpack(const json &j) {
   bool ret = false;
@@ -69,7 +69,7 @@ bool is_attpack(const json &j) {
   return ret;
 }
 
-#undef ESMC_METHOD
+#undef  ESMC_METHOD
 #define ESMC_METHOD "get_attpack_count()"
 std::size_t get_attpack_count(const json &j) {
   // Test: test_get_attpack_count
@@ -81,7 +81,7 @@ std::size_t get_attpack_count(const json &j) {
   return ret;
 }
 
-#undef ESMC_METHOD
+#undef  ESMC_METHOD
 #define ESMC_METHOD "update_json_count()"
 void update_json_count(std::size_t &count, std::size_t &count_total, const json &j, bool recursive) {
   // Test: test_update_json_count
@@ -107,29 +107,7 @@ void update_json_count(std::size_t &count, std::size_t &count_total, const json 
   }
 }
 
-#undef ESMC_METHOD
-#define ESMC_METHOD "get_json_pointer()"
-json const* get_json_pointer(const json &j, const json::json_pointer &key, bool recursive) {
-  // Throws: see update_json_pointer
-  json const *ret = nullptr;
-  try {
-    ret = &(j.at(key));
-  } catch (json::out_of_range &e) {
-    if (recursive) {
-      for (json::const_iterator it=j.cbegin(); it!=j.cend(); it++) {
-        if (it.value().is_object()) {
-          update_json_pointer(it.value(), &ret, key, true);
-        }
-      }
-    }
-    if (!ret) {
-      throw(e);
-    }
-  }
-  return ret;
-}
-
-#undef ESMC_METHOD
+#undef  ESMC_METHOD
 #define ESMC_METHOD "update_json_pointer(<const>)"
 void update_json_pointer(const json &j, json const **jdp, const json::json_pointer &key, bool recursive) {
   // Test: test_update_json_pointer
@@ -151,7 +129,7 @@ void update_json_pointer(const json &j, json const **jdp, const json::json_point
   }
 }
 
-#undef ESMC_METHOD
+#undef  ESMC_METHOD
 #define ESMC_METHOD "update_json_pointer(<non-const>)"
 void update_json_pointer(json &j, json **jdp, const json::json_pointer &key, bool recursive) {
   // Test: test_update_json_pointer (for const overload)
@@ -173,7 +151,7 @@ void update_json_pointer(json &j, json **jdp, const json::json_pointer &key, boo
   }
 }
 
-#undef ESMC_METHOD
+#undef  ESMC_METHOD
 #define ESMC_METHOD "handleHasKey"
 bool handleHasKey(const Attributes* attrs, key_t& key, int& rc) {
   // Exceptions:  ESMCI::esmf_attrs_error
@@ -192,7 +170,7 @@ bool handleHasKey(const Attributes* attrs, key_t& key, int& rc) {
   return has_key;
 }
 
-#undef ESMC_METHOD
+#undef  ESMC_METHOD
 #define ESMC_METHOD "handleJSONTypeCheck()"
 void handleJSONTypeCheck(key_t &key, const json &src, const json &dst, int &rc) {
   if (!src.is_null() && src.type() != dst.type()) {
@@ -201,14 +179,14 @@ void handleJSONTypeCheck(key_t &key, const json &src, const json &dst, int &rc) 
   }
 }
 
-#undef ESMC_METHOD
+#undef  ESMC_METHOD
 #define ESMC_METHOD "isIn(<string,vector>)"
 bool isIn(key_t& target, const std::vector<std::string>& container) {
   auto it = std::find(container.cbegin(), container.cend(), target);
   return !(it == container.cend());
 }
 
-#undef ESMC_METHOD
+#undef  ESMC_METHOD
 #define ESMC_METHOD "isIn(<string vector,vector>)"
 bool isIn(const std::vector<std::string>& target, const std::vector<std::string>& container) {
   std::size_t count = 0;
@@ -233,7 +211,7 @@ bool isIn(const std::vector<std::string>& target, const std::vector<std::string>
   return ret;
 }
 
-#undef ESMC_METHOD
+#undef  ESMC_METHOD
 #define ESMC_METHOD "isIn(<string,json>)"
 bool isIn(key_t& target, const json& j) {
   if (j.is_null()) {
@@ -241,6 +219,34 @@ bool isIn(key_t& target, const json& j) {
   } else {
     return j.find(target) != j.end();
   }
+}
+
+#undef  ESMC_METHOD
+#define ESMC_METHOD "json_type_to_esmf_typekind()"
+ESMC_TypeKind_Flag json_type_to_esmf_typekind(const json &j) noexcept {
+  json jj;
+  jj["foo"] = ESMC_TYPEKIND_I1;
+  ESMC_TypeKind_Flag esmf_type;
+  if (j.type() == json::value_t::null) {
+    esmf_type = ESMF_NOKIND;
+  } else if (j.type() == json::value_t::boolean) {
+    esmf_type = ESMC_TYPEKIND_LOGICAL;
+  } else if (j.type() == json::value_t::number_integer) {
+    esmf_type = ESMC_TYPEKIND_I8;
+  } else if (j.type() == json::value_t::number_unsigned) {
+    esmf_type = ESMC_TYPEKIND_I8;
+  } else if (j.type() == json::value_t::number_float) {
+    esmf_type = ESMC_TYPEKIND_R8;
+  } else if (j.type() == json::value_t::object) {
+    esmf_type = ESMF_NOKIND;
+  } else if (j.type() == json::value_t::array) {
+    esmf_type = ESMF_NOKIND;
+  } else if (j.type() == json::value_t::string) {
+    esmf_type = ESMC_TYPEKIND_CHARACTER;
+  } else {
+    assert(false);
+  }
+  return esmf_type;
 }
 
 //-----------------------------------------------------------------------------
@@ -493,7 +499,7 @@ bool Attributes::hasKey(const json::json_pointer &jp, int& rc) const {
   return ret;
 }
 
-#undef ESMC_METHOD
+#undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::inquire()"
 json Attributes::inquire(key_t &key, int &rc, bool recursive, const int *idx) const {
   // Test: testInquire
@@ -515,6 +521,7 @@ json Attributes::inquire(key_t &key, int &rc, bool recursive, const int *idx) co
       sp = &(sp->at(*idx));
     }
     const json &sk = *sp;
+    j["ESMC_TypeKind_Flag"] = json_type_to_esmf_typekind(sk);
     std::size_t count = 0;
     std::size_t count_total = 0;
     if (!sk.is_array() && recursive) {
@@ -581,7 +588,7 @@ void Attributes::deserialize(char *buffer, int *offset, int &rc) {
   return;
 }
 
-#undef ESMC_METHOD
+#undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::get_isoc()"
 void Attributes::get_isoc(ESMCI::ESMC_ISOCType ictype, void *ret, char* key,
   int& rc, void* def) const {
@@ -642,7 +649,7 @@ void Attributes::get_isoc(ESMCI::ESMC_ISOCType ictype, void *ret, char* key,
   }
 }
 
-#undef ESMC_METHOD
+#undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::isSetNull()"
 bool Attributes::isSetNull(key_t &key, int &rc) const {
   rc = ESMF_FAILURE;
@@ -696,7 +703,7 @@ void Attributes::serialize(char *buffer, int *length, int *offset,
   return;
 }
 
-#undef ESMC_METHOD
+#undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::set(<Attributes>)"
 void Attributes::set(key_t &key, const ESMCI::Attributes &attrs, bool force,
   int &rc) {
@@ -719,7 +726,7 @@ void Attributes::set(key_t &key, const ESMCI::Attributes &attrs, bool force,
   this->dirty = true;
 }
 
-#undef ESMC_METHOD
+#undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::set(<null>)"
 void Attributes::set(key_t &key, bool force, int &rc) {
   rc = ESMF_FAILURE;
@@ -953,7 +960,7 @@ void InfoView::update_storage_ptr(const json::json_pointer *key, const int *idx,
 //-----------------------------------------------------------------------------
 
 //tdk:rm
-//#undef ESMC_METHOD
+//#undef  ESMC_METHOD
 //#define ESMC_METHOD "AttPack(ESMCI::Attributes &info, key_t &convention, key_t &purpose, int &rc)"
 //AttPack::AttPack(ESMCI::Attributes &info, key_t &convention, key_t &purpose, int &rc) {
 //  rc = ESMF_FAILURE;
