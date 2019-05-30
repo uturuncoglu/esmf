@@ -142,7 +142,7 @@ public:
   void set(key_t &key, const ESMCI::Attributes &attrs, bool force, int &rc);
   void set(key_t &key, bool force, int &rc);  // set null
   template <typename T>
-  void set(key_t& key, T value, bool force, int& rc, int *index = nullptr);
+  void set(key_t& key, T value, bool force, int& rc, const int *index = nullptr);
   template <typename T>
   void set(key_t& key, T *values, int count, bool force, int& rc);
 

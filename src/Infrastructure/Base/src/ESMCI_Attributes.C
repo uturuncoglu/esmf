@@ -749,13 +749,14 @@ void Attributes::set(key_t &key, bool force, int &rc) {
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::set(<scalar>)"
 template <typename T>
-void Attributes::set(key_t &key, T value, bool force, int &rc, int *index) { //tdk:todo: change int *index to const int *index
+void Attributes::set(key_t &key, T value, bool force, int &rc, const int *index) {
   // Exceptions:  ESMCI:esmf_attrs_error
   rc = ESMF_FAILURE;
   try {
     json::json_pointer jp = this->formatKey(key, rc);
     bool has_key = false;
     json jvalue = value;
+    json &wstore = this->getStorageRefWritable();
     if (!index) {
       try {
         has_key = this->hasKey(jp, rc);
@@ -768,12 +769,14 @@ void Attributes::set(key_t &key, T value, bool force, int &rc, int *index) { //t
       }
     }
     if (index) {
-      json &storage = this->getStorageRefWritable();
-      json::array_t *arr_ptr = storage.at(jp).get_ptr<json::array_t *>();
+      json::array_t *arr_ptr = wstore.at(jp).get_ptr<json::array_t *>();
       try {
-        json jat = arr_ptr[0].at(*index);
-        handleJSONTypeCheck(key, jat, jvalue, rc);
-        arr_ptr[0].at(*index) = value;
+        json jat = arr_ptr->at(*index);
+        try {
+          handleJSONTypeCheck(key, jat, jvalue, rc);
+        }
+        ESMF_CATCH_PASSTHRU
+        arr_ptr->at(*index) = jvalue;
       }
       catch (std::out_of_range &exc) {
         ESMF_CHECKERR_STD("ESMF_RC_ARG_OUTOFRANGE", ESMF_RC_ARG_OUTOFRANGE,
@@ -781,22 +784,24 @@ void Attributes::set(key_t &key, T value, bool force, int &rc, int *index) { //t
       }
     } else {
       if (has_key) {
-        json jat = storage.at(jp);
-        handleJSONTypeCheck(key, jat, jvalue, rc);
+        json jat = wstore.at(jp);
+        try {
+          handleJSONTypeCheck(key, jat, jvalue, rc);
+        }
+        ESMF_CATCH_PASSTHRU
       }
-      storage[jp] = jvalue;
+      wstore[jp] = jvalue;
     }
   }
   ESMF_CATCH_ATTRS
   this->dirty = true;
-  rc = ESMF_SUCCESS;
 };
-template void Attributes::set<float>(key_t&, float, bool, int&, int*);
-template void Attributes::set<double>(key_t&, double, bool, int&, int*);
-template void Attributes::set<int>(key_t&, int, bool, int&, int*);
-template void Attributes::set<long int>(key_t&, long int, bool, int&, int*);
-template void Attributes::set<std::string>(key_t&, std::string, bool, int&, int*);
-template void Attributes::set<bool>(key_t&, bool, bool, int&, int*);
+template void Attributes::set<float>(key_t&, float, bool, int&, const int*);
+template void Attributes::set<double>(key_t&, double, bool, int&, const int*);
+template void Attributes::set<int>(key_t&, int, bool, int&, const int*);
+template void Attributes::set<long int>(key_t&, long int, bool, int&, const int*);
+template void Attributes::set<std::string>(key_t&, std::string, bool, int&, const int*);
+template void Attributes::set<bool>(key_t&, bool, bool, int&, const int*);
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::set(<array>)"
