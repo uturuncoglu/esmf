@@ -964,31 +964,9 @@ void InfoView::update_storage_ptr(const json::json_pointer *key, const int *idx,
 
 //-----------------------------------------------------------------------------
 
-//tdk:rm
-//#undef  ESMC_METHOD
-//#define ESMC_METHOD "AttPack(ESMCI::Attributes &info, key_t &convention, key_t &purpose, int &rc)"
-//AttPack::AttPack(ESMCI::Attributes &info, key_t &convention, key_t &purpose, int &rc) {
-//  rc = ESMF_FAILURE;
-//  try {
-//    std::string key = "/" + convention + "/" + purpose;
-//    json &infor = info.getStorageRefWritable();
-//    if (!info.hasKey(key, rc, true)) {
-//      infor[convention][purpose] = json::object();
-//    }
-//    this->storage = &(infor[convention][purpose]);
-//    this->convention = convention;
-//    this->purpose = purpose;
-//  }
-//  ESMF_CATCH_ATTRS
-//  rc = ESMF_SUCCESS;
-//}
-
-//-----------------------------------------------------------------------------
-
 #undef  ESMC_METHOD
 #define ESMC_METHOD "esmf_attrs_error::esmf_attrs_error()"
-esmf_attrs_error::esmf_attrs_error (key_t& code_name, int rc,
-                                    key_t& msg) {
+esmf_attrs_error::esmf_attrs_error (key_t &code_name, int rc, key_t &msg) {
   assert(rc != ESMF_SUCCESS);
   std::string the_msg;
   if (code_name != "") {

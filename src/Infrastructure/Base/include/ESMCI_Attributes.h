@@ -180,24 +180,6 @@ public:
 
   json &get_ivref(void) {return *this->storage;}
 };
-//-----------------------------------------------------------------------------
-
-//tdk:rm
-//class AttPack : public Attributes {
-//private:
-//  json *storage = nullptr;
-//public:
-//  AttPack(json *infop) {this->storage = infop;}
-//  AttPack(void) = delete; // Default constructor
-//  ~AttPack(void) = default; // Default destructor
-//  AttPack(AttPack&&) = delete; // Move constructor
-//  AttPack(const AttPack&) = delete; // Copy constructor
-//  AttPack&operator=(const AttPack&) = delete; // Copy assignment
-//  AttPack&operator=(AttPack&&) = delete; // Move assignment
-//
-//  const json& getStorageRef(void) const   {return *(this->storage);}
-//        json& getStorageRefWritable(void) {return *(this->storage);}
-//};
 
 //-----------------------------------------------------------------------------
 
