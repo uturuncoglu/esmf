@@ -112,7 +112,7 @@ public:
   static json::json_pointer formatKey(key_t &key, int &rc);
 
   template <typename T>
-  T get(key_t &key, int &rc, const T *def = nullptr, const int *index = nullptr, bool recursive = false) const;
+  T get(key_t &key, int &rc, const T *def = nullptr, const int *index = nullptr, bool recursive = false, std::string *ikey = nullptr) const;
 
   //tdk:remove this interface
   void get_isoc(ESMCI::ESMC_ISOCType ictype, void *ret, char* key, int& rc,

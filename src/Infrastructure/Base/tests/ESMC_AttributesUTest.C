@@ -194,10 +194,54 @@ void testGet(int& rc, char failMsg[]) {
   ESMF_CATCH_PASSTHRU
 }
 
+#undef  ESMC_METHOD
+#define ESMC_METHOD "testGetObjectIndex()"
+void testGetObjectIndex(int& rc, char failMsg[]) {
+  rc = ESMF_FAILURE;
+
+  json j = {{"foo1", 1}, {"foo2", 2}, {"foo3", 3}};
+  Attributes attrs(j);
+
+  int actual;
+  std::string actual_key;
+  try {
+    std::string key = "";
+    int index = 1;
+    actual = attrs.get<int>(key, rc, nullptr, &index, false, &actual_key);
+  }
+  ESMF_CATCH_PASSTHRU
+
+  // Test object index retrieval with key value
+  if (actual != 2 && actual_key != "foo2") {
+    return finalizeFailure(rc, failMsg, "Did not get object index");
+  }
+
+  // Test wrong type
+  try {
+    std::string key = "foo3";
+    int index = 1;
+    actual = attrs.get<int>(key, rc, nullptr, &index);
+    return finalizeFailure(rc, failMsg, "Did not catch wrong type");
+  }
+  catch (ESMCI::esmf_attrs_error &exc_esmf) {
+    rc = ESMF_SUCCESS;
+  }
+
+  // Test index out of range
+  try {
+    std::string key = "";
+    int index = 11;
+    actual = attrs.get<int>(key, rc, nullptr, &index);
+    return finalizeFailure(rc, failMsg, "Did not catch out of range");
+  }
+  catch (ESMCI::esmf_attrs_error &exc_esmf) {
+    rc = ESMF_SUCCESS;
+  }
+}
+
 #undef ESMC_METHOD
 #define ESMC_METHOD "testSetGetIndex()"
 void testSetGetIndex(int& rc, char failMsg[]) {
-  //tdk:order
   rc = ESMF_FAILURE;
   Attributes attrs;
   int n = 25;
@@ -756,6 +800,16 @@ void testInquire(int& rc, char failMsg[]) {
   if(inq.at("jsonType")!="number") {
     return finalizeFailure(rc, failMsg, "Wrong inquire count with recursive");
   }
+
+  // Test using an object index
+  try {
+    int idx = 1;
+    inq = info.inquire("/ESMF/General", rc, false, &idx);
+  }
+  ESMF_CATCH_PASSTHRU
+  if (inq.at("key") != "x") {
+    return finalizeFailure(rc, failMsg, "Did not use object index correctly");
+  }
 }
 
 #undef  ESMC_METHOD
@@ -1054,6 +1108,13 @@ int main(void) {
   //NEX_UTest
   strcpy(name, "InfoView update_ptr");
   test_infoview_update_ptr(rc, failMsg);
+  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
+  //---------------------------------------------------------------------------
+
+  //---------------------------------------------------------------------------
+  //NEX_UTest
+  strcpy(name, "Attributes testGetObjectIndex");
+  testGetObjectIndex(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //---------------------------------------------------------------------------
 

@@ -379,7 +379,7 @@ json::json_pointer Attributes::formatKey(key_t& key, int& rc) {
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::get()"
 template <typename T>
-T Attributes::get(key_t &key, int &rc, const T *def, const int *index, bool recursive) const {
+T Attributes::get(key_t &key, int &rc, const T *def, const int *index, bool recursive, std::string *ikey) const {
   // Exceptions:  ESMCI:esmf_attrs_error
 
   rc = ESMF_FAILURE;
@@ -391,12 +391,36 @@ T Attributes::get(key_t &key, int &rc, const T *def, const int *index, bool recu
       update_json_pointer(this->getStorageRef(), &jp, jpath, recursive);
       assert(jp);
       if (index) {
-        json::array_t const *jarr = jp->get_ptr<json::array_t const *>();
-        try {
-          ret = jarr->at(*index);
-        }
-        catch (std::out_of_range &e) {
-          ESMF_CHECKERR_STD("ESMC_RC_ARG_OUTOFRANGE", ESMC_RC_ARG_OUTOFRANGE, e.what(), rc)
+        if (jp->is_array()) {
+          json::array_t const *jarr = jp->get_ptr < json::array_t const * > ();
+          try {
+            ret = jarr->at(*index);
+          }
+          catch (std::out_of_range &e) {
+            ESMF_CHECKERR_STD("ESMC_RC_ARG_OUTOFRANGE", ESMC_RC_ARG_OUTOFRANGE,
+                              e.what(), rc)
+          }
+        } else if (jp->is_object()) {
+          if (*index >= (int)jp->size()) {
+            std::string msg = "'index' greater than object count";
+            ESMF_CHECKERR_STD("ESMC_RC_ARG_OUTOFRANGE", ESMC_RC_ARG_OUTOFRANGE,
+                              msg, rc)
+          }
+          int ctr = 0;
+          for (json::const_iterator it=jp->cbegin(); it!=jp->cend(); it++) {
+            if (ctr == *index) {
+              ret = it.value();
+              if (ikey) {
+                *ikey = it.key();
+              }
+              break;
+            } else {
+              ctr++;
+            }
+          }
+        } else {
+          std::string msg = "'index' only supported for JSON arrays or objects";
+          ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, msg, rc);
         }
       } else {
         ret = *jp;
@@ -412,13 +436,13 @@ T Attributes::get(key_t &key, int &rc, const T *def, const int *index, bool recu
   ESMF_CATCH_ATTRS
   return ret;
 }
-template float Attributes::get(key_t&, int&, const float*, const int*, bool recursive = false) const;
-template double Attributes::get(key_t&, int&, const double*, const int*, bool recursive = false) const;
-template int Attributes::get(key_t&, int&, const int*, const int*, bool recursive = false) const;
-template long int Attributes::get(key_t&, int&, const long int*, const int*, bool recursive = false) const;
-template bool Attributes::get(key_t&, int&, const bool*, const int*, bool recursive = false) const;
-template std::string Attributes::get(key_t&, int&, const std::string*, const int*, bool recursive = false) const;
-template json Attributes::get(key_t&, int&, const json*, const int*, bool recursive = false) const;
+template float Attributes::get(key_t&, int&, const float*, const int*, bool, std::string*) const;
+template double Attributes::get(key_t&, int&, const double*, const int*, bool, std::string*) const;
+template int Attributes::get(key_t&, int&, const int*, const int*, bool, std::string*) const;
+template long int Attributes::get(key_t&, int&, const long int*, const int*, bool, std::string*) const;
+template bool Attributes::get(key_t&, int&, const bool*, const int*, bool, std::string*) const;
+template std::string Attributes::get(key_t&, int&, const std::string*, const int*, bool, std::string*) const;
+template json Attributes::get(key_t&, int&, const json*, const int*, bool, std::string*) const;
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Attributes::getPointer()"
@@ -509,6 +533,7 @@ json Attributes::inquire(key_t &key, int &rc, bool recursive, const int *idx) co
   json j = json::object();
   try {
     j["isDirty"] = this->isDirty();
+    j["key"] = json::value_t::null;
     const json *sp = &(this->getStorageRef());
     std::size_t attPackCount = 0;
     if (key!="") {
@@ -518,7 +543,34 @@ json Attributes::inquire(key_t &key, int &rc, bool recursive, const int *idx) co
       attPackCount = get_attpack_count(*sp);
     }
     if (idx) {
-      sp = &(sp->at(*idx));
+      if (sp->is_array()) {
+        try {
+          sp = &(sp->at(*idx));
+        }
+        catch (std::out_of_range &e) {
+          ESMF_CHECKERR_STD("ESMC_RC_ARG_OUTOFRANGE", ESMC_RC_ARG_OUTOFRANGE,
+                            e.what(), rc)
+        }
+      } else if (sp->is_object()) {
+        if (*idx >= (int)sp->size()) {
+          std::string msg = "'idx' greater than object count";
+          ESMF_CHECKERR_STD("ESMC_RC_ARG_OUTOFRANGE", ESMC_RC_ARG_OUTOFRANGE,
+                            msg, rc)
+        }
+        int ctr = 0;
+        for (json::const_iterator it=sp->cbegin(); it!=sp->cend(); it++) {
+          if (ctr == *idx) {
+            sp = &(it.value());
+            j["key"] = it.key();
+            break;
+          } else {
+            ctr++;
+          }
+        }
+      } else {
+        std::string msg = "'idx' only supported for JSON arrays or objects";
+        ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, msg, rc);
+      }
     }
     const json &sk = *sp;
     j["ESMC_TypeKind_Flag"] = json_type_to_esmf_typekind(sk);
