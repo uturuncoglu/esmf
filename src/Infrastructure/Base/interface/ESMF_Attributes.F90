@@ -302,19 +302,20 @@ end subroutine ESMF_AttributesRemove
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributesInquire()"
 subroutine ESMF_AttributesInquire(attrs, key, count, countTotal, jsonType, isArray, &
-  isDirty, attPackCount, attnestflag, idx, typekind, rc)
+  isDirty, attPackCount, attnestflag, idx, typekind, ikey, rc)
 
   type(ESMF_Attributes), intent(in) :: attrs
   character(len=*), intent(in), optional :: key
-  integer(C_INT), intent(inout), optional :: count
-  integer(C_INT), intent(inout), optional :: countTotal
-  character(len=*), intent(inout), optional :: jsonType
-  logical, intent(inout), optional :: isArray
-  logical, intent(inout), optional :: isDirty
-  integer(C_INT), intent(inout), optional :: attPackCount
+  integer(C_INT), intent(out), optional :: count
+  integer(C_INT), intent(out), optional :: countTotal
+  character(len=*), intent(out), optional :: jsonType
+  logical, intent(out), optional :: isArray
+  logical, intent(out), optional :: isDirty
+  integer(C_INT), intent(out), optional :: attPackCount
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer(C_INT), intent(in), optional :: idx
-  type(ESMF_TypeKind_Flag), optional :: typekind
+  type(ESMF_TypeKind_Flag), intent(out), optional :: typekind
+  character(len=*), intent(out), optional :: ikey
   integer, intent(inout), optional :: rc
 
   integer :: localrc, esmc_typekind
@@ -379,6 +380,10 @@ subroutine ESMF_AttributesInquire(attrs, key, count, countTotal, jsonType, isArr
     call ESMF_AttributesGet(inq, "ESMC_TypeKind_Flag", esmc_typekind, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     typekind = ESMF_TypeKind_Flag(esmc_typekind)
+  end if
+  if (present(ikey)) then
+    call ESMF_AttributesGet(inq, "key", ikey, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   end if
 
   call ESMF_AttributesDestroy(inq, rc=rc)
