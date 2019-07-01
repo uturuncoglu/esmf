@@ -60,10 +60,10 @@ class ESMC_Base
     char            baseName[ESMF_MAXSTR];    // object name, unique over class 
     char            baseNameF90[ESMF_MAXSTR]; // same name, non-null terminated
     char            className[ESMF_MAXSTR];   // object class
-    ESMCI::Attribute* root;
+    ESMCI::Attributes* root;
     bool            rootalias;
-    ESMCI::Attributes* attrs;  // root_attrs_tdk
-    bool            attrsalias; // root_attrs_tdk
+//    ESMCI::Attributes* attrs;  // root_attrs_tdk
+//    bool            attrsalias; // root_attrs_tdk
   private:
 
     // prevent accidental copying
@@ -79,10 +79,10 @@ class ESMC_Base
     // should not instantiate a ESMC_Base object directly; must sub-class first.
 
     // accessor to root
-    ESMCI::Attribute *ESMC_BaseGetRoot(void) const {return root;}
-    void ESMC_BaseSetRoot(ESMCI::Attribute *orig) {root = orig; rootalias=true;}
-    ESMCI::Attributes *ESMC_BaseGetAttrs(void) const {return attrs;} // root_attrs_tdk
-    void ESMC_BaseSetAttrs(ESMCI::Attributes *orig) {attrs = orig; attrsalias=true;} // root_attrs_tdk
+//    ESMCI::Attribute *ESMC_BaseGetRoot(void) const {return root;}
+//    void ESMC_BaseSetRoot(ESMCI::Attribute *orig) {root = orig; rootalias=true;}
+    ESMCI::Attributes *ESMC_BaseGetAttrs(void) const {return root;} // root_attrs_tdk, tdk:rename: to info
+    void ESMC_BaseSetAttrs(ESMCI::Attributes *orig) {root = orig; rootalias=true;} // root_attrs_tdk tdk:rename: to info
 
     // accessors to unique ID
     void ESMC_BaseSetID(int id);

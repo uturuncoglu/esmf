@@ -105,8 +105,11 @@ static const char *const version = "$Id$";
 #undef ESMC_METHOD
 #define ESMC_METHOD "ESMC_Base::constructAttrs()"
 void ESMC_Base::constructAttrs(ESMC_Base& base) { // root_attrs_tdk
-  base.attrs = new ESMCI::Attributes();
-  base.attrsalias = false;
+  //tdk:rename: to info
+//  base.attrs = new ESMCI::Attributes();
+//  base.attrsalias = false;
+  base.root = new ESMCI::Attributes();
+  base.rootalias = false;
 }
 
 //-----------------------------------------------------------------------------
@@ -686,21 +689,21 @@ void ESMC_Base::constructAttrs(ESMC_Base& base) { // root_attrs_tdk
         ESMC_CONTEXT, &localrc)) return localrc;
 
     // setup the root Attribute, passing the address of this
-    root = new ESMCI::Attribute(ESMF_TRUE);
-    root->setBase(this);
-    rootalias = false;
+//    root = new ESMCI::Attribute(ESMF_TRUE);
+//    root->setBase(this);
+//    rootalias = false;
     constructAttrs(*this); //root_attrs_tdk
 
     // Deserialize the Attribute hierarchy
     if (attreconflag == ESMC_ATTRECONCILE_ON) {
-      attrs->deserialize(buffer, offset, localrc); //root_attrs_tdk
+      root->deserialize(buffer, offset, localrc); //root_attrs_tdk
       if (ESMC_LogDefault.MsgFoundError(localrc, ESMCI_ERR_PASSTHRU,
             ESMC_CONTEXT, &localrc)) return localrc; //root_attrs_tdk
-      if (*offset%8 != 0)
-        *offset += 8 - *offset%8;
-      localrc = root->ESMC_Deserialize(buffer,offset);
-      if (ESMC_LogDefault.MsgFoundError(localrc, ESMCI_ERR_PASSTHRU, 
-            ESMC_CONTEXT, &localrc)) return localrc;
+//      if (*offset%8 != 0)
+//        *offset += 8 - *offset%8;
+//      localrc = root->ESMC_Deserialize(buffer,offset);
+//      if (ESMC_LogDefault.MsgFoundError(localrc, ESMCI_ERR_PASSTHRU,
+//            ESMC_CONTEXT, &localrc)) return localrc;
     }
         
   return ESMF_SUCCESS;
@@ -850,16 +853,16 @@ void ESMC_Base::constructAttrs(ESMC_Base& base) { // root_attrs_tdk
       }
     }
   }
-  if ((root->getCountAttr() > 0 || root->getCountPack() > 0) && tofile) {
-    std::cout << " Root Attributes:" << std::endl;
-    // ESMC_LogDefault.Write(msgbuf, ESMC_LOGMSG_INFO);
+//  if ((root->getCountAttr() > 0 || root->getCountPack() > 0) && tofile) {
+  std::cout << " Root Attributes:" << std::endl;
+  // ESMC_LogDefault.Write(msgbuf, ESMC_LOGMSG_INFO);
 
-    // traverse the Attribute hierarchy, printing as we go
-    if (append)
-      root->ESMC_Print(tofile, filename, true);
-    else
-      root->ESMC_Print(tofile, filename, false);
-  }
+  // traverse the Attribute hierarchy, printing as we go
+  if (append)
+    root->ESMC_Print(tofile, filename, true);
+  else
+    root->ESMC_Print(tofile, filename, false);
+//  }
   fflush (NULL);
 
   return ESMF_SUCCESS;
@@ -1003,14 +1006,14 @@ void ESMC_Base::constructAttrs(ESMC_Base& base) { // root_attrs_tdk
 
     // Serialize the Attribute hierarchy
     if (attreconflag == ESMC_ATTRECONCILE_ON) {
-      attrs->serialize(buffer, length, offset, inquireflag, localrc); //root_attrs_tdk
+      root->serialize(buffer, length, offset, inquireflag, localrc); //root_attrs_tdk
       if (ESMC_LogDefault.MsgFoundError(localrc, ESMCI_ERR_PASSTHRU,
         ESMC_CONTEXT, &localrc)) return localrc; //root_attrs_tdk
-      if (*offset%8 != 0)
-        *offset += 8 - *offset%8;
-      localrc = root->ESMC_Serialize(buffer,length,offset, inquireflag);
-      if (ESMC_LogDefault.MsgFoundError(localrc, ESMCI_ERR_PASSTHRU, 
-            ESMC_CONTEXT, &localrc)) return localrc;
+//      if (*offset%8 != 0)
+//        *offset += 8 - *offset%8;
+//      localrc = root->ESMC_Serialize(buffer,length,offset, inquireflag);
+//      if (ESMC_LogDefault.MsgFoundError(localrc, ESMCI_ERR_PASSTHRU,
+//            ESMC_CONTEXT, &localrc)) return localrc;
     }
 
   return ESMF_SUCCESS;
@@ -1133,9 +1136,9 @@ void ESMC_Base::constructAttrs(ESMC_Base& base) { // root_attrs_tdk
   ESMCI::VM::addObject(this, vmID);
 
   // setup the root Attribute, passing the address of this
-  root = new ESMCI::Attribute(ESMF_TRUE);
-  root->setBase(this);
-  rootalias = false;
+//  root = new ESMCI::Attribute(ESMF_TRUE);
+//  root->setBase(this);
+//  rootalias = false;
   constructAttrs(*this); // root_attrs_tdk
 
   baseStatus  = ESMF_STATUS_READY;
@@ -1201,11 +1204,11 @@ void ESMC_Base::constructAttrs(ESMC_Base& base) { // root_attrs_tdk
   // setup the root Attribute, passing the address of this
   if (id==-1){
     rootalias = true; // protect root Attribute from being used in delete
-    attrsalias = true; // root_attrs_tdk
+//    attrsalias = true; // root_attrs_tdk
   }else{
-    root = new ESMCI::Attribute(ESMF_TRUE);
-    root->setBase(this);
-    rootalias = false;
+//    root = new ESMCI::Attribute(ESMF_TRUE);
+//    root->setBase(this);
+//    rootalias = false;
     constructAttrs(*this); // root_attrs_tdk
   }
 
@@ -1270,9 +1273,9 @@ void ESMC_Base::constructAttrs(ESMC_Base& base) { // root_attrs_tdk
   ESMCI::VM::addObject(this, vmID);
 
   // setup the root Attribute, passing the address of this
-  root = new ESMCI::Attribute(ESMF_TRUE);
-  root->setBase(this);
-  rootalias = false;
+//  root = new ESMCI::Attribute(ESMF_TRUE);
+//  root->setBase(this);
+//  rootalias = false;
   constructAttrs(*this); // root_attrs_tdk
 
   baseStatus  = ESMF_STATUS_READY;
@@ -1334,8 +1337,8 @@ void ESMC_Base::constructAttrs(ESMC_Base& base) { // root_attrs_tdk
   // delete the root Attribute
   if (!rootalias)
     delete root;
-  if (!attrsalias)// root_attrs_tdk
-    delete attrs;// root_attrs_tdk
+//  if (!attrsalias)// root_attrs_tdk
+//    delete attrs;// root_attrs_tdk
 
   // if we have to support reference counts someday,
   // test if (refCount > 0) and do something if true;

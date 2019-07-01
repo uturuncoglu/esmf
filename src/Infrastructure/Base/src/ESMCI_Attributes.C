@@ -37,6 +37,7 @@
 #include <assert.h>
 #include <vector>
 #include <iostream>
+#include <fstream>
 
 using json = nlohmann::json;  // Convenience rename for JSON namespace.
 
@@ -913,6 +914,55 @@ void Attributes::update(const Attributes &attrs, int &rc) {
   this->dirty = true;
   rc = ESMF_SUCCESS;
 };
+
+#undef  ESMC_METHOD
+#define ESMC_METHOD "ESMC_Print"
+//BOPI
+// !IROUTINE:  Info::ESMC_Print - Print the {\tt Info} contents
+//
+// !INTERFACE:
+  int Attributes::ESMC_Print(
+//
+// !RETURN VALUE:
+//    {\tt ESMF\_SUCCESS} or error code on failure.
+//
+// !ARGUMENTS:
+    bool tofile,            // stream to stdout or file
+    const char *filename,   // filename
+    bool append) const {    // append or start new
+//
+// !DESCRIPTION:
+//     Print the contents of an {\tt Attribute} object
+//
+//EOPI
+    int strsize=4*ESMF_MAXSTR;
+    char msgbuf[strsize];
+    std::ofstream fp;
+    int rc = ESMF_SUCCESS;
+
+    if (tofile) {
+      sprintf(msgbuf, "%s\n", filename);
+      // open file for writing and append to previous contents
+      if (append)
+        fp.open(msgbuf, std::ofstream::out | std::ofstream::app);
+        // open file for writing and throw away previous contents
+      else
+        fp.open(msgbuf, std::ofstream::out | std::ofstream::trunc);
+    }
+
+    if (tofile)
+      fp << this->dump(2, rc);
+    else
+      printf("%s", this->dump(2, rc).c_str());
+
+    if (tofile)
+      fp.close();
+    else
+      fflush (stdout);
+
+    return rc;
+
+  }  // end ESMC_Print
 
 //-----------------------------------------------------------------------------
 

@@ -148,6 +148,7 @@ public:
 
   void update(const Attributes& attrs, int& rc);
 
+  int ESMC_Print(bool tofile, const char *filename, bool append) const; //tdk:implement
 };
 
 class InfoView {
