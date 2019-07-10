@@ -8,13 +8,13 @@
 // NASA Goddard Space Flight Center.
 // Licensed under the University of Illinois-NCSA License.
 //
-// ESMF Attributes C++ include file
+// ESMF Info C++ include file
 //
 //-----------------------------------------------------------------------------
 //
 
-#ifndef ESMCI_ATTRIBUTES_H
-#define ESMCI_ATTRIBUTES_H
+#ifndef ESMCI_INFO_H
+#define ESMCI_INFO_H
 
 //-----------------------------------------------------------------------------
 
@@ -29,26 +29,26 @@ using json = nlohmann::json;  // Convenience rename for JSON namespace.
 //tdk:LAST: remove all tdk stuff (search for tdk)
 
 // Standard ESMF check error macros
-#define ESMF_CHECKERR_STD(name_rc, actual_rc, msg, update_rc) {if (actual_rc != ESMF_SUCCESS) {ESMCI::esmf_attrs_error local_macro_error(name_rc, actual_rc, msg); if (ESMC_LogDefault.MsgFoundError(actual_rc, local_macro_error.what(), ESMC_CONTEXT, &update_rc)) throw(local_macro_error);}}
+#define ESMF_CHECKERR_STD(name_rc, actual_rc, msg, update_rc) {if (actual_rc != ESMF_SUCCESS) {ESMCI::esmf_info_error local_macro_error(name_rc, actual_rc, msg); if (ESMC_LogDefault.MsgFoundError(actual_rc, local_macro_error.what(), ESMC_CONTEXT, &update_rc)) throw(local_macro_error);}}
 
-#define ESMF_THROW_JSON(json_exc, name_rc, actual_rc, update_rc) {ESMC_LogDefault.MsgFoundError(actual_rc, json_exc.what(), ESMC_CONTEXT, &update_rc); throw(ESMCI::esmf_attrs_error(name_rc, actual_rc, json_exc.what()));}
+#define ESMF_THROW_JSON(json_exc, name_rc, actual_rc, update_rc) {ESMC_LogDefault.MsgFoundError(actual_rc, json_exc.what(), ESMC_CONTEXT, &update_rc); throw(ESMCI::esmf_info_error(name_rc, actual_rc, json_exc.what()));}
 
 #define ESMF_HANDLE_PASSTHRU(exc_esmf) {ESMC_LogDefault.MsgFoundError(exc_esmf.getReturnCode(), exc_esmf.what(), ESMC_CONTEXT, nullptr); throw(exc_esmf);}
 
-#define ESMF_CATCH_PASSTHRU catch (esmf_attrs_error &exc_esmf) {ESMF_HANDLE_PASSTHRU(exc_esmf)}
+#define ESMF_CATCH_PASSTHRU catch (esmf_info_error &exc_esmf) {ESMF_HANDLE_PASSTHRU(exc_esmf)}
 
-#define ESMF_CATCH_ISOC catch (ESMCI::esmf_attrs_error &exc_esmf) {ESMC_LogDefault.MsgFoundError(exc_esmf.getReturnCode(), exc_esmf.what(), ESMC_CONTEXT, nullptr); rc = exc_esmf.getReturnCode();} catch(...) {std::string msg;if (rc == ESMF_SUCCESS) {msg = "Unhandled throw and return code is ESMF_SUCCESS(?). Changing return code to ESMF_FAILURE";rc = ESMF_FAILURE;} else {msg = "Unhandled throw";}ESMC_LogDefault.MsgFoundError(rc, msg, ESMC_CONTEXT, nullptr);}
+#define ESMF_CATCH_ISOC catch (ESMCI::esmf_info_error &exc_esmf) {ESMC_LogDefault.MsgFoundError(exc_esmf.getReturnCode(), exc_esmf.what(), ESMC_CONTEXT, nullptr); rc = exc_esmf.getReturnCode();} catch(...) {std::string msg;if (rc == ESMF_SUCCESS) {msg = "Unhandled throw and return code is ESMF_SUCCESS(?). Changing return code to ESMF_FAILURE";rc = ESMF_FAILURE;} else {msg = "Unhandled throw";}ESMC_LogDefault.MsgFoundError(rc, msg, ESMC_CONTEXT, nullptr);}
 
-#define ESMF_CATCH_ATTRS catch (json::out_of_range &exc_json) {ESMF_THROW_JSON(exc_json, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);} catch (json::type_error &exc_json) {ESMF_THROW_JSON(exc_json, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);} catch (ESMCI::esmf_attrs_error &exc_esmf) {ESMF_HANDLE_PASSTHRU(exc_esmf);} catch (...) {ESMF_CHECKERR_STD("", ESMF_FAILURE, "Unhandled throw", rc);}
+#define ESMF_CATCH_INFO catch (json::out_of_range &exc_json) {ESMF_THROW_JSON(exc_json, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);} catch (json::type_error &exc_json) {ESMF_THROW_JSON(exc_json, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);} catch (ESMCI::esmf_info_error &exc_esmf) {ESMF_HANDLE_PASSTHRU(exc_esmf);} catch (...) {ESMF_CHECKERR_STD("", ESMF_FAILURE, "Unhandled throw", rc);}
 
 #define ESMF_CATCH_JSON catch (json::out_of_range &e) {ESMF_THROW_JSON(e, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);} catch (json::type_error &e) {ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);}
 
 //-----------------------------------------------------------------------------
 //BOP
-// !CLASS:  Attributes
+// !CLASS:  Info
 //
 // !DESCRIPTION:
-// The code in this file implements the Attributes defined type
+// The code in this file implements the Info defined type
 // and methods.
 //
 //-----------------------------------------------------------------------------
@@ -65,10 +65,10 @@ enum ESMC_ISOCType {C_INT, C_LONG, C_FLOAT, C_DOUBLE, C_CHAR};
 
 //-----------------------------------------------------------------------------
 
-class esmf_attrs_error : public std::exception
+class esmf_info_error : public std::exception
 {
 public:
-  esmf_attrs_error(key_t &code_name, int rc, key_t &msg);
+  esmf_info_error(key_t &code_name, int rc, key_t &msg);
 
   int getReturnCode() {return this->rc;}
 
@@ -81,7 +81,7 @@ private:
 
 //-----------------------------------------------------------------------------
 
-class Attributes {
+class Info2 {
 
 private:
   bool dirty = false;
@@ -92,17 +92,17 @@ protected:
   virtual void init(void) {this->storage = json::object();}
 
 public:
-  Attributes(void) {this->init();}
-//  Attributes(void) = default;  // Default constructor
-  virtual ~Attributes(void) = default;  // Default destructor
-  Attributes(Attributes&&) = delete; // Move constructor
-  Attributes(const Attributes&) = delete; // Copy constructor
-  Attributes&operator=(const Attributes&) = delete; // Copy assignment
-  Attributes&operator=(Attributes&&) = delete; // Move assignment
+  Info2(void) {this->init();}
+//  Info(void) = default;  // Default constructor
+  virtual ~Info2(void) = default;  // Default destructor
+  Info2(Info2&&) = delete; // Move constructor
+  Info2(const Info2&) = delete; // Copy constructor
+  Info2&operator=(const Info2&) = delete; // Copy assignment
+  Info2&operator=(Info2&&) = delete; // Move assignment
 
-  Attributes(const json& storage); // Copy constructor from JSON
-  Attributes(json&& storage); // Move constructor from JSON
-  Attributes(key_t& input, int& rc); // Parse JSON string constructor
+  Info2(const json& storage); // Copy constructor from JSON
+  Info2(json&& storage); // Move constructor from JSON
+  Info2(key_t& input, int& rc); // Parse JSON string constructor
 
   std::string dump(int& rc) const;
   std::string dump(int indent, int& rc) const;
@@ -139,16 +139,16 @@ public:
   void serialize(char *buffer, int *length, int *offset,
     ESMC_InquireFlag inquireflag, int &rc);
 
-  void set(key_t &key, const ESMCI::Attributes &attrs, bool force, int &rc);
+  void set(key_t &key, const ESMCI::Info2 &info, bool force, int &rc);
   void set(key_t &key, bool force, int &rc);  // set null
   template <typename T>
   void set(key_t& key, T value, bool force, int& rc, const int *index = nullptr);
   template <typename T>
   void set(key_t& key, T *values, int count, bool force, int& rc);
 
-  void update(const Attributes& attrs, int& rc);
+  void update(const Info2& info, int& rc);
 
-  int ESMC_Print(bool tofile, const char *filename, bool append) const; //tdk:implement
+  int ESMC_Print(bool tofile, const char *filename, bool append) const;
 };
 
 class InfoView {
@@ -201,7 +201,7 @@ public:
 //-----------------------------------------------------------------------------
 
 void alignOffset(int &offset);
-void broadcastAttributes(ESMCI::Attributes* attrs, int rootPet, int& rc);
+void broadcastInfo(ESMCI::Info2* info, int rootPet, int& rc);
 std::size_t get_attpack_count(const json &j);
 void update_json_pointer(const json &j, json const **jdp, const json::json_pointer &key, bool recursive);
 void update_json_count(std::size_t &count, std::size_t &count_total, const json &j, bool recursive);

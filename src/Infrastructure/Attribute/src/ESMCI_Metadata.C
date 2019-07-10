@@ -28,7 +28,7 @@
 #include "ESMCI_IOHandle.h"
 
 #include "ESMC.h"
-#include "ESMCI_Attributes.h"
+#include "ESMCI_Info2.h"
 #include "ESMCI_Macros.h"
 #include "ESMCI_Metadata.h"
 #include "ESMCI_LocalArray.h"
@@ -552,7 +552,7 @@ Array* Metadata::createArray(DistGrid& distgrid, const json& jsonParms,
   catch (json::type_error &e) {
     ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
   }
-  catch (ESMCI::esmf_attrs_error &e) {
+  catch (ESMCI::esmf_info_error &e) {
     ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU, rc);
   }
   catch (...) {
@@ -603,7 +603,7 @@ ArrayBundle* Metadata::createArrayBundle(DistGrid& distgrid, vector<Array*>& arr
   catch (json::type_error &e) {
     ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
   }
-  catch (ESMCI::esmf_attrs_error &e) {
+  catch (ESMCI::esmf_info_error &e) {
     ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU, rc);
   }
   catch (...) {
@@ -693,7 +693,7 @@ DistGrid* Metadata::createDistGrid(const json& jsonParms, int& rc) const {
   catch (json::type_error &e) {
     ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
   }
-  catch (ESMCI::esmf_attrs_error &e) {
+  catch (ESMCI::esmf_info_error &e) {
     ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU, rc);
   }
   catch (...) {
@@ -739,7 +739,7 @@ json& Metadata::getOrCreateDimension(const string& name, int& rc) {
     ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
     return ret;
   }
-  catch (esmf_attrs_error& e) {
+  catch (esmf_info_error& e) {
     ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU, rc);
   }
   catch (...) {
@@ -772,7 +772,7 @@ json& Metadata::getOrCreateNamedPackage(const string& pkgKey, const string& meta
   catch (json::type_error &e) {
     ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
   }
-  catch (ESMCI::esmf_attrs_error &e) {
+  catch (ESMCI::esmf_info_error &e) {
     ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU, rc);
   }
   catch (...) {
@@ -789,7 +789,7 @@ json& Metadata::getOrCreateVariable(const string& name, int& rc) {
     ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
     return ret;
   }
-  catch (esmf_attrs_error& e) {
+  catch (esmf_info_error& e) {
     ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU, rc);
   }
   catch (...) {

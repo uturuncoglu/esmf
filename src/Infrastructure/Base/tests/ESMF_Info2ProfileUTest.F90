@@ -10,7 +10,7 @@
 !
 !==============================================================================
 
-#define FILENAME "src/Infrastructure/Attribute/test/ESMF_AttributesProfileUTest.F90"
+#define FILENAME "src/Infrastructure/Base/test/ESMF_Info2ProfileUTest.F90"
 
 #include "ESMF_Macros.inc"
 #include "ESMF.h"
@@ -19,11 +19,11 @@
 !==============================================================================
 !==============================================================================
 
-program ESMF_AttributesProfileUTest
+program ESMF_Info2ProfileUTest
 
   !============================================================================
   !BOP
-  ! !PROGRAM: ESMF_AttributesProfileUTest -  Profiles Attributes code
+  ! !PROGRAM: ESMF_Info2ProfileUTest -  Profiles Info2 code
   !
   ! !DESCRIPTION:
   !
@@ -31,7 +31,7 @@ program ESMF_AttributesProfileUTest
   ! !USES:
   use ESMF_TestMod     ! test methods
   use ESMF
-  use ESMF_AttributesMod
+  use ESMF_Info2Mod
 
   implicit none
 
@@ -51,7 +51,7 @@ program ESMF_AttributesProfileUTest
   integer, allocatable, dimension(:) :: seed
   real                  :: r
   integer(ESMF_KIND_I4) :: value
-  type(ESMF_Attributes) :: attrs, attrs2
+  type(ESMF_Info2) :: attrs, attrs2
   integer, parameter    :: nkeys = 1000
   integer, parameter    :: ntests = 100000
   logical :: is_present
@@ -66,10 +66,10 @@ program ESMF_AttributesProfileUTest
   ! Test setting and getting a bunch of attributes.
 
   rc = ESMF_FAILURE
-  write(name, *) "ESMF_Attributes Profile Loop"
+  write(name, *) "ESMF_Info2 Profile Loop"
   write(failMsg, *) "Failure during profile loop test"
 
-  attrs = ESMF_AttributesCreate(rc=rc)
+  attrs = ESMF_Info2Create(rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
   !----------------------------------------------------------------------------
@@ -79,13 +79,13 @@ program ESMF_AttributesProfileUTest
 
     write(key, *) ii
 
-    call ESMF_TraceRegionEnter("JSON_Attributes::Set", rc=rc)
+    call ESMF_TraceRegionEnter("JSON_Info2::Set", rc=rc)
     if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-    call ESMF_AttributesSet(attrs, adjustl(trim(key)), ii, rc=rc)
+    call ESMF_Info2Set(attrs, adjustl(trim(key)), ii, rc=rc)
     if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-    call ESMF_TraceRegionExit("JSON_Attributes::Set", rc=rc)
+    call ESMF_TraceRegionExit("JSON_Info2::Set", rc=rc)
     if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
   end do
@@ -104,20 +104,20 @@ program ESMF_AttributesProfileUTest
 
     write(key, *) idx
 
-    call ESMF_TraceRegionEnter("JSON_Attributes::Get", rc=rc)
+    call ESMF_TraceRegionEnter("JSON_Info2::Get", rc=rc)
     if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-    call ESMF_AttributesGet(attrs, adjustl(trim(key)), value, rc=rc)
+    call ESMF_Info2Get(attrs, adjustl(trim(key)), value, rc=rc)
     if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-    call ESMF_TraceRegionExit("JSON_Attributes::Get", rc=rc)
+    call ESMF_TraceRegionExit("JSON_Info2::Get", rc=rc)
     if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
   end do
 
   !----------------------------------------------------------------------------
 
-!  call ESMF_AttributesPrint(attrs)
+!  call ESMF_Info2Print(attrs)
 
   deallocate(seed)
 
@@ -129,38 +129,38 @@ program ESMF_AttributesProfileUTest
 
   ! Profile checking for attribute presence.
 
-  write(name, *) "ESMF_Attributes Presence Check Profile Test"
+  write(name, *) "ESMF_Info2 Presence Check Profile Test"
   write(failMsg, *) "Failure during presence profile loop test"
 
   do ii=1, ntests
 
-    call ESMF_TraceRegionEnter("JSON_Attributes::IsPresent False", rc=rc)
+    call ESMF_TraceRegionEnter("JSON_Info2::IsPresent False", rc=rc)
     if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-    is_present = ESMF_AttributesIsPresent(attrs, "this", rc=rc)
+    is_present = ESMF_Info2IsPresent(attrs, "this", rc=rc)
     if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-    call ESMF_TraceRegionExit("JSON_Attributes::IsPresent False", rc=rc)
+    call ESMF_TraceRegionExit("JSON_Info2::IsPresent False", rc=rc)
     if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
   end do
 
   do ii=1, ntests
 
-    call ESMF_TraceRegionEnter("JSON_Attributes::IsPresent True", rc=rc)
+    call ESMF_TraceRegionEnter("JSON_Info2::IsPresent True", rc=rc)
     if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-    is_present = ESMF_AttributesIsPresent(attrs, "999", rc=rc)
+    is_present = ESMF_Info2IsPresent(attrs, "999", rc=rc)
     if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-    call ESMF_TraceRegionExit("JSON_Attributes::IsPresent True", rc=rc)
+    call ESMF_TraceRegionExit("JSON_Info2::IsPresent True", rc=rc)
     if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
   end do
 
   call ESMF_Test((rc == ESMF_SUCCESS), name, failMsg, result, ESMF_SRCLINE)
 
-  call ESMF_AttributesDestroy(attrs, rc=rc)
+  call ESMF_Info2Destroy(attrs, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
   !----------------------------------------------------------------------------
@@ -169,4 +169,4 @@ program ESMF_AttributesProfileUTest
   call ESMF_TestEnd(ESMF_SRCLINE) ! calls ESMF_Finalize() internally
   !----------------------------------------------------------------------------
 
-end program ESMF_AttributesProfileUTest
+end program ESMF_Info2ProfileUTest

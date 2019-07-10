@@ -72,7 +72,7 @@ void testOpenClose(int& rc, char failMsg[]) {
     ioh.open(rc);
     return finalizeFailure(rc, failMsg, "Expected to fail without URI");
   }
-  catch (esmf_attrs_error& e) {};
+  catch (esmf_info_error& e) {};
 
   // Test the basic IO system =================================================
 
@@ -314,7 +314,7 @@ void testReadWrite1DArrayIsolated(int& rc, char failMsg[]) {
   catch (json::type_error &e) {
     ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
   }
-  catch (ESMCI::esmf_attrs_error &e) {
+  catch (ESMCI::esmf_info_error &e) {
     ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU, rc);
   }
   catch (...) {
@@ -649,7 +649,7 @@ void testWriteUnlimDimArray(int& rc, char failMsg[]) {
   try {
     ioh.dodef(rc);
   }
-  catch (esmf_attrs_error& e) {
+  catch (esmf_info_error& e) {
     ESMF_CHECKERR_STD("", e.getReturnCode(), "Did not define", rc);
   }
 
@@ -800,7 +800,7 @@ void testReadMetadata(int& rc, char failMsg[]) {
   catch (json::type_error &e) {
     ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
   }
-  catch (ESMCI::esmf_attrs_error &e) {
+  catch (ESMCI::esmf_info_error &e) {
     ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU, rc);
   }
   catch (...) {
@@ -827,56 +827,56 @@ int main(void) {
 
   //tdk:UNCOMMENT
   //---------------------------------------------------------------------------
-  //NEX_UTest
+  //NEX_disabled_UTest
   strcpy(name, "Construct/Destruct");
   testConstructDestruct(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //---------------------------------------------------------------------------
 
   //---------------------------------------------------------------------------
-  //NEX_UTest
+  //NEX_disabled_UTest
   strcpy(name, "Test opening and closing a netCDF file");
   testOpenClose(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //---------------------------------------------------------------------------
 
   //---------------------------------------------------------------------------
-  //NEX_UTest
+  //NEX_disabled_UTest
   strcpy(name, "Test writing a 1D array");
   testWrite1DArray(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //---------------------------------------------------------------------------
 
   //---------------------------------------------------------------------------
-  //NEX_UTest
+  //NEX_disabled_UTest
   strcpy(name, "Test reading & writing a 1D array - isolated");
   testReadWrite1DArrayIsolated(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //---------------------------------------------------------------------------
 
   //---------------------------------------------------------------------------
-  //NEX_UTest
+  //NEX_disabled_UTest
   strcpy(name, "Test writing a 3D array");
   testWrite3DArray(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //---------------------------------------------------------------------------
 
   //---------------------------------------------------------------------------
-  //NEX_UTest
+  //NEX_disabled_UTest
   strcpy(name, "Test writing an array w/ an unlimited dimension");
   testWriteUnlimDimArray(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //---------------------------------------------------------------------------
 
   //---------------------------------------------------------------------------
-  //NEX_UTest
+  //NEX_disabled_UTest
   strcpy(name, "Test writing an array with some empty processes");
   testReadWrite1DArrayZeroLength(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //---------------------------------------------------------------------------
 
   //---------------------------------------------------------------------------
-  //NEX_UTest
+  //NEX_disabled_UTest
   strcpy(name, "Reading Metadata from a netCDF file");
   testReadMetadata(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);

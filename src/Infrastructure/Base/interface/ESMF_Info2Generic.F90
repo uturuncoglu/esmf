@@ -3,9 +3,9 @@
 !------------------------------------------------------------------------------
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributesGetR4()"
-subroutine ESMF_AttributesGetR4(attrs, key, value, default, idx, attnestflag, rc)
-  type(ESMF_Attributes), intent(inout) :: attrs
+#define ESMF_METHOD "ESMF_Info2GetR4()"
+subroutine ESMF_Info2GetR4(info, key, value, default, idx, attnestflag, rc)
+  type(ESMF_Info2), intent(inout) :: info
   character(len=*), intent(in) :: key
   real(ESMF_KIND_R4), intent(out) :: value
   real(ESMF_KIND_R4), intent(in), optional :: default
@@ -43,8 +43,8 @@ subroutine ESMF_AttributesGetR4(attrs, key, value, default, idx, attnestflag, rc
 
   ! Call C ####################################################################
 
-  call c_attrs_get_R4(&
-    attrs%ptr, &
+  call c_info_get_R4(&
+    info%ptr, &
     trim(key)//C_NULL_CHAR, &
     value, &
     localrc, &
@@ -54,12 +54,12 @@ subroutine ESMF_AttributesGetR4(attrs, key, value, default, idx, attnestflag, rc
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributesGetR4
+end subroutine ESMF_Info2GetR4
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributesGetR8()"
-subroutine ESMF_AttributesGetR8(attrs, key, value, default, idx, attnestflag, rc)
-  type(ESMF_Attributes), intent(inout) :: attrs
+#define ESMF_METHOD "ESMF_Info2GetR8()"
+subroutine ESMF_Info2GetR8(info, key, value, default, idx, attnestflag, rc)
+  type(ESMF_Info2), intent(inout) :: info
   character(len=*), intent(in) :: key
   real(ESMF_KIND_R8), intent(out) :: value
   real(ESMF_KIND_R8), intent(in), optional :: default
@@ -97,8 +97,8 @@ subroutine ESMF_AttributesGetR8(attrs, key, value, default, idx, attnestflag, rc
 
   ! Call C ####################################################################
 
-  call c_attrs_get_R8(&
-    attrs%ptr, &
+  call c_info_get_R8(&
+    info%ptr, &
     trim(key)//C_NULL_CHAR, &
     value, &
     localrc, &
@@ -108,12 +108,12 @@ subroutine ESMF_AttributesGetR8(attrs, key, value, default, idx, attnestflag, rc
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributesGetR8
+end subroutine ESMF_Info2GetR8
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributesGetI4()"
-subroutine ESMF_AttributesGetI4(attrs, key, value, default, idx, attnestflag, rc)
-  type(ESMF_Attributes), intent(inout) :: attrs
+#define ESMF_METHOD "ESMF_Info2GetI4()"
+subroutine ESMF_Info2GetI4(info, key, value, default, idx, attnestflag, rc)
+  type(ESMF_Info2), intent(inout) :: info
   character(len=*), intent(in) :: key
   integer(ESMF_KIND_I4), intent(out) :: value
   integer(ESMF_KIND_I4), intent(in), optional :: default
@@ -151,8 +151,8 @@ subroutine ESMF_AttributesGetI4(attrs, key, value, default, idx, attnestflag, rc
 
   ! Call C ####################################################################
 
-  call c_attrs_get_I4(&
-    attrs%ptr, &
+  call c_info_get_I4(&
+    info%ptr, &
     trim(key)//C_NULL_CHAR, &
     value, &
     localrc, &
@@ -162,12 +162,12 @@ subroutine ESMF_AttributesGetI4(attrs, key, value, default, idx, attnestflag, rc
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributesGetI4
+end subroutine ESMF_Info2GetI4
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributesGetI8()"
-subroutine ESMF_AttributesGetI8(attrs, key, value, default, idx, attnestflag, rc)
-  type(ESMF_Attributes), intent(inout) :: attrs
+#define ESMF_METHOD "ESMF_Info2GetI8()"
+subroutine ESMF_Info2GetI8(info, key, value, default, idx, attnestflag, rc)
+  type(ESMF_Info2), intent(inout) :: info
   character(len=*), intent(in) :: key
   integer(ESMF_KIND_I8), intent(out) :: value
   integer(ESMF_KIND_I8), intent(in), optional :: default
@@ -205,8 +205,8 @@ subroutine ESMF_AttributesGetI8(attrs, key, value, default, idx, attnestflag, rc
 
   ! Call C ####################################################################
 
-  call c_attrs_get_I8(&
-    attrs%ptr, &
+  call c_info_get_I8(&
+    info%ptr, &
     trim(key)//C_NULL_CHAR, &
     value, &
     localrc, &
@@ -216,12 +216,12 @@ subroutine ESMF_AttributesGetI8(attrs, key, value, default, idx, attnestflag, rc
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributesGetI8
+end subroutine ESMF_Info2GetI8
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributesGetLG()"
-subroutine ESMF_AttributesGetLG(attrs, key, value, default, idx, attnestflag, rc)
-  type(ESMF_Attributes), intent(inout) :: attrs
+#define ESMF_METHOD "ESMF_Info2GetLG()"
+subroutine ESMF_Info2GetLG(info, key, value, default, idx, attnestflag, rc)
+  type(ESMF_Info2), intent(inout) :: info
   character(len=*), intent(in) :: key
   logical, intent(inout) :: value
   logical, intent(in), optional :: default
@@ -260,8 +260,8 @@ subroutine ESMF_AttributesGetLG(attrs, key, value, default, idx, attnestflag, rc
 
   ! Call C ####################################################################
 
-  call c_attrs_get_LG(&
-    attrs%ptr, &
+  call c_info_get_LG(&
+    info%ptr, &
     trim(key)//C_NULL_CHAR, &
     local_value, &
     localrc, &
@@ -271,7 +271,7 @@ subroutine ESMF_AttributesGetLG(attrs, key, value, default, idx, attnestflag, rc
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   value = local_value
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributesGetLG
+end subroutine ESMF_Info2GetLG
 
 
 !------------------------------------------------------------------------------
@@ -279,9 +279,9 @@ end subroutine ESMF_AttributesGetLG
 !------------------------------------------------------------------------------
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributesGetArrayR4()"
-subroutine ESMF_AttributesGetArrayR4(attrs, key, values, nelements, attnestflag, rc)
-  type(ESMF_Attributes), intent(inout) :: attrs
+#define ESMF_METHOD "ESMF_Info2GetArrayR4()"
+subroutine ESMF_Info2GetArrayR4(info, key, values, nelements, attnestflag, rc)
+  type(ESMF_Info2), intent(inout) :: info
   character(len=*), intent(in) :: key
   real(ESMF_KIND_R4), dimension(:), allocatable, intent(out) :: values
   integer, intent(inout) :: nelements
@@ -298,14 +298,14 @@ subroutine ESMF_AttributesGetArrayR4(attrs, key, values, nelements, attnestflag,
     if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = .true.
   end if
 
-  ! Get the array size from the attributes store
-  call ESMF_AttributesInquire(attrs, key=key, count=nelements, attnestflag=attnestflag, rc=localrc)
+  ! Get the array size from the info store
+  call ESMF_Info2Inquire(info, key=key, count=nelements, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   ! Allocate the outgoing storage array and call into C to fill the array
   if (.not. allocated(values)) allocate(values(nelements))
-  call c_attrs_get_array_R4(&
-    attrs%ptr, &
+  call c_info_get_array_R4(&
+    info%ptr, &
     trim(key)//C_NULL_CHAR, &
     values, &
     nelements, &
@@ -314,12 +314,12 @@ subroutine ESMF_AttributesGetArrayR4(attrs, key, values, nelements, attnestflag,
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributesGetArrayR4
+end subroutine ESMF_Info2GetArrayR4
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributesGetArrayR8()"
-subroutine ESMF_AttributesGetArrayR8(attrs, key, values, nelements, attnestflag, rc)
-  type(ESMF_Attributes), intent(inout) :: attrs
+#define ESMF_METHOD "ESMF_Info2GetArrayR8()"
+subroutine ESMF_Info2GetArrayR8(info, key, values, nelements, attnestflag, rc)
+  type(ESMF_Info2), intent(inout) :: info
   character(len=*), intent(in) :: key
   real(ESMF_KIND_R8), dimension(:), allocatable, intent(out) :: values
   integer, intent(inout) :: nelements
@@ -336,14 +336,14 @@ subroutine ESMF_AttributesGetArrayR8(attrs, key, values, nelements, attnestflag,
     if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = .true.
   end if
 
-  ! Get the array size from the attributes store
-  call ESMF_AttributesInquire(attrs, key=key, count=nelements, attnestflag=attnestflag, rc=localrc)
+  ! Get the array size from the info store
+  call ESMF_Info2Inquire(info, key=key, count=nelements, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   ! Allocate the outgoing storage array and call into C to fill the array
   if (.not. allocated(values)) allocate(values(nelements))
-  call c_attrs_get_array_R8(&
-    attrs%ptr, &
+  call c_info_get_array_R8(&
+    info%ptr, &
     trim(key)//C_NULL_CHAR, &
     values, &
     nelements, &
@@ -352,12 +352,12 @@ subroutine ESMF_AttributesGetArrayR8(attrs, key, values, nelements, attnestflag,
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributesGetArrayR8
+end subroutine ESMF_Info2GetArrayR8
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributesGetArrayI4()"
-subroutine ESMF_AttributesGetArrayI4(attrs, key, values, nelements, attnestflag, rc)
-  type(ESMF_Attributes), intent(inout) :: attrs
+#define ESMF_METHOD "ESMF_Info2GetArrayI4()"
+subroutine ESMF_Info2GetArrayI4(info, key, values, nelements, attnestflag, rc)
+  type(ESMF_Info2), intent(inout) :: info
   character(len=*), intent(in) :: key
   integer(ESMF_KIND_I4), dimension(:), allocatable, intent(out) :: values
   integer, intent(inout) :: nelements
@@ -374,14 +374,14 @@ subroutine ESMF_AttributesGetArrayI4(attrs, key, values, nelements, attnestflag,
     if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = .true.
   end if
 
-  ! Get the array size from the attributes store
-  call ESMF_AttributesInquire(attrs, key=key, count=nelements, attnestflag=attnestflag, rc=localrc)
+  ! Get the array size from the info store
+  call ESMF_Info2Inquire(info, key=key, count=nelements, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   ! Allocate the outgoing storage array and call into C to fill the array
   if (.not. allocated(values)) allocate(values(nelements))
-  call c_attrs_get_array_I4(&
-    attrs%ptr, &
+  call c_info_get_array_I4(&
+    info%ptr, &
     trim(key)//C_NULL_CHAR, &
     values, &
     nelements, &
@@ -390,12 +390,12 @@ subroutine ESMF_AttributesGetArrayI4(attrs, key, values, nelements, attnestflag,
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributesGetArrayI4
+end subroutine ESMF_Info2GetArrayI4
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributesGetArrayI8()"
-subroutine ESMF_AttributesGetArrayI8(attrs, key, values, nelements, attnestflag, rc)
-  type(ESMF_Attributes), intent(inout) :: attrs
+#define ESMF_METHOD "ESMF_Info2GetArrayI8()"
+subroutine ESMF_Info2GetArrayI8(info, key, values, nelements, attnestflag, rc)
+  type(ESMF_Info2), intent(inout) :: info
   character(len=*), intent(in) :: key
   integer(ESMF_KIND_I8), dimension(:), allocatable, intent(out) :: values
   integer, intent(inout) :: nelements
@@ -412,14 +412,14 @@ subroutine ESMF_AttributesGetArrayI8(attrs, key, values, nelements, attnestflag,
     if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = .true.
   end if
 
-  ! Get the array size from the attributes store
-  call ESMF_AttributesInquire(attrs, key=key, count=nelements, attnestflag=attnestflag, rc=localrc)
+  ! Get the array size from the info store
+  call ESMF_Info2Inquire(info, key=key, count=nelements, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   ! Allocate the outgoing storage array and call into C to fill the array
   if (.not. allocated(values)) allocate(values(nelements))
-  call c_attrs_get_array_I8(&
-    attrs%ptr, &
+  call c_info_get_array_I8(&
+    info%ptr, &
     trim(key)//C_NULL_CHAR, &
     values, &
     nelements, &
@@ -428,12 +428,12 @@ subroutine ESMF_AttributesGetArrayI8(attrs, key, values, nelements, attnestflag,
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributesGetArrayI8
+end subroutine ESMF_Info2GetArrayI8
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributesGetArrayLG()"
-subroutine ESMF_AttributesGetArrayLG(attrs, key, values, nelements, attnestflag, rc)
-  type(ESMF_Attributes), intent(inout) :: attrs
+#define ESMF_METHOD "ESMF_Info2GetArrayLG()"
+subroutine ESMF_Info2GetArrayLG(info, key, values, nelements, attnestflag, rc)
+  type(ESMF_Info2), intent(inout) :: info
   character(len=*), intent(in) :: key
   logical, dimension(:), allocatable, intent(out) :: values
   integer, intent(inout) :: nelements
@@ -452,14 +452,14 @@ subroutine ESMF_AttributesGetArrayLG(attrs, key, values, nelements, attnestflag,
     if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = .true.
   end if
 
-  ! Get the array size from the attributes store
-  call ESMF_AttributesInquire(attrs, key=key, count=nelements, attnestflag=attnestflag, rc=localrc)
+  ! Get the array size from the info store
+  call ESMF_Info2Inquire(info, key=key, count=nelements, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   ! Allocate the outgoing storage array and call into C to fill the array
   allocate(local_values(nelements))
-  call c_attrs_get_array_LG(&
-    attrs%ptr, &
+  call c_info_get_array_LG(&
+    info%ptr, &
     trim(key)//C_NULL_CHAR, &
     local_values, &
     nelements, &
@@ -474,16 +474,16 @@ subroutine ESMF_AttributesGetArrayLG(attrs, key, values, nelements, attnestflag,
   deallocate(local_values)
   
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributesGetArrayLG
+end subroutine ESMF_Info2GetArrayLG
 
 !------------------------------------------------------------------------------
 ! Set (Scalar) ----------------------------------------------------------------
 !------------------------------------------------------------------------------
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributesSetR4()"
-subroutine ESMF_AttributesSetR4(attrs, key, value, force, idx, rc)
-  type(ESMF_Attributes), intent(inout) :: attrs
+#define ESMF_METHOD "ESMF_Info2SetR4()"
+subroutine ESMF_Info2SetR4(info, key, value, force, idx, rc)
+  type(ESMF_Info2), intent(inout) :: info
   character(len=*), intent(in) :: key
   real(ESMF_KIND_R4), intent(in) :: value
   logical, intent(in), optional :: force
@@ -510,8 +510,8 @@ subroutine ESMF_AttributesSetR4(attrs, key, value, force, idx, rc)
     local_idx_ptr = C_NULL_PTR
   end if
 
-  call c_attrs_set_R4(&
-    attrs%ptr, &
+  call c_info_set_R4(&
+    info%ptr, &
     trim(key)//C_NULL_CHAR, &
     value, &
     local_force, &
@@ -520,12 +520,12 @@ subroutine ESMF_AttributesSetR4(attrs, key, value, force, idx, rc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributesSetR4
+end subroutine ESMF_Info2SetR4
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributesSetR8()"
-subroutine ESMF_AttributesSetR8(attrs, key, value, force, idx, rc)
-  type(ESMF_Attributes), intent(inout) :: attrs
+#define ESMF_METHOD "ESMF_Info2SetR8()"
+subroutine ESMF_Info2SetR8(info, key, value, force, idx, rc)
+  type(ESMF_Info2), intent(inout) :: info
   character(len=*), intent(in) :: key
   real(ESMF_KIND_R8), intent(in) :: value
   logical, intent(in), optional :: force
@@ -552,8 +552,8 @@ subroutine ESMF_AttributesSetR8(attrs, key, value, force, idx, rc)
     local_idx_ptr = C_NULL_PTR
   end if
 
-  call c_attrs_set_R8(&
-    attrs%ptr, &
+  call c_info_set_R8(&
+    info%ptr, &
     trim(key)//C_NULL_CHAR, &
     value, &
     local_force, &
@@ -562,12 +562,12 @@ subroutine ESMF_AttributesSetR8(attrs, key, value, force, idx, rc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributesSetR8
+end subroutine ESMF_Info2SetR8
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributesSetI4()"
-subroutine ESMF_AttributesSetI4(attrs, key, value, force, idx, rc)
-  type(ESMF_Attributes), intent(inout) :: attrs
+#define ESMF_METHOD "ESMF_Info2SetI4()"
+subroutine ESMF_Info2SetI4(info, key, value, force, idx, rc)
+  type(ESMF_Info2), intent(inout) :: info
   character(len=*), intent(in) :: key
   integer(ESMF_KIND_I4), intent(in) :: value
   logical, intent(in), optional :: force
@@ -594,8 +594,8 @@ subroutine ESMF_AttributesSetI4(attrs, key, value, force, idx, rc)
     local_idx_ptr = C_NULL_PTR
   end if
 
-  call c_attrs_set_I4(&
-    attrs%ptr, &
+  call c_info_set_I4(&
+    info%ptr, &
     trim(key)//C_NULL_CHAR, &
     value, &
     local_force, &
@@ -604,12 +604,12 @@ subroutine ESMF_AttributesSetI4(attrs, key, value, force, idx, rc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributesSetI4
+end subroutine ESMF_Info2SetI4
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributesSetI8()"
-subroutine ESMF_AttributesSetI8(attrs, key, value, force, idx, rc)
-  type(ESMF_Attributes), intent(inout) :: attrs
+#define ESMF_METHOD "ESMF_Info2SetI8()"
+subroutine ESMF_Info2SetI8(info, key, value, force, idx, rc)
+  type(ESMF_Info2), intent(inout) :: info
   character(len=*), intent(in) :: key
   integer(ESMF_KIND_I8), intent(in) :: value
   logical, intent(in), optional :: force
@@ -636,8 +636,8 @@ subroutine ESMF_AttributesSetI8(attrs, key, value, force, idx, rc)
     local_idx_ptr = C_NULL_PTR
   end if
 
-  call c_attrs_set_I8(&
-    attrs%ptr, &
+  call c_info_set_I8(&
+    info%ptr, &
     trim(key)//C_NULL_CHAR, &
     value, &
     local_force, &
@@ -646,12 +646,12 @@ subroutine ESMF_AttributesSetI8(attrs, key, value, force, idx, rc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributesSetI8
+end subroutine ESMF_Info2SetI8
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributesSetCH()"
-subroutine ESMF_AttributesSetCH(attrs, key, value, force, idx, rc)
-  type(ESMF_Attributes), intent(inout) :: attrs
+#define ESMF_METHOD "ESMF_Info2SetCH()"
+subroutine ESMF_Info2SetCH(info, key, value, force, idx, rc)
+  type(ESMF_Info2), intent(inout) :: info
   character(len=*), intent(in) :: key
   character(len=*), intent(in) :: value
   logical, intent(in), optional :: force
@@ -678,8 +678,8 @@ subroutine ESMF_AttributesSetCH(attrs, key, value, force, idx, rc)
     local_idx_ptr = C_NULL_PTR
   end if
 
-  call c_attrs_set_CH(&
-    attrs%ptr, &
+  call c_info_set_CH(&
+    info%ptr, &
     trim(key)//C_NULL_CHAR, &
     trim(value)//C_NULL_CHAR, &
     local_force, &
@@ -688,12 +688,12 @@ subroutine ESMF_AttributesSetCH(attrs, key, value, force, idx, rc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributesSetCH
+end subroutine ESMF_Info2SetCH
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributesSetLG()"
-subroutine ESMF_AttributesSetLG(attrs, key, value, force, idx, rc)
-  type(ESMF_Attributes), intent(inout) :: attrs
+#define ESMF_METHOD "ESMF_Info2SetLG()"
+subroutine ESMF_Info2SetLG(info, key, value, force, idx, rc)
+  type(ESMF_Info2), intent(inout) :: info
   character(len=*), intent(in) :: key
   logical, intent(in) :: value
   logical, intent(in), optional :: force
@@ -721,8 +721,8 @@ subroutine ESMF_AttributesSetLG(attrs, key, value, force, idx, rc)
   end if
 
   local_value = value
-  call c_attrs_set_LG(&
-    attrs%ptr, &
+  call c_info_set_LG(&
+    info%ptr, &
     trim(key)//C_NULL_CHAR, &
     local_value, &
     local_force, &
@@ -731,16 +731,16 @@ subroutine ESMF_AttributesSetLG(attrs, key, value, force, idx, rc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributesSetLG
+end subroutine ESMF_Info2SetLG
 
 !------------------------------------------------------------------------------
 ! SetArray --------------------------------------------------------------------
 !------------------------------------------------------------------------------
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributesSetArrayR4()"
-subroutine ESMF_AttributesSetArrayR4(attrs, key, values, force, rc)
-  type(ESMF_Attributes), intent(inout) :: attrs
+#define ESMF_METHOD "ESMF_Info2SetArrayR4()"
+subroutine ESMF_Info2SetArrayR4(info, key, values, force, rc)
+  type(ESMF_Info2), intent(inout) :: info
   character(len=*), intent(in) :: key
   real(ESMF_KIND_R4), dimension(:), intent(in) :: values
   logical, intent(in), optional :: force
@@ -757,8 +757,8 @@ subroutine ESMF_AttributesSetArrayR4(attrs, key, values, force, rc)
   else
     local_force = .true.
   end if
-  call c_attrs_set_array_R4(&
-    attrs%ptr, &
+  call c_info_set_array_R4(&
+    info%ptr, &
     trim(key)//C_NULL_CHAR, &
     values, &
     SIZE(values), &
@@ -767,12 +767,12 @@ subroutine ESMF_AttributesSetArrayR4(attrs, key, values, force, rc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributesSetArrayR4
+end subroutine ESMF_Info2SetArrayR4
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributesSetArrayR8()"
-subroutine ESMF_AttributesSetArrayR8(attrs, key, values, force, rc)
-  type(ESMF_Attributes), intent(inout) :: attrs
+#define ESMF_METHOD "ESMF_Info2SetArrayR8()"
+subroutine ESMF_Info2SetArrayR8(info, key, values, force, rc)
+  type(ESMF_Info2), intent(inout) :: info
   character(len=*), intent(in) :: key
   real(ESMF_KIND_R8), dimension(:), intent(in) :: values
   logical, intent(in), optional :: force
@@ -789,8 +789,8 @@ subroutine ESMF_AttributesSetArrayR8(attrs, key, values, force, rc)
   else
     local_force = .true.
   end if
-  call c_attrs_set_array_R8(&
-    attrs%ptr, &
+  call c_info_set_array_R8(&
+    info%ptr, &
     trim(key)//C_NULL_CHAR, &
     values, &
     SIZE(values), &
@@ -799,12 +799,12 @@ subroutine ESMF_AttributesSetArrayR8(attrs, key, values, force, rc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributesSetArrayR8
+end subroutine ESMF_Info2SetArrayR8
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributesSetArrayI4()"
-subroutine ESMF_AttributesSetArrayI4(attrs, key, values, force, rc)
-  type(ESMF_Attributes), intent(inout) :: attrs
+#define ESMF_METHOD "ESMF_Info2SetArrayI4()"
+subroutine ESMF_Info2SetArrayI4(info, key, values, force, rc)
+  type(ESMF_Info2), intent(inout) :: info
   character(len=*), intent(in) :: key
   integer(ESMF_KIND_I4), dimension(:), intent(in) :: values
   logical, intent(in), optional :: force
@@ -821,8 +821,8 @@ subroutine ESMF_AttributesSetArrayI4(attrs, key, values, force, rc)
   else
     local_force = .true.
   end if
-  call c_attrs_set_array_I4(&
-    attrs%ptr, &
+  call c_info_set_array_I4(&
+    info%ptr, &
     trim(key)//C_NULL_CHAR, &
     values, &
     SIZE(values), &
@@ -831,12 +831,12 @@ subroutine ESMF_AttributesSetArrayI4(attrs, key, values, force, rc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributesSetArrayI4
+end subroutine ESMF_Info2SetArrayI4
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributesSetArrayI8()"
-subroutine ESMF_AttributesSetArrayI8(attrs, key, values, force, rc)
-  type(ESMF_Attributes), intent(inout) :: attrs
+#define ESMF_METHOD "ESMF_Info2SetArrayI8()"
+subroutine ESMF_Info2SetArrayI8(info, key, values, force, rc)
+  type(ESMF_Info2), intent(inout) :: info
   character(len=*), intent(in) :: key
   integer(ESMF_KIND_I8), dimension(:), intent(in) :: values
   logical, intent(in), optional :: force
@@ -853,8 +853,8 @@ subroutine ESMF_AttributesSetArrayI8(attrs, key, values, force, rc)
   else
     local_force = .true.
   end if
-  call c_attrs_set_array_I8(&
-    attrs%ptr, &
+  call c_info_set_array_I8(&
+    info%ptr, &
     trim(key)//C_NULL_CHAR, &
     values, &
     SIZE(values), &
@@ -863,12 +863,12 @@ subroutine ESMF_AttributesSetArrayI8(attrs, key, values, force, rc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributesSetArrayI8
+end subroutine ESMF_Info2SetArrayI8
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributesSetArrayLG()"
-subroutine ESMF_AttributesSetArrayLG(attrs, key, values, force, rc)
-  type(ESMF_Attributes), intent(inout) :: attrs
+#define ESMF_METHOD "ESMF_Info2SetArrayLG()"
+subroutine ESMF_Info2SetArrayLG(info, key, values, force, rc)
+  type(ESMF_Info2), intent(inout) :: info
   character(len=*), intent(in) :: key
   logical, dimension(:), intent(in) :: values
   logical, intent(in), optional :: force
@@ -892,8 +892,8 @@ subroutine ESMF_AttributesSetArrayLG(attrs, key, values, force, rc)
   do ii=1,SIZE(values)
     local_values(ii) = values(ii)
   enddo
-  call c_attrs_set_array_LG(&
-    attrs%ptr, &
+  call c_info_set_array_LG(&
+    info%ptr, &
     trim(key)//C_NULL_CHAR, &
     local_values, &
     SIZE(values), &
@@ -902,4 +902,4 @@ subroutine ESMF_AttributesSetArrayLG(attrs, key, values, force, rc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   deallocate(local_values)
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributesSetArrayLG
+end subroutine ESMF_Info2SetArrayLG

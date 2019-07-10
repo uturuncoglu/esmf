@@ -66,7 +66,7 @@ program ESMF_AttributesUTest
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
   !----------------------------------------------------------------------------
-  !NEX_UTest
+  !NEX_disabled_UTest
   ! Test creating and destroying a bunch of attributes
   rc = ESMF_FAILURE
   write(name, *) "ESMF_Attribute Profile Loop"

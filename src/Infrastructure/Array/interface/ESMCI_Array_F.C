@@ -751,11 +751,11 @@ extern "C" {
     if (rc!=NULL) *rc = ESMF_SUCCESS;
   }
 
-  void FTN_X(c_esmc_arraygetattrs)(ESMCI::Array **ptr, ESMCI::Attributes **attrs,
-    int *rc) { //root_attrs_tdk
+  void FTN_X(c_esmc_arraygetinfo)(ESMCI::Array **ptr, ESMCI::Info2 **info,
+    int *rc) { //root_info_tdk
 #undef  ESMC_METHOD
-#define ESMC_METHOD "c_esmc_arraygetattrs()"
-    *attrs = (*ptr)->ESMC_BaseGetAttrs();
+#define ESMC_METHOD "c_esmc_arraygetinfo()"
+    *info = (*ptr)->ESMC_BaseGetInfo();
     if (rc) {*rc = ESMF_SUCCESS;}
   }
 

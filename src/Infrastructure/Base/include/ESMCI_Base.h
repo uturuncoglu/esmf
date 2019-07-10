@@ -26,7 +26,7 @@ class ESMC_Base;
 
 #include "ESMCI_VM.h"
 #include "ESMCI_Attribute.h"
-#include "ESMCI_Attributes.h"  // root_attrs_tdk
+#include "ESMCI_Info2.h"
 
 //-----------------------------------------------------------------------------
 //BOP
@@ -62,15 +62,15 @@ class ESMC_Base
     char            className[ESMF_MAXSTR];   // object class
     ESMCI::Attribute* root;
     bool            rootalias;
-    ESMCI::Attributes* attrs;  // root_attrs_tdk
-    bool            attrsalias; // root_attrs_tdk
+    ESMCI::Info2* info;  // root_info_tdk
+    bool            infoalias; // root_info_tdk
   private:
 
     // prevent accidental copying
     //ESMC_Base& operator=(const ESMC_Base&);
     ESMC_Base(const ESMC_Base&);
 
-    void constructAttrs(ESMC_Base& base); // root_attrs_tdk
+    void constructInfo(ESMC_Base& base); // root_info_tdk
   
   public:
     int           classID;      // unique ID relative to this class
@@ -81,8 +81,8 @@ class ESMC_Base
     // accessor to root
     ESMCI::Attribute *ESMC_BaseGetRoot(void) const {return root;}
     void ESMC_BaseSetRoot(ESMCI::Attribute *orig) {root = orig; rootalias=true;}
-    ESMCI::Attributes *ESMC_BaseGetAttrs(void) const {return attrs;} // root_attrs_tdk
-    void ESMC_BaseSetAttrs(ESMCI::Attributes *orig) {attrs = orig; attrsalias=true;} // root_attrs_tdk
+    ESMCI::Info2 *ESMC_BaseGetInfo(void) const {return info;} // root_info_tdk
+    void ESMC_BaseSetInfo(ESMCI::Info2 *orig) {info = orig; infoalias=true;} // root_info_tdk
 
     // accessors to unique ID
     void ESMC_BaseSetID(int id);

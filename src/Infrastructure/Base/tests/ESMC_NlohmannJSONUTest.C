@@ -37,12 +37,12 @@ using json = nlohmann::json;  // Convenience rename for JSON namespace
 //EOP
 //------------------------------------------------------------------------------
 
-class MockAttributesNoCopy
+class MockInfoNoCopy
 {
   public:
     json *storage;
 
-    MockAttributesNoCopy(json &storage){
+    MockInfoNoCopy(json &storage){
       this->storage = &storage;
     };
 
@@ -187,17 +187,17 @@ int main(void) {
 
   //----------------------------------------------------------------------------
   //NEX_UTest
-  strcpy(name, "Mock attributes constructor (1)");
+  strcpy(name, "Mock info constructor (1)");
   strcpy(failMsg, "Storage reference not equivalent");
   failed = false;
 
   json j2;
-  MockAttributesNoCopy mattrs(j2);
+  MockInfoNoCopy minfo(j2);
   string key2 = "something";
   string value2 = "nothing";
   j2[key2] = value2;
 
-  const json &refVar = mattrs.getStorageRef();
+  const json &refVar = minfo.getStorageRef();
   if (&refVar != &j2) {
     failed = true;
   }
@@ -206,11 +206,11 @@ int main(void) {
 
   //----------------------------------------------------------------------------
   //NEX_UTest
-  strcpy(name, "Mock attributes constructor (2)");
+  strcpy(name, "Mock info constructor (2)");
   strcpy(failMsg, "Value not added to target JSON object");
   failed = false;
 
-  json *ref = mattrs.getPointer();
+  json *ref = minfo.getPointer();
   string actual2 = ref->at(key2);
 
   if (actual2 != value2) {
@@ -221,7 +221,7 @@ int main(void) {
 
   //----------------------------------------------------------------------------
   //NEX_UTest
-  strcpy(name, "Mock attributes constructor (3)");
+  strcpy(name, "Mock info constructor (3)");
   strcpy(failMsg, "Address target not equivalent");
   failed = false;
 

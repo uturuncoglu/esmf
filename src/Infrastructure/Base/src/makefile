@@ -2,12 +2,12 @@
 
 ALL: build_here
 
-SOURCEC	  = ESMCI_Base.C ESMCI_Attributes.C ESMC_AttributesCDef.C \
-            ESMC_AttributesCDefGeneric.C
+SOURCEC	  = ESMCI_Base.C ESMCI_Info2.C ESMC_Info2CDef.C \
+            ESMC_Info2CDefGeneric.C
 SOURCEF	  =
 STOREH    = ESMCI_Base.h \
             nlohmann/json/json.hpp \
-            ESMCI_Attributes.h
+            ESMCI_Info2.h
 
 OBJSC     = $(addsuffix .o, $(basename $(SOURCEC)))
 OBJSF     = $(addsuffix .o, $(basename $(SOURCEF)))

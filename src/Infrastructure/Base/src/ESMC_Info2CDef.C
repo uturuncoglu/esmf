@@ -8,9 +8,9 @@
 // NASA Goddard Space Flight Center.
 // Licensed under the University of Illinois-NCSA License.
 
-#define ESMC_FILENAME "./src/Infrastructure/Attribute/src/ESMC_AttributesCDef.C"
+#define ESMC_FILENAME "./src/Infrastructure/Attribute/src/ESMC_Info2CDef.C"
 
-// Attributes C-Fortran method implementation (body) file
+// Info C-Fortran method implementation (body) file
 
 // single blank line to make protex happy.
 //BOPI
@@ -25,7 +25,7 @@
 #include "ESMC.h"
 #include "ESMCI_Base.h"
 #include "ESMCI_Macros.h"
-#include "ESMCI_Attributes.h"
+#include "ESMCI_Info2.h"
 #include "ESMCI_LogErr.h"
 #include "ESMCI_Util.h"
 #include "ESMCI_VM.h"
@@ -48,11 +48,11 @@ extern "C" {
 // Helper Functions
 //-----------------------------------------------------------------------------
 
-ESMCI::Attributes *baseAddressToAttributes(const long int &baseAddress) {
+ESMCI::Info2 *baseAddressToInfo2(const long int &baseAddress) {
   void *v = (void *) baseAddress;
   ESMC_Base *base = reinterpret_cast<ESMC_Base *>(v);
-  ESMCI::Attributes *attrs = base->ESMC_BaseGetAttrs();
-  return attrs;
+  ESMCI::Info2 *info = base->ESMC_BaseGetInfo();
+  return info;
 }
 
 void updateDirtyInfo(const json &inqstate, int *ctr, std::vector<long int> *base_addresses) {
@@ -81,64 +81,64 @@ void updateDirtyInfo(const json &inqstate, int *ctr, std::vector<long int> *base
 //-----------------------------------------------------------------------------
 
 #undef ESMC_METHOD
-#define ESMC_METHOD "ESMC_BaseGetAttributes()"
-ESMCI::Attributes* ESMC_BaseGetAttributes(long int &baseAddress) {
+#define ESMC_METHOD "ESMC_BaseGetInfo2()"
+ESMCI::Info2* ESMC_BaseGetInfo2(long int &baseAddress) {
   ESMC_Base *base = reinterpret_cast<ESMC_Base*>((void*)baseAddress);
-  return base->ESMC_BaseGetAttrs();
+  return base->ESMC_BaseGetInfo();
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_AttributesCopy()"
-ESMCI::Attributes* ESMC_AttributesCopy(ESMCI::Attributes *attrs, int &rc) {
+#define ESMC_METHOD "ESMC_Info2Copy()"
+ESMCI::Info2* ESMC_Info2Copy(ESMCI::Info2 *info, int &rc) {
   rc = ESMF_SUCCESS;
-  return new ESMCI::Attributes(attrs->getStorageRef());
+  return new ESMCI::Info2(info->getStorageRef());
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_AttributesCreate()"
-ESMCI::Attributes* ESMC_AttributesCreate(int& rc) {
+#define ESMC_METHOD "ESMC_Info2Create()"
+ESMCI::Info2* ESMC_Info2Create(int& rc) {
   rc = ESMF_SUCCESS;
-  return new ESMCI::Attributes();
+  return new ESMCI::Info2();
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_AttributesCreateByKey()"
-ESMCI::Attributes* ESMC_AttributesCreateByKey(ESMCI::Attributes *srcAttrs,
+#define ESMC_METHOD "ESMC_Info2CreateByKey()"
+ESMCI::Info2* ESMC_Info2CreateByKey(ESMCI::Info2 *srcInfo,
   char* key, int& rc) {
   rc = ESMF_FAILURE;
-  ESMCI::Attributes *attrs;
+  ESMCI::Info2 *info;
   try {
     std::string local_key(key);
-    json new_storage = srcAttrs->get<json>(local_key, rc);
-    attrs = new ESMCI::Attributes(std::move(new_storage));
+    json new_storage = srcInfo->get<json>(local_key, rc);
+    info = new ESMCI::Info2(std::move(new_storage));
   }
   ESMF_CATCH_ISOC;
-  return attrs;
+  return info;
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_AttributesCreateByParse()"
-ESMCI::Attributes* ESMC_AttributesCreateByParse(char *payload, int& rc) {
+#define ESMC_METHOD "ESMC_Info2CreateByParse()"
+ESMCI::Info2* ESMC_Info2CreateByParse(char *payload, int& rc) {
   rc = ESMF_FAILURE;
-  ESMCI::Attributes *attrs;
+  ESMCI::Info2 *info;
   try {
     std::string local_payload(payload);
-    attrs = new ESMCI::Attributes(payload, rc);
+    info = new ESMCI::Info2(payload, rc);
   }
   ESMF_CATCH_ISOC;
-  return attrs;
+  return info;
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_AttributesDestroy()"
-void ESMC_AttributesDestroy(ESMCI::Attributes* attrs, int& rc) {
-  delete attrs;
+#define ESMC_METHOD "ESMC_Info2Destroy()"
+void ESMC_Info2Destroy(ESMCI::Info2* info, int& rc) {
+  delete info;
   rc = ESMF_SUCCESS;
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_AttributesErase()"
-void ESMC_AttributesErase(ESMCI::Attributes* attrs, char* keyParent,
+#define ESMC_METHOD "ESMC_Info2Erase()"
+void ESMC_Info2Erase(ESMCI::Info2* info, char* keyParent,
                           char* keyChild, int& rc) {
   rc = ESMF_FAILURE;
   std::string localkeyParent(keyParent);
@@ -150,22 +150,22 @@ void ESMC_AttributesErase(ESMCI::Attributes* attrs, char* keyParent,
   // seems redundant.
   try {
     if (localkeyChild == "") {
-      attrs->erase(localkeyChild, localkeyParent, rc);
+      info->erase(localkeyChild, localkeyParent, rc);
     } else {
-      attrs->erase(localkeyParent, localkeyChild, rc);
+      info->erase(localkeyParent, localkeyChild, rc);
     }
   }
   ESMF_CATCH_ISOC;
 }
 
 #undef ESMC_METHOD
-#define ESMC_METHOD "ESMC_AttributesInquire()"
-void ESMC_AttributesInquire(ESMCI::Attributes *attrs, ESMCI::Attributes *inq,
+#define ESMC_METHOD "ESMC_Info2Inquire()"
+void ESMC_Info2Inquire(ESMCI::Info2 *info, ESMCI::Info2 *inq,
                             char *key, bool recursive, int *idx, int &rc) {
   rc = ESMF_FAILURE;
   try {
     std::string localKey(key);
-    json jinq = attrs->inquire(localKey, rc, recursive, idx);
+    json jinq = info->inquire(localKey, rc, recursive, idx);
     json &inqref = inq->getStorageRefWritable();
     inqref = std::move(jinq);
   }
@@ -173,8 +173,8 @@ void ESMC_AttributesInquire(ESMCI::Attributes *attrs, ESMCI::Attributes *inq,
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_AttributesIsEqual()"
-void ESMC_AttributesIsEqual(ESMCI::Attributes *lhs, ESMCI::Attributes *rhs,
+#define ESMC_METHOD "ESMC_Info2IsEqual()"
+void ESMC_Info2IsEqual(ESMCI::Info2 *lhs, ESMCI::Info2 *rhs,
   bool &res, int &rc) {
   rc = ESMF_FAILURE;
   try {
@@ -185,39 +185,39 @@ void ESMC_AttributesIsEqual(ESMCI::Attributes *lhs, ESMCI::Attributes *rhs,
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_AttributesIsPresent()"
-void ESMC_AttributesIsPresent(ESMCI::Attributes *attrs, char *key, bool &res, int &rc,
+#define ESMC_METHOD "ESMC_Info2IsPresent()"
+void ESMC_Info2IsPresent(ESMCI::Info2 *info, char *key, bool &res, int &rc,
         int &isptr) {
   std::string local_key(key);
   try {
-    res = attrs->hasKey(local_key, rc, isptr);
+    res = info->hasKey(local_key, rc, isptr);
   }
   ESMF_CATCH_ISOC;
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_AttributesIsSet()"
-void ESMC_AttributesIsSet(ESMCI::Attributes *attrs, char *key, int &isSet, int &rc) {
+#define ESMC_METHOD "ESMC_Info2IsSet()"
+void ESMC_Info2IsSet(ESMCI::Info2 *info, char *key, int &isSet, int &rc) {
   std::string local_key(key);
   try {
-    isSet = attrs->isSetNull(local_key, rc);
+    isSet = info->isSetNull(local_key, rc);
   }
   ESMF_CATCH_ISOC;
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_AttributesPrint()"
-void ESMC_AttributesPrint(ESMCI::Attributes *attrs, int &indent, int &rc) {
+#define ESMC_METHOD "ESMC_Info2Print()"
+void ESMC_Info2Print(ESMCI::Info2 *info, int &indent, int &rc) {
   rc = ESMF_FAILURE;
   try {
-    std::cout << attrs->dump(indent, rc) << std::endl;
+    std::cout << info->dump(indent, rc) << std::endl;
   }
   ESMF_CATCH_ISOC;
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_AttributesUpdate()"
-void ESMC_AttributesUpdate(ESMCI::Attributes *lhs, ESMCI::Attributes *rhs, int &rc) {
+#define ESMC_METHOD "ESMC_Info2Update()"
+void ESMC_Info2Update(ESMCI::Info2 *lhs, ESMCI::Info2 *rhs, int &rc) {
   rc = ESMF_FAILURE;
   try {
     lhs->update(*rhs, rc);
@@ -226,8 +226,8 @@ void ESMC_AttributesUpdate(ESMCI::Attributes *lhs, ESMCI::Attributes *rhs, int &
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_AttributesBaseSyncDo"
-void ESMC_AttributesBaseSyncDo(std::vector<long int> &base_addresses, int &rootPet, int &rc) {
+#define ESMC_METHOD "ESMC_Info2BaseSyncDo"
+void ESMC_Info2BaseSyncDo(std::vector<long int> &base_addresses, int &rootPet, int &rc) {
   rc = ESMF_FAILURE;
   try {
     ESMCI::VM *vm = ESMCI::VM::getCurrent(&rc);
@@ -235,35 +235,35 @@ void ESMC_AttributesBaseSyncDo(std::vector<long int> &base_addresses, int &rootP
     int localPet = vm->getLocalPet();
     json j = json::object();
     if (localPet == rootPet) {
-      // For each base address, blind-cast to an attributes object and determine
+      // For each base address, blind-cast to an infoibutes object and determine
       // if that object has been updated (dirty). If it has been updated, then
       // stick its serialized string representation inside a JSON map. For
       // broadcasting.
       for (std::size_t ii = 0; ii < base_addresses.size(); ++ii) {
-        ESMCI::Attributes *attrs = baseAddressToAttributes(base_addresses[ii]);
-        bool is_dirty = attrs->isDirty();
+        ESMCI::Info2 *info = baseAddressToInfo2(base_addresses[ii]);
+        bool is_dirty = info->isDirty();
         if (is_dirty) {
           try {
-            j[std::to_string(ii)] = attrs->getStorageRef().dump();
+            j[std::to_string(ii)] = info->getStorageRef().dump();
           }
           ESMF_CATCH_JSON;
         }
       }
     }
     // Broadcast the update map.
-    ESMCI::Attributes battrs(std::move(j));
-    broadcastAttributes(&battrs, rootPet, rc);
+    ESMCI::Info2 binfo(std::move(j));
+    broadcastInfo(&binfo, rootPet, rc);
     // Update for each string key/index in the update map.
-    const json &storage = battrs.getStorageRef();
+    const json &storage = binfo.getStorageRef();
     int ikey;
     for (json::const_iterator it=storage.cbegin(); it!=storage.cend(); it++) {
       ikey = std::stoi(it.key());  // Convert the string index to an integer
-      ESMCI::Attributes *attrs_to_update = baseAddressToAttributes(base_addresses[ikey]);
+      ESMCI::Info2 *info_to_update = baseAddressToInfo2(base_addresses[ikey]);
       // This object is created from a serialized string stored in the update
       // map.
-      ESMCI::Attributes rhs(it.value(), rc);
+      ESMCI::Info2 rhs(it.value(), rc);
       try {
-        if (localPet != rootPet) { attrs_to_update->update(rhs, rc); }
+        if (localPet != rootPet) { info_to_update->update(rhs, rc); }
       }
       ESMF_CATCH_JSON;
     }
@@ -272,8 +272,8 @@ void ESMC_AttributesBaseSyncDo(std::vector<long int> &base_addresses, int &rootP
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_AttributesBaseSync()"
-void ESMC_AttributesBaseSync(ESMCI::Attributes *inqstate, int &rootPet, int &rc) {
+#define ESMC_METHOD "ESMC_Info2BaseSync()"
+void ESMC_Info2BaseSync(ESMCI::Info2 *inqstate, int &rootPet, int &rc) {
   rc = ESMF_FAILURE;
   try {
     const json &j_inqstate = inqstate->getStorageRef();
@@ -281,24 +281,24 @@ void ESMC_AttributesBaseSync(ESMCI::Attributes *inqstate, int &rootPet, int &rc)
     updateDirtyInfo(j_inqstate, &ctr, nullptr);
     std::vector<long int> base_addresses(ctr, 0);
     updateDirtyInfo(j_inqstate, nullptr, &base_addresses);
-    ESMC_AttributesBaseSyncDo(base_addresses, rootPet, rc);
+    ESMC_Info2BaseSyncDo(base_addresses, rootPet, rc);
   }
   ESMF_CATCH_ISOC;
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_AttributesBroadcast()"
-void ESMC_AttributesBroadcast(ESMCI::Attributes *attrs, int &rootPet, int &rc) {
+#define ESMC_METHOD "ESMC_Info2Broadcast()"
+void ESMC_Info2Broadcast(ESMCI::Info2 *info, int &rootPet, int &rc) {
   rc = ESMF_FAILURE;
   try {
-    broadcastAttributes(attrs, rootPet, rc);
+    broadcastInfo(info, rootPet, rc);
   }
   ESMF_CATCH_ISOC;
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_AttributesReadJSON()"
-void ESMC_AttributesReadJSON(ESMCI::Attributes *attrs, char *filename,
+#define ESMC_METHOD "ESMC_Info2ReadJSON()"
+void ESMC_Info2ReadJSON(ESMCI::Info2 *info, char *filename,
                              int &rc) {
   rc = ESMF_FAILURE;
   std::string filename2(filename);
@@ -315,7 +315,7 @@ void ESMC_AttributesReadJSON(ESMCI::Attributes *attrs, char *filename,
       ESMF_THROW_JSON(e, "ESMC_RC_FILE_READ", ESMC_RC_FILE_READ, rc);
     }
     i.close();
-    json &out = attrs->getStorageRefWritable();
+    json &out = info->getStorageRefWritable();
     out = move(j);
     rc = ESMF_SUCCESS;
   }
@@ -323,8 +323,8 @@ void ESMC_AttributesReadJSON(ESMCI::Attributes *attrs, char *filename,
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_AttributesWriteJSON()"
-void ESMC_AttributesWriteJSON(ESMCI::Attributes *attrs, char *filename,
+#define ESMC_METHOD "ESMC_Info2WriteJSON()"
+void ESMC_Info2WriteJSON(ESMCI::Info2 *info, char *filename,
   int &rc) {
   rc = ESMF_FAILURE;
   std::string filename2(filename);
@@ -335,7 +335,7 @@ void ESMC_AttributesWriteJSON(ESMCI::Attributes *attrs, char *filename,
       std::string errmsg = "Error opening output file: " + filename2;
       ESMF_CHECKERR_STD("ESMC_RC_FILE_OPEN", ESMC_RC_FILE_OPEN, errmsg, rc);
     }
-    file << attrs->getStorageRef();
+    file << info->getStorageRef();
     file.close();
     rc = ESMF_SUCCESS;
   }
@@ -346,7 +346,7 @@ void ESMC_AttributesWriteJSON(ESMCI::Attributes *attrs, char *filename,
 
 //#undef ESMC_METHOD
 //#define ESMC_METHOD "ESMC_InfoGetAttPack()"
-//void ESMC_InfoGetAttPack(ESMCI::Attributes *info, ESMCI::AttPack *attpack,
+//void ESMC_InfoGetAttPack(ESMCI::Info2 *info, ESMCI::AttPack *attpack,
 //  char *convention, char *purpose, int &rc) {
 //  rc = ESMF_FAILURE;
 //  try {
@@ -361,8 +361,8 @@ void ESMC_AttributesWriteJSON(ESMCI::Attributes *attrs, char *filename,
 //-----------------------------------------------------------------------------
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_AttributesGetCH()"
-void ESMC_AttributesGetCH(ESMCI::Attributes* attrs, char *key, char *value,
+#define ESMC_METHOD "ESMC_Info2GetCH()"
+void ESMC_Info2GetCH(ESMCI::Info2* info, char *key, char *value,
   int &vlen, int &rc, char *def, int *index) {
   // String pointer used to define the default value if present
   std::string *def_str_ptr;
@@ -379,7 +379,7 @@ void ESMC_AttributesGetCH(ESMCI::Attributes* attrs, char *key, char *value,
   std::string as_str;
   std::string local_key(key);
   try {
-    as_str = attrs->get<std::string>(local_key, rc, def_str_ptr, index);
+    as_str = info->get<std::string>(local_key, rc, def_str_ptr, index);
   }
   ESMF_CATCH_ISOC;
   // Transfer the string characters into the Fortran character array using
@@ -396,52 +396,52 @@ void ESMC_AttributesGetCH(ESMCI::Attributes* attrs, char *key, char *value,
 //-----------------------------------------------------------------------------
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_AttributesSetCH()"
-void ESMC_AttributesSetCH(ESMCI::Attributes *attrs, char *key, char *value,
+#define ESMC_METHOD "ESMC_Info2SetCH()"
+void ESMC_Info2SetCH(ESMCI::Info2 *info, char *key, char *value,
                               bool &force, int &rc, int *index) {
   rc = ESMF_FAILURE;
   std::string localKey(key);
   std::string localValue(value);
   try {
-    attrs->set<std::string>(localKey, localValue, force, rc, index);
+    info->set<std::string>(localKey, localValue, force, rc, index);
   }
   ESMF_CATCH_ISOC;
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_AttributesSetATTRS()"
-void ESMC_AttributesSetATTRS(ESMCI::Attributes *attrs, char *key,
-  ESMCI::Attributes *value, bool &force, int &rc) {
+#define ESMC_METHOD "ESMC_Info2SetINFO()"
+void ESMC_Info2SetINFO(ESMCI::Info2 *info, char *key,
+  ESMCI::Info2 *value, bool &force, int &rc) {
   rc = ESMF_FAILURE;
   std::string localKey(key);
   try {
-    attrs->set(localKey, *value, force, rc);
+    info->set(localKey, *value, force, rc);
   }
   ESMF_CATCH_ISOC;
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_AttributesSetNULL()"
-void ESMC_AttributesSetNULL(ESMCI::Attributes *attrs, char *key, bool &force,
+#define ESMC_METHOD "ESMC_Info2SetNULL()"
+void ESMC_Info2SetNULL(ESMCI::Info2 *info, char *key, bool &force,
   int &rc) {
   rc = ESMF_FAILURE;
   std::string localKey(key);
   try {
-    attrs->set(localKey, force, rc);
+    info->set(localKey, force, rc);
   }
   ESMF_CATCH_ISOC;
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_AttributesSetArrayCH()"
-void ESMC_AttributesSetArrayCH(ESMCI::Attributes *attrs, char *key, int &count,
+#define ESMC_METHOD "ESMC_Info2SetArrayCH()"
+void ESMC_Info2SetArrayCH(ESMCI::Info2 *info, char *key, int &count,
   bool &force, int &rc) {
   // Notes:
   //  * Only allocates storage. Does not actually insert anything!
   rc = ESMF_FAILURE;
   std::string localKey(key);
   try {
-    attrs->set<std::vector<std::string>>(localKey, nullptr, count, force, rc);
+    info->set<std::vector<std::string>>(localKey, nullptr, count, force, rc);
   }
   ESMF_CATCH_ISOC;
 }

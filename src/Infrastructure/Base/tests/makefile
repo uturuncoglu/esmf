@@ -5,30 +5,30 @@ run:  run_unit_tests
 
 LOCDIR	  = src/Infrastructure/Base/tests
 
-#TESTS_BUILD = $(ESMF_TESTDIR)/ESMC_AttributesUTest
+#TESTS_BUILD = $(ESMF_TESTDIR)/ESMC_Info2UTest
 TESTS_BUILD   = $(ESMF_TESTDIR)/ESMF_BaseUTest \
                 $(ESMF_TESTDIR)/ESMC_NlohmannJSONUTest \
-                $(ESMF_TESTDIR)/ESMC_AttributesUTest \
-                $(ESMF_TESTDIR)/ESMF_AttributesUTest \
-                $(ESMF_TESTDIR)/ESMF_AttributesProfileUTest \
-                $(ESMF_TESTDIR)/ESMF_AttributesArrayUTest \
-                $(ESMF_TESTDIR)/ESMF_AttributesSyncUTest
+                $(ESMF_TESTDIR)/ESMC_Info2UTest \
+                $(ESMF_TESTDIR)/ESMF_Info2UTest \
+                $(ESMF_TESTDIR)/ESMF_Info2ProfileUTest \
+                $(ESMF_TESTDIR)/ESMF_Info2ArrayUTest \
+                $(ESMF_TESTDIR)/ESMF_Info2SyncUTest
 
 TESTS_RUN     = RUN_ESMF_BaseUTest \
                 RUN_ESMC_NlohmannJSONUTest \
-                RUN_ESMC_AttributesUTest \
-                RUN_ESMF_AttributesUTest \
-                RUN_ESMF_AttributesProfileUTest \
-                RUN_ESMF_AttributesArrayUTest \
-                RUN_ESMF_AttributesSyncUTest
+                RUN_ESMC_Info2UTest \
+                RUN_ESMF_Info2UTest \
+                RUN_ESMF_Info2ProfileUTest \
+                RUN_ESMF_Info2ArrayUTest \
+                RUN_ESMF_Info2SyncUTest
 
 TESTS_RUN_UNI = RUN_ESMF_BaseUTestUNI \
                 RUN_ESMC_NlohmannJSONUTestUNI \
-                RUN_ESMC_AttributesUTestUNI \
-                RUN_ESMF_AttributesUTestUNI \
-                RUN_ESMF_AttributesProfileUTestUNI \
-                RUN_ESMF_AttributesArrayUTestUNI \
-                RUN_ESMF_AttributesSyncUTestUNI
+                RUN_ESMC_Info2UTestUNI \
+                RUN_ESMF_Info2UTestUNI \
+                RUN_ESMF_Info2ProfileUTestUNI \
+                RUN_ESMF_Info2ArrayUTestUNI \
+                RUN_ESMF_Info2SyncUTestUNI
 
 
 include ${ESMF_DIR}/makefile
@@ -50,7 +50,7 @@ RUN_ESMF_BaseUTest:
 RUN_ESMF_BaseUTestUNI:
 	$(MAKE) TNAME=Base NP=1 ftest
 
-# Attributes ==================================================================
+# Info ==================================================================
 
 RUN_ESMC_NlohmannJSONUTest:
 	$(MAKE) TNAME=NlohmannJSON NP=4 ctest
@@ -58,32 +58,32 @@ RUN_ESMC_NlohmannJSONUTest:
 RUN_ESMC_NlohmannJSONUTestUNI:
 	$(MAKE) TNAME=NlohmannJSONUNI NP=1 ctest
 
-RUN_ESMC_AttributesUTest:
-	$(MAKE) TNAME=Attributes NP=4 ctest
+RUN_ESMC_Info2UTest:
+	$(MAKE) TNAME=Info2 NP=4 ctest
 
-RUN_ESMC_AttributesUTestUNI:
-	$(MAKE) TNAME=AttributesUNI NP=1 ctest
+RUN_ESMC_Info2UTestUNI:
+	$(MAKE) TNAME=Info2UNI NP=1 ctest
 
-RUN_ESMF_AttributesUTest:
-	$(MAKE) TNAME=Attributes NP=4 ftest
+RUN_ESMF_Info2UTest:
+	$(MAKE) TNAME=Info2 NP=4 ftest
 
-RUN_ESMF_AttributesUTestUNI:
-	$(MAKE) TNAME=AttributesUNI NP=1 ftest
+RUN_ESMF_Info2UTestUNI:
+	$(MAKE) TNAME=Info2UNI NP=1 ftest
 
-RUN_ESMF_AttributesProfileUTest:
-	env ESMF_RUNTIME_PROFILE=ON $(MAKE) TNAME=AttributesProfile NP=4 ftest
+RUN_ESMF_Info2ProfileUTest:
+	env ESMF_RUNTIME_PROFILE=ON $(MAKE) TNAME=Info2Profile NP=4 ftest
 
-RUN_ESMF_AttributesProfileUTestUNI:
-	env ESMF_RUNTIME_PROFILE=ON $(MAKE) TNAME=AttributesProfileUNI NP=1 ftest
+RUN_ESMF_Info2ProfileUTestUNI:
+	env ESMF_RUNTIME_PROFILE=ON $(MAKE) TNAME=Info2ProfileUNI NP=1 ftest
 
-RUN_ESMF_AttributesArrayUTest:
-	$(MAKE) TNAME=AttributesArray NP=4 ftest
+RUN_ESMF_Info2ArrayUTest:
+	$(MAKE) TNAME=Info2Array NP=4 ftest
 
-RUN_ESMF_AttributesArrayUTestUNI:
-	$(MAKE) TNAME=AttributesArrayUNI NP=1 ftest
+RUN_ESMF_Info2ArrayUTestUNI:
+	$(MAKE) TNAME=Info2ArrayUNI NP=1 ftest
 
-RUN_ESMF_AttributesSyncUTest:
-	$(MAKE) TNAME=AttributesSync NP=4 ftest
+RUN_ESMF_Info2SyncUTest:
+	$(MAKE) TNAME=Info2Sync NP=4 ftest
 
-RUN_ESMF_AttributesSyncUTestUNI:
-	$(MAKE) TNAME=AttributesSyncUNI NP=1 ftest
+RUN_ESMF_Info2SyncUTestUNI:
+	$(MAKE) TNAME=Info2SyncUNI NP=1 ftest

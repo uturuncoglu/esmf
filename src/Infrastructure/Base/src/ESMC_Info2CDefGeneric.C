@@ -8,9 +8,9 @@
 // NASA Goddard Space Flight Center.
 // Licensed under the University of Illinois-NCSA License.
 
-#define ESMC_FILENAME "./src/Infrastructure/Attribute/src/ESMC_AttributesCDefGeneric.C"
+#define ESMC_FILENAME "./src/Infrastructure/Attribute/src/ESMC_Info2CDefGeneric.C"
 
-// Attributes C-Fortran method implementation (body) file
+// Info C-Fortran method implementation (body) file
 
 // single blank line to make protex happy.
 //BOPI
@@ -25,7 +25,7 @@
 #include "ESMC.h"
 #include "ESMCI_Base.h"
 #include "ESMCI_Macros.h"
-#include "ESMCI_Attributes.h"
+#include "ESMCI_Info2.h"
 #include "ESMCI_LogErr.h"
 #include "ESMCI_Util.h"
 #include "ESMCI_VM.h"
@@ -45,61 +45,61 @@ using json = nlohmann::json;
 extern "C" {
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_AttributesGetR4()"
-void ESMC_AttributesGetR4(ESMCI::Attributes *attrs, char *key, float &value,
+#define ESMC_METHOD "ESMC_Info2GetR4()"
+void ESMC_Info2GetR4(ESMCI::Info2 *info, char *key, float &value,
   int &rc, float *def, int *index, bool recursive) {
   rc = ESMF_FAILURE;
   std::string localKey(key);
   try {
-    value = attrs->get<float>(localKey, rc, def, index, recursive);
+    value = info->get<float>(localKey, rc, def, index, recursive);
   }
   ESMF_CATCH_ISOC;
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_AttributesGetR8()"
-void ESMC_AttributesGetR8(ESMCI::Attributes *attrs, char *key, double &value,
+#define ESMC_METHOD "ESMC_Info2GetR8()"
+void ESMC_Info2GetR8(ESMCI::Info2 *info, char *key, double &value,
   int &rc, double *def, int *index, bool recursive) {
   rc = ESMF_FAILURE;
   std::string localKey(key);
   try {
-    value = attrs->get<double>(localKey, rc, def, index, recursive);
+    value = info->get<double>(localKey, rc, def, index, recursive);
   }
   ESMF_CATCH_ISOC;
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_AttributesGetI4()"
-void ESMC_AttributesGetI4(ESMCI::Attributes *attrs, char *key, int &value,
+#define ESMC_METHOD "ESMC_Info2GetI4()"
+void ESMC_Info2GetI4(ESMCI::Info2 *info, char *key, int &value,
   int &rc, int *def, int *index, bool recursive) {
   rc = ESMF_FAILURE;
   std::string localKey(key);
   try {
-    value = attrs->get<int>(localKey, rc, def, index, recursive);
+    value = info->get<int>(localKey, rc, def, index, recursive);
   }
   ESMF_CATCH_ISOC;
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_AttributesGetI8()"
-void ESMC_AttributesGetI8(ESMCI::Attributes *attrs, char *key, long int &value,
+#define ESMC_METHOD "ESMC_Info2GetI8()"
+void ESMC_Info2GetI8(ESMCI::Info2 *info, char *key, long int &value,
   int &rc, long int *def, int *index, bool recursive) {
   rc = ESMF_FAILURE;
   std::string localKey(key);
   try {
-    value = attrs->get<long int>(localKey, rc, def, index, recursive);
+    value = info->get<long int>(localKey, rc, def, index, recursive);
   }
   ESMF_CATCH_ISOC;
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_AttributesGetLG()"
-void ESMC_AttributesGetLG(ESMCI::Attributes *attrs, char *key, bool &value,
+#define ESMC_METHOD "ESMC_Info2GetLG()"
+void ESMC_Info2GetLG(ESMCI::Info2 *info, char *key, bool &value,
   int &rc, bool *def, int *index, bool recursive) {
   rc = ESMF_FAILURE;
   std::string localKey(key);
   try {
-    value = attrs->get<bool>(localKey, rc, def, index, recursive);
+    value = info->get<bool>(localKey, rc, def, index, recursive);
   }
   ESMF_CATCH_ISOC;
 }
@@ -107,13 +107,13 @@ void ESMC_AttributesGetLG(ESMCI::Attributes *attrs, char *key, bool &value,
 //-----------------------------------------------------------------------------
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_AttributesGetArrayR4()"
-void ESMC_AttributesGetArrayR4(ESMCI::Attributes *attrs, char *key,
+#define ESMC_METHOD "ESMC_Info2GetArrayR4()"
+void ESMC_Info2GetArrayR4(ESMCI::Info2 *info, char *key,
                                float *values, int &count, int &rc, bool recursive) {
   rc = ESMF_FAILURE;
   std::string localKey(key);
   try {
-    const json *j = attrs->getPointer(localKey, rc, recursive);
+    const json *j = info->getPointer(localKey, rc, recursive);
     const json::array_t *ap = j->get_ptr<const json::array_t *>();
 
     count = (int)ap->size();
@@ -130,13 +130,13 @@ void ESMC_AttributesGetArrayR4(ESMCI::Attributes *attrs, char *key,
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_AttributesGetArrayR8()"
-void ESMC_AttributesGetArrayR8(ESMCI::Attributes *attrs, char *key,
+#define ESMC_METHOD "ESMC_Info2GetArrayR8()"
+void ESMC_Info2GetArrayR8(ESMCI::Info2 *info, char *key,
                                double *values, int &count, int &rc, bool recursive) {
   rc = ESMF_FAILURE;
   std::string localKey(key);
   try {
-    const json *j = attrs->getPointer(localKey, rc, recursive);
+    const json *j = info->getPointer(localKey, rc, recursive);
     const json::array_t *ap = j->get_ptr<const json::array_t *>();
 
     count = (int)ap->size();
@@ -153,13 +153,13 @@ void ESMC_AttributesGetArrayR8(ESMCI::Attributes *attrs, char *key,
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_AttributesGetArrayI4()"
-void ESMC_AttributesGetArrayI4(ESMCI::Attributes *attrs, char *key,
+#define ESMC_METHOD "ESMC_Info2GetArrayI4()"
+void ESMC_Info2GetArrayI4(ESMCI::Info2 *info, char *key,
                                int *values, int &count, int &rc, bool recursive) {
   rc = ESMF_FAILURE;
   std::string localKey(key);
   try {
-    const json *j = attrs->getPointer(localKey, rc, recursive);
+    const json *j = info->getPointer(localKey, rc, recursive);
     const json::array_t *ap = j->get_ptr<const json::array_t *>();
 
     count = (int)ap->size();
@@ -176,13 +176,13 @@ void ESMC_AttributesGetArrayI4(ESMCI::Attributes *attrs, char *key,
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_AttributesGetArrayI8()"
-void ESMC_AttributesGetArrayI8(ESMCI::Attributes *attrs, char *key,
+#define ESMC_METHOD "ESMC_Info2GetArrayI8()"
+void ESMC_Info2GetArrayI8(ESMCI::Info2 *info, char *key,
                                long int *values, int &count, int &rc, bool recursive) {
   rc = ESMF_FAILURE;
   std::string localKey(key);
   try {
-    const json *j = attrs->getPointer(localKey, rc, recursive);
+    const json *j = info->getPointer(localKey, rc, recursive);
     const json::array_t *ap = j->get_ptr<const json::array_t *>();
 
     count = (int)ap->size();
@@ -199,13 +199,13 @@ void ESMC_AttributesGetArrayI8(ESMCI::Attributes *attrs, char *key,
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_AttributesGetArrayLG()"
-void ESMC_AttributesGetArrayLG(ESMCI::Attributes *attrs, char *key,
+#define ESMC_METHOD "ESMC_Info2GetArrayLG()"
+void ESMC_Info2GetArrayLG(ESMCI::Info2 *info, char *key,
                                bool *values, int &count, int &rc, bool recursive) {
   rc = ESMF_FAILURE;
   std::string localKey(key);
   try {
-    const json *j = attrs->getPointer(localKey, rc, recursive);
+    const json *j = info->getPointer(localKey, rc, recursive);
     const json::array_t *ap = j->get_ptr<const json::array_t *>();
 
     count = (int)ap->size();
@@ -224,61 +224,61 @@ void ESMC_AttributesGetArrayLG(ESMCI::Attributes *attrs, char *key,
 //-----------------------------------------------------------------------------
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_AttributesSetR4()"
-void ESMC_AttributesSetR4(ESMCI::Attributes *attrs, char *key, float &value,
+#define ESMC_METHOD "ESMC_Info2SetR4()"
+void ESMC_Info2SetR4(ESMCI::Info2 *info, char *key, float &value,
                               bool &force, int &rc, int *index) {
   rc = ESMF_FAILURE;
   std::string localKey(key);
   try {
-    attrs->set<float>(localKey, value, force, rc, index);
+    info->set<float>(localKey, value, force, rc, index);
   }
   ESMF_CATCH_ISOC;
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_AttributesSetR8()"
-void ESMC_AttributesSetR8(ESMCI::Attributes *attrs, char *key, double &value,
+#define ESMC_METHOD "ESMC_Info2SetR8()"
+void ESMC_Info2SetR8(ESMCI::Info2 *info, char *key, double &value,
                               bool &force, int &rc, int *index) {
   rc = ESMF_FAILURE;
   std::string localKey(key);
   try {
-    attrs->set<double>(localKey, value, force, rc, index);
+    info->set<double>(localKey, value, force, rc, index);
   }
   ESMF_CATCH_ISOC;
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_AttributesSetI4()"
-void ESMC_AttributesSetI4(ESMCI::Attributes *attrs, char *key, int &value,
+#define ESMC_METHOD "ESMC_Info2SetI4()"
+void ESMC_Info2SetI4(ESMCI::Info2 *info, char *key, int &value,
                               bool &force, int &rc, int *index) {
   rc = ESMF_FAILURE;
   std::string localKey(key);
   try {
-    attrs->set<int>(localKey, value, force, rc, index);
+    info->set<int>(localKey, value, force, rc, index);
   }
   ESMF_CATCH_ISOC;
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_AttributesSetI8()"
-void ESMC_AttributesSetI8(ESMCI::Attributes *attrs, char *key, long int &value,
+#define ESMC_METHOD "ESMC_Info2SetI8()"
+void ESMC_Info2SetI8(ESMCI::Info2 *info, char *key, long int &value,
                               bool &force, int &rc, int *index) {
   rc = ESMF_FAILURE;
   std::string localKey(key);
   try {
-    attrs->set<long int>(localKey, value, force, rc, index);
+    info->set<long int>(localKey, value, force, rc, index);
   }
   ESMF_CATCH_ISOC;
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_AttributesSetLG()"
-void ESMC_AttributesSetLG(ESMCI::Attributes *attrs, char *key, bool &value,
+#define ESMC_METHOD "ESMC_Info2SetLG()"
+void ESMC_Info2SetLG(ESMCI::Info2 *info, char *key, bool &value,
                               bool &force, int &rc, int *index) {
   rc = ESMF_FAILURE;
   std::string localKey(key);
   try {
-    attrs->set<bool>(localKey, value, force, rc, index);
+    info->set<bool>(localKey, value, force, rc, index);
   }
   ESMF_CATCH_ISOC;
 }
@@ -286,61 +286,61 @@ void ESMC_AttributesSetLG(ESMCI::Attributes *attrs, char *key, bool &value,
 //-----------------------------------------------------------------------------
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_AttributesSetArrayR4()"
-void ESMC_AttributesSetArrayR4(ESMCI::Attributes *attrs, char *key,
+#define ESMC_METHOD "ESMC_Info2SetArrayR4()"
+void ESMC_Info2SetArrayR4(ESMCI::Info2 *info, char *key,
                                float *values, int &count, bool &force, int &rc) {
   rc = ESMF_FAILURE;
   std::string localKey(key);
   try {
-    attrs->set<float>(localKey, values, count, force, rc);
+    info->set<float>(localKey, values, count, force, rc);
   }
   ESMF_CATCH_ISOC;
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_AttributesSetArrayR8()"
-void ESMC_AttributesSetArrayR8(ESMCI::Attributes *attrs, char *key,
+#define ESMC_METHOD "ESMC_Info2SetArrayR8()"
+void ESMC_Info2SetArrayR8(ESMCI::Info2 *info, char *key,
                                double *values, int &count, bool &force, int &rc) {
   rc = ESMF_FAILURE;
   std::string localKey(key);
   try {
-    attrs->set<double>(localKey, values, count, force, rc);
+    info->set<double>(localKey, values, count, force, rc);
   }
   ESMF_CATCH_ISOC;
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_AttributesSetArrayI4()"
-void ESMC_AttributesSetArrayI4(ESMCI::Attributes *attrs, char *key,
+#define ESMC_METHOD "ESMC_Info2SetArrayI4()"
+void ESMC_Info2SetArrayI4(ESMCI::Info2 *info, char *key,
                                int *values, int &count, bool &force, int &rc) {
   rc = ESMF_FAILURE;
   std::string localKey(key);
   try {
-    attrs->set<int>(localKey, values, count, force, rc);
+    info->set<int>(localKey, values, count, force, rc);
   }
   ESMF_CATCH_ISOC;
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_AttributesSetArrayI8()"
-void ESMC_AttributesSetArrayI8(ESMCI::Attributes *attrs, char *key,
+#define ESMC_METHOD "ESMC_Info2SetArrayI8()"
+void ESMC_Info2SetArrayI8(ESMCI::Info2 *info, char *key,
                                long int *values, int &count, bool &force, int &rc) {
   rc = ESMF_FAILURE;
   std::string localKey(key);
   try {
-    attrs->set<long int>(localKey, values, count, force, rc);
+    info->set<long int>(localKey, values, count, force, rc);
   }
   ESMF_CATCH_ISOC;
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_AttributesSetArrayLG()"
-void ESMC_AttributesSetArrayLG(ESMCI::Attributes *attrs, char *key,
+#define ESMC_METHOD "ESMC_Info2SetArrayLG()"
+void ESMC_Info2SetArrayLG(ESMCI::Info2 *info, char *key,
                                bool *values, int &count, bool &force, int &rc) {
   rc = ESMF_FAILURE;
   std::string localKey(key);
   try {
-    attrs->set<bool>(localKey, values, count, force, rc);
+    info->set<bool>(localKey, values, count, force, rc);
   }
   ESMF_CATCH_ISOC;
 }

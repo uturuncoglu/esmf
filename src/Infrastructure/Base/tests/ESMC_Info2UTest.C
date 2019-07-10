@@ -17,7 +17,7 @@
 
 #include "ESMC.h"
 #include "ESMC_Test.h"
-#include "ESMCI_Attributes.h"
+#include "ESMCI_Info2.h"
 #include "ESMCI_Macros.h"
 #include "ESMCI_LogErr.h"
 #include "ESMCI_Util.h"
@@ -28,9 +28,9 @@ using namespace std;
 
 //=============================================================================
 //BOP
-// !PROGRAM: ESMC_AttributesUTest - Internal Attribute JSON functionality
+// !PROGRAM: ESMC_InfoUTest - Internal Attribute JSON functionality
 //
-// !DESCRIPTION: Test Attributes class
+// !DESCRIPTION: Test Info class
 //
 //EOP
 //-----------------------------------------------------------------------------
@@ -42,8 +42,8 @@ void finalizeFailure(int& rc, char failMsg[], string msg) {
 };
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "testBroadcastAttributes()"
-void testBroadcastAttributes(int& rc, char failMsg[]) {
+#define ESMC_METHOD "testbroadcastInfo()"
+void testbroadcastInfo(int& rc, char failMsg[]) {
   rc = ESMF_FAILURE;
 
   ESMCI::VM *vm = nullptr;
@@ -55,7 +55,7 @@ void testBroadcastAttributes(int& rc, char failMsg[]) {
   int localPet = vm->getLocalPet();
   int petCount = vm->getPetCount();
 
-  Attributes attrs;
+  Info2 info;
 
   int rootPet;
   // Use a non-zero root pet for parallel testing
@@ -68,18 +68,18 @@ void testBroadcastAttributes(int& rc, char failMsg[]) {
   int desired = 5;
   if (localPet == rootPet) {
   try {
-      attrs.set("foo", desired, false, rc);
+      info.set("foo", desired, false, rc);
   }
   ESMF_CATCH_PASSTHRU
   }
 
   try {
-    ESMCI::broadcastAttributes(&attrs, rootPet, rc);
+    ESMCI::broadcastInfo(&info, rootPet, rc);
   }
   ESMF_CATCH_PASSTHRU
 
   try {
-    int actual = attrs.get<int>("foo", rc);
+    int actual = info.get<int>("foo", rc);
     if (actual != desired) {
       return finalizeFailure(rc, failMsg, "Value not broadcast");
     }
@@ -90,13 +90,13 @@ void testBroadcastAttributes(int& rc, char failMsg[]) {
 #undef  ESMC_METHOD
 #define ESMC_METHOD "testConstructor()"
 void testConstructor(int& rc, char failMsg[]) {
-  Attributes attrs;
+  Info2 info;
 
   // Test constructing from a JSON object instance creates a copy.
   json root;
   int desired = 5;
   root["foo"] = desired;
-  Attributes a(root);
+  Info2 a(root);
   root["foo"] = 10;
 
   try {
@@ -124,7 +124,7 @@ void testConstructor(int& rc, char failMsg[]) {
 
   long int *srcPtr = src.at("foo").get_ptr<json::number_integer_t *>();
 
-  Attributes dst(move(src));
+  Info2 dst(move(src));
 
   if (!src.is_null()){
     return finalizeFailure(rc, failMsg, "JSON object not moved");
@@ -147,21 +147,21 @@ void testConstructor(int& rc, char failMsg[]) {
 void testGet(int& rc, char failMsg[]) {
   rc = ESMF_FAILURE;
 
-  Attributes attrs;
+  Info2 info;
 
   try {
-    attrs.set("target", 50, false, rc);
+    info.set("target", 50, false, rc);
   }
   ESMF_CATCH_PASSTHRU
 
   try {
-    auto actual = attrs.get<int>("target", rc);
+    auto actual = info.get<int>("target", rc);
 
     if (actual != 50) {
       return finalizeFailure(rc, failMsg, "Could not get target");
     }
 
-    auto actual_ptr = attrs.getPointer("target", rc);
+    auto actual_ptr = info.getPointer("target", rc);
 
     std::size_t addr1 = (std::size_t)&actual;
     std::size_t addr2 = (std::size_t)&*actual_ptr;
@@ -172,9 +172,9 @@ void testGet(int& rc, char failMsg[]) {
   ESMF_CATCH_PASSTHRU
 
   try {
-    attrs.get<int>("blah", rc);
+    info.get<int>("blah", rc);
     return finalizeFailure(rc, failMsg, "Error not raised for missing key");
-  } catch (esmf_attrs_error& err) {
+  } catch (esmf_info_error& err) {
     if (err.getReturnCode() != ESMC_RC_NOT_FOUND) {
       return finalizeFailure(rc, failMsg, "Wrong error return code");
     }
@@ -182,11 +182,11 @@ void testGet(int& rc, char failMsg[]) {
 
   // Test get with a default value ============================================
 
-  Attributes attrs2;
+  Info2 info2;
   rc = ESMF_FAILURE;
   int def = 3000;
   try {
-    auto actual2 = attrs2.get<int>("blah-dee-blah", rc, &def);
+    auto actual2 = info2.get<int>("blah-dee-blah", rc, &def);
     if (actual2 != def) {
       return finalizeFailure(rc, failMsg, "Did not get default value");
     }
@@ -200,14 +200,14 @@ void testGetObjectIndex(int& rc, char failMsg[]) {
   rc = ESMF_FAILURE;
 
   json j = {{"foo1", 1}, {"foo2", 2}, {"foo3", 3}};
-  Attributes attrs(j);
+  Info2 info(j);
 
   int actual;
   std::string actual_key;
   try {
     std::string key = "";
     int index = 1;
-    actual = attrs.get<int>(key, rc, nullptr, &index, false, &actual_key);
+    actual = info.get<int>(key, rc, nullptr, &index, false, &actual_key);
   }
   ESMF_CATCH_PASSTHRU
 
@@ -220,10 +220,10 @@ void testGetObjectIndex(int& rc, char failMsg[]) {
   try {
     std::string key = "foo3";
     int index = 1;
-    actual = attrs.get<int>(key, rc, nullptr, &index);
+    actual = info.get<int>(key, rc, nullptr, &index);
     return finalizeFailure(rc, failMsg, "Did not catch wrong type");
   }
-  catch (ESMCI::esmf_attrs_error &exc_esmf) {
+  catch (ESMCI::esmf_info_error &exc_esmf) {
     rc = ESMF_SUCCESS;
   }
 
@@ -231,10 +231,10 @@ void testGetObjectIndex(int& rc, char failMsg[]) {
   try {
     std::string key = "";
     int index = 11;
-    actual = attrs.get<int>(key, rc, nullptr, &index);
+    actual = info.get<int>(key, rc, nullptr, &index);
     return finalizeFailure(rc, failMsg, "Did not catch out of range");
   }
-  catch (ESMCI::esmf_attrs_error &exc_esmf) {
+  catch (ESMCI::esmf_info_error &exc_esmf) {
     rc = ESMF_SUCCESS;
   }
 }
@@ -243,7 +243,7 @@ void testGetObjectIndex(int& rc, char failMsg[]) {
 #define ESMC_METHOD "testSetGetIndex()"
 void testSetGetIndex(int& rc, char failMsg[]) {
   rc = ESMF_FAILURE;
-  Attributes attrs;
+  Info2 info;
   int n = 25;
   double values[n];
   for (int ii = 0; ii < n; ++ii) {
@@ -251,21 +251,21 @@ void testSetGetIndex(int& rc, char failMsg[]) {
   }
   std::string key = "the-key";
   try {
-    attrs.set<double>(key, nullptr, n, false, rc);
+    info.set<double>(key, nullptr, n, false, rc);
     for (int ii = 0; ii < n; ++ii) {
-      attrs.set<double>(key, values[ii], false, rc, &ii);
+      info.set<double>(key, values[ii], false, rc, &ii);
     }
   }
-  catch (ESMCI::esmf_attrs_error &exc_esmf) {
+  catch (ESMCI::esmf_info_error &exc_esmf) {
     ESMF_HANDLE_PASSTHRU(exc_esmf);
   }
   double diff;
   double actual;
   for (int ii = 0; ii < n; ++ii) {
     try {
-      actual = attrs.get<double>(key, rc, nullptr, &ii);
+      actual = info.get<double>(key, rc, nullptr, &ii);
     }
-    catch (ESMCI::esmf_attrs_error &exc_esmf) {
+    catch (ESMCI::esmf_info_error &exc_esmf) {
       ESMF_HANDLE_PASSTHRU(exc_esmf);
     }
     diff = std::abs(values[ii] - actual);
@@ -278,9 +278,9 @@ void testSetGetIndex(int& rc, char failMsg[]) {
 
   int jj = 1000;
   try {
-    actual = attrs.get<double>(key, rc, nullptr, &jj);
+    actual = info.get<double>(key, rc, nullptr, &jj);
   }
-  catch (ESMCI::esmf_attrs_error &exc_esmf) {
+  catch (ESMCI::esmf_info_error &exc_esmf) {
     if (exc_esmf.getReturnCode() != ESMC_RC_ARG_OUTOFRANGE) {
       return finalizeFailure(rc, failMsg, "Did not handle out_of_range");
     } else {
@@ -293,9 +293,9 @@ void testSetGetIndex(int& rc, char failMsg[]) {
   std::string not_there = "not_there";
   int noidx = 5;
   try {
-    attrs.set<int>(not_there, 111, false, rc, &noidx);
+    info.set<int>(not_there, 111, false, rc, &noidx);
   }
-  catch (ESMCI::esmf_attrs_error &exc_esmf) {
+  catch (ESMCI::esmf_info_error &exc_esmf) {
     if (exc_esmf.getReturnCode() == ESMC_RC_NOT_FOUND) {
       rc = ESMF_SUCCESS;
     } else {
@@ -309,25 +309,25 @@ void testSetGetIndex(int& rc, char failMsg[]) {
 void testHasKey(int& rc, char failMsg[]) {
   rc = ESMF_FAILURE;
 
-  Attributes attrs;
+  Info2 info;
 
   try {
-    attrs.set("/neverEver", 13, false, rc);
+    info.set("/neverEver", 13, false, rc);
   }
   ESMF_CATCH_PASSTHRU
 
-  bool actual = attrs.hasKey("/hello", rc, true);
+  bool actual = info.hasKey("/hello", rc, true);
   if (actual){
     return finalizeFailure(rc, failMsg, "Key is not present");
   }
 
-  bool actual2 = attrs.hasKey("/neverEver", rc, true);
+  bool actual2 = info.hasKey("/neverEver", rc, true);
   if (!actual2){
     return finalizeFailure(rc, failMsg, "Key is present");
   }
 
   // Test not using a JSON pointer.
-  bool actual3 = attrs.hasKey("neverEver", rc);
+  bool actual3 = info.hasKey("neverEver", rc);
   if (!actual3){
     return finalizeFailure(rc, failMsg, "Key is present with non-pointer");
   }
@@ -340,20 +340,20 @@ void testHasKey(int& rc, char failMsg[]) {
 void testErase(int& rc, char failMsg[]) {
   rc = ESMF_FAILURE;
 
-  Attributes attrs;
+  Info2 info;
 
   string key = "/something/nested";
   try {
-    attrs.set(key, 10, false, rc);
+    info.set(key, 10, false, rc);
   }
   ESMF_CATCH_PASSTHRU
 
   try {
-    attrs.erase("/something", "nested", rc);
+    info.erase("/something", "nested", rc);
   }
   ESMF_CATCH_PASSTHRU
 
-  const json &storage = attrs.getStorageRef();
+  const json &storage = info.getStorageRef();
   const json &actual = storage["something"];
   if (actual.find("nested") != actual.end()){
     return finalizeFailure(rc, failMsg, "Nested item not deleted");
@@ -365,10 +365,10 @@ void testErase(int& rc, char failMsg[]) {
   rc = ESMF_FAILURE;
   bool failed = true;
   try {
-    attrs.erase("/nothing", "nested", rc);
+    info.erase("/nothing", "nested", rc);
     failed = true;
   }
-  catch (esmf_attrs_error &err) {
+  catch (esmf_info_error &err) {
     if (rc == ESMC_RC_NOT_FOUND){
       failed = false;
     }
@@ -379,10 +379,10 @@ void testErase(int& rc, char failMsg[]) {
 
   rc = ESMF_FAILURE;
   try {
-    attrs.erase("/something", "underground", rc);
+    info.erase("/something", "underground", rc);
     failed = true;
   }
-  catch (esmf_attrs_error &err){
+  catch (esmf_info_error &err){
     if (rc == ESMC_RC_NOT_FOUND){
       failed = false;
     }
@@ -399,12 +399,12 @@ void testErase(int& rc, char failMsg[]) {
 #define ESMC_METHOD "testFormatKey()"
 void testFormatKey(int& rc, char failMsg[]) {
   rc = ESMF_FAILURE;
-  Attributes attrs;
+  Info2 info;
   bool has_key;
   try {
-    has_key = attrs.hasKey("/foo/~", rc, true);
+    has_key = info.hasKey("/foo/~", rc, true);
   }
-  catch (ESMCI::esmf_attrs_error &exc_esmf) {
+  catch (ESMCI::esmf_info_error &exc_esmf) {
     if (exc_esmf.getReturnCode() != ESMC_RC_ARG_BAD) {
       return finalizeFailure(rc, failMsg, "Did not handle JSON parse error");
     }
@@ -460,18 +460,18 @@ void test_update_json_count(int& rc, char failMsg[]) {
 void testSetGet(int& rc, char failMsg[]) {
   rc = ESMF_FAILURE;
 
-  Attributes attrs;
+  Info2 info;
 
   // Test setting a single value ==============================================
 
   int value = 10;
   string key = "theKey";
   try {
-    attrs.set(key, value, false, rc);
+    info.set(key, value, false, rc);
   }
   ESMF_CATCH_PASSTHRU
 
-  const json& storage = attrs.getStorageRef();
+  const json& storage = info.getStorageRef();
 
   if (storage["theKey"] != value){
     return finalizeFailure(rc, failMsg, "Did not set key correctly");
@@ -479,7 +479,7 @@ void testSetGet(int& rc, char failMsg[]) {
 
   rc = ESMF_FAILURE;
   try {
-    auto actual = attrs.getPointer(key, rc);
+    auto actual = info.getPointer(key, rc);
 
     if (*actual != value){
       return finalizeFailure(rc, failMsg, "Did not get pointer key correctly");
@@ -493,7 +493,7 @@ void testSetGet(int& rc, char failMsg[]) {
   string keyp = "/root/group1/group2";
   rc = ESMF_FAILURE;
 try {
-      attrs.set(keyp, value2, false, rc);
+      info.set(keyp, value2, false, rc);
   }
 ESMF_CATCH_PASSTHRU
 
@@ -503,7 +503,7 @@ ESMF_CATCH_PASSTHRU
 
   rc = ESMF_FAILURE;
   try {
-    auto actual2 = attrs.getPointer(keyp, rc);
+    auto actual2 = info.getPointer(keyp, rc);
     if (*actual2 != value2){
       return finalizeFailure(rc, failMsg, "Did not get nested key correctly");
     }
@@ -514,17 +514,17 @@ ESMF_CATCH_PASSTHRU
 
   key = "/twiceSet";
   try {
-    attrs.set(key, 10, false, rc);
+    info.set(key, 10, false, rc);
   }
   ESMF_CATCH_PASSTHRU
 
   value = 12;
   try {
-    attrs.set(key, value, true, rc);
+    info.set(key, value, true, rc);
   }
   ESMF_CATCH_PASSTHRU
 
-  if (*attrs.getPointer(key, rc) != value){
+  if (*info.getPointer(key, rc) != value){
     return finalizeFailure(rc, failMsg, "Did not overload existing key correctly");
   }
 
@@ -533,12 +533,12 @@ ESMF_CATCH_PASSTHRU
   key = "hello";
   string value3 = "world";
   try {
-    attrs.set(key, value3, false, rc);
+    info.set(key, value3, false, rc);
   }
   ESMF_CATCH_PASSTHRU
 
   try {
-    string actual3 = attrs.get<string>(key, rc);
+    string actual3 = info.get<string>(key, rc);
     if (actual3 != value3) {
       return finalizeFailure(rc, failMsg, "Did not get string value");
     }
@@ -551,10 +551,10 @@ ESMF_CATCH_PASSTHRU
   json ja;
   json j_vec(c_vector);
   ja["foo"] = j_vec;
-  Attributes attrsvec(ja);
+  Info2 infovec(ja);
 
   try {
-    auto actual4 = attrsvec.get<int>("/foo/2", rc);
+    auto actual4 = infovec.get<int>("/foo/2", rc);
     if (actual4 != c_vector[2]) {
       return finalizeFailure(rc, failMsg, "Did not get array element value");
     }
@@ -566,14 +566,14 @@ ESMF_CATCH_PASSTHRU
   int c_int_arr[4] = {1, 2, 3, 4};
   int count = 4;
 
-  Attributes attrs2;
+  Info2 info2;
 
   try {
-    attrs2.set("the-key", c_int_arr, count, false, rc);
+    info2.set("the-key", c_int_arr, count, false, rc);
   }
   ESMF_CATCH_PASSTHRU
 
-  json::array_t apref = attrs2.getStorageRef()["the-key"];
+  json::array_t apref = info2.getStorageRef()["the-key"];
 
   for (auto ii=0; ii<count; ii++) {
     if (apref[ii] != c_int_arr[ii]) {
@@ -583,7 +583,7 @@ ESMF_CATCH_PASSTHRU
 
   // Test modifying internal storage ==========================================
 
-  Attributes mstore;
+  Info2 mstore;
   json& jstore = mstore.getStorageRefWritable();
   jstore["i am an int"] = 111;
   if (mstore.get<int>("i am an int", rc) != 111) {
@@ -599,9 +599,9 @@ void testSetGetErrorHandling(int& rc, char failMsg[]) {
   rc = ESMF_FAILURE;
 
   //---------------------------------------------------------------------------
-  // Test the ESMF attributes exception
+  // Test the ESMF info exception
 
-  esmf_attrs_error ae("ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, "a message");
+  esmf_info_error ae("ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, "a message");
   const char *actual = ae.what();
   string desired = "Error/Return Code 541 (ESMC_RC_NOT_FOUND) - a message";
   if (actual != desired || ae.getReturnCode() != ESMC_RC_NOT_FOUND) {
@@ -612,14 +612,14 @@ void testSetGetErrorHandling(int& rc, char failMsg[]) {
   // Test trying to get a value that is not in the map or is the wrong type
   // will error.
 
-  Attributes attrs;
+  Info2 info;
 
   bool failed = true;
   string key = "/theKey";
   try {
-    auto actual = attrs.getPointer(key, rc);
+    auto actual = info.getPointer(key, rc);
   }
-  catch (esmf_attrs_error& err) {
+  catch (esmf_info_error& err) {
     if (rc == ESMC_RC_NOT_FOUND){
       failed = false;
     }
@@ -636,15 +636,15 @@ void testSetGetErrorHandling(int& rc, char failMsg[]) {
 
   string key2 = "/theKey2";
   try {
-    attrs.set(key2, 111, false, rc);
+    info.set(key2, 111, false, rc);
   }
   ESMF_CATCH_PASSTHRU
 
   failed = true;
   try {
-    attrs.set(key2, 222, false, rc);
+    info.set(key2, 222, false, rc);
   }
-  catch (esmf_attrs_error &err) {
+  catch (esmf_info_error &err) {
     if (rc == ESMC_RC_CANNOT_SET) {
       failed = false;
     }
@@ -659,9 +659,9 @@ void testSetGetErrorHandling(int& rc, char failMsg[]) {
   failed = true;
   string key3 = "///key";
   try {
-    attrs.set(key3, 111, false, rc);
+    info.set(key3, 111, false, rc);
   }
-  catch (esmf_attrs_error &err) {
+  catch (esmf_info_error &err) {
     if (rc == ESMC_RC_ARG_BAD && err.getReturnCode() == ESMC_RC_ARG_BAD) {
       failed = false;
     }
@@ -680,23 +680,23 @@ void testSetGetErrorHandling(int& rc, char failMsg[]) {
 #define ESMC_METHOD "testDumpLength()"
 void testDumpLength(int& rc, char failMsg[]) {
   rc = ESMF_FAILURE;
-  Attributes attrs;
-  std::string attrbuff;
+  Info2 info;
+  std::string infobuff;
   try {
-    attrbuff = attrs.dump(rc);
+    infobuff = info.dump(rc);
   }
-  catch (esmf_attrs_error &e) {
+  catch (esmf_info_error &e) {
     ESMF_HANDLE_PASSTHRU(e);
   }
-  std::size_t sf = attrbuff.length();
+  std::size_t sf = infobuff.length();
   try {
-    attrs.set("the_int", 50, false, rc);
-    attrbuff = attrs.dump(rc);
+    info.set("the_int", 50, false, rc);
+    infobuff = info.dump(rc);
   }
-  catch (esmf_attrs_error &e) {
+  catch (esmf_info_error &e) {
     ESMF_HANDLE_PASSTHRU(e);
   }
-  std::size_t sf2 = attrbuff.length();
+  std::size_t sf2 = infobuff.length();
   if (sf2 < sf) {
     return finalizeFailure(rc, failMsg, "Length too small with int");
   }
@@ -707,20 +707,20 @@ void testDumpLength(int& rc, char failMsg[]) {
 #define ESMC_METHOD "testSerializeDeserialize()"
 void testSerializeDeserialize(int& rc, char failMsg[]) {
   rc = ESMF_FAILURE;
-  Attributes attrs;
+  Info2 info;
   try {
-    attrs.set("foo", 16, false, rc);
+    info.set("foo", 16, false, rc);
   }
-  catch (esmf_attrs_error &e) {
+  catch (esmf_info_error &e) {
     ESMF_HANDLE_PASSTHRU(e);
   }
   char *null_buffer = nullptr;
   int inquire_length = 0;
   int offset = 0;
   try {
-    attrs.serialize(null_buffer, &inquire_length, &offset, ESMF_INQUIREONLY, rc);
+    info.serialize(null_buffer, &inquire_length, &offset, ESMF_INQUIREONLY, rc);
   }
-  catch (esmf_attrs_error &e) {
+  catch (esmf_info_error &e) {
     ESMF_HANDLE_PASSTHRU(e);
   }
   if (offset != 0) {
@@ -729,9 +729,9 @@ void testSerializeDeserialize(int& rc, char failMsg[]) {
   char buffer[inquire_length];
   int length = 0;
   try {
-    attrs.serialize(buffer, &length, &offset, ESMF_NOINQUIRE, rc);
+    info.serialize(buffer, &length, &offset, ESMF_NOINQUIRE, rc);
   }
-  catch (esmf_attrs_error &e) {
+  catch (esmf_info_error &e) {
     ESMF_HANDLE_PASSTHRU(e);
   }
   int aligned_length = length;
@@ -739,18 +739,18 @@ void testSerializeDeserialize(int& rc, char failMsg[]) {
   if (offset != aligned_length) {
     return finalizeFailure(rc, failMsg, "Offset and length should be equal");
   }
-  Attributes deattrs;
+  Info2 deinfo;
   int deoffset = 0;
   try {
-    deattrs.deserialize(buffer, &deoffset, rc);
+    deinfo.deserialize(buffer, &deoffset, rc);
   }
-  catch (esmf_attrs_error &e) {
+  catch (esmf_info_error &e) {
     ESMF_HANDLE_PASSTHRU(e);
   }
   if (deoffset != offset) {
     return finalizeFailure(rc, failMsg, "Deserialize offset incorrect");
   }
-  if (attrs.getStorageRef() != deattrs.getStorageRef()) {
+  if (info.getStorageRef() != deinfo.getStorageRef()) {
     return finalizeFailure(rc, failMsg, "Storage not equal");
   }
   return;
@@ -765,7 +765,7 @@ void testInquire(int& rc, char failMsg[]) {
   j["ESMF"]["General"]["x"] = 1000;
   j["NUOPC"]["General"]["a"] = 111;
   j["NUOPC"]["General"]["b"] = 1111;
-  ESMCI::Attributes info(std::move(j));
+  ESMCI::Info2 info(std::move(j));
   json inq;
   try {
     inq = info.inquire("", rc);
@@ -818,13 +818,13 @@ void testUpdate(int& rc, char failMsg[]) {
   rc = ESMF_FAILURE;
 
   json update_target =  R"( {"color": "red", "price": 17.99} )"_json;
-  Attributes update_target_attrs(update_target);
+  Info2 update_target_info(update_target);
 
   json used_to_update = R"( {"color": "blue", "speed": 100} )"_json;
-  Attributes used_to_update_attrs(used_to_update);
+  Info2 used_to_update_info(used_to_update);
 
-  const json& lhs = update_target_attrs.getStorageRef();
-  const json& rhs = used_to_update_attrs.getStorageRef();
+  const json& lhs = update_target_info.getStorageRef();
+  const json& rhs = used_to_update_info.getStorageRef();
 
   if (lhs == rhs){
     return finalizeFailure(rc, failMsg, "Storage should not be equal");
@@ -832,7 +832,7 @@ void testUpdate(int& rc, char failMsg[]) {
 
   rc = ESMF_FAILURE;
   try {
-    update_target_attrs.update(used_to_update_attrs, rc);
+    update_target_info.update(used_to_update_info, rc);
   }
   ESMF_CATCH_PASSTHRU
 
@@ -964,7 +964,7 @@ void test_infoview_update_ptr(int& rc, char failMsg[]) {
     iview.update_storage_ptr(&jp, &idx, true);
     return finalizeFailure(rc, failMsg, "did not hit type error with idx");
   }
-  catch (ESMCI::esmf_attrs_error &e) {}
+  catch (ESMCI::esmf_info_error &e) {}
 
   iview.update_storage_ptr(j);
   json::json_pointer jp4("/b");
@@ -974,7 +974,7 @@ void test_infoview_update_ptr(int& rc, char failMsg[]) {
     iview.update_ptr(&incompatp);
     return finalizeFailure(rc, failMsg, "did not hit type error with update_ptr");
   }
-  catch (ESMCI::esmf_attrs_error &e) {}
+  catch (ESMCI::esmf_info_error &e) {}
 
   rc = ESMF_SUCCESS;
 };
@@ -994,112 +994,112 @@ int main(void) {
 
   //---------------------------------------------------------------------------
   //NEX_UTest
-  strcpy(name, "Attributes Constructors");
+  strcpy(name, "Info Constructors");
   testConstructor(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //---------------------------------------------------------------------------
 
   //---------------------------------------------------------------------------
   //NEX_UTest
-  strcpy(name, "Attributes erase()");
+  strcpy(name, "Info erase()");
   testErase(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //---------------------------------------------------------------------------
 
   //---------------------------------------------------------------------------
   //NEX_UTest
-  strcpy(name, "Attributes set() & getPointer()");
+  strcpy(name, "Info set() & getPointer()");
   testSetGet(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //---------------------------------------------------------------------------
 
   //---------------------------------------------------------------------------
   //NEX_UTest
-  strcpy(name, "Attributes Set/Get Error Handling");
+  strcpy(name, "Info Set/Get Error Handling");
   testSetGetErrorHandling(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //---------------------------------------------------------------------------
 
   //---------------------------------------------------------------------------
   //NEX_UTest
-  strcpy(name, "Attributes update()");
+  strcpy(name, "Info update()");
   testUpdate(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //---------------------------------------------------------------------------
 
   //---------------------------------------------------------------------------
   //NEX_UTest
-  strcpy(name, "Attributes hasKey()");
+  strcpy(name, "Info hasKey()");
   testHasKey(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //---------------------------------------------------------------------------
 
   //---------------------------------------------------------------------------
   //NEX_UTest
-  strcpy(name, "Attributes get()");
+  strcpy(name, "Info get()");
   testGet(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //---------------------------------------------------------------------------
 
   //---------------------------------------------------------------------------
   //NEX_UTest
-  strcpy(name, "Attributes broadcastAttributes()");
-  testBroadcastAttributes(rc, failMsg);
+  strcpy(name, "Info broadcastInfo()");
+  testbroadcastInfo(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //---------------------------------------------------------------------------
 
   //---------------------------------------------------------------------------
   //NEX_UTest
-  strcpy(name, "Attributes formatKey()");
+  strcpy(name, "Info formatKey()");
   testFormatKey(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //---------------------------------------------------------------------------
 
   //---------------------------------------------------------------------------
   //NEX_UTest
-  strcpy(name, "Attributes Dump Length");
+  strcpy(name, "Info Dump Length");
   testDumpLength(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //---------------------------------------------------------------------------
 
   //---------------------------------------------------------------------------
   //NEX_UTest
-  strcpy(name, "Attributes Serialize/Deserialize");
+  strcpy(name, "Info Serialize/Deserialize");
   testSerializeDeserialize(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //---------------------------------------------------------------------------
 
   //---------------------------------------------------------------------------
   //NEX_UTest
-  strcpy(name, "Attributes Set/Get with an Index");
+  strcpy(name, "Info Set/Get with an Index");
   testSetGetIndex(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //---------------------------------------------------------------------------
 
   //---------------------------------------------------------------------------
   //NEX_UTest
-  strcpy(name, "Attributes counting AttPacks");
+  strcpy(name, "Info counting AttPacks");
   test_get_attpack_count(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //---------------------------------------------------------------------------
 
   //---------------------------------------------------------------------------
   //NEX_UTest
-  strcpy(name, "Attributes recursive counting");
+  strcpy(name, "Info recursive counting");
   test_update_json_count(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //---------------------------------------------------------------------------
 
   //---------------------------------------------------------------------------
   //NEX_UTest
-  strcpy(name, "Attributes inquire");
+  strcpy(name, "Info inquire");
   testInquire(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //---------------------------------------------------------------------------
 
   //---------------------------------------------------------------------------
   //NEX_UTest
-  strcpy(name, "Attributes update_json_pointer");
+  strcpy(name, "Info update_json_pointer");
   test_update_json_pointer(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //---------------------------------------------------------------------------
@@ -1113,7 +1113,7 @@ int main(void) {
 
   //---------------------------------------------------------------------------
   //NEX_UTest
-  strcpy(name, "Attributes testGetObjectIndex");
+  strcpy(name, "Info testGetObjectIndex");
   testGetObjectIndex(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //---------------------------------------------------------------------------

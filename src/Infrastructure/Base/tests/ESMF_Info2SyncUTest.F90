@@ -10,7 +10,7 @@
 !
 !==============================================================================
 
-#define FILENAME "src/Infrastructure/Attribute/test/ESMF_AttributesSyncUTest.F90"
+#define FILENAME "src/Infrastructure/Base/test/ESMF_Info2SyncUTest.F90"
 
 #include "ESMF_Macros.inc"
 #include "ESMF.h"
@@ -19,11 +19,11 @@
 !==============================================================================
 !==============================================================================
 
-program ESMF_AttributesSyncUTest
+program ESMF_Info2SyncUTest
 
   !============================================================================
   !BOP
-  ! !PROGRAM: ESMF_AttributesUTest - Test general Attributes usage
+  ! !PROGRAM: ESMF_Info2UTest - Test general Info2 usage
   !
   ! !DESCRIPTION:
   !
@@ -32,8 +32,8 @@ program ESMF_AttributesSyncUTest
   use ESMF_TestMod     ! test methods
   use ESMF_UtilTypesMod     ! ESMF utility types
   use ESMF
-  use ESMF_AttributesMod
-  use ESMF_AttributesSyncMod
+  use ESMF_Info2Mod
+  use ESMF_InfoSyncMod
 
   implicit none
 
@@ -53,7 +53,7 @@ program ESMF_AttributesSyncUTest
   type(ESMF_Array) :: arr, arr2
   type(ESMF_ArrayBundle) :: ab
   type(ESMF_Pointer) :: eptr
-  type(ESMF_Attributes) :: attrsp, desired_attrs
+  type(ESMF_Info2) :: attrsp, desired_attrs
   type(ESMF_Field) :: field, field2, field3, field4
   type(ESMF_FieldBundle) :: fb
   type(ESMF_DistGrid) :: distgrid, distgrid1d
@@ -78,7 +78,7 @@ program ESMF_AttributesSyncUTest
 
   !----------------------------------------------------------------------------
   !NEX_UTest
-  write(name, *) "ESMF_AttributesReconcile"
+  write(name, *) "ESMF_Info2Reconcile"
   write(failMsg, *) "Did not reconcile successfully"
   rc = ESMF_FAILURE
 
@@ -129,42 +129,42 @@ program ESMF_AttributesSyncUTest
   !----------------------------------------------------------------------------
 
   if (localPet == rootPet) then
-    ! attrsp = ESMF_AttributesBaseGet(state%statep%base)
+    ! attrsp = ESMF_Info2BaseGet(state%statep%base)
     ! ainq = ainq%Create(createInfo=.false.)
     ! call ainq%Update(state, "")
     ! attrsp = ainq%GetCurrentInfo()
     attrsp = ainq%GetInfo(state)
-    call ESMF_AttributesSet(attrsp, "fvarname", "state")
+    call ESMF_Info2Set(attrsp, "fvarname", "state")
 
     attrsp = ainq%GetInfo(nested_state2)
-    ! attrsp = ESMF_AttributesBaseGet(nested_state2%statep%base)
-    call ESMF_AttributesSet(attrsp, "fvarname", "nested_state2")
+    ! attrsp = ESMF_Info2BaseGet(nested_state2%statep%base)
+    call ESMF_Info2Set(attrsp, "fvarname", "nested_state2")
 
-    ! attrsp = ESMF_AttributesBaseGet(field%ftypep%base)
+    ! attrsp = ESMF_Info2BaseGet(field%ftypep%base)
     attrsp = ainq%GetInfo(field)
-    call ESMF_AttributesSet(attrsp, "fvarname", "field")
+    call ESMF_Info2Set(attrsp, "fvarname", "field")
 
     attrsp = ainq%GetInfo(field2)
-    ! attrsp = ESMF_AttributesBaseGet(field2%ftypep%base)
-    call ESMF_AttributesSet(attrsp, "fvarname", "field2")
+    ! attrsp = ESMF_Info2BaseGet(field2%ftypep%base)
+    call ESMF_Info2Set(attrsp, "fvarname", "field2")
 
-    ! attrsp = ESMF_AttributesBaseGet(field3%ftypep%base)
+    ! attrsp = ESMF_Info2BaseGet(field3%ftypep%base)
     attrsp = ainq%GetInfo(field3)
-    call ESMF_AttributesSet(attrsp, "fvarname", "field3")
+    call ESMF_Info2Set(attrsp, "fvarname", "field3")
 
     ! call ESMF_ArrayGetThis(arr, eptr)
-    ! attrsp = ESMF_AttributesPointerGet(eptr)
+    ! attrsp = ESMF_Info2PointerGet(eptr)
     attrsp = ainq%GetInfo(arr)
-    call ESMF_AttributesSet(attrsp, "fvarname", "arr")
+    call ESMF_Info2Set(attrsp, "fvarname", "arr")
 
     ! call ESMF_ArrayBundleGetThis(ab, eptr)
-    ! attrsp = ESMF_AttributesPointerGet(eptr)
+    ! attrsp = ESMF_Info2PointerGet(eptr)
     attrsp = ainq%GetInfo(ab)
-    call ESMF_AttributesSet(attrsp, "fvarname", "ab")
+    call ESMF_Info2Set(attrsp, "fvarname", "ab")
 
     attrsp = ainq%GetInfo(locstream)
-    ! attrsp = ESMF_AttributesBaseGet(locstream%lstypep%base)
-    call ESMF_AttributesSet(attrsp, "fvarname", "locstream")
+    ! attrsp = ESMF_Info2BaseGet(locstream%lstypep%base)
+    call ESMF_Info2Set(attrsp, "fvarname", "locstream")
   end if
 
   if (localPet == 0) then
@@ -172,11 +172,11 @@ program ESMF_AttributesSyncUTest
     call desired_einq%Update(state, "")
     desired_attrs = desired_einq%info
   else
-    desired_attrs = ESMF_AttributesCreate()
+    desired_attrs = ESMF_Info2Create()
   end if
-  call ESMF_AttributesBroadcast(desired_attrs, 0)
+  call ESMF_Info2Broadcast(desired_attrs, 0)
 
-  call ESMF_AttributesStateSync(state, rootPet, rc=rc)
+  call ESMF_Info2StateSync(state, rootPet, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
   einq = einq%Create(addObjectInfo=.true., rc=rc)
@@ -191,7 +191,7 @@ program ESMF_AttributesSyncUTest
   if (localPet == 0) then
     call desired_einq%Destroy()
   else
-    call ESMF_AttributesDestroy(desired_attrs)
+    call ESMF_Info2Destroy(desired_attrs)
   end if
   call ESMF_StateDestroy(state)
   call ESMF_StateDestroy(nested_state)
@@ -214,4 +214,4 @@ program ESMF_AttributesSyncUTest
   call ESMF_TestEnd(ESMF_SRCLINE) ! calls ESMF_Finalize() internally
   !----------------------------------------------------------------------------
 
-end program ESMF_AttributesSyncUTest
+end program ESMF_Info2SyncUTest

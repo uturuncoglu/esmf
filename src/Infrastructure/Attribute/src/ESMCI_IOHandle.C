@@ -29,7 +29,7 @@
 #include <pio.h>
 
 #include "ESMC.h"
-#include "ESMCI_Attributes.h"
+#include "ESMCI_Info2.h"
 #include "ESMCI_IOHandle.h"
 #include "ESMCI_Macros.h"
 #include "ESMCI_Metadata.h"
@@ -147,7 +147,7 @@ void tdklog(const string& msg, PIO_Offset* l, std::size_t size) {
 //    rc = ESMF_SUCCESS;
 //    return ret;
 //  }
-//  catch (ESMCI::esmf_attrs_error) { throw; }
+//  catch (ESMCI::esmf_info_error) { throw; }
 //  catch (...) { ESMF_CHECKERR_STD("", ESMF_FAILURE, "Unhandled throw", rc); }
 //}
 
@@ -245,7 +245,7 @@ vector<PIO_Offset> createPIOCompmap(const Array& arr, int& rc) {
     rc = ESMF_SUCCESS;
     return compmap;
   }
-  catch (ESMCI::esmf_attrs_error) { throw; }
+  catch (ESMCI::esmf_info_error) { throw; }
   catch (...) { ESMF_CHECKERR_STD("", ESMF_FAILURE, "Unhandled throw", rc); }
 }
 
@@ -320,7 +320,7 @@ void readPIOAttributes(json& var_meta, int natts, int ncid, int varid, int &rc) 
   catch (json::type_error &e) {
     ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
   }
-  catch (ESMCI::esmf_attrs_error &e) {
+  catch (ESMCI::esmf_info_error &e) {
     ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU, rc);
   }
   catch (...) {
@@ -364,7 +364,7 @@ void writePIOAttributes(const json& attrs, int ncid, int varid, int& rc) {
   catch (json::type_error &e) {
     ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
   }
-  catch (ESMCI::esmf_attrs_error &e) {
+  catch (ESMCI::esmf_info_error &e) {
     ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU, rc);
   }
   catch (...) {
@@ -416,7 +416,7 @@ void IOHandle::close(int& rc) {
   catch (json::type_error &e) {
     ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
   }
-  catch (ESMCI::esmf_attrs_error &e) {
+  catch (ESMCI::esmf_info_error &e) {
     ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU, rc);
   }
   catch (...) {
@@ -506,7 +506,7 @@ void IOHandle::dodef(int& rc) {
   catch (json::type_error &e) {
     ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
   }
-  catch (ESMCI::esmf_attrs_error &e) {
+  catch (ESMCI::esmf_info_error &e) {
     ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU, rc);
   }
   catch (...) {
@@ -530,7 +530,7 @@ void IOHandle::enddef(int& rc) {
   catch (json::type_error &e) {
     ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
   }
-  catch (ESMCI::esmf_attrs_error &e) {
+  catch (ESMCI::esmf_info_error &e) {
     ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU, rc);
   }
   catch (...) {
@@ -575,7 +575,7 @@ void IOHandle::finalize(int& rc) {
   catch (json::type_error &e) {
     ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
   }
-  catch (ESMCI::esmf_attrs_error &e) {
+  catch (ESMCI::esmf_info_error &e) {
     ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU, rc);
   }
   catch (...) {
@@ -621,7 +621,7 @@ int IOHandle::init(int& rc) {
   catch (json::type_error &e) {
     ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
   }
-  catch (ESMCI::esmf_attrs_error &e) {
+  catch (ESMCI::esmf_info_error &e) {
     ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU, rc);
   }
   catch (...) {
@@ -681,7 +681,7 @@ void IOHandle::initPIODecomp(const Array& arr, int& rc) {
   catch (json::type_error &e) {
     ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
   }
-  catch (ESMCI::esmf_attrs_error &e) {
+  catch (ESMCI::esmf_info_error &e) {
     ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU, rc);
   }
   catch (...) {
@@ -712,10 +712,6 @@ void IOHandle::open(int& rc) {
 
     int iotype = (int)(this->PIOArgs.value(PIOARG::IOTYPE, PIODEF::IOTYPE));
     int mode = this->PIOArgs.value(PIOARG::MODE, PIODEF::MODE_WRITE);
-    tdklog("iohandle::open PIOArgs="+this->PIOArgs.dump());
-    tdklog("iohandle::open mode="+to_string(mode));
-    tdklog("iohandle::open NC_NOWRITE="+to_string(NC_NOWRITE));
-    tdklog("iohandle::open NC_WRITE="+to_string(NC_WRITE));
     auto it_ncid = this->PIOArgs.find(PIOARG::NCID);
     int ncid;
 
@@ -765,18 +761,7 @@ void IOHandle::open(int& rc) {
 
     rc = ESMF_SUCCESS;
   }
-  catch (json::out_of_range &e) {
-    ESMF_THROW_JSON(e, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);
-  }
-  catch (json::type_error &e) {
-    ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
-  }
-  catch (ESMCI::esmf_attrs_error &e) {
-    ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU, rc);
-  }
-  catch (...) {
-    ESMF_CHECKERR_STD("", ESMF_FAILURE, "Unhandled throw", rc);
-  }
+  ESMF_CATCH_INFO
 }
 
 #undef ESMC_METHOD
@@ -1032,7 +1017,7 @@ void IOHandle::readOrWrite(ESMC_RWMode rwmode, const Array& arr, int& rc) {
   catch (json::type_error &e) {
     ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
   }
-  catch (ESMCI::esmf_attrs_error& e) {
+  catch (ESMCI::esmf_info_error& e) {
     ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU, rc);
   }
   catch (...) {

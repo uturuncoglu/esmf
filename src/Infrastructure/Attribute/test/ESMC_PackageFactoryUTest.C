@@ -18,7 +18,7 @@
 
 #include "ESMC.h"
 #include "ESMC_Test.h"
-#include "ESMCI_Attributes.h"
+#include "ESMCI_Info2.h"
 #include "ESMCI_Macros.h"
 #include "ESMCI_LogErr.h"
 #include "ESMCI_Util.h"

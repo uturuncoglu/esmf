@@ -10,7 +10,7 @@
 !
 !==============================================================================
 
-#define FILENAME "src/Infrastructure/Attribute/test/ESMF_AttributesUTest.F90"
+#define FILENAME "src/Infrastructure/Attribute/test/ESMF_Info2UTest.F90"
 
 #include "ESMF_Macros.inc"
 #include "ESMF.h"
@@ -19,11 +19,11 @@
 !==============================================================================
 !==============================================================================
 
-program ESMF_AttributesUTest
+program ESMF_Info2UTest
 
   !============================================================================
   !BOP
-  ! !PROGRAM: ESMF_AttributesUTest - Test general Attributes usage
+  ! !PROGRAM: ESMF_Info2UTest - Test general Info2 usage
   !
   ! !DESCRIPTION:
   !
@@ -31,7 +31,7 @@ program ESMF_AttributesUTest
   ! !USES:
   use ESMF_TestMod     ! test methods
   use ESMF
-  use ESMF_AttributesMod
+  use ESMF_Info2Mod
 
   implicit none
 
@@ -66,7 +66,7 @@ program ESMF_AttributesUTest
   real(ESMF_KIND_R8) :: desired_r8, value_r8
   integer(ESMF_KIND_I4), dimension(3) :: arr_i4
   integer(ESMF_KIND_I4), dimension(:), allocatable :: arr_i4_get
-  type(ESMF_Attributes) :: attrs, attrs2, attrs3, attrs4, attrs5, attrs6, &
+  type(ESMF_Info2) :: attrs, attrs2, attrs3, attrs4, attrs5, attrs6, &
                            attrs7, attrs8, attrs9, attrs10, attrs_copy_src, &
                            attrs_copy_dst, attrs_w, attrs_r, attrs_logical, &
                            attrs_types, attrs_obj_dst, attrs_obj_src, &
@@ -91,67 +91,67 @@ program ESMF_AttributesUTest
 
   !----------------------------------------------------------------------------
   !NEX_UTest
-  write(name, *) "ESMF_AttributesCreate"
-  write(failMsg, *) "Did not create Attributes"
+  write(name, *) "ESMF_Info2Create"
+  write(failMsg, *) "Did not create Info2"
   rc = ESMF_FAILURE
 
-  attrs = ESMF_AttributesCreate(rc=rc)
+  attrs = ESMF_Info2Create(rc=rc)
 
   call ESMF_Test((rc == ESMF_SUCCESS), name, failMsg, result, ESMF_SRCLINE)
 
   !----------------------------------------------------------------------------
   !NEX_UTest
-  write(name, *) "ESMF_AttributesDestroy"
-  write(failMsg, *) "Did not destroy Attributes"
+  write(name, *) "ESMF_Info2Destroy"
+  write(failMsg, *) "Did not destroy Info2"
   rc = ESMF_FAILURE;
 
-  call ESMF_AttributesDestroy(attrs, rc=rc)
+  call ESMF_Info2Destroy(attrs, rc=rc)
 
   call ESMF_Test((rc == ESMF_SUCCESS), name, failMsg, result, ESMF_SRCLINE)
   !----------------------------------------------------------------------------
 
   !----------------------------------------------------------------------------
   !NEX_UTest
-  write(name, *) "ESMF_AttributesSet"
+  write(name, *) "ESMF_Info2Set"
   write(failMsg, *) "Did not set key"
   rc = ESMF_FAILURE
 
-  attrs2 = ESMF_AttributesCreate(rc)
+  attrs2 = ESMF_Info2Create(rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
   key = "testKey"
   actual = 333
-  call ESMF_AttributesSet(attrs2, key, actual, rc=rc)
+  call ESMF_Info2Set(attrs2, key, actual, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
   key_i8 = "testKeyI8"
   desired_i8 = 92233720
-  call ESMF_AttributesSet(attrs2, key_i8, desired_i8, rc=rc)
+  call ESMF_Info2Set(attrs2, key_i8, desired_i8, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
   key_r4 = "testKeyR4"
   desired_r4 = 333.0 + (1.0/3.0)
-  call ESMF_AttributesSet(attrs2, key_r4, desired_r4, rc=rc)
+  call ESMF_Info2Set(attrs2, key_r4, desired_r4, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
   key_r8 = "testKeyR8"
   desired_r8 = 1.797693e-10
-  call ESMF_AttributesSet(attrs2, key_r8, desired_r8, rc=rc)
+  call ESMF_Info2Set(attrs2, key_r8, desired_r8, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
   key_char = "testKeyChar"
   desired_char = "i am char"
-  call ESMF_AttributesSet(attrs2, key_char, desired_char, rc=rc)
+  call ESMF_Info2Set(attrs2, key_char, desired_char, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
   call ESMF_Test((rc == ESMF_SUCCESS), name, failMsg, result, ESMF_SRCLINE)
 
   !----------------------------------------------------------------------------
   !NEX_UTest
-  write(name, *) "ESMF_AttributesGetI4"
+  write(name, *) "ESMF_Info2GetI4"
   write(failMsg, *) "Did not get key"
 
-  call ESMF_AttributesGet(attrs2, key, value, rc=rc)
+  call ESMF_Info2Get(attrs2, key, value, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
   call ESMF_Test((value == actual), name, failMsg, result, ESMF_SRCLINE)
@@ -159,10 +159,10 @@ program ESMF_AttributesUTest
 
   !----------------------------------------------------------------------------
   !NEX_UTest
-  write(name, *) "ESMF_AttributesGetI8"
+  write(name, *) "ESMF_Info2GetI8"
   write(failMsg, *) "Did not get key"
 
-  call ESMF_AttributesGet(attrs2, key_i8, value_i8, rc=rc)
+  call ESMF_Info2Get(attrs2, key_i8, value_i8, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
   call ESMF_Test((value_i8 == desired_i8), name, failMsg, result, ESMF_SRCLINE)
@@ -170,10 +170,10 @@ program ESMF_AttributesUTest
 
   !----------------------------------------------------------------------------
   !NEX_UTest
-  write(name, *) "ESMF_AttributesGetR4"
+  write(name, *) "ESMF_Info2GetR4"
   write(failMsg, *) "Did not get key"
 
-  call ESMF_AttributesGet(attrs2, key_r4, value_r4, rc=rc)
+  call ESMF_Info2Get(attrs2, key_r4, value_r4, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
   call ESMF_Test((ABS(value_r4 - desired_r4) < 1e-16), name, failMsg, result, ESMF_SRCLINE)
@@ -181,22 +181,22 @@ program ESMF_AttributesUTest
 
   !----------------------------------------------------------------------------
   !NEX_UTest
-  write(name, *) "ESMF_AttributesGetR8"
+  write(name, *) "ESMF_Info2GetR8"
   write(failMsg, *) "Did not get key"
 
-  call ESMF_AttributesGet(attrs2, key_r8, value_r8, rc=rc)
+  call ESMF_Info2Get(attrs2, key_r8, value_r8, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
   call ESMF_Test((ABS(value_r8 - desired_r8) < 1e-16), name, failMsg, result, ESMF_SRCLINE)
 
   !----------------------------------------------------------------------------
   !NEX_UTest
-  write(name, *) "ESMF_AttributesGetCH with Default"
+  write(name, *) "ESMF_Info2GetCH with Default"
   write(failMsg, *) "Did not get default key"
 
   def_desired_char = "this is default!"
   def_key_char = "does not exist in attrs"
-  call ESMF_AttributesGet(attrs2, def_key_char, def_value_char, default=def_desired_char, &
+  call ESMF_Info2Get(attrs2, def_key_char, def_value_char, default=def_desired_char, &
     rc=rc)
 
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
@@ -205,15 +205,15 @@ program ESMF_AttributesUTest
 
   !----------------------------------------------------------------------------
   !NEX_UTest
-  write(name, *) "ESMF_AttributesSet/Get Empty Character"
+  write(name, *) "ESMF_Info2Set/Get Empty Character"
   write(failMsg, *) "Did not set/get empty string key"
 
   key_empty_char = "so empty inside"
   desired_empty_char = ""
-  call ESMF_AttributesSet(attrs2, key_empty_char, desired_empty_char, rc=rc)
+  call ESMF_Info2Set(attrs2, key_empty_char, desired_empty_char, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-  call ESMF_AttributesGet(attrs2, key_empty_char, empty_value_char, rc=rc)
+  call ESMF_Info2Get(attrs2, key_empty_char, empty_value_char, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
   call ESMF_Test((desired_empty_char==empty_value_char), name, failMsg, result, ESMF_SRCLINE)
@@ -221,40 +221,40 @@ program ESMF_AttributesUTest
 
   !----------------------------------------------------------------------------
   !NEX_UTest
-  write(name, *) "ESMF_AttributesGetCH"
+  write(name, *) "ESMF_Info2GetCH"
   write(failMsg, *) "Did not get key"
 
-  call ESMF_AttributesGet(attrs2, key_char, value_char, rc=rc)
+  call ESMF_Info2Get(attrs2, key_char, value_char, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
   call ESMF_Test((desired_char==value_char), name, failMsg, result, ESMF_SRCLINE)
 
-  call ESMF_AttributesDestroy(attrs2, rc=rc)
+  call ESMF_Info2Destroy(attrs2, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
   !----------------------------------------------------------------------------
 
   !----------------------------------------------------------------------------
   !NEX_UTest
   ! Test we can overload the value if force is true
-  write(name, *) "ESMF_AttributesSet Force Flag"
+  write(name, *) "ESMF_Info2Set Force Flag"
   write(failMsg, *) "Could not overload value"
   rc = ESMF_FAILURE
 
-  attrs3 = ESMF_AttributesCreate(rc=rc)
+  attrs3 = ESMF_Info2Create(rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
   key = "testKey"
   actual = 333
 
-  call ESMF_AttributesSet(attrs3, "foobar", 123, force=.true., rc=rc)
+  call ESMF_Info2Set(attrs3, "foobar", 123, force=.true., rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-  call ESMF_AttributesSet(attrs3, "foobar", 123, force=.true., rc=rc)
+  call ESMF_Info2Set(attrs3, "foobar", 123, force=.true., rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
   call ESMF_Test((rc == ESMF_SUCCESS), name, failMsg, result, ESMF_SRCLINE)
 
-  call ESMF_AttributesDestroy(attrs3, rc)
+  call ESMF_Info2Destroy(attrs3, rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
   !----------------------------------------------------------------------------
 
@@ -262,17 +262,17 @@ program ESMF_AttributesUTest
   !NEX_UTest
   ! Test creating and destroying a bunch of attributes
   rc = ESMF_FAILURE
-  write(name, *) "ESMF_Attributes Create+Destroy Loop"
+  write(name, *) "ESMF_Info2 Create+Destroy Loop"
   write(failMsg, *) "Failure during loop test"
 
   do i=1, 100000
-    attrs4 = ESMF_AttributesCreate(rc)
+    attrs4 = ESMF_Info2Create(rc)
     if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-    call ESMF_AttributesSet(attrs4, "foobar", 123, rc=rc)
+    call ESMF_Info2Set(attrs4, "foobar", 123, rc=rc)
     if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-    call ESMF_AttributesDestroy(attrs4, rc)
+    call ESMF_Info2Destroy(attrs4, rc)
     if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
   end do
 
@@ -282,164 +282,164 @@ program ESMF_AttributesUTest
   !----------------------------------------------------------------------------
   !NEX_UTest
   ! Test get with a default value
-  write(name, *) "ESMF_AttributesGet with Default Value"
+  write(name, *) "ESMF_Info2Get with Default Value"
   write(failMsg, *) "Did not get default value"
   rc = ESMF_FAILURE
 
-  attrs5 = ESMF_AttributesCreate(rc)
+  attrs5 = ESMF_Info2Create(rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-  call ESMF_AttributesGet(attrs5, "doesNotExist", actual2, rc=rc, default=5897)
+  call ESMF_Info2Get(attrs5, "doesNotExist", actual2, rc=rc, default=5897)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
   call ESMF_Test((actual2 == 5897), name, failMsg, result, ESMF_SRCLINE)
 
-  call ESMF_AttributesDestroy(attrs5, rc)
+  call ESMF_Info2Destroy(attrs5, rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
   !----------------------------------------------------------------------------
 
   !----------------------------------------------------------------------------
   !NEX_UTest
-  write(name, *) "ESMF_AttributesPrint"
+  write(name, *) "ESMF_Info2Print"
   write(failMsg, *) "Print somehow not successful"
 
   rc = ESMF_FAILURE
 
-  attrs6 = ESMF_AttributesCreate(rc=rc)
+  attrs6 = ESMF_Info2Create(rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-  call ESMF_AttributesSet(attrs6, "/i/am/nested", 111, rc=rc)
+  call ESMF_Info2Set(attrs6, "/i/am/nested", 111, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-  call ESMF_AttributesSet(attrs6, "top-level", 222, rc=rc)
-  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
-
-  print *, ""
-  print *, "===== ESMF_AttributesPrint Test Start ====="
-  print *, ""
-
-  call ESMF_AttributesPrint(attrs6, rc=rc)
-  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
-
-  call ESMF_AttributesPrint(attrs6, indent=1, rc=rc)
+  call ESMF_Info2Set(attrs6, "top-level", 222, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
   print *, ""
-  print *, "===== ESMF_AttributesPrint Test End ====="
+  print *, "===== ESMF_Info2Print Test Start ====="
+  print *, ""
+
+  call ESMF_Info2Print(attrs6, rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  call ESMF_Info2Print(attrs6, indent=1, rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  print *, ""
+  print *, "===== ESMF_Info2Print Test End ====="
   print *, ""
 
   call ESMF_Test((rc == ESMF_SUCCESS), name, failMsg, result, ESMF_SRCLINE)
 
-  call ESMF_AttributesDestroy(attrs6, rc)
+  call ESMF_Info2Destroy(attrs6, rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
   !----------------------------------------------------------------------------
 
   !----------------------------------------------------------------------------
   !NEX_UTest
-  write(name, *) "ESMF_AttributesRemove Child From Parent"
+  write(name, *) "ESMF_Info2Remove Child From Parent"
   write(failMsg, *) "Child not erased from parent"
 
   rc = ESMF_FAILURE
 
-  attrs7 = ESMF_AttributesCreate(rc)
+  attrs7 = ESMF_Info2Create(rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-  call ESMF_AttributesSet(attrs7, "this/is/erase/test", 111, rc=rc)
+  call ESMF_Info2Set(attrs7, "this/is/erase/test", 111, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-  call ESMF_AttributesRemove(attrs7, "this/is/erase", keyChild="test", rc=rc)
+  call ESMF_Info2Remove(attrs7, "this/is/erase", keyChild="test", rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-  call ESMF_AttributesGet(attrs7, "/this/is/erase/test", actual3, &
+  call ESMF_Info2Get(attrs7, "/this/is/erase/test", actual3, &
                           default=-999, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
   call ESMF_Test((actual3 == -999), name, failMsg, result, ESMF_SRCLINE)
 
-!  call ESMF_AttributesPrint(attrs7, rc=rc)
+!  call ESMF_Info2Print(attrs7, rc=rc)
 !  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
   !----------------------------------------------------------------------------
   !NEX_UTest
-  write(name, *) "ESMF_AttributesRemove Root"
+  write(name, *) "ESMF_Info2Remove Root"
   write(failMsg, *) "Did not erase from root"
 
-  call ESMF_AttributesRemove(attrs7, "this", rc=rc)
+  call ESMF_Info2Remove(attrs7, "this", rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-!  call ESMF_AttributesPrint(attrs7, rc=rc)
+!  call ESMF_Info2Print(attrs7, rc=rc)
 !  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-  call ESMF_AttributesGet(attrs7, "this", actual3, default=-888, rc=rc)
+  call ESMF_Info2Get(attrs7, "this", actual3, default=-888, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
   call ESMF_Test((actual3 == -888), name, failMsg, result, ESMF_SRCLINE)
 
-  call ESMF_AttributesDestroy(attrs7, rc=rc)
+  call ESMF_Info2Destroy(attrs7, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
   !----------------------------------------------------------------------------
 
   !----------------------------------------------------------------------------
   !NEX_UTest
-  write(name, *) "ESMF_AttributesIsPresent False"
+  write(name, *) "ESMF_Info2IsPresent False"
   write(failMsg, *) "Attribute key should not be present"
 
-  attrs8 = ESMF_AttributesCreate(rc=rc)
+  attrs8 = ESMF_Info2Create(rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-  is_present = ESMF_AttributesIsPresent(attrs8, "this", rc=rc)
+  is_present = ESMF_Info2IsPresent(attrs8, "this", rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
   call ESMF_Test((.not. is_present), name, failMsg, result, ESMF_SRCLINE)
 
-  call ESMF_AttributesDestroy(attrs8, rc=rc)
+  call ESMF_Info2Destroy(attrs8, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
   !----------------------------------------------------------------------------
 
   !----------------------------------------------------------------------------
   !NEX_UTest
-  write(name, *) "ESMF_AttributesIsPresent True"
+  write(name, *) "ESMF_Info2IsPresent True"
   write(failMsg, *) "Attribute key is actually present"
 
-  attrs8 = ESMF_AttributesCreate(rc=rc)
+  attrs8 = ESMF_Info2Create(rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-  call ESMF_AttributesSet(attrs8, "this", 11, rc=rc)
+  call ESMF_Info2Set(attrs8, "this", 11, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-  is_present = ESMF_AttributesIsPresent(attrs8, "this", rc=rc)
+  is_present = ESMF_Info2IsPresent(attrs8, "this", rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
   call ESMF_Test((is_present), name, failMsg, result, ESMF_SRCLINE)
 
-  call ESMF_AttributesDestroy(attrs8, rc=rc)
+  call ESMF_Info2Destroy(attrs8, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
   !----------------------------------------------------------------------------
 
   !----------------------------------------------------------------------------
   !NEX_UTest
-  write(name, *) "ESMF_AttributesIsPresent True w/ Pointer"
+  write(name, *) "ESMF_Info2IsPresent True w/ Pointer"
   write(failMsg, *) "Attribute key is present using pointer syntax"
 
-  attrs8 = ESMF_AttributesCreate(rc=rc)
+  attrs8 = ESMF_Info2Create(rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-  call ESMF_AttributesSet(attrs8, "/this/is/nested", 11, rc=rc)
+  call ESMF_Info2Set(attrs8, "/this/is/nested", 11, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-  is_present = ESMF_AttributesIsPresent(attrs8, "/this/is/nested", &
+  is_present = ESMF_Info2IsPresent(attrs8, "/this/is/nested", &
     isPointer=.true., rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
   call ESMF_Test((is_present), name, failMsg, result, ESMF_SRCLINE)
 
-  call ESMF_AttributesDestroy(attrs8, rc=rc)
+  call ESMF_Info2Destroy(attrs8, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
   !----------------------------------------------------------------------------
 
   !----------------------------------------------------------------------------
   !NEX_UTest
-  write(name, *) "ESMF_Attributes Array Setting/Getting"
+  write(name, *) "ESMF_Info2 Array Setting/Getting"
   write(failMsg, *) "Array operations failed"
   failed = .false.
 
@@ -447,13 +447,13 @@ program ESMF_AttributesUTest
   arr_i4(2) = 456
   arr_i4(3) = 789
 
-  attrs9 = ESMF_AttributesCreate(rc=rc)
+  attrs9 = ESMF_Info2Create(rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-  call ESMF_AttributesSet(attrs9, "the-key", arr_i4, rc=rc)
+  call ESMF_Info2Set(attrs9, "the-key", arr_i4, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-  call ESMF_AttributesGet(attrs9, "the-key", arr_i4_get, arr_i4_get_count, rc=rc)
+  call ESMF_Info2Get(attrs9, "the-key", arr_i4_get, arr_i4_get_count, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
   do i=1, 3
@@ -466,42 +466,42 @@ program ESMF_AttributesUTest
 
   call ESMF_Test((.not. failed), name, failMsg, result, ESMF_SRCLINE)
 
-  call ESMF_AttributesDestroy(attrs9, rc=rc)
+  call ESMF_Info2Destroy(attrs9, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
   !----------------------------------------------------------------------------
 
   !----------------------------------------------------------------------------
   !NEX_UTest
-  write(name, *) "ESMF_AttributesSetNULL and ESMF_AttributesIsSet"
+  write(name, *) "ESMF_Info2SetNULL and ESMF_Info2IsSet"
   write(failMsg, *) "Did not return ESMF_SUCCESS"
   failed = .false.
 
-  attrs10 = ESMF_AttributesCreate(rc=rc)
+  attrs10 = ESMF_Info2Create(rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-  call ESMF_AttributesSetNULL(attrs10, "is-the-null", rc=rc)
+  call ESMF_Info2SetNULL(attrs10, "is-the-null", rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-  is_set = ESMF_AttributesIsSet(attrs10, "is-the-null", rc=rc)
+  is_set = ESMF_Info2IsSet(attrs10, "is-the-null", rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
   if (is_set) then
     failed = .true.
   end if
 
-  call ESMF_AttributesSet(attrs10, "is-the-null", 5, rc=rc)
+  call ESMF_Info2Set(attrs10, "is-the-null", 5, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-  is_set = ESMF_AttributesIsSet(attrs10, "is-the-null", rc=rc)
+  is_set = ESMF_Info2IsSet(attrs10, "is-the-null", rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
   if (.not. is_set) then
     failed = .true.
   end if
 
-!  call ESMF_AttributesPrint(attrs10, rc=rc) !tdk:p
+!  call ESMF_Info2Print(attrs10, rc=rc) !tdk:p
 
-  call ESMF_AttributesDestroy(attrs10, rc=rc)
+  call ESMF_Info2Destroy(attrs10, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
   call ESMF_Test((.not. failed), name, failMsg, result, ESMF_SRCLINE)
@@ -509,24 +509,24 @@ program ESMF_AttributesUTest
 
   !----------------------------------------------------------------------------
   !NEX_UTest
-  write(name, *) "ESMF_AttributesCopy"
-  write(failMsg, *) "Did not copy Attributes"
+  write(name, *) "ESMF_Info2Copy"
+  write(failMsg, *) "Did not copy Info2"
   rc = ESMF_FAILURE
 
-  attrs_copy_src = ESMF_AttributesCreate(rc=rc)
+  attrs_copy_src = ESMF_Info2Create(rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-  attrs_copy_dst = ESMF_AttributesCopy(attrs_copy_src, rc=rc)
+  attrs_copy_dst = ESMF_Info2Copy(attrs_copy_src, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-  call ESMF_AttributesSet(attrs_copy_dst, "a-key", 22, rc=rc)
+  call ESMF_Info2Set(attrs_copy_dst, "a-key", 22, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-  is_present_copy_test = ESMF_AttributesIsPresent(attrs_copy_src, "a-key", rc=rc)
+  is_present_copy_test = ESMF_Info2IsPresent(attrs_copy_src, "a-key", rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-  call ESMF_AttributesDestroy(attrs_copy_src, rc=rc)
-  call ESMF_AttributesDestroy(attrs_copy_dst, rc=rc)
+  call ESMF_Info2Destroy(attrs_copy_src, rc=rc)
+  call ESMF_Info2Destroy(attrs_copy_dst, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
   call ESMF_Test((is_present_copy_test .eqv. .false.), name, failMsg, result, ESMF_SRCLINE)
@@ -534,28 +534,28 @@ program ESMF_AttributesUTest
 
   !----------------------------------------------------------------------------
   !NEX_UTest
-  write(name, *) "ESMF_AttributesWrite & ESMF_AttributesRead"
-  write(failMsg, *) "Did not read/write Attributes"
+  write(name, *) "ESMF_Info2Write & ESMF_Info2Read"
+  write(failMsg, *) "Did not read/write Info2"
   rc = ESMF_FAILURE
 
-  attrs_w = ESMF_AttributesCreate(rc=rc)
+  attrs_w = ESMF_Info2Create(rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
   desired_rw_val = 22.3
-  call ESMF_AttributesSet(attrs_w, "a-key", desired_rw_val, rc=rc)
+  call ESMF_Info2Set(attrs_w, "a-key", desired_rw_val, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-  call ESMF_AttributesWriteJSON(attrs_w, "test-esmf-attrs-write.json", rc=rc)
+  call ESMF_Info2WriteJSON(attrs_w, "test-esmf-attrs-write.json", rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-  attrs_r = ESMF_AttributesReadJSON("test-esmf-attrs-write.json", rc=rc)
+  attrs_r = ESMF_Info2ReadJSON("test-esmf-attrs-write.json", rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-  call ESMF_AttributesGet(attrs_r, "a-key", actual_rw_val, rc=rc)
+  call ESMF_Info2Get(attrs_r, "a-key", actual_rw_val, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-  call ESMF_AttributesDestroy(attrs_w, rc=rc)
-  call ESMF_AttributesDestroy(attrs_r, rc=rc)
+  call ESMF_Info2Destroy(attrs_w, rc=rc)
+  call ESMF_Info2Destroy(attrs_r, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
   call ESMF_Test((ABS(actual_rw_val-desired_rw_val) < 1e-16), name, failMsg, result, ESMF_SRCLINE)
@@ -563,24 +563,24 @@ program ESMF_AttributesUTest
 
   !----------------------------------------------------------------------------
   !NEX_UTest
-  write(name, *) "ESMF_Attributes Logical Scalar"
+  write(name, *) "ESMF_Info2 Logical Scalar"
   write(failMsg, *) "Did not set/get logical type"
   rc = ESMF_FAILURE
 
-  attrs_logical = ESMF_AttributesCreate(rc=rc)
+  attrs_logical = ESMF_Info2Create(rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
   desired_logical = .false.
-  call ESMF_AttributesSet(attrs_logical, "logical-key", desired_logical, rc=rc)
+  call ESMF_Info2Set(attrs_logical, "logical-key", desired_logical, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-!  call ESMF_AttributesPrint(attrs_logical, 2)
+!  call ESMF_Info2Print(attrs_logical, 2)
 
   actual_logical = .true.  ! Set to true to make sure it is updated in the call
-  call ESMF_AttributesGet(attrs_logical, "logical-key", actual_logical, rc=rc)
+  call ESMF_Info2Get(attrs_logical, "logical-key", actual_logical, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-  call ESMF_AttributesDestroy(attrs_logical, rc=rc)
+  call ESMF_Info2Destroy(attrs_logical, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
   call ESMF_Test((actual_logical .eqv. .false.), name, failMsg, result, ESMF_SRCLINE)
@@ -588,130 +588,130 @@ program ESMF_AttributesUTest
 
   !----------------------------------------------------------------------------
   !NEX_UTest
-  write(name, *) "ESMF_Attributes Test Type Checking"
+  write(name, *) "ESMF_Info2 Test Type Checking"
   write(failMsg, *) "Did not catch type error"
   rc = ESMF_FAILURE
 
-  attrs_types = ESMF_AttributesCreate(rc=rc)
+  attrs_types = ESMF_Info2Create(rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-  call ESMF_AttributesSet(attrs_types, "key", 111, rc=rc)
+  call ESMF_Info2Set(attrs_types, "key", 111, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-!  call ESMF_AttributesPrint(attrs_types, 2)
+!  call ESMF_Info2Print(attrs_types, 2)
 
-  call ESMF_AttributesSet(attrs_types, "key", 111.0, rc=rc)
+  call ESMF_Info2Set(attrs_types, "key", 111.0, rc=rc)
   call ESMF_Test((rc==ESMC_RC_ARG_BAD), name, failMsg, result, ESMF_SRCLINE)
 
-  call ESMF_AttributesDestroy(attrs_types, rc=rc)
+  call ESMF_Info2Destroy(attrs_types, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
   !----------------------------------------------------------------------------
 
   !----------------------------------------------------------------------------
   !NEX_UTest
-  write(name, *) "ESMF_Attributes Set/Get Object"
-  write(failMsg, *) "Did not set/get Attributes object"
+  write(name, *) "ESMF_Info2 Set/Get Object"
+  write(failMsg, *) "Did not set/get Info2 object"
   rc = ESMF_FAILURE
   failed = .false.
 
-  attrs_obj_dst = ESMF_AttributesCreate(rc=rc)
+  attrs_obj_dst = ESMF_Info2Create(rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
-  attrs_obj_src = ESMF_AttributesCreate(rc=rc)
-  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
-
-  call ESMF_AttributesSet(attrs_obj_src, "src-key", 11167, rc=rc)
+  attrs_obj_src = ESMF_Info2Create(rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-  call ESMF_AttributesSet(attrs_obj_dst, "dst-key", attrs_obj_src, rc=rc)
+  call ESMF_Info2Set(attrs_obj_src, "src-key", 11167, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-  attrs_obj_new = ESMF_AttributesCreate(attrs_obj_dst, "dst-key", rc=rc)
+  call ESMF_Info2Set(attrs_obj_dst, "dst-key", attrs_obj_src, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-!  call ESMF_AttributesPrint(attrs_obj_dst, 2)
-!  call ESMF_AttributesPrint(attrs_obj_new, 2)
-
-  fails_obj(1) = ESMF_AttributesIsPresent(attrs_obj_new, "dst-key", rc=rc)
+  attrs_obj_new = ESMF_Info2Create(attrs_obj_dst, "dst-key", rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-  call ESMF_AttributesSet(attrs_obj_src, "another-key", 44, rc=rc)
+!  call ESMF_Info2Print(attrs_obj_dst, 2)
+!  call ESMF_Info2Print(attrs_obj_new, 2)
+
+  fails_obj(1) = ESMF_Info2IsPresent(attrs_obj_new, "dst-key", rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-  fails_obj(2) = ESMF_AttributesIsPresent(attrs_obj_new, "another-key", rc=rc)
+  call ESMF_Info2Set(attrs_obj_src, "another-key", 44, rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  fails_obj(2) = ESMF_Info2IsPresent(attrs_obj_new, "another-key", rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
   call ESMF_Test((.not. any(fails_obj)), name, failMsg, result, ESMF_SRCLINE)
 
-!  call ESMF_AttributesPrint(attrs_obj_dst, 2)
-!  call ESMF_AttributesPrint(attrs_obj_new, 2)
+!  call ESMF_Info2Print(attrs_obj_dst, 2)
+!  call ESMF_Info2Print(attrs_obj_new, 2)
 !  print *, fails_obj
 
-  call ESMF_AttributesDestroy(attrs_obj_dst, rc=rc)
-  call ESMF_AttributesDestroy(attrs_obj_src, rc=rc)
+  call ESMF_Info2Destroy(attrs_obj_dst, rc=rc)
+  call ESMF_Info2Destroy(attrs_obj_src, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
   !----------------------------------------------------------------------------
 
   !----------------------------------------------------------------------------
   !NEX_UTest
-  write(name, *) "ESMF_Attributes Create By Parse"
-  write(failMsg, *) "Did not create Attributes by parse"
+  write(name, *) "ESMF_Info2 Create By Parse"
+  write(failMsg, *) "Did not create Info2 by parse"
   rc = ESMF_FAILURE
   failed = .false.
 
   to_parse = '{"hello": "fortran parser", "multiple-types": 55}'
 
-  attrs_parse = ESMF_AttributesCreate(to_parse, rc=rc)
+  attrs_parse = ESMF_Info2Create(to_parse, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-  call ESMF_AttributesGet(attrs_parse, "multiple-types", actual4, rc=rc)
+  call ESMF_Info2Get(attrs_parse, "multiple-types", actual4, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
   call ESMF_Test((actual4==55), name, failMsg, result, ESMF_SRCLINE)
 
-  call ESMF_AttributesDestroy(attrs_parse, rc=rc)
+  call ESMF_Info2Destroy(attrs_parse, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
   !----------------------------------------------------------------------------
 
   !----------------------------------------------------------------------------
   !NEX_UTest
-  write(name, *) "ESMF_AttributesUpdate"
+  write(name, *) "ESMF_Info2Update"
   write(failMsg, *) "Did not update"
   rc = ESMF_FAILURE
   failed = .false.
 
   to_parse = '{"please": "update-me"}'
-  attrs_update_lhs = ESMF_AttributesCreate(to_parse, rc=rc)
+  attrs_update_lhs = ESMF_Info2Create(to_parse, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
   to_parse = '{"i-am-new": 111}'
-  attrs_update_rhs = ESMF_AttributesCreate(to_parse, rc=rc)
+  attrs_update_rhs = ESMF_Info2Create(to_parse, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-  call ESMF_AttributesUpdate(attrs_update_lhs, attrs_update_rhs, rc=rc)
+  call ESMF_Info2Update(attrs_update_lhs, attrs_update_rhs, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-  call ESMF_AttributesGet(attrs_update_lhs, "i-am-new", actual, rc=rc)
+  call ESMF_Info2Get(attrs_update_lhs, "i-am-new", actual, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
   call ESMF_Test((actual==111), name, failMsg, result, ESMF_SRCLINE)
 
-  call ESMF_AttributesDestroy(attrs_update_lhs, rc=rc)
-  call ESMF_AttributesDestroy(attrs_update_rhs, rc=rc)
+  call ESMF_Info2Destroy(attrs_update_lhs, rc=rc)
+  call ESMF_Info2Destroy(attrs_update_rhs, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
   !----------------------------------------------------------------------------
 
   !----------------------------------------------------------------------------
   !NEX_UTest
-  write(name, *) "ESMF_AttributesInquire"
+  write(name, *) "ESMF_Info2Inquire"
   write(failMsg, *) "Did not inquire right"
   rc = ESMF_FAILURE
   failed = .false.
 
   to_parse = '{"ask": "questions please", "number": 1}'
-  attrs_inq = ESMF_AttributesCreate(to_parse, rc=rc)
+  attrs_inq = ESMF_Info2Create(to_parse, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-  call ESMF_AttributesInquire(attrs_inq, count=count, isArray=isArray, &
+  call ESMF_Info2Inquire(attrs_inq, count=count, isArray=isArray, &
     isDirty=isDirty, jsonType=jsonType, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
@@ -720,47 +720,47 @@ program ESMF_AttributesUTest
                  (isArray .eqv. .false.) .and. &
                  (isDirty .eqv. .false.)), name, failMsg, result, ESMF_SRCLINE)
 
-  call ESMF_AttributesDestroy(attrs_inq, rc=rc)
+  call ESMF_Info2Destroy(attrs_inq, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
   !----------------------------------------------------------------------------
 
   !----------------------------------------------------------------------------
   !NEX_UTest
-  write(name, *) "ESMF_AttributesEqual/NotEqual Operator"
+  write(name, *) "ESMF_Info2Equal/NotEqual Operator"
   write(failMsg, *) "Did not evaluate equality"
   rc = ESMF_FAILURE
   failed = .false.
 
   to_parse = '{"ask": "questions please", "number": 1}'
-  attrs_eq_lhs = ESMF_AttributesCreate(to_parse, rc=rc)
-  attrs_eq_rhs = ESMF_AttributesCreate(to_parse, rc=rc)
+  attrs_eq_lhs = ESMF_Info2Create(to_parse, rc=rc)
+  attrs_eq_rhs = ESMF_Info2Create(to_parse, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
   call ESMF_Test(((attrs_eq_lhs==attrs_eq_rhs) .and. &
     (.not. attrs_eq_lhs/=attrs_eq_rhs)), name, failMsg, result, ESMF_SRCLINE)
 
-  call ESMF_AttributesDestroy(attrs_eq_lhs, rc=rc)
-  call ESMF_AttributesDestroy(attrs_eq_rhs, rc=rc)
+  call ESMF_Info2Destroy(attrs_eq_lhs, rc=rc)
+  call ESMF_Info2Destroy(attrs_eq_rhs, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
   !----------------------------------------------------------------------------
   
   !----------------------------------------------------------------------------
   !NEX_UTest
-  write(name, *) "ESMF_AttributesGet Recursive"
+  write(name, *) "ESMF_Info2Get Recursive"
   write(failMsg, *) "Did not get recursive"
   rc = ESMF_FAILURE
   failed = .false.
 
   to_parse = '{"ask": "questions please", "number": 1, "nest": {"a": 5}}'
-  irecurse = ESMF_AttributesCreate(to_parse, rc=rc)
+  irecurse = ESMF_Info2Create(to_parse, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
   
-  call ESMF_AttributesGet(irecurse, "a", ir4, attnestflag=ESMF_ATTNEST_ON, rc=rc)
+  call ESMF_Info2Get(irecurse, "a", ir4, attnestflag=ESMF_ATTNEST_ON, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
   call ESMF_Test(ir4==5, name, failMsg, result, ESMF_SRCLINE)
 
-  call ESMF_AttributesDestroy(irecurse, rc=rc)
+  call ESMF_Info2Destroy(irecurse, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
   !----------------------------------------------------------------------------
 
@@ -768,4 +768,4 @@ program ESMF_AttributesUTest
   call ESMF_TestEnd(ESMF_SRCLINE) ! calls ESMF_Finalize() internally
   !----------------------------------------------------------------------------
 
-end program ESMF_AttributesUTest
+end program ESMF_Info2UTest

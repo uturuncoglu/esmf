@@ -103,10 +103,10 @@ static const char *const version = "$Id$";
 }  // end ESMC_Base
 
 #undef ESMC_METHOD
-#define ESMC_METHOD "ESMC_Base::constructAttrs()"
-void ESMC_Base::constructAttrs(ESMC_Base& base) { // root_attrs_tdk
-  base.attrs = new ESMCI::Attributes();
-  base.attrsalias = false;
+#define ESMC_METHOD "ESMC_Base::constructInfo()"
+void ESMC_Base::constructInfo(ESMC_Base& base) { // root_info_tdk
+  base.info = new ESMCI::Info2();
+  base.infoalias = false;
 }
 
 //-----------------------------------------------------------------------------
@@ -689,13 +689,13 @@ void ESMC_Base::constructAttrs(ESMC_Base& base) { // root_attrs_tdk
     root = new ESMCI::Attribute(ESMF_TRUE);
     root->setBase(this);
     rootalias = false;
-    constructAttrs(*this); //root_attrs_tdk
+    constructInfo(*this); //root_info_tdk
 
     // Deserialize the Attribute hierarchy
     if (attreconflag == ESMC_ATTRECONCILE_ON) {
-      attrs->deserialize(buffer, offset, localrc); //root_attrs_tdk
+      info->deserialize(buffer, offset, localrc); //root_info_tdk
       if (ESMC_LogDefault.MsgFoundError(localrc, ESMCI_ERR_PASSTHRU,
-            ESMC_CONTEXT, &localrc)) return localrc; //root_attrs_tdk
+            ESMC_CONTEXT, &localrc)) return localrc; //root_info_tdk
       if (*offset%8 != 0)
         *offset += 8 - *offset%8;
       localrc = root->ESMC_Deserialize(buffer,offset);
@@ -1003,9 +1003,9 @@ void ESMC_Base::constructAttrs(ESMC_Base& base) { // root_attrs_tdk
 
     // Serialize the Attribute hierarchy
     if (attreconflag == ESMC_ATTRECONCILE_ON) {
-      attrs->serialize(buffer, length, offset, inquireflag, localrc); //root_attrs_tdk
+      info->serialize(buffer, length, offset, inquireflag, localrc); //root_info_tdk
       if (ESMC_LogDefault.MsgFoundError(localrc, ESMCI_ERR_PASSTHRU,
-        ESMC_CONTEXT, &localrc)) return localrc; //root_attrs_tdk
+        ESMC_CONTEXT, &localrc)) return localrc; //root_info_tdk
       if (*offset%8 != 0)
         *offset += 8 - *offset%8;
       localrc = root->ESMC_Serialize(buffer,length,offset, inquireflag);
@@ -1136,7 +1136,7 @@ void ESMC_Base::constructAttrs(ESMC_Base& base) { // root_attrs_tdk
   root = new ESMCI::Attribute(ESMF_TRUE);
   root->setBase(this);
   rootalias = false;
-  constructAttrs(*this); // root_attrs_tdk
+  constructInfo(*this); // root_info_tdk
 
   baseStatus  = ESMF_STATUS_READY;
   status      = ESMF_STATUS_READY;
@@ -1201,12 +1201,12 @@ void ESMC_Base::constructAttrs(ESMC_Base& base) { // root_attrs_tdk
   // setup the root Attribute, passing the address of this
   if (id==-1){
     rootalias = true; // protect root Attribute from being used in delete
-    attrsalias = true; // root_attrs_tdk
+    infoalias = true; // root_info_tdk
   }else{
     root = new ESMCI::Attribute(ESMF_TRUE);
     root->setBase(this);
     rootalias = false;
-    constructAttrs(*this); // root_attrs_tdk
+    constructInfo(*this); // root_info_tdk
   }
 
   baseStatus  = ESMF_STATUS_READY;
@@ -1222,7 +1222,7 @@ void ESMC_Base::constructAttrs(ESMC_Base& base) { // root_attrs_tdk
 // !IROUTINE:  ESMC_Base - native C++ constructor for ESMC_Base class
 //
 // !INTERFACE:
-      ESMC_Base::ESMC_Base(const char *superclass, const char *name, int nattrs,
+      ESMC_Base::ESMC_Base(const char *superclass, const char *name, int ninfo,
         ESMCI::VM *vmArg){
 //
 // !RETURN VALUE:
@@ -1233,7 +1233,7 @@ void ESMC_Base::constructAttrs(ESMC_Base& base) { // root_attrs_tdk
 //
 // !DESCRIPTION:
 //   initialization with known class name, object name, initial number
-//   of attributes to make space for.
+//   of Info2 to make space for.
 //
 //EOPI
   int rc;
@@ -1282,7 +1282,7 @@ void ESMC_Base::constructAttrs(ESMC_Base& base) { // root_attrs_tdk
   root = new ESMCI::Attribute(ESMF_TRUE);
   root->setBase(this);
   rootalias = false;
-  constructAttrs(*this); // root_attrs_tdk
+  constructInfo(*this); // root_info_tdk
 
   baseStatus  = ESMF_STATUS_READY;
   status      = ESMF_STATUS_READY;
@@ -1343,8 +1343,8 @@ void ESMC_Base::constructAttrs(ESMC_Base& base) { // root_attrs_tdk
   // delete the root Attribute
   if (!rootalias)
     delete root;
-  if (!attrsalias)// root_attrs_tdk
-    delete attrs;// root_attrs_tdk
+  if (!infoalias)// root_info_tdk
+    delete info;// root_info_tdk
 
   // if we have to support reference counts someday,
   // test if (refCount > 0) and do something if true;
