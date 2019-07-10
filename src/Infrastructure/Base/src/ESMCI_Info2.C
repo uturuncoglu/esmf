@@ -446,6 +446,24 @@ template std::string Info2::get(key_t&, int&, const std::string*, const int*, bo
 template json Info2::get(key_t&, int&, const json*, const int*, bool, std::string*) const;
 
 #undef  ESMC_METHOD
+#define ESMC_METHOD "Info2::get() vector<T>"
+template <typename T>
+std::vector<T> Info2::getvec(key_t& key, int& rc, bool recursive) const {
+  std::vector<T> ret;
+  try {
+    json const *j;
+    try {
+      j = this->getPointer(key, rc, recursive);
+    }
+    ESMF_CATCH_PASSTHRU
+    ret = j->get<std::vector<T>>();
+  }
+  ESMF_CATCH_INFO
+  return ret;
+};
+template std::vector<std::string> Info2::getvec(key_t&, int&, bool) const;
+
+#undef  ESMC_METHOD
 #define ESMC_METHOD "Info2::getPointer()"
 json const * Info2::getPointer(key_t& key, int& rc, bool recursive) const {
   // Exceptions:  ESMCI:esmf_info_error
