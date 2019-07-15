@@ -325,37 +325,6 @@ contains
           ESMF_ERR_PASSTHRU, &
           ESMF_CONTEXT, rcToReturn=rc)) return
 
-      ! Handle the attribute heirarchy
-      linkChange = ESMF_TRUE
-      select case (dataitem%otype%ot)
-      case (ESMF_STATEITEM_FIELD%ot)
-        call c_ESMC_AttributeLinkRemove(localstatep%base, &
-            dataitem%datap%fp%ftypep%base, linkChange, localrc)
-
-      case (ESMF_STATEITEM_FIELDBUNDLE%ot)
-        call c_ESMC_AttributeLinkRemove(localstatep%base, &
-            dataitem%datap%fbp%this%base, linkChange, localrc)
-
-      case (ESMF_STATEITEM_ARRAY%ot)
-        call c_ESMC_AttributeLinkRemove(localstatep%base, &
-            dataitem%datap%ap, linkChange, localrc)
-
-      case (ESMF_STATEITEM_ARRAYBUNDLE%ot)
-        call c_ESMC_AttributeLinkRemove(localstatep%base, &
-            dataitem%datap%abp, linkChange, localrc)
-
-      case (ESMF_STATEITEM_ROUTEHANDLE%ot)
-        localrc = ESMF_SUCCESS
-
-      case (ESMF_STATEITEM_STATE%ot)
-        call c_ESMC_AttributeLinkRemove(localstatep%base, &
-            dataitem%datap%spp%base, linkChange, localrc)
-
-      end select
-      if (ESMF_LogFoundError(localrc, &
-          ESMF_ERR_PASSTHRU, &
-          ESMF_CONTEXT, rcToReturn=rc)) return
-
       deallocate (dataitem, stat=memstat)
       if (ESMF_LogFoundDeallocError(memstat, &
           ESMF_ERR_PASSTHRU, &

@@ -1261,12 +1261,6 @@ itemloop:  do k=attreconstart, si%theircount
           if (stypep%datalist(i)%datap%spp%datacount == 0) then
             ! nested State is empty
             emptyNest = .true.
-            linkChange = ESMF_TRUE
-            call c_ESMC_AttributeLinkRemove(stypep%base, stypep%datalist(i)%datap%spp%base, &
-              linkChange, localrc)
-           if (ESMF_LogFoundError(localrc, &
-             ESMF_ERR_PASSTHRU, &
-             ESMF_CONTEXT, rcToReturn=rc)) return
           endif
 !print *, "gjt: zap empty nest in State"
         endif
