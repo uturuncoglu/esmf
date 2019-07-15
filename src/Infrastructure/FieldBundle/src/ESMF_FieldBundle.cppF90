@@ -564,7 +564,6 @@ type(ESMF_KeywordEnforcer), optional:: keywordEnforcer ! must use keywords below
 !------------------------------------------------------------------------------
     integer                       :: localrc      ! local return code
     integer                       :: fieldCount, i, j, addedIndex, garbageSize
-    type(ESMF_Logical)            :: linkChange
     type(ESMF_Field), pointer     :: garbageList(:), addedList(:)
     logical                       :: isGarbage
 
@@ -643,53 +642,14 @@ type(ESMF_KeywordEnforcer), optional:: keywordEnforcer ! must use keywords below
           endif
         enddo
 
-        ! Attribute link
-        linkChange = ESMF_TRUE
-
         if(size(addedList) .ge. 1) then
           call ESMF_FieldBundleSetGeom(fieldbundle, addedList(1), rc=localrc)
           if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, &
                         ESMF_CONTEXT, rcToReturn=rc))  return
         endif
-
-        do i=1, size(addedList)
-          call c_ESMC_AttributeLink(fieldbundle%this%base, addedList(i)%ftypep%base, linkChange, localrc)
-          if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, &
-                        ESMF_CONTEXT, rcToReturn=rc))  return
-        enddo
         deallocate(addedList)
 
       endif  ! partial add
-
-    else
-      ! No garbage, all fieldList should be linked
-      !
-      ! Obviously the attribute linking of the geombase object is a bit tricky,
-      ! right now, we do not restrict the geombase to be matched among the fields in the
-      ! fieldBundle. But for attribute hierarchy, we actually assume that all fields in
-      ! the fieldBundle should be built on the same geombase object.
-      !
-      ! 3/7/13
-      ! New behavior for geombase:
-      ! 1. FieldBundleSet() can always change the geombase object in a FieldBundle
-      ! 2. Add/AddReplace/Replace can  change the geombase object in a FieldBundle if it is not set
-      ! 3. Add/AddReplace/Replace can NOT change  geombase object in a FieldBundle after its set
-      !
-      ! Attribute link
-      if(size(fieldList) .ge. 1 .and. (fieldbundle%this%status /= ESMF_FBSTATUS_GRIDSET) ) then
-        ! setgeom links grid geombase automatically
-        call ESMF_FieldBundleSetGeom(fieldbundle, fieldList(1), rc=localrc)
-        if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, &
-          ESMF_CONTEXT, rcToReturn=rc))  return
-      endif ! non-empty fieldlist
-
-      linkChange = ESMF_TRUE
-      do i=1, size(fieldList)
-        call c_ESMC_AttributeLink(fieldbundle%this%base, fieldList(i)%ftypep%base, linkChange, localrc)
-        if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, &
-                      ESMF_CONTEXT, rcToReturn=rc))  return
-      enddo
-      
     endif ! garbageSize /= 0
 
     ! always deallocate garbageList because it's always associated returning from Container
@@ -808,8 +768,7 @@ type(ESMF_KeywordEnforcer), optional:: keywordEnforcer ! must use keywords below
 !EOP
 !------------------------------------------------------------------------------
     integer                       :: localrc      ! local return code
-    integer                       :: fieldCount, i, garbageSize
-    type(ESMF_Logical)            :: linkChange
+    integer                       :: fieldCount, i
     type(ESMF_Field), pointer     :: garbageList(:)
 
     ! initialize return code; assume routine not implemented
@@ -845,28 +804,6 @@ type(ESMF_KeywordEnforcer), optional:: keywordEnforcer ! must use keywords below
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, &
       ESMF_CONTEXT, rcToReturn=rc)) return
 
-    ! Attribute link
-    if(size(fieldList) .ge. 1 .and. (fieldbundle%this%status /= ESMF_FBSTATUS_GRIDSET) ) then
-      ! setgeom links grid geombase automatically
-      call ESMF_FieldBundleSetGeom(fieldbundle, fieldList(1), rc=localrc)
-      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, &
-        ESMF_CONTEXT, rcToReturn=rc))  return
-    endif ! non-empty fieldlist
-    linkChange = ESMF_TRUE
-    ! Add all fields in fieldList
-    do i = 1, fieldCount
-      call c_ESMC_AttributeLink(fieldbundle%this%base, fieldList(i)%ftypep%base, linkChange, localrc)
-      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, &
-                    ESMF_CONTEXT, rcToReturn=rc))  return
-    enddo
-    
-    ! Remove those that were replaced
-    garbageSize = size(garbageList)
-    do i=1, garbageSize
-      call c_ESMC_AttributeLinkRemove(fieldbundle%this%base, garbageList(i)%ftypep%base, linkChange, localrc)
-      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, &
-                    ESMF_CONTEXT, rcToReturn=rc))  return
-    enddo
     deallocate(garbageList)
 
     ! Return successfully
@@ -938,7 +875,6 @@ type(ESMF_KeywordEnforcer), optional:: keywordEnforcer ! must use keywords below
     integer                 :: localrc    ! local return code
     type(ESMF_FieldBundleType), pointer  :: this
     integer                 :: fieldCount, i
-    type(ESMF_Logical)      :: linkChange
     type(ESMF_GeomType_Flag)     :: geomtype
     type(ESMF_Grid)         :: grid
     type(ESMF_XGrid)        :: xgrid
@@ -4225,7 +4161,6 @@ type(ESMF_KeywordEnforcer), optional:: keywordEnforcer ! must use keywords below
 !------------------------------------------------------------------------------
     integer                       :: localrc      ! local return code
     integer                       :: fieldCount, i, fcount
-    type(ESMF_Logical)            :: linkChange
     type(ESMF_Field), pointer     :: garbageList(:)
 
     ! initialize return code; assume routine not implemented
@@ -4259,12 +4194,6 @@ type(ESMF_KeywordEnforcer), optional:: keywordEnforcer ! must use keywords below
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, &
       ESMF_CONTEXT, rcToReturn=rc)) return
 
-    ! Remove attribute link for those Fields that were removed
-    do i=1, size(garbageList)
-      call c_ESMC_AttributeLinkRemove(fieldbundle%this%base, garbageList(i)%ftypep%base, linkChange, localrc)
-      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, &
-                    ESMF_CONTEXT, rcToReturn=rc))  return
-    enddo
     deallocate(garbageList)
 
     ! Check if the fieldbundle is empty
@@ -4341,7 +4270,6 @@ type(ESMF_KeywordEnforcer), optional:: keywordEnforcer ! must use keywords below
 !------------------------------------------------------------------------------
     integer                       :: localrc      ! local return code
     integer                       :: fieldCount, i
-    type(ESMF_Logical)            :: linkChange
     type(ESMF_Field), pointer     :: garbageList(:)
 
     ! initialize return code; assume routine not implemented
@@ -4384,20 +4312,6 @@ type(ESMF_KeywordEnforcer), optional:: keywordEnforcer ! must use keywords below
         ESMF_CONTEXT, rcToReturn=rc))  return
     endif ! non-empty fieldlist
 
-    ! Add all the input Fields in fieldList
-    linkChange = ESMF_TRUE
-    do i = 1, fieldCount
-      call c_ESMC_AttributeLink(fieldbundle%this%base, fieldList(i)%ftypep%base, linkChange, localrc)
-      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, &
-                    ESMF_CONTEXT, rcToReturn=rc))  return
-    enddo
-    
-    ! Remove those that were replaced or not added
-    do i = 1, size(garbageList)
-      call c_ESMC_AttributeLinkRemove(fieldbundle%this%base, garbageList(i)%ftypep%base, linkChange, localrc)
-      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, &
-                    ESMF_CONTEXT, rcToReturn=rc))  return
-    enddo
     deallocate(garbageList)
 
     ! Return successfully
@@ -4445,7 +4359,6 @@ type(ESMF_KeywordEnforcer), optional:: keywordEnforcer ! must use keywords below
 
       integer :: status                           ! Error status
       type(ESMF_FieldBundleType), pointer :: btype     ! internal data
-      type(ESMF_Logical) :: linkChange
 
       ! Initialize return code; assume routine not implemented
       status = ESMF_RC_NOT_IMPL
@@ -4473,12 +4386,6 @@ type(ESMF_KeywordEnforcer), optional:: keywordEnforcer ! must use keywords below
 
       ! Set Status to containing a Grid
       btype%status = ESMF_FBSTATUS_GRIDSET
-
-      !  link the Attribute hierarchies
-      linkChange = ESMF_TRUE
-      call c_ESMC_AttributeLink(btype%base, grid, linkChange, status)
-      if (ESMF_LogFoundError(status, ESMF_ERR_PASSTHRU, &
-                    ESMF_CONTEXT, rcToReturn=rc))  return
 
       if (present(rc)) rc = ESMF_SUCCESS
 
@@ -4597,7 +4504,6 @@ type(ESMF_KeywordEnforcer), optional:: keywordEnforcer ! must use keywords below
 
       integer :: status                           ! Error status
       type(ESMF_FieldBundleType), pointer :: btype     ! internal data
-      type(ESMF_Logical) :: linkChange
 
       ! Initialize return code; assume routine not implemented
       status = ESMF_RC_NOT_IMPL
@@ -4624,12 +4530,6 @@ type(ESMF_KeywordEnforcer), optional:: keywordEnforcer ! must use keywords below
 
       ! Set Status to containing a Geombase
       btype%status = ESMF_FBSTATUS_GRIDSET
-
-      !  link the Attribute hierarchies
-      linkChange = ESMF_TRUE
-      call c_ESMC_AttributeLink(btype%base, locstream%lstypep%base, linkChange, status)
-      if (ESMF_LogFoundError(status, ESMF_ERR_PASSTHRU, &
-                    ESMF_CONTEXT, rcToReturn=rc))  return
 
       if (present(rc)) rc = ESMF_SUCCESS
 
@@ -6225,7 +6125,6 @@ call ESMF_LogWrite("Aft ESMF_IOWrite", ESMF_LOGMSG_INFO, rc=rc)
       type(ESMF_LocStream) :: locstream
       type(ESMF_GeomType_Flag) :: geomtype
       type(ESMF_Field), pointer :: flist(:)
-      type(ESMF_Logical) :: linkChange
 
       ! Initialize return code; assume routine not implemented
       if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -6240,8 +6139,6 @@ call ESMF_LogWrite("Aft ESMF_IOWrite", ESMF_LOGMSG_INFO, rc=rc)
       else
         lattreconflag = ESMF_ATTRECONCILE_OFF
       endif
-      ! linkChange flag true for all but Components
-      linkChange = ESMF_TRUE;
 
       ! in case of error, make sure this is invalid.
       nullify(bp)
@@ -6279,31 +6176,7 @@ call ESMF_LogWrite("Aft ESMF_IOWrite", ESMF_LOGMSG_INFO, rc=rc)
         if (ESMF_LogFoundError(localrc, &
           ESMF_ERR_PASSTHRU, &
           ESMF_CONTEXT, rcToReturn=rc)) return
-        !  link the Attribute hierarchies
-        call ESMF_GeomBaseGet(bp%geombase, geomtype=geomtype, rc=localrc)
-        if (ESMF_LogFoundError(localrc, &
-          ESMF_ERR_PASSTHRU, &
-          ESMF_CONTEXT, rcToReturn=rc)) return
-        if (geomtype == ESMF_GEOMTYPE_GRID) then
-           call ESMF_GeomBaseGet(bp%geombase, grid=grid, rc=localrc)
-           if (ESMF_LogFoundError(localrc, &
-                ESMF_ERR_PASSTHRU, &
-                ESMF_CONTEXT, rcToReturn=rc)) return
-           linkChange = ESMF_TRUE
-           call c_ESMC_AttributeLink(bp%base, grid, linkChange, status)
-           if (ESMF_LogFoundError(status, ESMF_ERR_PASSTHRU, &
-                ESMF_CONTEXT, rcToReturn=rc))  return
-        else if (geomtype == ESMF_GEOMTYPE_LOCSTREAM) then
-           call ESMF_GeomBaseGet(bp%geombase, locstream=locstream, rc=localrc)
-           if (ESMF_LogFoundError(localrc, &
-                ESMF_ERR_PASSTHRU, &
-                ESMF_CONTEXT, rcToReturn=rc)) return
-           linkChange = ESMF_TRUE
-           call c_ESMC_AttributeLink(bp%base, locstream%lstypep%base, linkChange, status)
-           if (ESMF_LogFoundError(status, ESMF_ERR_PASSTHRU, &
-                ESMF_CONTEXT, rcToReturn=rc))  return
-        endif
-     endif
+      endif
 
       ! TODO: decide if these need to be sent before or after
       allocate(flist(fieldCount), stat=localrc)
@@ -6480,7 +6353,6 @@ call ESMF_LogWrite("Aft ESMF_IOWrite", ESMF_LOGMSG_INFO, rc=rc)
     integer                                           :: localrc
     type(ESMF_GeomType_Flag)                               :: geomtype
     type(ESMF_Grid)                                   :: grid
-    type(ESMF_Logical)                                :: linkChange
 
     localrc = ESMF_RC_NOT_IMPL
     if(present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -6499,16 +6371,7 @@ call ESMF_LogWrite("Aft ESMF_IOWrite", ESMF_LOGMSG_INFO, rc=rc)
     call ESMF_GeomBaseGet(fieldbundle%this%geombase, geomtype=geomtype, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, &
       ESMF_CONTEXT, rcToReturn=rc))  return
-    if(geomtype == ESMF_GEOMTYPE_GRID) then
-      call ESMF_GeombaseGet(fieldbundle%this%geombase, grid=grid, rc=localrc)  
-      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, &
-        ESMF_CONTEXT, rcToReturn=rc))  return
 
-      linkChange = ESMF_TRUE
-      call c_ESMC_AttributeLinkRemove(fieldbundle%this%base, grid, linkChange, localrc)
-      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, &
-                    ESMF_CONTEXT, rcToReturn=rc))  return
-    endif
     call ESMF_GeomBaseDestroy(fieldbundle%this%geombase, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, &
       ESMF_CONTEXT, rcToReturn=rc))  return

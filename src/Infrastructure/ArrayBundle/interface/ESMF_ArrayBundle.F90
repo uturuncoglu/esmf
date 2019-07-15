@@ -722,14 +722,6 @@ type(ESMF_KeywordEnforcer), optional:: keywordEnforcer ! must use keywords below
     ! Garbage collection
     deallocate(arrayPointerList)
 
-    ! link the Attribute hierarchies
-    linkChange = ESMF_TRUE;
-    do i=1,arrayCount
-      call c_ESMC_AttributeLink(arraybundle, arrayList(i), linkChange, localrc)
-      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, &
-        ESMF_CONTEXT, rcToReturn=rc))  return
-    enddo
-
     ! Set return value
     ESMF_ArrayBundleCreate = arraybundle
 
