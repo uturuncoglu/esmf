@@ -278,7 +278,7 @@ subroutine ESMF_Info2Remove(info, keyParent, keyChild, rc)
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(len=ESMF_MAXSTR) :: localkeyChild
+  character(len=ESMF_MAXSTR) :: localkeyChild !tdk:todo: change this to an allocated
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE

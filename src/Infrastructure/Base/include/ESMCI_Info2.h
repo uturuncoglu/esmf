@@ -107,7 +107,7 @@ public:
   std::string dump(int& rc) const;
   std::string dump(int indent, int& rc) const;
 
-  void erase(key_t& key, key_t& keyChild, int& rc);
+  void erase(key_t& key, key_t& keyChild, int& rc, bool recursive = false);
 
   static json::json_pointer formatKey(key_t &key, int &rc);
 

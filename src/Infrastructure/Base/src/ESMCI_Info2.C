@@ -319,30 +319,23 @@ std::string Info2::dump(int indent, int& rc) const {
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Info2::erase()"
-void Info2::erase(key_t &keyParent, key_t &keyChild, int &rc) {
+void Info2::erase(key_t &keyParent, key_t &keyChild, int &rc, bool recursive) {
   // Exceptions: ESMCI::esmf_info_error
 
   rc = ESMF_FAILURE;
   try {
-    json::json_pointer jp = this->formatKey(keyParent, rc);
+    json::json_pointer key = this->formatKey(keyParent, rc);
     try {
-      json &target = this->getStorageRefWritable().at(jp);
-      json &found = target.at(keyChild);
-      target.erase(keyChild);
+      json &j = this->getStorageRefWritable();
+      json *jp = nullptr;
+      update_json_pointer(j, &jp, key, recursive);
+      assert(jp);
+      json &found = jp->at(keyChild); // Check that the key exists
+      jp->erase(keyChild);
     }
-    catch (json::out_of_range &e) {
-      ESMF_THROW_JSON(e, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);
-    }
-    catch (json::type_error& e) {
-      ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
-    }
+    ESMF_CATCH_JSON
   }
-  catch (ESMCI::esmf_info_error &exc_esmf) {
-    ESMF_HANDLE_PASSTHRU(exc_esmf);
-  }
-  catch (...) {
-    ESMF_CHECKERR_STD("", ESMF_FAILURE, "Unhandled throw", rc);
-  }
+  ESMF_CATCH_INFO
   this->dirty = true;
   rc = ESMF_SUCCESS;
   return;
