@@ -64,12 +64,13 @@ interface
 
   !=============================================================================
 
-  subroutine c_info_erase(info, keyParent, keyChild, rc) bind(C, name="ESMC_Info2Erase")
+  subroutine c_info_erase(info, keyParent, keyChild, recursive, rc) bind(C, name="ESMC_Info2Erase")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: info
     character(C_CHAR), intent(in) :: keyParent(*)
     character(C_CHAR), intent(in) :: keyChild(*)
+    logical(C_BOOL), intent(in) :: recursive
     integer(C_INT), intent(inout) :: rc
   end subroutine c_info_erase
 
@@ -99,13 +100,14 @@ interface
 
   !=============================================================================
 
-  subroutine c_info_is_present(info, key, res, rc, isptr) bind(C, name="ESMC_Info2IsPresent")
+  subroutine c_info_is_present(info, key, res, rc, recursive, isptr) bind(C, name="ESMC_Info2IsPresent")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: info
     character(C_CHAR), intent(in) :: key(*)
     logical(C_BOOL), intent(inout) :: res
     integer(C_INT), intent(inout) :: rc
+    logical(C_BOOL), intent(in) :: recursive
     integer(C_INT), intent(in) :: isptr
   end subroutine c_info_is_present
 

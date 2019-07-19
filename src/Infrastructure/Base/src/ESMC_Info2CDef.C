@@ -139,7 +139,7 @@ void ESMC_Info2Destroy(ESMCI::Info2* info, int& rc) {
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_Info2Erase()"
 void ESMC_Info2Erase(ESMCI::Info2* info, char* keyParent,
-                          char* keyChild, int& rc) {
+                          char* keyChild, bool &recursive, int& rc) {
   rc = ESMF_FAILURE;
   std::string localkeyParent(keyParent);
   std::string localkeyChild(keyChild);
@@ -150,9 +150,9 @@ void ESMC_Info2Erase(ESMCI::Info2* info, char* keyParent,
   // seems redundant.
   try {
     if (localkeyChild == "") {
-      info->erase(localkeyChild, localkeyParent, rc);
+      info->erase(localkeyChild, localkeyParent, rc, recursive);
     } else {
-      info->erase(localkeyParent, localkeyChild, rc);
+      info->erase(localkeyParent, localkeyChild, rc, recursive);
     }
   }
   ESMF_CATCH_ISOC;
@@ -187,10 +187,10 @@ void ESMC_Info2IsEqual(ESMCI::Info2 *lhs, ESMCI::Info2 *rhs,
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_Info2IsPresent()"
 void ESMC_Info2IsPresent(ESMCI::Info2 *info, char *key, bool &res, int &rc,
-        int &isptr) {
+        bool &recursive, int &isptr) {
   std::string local_key(key);
   try {
-    res = info->hasKey(local_key, rc, isptr);
+    res = info->hasKey(local_key, rc, isptr, recursive);
   }
   ESMF_CATCH_ISOC;
 }

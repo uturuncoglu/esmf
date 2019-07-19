@@ -477,35 +477,26 @@ json const * Info2::getPointer(key_t& key, int& rc, bool recursive) const {
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Info2::hasKey()"
-bool Info2::hasKey(key_t& key, int& rc, bool isptr) const {
+bool Info2::hasKey(key_t& key, int& rc, bool isptr, bool recursive) const {
   // Exceptions:  ESMCI::esmf_info_error
   // isptr is optional
 
   rc = ESMF_FAILURE;
   bool ret;
-  const json &storage = this->getStorageRef();
-  if (isptr) {
+  if (isptr || recursive) {
     // Use JSON pointer syntax. This is slower than just attempting to find
     // the key. JSON pointers do not work with find. See: https://github.com/nlohmann/json/issues/1182#issuecomment-409708389
     // for an explanation.
     try {
       json::json_pointer jp = this->formatKey(key, rc);
-      try {
-        storage.at(jp);
-        ret = true;
-      }
-      catch (json::out_of_range& e) {
-        ret = false;
-      }
+      ret = this->hasKey(jp, rc, recursive); // Call overload for JSON Pointer
     }
-    catch (ESMCI::esmf_info_error &e) {
-      ESMF_HANDLE_PASSTHRU(e);
-    }
+    ESMF_CATCH_INFO
 
   } else {
     // This is faster because it avoids exceptions. However, it does not work
     // with JSON pointers.
-    ret = !(storage.find(key) == storage.end());
+    ret = !(this->getStorageRef().find(key) == storage.end());
   }
   rc = ESMF_SUCCESS;
   return ret;
@@ -513,7 +504,7 @@ bool Info2::hasKey(key_t& key, int& rc, bool isptr) const {
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Info2::hasKey()"
-bool Info2::hasKey(const json::json_pointer &jp, int& rc) const {
+bool Info2::hasKey(const json::json_pointer &jp, int& rc, bool recursive) const {
   // Exceptions:  ESMCI::esmf_info_error
   rc = ESMF_FAILURE;
   bool ret;

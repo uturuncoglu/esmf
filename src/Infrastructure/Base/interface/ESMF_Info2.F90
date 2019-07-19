@@ -271,14 +271,16 @@ end function ESMF_Info2NotEqual
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_Info2Remove()"
-subroutine ESMF_Info2Remove(info, keyParent, keyChild, rc)
+subroutine ESMF_Info2Remove(info, keyParent, keyChild, attnestflag, rc)
   type(ESMF_Info2), intent(inout) :: info
   character(len=*), intent(in) :: keyParent
   character(len=*), intent(in), optional :: keyChild
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
   character(len=ESMF_MAXSTR) :: localkeyChild !tdk:todo: change this to an allocated
+  logical(C_BOOL) :: recursive=.false.
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
@@ -288,9 +290,12 @@ subroutine ESMF_Info2Remove(info, keyParent, keyChild, rc)
   else
     localkeyChild = ""
   end if
+  if (present(attnestflag)) then
+    if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = .true.
+  end if
 
   call c_info_erase(info%ptr, trim(keyParent)//C_NULL_CHAR, &
-                     trim(localkeyChild)//C_NULL_CHAR, localrc)
+                     trim(localkeyChild)//C_NULL_CHAR, recursive, localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
                          rcToReturn=rc)) return
 
@@ -396,9 +401,10 @@ end subroutine ESMF_Info2Inquire
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_Info2IsPresent()"
-function ESMF_Info2IsPresent(info, key, isPointer, rc) result(is_present)
+function ESMF_Info2IsPresent(info, key, attnestflag, isPointer, rc) result(is_present)
   type(ESMF_Info2), intent(in) :: info
   character(len=*), intent(in) :: key
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   logical, intent(in), optional :: isPointer
   integer, intent(inout), optional :: rc
   logical :: is_present
@@ -407,11 +413,15 @@ function ESMF_Info2IsPresent(info, key, isPointer, rc) result(is_present)
   integer :: localrc
   integer(C_INT) :: isPointer_forC
   logical(C_BOOL) :: local_is_present
+  logical(C_BOOL) :: recursive=.false.
 
   is_present = .false.
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
 
+  if (present(attnestflag)) then
+    if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = .true.
+  end if
   if (present(isPointer)) then
     local_isPointer = isPointer
   else
@@ -425,7 +435,7 @@ function ESMF_Info2IsPresent(info, key, isPointer, rc) result(is_present)
   end if
 
   call c_info_is_present(info%ptr, trim(key)//C_NULL_CHAR, local_is_present, &
-    localrc, isPointer_forC)
+    localrc, recursive, isPointer_forC)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
     rcToReturn=rc)) return
 
