@@ -54,6 +54,16 @@ interface
   end subroutine
 
   !=============================================================================
+  
+  subroutine c_info_copyforattribute(isrc, idst, rc) bind(C, name="ESMC_Info2CopyForAttribute")
+    use iso_c_binding
+    implicit none
+    type(C_PTR), value :: isrc
+    type(C_PTR), value :: idst
+    integer(C_INT), intent(inout) :: rc
+  end subroutine
+  
+  !=============================================================================
 
   subroutine c_info_destroy(info, rc) bind(C, name="ESMC_Info2Destroy")
     use iso_c_binding

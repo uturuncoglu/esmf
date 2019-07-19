@@ -95,6 +95,17 @@ ESMCI::Info2* ESMC_Info2Copy(ESMCI::Info2 *info, int &rc) {
 }
 
 #undef  ESMC_METHOD
+#define ESMC_METHOD "ESMC_Info2CopyForAttribute()"
+void ESMC_Info2CopyForAttribute(const ESMCI::Info2* src, ESMCI::Info2* dst, int& rc) {
+  rc = ESMF_FAILURE;
+  try {
+    dst->getStorageRefWritable() = src->getStorageRef();
+  }
+  ESMF_CATCH_INFO
+    rc = ESMF_SUCCESS;
+}
+
+#undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_Info2Create()"
 ESMCI::Info2* ESMC_Info2Create(int& rc) {
   rc = ESMF_SUCCESS;
