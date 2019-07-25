@@ -439,7 +439,7 @@ template std::string Info2::get(key_t&, int&, const std::string*, const int*, bo
 template json Info2::get(key_t&, int&, const json*, const int*, bool, std::string*) const;
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "Info2::get() vector<T>"
+#define ESMC_METHOD "Info2::getvec() vector<T>"
 template <typename T>
 std::vector<T> Info2::getvec(key_t& key, int& rc, bool recursive) const {
   std::vector<T> ret;
