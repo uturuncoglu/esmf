@@ -36,6 +36,7 @@
 #include "ESMCI_Array.h"
 #include "ESMC_Util.h"
 #include "ESMCI_IO_Handler.h"
+#include "ESMCI_Info2.h"
 
 #include <cstdio>
 #include <vector>
@@ -61,9 +62,9 @@ namespace ESMCI {
     enum IOListObjectType type;
     IO_ObjectType object;           // e.g., Array, Attribute
     std::string name;
-    Attribute *dimAttPack;
-    Attribute *varAttPack;
-    Attribute *gblAttPack;
+    ESMCI::Info2 *dimAttPack;
+    ESMCI::Info2 *varAttPack;
+    ESMCI::Info2 *gblAttPack;
     ESMC_I8 number;
 
     IO_ObjectContainer () {
@@ -76,9 +77,9 @@ namespace ESMCI {
       number = 0;
     }
     IO_ObjectContainer (Array *arr_p, const std::string &arrName,
-            Attribute *dimAttPack,
-            Attribute *varAttPack,
-            Attribute *gblAttPack) {
+                        ESMCI::Info2 *dimAttPack,
+                        ESMCI::Info2 *varAttPack,
+                        ESMCI::Info2 *gblAttPack) {
       type = IO_ARRAY;
       object.arr = arr_p;
       if (arrName.length() > 0)
@@ -194,9 +195,9 @@ namespace ESMCI {
     int addArray(Array *arr_p);
     int addArray(Array *arr_p,
                  const std::string &variableName,
-                 Attribute *dimAttPack,
-                 Attribute *varAttPack,
-                 Attribute *gblAttPack);
+                 ESMCI::Info2 *dimAttPack,
+                 ESMCI::Info2 *varAttPack,
+                 ESMCI::Info2 *gblAttPack);
 // TBI
 #if 0
     void addAttributes(ESMC_Base *obj_p,
@@ -207,7 +208,7 @@ namespace ESMCI {
     void addGrid(ESMC_Base *grid_p, char *gridName,
                  int *rc=NULL);
 #endif // TBI
-    void dimlabel_get (Attribute *dimAttPack,
+    void dimlabel_get (ESMCI::Info2 *dimAttPack,
         std::string labeltype,
         std::vector<std::string> &dimLabels,
         int *rc);
