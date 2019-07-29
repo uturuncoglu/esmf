@@ -73,6 +73,7 @@
 #include "ESMCI_LogErr.h"
 #include "ESMCI_IO.h"
 #include "ESMCI_TraceRegion.h"
+#include "ESMCI_Info2.h"
 
 #ifdef ASMM_STORE_DUMPSMM_on
 extern "C" {
@@ -3858,8 +3859,10 @@ int Array::write(
   }
 
   DistGrid *dg = getDistGrid();
+  ESMCI::Info2 *info_this = this->ESMC_BaseGetInfo();
+  ESMCI::Info2 *info_dg = dg->ESMC_BaseGetInfo();
   if ((convention.length() > 0) && (purpose.length() > 0)) {
-    if ((this->ESMC_BaseGetRoot()->getCountPack() == 0) && (dg->ESMC_BaseGetRoot()->getCountPack() == 0)) {
+    if ((info_this->getCountPack() == 0) && (info_dg->getCountPack() == 0)) {
       localrc = ESMF_RC_ATTR_NOTSET;
       if (ESMC_LogDefault.MsgFoundError(localrc, "No Array or DistGrid AttPacks found", ESMC_CONTEXT,
           &rc)) return rc;
@@ -3871,18 +3874,14 @@ int Array::write(
   bool has_convpurp = (convention.length() > 0) && (purpose.length() > 0);
 
   // If present, use Attributes at the DistGrid level for dimension names
-  Attribute *dimAttPack = NULL;
-  if ((convention.length() > 0) && (purpose.length() > 0)) {
-    std::vector<std::string> attPackNameList;
-    int attPackNameCount;
-    localrc = dg->ESMC_BaseGetRoot()->AttPackGet(
-        convention, purpose, "distgrid",
-        attPackNameList, attPackNameCount, ESMC_ATTNEST_ON);
-    if (localrc == ESMF_SUCCESS) {
-      dimAttPack = dg->ESMC_BaseGetRoot()->AttPackGet (
-          convention, purpose, "distgrid",
-          attPackNameList[0], ESMC_ATTNEST_ON);
+  ESMCI::Info2 *dimAttPack = NULL;
+  ESMCI::Info2 i_dimAttPack;
+  if (has_convpurp) {
+    try {
+      info_dg->get(i_dimAttPack, key, localrc);
+      dimAttPack = &i_dimAttPack;
     }
+    ESMF_CATCH_INFO
   }
 
   // If present, use Attributes at the Array level for variable attributes
