@@ -3866,6 +3866,10 @@ int Array::write(
     }
   }
 
+  // Key for the "attribute package"
+  const std::string key = "/"+convention+"/"+purpose;
+  bool has_convpurp = (convention.length() > 0) && (purpose.length() > 0);
+
   // If present, use Attributes at the DistGrid level for dimension names
   Attribute *dimAttPack = NULL;
   if ((convention.length() > 0) && (purpose.length() > 0)) {
@@ -3882,21 +3886,17 @@ int Array::write(
   }
 
   // If present, use Attributes at the Array level for variable attributes
-  Attribute *varAttPack = NULL;
-  if ((convention.length() > 0) && (purpose.length() > 0)) {
-    std::vector<std::string> attPackNameList;
-    int attPackNameCount;
-    localrc = this->ESMC_BaseGetRoot()->AttPackGet(
-        convention, purpose, "array",
-        attPackNameList, attPackNameCount, ESMC_ATTNEST_ON);
-    if (localrc == ESMF_SUCCESS) {
-      varAttPack = this->ESMC_BaseGetRoot()->AttPackGet (
-          convention, purpose, "array",
-          attPackNameList[0], ESMC_ATTNEST_ON);
-    }
+  ESMCI::Info2 *varAttPack = NULL;
+  ESMCI::Info2 i_varAttPack;
+  if (has_convpurp) {
+  try {
+    info_this->get(i_varAttPack, key, localrc);
+    varAttPack = &i_varAttPack;
+  }
+  ESMF_CATCH_INFO
   }
 
-  Attribute *gblAttPack = NULL;
+  ESMCI::Info2 *gblAttPack = NULL;
 
   IO *newIO = IO::create(&rc);
   if (ESMC_LogDefault.MsgFoundError(rc, ESMCI_ERR_PASSTHRU, ESMC_CONTEXT, &rc)){

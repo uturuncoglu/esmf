@@ -412,6 +412,24 @@ void testFormatKey(int& rc, char failMsg[]) {
   rc = ESMF_SUCCESS;
 }
 
+#undef  ESMC_METHOD
+#define ESMC_METHOD "testGetInfoObject()"
+void testGetInfoObject(int& rc, char failMsg[]) {
+  rc = ESMF_FAILURE;
+  json j = {{"foo1", 1}, {"foo2", {{"nest1", 55}}}, {"foo3", 3}};
+  Info2 info(j);
+  Info2 actual;
+  try {
+    info.get(actual, "foo2", rc);
+  }
+  ESMF_CATCH_INFO
+  int desired = j["foo2"]["nest1"];
+  if (actual.get<int>("nest1", rc) != desired) {
+    return finalizeFailure(rc, failMsg, "Did not get Info object");
+  }
+  rc = ESMF_SUCCESS;
+}
+
 #undef ESMC_METHOD
 #define ESMC_METHOD "test_get_attpack_count()"
 void test_get_attpack_count(int& rc, char failMsg[]) {
@@ -1115,6 +1133,13 @@ int main(void) {
   //NEX_UTest
   strcpy(name, "Info testGetObjectIndex");
   testGetObjectIndex(rc, failMsg);
+  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
+  //---------------------------------------------------------------------------
+
+  //---------------------------------------------------------------------------
+  //NEX_UTest
+  strcpy(name, "Info testGetInfoObject");
+  testGetInfoObject(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //---------------------------------------------------------------------------
 

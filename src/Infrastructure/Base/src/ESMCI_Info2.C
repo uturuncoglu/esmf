@@ -250,6 +250,17 @@ ESMC_TypeKind_Flag json_type_to_esmf_typekind(const json &j) noexcept {
   return esmf_type;
 }
 
+#undef  ESMC_METHOD
+#define ESMC_METHOD "check_init_from_json()"
+void check_init_from_json(const json j, int &rc) {
+  // Test:
+  // Notes:
+  if (!j.is_object()) {
+    std::string msg = "Can only create Info from JSON value_t::object_t types";
+    ESMF_CHECKERR_STD("ESMC_RC_OBJ_NOT_CREATED", ESMC_RC_OBJ_NOT_CREATED, msg, rc);
+  }
+}
+
 //-----------------------------------------------------------------------------
 // Info Implementations -------------------------------------------------------
 //-----------------------------------------------------------------------------
@@ -257,17 +268,16 @@ ESMC_TypeKind_Flag json_type_to_esmf_typekind(const json &j) noexcept {
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Info2(json&)"
 Info2::Info2(const json& storage){
+  int rc;
+  check_init_from_json(storage, rc);
   this->storage = storage;
 };
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Info2(json&&)"
 Info2::Info2(json&& storage){
-  if (!storage.is_object()) {
-    std::string msg = "Can only create Info from JSON value_t::object_t types";
-    int rc;
-    ESMF_CHECKERR_STD("ESMC_RC_OBJ_NOT_CREATED", ESMC_RC_OBJ_NOT_CREATED, msg, rc);
-  }
+  int rc;
+  check_init_from_json(storage, rc);
   this->storage = move(storage);
 };
 
@@ -437,6 +447,21 @@ template long int Info2::get(key_t&, int&, const long int*, const int*, bool, st
 template bool Info2::get(key_t&, int&, const bool*, const int*, bool, std::string*) const;
 template std::string Info2::get(key_t&, int&, const std::string*, const int*, bool, std::string*) const;
 template json Info2::get(key_t&, int&, const json*, const int*, bool, std::string*) const;
+
+#undef  ESMC_METHOD
+#define ESMC_METHOD "Info2::get() Info2"
+void Info2::get(ESMCI::Info2 &info, key_t &key, int &rc) const {
+  // Test: testGetInfoObject
+  // Notes:
+  rc = ESMF_FAILURE;
+  json j;
+  try {
+    j = this->get<json>(key, rc);
+    check_init_from_json(j, rc);
+  }
+  ESMF_CATCH_INFO
+  info.getStorageRefWritable() = std::move(j);
+}
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Info2::getvec() vector<T>"

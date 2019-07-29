@@ -35,9 +35,10 @@ using json = nlohmann::json;  // Convenience rename for JSON namespace.
 
 #define ESMF_HANDLE_PASSTHRU(exc_esmf) {ESMC_LogDefault.MsgFoundError(exc_esmf.getReturnCode(), exc_esmf.what(), ESMC_CONTEXT, nullptr); throw(exc_esmf);}
 
-#define ESMF_CATCH_PASSTHRU catch (esmf_info_error &exc_esmf) {ESMF_HANDLE_PASSTHRU(exc_esmf)}
+#define ESMF_CATCH_PASSTHRU catch (ESMCI::esmf_info_error &exc_esmf) {ESMF_HANDLE_PASSTHRU(exc_esmf)}
 
 #define ESMF_CATCH_ISOC catch (ESMCI::esmf_info_error &exc_esmf) {ESMC_LogDefault.MsgFoundError(exc_esmf.getReturnCode(), exc_esmf.what(), ESMC_CONTEXT, nullptr); rc = exc_esmf.getReturnCode();} catch(...) {std::string msg;if (rc == ESMF_SUCCESS) {msg = "Unhandled throw and return code is ESMF_SUCCESS(?). Changing return code to ESMF_FAILURE";rc = ESMF_FAILURE;} else {msg = "Unhandled throw";}ESMC_LogDefault.MsgFoundError(rc, msg, ESMC_CONTEXT, nullptr);}
+#define ESMF_CATCH_ISOCP catch (ESMCI::esmf_info_error &exc_esmf){ESMC_LogDefault.MsgFoundError(exc_esmf.getReturnCode(), exc_esmf.what(), ESMC_CONTEXT, rc);}catch(...) {std::string msg;if (localrc == ESMF_SUCCESS) {msg = "Unhandled throw and return code is ESMF_SUCCESS(?). Changing return code to ESMF_FAILURE";localrc = ESMF_FAILURE;} else {msg = "Unhandled throw";}ESMC_LogDefault.MsgFoundError(localrc, msg, ESMC_CONTEXT, rc);}
 
 #define ESMF_CATCH_INFO catch (json::out_of_range &exc_json) {ESMF_THROW_JSON(exc_json, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);} catch (json::type_error &exc_json) {ESMF_THROW_JSON(exc_json, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);} catch (ESMCI::esmf_info_error &exc_esmf) {ESMF_HANDLE_PASSTHRU(exc_esmf);} catch (...) {ESMF_CHECKERR_STD("", ESMF_FAILURE, "Unhandled throw", rc);}
 
@@ -81,6 +82,16 @@ private:
 
 //-----------------------------------------------------------------------------
 
+void alignOffset(int &offset);
+std::size_t get_attpack_count(const json &j);
+void update_json_pointer(const json &j, json const **jdp, const json::json_pointer &key, bool recursive);
+void update_json_count(std::size_t &count, std::size_t &count_total, const json &j, bool recursive);
+bool isIn(key_t& target, const std::vector<std::string>& container);
+bool isIn(const std::vector<std::string>& target, const std::vector<std::string>& container);
+bool isIn(key_t& target, const json& j);
+
+//-----------------------------------------------------------------------------
+
 class Info2 {
 
 private:
@@ -111,8 +122,14 @@ public:
 
   static json::json_pointer formatKey(key_t &key, int &rc);
 
+  //---------------------------------------------------------------------------
   template <typename T>
   T get(key_t &key, int &rc, const T *def = nullptr, const int *index = nullptr, bool recursive = false, std::string *ikey = nullptr) const;
+
+  void get(ESMCI::Info2 &info, key_t &key, int &rc) const;
+  //---------------------------------------------------------------------------
+
+  std::size_t getCountPack(void) const {return get_attpack_count(this->getStorageRef());}
 
   template <typename T>
   std::vector<T> getvec(key_t &key, int &rc, bool recursive = false) const;
@@ -153,6 +170,12 @@ public:
 
   int ESMC_Print(bool tofile, const char *filename, bool append) const;
 };
+
+//-----------------------------------------------------------------------------
+
+void broadcastInfo(ESMCI::Info2* info, int rootPet, int& rc);
+
+//-----------------------------------------------------------------------------
 
 class InfoView {
 private:
@@ -200,19 +223,6 @@ public:
 
   json getOrCreateJSON(key_t& key, int& rc, key_t& uri = "");
 };
-
-//-----------------------------------------------------------------------------
-
-void alignOffset(int &offset);
-void broadcastInfo(ESMCI::Info2* info, int rootPet, int& rc);
-std::size_t get_attpack_count(const json &j);
-void update_json_pointer(const json &j, json const **jdp, const json::json_pointer &key, bool recursive);
-void update_json_count(std::size_t &count, std::size_t &count_total, const json &j, bool recursive);
-bool isIn(key_t& target, const std::vector<std::string>& container);
-bool isIn(const std::vector<std::string>& target, const std::vector<std::string>& container);
-bool isIn(key_t& target, const json& j);
-
-//-----------------------------------------------------------------------------
 
 } // namespace
 
