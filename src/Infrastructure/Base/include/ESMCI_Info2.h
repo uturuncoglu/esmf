@@ -58,6 +58,8 @@ using json = nlohmann::json;  // Convenience rename for JSON namespace.
 
 namespace ESMCI {
 
+class VM;
+
 typedef const std::string key_t;
 typedef std::vector<json> const *vecjson_t;
 typedef json::array_t const *arrjson_t;

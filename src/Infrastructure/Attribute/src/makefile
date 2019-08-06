@@ -3,10 +3,7 @@
 # default rule if no explicit target is given to make
 ALL: build_here
 
-SOURCEC	  = ESMCI_Attribute.C ESMCI_AttributeUpdate.C ESMCI_AttributeWrite.C \
-            ESMCI_AttributeWriteCIM.C ESMCI_AttributeWriteCIMgrids.C \
-            ESMCI_AttributeWriteTab.C ESMCI_AttributeWriteXML.C \
-            ESMCI_AttributeWriteJSON.C \
+SOURCEC	  = ESMCI_Attribute.C ESMCI_AttributeUpdate.C \
             ESMCI_Metadata.C \
             ESMCI_IOHandle.C \
             ESMCI_TestUtilAttributes.C

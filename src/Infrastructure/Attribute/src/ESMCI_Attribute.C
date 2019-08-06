@@ -28,7 +28,7 @@
 #include "ESMCI_Attribute.h"
 
 #include "ESMCI_Macros.h"
-#include "ESMCI_IO_XML.h"
+//#include "ESMCI_IO_XML.h"
 #include "ESMCI_Base.h"
 #include "ESMCI_LogErr.h"
 #include "ESMCI_Time.h"

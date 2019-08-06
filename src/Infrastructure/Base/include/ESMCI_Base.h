@@ -25,7 +25,7 @@
 class ESMC_Base;
 
 #include "ESMCI_VM.h"
-#include "ESMCI_Attribute.h"
+//#include "ESMCI_Attribute.h"
 #include "ESMCI_Info2.h"
 
 //-----------------------------------------------------------------------------
@@ -42,7 +42,7 @@ class ESMC_Base;
 
 // !PUBLIC TYPES:
  class ESMC_Base;
- class Attribute;
+// class Attribute;
 
 class ESMC_Base
 {
@@ -60,8 +60,8 @@ class ESMC_Base
     char            baseName[ESMF_MAXSTR];    // object name, unique over class 
     char            baseNameF90[ESMF_MAXSTR]; // same name, non-null terminated
     char            className[ESMF_MAXSTR];   // object class
-    ESMCI::Attribute* root;
-    bool            rootalias;
+//    ESMCI::Attribute* root;
+//    bool            rootalias;
     ESMCI::Info2* info;  // root_info_tdk
     bool            infoalias; // root_info_tdk
   private:
@@ -79,8 +79,8 @@ class ESMC_Base
     // should not instantiate a ESMC_Base object directly; must sub-class first.
 
     // accessor to root
-    ESMCI::Attribute *ESMC_BaseGetRoot(void) const {return root;}
-    void ESMC_BaseSetRoot(ESMCI::Attribute *orig) {root = orig; rootalias=true;}
+//    ESMCI::Attribute *ESMC_BaseGetRoot(void) const {return root;}
+//    void ESMC_BaseSetRoot(ESMCI::Attribute *orig) {root = orig; rootalias=true;}
     ESMCI::Info2 *ESMC_BaseGetInfo(void) const {return info;} // root_info_tdk
     void ESMC_BaseSetInfo(ESMCI::Info2 *orig) {info = orig; infoalias=true;} // root_info_tdk
 

@@ -55,7 +55,7 @@ namespace ESMCI {
 
   typedef union {
     Array *arr;
-    Attribute *attr;
+    ESMCI::Info2 *attr;
   } IO_ObjectType;
 
   struct IO_ObjectContainer {
@@ -102,7 +102,7 @@ namespace ESMCI {
     Array *getArray(void) {
       return object.arr;
     }
-    Attribute *getAttribute(void) {
+    ESMCI::Info2 *getAttribute(void) {
       return object.attr;
     }
     const char *getName(void) {

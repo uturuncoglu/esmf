@@ -148,6 +148,35 @@ void ESMC_Info2Destroy(ESMCI::Info2* info, int& rc) {
 }
 
 #undef  ESMC_METHOD
+#define ESMC_METHOD "ESMC_Info2Dump()"
+void ESMC_Info2Dump(ESMCI::Info2 *info, char *output, int &rc) {
+  // Test:
+  // Notes:
+  rc = ESMF_FAILURE;
+  try {
+    const std::string c_output = info->dump(rc);
+    for (std::size_t ii = 0; ii < c_output.size(); ++ii) {
+      output[ii] = c_output[ii];
+    }
+  }
+  ESMF_CATCH_ISOC
+  rc = ESMF_SUCCESS;
+}
+
+#undef  ESMC_METHOD
+#define ESMC_METHOD "ESMC_Info2DumpLength()"
+void ESMC_Info2DumpLength(ESMCI::Info2 *info, int &dump_length, int &rc) {
+  // Test:
+  // Notes:
+  rc = ESMF_FAILURE;
+  try {
+    dump_length = info->dump(rc).size();
+  }
+  ESMF_CATCH_ISOC
+  rc = ESMF_SUCCESS;
+}
+
+#undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_Info2Erase()"
 void ESMC_Info2Erase(ESMCI::Info2* info, char* keyParent,
                           char* keyChild, bool &recursive, int& rc) {

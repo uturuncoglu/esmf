@@ -74,6 +74,24 @@ interface
 
   !=============================================================================
 
+  subroutine c_info_dump(info, output, rc) bind(C, name="ESMC_Info2Dump")
+    use iso_c_binding
+    implicit none
+    type(C_PTR), value :: info
+    character(C_CHAR), intent(out) :: output(*)
+    integer(C_INT), intent(inout) :: rc
+  end subroutine c_info_dump
+
+  subroutine c_info_dump_len(info, dump_length, rc) bind(C, name="ESMC_Info2DumpLength")
+    use iso_c_binding
+    implicit none
+    type(C_PTR), value :: info
+    integer(C_INT), intent(out) :: dump_length
+    integer(C_INT), intent(inout) :: rc
+  end subroutine c_info_dump_len
+
+  !=============================================================================
+
   subroutine c_info_erase(info, keyParent, keyChild, recursive, rc) bind(C, name="ESMC_Info2Erase")
     use iso_c_binding
     implicit none

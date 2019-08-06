@@ -242,6 +242,39 @@ end subroutine ESMF_Info2Destroy
 !------------------------------------------------------------------------------
 
 #undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_Info2Dump()"
+function ESMF_Info2Dump(info, key, rc) result(output)
+  type(ESMF_Info2), intent(in) :: info
+  character(*), intent(in), optional :: key
+  integer, intent(inout), optional :: rc
+  character(:), allocatable :: output
+
+  character(:), allocatable :: l_key
+  integer :: dump_length, localrc
+
+  localrc = ESMF_RC_NOT_IMPL
+  if (present(rc)) rc = ESMF_RC_NOT_IMPL
+
+  if (present(key)) then
+    l_key = key
+  else
+    l_key = ""
+  endif
+
+  call c_info_dump_len(info%ptr, dump_length, localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT)) return
+
+  allocate(character(dump_length)::output)
+
+  call c_info_dump(info%ptr, output, localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT)) return
+
+  if (present(rc)) rc = ESMF_SUCCESS
+end function ESMF_Info2Dump
+
+!------------------------------------------------------------------------------
+
+#undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_Info2Equal()"
 function ESMF_Info2Equal(lhs, rhs) result(is_equal)
   type(ESMF_Info2), intent(in) :: lhs

@@ -1310,17 +1310,6 @@ module ESMF_ComplianceICMod
              return  ! bail out
 
           ! add a few attributes so they appear in the JSON
-          ! TODO: this should really only be done once
-          call ESMF_AttributeAdd(state, convention=convention, purpose=purpose, &
-                               attrList=(/"ESMFID", &
-                                          "name  ", &
-                                          "intent"/), &
-                               attpack=attpack, rc=rc)
-          if (ESMF_LogFoundError(rc, &
-            line=__LINE__, &
-            file=FILENAME)) &
-            return  ! bail out
-
           call ESMF_AttributeSet(state, name="name", value=name, &
                                attpack=attpack, rc=rc)
           if (ESMF_LogFoundError(rc, &
@@ -1350,8 +1339,7 @@ module ESMF_ComplianceICMod
               return  ! bail out
 
           if (isPresent) then
-              call ESMF_AttPackStreamJSON(attpack, flattenPackList=.true., &
-                    includeUnset=.false., includeLinks=.false., output=jsonstring, rc=rc)
+              call ESMF_AttPackStreamJSON(attpack, jsonstring, rc=rc)
               if (ESMF_LogFoundError(rc, &
                   line=__LINE__, &
                   file=FILENAME)) &
@@ -2001,15 +1989,6 @@ module ESMF_ComplianceICMod
           file=FILENAME)) &
           return  ! bail out
 
-        call ESMF_AttributeAdd(comp, convention=convention, purpose=purpose, &
-                               attrList=(/"CompName", &
-                                          "ESMFID  "/), &
-                               attpack=attpack, rc=rc)
-        if (ESMF_LogFoundError(rc, &
-          line=__LINE__, &
-          file=FILENAME)) &
-          return  ! bail out
-
         call ESMF_AttributeSet(comp, name="CompName", value=compName, &
                                attpack=attpack, rc=rc)
         if (ESMF_LogFoundError(rc, &
@@ -2033,8 +2012,7 @@ module ESMF_ComplianceICMod
           return  ! bail out
 
         if (isPresent) then
-            call ESMF_AttPackStreamJSON(attpack, flattenPackList=.true., &
-                    includeUnset=.false., includeLinks=.true., output=jsonstring, rc=rc)
+            call ESMF_AttPackStreamJSON(attpack, jsonstring, rc=rc)
             if (ESMF_LogFoundError(rc, &
               line=__LINE__, &
               file=FILENAME)) &
@@ -2244,15 +2222,6 @@ module ESMF_ComplianceICMod
                 fieldMinVal = minval(farrayPtr2D)
                 fieldMaxVal = maxval(farrayPtr2D)
 
-                call ESMF_AttributeAdd(field, convention=convention, purpose=purpose, &
-                           attrList=(/"petMinVal",   &
-                                      "petMaxVal"/), &
-                           attpack=attpack, rc=rc)
-                if (ESMF_LogFoundError(rc, &
-                    line=__LINE__, &
-                    file=FILENAME)) &
-                    return  ! bail out
-
                 call ESMF_AttributeSet(field, name="petMinVal", value=fieldMinVal, &
                            attpack=attpack, rc=rc)
                 if (ESMF_LogFoundError(rc, &
@@ -2269,15 +2238,6 @@ module ESMF_ComplianceICMod
 
             endif
         endif
-
-        call ESMF_AttributeAdd(field, convention=convention, purpose=purpose, &
-                           attrList=(/"ESMFID     ",   &
-                                      "stateESMFID"/), &
-                           attpack=attpack, rc=rc)
-        if (ESMF_LogFoundError(rc, &
-            line=__LINE__, &
-            file=FILENAME)) &
-            return  ! bail out
 
         call JSON_GetID(field, idStr, rc=rc)
         if (ESMF_LogFoundError(rc, &
@@ -2307,8 +2267,7 @@ module ESMF_ComplianceICMod
               return  ! bail out
 
         if (isPresent) then
-            call ESMF_AttPackStreamJSON(attpack, flattenPackList=.true., &
-                includeUnset=.false., includeLinks=.false., output=jsonstring, rc=rc)
+            call ESMF_AttPackStreamJSON(attpack, jsonstring, rc=rc)
             if (ESMF_LogFoundError(rc, &
               line=__LINE__, &
               file=FILENAME)) &
