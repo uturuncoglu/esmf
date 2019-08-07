@@ -51,8 +51,6 @@ public ESMF_AttPackStreamJSON
 public ESMF_AttributeCopy
 public ESMF_AttributeGet
 public ESMF_AttributeGetAttPack
-
-
 public ESMF_AttributeSet
 public ESMF_AttributeRead
 public ESMF_AttributeRemove
@@ -840,8 +838,8 @@ end subroutine ESMF_AttributeSetAttPackArrayR4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjArrayR4()"
-subroutine ESMF_AttributeSetObjArrayR4(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjArrayR4(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_Array), intent(inout) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R4), intent(in) :: value
@@ -850,6 +848,7 @@ subroutine ESMF_AttributeSetObjArrayR4(target, name, value, keywordEnforcer, con
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -913,8 +912,8 @@ end subroutine ESMF_AttributeSetAttPackArrayR4_N
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjArrayR4_N()"
-subroutine ESMF_AttributeSetObjArrayR4_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjArrayR4_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_Array), intent(inout) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R4), dimension(:), intent(in) :: value
@@ -923,6 +922,7 @@ subroutine ESMF_AttributeSetObjArrayR4_N(target, name, value, keywordEnforcer, c
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -986,8 +986,8 @@ end subroutine ESMF_AttributeSetAttPackArrayR8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjArrayR8()"
-subroutine ESMF_AttributeSetObjArrayR8(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjArrayR8(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_Array), intent(inout) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R8), intent(in) :: value
@@ -996,6 +996,7 @@ subroutine ESMF_AttributeSetObjArrayR8(target, name, value, keywordEnforcer, con
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -1059,8 +1060,8 @@ end subroutine ESMF_AttributeSetAttPackArrayR8_N
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjArrayR8_N()"
-subroutine ESMF_AttributeSetObjArrayR8_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjArrayR8_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_Array), intent(inout) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R8), dimension(:), intent(in) :: value
@@ -1069,6 +1070,7 @@ subroutine ESMF_AttributeSetObjArrayR8_N(target, name, value, keywordEnforcer, c
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -1132,8 +1134,8 @@ end subroutine ESMF_AttributeSetAttPackArrayI4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjArrayI4()"
-subroutine ESMF_AttributeSetObjArrayI4(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjArrayI4(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_Array), intent(inout) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I4), intent(in) :: value
@@ -1142,6 +1144,7 @@ subroutine ESMF_AttributeSetObjArrayI4(target, name, value, keywordEnforcer, con
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -1205,8 +1208,8 @@ end subroutine ESMF_AttributeSetAttPackArrayI4_N
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjArrayI4_N()"
-subroutine ESMF_AttributeSetObjArrayI4_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjArrayI4_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_Array), intent(inout) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I4), dimension(:), intent(in) :: value
@@ -1215,6 +1218,7 @@ subroutine ESMF_AttributeSetObjArrayI4_N(target, name, value, keywordEnforcer, c
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -1278,8 +1282,8 @@ end subroutine ESMF_AttributeSetAttPackArrayI8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjArrayI8()"
-subroutine ESMF_AttributeSetObjArrayI8(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjArrayI8(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_Array), intent(inout) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I8), intent(in) :: value
@@ -1288,6 +1292,7 @@ subroutine ESMF_AttributeSetObjArrayI8(target, name, value, keywordEnforcer, con
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -1351,8 +1356,8 @@ end subroutine ESMF_AttributeSetAttPackArrayI8_N
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjArrayI8_N()"
-subroutine ESMF_AttributeSetObjArrayI8_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjArrayI8_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_Array), intent(inout) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I8), dimension(:), intent(in) :: value
@@ -1361,6 +1366,7 @@ subroutine ESMF_AttributeSetObjArrayI8_N(target, name, value, keywordEnforcer, c
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -1424,8 +1430,8 @@ end subroutine ESMF_AttributeSetAttPackArrayCH
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjArrayCH()"
-subroutine ESMF_AttributeSetObjArrayCH(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjArrayCH(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_Array), intent(inout) :: target
   character(len=*), intent(in) :: name
   character(len=*), intent(in) :: value
@@ -1434,6 +1440,7 @@ subroutine ESMF_AttributeSetObjArrayCH(target, name, value, keywordEnforcer, con
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -1497,8 +1504,8 @@ end subroutine ESMF_AttributeSetAttPackArrayCH_N
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjArrayCH_N()"
-subroutine ESMF_AttributeSetObjArrayCH_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjArrayCH_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_Array), intent(inout) :: target
   character(len=*), intent(in) :: name
   character(len=*), dimension(:), intent(in) :: value
@@ -1507,6 +1514,7 @@ subroutine ESMF_AttributeSetObjArrayCH_N(target, name, value, keywordEnforcer, c
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -1570,8 +1578,8 @@ end subroutine ESMF_AttributeSetAttPackArrayLG
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjArrayLG()"
-subroutine ESMF_AttributeSetObjArrayLG(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjArrayLG(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_Array), intent(inout) :: target
   character(len=*), intent(in) :: name
   logical, intent(in) :: value
@@ -1580,6 +1588,7 @@ subroutine ESMF_AttributeSetObjArrayLG(target, name, value, keywordEnforcer, con
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -1643,8 +1652,8 @@ end subroutine ESMF_AttributeSetAttPackArrayLG_N
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjArrayLG_N()"
-subroutine ESMF_AttributeSetObjArrayLG_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjArrayLG_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_Array), intent(inout) :: target
   character(len=*), intent(in) :: name
   logical, dimension(:), intent(in) :: value
@@ -1653,6 +1662,7 @@ subroutine ESMF_AttributeSetObjArrayLG_N(target, name, value, keywordEnforcer, c
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -1716,8 +1726,8 @@ end subroutine ESMF_AttributeSetAttPackArrayBundleR4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjArrayBundleR4()"
-subroutine ESMF_AttributeSetObjArrayBundleR4(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjArrayBundleR4(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_ArrayBundle), intent(inout) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R4), intent(in) :: value
@@ -1726,6 +1736,7 @@ subroutine ESMF_AttributeSetObjArrayBundleR4(target, name, value, keywordEnforce
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -1789,8 +1800,8 @@ end subroutine ESMF_AttributeSetAttPackArrayBundleR4_N
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjArrayBundleR4_N()"
-subroutine ESMF_AttributeSetObjArrayBundleR4_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjArrayBundleR4_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_ArrayBundle), intent(inout) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R4), dimension(:), intent(in) :: value
@@ -1799,6 +1810,7 @@ subroutine ESMF_AttributeSetObjArrayBundleR4_N(target, name, value, keywordEnfor
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -1862,8 +1874,8 @@ end subroutine ESMF_AttributeSetAttPackArrayBundleR8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjArrayBundleR8()"
-subroutine ESMF_AttributeSetObjArrayBundleR8(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjArrayBundleR8(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_ArrayBundle), intent(inout) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R8), intent(in) :: value
@@ -1872,6 +1884,7 @@ subroutine ESMF_AttributeSetObjArrayBundleR8(target, name, value, keywordEnforce
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -1935,8 +1948,8 @@ end subroutine ESMF_AttributeSetAttPackArrayBundleR8_N
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjArrayBundleR8_N()"
-subroutine ESMF_AttributeSetObjArrayBundleR8_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjArrayBundleR8_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_ArrayBundle), intent(inout) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R8), dimension(:), intent(in) :: value
@@ -1945,6 +1958,7 @@ subroutine ESMF_AttributeSetObjArrayBundleR8_N(target, name, value, keywordEnfor
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -2008,8 +2022,8 @@ end subroutine ESMF_AttributeSetAttPackArrayBundleI4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjArrayBundleI4()"
-subroutine ESMF_AttributeSetObjArrayBundleI4(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjArrayBundleI4(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_ArrayBundle), intent(inout) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I4), intent(in) :: value
@@ -2018,6 +2032,7 @@ subroutine ESMF_AttributeSetObjArrayBundleI4(target, name, value, keywordEnforce
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -2081,8 +2096,8 @@ end subroutine ESMF_AttributeSetAttPackArrayBundleI4_N
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjArrayBundleI4_N()"
-subroutine ESMF_AttributeSetObjArrayBundleI4_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjArrayBundleI4_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_ArrayBundle), intent(inout) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I4), dimension(:), intent(in) :: value
@@ -2091,6 +2106,7 @@ subroutine ESMF_AttributeSetObjArrayBundleI4_N(target, name, value, keywordEnfor
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -2154,8 +2170,8 @@ end subroutine ESMF_AttributeSetAttPackArrayBundleI8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjArrayBundleI8()"
-subroutine ESMF_AttributeSetObjArrayBundleI8(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjArrayBundleI8(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_ArrayBundle), intent(inout) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I8), intent(in) :: value
@@ -2164,6 +2180,7 @@ subroutine ESMF_AttributeSetObjArrayBundleI8(target, name, value, keywordEnforce
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -2227,8 +2244,8 @@ end subroutine ESMF_AttributeSetAttPackArrayBundleI8_N
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjArrayBundleI8_N()"
-subroutine ESMF_AttributeSetObjArrayBundleI8_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjArrayBundleI8_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_ArrayBundle), intent(inout) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I8), dimension(:), intent(in) :: value
@@ -2237,6 +2254,7 @@ subroutine ESMF_AttributeSetObjArrayBundleI8_N(target, name, value, keywordEnfor
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -2300,8 +2318,8 @@ end subroutine ESMF_AttributeSetAttPackArrayBundleCH
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjArrayBundleCH()"
-subroutine ESMF_AttributeSetObjArrayBundleCH(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjArrayBundleCH(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_ArrayBundle), intent(inout) :: target
   character(len=*), intent(in) :: name
   character(len=*), intent(in) :: value
@@ -2310,6 +2328,7 @@ subroutine ESMF_AttributeSetObjArrayBundleCH(target, name, value, keywordEnforce
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -2373,8 +2392,8 @@ end subroutine ESMF_AttributeSetAttPackArrayBundleCH_N
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjArrayBundleCH_N()"
-subroutine ESMF_AttributeSetObjArrayBundleCH_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjArrayBundleCH_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_ArrayBundle), intent(inout) :: target
   character(len=*), intent(in) :: name
   character(len=*), dimension(:), intent(in) :: value
@@ -2383,6 +2402,7 @@ subroutine ESMF_AttributeSetObjArrayBundleCH_N(target, name, value, keywordEnfor
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -2446,8 +2466,8 @@ end subroutine ESMF_AttributeSetAttPackArrayBundleLG
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjArrayBundleLG()"
-subroutine ESMF_AttributeSetObjArrayBundleLG(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjArrayBundleLG(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_ArrayBundle), intent(inout) :: target
   character(len=*), intent(in) :: name
   logical, intent(in) :: value
@@ -2456,6 +2476,7 @@ subroutine ESMF_AttributeSetObjArrayBundleLG(target, name, value, keywordEnforce
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -2519,8 +2540,8 @@ end subroutine ESMF_AttributeSetAttPackArrayBundleLG_N
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjArrayBundleLG_N()"
-subroutine ESMF_AttributeSetObjArrayBundleLG_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjArrayBundleLG_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_ArrayBundle), intent(inout) :: target
   character(len=*), intent(in) :: name
   logical, dimension(:), intent(in) :: value
@@ -2529,6 +2550,7 @@ subroutine ESMF_AttributeSetObjArrayBundleLG_N(target, name, value, keywordEnfor
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -2592,8 +2614,8 @@ end subroutine ESMF_AttributeSetAttPackCplCompR4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjCplCompR4()"
-subroutine ESMF_AttributeSetObjCplCompR4(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjCplCompR4(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_CplComp), intent(inout) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R4), intent(in) :: value
@@ -2602,6 +2624,7 @@ subroutine ESMF_AttributeSetObjCplCompR4(target, name, value, keywordEnforcer, c
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -2665,8 +2688,8 @@ end subroutine ESMF_AttributeSetAttPackCplCompR4_N
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjCplCompR4_N()"
-subroutine ESMF_AttributeSetObjCplCompR4_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjCplCompR4_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_CplComp), intent(inout) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R4), dimension(:), intent(in) :: value
@@ -2675,6 +2698,7 @@ subroutine ESMF_AttributeSetObjCplCompR4_N(target, name, value, keywordEnforcer,
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -2738,8 +2762,8 @@ end subroutine ESMF_AttributeSetAttPackCplCompR8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjCplCompR8()"
-subroutine ESMF_AttributeSetObjCplCompR8(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjCplCompR8(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_CplComp), intent(inout) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R8), intent(in) :: value
@@ -2748,6 +2772,7 @@ subroutine ESMF_AttributeSetObjCplCompR8(target, name, value, keywordEnforcer, c
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -2811,8 +2836,8 @@ end subroutine ESMF_AttributeSetAttPackCplCompR8_N
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjCplCompR8_N()"
-subroutine ESMF_AttributeSetObjCplCompR8_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjCplCompR8_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_CplComp), intent(inout) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R8), dimension(:), intent(in) :: value
@@ -2821,6 +2846,7 @@ subroutine ESMF_AttributeSetObjCplCompR8_N(target, name, value, keywordEnforcer,
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -2884,8 +2910,8 @@ end subroutine ESMF_AttributeSetAttPackCplCompI4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjCplCompI4()"
-subroutine ESMF_AttributeSetObjCplCompI4(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjCplCompI4(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_CplComp), intent(inout) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I4), intent(in) :: value
@@ -2894,6 +2920,7 @@ subroutine ESMF_AttributeSetObjCplCompI4(target, name, value, keywordEnforcer, c
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -2957,8 +2984,8 @@ end subroutine ESMF_AttributeSetAttPackCplCompI4_N
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjCplCompI4_N()"
-subroutine ESMF_AttributeSetObjCplCompI4_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjCplCompI4_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_CplComp), intent(inout) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I4), dimension(:), intent(in) :: value
@@ -2967,6 +2994,7 @@ subroutine ESMF_AttributeSetObjCplCompI4_N(target, name, value, keywordEnforcer,
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -3030,8 +3058,8 @@ end subroutine ESMF_AttributeSetAttPackCplCompI8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjCplCompI8()"
-subroutine ESMF_AttributeSetObjCplCompI8(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjCplCompI8(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_CplComp), intent(inout) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I8), intent(in) :: value
@@ -3040,6 +3068,7 @@ subroutine ESMF_AttributeSetObjCplCompI8(target, name, value, keywordEnforcer, c
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -3103,8 +3132,8 @@ end subroutine ESMF_AttributeSetAttPackCplCompI8_N
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjCplCompI8_N()"
-subroutine ESMF_AttributeSetObjCplCompI8_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjCplCompI8_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_CplComp), intent(inout) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I8), dimension(:), intent(in) :: value
@@ -3113,6 +3142,7 @@ subroutine ESMF_AttributeSetObjCplCompI8_N(target, name, value, keywordEnforcer,
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -3176,8 +3206,8 @@ end subroutine ESMF_AttributeSetAttPackCplCompCH
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjCplCompCH()"
-subroutine ESMF_AttributeSetObjCplCompCH(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjCplCompCH(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_CplComp), intent(inout) :: target
   character(len=*), intent(in) :: name
   character(len=*), intent(in) :: value
@@ -3186,6 +3216,7 @@ subroutine ESMF_AttributeSetObjCplCompCH(target, name, value, keywordEnforcer, c
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -3249,8 +3280,8 @@ end subroutine ESMF_AttributeSetAttPackCplCompCH_N
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjCplCompCH_N()"
-subroutine ESMF_AttributeSetObjCplCompCH_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjCplCompCH_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_CplComp), intent(inout) :: target
   character(len=*), intent(in) :: name
   character(len=*), dimension(:), intent(in) :: value
@@ -3259,6 +3290,7 @@ subroutine ESMF_AttributeSetObjCplCompCH_N(target, name, value, keywordEnforcer,
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -3322,8 +3354,8 @@ end subroutine ESMF_AttributeSetAttPackCplCompLG
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjCplCompLG()"
-subroutine ESMF_AttributeSetObjCplCompLG(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjCplCompLG(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_CplComp), intent(inout) :: target
   character(len=*), intent(in) :: name
   logical, intent(in) :: value
@@ -3332,6 +3364,7 @@ subroutine ESMF_AttributeSetObjCplCompLG(target, name, value, keywordEnforcer, c
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -3395,8 +3428,8 @@ end subroutine ESMF_AttributeSetAttPackCplCompLG_N
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjCplCompLG_N()"
-subroutine ESMF_AttributeSetObjCplCompLG_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjCplCompLG_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_CplComp), intent(inout) :: target
   character(len=*), intent(in) :: name
   logical, dimension(:), intent(in) :: value
@@ -3405,6 +3438,7 @@ subroutine ESMF_AttributeSetObjCplCompLG_N(target, name, value, keywordEnforcer,
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -3468,8 +3502,8 @@ end subroutine ESMF_AttributeSetAttPackGridCompR4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjGridCompR4()"
-subroutine ESMF_AttributeSetObjGridCompR4(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjGridCompR4(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_GridComp), intent(inout) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R4), intent(in) :: value
@@ -3478,6 +3512,7 @@ subroutine ESMF_AttributeSetObjGridCompR4(target, name, value, keywordEnforcer, 
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -3541,8 +3576,8 @@ end subroutine ESMF_AttributeSetAttPackGridCompR4_N
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjGridCompR4_N()"
-subroutine ESMF_AttributeSetObjGridCompR4_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjGridCompR4_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_GridComp), intent(inout) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R4), dimension(:), intent(in) :: value
@@ -3551,6 +3586,7 @@ subroutine ESMF_AttributeSetObjGridCompR4_N(target, name, value, keywordEnforcer
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -3614,8 +3650,8 @@ end subroutine ESMF_AttributeSetAttPackGridCompR8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjGridCompR8()"
-subroutine ESMF_AttributeSetObjGridCompR8(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjGridCompR8(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_GridComp), intent(inout) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R8), intent(in) :: value
@@ -3624,6 +3660,7 @@ subroutine ESMF_AttributeSetObjGridCompR8(target, name, value, keywordEnforcer, 
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -3687,8 +3724,8 @@ end subroutine ESMF_AttributeSetAttPackGridCompR8_N
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjGridCompR8_N()"
-subroutine ESMF_AttributeSetObjGridCompR8_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjGridCompR8_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_GridComp), intent(inout) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R8), dimension(:), intent(in) :: value
@@ -3697,6 +3734,7 @@ subroutine ESMF_AttributeSetObjGridCompR8_N(target, name, value, keywordEnforcer
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -3760,8 +3798,8 @@ end subroutine ESMF_AttributeSetAttPackGridCompI4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjGridCompI4()"
-subroutine ESMF_AttributeSetObjGridCompI4(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjGridCompI4(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_GridComp), intent(inout) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I4), intent(in) :: value
@@ -3770,6 +3808,7 @@ subroutine ESMF_AttributeSetObjGridCompI4(target, name, value, keywordEnforcer, 
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -3833,8 +3872,8 @@ end subroutine ESMF_AttributeSetAttPackGridCompI4_N
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjGridCompI4_N()"
-subroutine ESMF_AttributeSetObjGridCompI4_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjGridCompI4_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_GridComp), intent(inout) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I4), dimension(:), intent(in) :: value
@@ -3843,6 +3882,7 @@ subroutine ESMF_AttributeSetObjGridCompI4_N(target, name, value, keywordEnforcer
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -3906,8 +3946,8 @@ end subroutine ESMF_AttributeSetAttPackGridCompI8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjGridCompI8()"
-subroutine ESMF_AttributeSetObjGridCompI8(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjGridCompI8(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_GridComp), intent(inout) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I8), intent(in) :: value
@@ -3916,6 +3956,7 @@ subroutine ESMF_AttributeSetObjGridCompI8(target, name, value, keywordEnforcer, 
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -3979,8 +4020,8 @@ end subroutine ESMF_AttributeSetAttPackGridCompI8_N
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjGridCompI8_N()"
-subroutine ESMF_AttributeSetObjGridCompI8_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjGridCompI8_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_GridComp), intent(inout) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I8), dimension(:), intent(in) :: value
@@ -3989,6 +4030,7 @@ subroutine ESMF_AttributeSetObjGridCompI8_N(target, name, value, keywordEnforcer
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -4052,8 +4094,8 @@ end subroutine ESMF_AttributeSetAttPackGridCompCH
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjGridCompCH()"
-subroutine ESMF_AttributeSetObjGridCompCH(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjGridCompCH(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_GridComp), intent(inout) :: target
   character(len=*), intent(in) :: name
   character(len=*), intent(in) :: value
@@ -4062,6 +4104,7 @@ subroutine ESMF_AttributeSetObjGridCompCH(target, name, value, keywordEnforcer, 
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -4125,8 +4168,8 @@ end subroutine ESMF_AttributeSetAttPackGridCompCH_N
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjGridCompCH_N()"
-subroutine ESMF_AttributeSetObjGridCompCH_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjGridCompCH_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_GridComp), intent(inout) :: target
   character(len=*), intent(in) :: name
   character(len=*), dimension(:), intent(in) :: value
@@ -4135,6 +4178,7 @@ subroutine ESMF_AttributeSetObjGridCompCH_N(target, name, value, keywordEnforcer
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -4198,8 +4242,8 @@ end subroutine ESMF_AttributeSetAttPackGridCompLG
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjGridCompLG()"
-subroutine ESMF_AttributeSetObjGridCompLG(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjGridCompLG(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_GridComp), intent(inout) :: target
   character(len=*), intent(in) :: name
   logical, intent(in) :: value
@@ -4208,6 +4252,7 @@ subroutine ESMF_AttributeSetObjGridCompLG(target, name, value, keywordEnforcer, 
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -4271,8 +4316,8 @@ end subroutine ESMF_AttributeSetAttPackGridCompLG_N
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjGridCompLG_N()"
-subroutine ESMF_AttributeSetObjGridCompLG_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjGridCompLG_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_GridComp), intent(inout) :: target
   character(len=*), intent(in) :: name
   logical, dimension(:), intent(in) :: value
@@ -4281,6 +4326,7 @@ subroutine ESMF_AttributeSetObjGridCompLG_N(target, name, value, keywordEnforcer
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -4344,8 +4390,8 @@ end subroutine ESMF_AttributeSetAttPackSciCompR4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjSciCompR4()"
-subroutine ESMF_AttributeSetObjSciCompR4(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjSciCompR4(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_SciComp), intent(inout) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R4), intent(in) :: value
@@ -4354,6 +4400,7 @@ subroutine ESMF_AttributeSetObjSciCompR4(target, name, value, keywordEnforcer, c
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -4417,8 +4464,8 @@ end subroutine ESMF_AttributeSetAttPackSciCompR4_N
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjSciCompR4_N()"
-subroutine ESMF_AttributeSetObjSciCompR4_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjSciCompR4_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_SciComp), intent(inout) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R4), dimension(:), intent(in) :: value
@@ -4427,6 +4474,7 @@ subroutine ESMF_AttributeSetObjSciCompR4_N(target, name, value, keywordEnforcer,
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -4490,8 +4538,8 @@ end subroutine ESMF_AttributeSetAttPackSciCompR8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjSciCompR8()"
-subroutine ESMF_AttributeSetObjSciCompR8(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjSciCompR8(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_SciComp), intent(inout) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R8), intent(in) :: value
@@ -4500,6 +4548,7 @@ subroutine ESMF_AttributeSetObjSciCompR8(target, name, value, keywordEnforcer, c
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -4563,8 +4612,8 @@ end subroutine ESMF_AttributeSetAttPackSciCompR8_N
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjSciCompR8_N()"
-subroutine ESMF_AttributeSetObjSciCompR8_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjSciCompR8_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_SciComp), intent(inout) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R8), dimension(:), intent(in) :: value
@@ -4573,6 +4622,7 @@ subroutine ESMF_AttributeSetObjSciCompR8_N(target, name, value, keywordEnforcer,
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -4636,8 +4686,8 @@ end subroutine ESMF_AttributeSetAttPackSciCompI4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjSciCompI4()"
-subroutine ESMF_AttributeSetObjSciCompI4(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjSciCompI4(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_SciComp), intent(inout) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I4), intent(in) :: value
@@ -4646,6 +4696,7 @@ subroutine ESMF_AttributeSetObjSciCompI4(target, name, value, keywordEnforcer, c
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -4709,8 +4760,8 @@ end subroutine ESMF_AttributeSetAttPackSciCompI4_N
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjSciCompI4_N()"
-subroutine ESMF_AttributeSetObjSciCompI4_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjSciCompI4_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_SciComp), intent(inout) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I4), dimension(:), intent(in) :: value
@@ -4719,6 +4770,7 @@ subroutine ESMF_AttributeSetObjSciCompI4_N(target, name, value, keywordEnforcer,
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -4782,8 +4834,8 @@ end subroutine ESMF_AttributeSetAttPackSciCompI8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjSciCompI8()"
-subroutine ESMF_AttributeSetObjSciCompI8(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjSciCompI8(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_SciComp), intent(inout) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I8), intent(in) :: value
@@ -4792,6 +4844,7 @@ subroutine ESMF_AttributeSetObjSciCompI8(target, name, value, keywordEnforcer, c
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -4855,8 +4908,8 @@ end subroutine ESMF_AttributeSetAttPackSciCompI8_N
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjSciCompI8_N()"
-subroutine ESMF_AttributeSetObjSciCompI8_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjSciCompI8_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_SciComp), intent(inout) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I8), dimension(:), intent(in) :: value
@@ -4865,6 +4918,7 @@ subroutine ESMF_AttributeSetObjSciCompI8_N(target, name, value, keywordEnforcer,
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -4928,8 +4982,8 @@ end subroutine ESMF_AttributeSetAttPackSciCompCH
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjSciCompCH()"
-subroutine ESMF_AttributeSetObjSciCompCH(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjSciCompCH(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_SciComp), intent(inout) :: target
   character(len=*), intent(in) :: name
   character(len=*), intent(in) :: value
@@ -4938,6 +4992,7 @@ subroutine ESMF_AttributeSetObjSciCompCH(target, name, value, keywordEnforcer, c
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -5001,8 +5056,8 @@ end subroutine ESMF_AttributeSetAttPackSciCompCH_N
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjSciCompCH_N()"
-subroutine ESMF_AttributeSetObjSciCompCH_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjSciCompCH_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_SciComp), intent(inout) :: target
   character(len=*), intent(in) :: name
   character(len=*), dimension(:), intent(in) :: value
@@ -5011,6 +5066,7 @@ subroutine ESMF_AttributeSetObjSciCompCH_N(target, name, value, keywordEnforcer,
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -5074,8 +5130,8 @@ end subroutine ESMF_AttributeSetAttPackSciCompLG
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjSciCompLG()"
-subroutine ESMF_AttributeSetObjSciCompLG(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjSciCompLG(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_SciComp), intent(inout) :: target
   character(len=*), intent(in) :: name
   logical, intent(in) :: value
@@ -5084,6 +5140,7 @@ subroutine ESMF_AttributeSetObjSciCompLG(target, name, value, keywordEnforcer, c
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -5147,8 +5204,8 @@ end subroutine ESMF_AttributeSetAttPackSciCompLG_N
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjSciCompLG_N()"
-subroutine ESMF_AttributeSetObjSciCompLG_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjSciCompLG_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_SciComp), intent(inout) :: target
   character(len=*), intent(in) :: name
   logical, dimension(:), intent(in) :: value
@@ -5157,6 +5214,7 @@ subroutine ESMF_AttributeSetObjSciCompLG_N(target, name, value, keywordEnforcer,
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -5220,8 +5278,8 @@ end subroutine ESMF_AttributeSetAttPackDistGridR4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjDistGridR4()"
-subroutine ESMF_AttributeSetObjDistGridR4(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjDistGridR4(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_DistGrid), intent(inout) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R4), intent(in) :: value
@@ -5230,6 +5288,7 @@ subroutine ESMF_AttributeSetObjDistGridR4(target, name, value, keywordEnforcer, 
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -5293,8 +5352,8 @@ end subroutine ESMF_AttributeSetAttPackDistGridR4_N
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjDistGridR4_N()"
-subroutine ESMF_AttributeSetObjDistGridR4_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjDistGridR4_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_DistGrid), intent(inout) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R4), dimension(:), intent(in) :: value
@@ -5303,6 +5362,7 @@ subroutine ESMF_AttributeSetObjDistGridR4_N(target, name, value, keywordEnforcer
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -5366,8 +5426,8 @@ end subroutine ESMF_AttributeSetAttPackDistGridR8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjDistGridR8()"
-subroutine ESMF_AttributeSetObjDistGridR8(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjDistGridR8(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_DistGrid), intent(inout) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R8), intent(in) :: value
@@ -5376,6 +5436,7 @@ subroutine ESMF_AttributeSetObjDistGridR8(target, name, value, keywordEnforcer, 
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -5439,8 +5500,8 @@ end subroutine ESMF_AttributeSetAttPackDistGridR8_N
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjDistGridR8_N()"
-subroutine ESMF_AttributeSetObjDistGridR8_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjDistGridR8_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_DistGrid), intent(inout) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R8), dimension(:), intent(in) :: value
@@ -5449,6 +5510,7 @@ subroutine ESMF_AttributeSetObjDistGridR8_N(target, name, value, keywordEnforcer
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -5512,8 +5574,8 @@ end subroutine ESMF_AttributeSetAttPackDistGridI4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjDistGridI4()"
-subroutine ESMF_AttributeSetObjDistGridI4(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjDistGridI4(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_DistGrid), intent(inout) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I4), intent(in) :: value
@@ -5522,6 +5584,7 @@ subroutine ESMF_AttributeSetObjDistGridI4(target, name, value, keywordEnforcer, 
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -5585,8 +5648,8 @@ end subroutine ESMF_AttributeSetAttPackDistGridI4_N
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjDistGridI4_N()"
-subroutine ESMF_AttributeSetObjDistGridI4_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjDistGridI4_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_DistGrid), intent(inout) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I4), dimension(:), intent(in) :: value
@@ -5595,6 +5658,7 @@ subroutine ESMF_AttributeSetObjDistGridI4_N(target, name, value, keywordEnforcer
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -5658,8 +5722,8 @@ end subroutine ESMF_AttributeSetAttPackDistGridI8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjDistGridI8()"
-subroutine ESMF_AttributeSetObjDistGridI8(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjDistGridI8(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_DistGrid), intent(inout) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I8), intent(in) :: value
@@ -5668,6 +5732,7 @@ subroutine ESMF_AttributeSetObjDistGridI8(target, name, value, keywordEnforcer, 
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -5731,8 +5796,8 @@ end subroutine ESMF_AttributeSetAttPackDistGridI8_N
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjDistGridI8_N()"
-subroutine ESMF_AttributeSetObjDistGridI8_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjDistGridI8_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_DistGrid), intent(inout) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I8), dimension(:), intent(in) :: value
@@ -5741,6 +5806,7 @@ subroutine ESMF_AttributeSetObjDistGridI8_N(target, name, value, keywordEnforcer
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -5804,8 +5870,8 @@ end subroutine ESMF_AttributeSetAttPackDistGridCH
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjDistGridCH()"
-subroutine ESMF_AttributeSetObjDistGridCH(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjDistGridCH(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_DistGrid), intent(inout) :: target
   character(len=*), intent(in) :: name
   character(len=*), intent(in) :: value
@@ -5814,6 +5880,7 @@ subroutine ESMF_AttributeSetObjDistGridCH(target, name, value, keywordEnforcer, 
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -5877,8 +5944,8 @@ end subroutine ESMF_AttributeSetAttPackDistGridCH_N
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjDistGridCH_N()"
-subroutine ESMF_AttributeSetObjDistGridCH_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjDistGridCH_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_DistGrid), intent(inout) :: target
   character(len=*), intent(in) :: name
   character(len=*), dimension(:), intent(in) :: value
@@ -5887,6 +5954,7 @@ subroutine ESMF_AttributeSetObjDistGridCH_N(target, name, value, keywordEnforcer
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -5950,8 +6018,8 @@ end subroutine ESMF_AttributeSetAttPackDistGridLG
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjDistGridLG()"
-subroutine ESMF_AttributeSetObjDistGridLG(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjDistGridLG(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_DistGrid), intent(inout) :: target
   character(len=*), intent(in) :: name
   logical, intent(in) :: value
@@ -5960,6 +6028,7 @@ subroutine ESMF_AttributeSetObjDistGridLG(target, name, value, keywordEnforcer, 
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -6023,8 +6092,8 @@ end subroutine ESMF_AttributeSetAttPackDistGridLG_N
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjDistGridLG_N()"
-subroutine ESMF_AttributeSetObjDistGridLG_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjDistGridLG_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_DistGrid), intent(inout) :: target
   character(len=*), intent(in) :: name
   logical, dimension(:), intent(in) :: value
@@ -6033,6 +6102,7 @@ subroutine ESMF_AttributeSetObjDistGridLG_N(target, name, value, keywordEnforcer
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -6096,8 +6166,8 @@ end subroutine ESMF_AttributeSetAttPackFieldR4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjFieldR4()"
-subroutine ESMF_AttributeSetObjFieldR4(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjFieldR4(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_Field), intent(inout) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R4), intent(in) :: value
@@ -6106,6 +6176,7 @@ subroutine ESMF_AttributeSetObjFieldR4(target, name, value, keywordEnforcer, con
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -6169,8 +6240,8 @@ end subroutine ESMF_AttributeSetAttPackFieldR4_N
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjFieldR4_N()"
-subroutine ESMF_AttributeSetObjFieldR4_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjFieldR4_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_Field), intent(inout) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R4), dimension(:), intent(in) :: value
@@ -6179,6 +6250,7 @@ subroutine ESMF_AttributeSetObjFieldR4_N(target, name, value, keywordEnforcer, c
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -6242,8 +6314,8 @@ end subroutine ESMF_AttributeSetAttPackFieldR8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjFieldR8()"
-subroutine ESMF_AttributeSetObjFieldR8(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjFieldR8(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_Field), intent(inout) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R8), intent(in) :: value
@@ -6252,6 +6324,7 @@ subroutine ESMF_AttributeSetObjFieldR8(target, name, value, keywordEnforcer, con
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -6315,8 +6388,8 @@ end subroutine ESMF_AttributeSetAttPackFieldR8_N
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjFieldR8_N()"
-subroutine ESMF_AttributeSetObjFieldR8_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjFieldR8_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_Field), intent(inout) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R8), dimension(:), intent(in) :: value
@@ -6325,6 +6398,7 @@ subroutine ESMF_AttributeSetObjFieldR8_N(target, name, value, keywordEnforcer, c
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -6388,8 +6462,8 @@ end subroutine ESMF_AttributeSetAttPackFieldI4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjFieldI4()"
-subroutine ESMF_AttributeSetObjFieldI4(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjFieldI4(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_Field), intent(inout) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I4), intent(in) :: value
@@ -6398,6 +6472,7 @@ subroutine ESMF_AttributeSetObjFieldI4(target, name, value, keywordEnforcer, con
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -6461,8 +6536,8 @@ end subroutine ESMF_AttributeSetAttPackFieldI4_N
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjFieldI4_N()"
-subroutine ESMF_AttributeSetObjFieldI4_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjFieldI4_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_Field), intent(inout) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I4), dimension(:), intent(in) :: value
@@ -6471,6 +6546,7 @@ subroutine ESMF_AttributeSetObjFieldI4_N(target, name, value, keywordEnforcer, c
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -6534,8 +6610,8 @@ end subroutine ESMF_AttributeSetAttPackFieldI8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjFieldI8()"
-subroutine ESMF_AttributeSetObjFieldI8(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjFieldI8(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_Field), intent(inout) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I8), intent(in) :: value
@@ -6544,6 +6620,7 @@ subroutine ESMF_AttributeSetObjFieldI8(target, name, value, keywordEnforcer, con
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -6607,8 +6684,8 @@ end subroutine ESMF_AttributeSetAttPackFieldI8_N
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjFieldI8_N()"
-subroutine ESMF_AttributeSetObjFieldI8_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjFieldI8_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_Field), intent(inout) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I8), dimension(:), intent(in) :: value
@@ -6617,6 +6694,7 @@ subroutine ESMF_AttributeSetObjFieldI8_N(target, name, value, keywordEnforcer, c
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -6680,8 +6758,8 @@ end subroutine ESMF_AttributeSetAttPackFieldCH
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjFieldCH()"
-subroutine ESMF_AttributeSetObjFieldCH(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjFieldCH(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_Field), intent(inout) :: target
   character(len=*), intent(in) :: name
   character(len=*), intent(in) :: value
@@ -6690,6 +6768,7 @@ subroutine ESMF_AttributeSetObjFieldCH(target, name, value, keywordEnforcer, con
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -6753,8 +6832,8 @@ end subroutine ESMF_AttributeSetAttPackFieldCH_N
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjFieldCH_N()"
-subroutine ESMF_AttributeSetObjFieldCH_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjFieldCH_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_Field), intent(inout) :: target
   character(len=*), intent(in) :: name
   character(len=*), dimension(:), intent(in) :: value
@@ -6763,6 +6842,7 @@ subroutine ESMF_AttributeSetObjFieldCH_N(target, name, value, keywordEnforcer, c
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -6826,8 +6906,8 @@ end subroutine ESMF_AttributeSetAttPackFieldLG
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjFieldLG()"
-subroutine ESMF_AttributeSetObjFieldLG(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjFieldLG(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_Field), intent(inout) :: target
   character(len=*), intent(in) :: name
   logical, intent(in) :: value
@@ -6836,6 +6916,7 @@ subroutine ESMF_AttributeSetObjFieldLG(target, name, value, keywordEnforcer, con
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -6899,8 +6980,8 @@ end subroutine ESMF_AttributeSetAttPackFieldLG_N
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjFieldLG_N()"
-subroutine ESMF_AttributeSetObjFieldLG_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjFieldLG_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_Field), intent(inout) :: target
   character(len=*), intent(in) :: name
   logical, dimension(:), intent(in) :: value
@@ -6909,6 +6990,7 @@ subroutine ESMF_AttributeSetObjFieldLG_N(target, name, value, keywordEnforcer, c
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -6972,8 +7054,8 @@ end subroutine ESMF_AttributeSetAttPackFieldBundleR4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjFieldBundleR4()"
-subroutine ESMF_AttributeSetObjFieldBundleR4(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjFieldBundleR4(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_FieldBundle), intent(inout) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R4), intent(in) :: value
@@ -6982,6 +7064,7 @@ subroutine ESMF_AttributeSetObjFieldBundleR4(target, name, value, keywordEnforce
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -7045,8 +7128,8 @@ end subroutine ESMF_AttributeSetAttPackFieldBundleR4_N
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjFieldBundleR4_N()"
-subroutine ESMF_AttributeSetObjFieldBundleR4_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjFieldBundleR4_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_FieldBundle), intent(inout) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R4), dimension(:), intent(in) :: value
@@ -7055,6 +7138,7 @@ subroutine ESMF_AttributeSetObjFieldBundleR4_N(target, name, value, keywordEnfor
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -7118,8 +7202,8 @@ end subroutine ESMF_AttributeSetAttPackFieldBundleR8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjFieldBundleR8()"
-subroutine ESMF_AttributeSetObjFieldBundleR8(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjFieldBundleR8(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_FieldBundle), intent(inout) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R8), intent(in) :: value
@@ -7128,6 +7212,7 @@ subroutine ESMF_AttributeSetObjFieldBundleR8(target, name, value, keywordEnforce
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -7191,8 +7276,8 @@ end subroutine ESMF_AttributeSetAttPackFieldBundleR8_N
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjFieldBundleR8_N()"
-subroutine ESMF_AttributeSetObjFieldBundleR8_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjFieldBundleR8_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_FieldBundle), intent(inout) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R8), dimension(:), intent(in) :: value
@@ -7201,6 +7286,7 @@ subroutine ESMF_AttributeSetObjFieldBundleR8_N(target, name, value, keywordEnfor
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -7264,8 +7350,8 @@ end subroutine ESMF_AttributeSetAttPackFieldBundleI4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjFieldBundleI4()"
-subroutine ESMF_AttributeSetObjFieldBundleI4(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjFieldBundleI4(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_FieldBundle), intent(inout) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I4), intent(in) :: value
@@ -7274,6 +7360,7 @@ subroutine ESMF_AttributeSetObjFieldBundleI4(target, name, value, keywordEnforce
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -7337,8 +7424,8 @@ end subroutine ESMF_AttributeSetAttPackFieldBundleI4_N
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjFieldBundleI4_N()"
-subroutine ESMF_AttributeSetObjFieldBundleI4_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjFieldBundleI4_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_FieldBundle), intent(inout) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I4), dimension(:), intent(in) :: value
@@ -7347,6 +7434,7 @@ subroutine ESMF_AttributeSetObjFieldBundleI4_N(target, name, value, keywordEnfor
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -7410,8 +7498,8 @@ end subroutine ESMF_AttributeSetAttPackFieldBundleI8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjFieldBundleI8()"
-subroutine ESMF_AttributeSetObjFieldBundleI8(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjFieldBundleI8(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_FieldBundle), intent(inout) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I8), intent(in) :: value
@@ -7420,6 +7508,7 @@ subroutine ESMF_AttributeSetObjFieldBundleI8(target, name, value, keywordEnforce
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -7483,8 +7572,8 @@ end subroutine ESMF_AttributeSetAttPackFieldBundleI8_N
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjFieldBundleI8_N()"
-subroutine ESMF_AttributeSetObjFieldBundleI8_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjFieldBundleI8_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_FieldBundle), intent(inout) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I8), dimension(:), intent(in) :: value
@@ -7493,6 +7582,7 @@ subroutine ESMF_AttributeSetObjFieldBundleI8_N(target, name, value, keywordEnfor
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -7556,8 +7646,8 @@ end subroutine ESMF_AttributeSetAttPackFieldBundleCH
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjFieldBundleCH()"
-subroutine ESMF_AttributeSetObjFieldBundleCH(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjFieldBundleCH(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_FieldBundle), intent(inout) :: target
   character(len=*), intent(in) :: name
   character(len=*), intent(in) :: value
@@ -7566,6 +7656,7 @@ subroutine ESMF_AttributeSetObjFieldBundleCH(target, name, value, keywordEnforce
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -7629,8 +7720,8 @@ end subroutine ESMF_AttributeSetAttPackFieldBundleCH_N
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjFieldBundleCH_N()"
-subroutine ESMF_AttributeSetObjFieldBundleCH_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjFieldBundleCH_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_FieldBundle), intent(inout) :: target
   character(len=*), intent(in) :: name
   character(len=*), dimension(:), intent(in) :: value
@@ -7639,6 +7730,7 @@ subroutine ESMF_AttributeSetObjFieldBundleCH_N(target, name, value, keywordEnfor
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -7702,8 +7794,8 @@ end subroutine ESMF_AttributeSetAttPackFieldBundleLG
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjFieldBundleLG()"
-subroutine ESMF_AttributeSetObjFieldBundleLG(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjFieldBundleLG(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_FieldBundle), intent(inout) :: target
   character(len=*), intent(in) :: name
   logical, intent(in) :: value
@@ -7712,6 +7804,7 @@ subroutine ESMF_AttributeSetObjFieldBundleLG(target, name, value, keywordEnforce
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -7775,8 +7868,8 @@ end subroutine ESMF_AttributeSetAttPackFieldBundleLG_N
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjFieldBundleLG_N()"
-subroutine ESMF_AttributeSetObjFieldBundleLG_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjFieldBundleLG_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_FieldBundle), intent(inout) :: target
   character(len=*), intent(in) :: name
   logical, dimension(:), intent(in) :: value
@@ -7785,6 +7878,7 @@ subroutine ESMF_AttributeSetObjFieldBundleLG_N(target, name, value, keywordEnfor
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -7848,8 +7942,8 @@ end subroutine ESMF_AttributeSetAttPackGridR4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjGridR4()"
-subroutine ESMF_AttributeSetObjGridR4(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjGridR4(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_Grid), intent(inout) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R4), intent(in) :: value
@@ -7858,6 +7952,7 @@ subroutine ESMF_AttributeSetObjGridR4(target, name, value, keywordEnforcer, conv
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -7921,8 +8016,8 @@ end subroutine ESMF_AttributeSetAttPackGridR4_N
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjGridR4_N()"
-subroutine ESMF_AttributeSetObjGridR4_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjGridR4_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_Grid), intent(inout) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R4), dimension(:), intent(in) :: value
@@ -7931,6 +8026,7 @@ subroutine ESMF_AttributeSetObjGridR4_N(target, name, value, keywordEnforcer, co
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -7994,8 +8090,8 @@ end subroutine ESMF_AttributeSetAttPackGridR8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjGridR8()"
-subroutine ESMF_AttributeSetObjGridR8(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjGridR8(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_Grid), intent(inout) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R8), intent(in) :: value
@@ -8004,6 +8100,7 @@ subroutine ESMF_AttributeSetObjGridR8(target, name, value, keywordEnforcer, conv
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -8067,8 +8164,8 @@ end subroutine ESMF_AttributeSetAttPackGridR8_N
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjGridR8_N()"
-subroutine ESMF_AttributeSetObjGridR8_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjGridR8_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_Grid), intent(inout) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R8), dimension(:), intent(in) :: value
@@ -8077,6 +8174,7 @@ subroutine ESMF_AttributeSetObjGridR8_N(target, name, value, keywordEnforcer, co
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -8140,8 +8238,8 @@ end subroutine ESMF_AttributeSetAttPackGridI4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjGridI4()"
-subroutine ESMF_AttributeSetObjGridI4(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjGridI4(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_Grid), intent(inout) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I4), intent(in) :: value
@@ -8150,6 +8248,7 @@ subroutine ESMF_AttributeSetObjGridI4(target, name, value, keywordEnforcer, conv
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -8213,8 +8312,8 @@ end subroutine ESMF_AttributeSetAttPackGridI4_N
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjGridI4_N()"
-subroutine ESMF_AttributeSetObjGridI4_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjGridI4_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_Grid), intent(inout) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I4), dimension(:), intent(in) :: value
@@ -8223,6 +8322,7 @@ subroutine ESMF_AttributeSetObjGridI4_N(target, name, value, keywordEnforcer, co
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -8286,8 +8386,8 @@ end subroutine ESMF_AttributeSetAttPackGridI8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjGridI8()"
-subroutine ESMF_AttributeSetObjGridI8(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjGridI8(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_Grid), intent(inout) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I8), intent(in) :: value
@@ -8296,6 +8396,7 @@ subroutine ESMF_AttributeSetObjGridI8(target, name, value, keywordEnforcer, conv
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -8359,8 +8460,8 @@ end subroutine ESMF_AttributeSetAttPackGridI8_N
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjGridI8_N()"
-subroutine ESMF_AttributeSetObjGridI8_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjGridI8_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_Grid), intent(inout) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I8), dimension(:), intent(in) :: value
@@ -8369,6 +8470,7 @@ subroutine ESMF_AttributeSetObjGridI8_N(target, name, value, keywordEnforcer, co
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -8432,8 +8534,8 @@ end subroutine ESMF_AttributeSetAttPackGridCH
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjGridCH()"
-subroutine ESMF_AttributeSetObjGridCH(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjGridCH(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_Grid), intent(inout) :: target
   character(len=*), intent(in) :: name
   character(len=*), intent(in) :: value
@@ -8442,6 +8544,7 @@ subroutine ESMF_AttributeSetObjGridCH(target, name, value, keywordEnforcer, conv
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -8505,8 +8608,8 @@ end subroutine ESMF_AttributeSetAttPackGridCH_N
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjGridCH_N()"
-subroutine ESMF_AttributeSetObjGridCH_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjGridCH_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_Grid), intent(inout) :: target
   character(len=*), intent(in) :: name
   character(len=*), dimension(:), intent(in) :: value
@@ -8515,6 +8618,7 @@ subroutine ESMF_AttributeSetObjGridCH_N(target, name, value, keywordEnforcer, co
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -8578,8 +8682,8 @@ end subroutine ESMF_AttributeSetAttPackGridLG
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjGridLG()"
-subroutine ESMF_AttributeSetObjGridLG(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjGridLG(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_Grid), intent(inout) :: target
   character(len=*), intent(in) :: name
   logical, intent(in) :: value
@@ -8588,6 +8692,7 @@ subroutine ESMF_AttributeSetObjGridLG(target, name, value, keywordEnforcer, conv
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -8651,8 +8756,8 @@ end subroutine ESMF_AttributeSetAttPackGridLG_N
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjGridLG_N()"
-subroutine ESMF_AttributeSetObjGridLG_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjGridLG_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_Grid), intent(inout) :: target
   character(len=*), intent(in) :: name
   logical, dimension(:), intent(in) :: value
@@ -8661,6 +8766,7 @@ subroutine ESMF_AttributeSetObjGridLG_N(target, name, value, keywordEnforcer, co
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -8724,8 +8830,8 @@ end subroutine ESMF_AttributeSetAttPackStateR4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjStateR4()"
-subroutine ESMF_AttributeSetObjStateR4(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjStateR4(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_State), intent(inout) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R4), intent(in) :: value
@@ -8734,6 +8840,7 @@ subroutine ESMF_AttributeSetObjStateR4(target, name, value, keywordEnforcer, con
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -8797,8 +8904,8 @@ end subroutine ESMF_AttributeSetAttPackStateR4_N
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjStateR4_N()"
-subroutine ESMF_AttributeSetObjStateR4_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjStateR4_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_State), intent(inout) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R4), dimension(:), intent(in) :: value
@@ -8807,6 +8914,7 @@ subroutine ESMF_AttributeSetObjStateR4_N(target, name, value, keywordEnforcer, c
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -8870,8 +8978,8 @@ end subroutine ESMF_AttributeSetAttPackStateR8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjStateR8()"
-subroutine ESMF_AttributeSetObjStateR8(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjStateR8(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_State), intent(inout) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R8), intent(in) :: value
@@ -8880,6 +8988,7 @@ subroutine ESMF_AttributeSetObjStateR8(target, name, value, keywordEnforcer, con
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -8943,8 +9052,8 @@ end subroutine ESMF_AttributeSetAttPackStateR8_N
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjStateR8_N()"
-subroutine ESMF_AttributeSetObjStateR8_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjStateR8_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_State), intent(inout) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R8), dimension(:), intent(in) :: value
@@ -8953,6 +9062,7 @@ subroutine ESMF_AttributeSetObjStateR8_N(target, name, value, keywordEnforcer, c
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -9016,8 +9126,8 @@ end subroutine ESMF_AttributeSetAttPackStateI4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjStateI4()"
-subroutine ESMF_AttributeSetObjStateI4(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjStateI4(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_State), intent(inout) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I4), intent(in) :: value
@@ -9026,6 +9136,7 @@ subroutine ESMF_AttributeSetObjStateI4(target, name, value, keywordEnforcer, con
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -9089,8 +9200,8 @@ end subroutine ESMF_AttributeSetAttPackStateI4_N
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjStateI4_N()"
-subroutine ESMF_AttributeSetObjStateI4_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjStateI4_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_State), intent(inout) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I4), dimension(:), intent(in) :: value
@@ -9099,6 +9210,7 @@ subroutine ESMF_AttributeSetObjStateI4_N(target, name, value, keywordEnforcer, c
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -9162,8 +9274,8 @@ end subroutine ESMF_AttributeSetAttPackStateI8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjStateI8()"
-subroutine ESMF_AttributeSetObjStateI8(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjStateI8(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_State), intent(inout) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I8), intent(in) :: value
@@ -9172,6 +9284,7 @@ subroutine ESMF_AttributeSetObjStateI8(target, name, value, keywordEnforcer, con
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -9235,8 +9348,8 @@ end subroutine ESMF_AttributeSetAttPackStateI8_N
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjStateI8_N()"
-subroutine ESMF_AttributeSetObjStateI8_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjStateI8_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_State), intent(inout) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I8), dimension(:), intent(in) :: value
@@ -9245,6 +9358,7 @@ subroutine ESMF_AttributeSetObjStateI8_N(target, name, value, keywordEnforcer, c
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -9308,8 +9422,8 @@ end subroutine ESMF_AttributeSetAttPackStateCH
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjStateCH()"
-subroutine ESMF_AttributeSetObjStateCH(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjStateCH(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_State), intent(inout) :: target
   character(len=*), intent(in) :: name
   character(len=*), intent(in) :: value
@@ -9318,6 +9432,7 @@ subroutine ESMF_AttributeSetObjStateCH(target, name, value, keywordEnforcer, con
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -9381,8 +9496,8 @@ end subroutine ESMF_AttributeSetAttPackStateCH_N
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjStateCH_N()"
-subroutine ESMF_AttributeSetObjStateCH_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjStateCH_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_State), intent(inout) :: target
   character(len=*), intent(in) :: name
   character(len=*), dimension(:), intent(in) :: value
@@ -9391,6 +9506,7 @@ subroutine ESMF_AttributeSetObjStateCH_N(target, name, value, keywordEnforcer, c
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -9454,8 +9570,8 @@ end subroutine ESMF_AttributeSetAttPackStateLG
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjStateLG()"
-subroutine ESMF_AttributeSetObjStateLG(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjStateLG(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_State), intent(inout) :: target
   character(len=*), intent(in) :: name
   logical, intent(in) :: value
@@ -9464,6 +9580,7 @@ subroutine ESMF_AttributeSetObjStateLG(target, name, value, keywordEnforcer, con
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -9527,8 +9644,8 @@ end subroutine ESMF_AttributeSetAttPackStateLG_N
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjStateLG_N()"
-subroutine ESMF_AttributeSetObjStateLG_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjStateLG_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_State), intent(inout) :: target
   character(len=*), intent(in) :: name
   logical, dimension(:), intent(in) :: value
@@ -9537,6 +9654,7 @@ subroutine ESMF_AttributeSetObjStateLG_N(target, name, value, keywordEnforcer, c
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -9600,8 +9718,8 @@ end subroutine ESMF_AttributeSetAttPackLocStreamR4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjLocStreamR4()"
-subroutine ESMF_AttributeSetObjLocStreamR4(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjLocStreamR4(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_LocStream), intent(inout) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R4), intent(in) :: value
@@ -9610,6 +9728,7 @@ subroutine ESMF_AttributeSetObjLocStreamR4(target, name, value, keywordEnforcer,
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -9673,8 +9792,8 @@ end subroutine ESMF_AttributeSetAttPackLocStreamR4_N
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjLocStreamR4_N()"
-subroutine ESMF_AttributeSetObjLocStreamR4_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjLocStreamR4_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_LocStream), intent(inout) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R4), dimension(:), intent(in) :: value
@@ -9683,6 +9802,7 @@ subroutine ESMF_AttributeSetObjLocStreamR4_N(target, name, value, keywordEnforce
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -9746,8 +9866,8 @@ end subroutine ESMF_AttributeSetAttPackLocStreamR8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjLocStreamR8()"
-subroutine ESMF_AttributeSetObjLocStreamR8(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjLocStreamR8(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_LocStream), intent(inout) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R8), intent(in) :: value
@@ -9756,6 +9876,7 @@ subroutine ESMF_AttributeSetObjLocStreamR8(target, name, value, keywordEnforcer,
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -9819,8 +9940,8 @@ end subroutine ESMF_AttributeSetAttPackLocStreamR8_N
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjLocStreamR8_N()"
-subroutine ESMF_AttributeSetObjLocStreamR8_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjLocStreamR8_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_LocStream), intent(inout) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R8), dimension(:), intent(in) :: value
@@ -9829,6 +9950,7 @@ subroutine ESMF_AttributeSetObjLocStreamR8_N(target, name, value, keywordEnforce
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -9892,8 +10014,8 @@ end subroutine ESMF_AttributeSetAttPackLocStreamI4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjLocStreamI4()"
-subroutine ESMF_AttributeSetObjLocStreamI4(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjLocStreamI4(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_LocStream), intent(inout) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I4), intent(in) :: value
@@ -9902,6 +10024,7 @@ subroutine ESMF_AttributeSetObjLocStreamI4(target, name, value, keywordEnforcer,
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -9965,8 +10088,8 @@ end subroutine ESMF_AttributeSetAttPackLocStreamI4_N
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjLocStreamI4_N()"
-subroutine ESMF_AttributeSetObjLocStreamI4_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjLocStreamI4_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_LocStream), intent(inout) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I4), dimension(:), intent(in) :: value
@@ -9975,6 +10098,7 @@ subroutine ESMF_AttributeSetObjLocStreamI4_N(target, name, value, keywordEnforce
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -10038,8 +10162,8 @@ end subroutine ESMF_AttributeSetAttPackLocStreamI8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjLocStreamI8()"
-subroutine ESMF_AttributeSetObjLocStreamI8(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjLocStreamI8(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_LocStream), intent(inout) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I8), intent(in) :: value
@@ -10048,6 +10172,7 @@ subroutine ESMF_AttributeSetObjLocStreamI8(target, name, value, keywordEnforcer,
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -10111,8 +10236,8 @@ end subroutine ESMF_AttributeSetAttPackLocStreamI8_N
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjLocStreamI8_N()"
-subroutine ESMF_AttributeSetObjLocStreamI8_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjLocStreamI8_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_LocStream), intent(inout) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I8), dimension(:), intent(in) :: value
@@ -10121,6 +10246,7 @@ subroutine ESMF_AttributeSetObjLocStreamI8_N(target, name, value, keywordEnforce
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -10184,8 +10310,8 @@ end subroutine ESMF_AttributeSetAttPackLocStreamCH
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjLocStreamCH()"
-subroutine ESMF_AttributeSetObjLocStreamCH(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjLocStreamCH(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_LocStream), intent(inout) :: target
   character(len=*), intent(in) :: name
   character(len=*), intent(in) :: value
@@ -10194,6 +10320,7 @@ subroutine ESMF_AttributeSetObjLocStreamCH(target, name, value, keywordEnforcer,
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -10257,8 +10384,8 @@ end subroutine ESMF_AttributeSetAttPackLocStreamCH_N
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjLocStreamCH_N()"
-subroutine ESMF_AttributeSetObjLocStreamCH_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjLocStreamCH_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_LocStream), intent(inout) :: target
   character(len=*), intent(in) :: name
   character(len=*), dimension(:), intent(in) :: value
@@ -10267,6 +10394,7 @@ subroutine ESMF_AttributeSetObjLocStreamCH_N(target, name, value, keywordEnforce
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -10330,8 +10458,8 @@ end subroutine ESMF_AttributeSetAttPackLocStreamLG
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjLocStreamLG()"
-subroutine ESMF_AttributeSetObjLocStreamLG(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjLocStreamLG(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_LocStream), intent(inout) :: target
   character(len=*), intent(in) :: name
   logical, intent(in) :: value
@@ -10340,6 +10468,7 @@ subroutine ESMF_AttributeSetObjLocStreamLG(target, name, value, keywordEnforcer,
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
@@ -10403,8 +10532,8 @@ end subroutine ESMF_AttributeSetAttPackLocStreamLG_N
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjLocStreamLG_N()"
-subroutine ESMF_AttributeSetObjLocStreamLG_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, rc)
-  ! 39.11.38/40 - attPackInstanceName is NOOP
+subroutine ESMF_AttributeSetObjLocStreamLG_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+  ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_LocStream), intent(inout) :: target
   character(len=*), intent(in) :: name
   logical, dimension(:), intent(in) :: value
@@ -10413,6 +10542,7 @@ subroutine ESMF_AttributeSetObjLocStreamLG_N(target, name, value, keywordEnforce
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: len_key, localrc=ESMF_FAILURE
