@@ -73,269 +73,269 @@ endtype
 
 interface ESMF_AttributeSet
   module procedure ESMF_AttributeSetAttPackArrayR4
-  module procedure ESMF_AttributeSetAttPackArrayR4_N
+  module procedure ESMF_AttributeSetAttPackArrayR4List
   module procedure ESMF_AttributeSetAttPackArrayR8
-  module procedure ESMF_AttributeSetAttPackArrayR8_N
+  module procedure ESMF_AttributeSetAttPackArrayR8List
   module procedure ESMF_AttributeSetAttPackArrayI4
-  module procedure ESMF_AttributeSetAttPackArrayI4_N
+  module procedure ESMF_AttributeSetAttPackArrayI4List
   module procedure ESMF_AttributeSetAttPackArrayI8
-  module procedure ESMF_AttributeSetAttPackArrayI8_N
+  module procedure ESMF_AttributeSetAttPackArrayI8List
   module procedure ESMF_AttributeSetAttPackArrayCH
-  module procedure ESMF_AttributeSetAttPackArrayCH_N
+  module procedure ESMF_AttributeSetAttPackArrayCHList
   module procedure ESMF_AttributeSetAttPackArrayLG
-  module procedure ESMF_AttributeSetAttPackArrayLG_N
+  module procedure ESMF_AttributeSetAttPackArrayLGList
   module procedure ESMF_AttributeSetAttPackArrayBundleR4
-  module procedure ESMF_AttributeSetAttPackArrayBundleR4_N
+  module procedure ESMF_AttributeSetAttPackArrayBundleR4List
   module procedure ESMF_AttributeSetAttPackArrayBundleR8
-  module procedure ESMF_AttributeSetAttPackArrayBundleR8_N
+  module procedure ESMF_AttributeSetAttPackArrayBundleR8List
   module procedure ESMF_AttributeSetAttPackArrayBundleI4
-  module procedure ESMF_AttributeSetAttPackArrayBundleI4_N
+  module procedure ESMF_AttributeSetAttPackArrayBundleI4List
   module procedure ESMF_AttributeSetAttPackArrayBundleI8
-  module procedure ESMF_AttributeSetAttPackArrayBundleI8_N
+  module procedure ESMF_AttributeSetAttPackArrayBundleI8List
   module procedure ESMF_AttributeSetAttPackArrayBundleCH
-  module procedure ESMF_AttributeSetAttPackArrayBundleCH_N
+  module procedure ESMF_AttributeSetAttPackArrayBundleCHList
   module procedure ESMF_AttributeSetAttPackArrayBundleLG
-  module procedure ESMF_AttributeSetAttPackArrayBundleLG_N
+  module procedure ESMF_AttributeSetAttPackArrayBundleLGList
   module procedure ESMF_AttributeSetAttPackCplCompR4
-  module procedure ESMF_AttributeSetAttPackCplCompR4_N
+  module procedure ESMF_AttributeSetAttPackCplCompR4List
   module procedure ESMF_AttributeSetAttPackCplCompR8
-  module procedure ESMF_AttributeSetAttPackCplCompR8_N
+  module procedure ESMF_AttributeSetAttPackCplCompR8List
   module procedure ESMF_AttributeSetAttPackCplCompI4
-  module procedure ESMF_AttributeSetAttPackCplCompI4_N
+  module procedure ESMF_AttributeSetAttPackCplCompI4List
   module procedure ESMF_AttributeSetAttPackCplCompI8
-  module procedure ESMF_AttributeSetAttPackCplCompI8_N
+  module procedure ESMF_AttributeSetAttPackCplCompI8List
   module procedure ESMF_AttributeSetAttPackCplCompCH
-  module procedure ESMF_AttributeSetAttPackCplCompCH_N
+  module procedure ESMF_AttributeSetAttPackCplCompCHList
   module procedure ESMF_AttributeSetAttPackCplCompLG
-  module procedure ESMF_AttributeSetAttPackCplCompLG_N
+  module procedure ESMF_AttributeSetAttPackCplCompLGList
   module procedure ESMF_AttributeSetAttPackGridCompR4
-  module procedure ESMF_AttributeSetAttPackGridCompR4_N
+  module procedure ESMF_AttributeSetAttPackGridCompR4List
   module procedure ESMF_AttributeSetAttPackGridCompR8
-  module procedure ESMF_AttributeSetAttPackGridCompR8_N
+  module procedure ESMF_AttributeSetAttPackGridCompR8List
   module procedure ESMF_AttributeSetAttPackGridCompI4
-  module procedure ESMF_AttributeSetAttPackGridCompI4_N
+  module procedure ESMF_AttributeSetAttPackGridCompI4List
   module procedure ESMF_AttributeSetAttPackGridCompI8
-  module procedure ESMF_AttributeSetAttPackGridCompI8_N
+  module procedure ESMF_AttributeSetAttPackGridCompI8List
   module procedure ESMF_AttributeSetAttPackGridCompCH
-  module procedure ESMF_AttributeSetAttPackGridCompCH_N
+  module procedure ESMF_AttributeSetAttPackGridCompCHList
   module procedure ESMF_AttributeSetAttPackGridCompLG
-  module procedure ESMF_AttributeSetAttPackGridCompLG_N
+  module procedure ESMF_AttributeSetAttPackGridCompLGList
   module procedure ESMF_AttributeSetAttPackSciCompR4
-  module procedure ESMF_AttributeSetAttPackSciCompR4_N
+  module procedure ESMF_AttributeSetAttPackSciCompR4List
   module procedure ESMF_AttributeSetAttPackSciCompR8
-  module procedure ESMF_AttributeSetAttPackSciCompR8_N
+  module procedure ESMF_AttributeSetAttPackSciCompR8List
   module procedure ESMF_AttributeSetAttPackSciCompI4
-  module procedure ESMF_AttributeSetAttPackSciCompI4_N
+  module procedure ESMF_AttributeSetAttPackSciCompI4List
   module procedure ESMF_AttributeSetAttPackSciCompI8
-  module procedure ESMF_AttributeSetAttPackSciCompI8_N
+  module procedure ESMF_AttributeSetAttPackSciCompI8List
   module procedure ESMF_AttributeSetAttPackSciCompCH
-  module procedure ESMF_AttributeSetAttPackSciCompCH_N
+  module procedure ESMF_AttributeSetAttPackSciCompCHList
   module procedure ESMF_AttributeSetAttPackSciCompLG
-  module procedure ESMF_AttributeSetAttPackSciCompLG_N
+  module procedure ESMF_AttributeSetAttPackSciCompLGList
   module procedure ESMF_AttributeSetAttPackDistGridR4
-  module procedure ESMF_AttributeSetAttPackDistGridR4_N
+  module procedure ESMF_AttributeSetAttPackDistGridR4List
   module procedure ESMF_AttributeSetAttPackDistGridR8
-  module procedure ESMF_AttributeSetAttPackDistGridR8_N
+  module procedure ESMF_AttributeSetAttPackDistGridR8List
   module procedure ESMF_AttributeSetAttPackDistGridI4
-  module procedure ESMF_AttributeSetAttPackDistGridI4_N
+  module procedure ESMF_AttributeSetAttPackDistGridI4List
   module procedure ESMF_AttributeSetAttPackDistGridI8
-  module procedure ESMF_AttributeSetAttPackDistGridI8_N
+  module procedure ESMF_AttributeSetAttPackDistGridI8List
   module procedure ESMF_AttributeSetAttPackDistGridCH
-  module procedure ESMF_AttributeSetAttPackDistGridCH_N
+  module procedure ESMF_AttributeSetAttPackDistGridCHList
   module procedure ESMF_AttributeSetAttPackDistGridLG
-  module procedure ESMF_AttributeSetAttPackDistGridLG_N
+  module procedure ESMF_AttributeSetAttPackDistGridLGList
   module procedure ESMF_AttributeSetAttPackFieldR4
-  module procedure ESMF_AttributeSetAttPackFieldR4_N
+  module procedure ESMF_AttributeSetAttPackFieldR4List
   module procedure ESMF_AttributeSetAttPackFieldR8
-  module procedure ESMF_AttributeSetAttPackFieldR8_N
+  module procedure ESMF_AttributeSetAttPackFieldR8List
   module procedure ESMF_AttributeSetAttPackFieldI4
-  module procedure ESMF_AttributeSetAttPackFieldI4_N
+  module procedure ESMF_AttributeSetAttPackFieldI4List
   module procedure ESMF_AttributeSetAttPackFieldI8
-  module procedure ESMF_AttributeSetAttPackFieldI8_N
+  module procedure ESMF_AttributeSetAttPackFieldI8List
   module procedure ESMF_AttributeSetAttPackFieldCH
-  module procedure ESMF_AttributeSetAttPackFieldCH_N
+  module procedure ESMF_AttributeSetAttPackFieldCHList
   module procedure ESMF_AttributeSetAttPackFieldLG
-  module procedure ESMF_AttributeSetAttPackFieldLG_N
+  module procedure ESMF_AttributeSetAttPackFieldLGList
   module procedure ESMF_AttributeSetAttPackFieldBundleR4
-  module procedure ESMF_AttributeSetAttPackFieldBundleR4_N
+  module procedure ESMF_AttributeSetAttPackFieldBundleR4List
   module procedure ESMF_AttributeSetAttPackFieldBundleR8
-  module procedure ESMF_AttributeSetAttPackFieldBundleR8_N
+  module procedure ESMF_AttributeSetAttPackFieldBundleR8List
   module procedure ESMF_AttributeSetAttPackFieldBundleI4
-  module procedure ESMF_AttributeSetAttPackFieldBundleI4_N
+  module procedure ESMF_AttributeSetAttPackFieldBundleI4List
   module procedure ESMF_AttributeSetAttPackFieldBundleI8
-  module procedure ESMF_AttributeSetAttPackFieldBundleI8_N
+  module procedure ESMF_AttributeSetAttPackFieldBundleI8List
   module procedure ESMF_AttributeSetAttPackFieldBundleCH
-  module procedure ESMF_AttributeSetAttPackFieldBundleCH_N
+  module procedure ESMF_AttributeSetAttPackFieldBundleCHList
   module procedure ESMF_AttributeSetAttPackFieldBundleLG
-  module procedure ESMF_AttributeSetAttPackFieldBundleLG_N
+  module procedure ESMF_AttributeSetAttPackFieldBundleLGList
   module procedure ESMF_AttributeSetAttPackGridR4
-  module procedure ESMF_AttributeSetAttPackGridR4_N
+  module procedure ESMF_AttributeSetAttPackGridR4List
   module procedure ESMF_AttributeSetAttPackGridR8
-  module procedure ESMF_AttributeSetAttPackGridR8_N
+  module procedure ESMF_AttributeSetAttPackGridR8List
   module procedure ESMF_AttributeSetAttPackGridI4
-  module procedure ESMF_AttributeSetAttPackGridI4_N
+  module procedure ESMF_AttributeSetAttPackGridI4List
   module procedure ESMF_AttributeSetAttPackGridI8
-  module procedure ESMF_AttributeSetAttPackGridI8_N
+  module procedure ESMF_AttributeSetAttPackGridI8List
   module procedure ESMF_AttributeSetAttPackGridCH
-  module procedure ESMF_AttributeSetAttPackGridCH_N
+  module procedure ESMF_AttributeSetAttPackGridCHList
   module procedure ESMF_AttributeSetAttPackGridLG
-  module procedure ESMF_AttributeSetAttPackGridLG_N
+  module procedure ESMF_AttributeSetAttPackGridLGList
   module procedure ESMF_AttributeSetAttPackStateR4
-  module procedure ESMF_AttributeSetAttPackStateR4_N
+  module procedure ESMF_AttributeSetAttPackStateR4List
   module procedure ESMF_AttributeSetAttPackStateR8
-  module procedure ESMF_AttributeSetAttPackStateR8_N
+  module procedure ESMF_AttributeSetAttPackStateR8List
   module procedure ESMF_AttributeSetAttPackStateI4
-  module procedure ESMF_AttributeSetAttPackStateI4_N
+  module procedure ESMF_AttributeSetAttPackStateI4List
   module procedure ESMF_AttributeSetAttPackStateI8
-  module procedure ESMF_AttributeSetAttPackStateI8_N
+  module procedure ESMF_AttributeSetAttPackStateI8List
   module procedure ESMF_AttributeSetAttPackStateCH
-  module procedure ESMF_AttributeSetAttPackStateCH_N
+  module procedure ESMF_AttributeSetAttPackStateCHList
   module procedure ESMF_AttributeSetAttPackStateLG
-  module procedure ESMF_AttributeSetAttPackStateLG_N
+  module procedure ESMF_AttributeSetAttPackStateLGList
   module procedure ESMF_AttributeSetAttPackLocStreamR4
-  module procedure ESMF_AttributeSetAttPackLocStreamR4_N
+  module procedure ESMF_AttributeSetAttPackLocStreamR4List
   module procedure ESMF_AttributeSetAttPackLocStreamR8
-  module procedure ESMF_AttributeSetAttPackLocStreamR8_N
+  module procedure ESMF_AttributeSetAttPackLocStreamR8List
   module procedure ESMF_AttributeSetAttPackLocStreamI4
-  module procedure ESMF_AttributeSetAttPackLocStreamI4_N
+  module procedure ESMF_AttributeSetAttPackLocStreamI4List
   module procedure ESMF_AttributeSetAttPackLocStreamI8
-  module procedure ESMF_AttributeSetAttPackLocStreamI8_N
+  module procedure ESMF_AttributeSetAttPackLocStreamI8List
   module procedure ESMF_AttributeSetAttPackLocStreamCH
-  module procedure ESMF_AttributeSetAttPackLocStreamCH_N
+  module procedure ESMF_AttributeSetAttPackLocStreamCHList
   module procedure ESMF_AttributeSetAttPackLocStreamLG
-  module procedure ESMF_AttributeSetAttPackLocStreamLG_N
+  module procedure ESMF_AttributeSetAttPackLocStreamLGList
   module procedure ESMF_AttributeSetObjArrayR4
-  module procedure ESMF_AttributeSetObjArrayR4_N
+  module procedure ESMF_AttributeSetObjArrayR4List
   module procedure ESMF_AttributeSetObjArrayR8
-  module procedure ESMF_AttributeSetObjArrayR8_N
+  module procedure ESMF_AttributeSetObjArrayR8List
   module procedure ESMF_AttributeSetObjArrayI4
-  module procedure ESMF_AttributeSetObjArrayI4_N
+  module procedure ESMF_AttributeSetObjArrayI4List
   module procedure ESMF_AttributeSetObjArrayI8
-  module procedure ESMF_AttributeSetObjArrayI8_N
+  module procedure ESMF_AttributeSetObjArrayI8List
   module procedure ESMF_AttributeSetObjArrayCH
-  module procedure ESMF_AttributeSetObjArrayCH_N
+  module procedure ESMF_AttributeSetObjArrayCHList
   module procedure ESMF_AttributeSetObjArrayLG
-  module procedure ESMF_AttributeSetObjArrayLG_N
+  module procedure ESMF_AttributeSetObjArrayLGList
   module procedure ESMF_AttributeSetObjArrayBundleR4
-  module procedure ESMF_AttributeSetObjArrayBundleR4_N
+  module procedure ESMF_AttributeSetObjArrayBundleR4List
   module procedure ESMF_AttributeSetObjArrayBundleR8
-  module procedure ESMF_AttributeSetObjArrayBundleR8_N
+  module procedure ESMF_AttributeSetObjArrayBundleR8List
   module procedure ESMF_AttributeSetObjArrayBundleI4
-  module procedure ESMF_AttributeSetObjArrayBundleI4_N
+  module procedure ESMF_AttributeSetObjArrayBundleI4List
   module procedure ESMF_AttributeSetObjArrayBundleI8
-  module procedure ESMF_AttributeSetObjArrayBundleI8_N
+  module procedure ESMF_AttributeSetObjArrayBundleI8List
   module procedure ESMF_AttributeSetObjArrayBundleCH
-  module procedure ESMF_AttributeSetObjArrayBundleCH_N
+  module procedure ESMF_AttributeSetObjArrayBundleCHList
   module procedure ESMF_AttributeSetObjArrayBundleLG
-  module procedure ESMF_AttributeSetObjArrayBundleLG_N
+  module procedure ESMF_AttributeSetObjArrayBundleLGList
   module procedure ESMF_AttributeSetObjCplCompR4
-  module procedure ESMF_AttributeSetObjCplCompR4_N
+  module procedure ESMF_AttributeSetObjCplCompR4List
   module procedure ESMF_AttributeSetObjCplCompR8
-  module procedure ESMF_AttributeSetObjCplCompR8_N
+  module procedure ESMF_AttributeSetObjCplCompR8List
   module procedure ESMF_AttributeSetObjCplCompI4
-  module procedure ESMF_AttributeSetObjCplCompI4_N
+  module procedure ESMF_AttributeSetObjCplCompI4List
   module procedure ESMF_AttributeSetObjCplCompI8
-  module procedure ESMF_AttributeSetObjCplCompI8_N
+  module procedure ESMF_AttributeSetObjCplCompI8List
   module procedure ESMF_AttributeSetObjCplCompCH
-  module procedure ESMF_AttributeSetObjCplCompCH_N
+  module procedure ESMF_AttributeSetObjCplCompCHList
   module procedure ESMF_AttributeSetObjCplCompLG
-  module procedure ESMF_AttributeSetObjCplCompLG_N
+  module procedure ESMF_AttributeSetObjCplCompLGList
   module procedure ESMF_AttributeSetObjGridCompR4
-  module procedure ESMF_AttributeSetObjGridCompR4_N
+  module procedure ESMF_AttributeSetObjGridCompR4List
   module procedure ESMF_AttributeSetObjGridCompR8
-  module procedure ESMF_AttributeSetObjGridCompR8_N
+  module procedure ESMF_AttributeSetObjGridCompR8List
   module procedure ESMF_AttributeSetObjGridCompI4
-  module procedure ESMF_AttributeSetObjGridCompI4_N
+  module procedure ESMF_AttributeSetObjGridCompI4List
   module procedure ESMF_AttributeSetObjGridCompI8
-  module procedure ESMF_AttributeSetObjGridCompI8_N
+  module procedure ESMF_AttributeSetObjGridCompI8List
   module procedure ESMF_AttributeSetObjGridCompCH
-  module procedure ESMF_AttributeSetObjGridCompCH_N
+  module procedure ESMF_AttributeSetObjGridCompCHList
   module procedure ESMF_AttributeSetObjGridCompLG
-  module procedure ESMF_AttributeSetObjGridCompLG_N
+  module procedure ESMF_AttributeSetObjGridCompLGList
   module procedure ESMF_AttributeSetObjSciCompR4
-  module procedure ESMF_AttributeSetObjSciCompR4_N
+  module procedure ESMF_AttributeSetObjSciCompR4List
   module procedure ESMF_AttributeSetObjSciCompR8
-  module procedure ESMF_AttributeSetObjSciCompR8_N
+  module procedure ESMF_AttributeSetObjSciCompR8List
   module procedure ESMF_AttributeSetObjSciCompI4
-  module procedure ESMF_AttributeSetObjSciCompI4_N
+  module procedure ESMF_AttributeSetObjSciCompI4List
   module procedure ESMF_AttributeSetObjSciCompI8
-  module procedure ESMF_AttributeSetObjSciCompI8_N
+  module procedure ESMF_AttributeSetObjSciCompI8List
   module procedure ESMF_AttributeSetObjSciCompCH
-  module procedure ESMF_AttributeSetObjSciCompCH_N
+  module procedure ESMF_AttributeSetObjSciCompCHList
   module procedure ESMF_AttributeSetObjSciCompLG
-  module procedure ESMF_AttributeSetObjSciCompLG_N
+  module procedure ESMF_AttributeSetObjSciCompLGList
   module procedure ESMF_AttributeSetObjDistGridR4
-  module procedure ESMF_AttributeSetObjDistGridR4_N
+  module procedure ESMF_AttributeSetObjDistGridR4List
   module procedure ESMF_AttributeSetObjDistGridR8
-  module procedure ESMF_AttributeSetObjDistGridR8_N
+  module procedure ESMF_AttributeSetObjDistGridR8List
   module procedure ESMF_AttributeSetObjDistGridI4
-  module procedure ESMF_AttributeSetObjDistGridI4_N
+  module procedure ESMF_AttributeSetObjDistGridI4List
   module procedure ESMF_AttributeSetObjDistGridI8
-  module procedure ESMF_AttributeSetObjDistGridI8_N
+  module procedure ESMF_AttributeSetObjDistGridI8List
   module procedure ESMF_AttributeSetObjDistGridCH
-  module procedure ESMF_AttributeSetObjDistGridCH_N
+  module procedure ESMF_AttributeSetObjDistGridCHList
   module procedure ESMF_AttributeSetObjDistGridLG
-  module procedure ESMF_AttributeSetObjDistGridLG_N
+  module procedure ESMF_AttributeSetObjDistGridLGList
   module procedure ESMF_AttributeSetObjFieldR4
-  module procedure ESMF_AttributeSetObjFieldR4_N
+  module procedure ESMF_AttributeSetObjFieldR4List
   module procedure ESMF_AttributeSetObjFieldR8
-  module procedure ESMF_AttributeSetObjFieldR8_N
+  module procedure ESMF_AttributeSetObjFieldR8List
   module procedure ESMF_AttributeSetObjFieldI4
-  module procedure ESMF_AttributeSetObjFieldI4_N
+  module procedure ESMF_AttributeSetObjFieldI4List
   module procedure ESMF_AttributeSetObjFieldI8
-  module procedure ESMF_AttributeSetObjFieldI8_N
+  module procedure ESMF_AttributeSetObjFieldI8List
   module procedure ESMF_AttributeSetObjFieldCH
-  module procedure ESMF_AttributeSetObjFieldCH_N
+  module procedure ESMF_AttributeSetObjFieldCHList
   module procedure ESMF_AttributeSetObjFieldLG
-  module procedure ESMF_AttributeSetObjFieldLG_N
+  module procedure ESMF_AttributeSetObjFieldLGList
   module procedure ESMF_AttributeSetObjFieldBundleR4
-  module procedure ESMF_AttributeSetObjFieldBundleR4_N
+  module procedure ESMF_AttributeSetObjFieldBundleR4List
   module procedure ESMF_AttributeSetObjFieldBundleR8
-  module procedure ESMF_AttributeSetObjFieldBundleR8_N
+  module procedure ESMF_AttributeSetObjFieldBundleR8List
   module procedure ESMF_AttributeSetObjFieldBundleI4
-  module procedure ESMF_AttributeSetObjFieldBundleI4_N
+  module procedure ESMF_AttributeSetObjFieldBundleI4List
   module procedure ESMF_AttributeSetObjFieldBundleI8
-  module procedure ESMF_AttributeSetObjFieldBundleI8_N
+  module procedure ESMF_AttributeSetObjFieldBundleI8List
   module procedure ESMF_AttributeSetObjFieldBundleCH
-  module procedure ESMF_AttributeSetObjFieldBundleCH_N
+  module procedure ESMF_AttributeSetObjFieldBundleCHList
   module procedure ESMF_AttributeSetObjFieldBundleLG
-  module procedure ESMF_AttributeSetObjFieldBundleLG_N
+  module procedure ESMF_AttributeSetObjFieldBundleLGList
   module procedure ESMF_AttributeSetObjGridR4
-  module procedure ESMF_AttributeSetObjGridR4_N
+  module procedure ESMF_AttributeSetObjGridR4List
   module procedure ESMF_AttributeSetObjGridR8
-  module procedure ESMF_AttributeSetObjGridR8_N
+  module procedure ESMF_AttributeSetObjGridR8List
   module procedure ESMF_AttributeSetObjGridI4
-  module procedure ESMF_AttributeSetObjGridI4_N
+  module procedure ESMF_AttributeSetObjGridI4List
   module procedure ESMF_AttributeSetObjGridI8
-  module procedure ESMF_AttributeSetObjGridI8_N
+  module procedure ESMF_AttributeSetObjGridI8List
   module procedure ESMF_AttributeSetObjGridCH
-  module procedure ESMF_AttributeSetObjGridCH_N
+  module procedure ESMF_AttributeSetObjGridCHList
   module procedure ESMF_AttributeSetObjGridLG
-  module procedure ESMF_AttributeSetObjGridLG_N
+  module procedure ESMF_AttributeSetObjGridLGList
   module procedure ESMF_AttributeSetObjStateR4
-  module procedure ESMF_AttributeSetObjStateR4_N
+  module procedure ESMF_AttributeSetObjStateR4List
   module procedure ESMF_AttributeSetObjStateR8
-  module procedure ESMF_AttributeSetObjStateR8_N
+  module procedure ESMF_AttributeSetObjStateR8List
   module procedure ESMF_AttributeSetObjStateI4
-  module procedure ESMF_AttributeSetObjStateI4_N
+  module procedure ESMF_AttributeSetObjStateI4List
   module procedure ESMF_AttributeSetObjStateI8
-  module procedure ESMF_AttributeSetObjStateI8_N
+  module procedure ESMF_AttributeSetObjStateI8List
   module procedure ESMF_AttributeSetObjStateCH
-  module procedure ESMF_AttributeSetObjStateCH_N
+  module procedure ESMF_AttributeSetObjStateCHList
   module procedure ESMF_AttributeSetObjStateLG
-  module procedure ESMF_AttributeSetObjStateLG_N
+  module procedure ESMF_AttributeSetObjStateLGList
   module procedure ESMF_AttributeSetObjLocStreamR4
-  module procedure ESMF_AttributeSetObjLocStreamR4_N
+  module procedure ESMF_AttributeSetObjLocStreamR4List
   module procedure ESMF_AttributeSetObjLocStreamR8
-  module procedure ESMF_AttributeSetObjLocStreamR8_N
+  module procedure ESMF_AttributeSetObjLocStreamR8List
   module procedure ESMF_AttributeSetObjLocStreamI4
-  module procedure ESMF_AttributeSetObjLocStreamI4_N
+  module procedure ESMF_AttributeSetObjLocStreamI4List
   module procedure ESMF_AttributeSetObjLocStreamI8
-  module procedure ESMF_AttributeSetObjLocStreamI8_N
+  module procedure ESMF_AttributeSetObjLocStreamI8List
   module procedure ESMF_AttributeSetObjLocStreamCH
-  module procedure ESMF_AttributeSetObjLocStreamCH_N
+  module procedure ESMF_AttributeSetObjLocStreamCHList
   module procedure ESMF_AttributeSetObjLocStreamLG
-  module procedure ESMF_AttributeSetObjLocStreamLG_N
+  module procedure ESMF_AttributeSetObjLocStreamLGList
 end interface
 
 interface ESMF_AttributeGet
@@ -838,12 +838,11 @@ end subroutine ESMF_AttributeSetAttPackArrayR4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjArrayR4()"
-subroutine ESMF_AttributeSetObjArrayR4(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+subroutine ESMF_AttributeSetObjArrayR4(target, name, value, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_Array), intent(inout) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R4), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -876,8 +875,8 @@ end subroutine ESMF_AttributeSetObjArrayR4
 
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetAttPackArrayR4_N()"
-subroutine ESMF_AttributeSetAttPackArrayR4_N(target, name, value, attpack, keywordEnforcer, itemcount, rc)
+#define ESMF_METHOD "ESMF_AttributeSetAttPackArrayR4List()"
+subroutine ESMF_AttributeSetAttPackArrayR4List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
   ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
   type(ESMF_Array), intent(in) :: target
   character(len=*), intent(in) :: name
@@ -906,18 +905,17 @@ subroutine ESMF_AttributeSetAttPackArrayR4_N(target, name, value, attpack, keywo
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetAttPackArrayR4_N
+end subroutine ESMF_AttributeSetAttPackArrayR4List
 
 !==============================================================================
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetObjArrayR4_N()"
-subroutine ESMF_AttributeSetObjArrayR4_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+#define ESMF_METHOD "ESMF_AttributeSetObjArrayR4List()"
+subroutine ESMF_AttributeSetObjArrayR4List(target, name, valueList, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_Array), intent(inout) :: target
   character(len=*), intent(in) :: name
-  real(ESMF_KIND_R4), dimension(:), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  real(ESMF_KIND_R4), dimension(:), intent(in) :: valueList
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -940,13 +938,13 @@ subroutine ESMF_AttributeSetObjArrayR4_N(target, name, value, keywordEnforcer, c
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetObjArrayR4_N
+end subroutine ESMF_AttributeSetObjArrayR4List
 
 
 #undef  ESMF_METHOD
@@ -986,12 +984,11 @@ end subroutine ESMF_AttributeSetAttPackArrayR8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjArrayR8()"
-subroutine ESMF_AttributeSetObjArrayR8(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+subroutine ESMF_AttributeSetObjArrayR8(target, name, value, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_Array), intent(inout) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R8), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -1024,8 +1021,8 @@ end subroutine ESMF_AttributeSetObjArrayR8
 
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetAttPackArrayR8_N()"
-subroutine ESMF_AttributeSetAttPackArrayR8_N(target, name, value, attpack, keywordEnforcer, itemcount, rc)
+#define ESMF_METHOD "ESMF_AttributeSetAttPackArrayR8List()"
+subroutine ESMF_AttributeSetAttPackArrayR8List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
   ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
   type(ESMF_Array), intent(in) :: target
   character(len=*), intent(in) :: name
@@ -1054,18 +1051,17 @@ subroutine ESMF_AttributeSetAttPackArrayR8_N(target, name, value, attpack, keywo
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetAttPackArrayR8_N
+end subroutine ESMF_AttributeSetAttPackArrayR8List
 
 !==============================================================================
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetObjArrayR8_N()"
-subroutine ESMF_AttributeSetObjArrayR8_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+#define ESMF_METHOD "ESMF_AttributeSetObjArrayR8List()"
+subroutine ESMF_AttributeSetObjArrayR8List(target, name, valueList, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_Array), intent(inout) :: target
   character(len=*), intent(in) :: name
-  real(ESMF_KIND_R8), dimension(:), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  real(ESMF_KIND_R8), dimension(:), intent(in) :: valueList
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -1088,13 +1084,13 @@ subroutine ESMF_AttributeSetObjArrayR8_N(target, name, value, keywordEnforcer, c
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetObjArrayR8_N
+end subroutine ESMF_AttributeSetObjArrayR8List
 
 
 #undef  ESMF_METHOD
@@ -1134,12 +1130,11 @@ end subroutine ESMF_AttributeSetAttPackArrayI4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjArrayI4()"
-subroutine ESMF_AttributeSetObjArrayI4(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+subroutine ESMF_AttributeSetObjArrayI4(target, name, value, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_Array), intent(inout) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I4), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -1172,8 +1167,8 @@ end subroutine ESMF_AttributeSetObjArrayI4
 
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetAttPackArrayI4_N()"
-subroutine ESMF_AttributeSetAttPackArrayI4_N(target, name, value, attpack, keywordEnforcer, itemcount, rc)
+#define ESMF_METHOD "ESMF_AttributeSetAttPackArrayI4List()"
+subroutine ESMF_AttributeSetAttPackArrayI4List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
   ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
   type(ESMF_Array), intent(in) :: target
   character(len=*), intent(in) :: name
@@ -1202,18 +1197,17 @@ subroutine ESMF_AttributeSetAttPackArrayI4_N(target, name, value, attpack, keywo
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetAttPackArrayI4_N
+end subroutine ESMF_AttributeSetAttPackArrayI4List
 
 !==============================================================================
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetObjArrayI4_N()"
-subroutine ESMF_AttributeSetObjArrayI4_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+#define ESMF_METHOD "ESMF_AttributeSetObjArrayI4List()"
+subroutine ESMF_AttributeSetObjArrayI4List(target, name, valueList, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_Array), intent(inout) :: target
   character(len=*), intent(in) :: name
-  integer(ESMF_KIND_I4), dimension(:), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  integer(ESMF_KIND_I4), dimension(:), intent(in) :: valueList
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -1236,13 +1230,13 @@ subroutine ESMF_AttributeSetObjArrayI4_N(target, name, value, keywordEnforcer, c
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetObjArrayI4_N
+end subroutine ESMF_AttributeSetObjArrayI4List
 
 
 #undef  ESMF_METHOD
@@ -1282,12 +1276,11 @@ end subroutine ESMF_AttributeSetAttPackArrayI8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjArrayI8()"
-subroutine ESMF_AttributeSetObjArrayI8(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+subroutine ESMF_AttributeSetObjArrayI8(target, name, value, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_Array), intent(inout) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I8), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -1320,8 +1313,8 @@ end subroutine ESMF_AttributeSetObjArrayI8
 
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetAttPackArrayI8_N()"
-subroutine ESMF_AttributeSetAttPackArrayI8_N(target, name, value, attpack, keywordEnforcer, itemcount, rc)
+#define ESMF_METHOD "ESMF_AttributeSetAttPackArrayI8List()"
+subroutine ESMF_AttributeSetAttPackArrayI8List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
   ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
   type(ESMF_Array), intent(in) :: target
   character(len=*), intent(in) :: name
@@ -1350,18 +1343,17 @@ subroutine ESMF_AttributeSetAttPackArrayI8_N(target, name, value, attpack, keywo
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetAttPackArrayI8_N
+end subroutine ESMF_AttributeSetAttPackArrayI8List
 
 !==============================================================================
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetObjArrayI8_N()"
-subroutine ESMF_AttributeSetObjArrayI8_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+#define ESMF_METHOD "ESMF_AttributeSetObjArrayI8List()"
+subroutine ESMF_AttributeSetObjArrayI8List(target, name, valueList, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_Array), intent(inout) :: target
   character(len=*), intent(in) :: name
-  integer(ESMF_KIND_I8), dimension(:), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  integer(ESMF_KIND_I8), dimension(:), intent(in) :: valueList
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -1384,13 +1376,13 @@ subroutine ESMF_AttributeSetObjArrayI8_N(target, name, value, keywordEnforcer, c
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetObjArrayI8_N
+end subroutine ESMF_AttributeSetObjArrayI8List
 
 
 #undef  ESMF_METHOD
@@ -1430,12 +1422,11 @@ end subroutine ESMF_AttributeSetAttPackArrayCH
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjArrayCH()"
-subroutine ESMF_AttributeSetObjArrayCH(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+subroutine ESMF_AttributeSetObjArrayCH(target, name, value, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_Array), intent(inout) :: target
   character(len=*), intent(in) :: name
   character(len=*), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -1468,8 +1459,8 @@ end subroutine ESMF_AttributeSetObjArrayCH
 
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetAttPackArrayCH_N()"
-subroutine ESMF_AttributeSetAttPackArrayCH_N(target, name, value, attpack, keywordEnforcer, itemcount, rc)
+#define ESMF_METHOD "ESMF_AttributeSetAttPackArrayCHList()"
+subroutine ESMF_AttributeSetAttPackArrayCHList(target, name, value, attpack, keywordEnforcer, itemcount, rc)
   ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
   type(ESMF_Array), intent(in) :: target
   character(len=*), intent(in) :: name
@@ -1498,18 +1489,17 @@ subroutine ESMF_AttributeSetAttPackArrayCH_N(target, name, value, attpack, keywo
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetAttPackArrayCH_N
+end subroutine ESMF_AttributeSetAttPackArrayCHList
 
 !==============================================================================
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetObjArrayCH_N()"
-subroutine ESMF_AttributeSetObjArrayCH_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+#define ESMF_METHOD "ESMF_AttributeSetObjArrayCHList()"
+subroutine ESMF_AttributeSetObjArrayCHList(target, name, valueList, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_Array), intent(inout) :: target
   character(len=*), intent(in) :: name
-  character(len=*), dimension(:), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  character(len=*), dimension(:), intent(in) :: valueList
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -1532,13 +1522,13 @@ subroutine ESMF_AttributeSetObjArrayCH_N(target, name, value, keywordEnforcer, c
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetObjArrayCH_N
+end subroutine ESMF_AttributeSetObjArrayCHList
 
 
 #undef  ESMF_METHOD
@@ -1578,12 +1568,11 @@ end subroutine ESMF_AttributeSetAttPackArrayLG
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjArrayLG()"
-subroutine ESMF_AttributeSetObjArrayLG(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+subroutine ESMF_AttributeSetObjArrayLG(target, name, value, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_Array), intent(inout) :: target
   character(len=*), intent(in) :: name
   logical, intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -1616,8 +1605,8 @@ end subroutine ESMF_AttributeSetObjArrayLG
 
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetAttPackArrayLG_N()"
-subroutine ESMF_AttributeSetAttPackArrayLG_N(target, name, value, attpack, keywordEnforcer, itemcount, rc)
+#define ESMF_METHOD "ESMF_AttributeSetAttPackArrayLGList()"
+subroutine ESMF_AttributeSetAttPackArrayLGList(target, name, value, attpack, keywordEnforcer, itemcount, rc)
   ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
   type(ESMF_Array), intent(in) :: target
   character(len=*), intent(in) :: name
@@ -1646,18 +1635,17 @@ subroutine ESMF_AttributeSetAttPackArrayLG_N(target, name, value, attpack, keywo
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetAttPackArrayLG_N
+end subroutine ESMF_AttributeSetAttPackArrayLGList
 
 !==============================================================================
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetObjArrayLG_N()"
-subroutine ESMF_AttributeSetObjArrayLG_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+#define ESMF_METHOD "ESMF_AttributeSetObjArrayLGList()"
+subroutine ESMF_AttributeSetObjArrayLGList(target, name, valueList, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_Array), intent(inout) :: target
   character(len=*), intent(in) :: name
-  logical, dimension(:), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  logical, dimension(:), intent(in) :: valueList
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -1680,13 +1668,13 @@ subroutine ESMF_AttributeSetObjArrayLG_N(target, name, value, keywordEnforcer, c
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetObjArrayLG_N
+end subroutine ESMF_AttributeSetObjArrayLGList
 
 
 #undef  ESMF_METHOD
@@ -1726,12 +1714,11 @@ end subroutine ESMF_AttributeSetAttPackArrayBundleR4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjArrayBundleR4()"
-subroutine ESMF_AttributeSetObjArrayBundleR4(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+subroutine ESMF_AttributeSetObjArrayBundleR4(target, name, value, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_ArrayBundle), intent(inout) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R4), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -1764,8 +1751,8 @@ end subroutine ESMF_AttributeSetObjArrayBundleR4
 
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetAttPackArrayBundleR4_N()"
-subroutine ESMF_AttributeSetAttPackArrayBundleR4_N(target, name, value, attpack, keywordEnforcer, itemcount, rc)
+#define ESMF_METHOD "ESMF_AttributeSetAttPackArrayBundleR4List()"
+subroutine ESMF_AttributeSetAttPackArrayBundleR4List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
   ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
   type(ESMF_ArrayBundle), intent(in) :: target
   character(len=*), intent(in) :: name
@@ -1794,18 +1781,17 @@ subroutine ESMF_AttributeSetAttPackArrayBundleR4_N(target, name, value, attpack,
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetAttPackArrayBundleR4_N
+end subroutine ESMF_AttributeSetAttPackArrayBundleR4List
 
 !==============================================================================
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetObjArrayBundleR4_N()"
-subroutine ESMF_AttributeSetObjArrayBundleR4_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+#define ESMF_METHOD "ESMF_AttributeSetObjArrayBundleR4List()"
+subroutine ESMF_AttributeSetObjArrayBundleR4List(target, name, valueList, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_ArrayBundle), intent(inout) :: target
   character(len=*), intent(in) :: name
-  real(ESMF_KIND_R4), dimension(:), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  real(ESMF_KIND_R4), dimension(:), intent(in) :: valueList
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -1828,13 +1814,13 @@ subroutine ESMF_AttributeSetObjArrayBundleR4_N(target, name, value, keywordEnfor
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetObjArrayBundleR4_N
+end subroutine ESMF_AttributeSetObjArrayBundleR4List
 
 
 #undef  ESMF_METHOD
@@ -1874,12 +1860,11 @@ end subroutine ESMF_AttributeSetAttPackArrayBundleR8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjArrayBundleR8()"
-subroutine ESMF_AttributeSetObjArrayBundleR8(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+subroutine ESMF_AttributeSetObjArrayBundleR8(target, name, value, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_ArrayBundle), intent(inout) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R8), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -1912,8 +1897,8 @@ end subroutine ESMF_AttributeSetObjArrayBundleR8
 
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetAttPackArrayBundleR8_N()"
-subroutine ESMF_AttributeSetAttPackArrayBundleR8_N(target, name, value, attpack, keywordEnforcer, itemcount, rc)
+#define ESMF_METHOD "ESMF_AttributeSetAttPackArrayBundleR8List()"
+subroutine ESMF_AttributeSetAttPackArrayBundleR8List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
   ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
   type(ESMF_ArrayBundle), intent(in) :: target
   character(len=*), intent(in) :: name
@@ -1942,18 +1927,17 @@ subroutine ESMF_AttributeSetAttPackArrayBundleR8_N(target, name, value, attpack,
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetAttPackArrayBundleR8_N
+end subroutine ESMF_AttributeSetAttPackArrayBundleR8List
 
 !==============================================================================
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetObjArrayBundleR8_N()"
-subroutine ESMF_AttributeSetObjArrayBundleR8_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+#define ESMF_METHOD "ESMF_AttributeSetObjArrayBundleR8List()"
+subroutine ESMF_AttributeSetObjArrayBundleR8List(target, name, valueList, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_ArrayBundle), intent(inout) :: target
   character(len=*), intent(in) :: name
-  real(ESMF_KIND_R8), dimension(:), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  real(ESMF_KIND_R8), dimension(:), intent(in) :: valueList
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -1976,13 +1960,13 @@ subroutine ESMF_AttributeSetObjArrayBundleR8_N(target, name, value, keywordEnfor
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetObjArrayBundleR8_N
+end subroutine ESMF_AttributeSetObjArrayBundleR8List
 
 
 #undef  ESMF_METHOD
@@ -2022,12 +2006,11 @@ end subroutine ESMF_AttributeSetAttPackArrayBundleI4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjArrayBundleI4()"
-subroutine ESMF_AttributeSetObjArrayBundleI4(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+subroutine ESMF_AttributeSetObjArrayBundleI4(target, name, value, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_ArrayBundle), intent(inout) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I4), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -2060,8 +2043,8 @@ end subroutine ESMF_AttributeSetObjArrayBundleI4
 
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetAttPackArrayBundleI4_N()"
-subroutine ESMF_AttributeSetAttPackArrayBundleI4_N(target, name, value, attpack, keywordEnforcer, itemcount, rc)
+#define ESMF_METHOD "ESMF_AttributeSetAttPackArrayBundleI4List()"
+subroutine ESMF_AttributeSetAttPackArrayBundleI4List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
   ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
   type(ESMF_ArrayBundle), intent(in) :: target
   character(len=*), intent(in) :: name
@@ -2090,18 +2073,17 @@ subroutine ESMF_AttributeSetAttPackArrayBundleI4_N(target, name, value, attpack,
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetAttPackArrayBundleI4_N
+end subroutine ESMF_AttributeSetAttPackArrayBundleI4List
 
 !==============================================================================
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetObjArrayBundleI4_N()"
-subroutine ESMF_AttributeSetObjArrayBundleI4_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+#define ESMF_METHOD "ESMF_AttributeSetObjArrayBundleI4List()"
+subroutine ESMF_AttributeSetObjArrayBundleI4List(target, name, valueList, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_ArrayBundle), intent(inout) :: target
   character(len=*), intent(in) :: name
-  integer(ESMF_KIND_I4), dimension(:), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  integer(ESMF_KIND_I4), dimension(:), intent(in) :: valueList
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -2124,13 +2106,13 @@ subroutine ESMF_AttributeSetObjArrayBundleI4_N(target, name, value, keywordEnfor
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetObjArrayBundleI4_N
+end subroutine ESMF_AttributeSetObjArrayBundleI4List
 
 
 #undef  ESMF_METHOD
@@ -2170,12 +2152,11 @@ end subroutine ESMF_AttributeSetAttPackArrayBundleI8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjArrayBundleI8()"
-subroutine ESMF_AttributeSetObjArrayBundleI8(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+subroutine ESMF_AttributeSetObjArrayBundleI8(target, name, value, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_ArrayBundle), intent(inout) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I8), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -2208,8 +2189,8 @@ end subroutine ESMF_AttributeSetObjArrayBundleI8
 
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetAttPackArrayBundleI8_N()"
-subroutine ESMF_AttributeSetAttPackArrayBundleI8_N(target, name, value, attpack, keywordEnforcer, itemcount, rc)
+#define ESMF_METHOD "ESMF_AttributeSetAttPackArrayBundleI8List()"
+subroutine ESMF_AttributeSetAttPackArrayBundleI8List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
   ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
   type(ESMF_ArrayBundle), intent(in) :: target
   character(len=*), intent(in) :: name
@@ -2238,18 +2219,17 @@ subroutine ESMF_AttributeSetAttPackArrayBundleI8_N(target, name, value, attpack,
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetAttPackArrayBundleI8_N
+end subroutine ESMF_AttributeSetAttPackArrayBundleI8List
 
 !==============================================================================
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetObjArrayBundleI8_N()"
-subroutine ESMF_AttributeSetObjArrayBundleI8_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+#define ESMF_METHOD "ESMF_AttributeSetObjArrayBundleI8List()"
+subroutine ESMF_AttributeSetObjArrayBundleI8List(target, name, valueList, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_ArrayBundle), intent(inout) :: target
   character(len=*), intent(in) :: name
-  integer(ESMF_KIND_I8), dimension(:), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  integer(ESMF_KIND_I8), dimension(:), intent(in) :: valueList
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -2272,13 +2252,13 @@ subroutine ESMF_AttributeSetObjArrayBundleI8_N(target, name, value, keywordEnfor
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetObjArrayBundleI8_N
+end subroutine ESMF_AttributeSetObjArrayBundleI8List
 
 
 #undef  ESMF_METHOD
@@ -2318,12 +2298,11 @@ end subroutine ESMF_AttributeSetAttPackArrayBundleCH
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjArrayBundleCH()"
-subroutine ESMF_AttributeSetObjArrayBundleCH(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+subroutine ESMF_AttributeSetObjArrayBundleCH(target, name, value, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_ArrayBundle), intent(inout) :: target
   character(len=*), intent(in) :: name
   character(len=*), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -2356,8 +2335,8 @@ end subroutine ESMF_AttributeSetObjArrayBundleCH
 
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetAttPackArrayBundleCH_N()"
-subroutine ESMF_AttributeSetAttPackArrayBundleCH_N(target, name, value, attpack, keywordEnforcer, itemcount, rc)
+#define ESMF_METHOD "ESMF_AttributeSetAttPackArrayBundleCHList()"
+subroutine ESMF_AttributeSetAttPackArrayBundleCHList(target, name, value, attpack, keywordEnforcer, itemcount, rc)
   ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
   type(ESMF_ArrayBundle), intent(in) :: target
   character(len=*), intent(in) :: name
@@ -2386,18 +2365,17 @@ subroutine ESMF_AttributeSetAttPackArrayBundleCH_N(target, name, value, attpack,
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetAttPackArrayBundleCH_N
+end subroutine ESMF_AttributeSetAttPackArrayBundleCHList
 
 !==============================================================================
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetObjArrayBundleCH_N()"
-subroutine ESMF_AttributeSetObjArrayBundleCH_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+#define ESMF_METHOD "ESMF_AttributeSetObjArrayBundleCHList()"
+subroutine ESMF_AttributeSetObjArrayBundleCHList(target, name, valueList, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_ArrayBundle), intent(inout) :: target
   character(len=*), intent(in) :: name
-  character(len=*), dimension(:), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  character(len=*), dimension(:), intent(in) :: valueList
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -2420,13 +2398,13 @@ subroutine ESMF_AttributeSetObjArrayBundleCH_N(target, name, value, keywordEnfor
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetObjArrayBundleCH_N
+end subroutine ESMF_AttributeSetObjArrayBundleCHList
 
 
 #undef  ESMF_METHOD
@@ -2466,12 +2444,11 @@ end subroutine ESMF_AttributeSetAttPackArrayBundleLG
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjArrayBundleLG()"
-subroutine ESMF_AttributeSetObjArrayBundleLG(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+subroutine ESMF_AttributeSetObjArrayBundleLG(target, name, value, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_ArrayBundle), intent(inout) :: target
   character(len=*), intent(in) :: name
   logical, intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -2504,8 +2481,8 @@ end subroutine ESMF_AttributeSetObjArrayBundleLG
 
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetAttPackArrayBundleLG_N()"
-subroutine ESMF_AttributeSetAttPackArrayBundleLG_N(target, name, value, attpack, keywordEnforcer, itemcount, rc)
+#define ESMF_METHOD "ESMF_AttributeSetAttPackArrayBundleLGList()"
+subroutine ESMF_AttributeSetAttPackArrayBundleLGList(target, name, value, attpack, keywordEnforcer, itemcount, rc)
   ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
   type(ESMF_ArrayBundle), intent(in) :: target
   character(len=*), intent(in) :: name
@@ -2534,18 +2511,17 @@ subroutine ESMF_AttributeSetAttPackArrayBundleLG_N(target, name, value, attpack,
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetAttPackArrayBundleLG_N
+end subroutine ESMF_AttributeSetAttPackArrayBundleLGList
 
 !==============================================================================
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetObjArrayBundleLG_N()"
-subroutine ESMF_AttributeSetObjArrayBundleLG_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+#define ESMF_METHOD "ESMF_AttributeSetObjArrayBundleLGList()"
+subroutine ESMF_AttributeSetObjArrayBundleLGList(target, name, valueList, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_ArrayBundle), intent(inout) :: target
   character(len=*), intent(in) :: name
-  logical, dimension(:), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  logical, dimension(:), intent(in) :: valueList
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -2568,13 +2544,13 @@ subroutine ESMF_AttributeSetObjArrayBundleLG_N(target, name, value, keywordEnfor
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetObjArrayBundleLG_N
+end subroutine ESMF_AttributeSetObjArrayBundleLGList
 
 
 #undef  ESMF_METHOD
@@ -2614,12 +2590,11 @@ end subroutine ESMF_AttributeSetAttPackCplCompR4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjCplCompR4()"
-subroutine ESMF_AttributeSetObjCplCompR4(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+subroutine ESMF_AttributeSetObjCplCompR4(target, name, value, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_CplComp), intent(inout) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R4), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -2652,8 +2627,8 @@ end subroutine ESMF_AttributeSetObjCplCompR4
 
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetAttPackCplCompR4_N()"
-subroutine ESMF_AttributeSetAttPackCplCompR4_N(target, name, value, attpack, keywordEnforcer, itemcount, rc)
+#define ESMF_METHOD "ESMF_AttributeSetAttPackCplCompR4List()"
+subroutine ESMF_AttributeSetAttPackCplCompR4List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
   ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
   type(ESMF_CplComp), intent(in) :: target
   character(len=*), intent(in) :: name
@@ -2682,18 +2657,17 @@ subroutine ESMF_AttributeSetAttPackCplCompR4_N(target, name, value, attpack, key
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetAttPackCplCompR4_N
+end subroutine ESMF_AttributeSetAttPackCplCompR4List
 
 !==============================================================================
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetObjCplCompR4_N()"
-subroutine ESMF_AttributeSetObjCplCompR4_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+#define ESMF_METHOD "ESMF_AttributeSetObjCplCompR4List()"
+subroutine ESMF_AttributeSetObjCplCompR4List(target, name, valueList, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_CplComp), intent(inout) :: target
   character(len=*), intent(in) :: name
-  real(ESMF_KIND_R4), dimension(:), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  real(ESMF_KIND_R4), dimension(:), intent(in) :: valueList
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -2716,13 +2690,13 @@ subroutine ESMF_AttributeSetObjCplCompR4_N(target, name, value, keywordEnforcer,
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetObjCplCompR4_N
+end subroutine ESMF_AttributeSetObjCplCompR4List
 
 
 #undef  ESMF_METHOD
@@ -2762,12 +2736,11 @@ end subroutine ESMF_AttributeSetAttPackCplCompR8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjCplCompR8()"
-subroutine ESMF_AttributeSetObjCplCompR8(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+subroutine ESMF_AttributeSetObjCplCompR8(target, name, value, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_CplComp), intent(inout) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R8), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -2800,8 +2773,8 @@ end subroutine ESMF_AttributeSetObjCplCompR8
 
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetAttPackCplCompR8_N()"
-subroutine ESMF_AttributeSetAttPackCplCompR8_N(target, name, value, attpack, keywordEnforcer, itemcount, rc)
+#define ESMF_METHOD "ESMF_AttributeSetAttPackCplCompR8List()"
+subroutine ESMF_AttributeSetAttPackCplCompR8List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
   ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
   type(ESMF_CplComp), intent(in) :: target
   character(len=*), intent(in) :: name
@@ -2830,18 +2803,17 @@ subroutine ESMF_AttributeSetAttPackCplCompR8_N(target, name, value, attpack, key
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetAttPackCplCompR8_N
+end subroutine ESMF_AttributeSetAttPackCplCompR8List
 
 !==============================================================================
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetObjCplCompR8_N()"
-subroutine ESMF_AttributeSetObjCplCompR8_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+#define ESMF_METHOD "ESMF_AttributeSetObjCplCompR8List()"
+subroutine ESMF_AttributeSetObjCplCompR8List(target, name, valueList, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_CplComp), intent(inout) :: target
   character(len=*), intent(in) :: name
-  real(ESMF_KIND_R8), dimension(:), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  real(ESMF_KIND_R8), dimension(:), intent(in) :: valueList
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -2864,13 +2836,13 @@ subroutine ESMF_AttributeSetObjCplCompR8_N(target, name, value, keywordEnforcer,
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetObjCplCompR8_N
+end subroutine ESMF_AttributeSetObjCplCompR8List
 
 
 #undef  ESMF_METHOD
@@ -2910,12 +2882,11 @@ end subroutine ESMF_AttributeSetAttPackCplCompI4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjCplCompI4()"
-subroutine ESMF_AttributeSetObjCplCompI4(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+subroutine ESMF_AttributeSetObjCplCompI4(target, name, value, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_CplComp), intent(inout) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I4), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -2948,8 +2919,8 @@ end subroutine ESMF_AttributeSetObjCplCompI4
 
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetAttPackCplCompI4_N()"
-subroutine ESMF_AttributeSetAttPackCplCompI4_N(target, name, value, attpack, keywordEnforcer, itemcount, rc)
+#define ESMF_METHOD "ESMF_AttributeSetAttPackCplCompI4List()"
+subroutine ESMF_AttributeSetAttPackCplCompI4List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
   ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
   type(ESMF_CplComp), intent(in) :: target
   character(len=*), intent(in) :: name
@@ -2978,18 +2949,17 @@ subroutine ESMF_AttributeSetAttPackCplCompI4_N(target, name, value, attpack, key
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetAttPackCplCompI4_N
+end subroutine ESMF_AttributeSetAttPackCplCompI4List
 
 !==============================================================================
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetObjCplCompI4_N()"
-subroutine ESMF_AttributeSetObjCplCompI4_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+#define ESMF_METHOD "ESMF_AttributeSetObjCplCompI4List()"
+subroutine ESMF_AttributeSetObjCplCompI4List(target, name, valueList, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_CplComp), intent(inout) :: target
   character(len=*), intent(in) :: name
-  integer(ESMF_KIND_I4), dimension(:), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  integer(ESMF_KIND_I4), dimension(:), intent(in) :: valueList
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -3012,13 +2982,13 @@ subroutine ESMF_AttributeSetObjCplCompI4_N(target, name, value, keywordEnforcer,
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetObjCplCompI4_N
+end subroutine ESMF_AttributeSetObjCplCompI4List
 
 
 #undef  ESMF_METHOD
@@ -3058,12 +3028,11 @@ end subroutine ESMF_AttributeSetAttPackCplCompI8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjCplCompI8()"
-subroutine ESMF_AttributeSetObjCplCompI8(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+subroutine ESMF_AttributeSetObjCplCompI8(target, name, value, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_CplComp), intent(inout) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I8), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -3096,8 +3065,8 @@ end subroutine ESMF_AttributeSetObjCplCompI8
 
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetAttPackCplCompI8_N()"
-subroutine ESMF_AttributeSetAttPackCplCompI8_N(target, name, value, attpack, keywordEnforcer, itemcount, rc)
+#define ESMF_METHOD "ESMF_AttributeSetAttPackCplCompI8List()"
+subroutine ESMF_AttributeSetAttPackCplCompI8List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
   ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
   type(ESMF_CplComp), intent(in) :: target
   character(len=*), intent(in) :: name
@@ -3126,18 +3095,17 @@ subroutine ESMF_AttributeSetAttPackCplCompI8_N(target, name, value, attpack, key
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetAttPackCplCompI8_N
+end subroutine ESMF_AttributeSetAttPackCplCompI8List
 
 !==============================================================================
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetObjCplCompI8_N()"
-subroutine ESMF_AttributeSetObjCplCompI8_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+#define ESMF_METHOD "ESMF_AttributeSetObjCplCompI8List()"
+subroutine ESMF_AttributeSetObjCplCompI8List(target, name, valueList, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_CplComp), intent(inout) :: target
   character(len=*), intent(in) :: name
-  integer(ESMF_KIND_I8), dimension(:), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  integer(ESMF_KIND_I8), dimension(:), intent(in) :: valueList
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -3160,13 +3128,13 @@ subroutine ESMF_AttributeSetObjCplCompI8_N(target, name, value, keywordEnforcer,
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetObjCplCompI8_N
+end subroutine ESMF_AttributeSetObjCplCompI8List
 
 
 #undef  ESMF_METHOD
@@ -3206,12 +3174,11 @@ end subroutine ESMF_AttributeSetAttPackCplCompCH
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjCplCompCH()"
-subroutine ESMF_AttributeSetObjCplCompCH(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+subroutine ESMF_AttributeSetObjCplCompCH(target, name, value, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_CplComp), intent(inout) :: target
   character(len=*), intent(in) :: name
   character(len=*), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -3244,8 +3211,8 @@ end subroutine ESMF_AttributeSetObjCplCompCH
 
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetAttPackCplCompCH_N()"
-subroutine ESMF_AttributeSetAttPackCplCompCH_N(target, name, value, attpack, keywordEnforcer, itemcount, rc)
+#define ESMF_METHOD "ESMF_AttributeSetAttPackCplCompCHList()"
+subroutine ESMF_AttributeSetAttPackCplCompCHList(target, name, value, attpack, keywordEnforcer, itemcount, rc)
   ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
   type(ESMF_CplComp), intent(in) :: target
   character(len=*), intent(in) :: name
@@ -3274,18 +3241,17 @@ subroutine ESMF_AttributeSetAttPackCplCompCH_N(target, name, value, attpack, key
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetAttPackCplCompCH_N
+end subroutine ESMF_AttributeSetAttPackCplCompCHList
 
 !==============================================================================
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetObjCplCompCH_N()"
-subroutine ESMF_AttributeSetObjCplCompCH_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+#define ESMF_METHOD "ESMF_AttributeSetObjCplCompCHList()"
+subroutine ESMF_AttributeSetObjCplCompCHList(target, name, valueList, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_CplComp), intent(inout) :: target
   character(len=*), intent(in) :: name
-  character(len=*), dimension(:), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  character(len=*), dimension(:), intent(in) :: valueList
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -3308,13 +3274,13 @@ subroutine ESMF_AttributeSetObjCplCompCH_N(target, name, value, keywordEnforcer,
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetObjCplCompCH_N
+end subroutine ESMF_AttributeSetObjCplCompCHList
 
 
 #undef  ESMF_METHOD
@@ -3354,12 +3320,11 @@ end subroutine ESMF_AttributeSetAttPackCplCompLG
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjCplCompLG()"
-subroutine ESMF_AttributeSetObjCplCompLG(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+subroutine ESMF_AttributeSetObjCplCompLG(target, name, value, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_CplComp), intent(inout) :: target
   character(len=*), intent(in) :: name
   logical, intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -3392,8 +3357,8 @@ end subroutine ESMF_AttributeSetObjCplCompLG
 
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetAttPackCplCompLG_N()"
-subroutine ESMF_AttributeSetAttPackCplCompLG_N(target, name, value, attpack, keywordEnforcer, itemcount, rc)
+#define ESMF_METHOD "ESMF_AttributeSetAttPackCplCompLGList()"
+subroutine ESMF_AttributeSetAttPackCplCompLGList(target, name, value, attpack, keywordEnforcer, itemcount, rc)
   ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
   type(ESMF_CplComp), intent(in) :: target
   character(len=*), intent(in) :: name
@@ -3422,18 +3387,17 @@ subroutine ESMF_AttributeSetAttPackCplCompLG_N(target, name, value, attpack, key
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetAttPackCplCompLG_N
+end subroutine ESMF_AttributeSetAttPackCplCompLGList
 
 !==============================================================================
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetObjCplCompLG_N()"
-subroutine ESMF_AttributeSetObjCplCompLG_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+#define ESMF_METHOD "ESMF_AttributeSetObjCplCompLGList()"
+subroutine ESMF_AttributeSetObjCplCompLGList(target, name, valueList, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_CplComp), intent(inout) :: target
   character(len=*), intent(in) :: name
-  logical, dimension(:), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  logical, dimension(:), intent(in) :: valueList
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -3456,13 +3420,13 @@ subroutine ESMF_AttributeSetObjCplCompLG_N(target, name, value, keywordEnforcer,
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetObjCplCompLG_N
+end subroutine ESMF_AttributeSetObjCplCompLGList
 
 
 #undef  ESMF_METHOD
@@ -3502,12 +3466,11 @@ end subroutine ESMF_AttributeSetAttPackGridCompR4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjGridCompR4()"
-subroutine ESMF_AttributeSetObjGridCompR4(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+subroutine ESMF_AttributeSetObjGridCompR4(target, name, value, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_GridComp), intent(inout) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R4), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -3540,8 +3503,8 @@ end subroutine ESMF_AttributeSetObjGridCompR4
 
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetAttPackGridCompR4_N()"
-subroutine ESMF_AttributeSetAttPackGridCompR4_N(target, name, value, attpack, keywordEnforcer, itemcount, rc)
+#define ESMF_METHOD "ESMF_AttributeSetAttPackGridCompR4List()"
+subroutine ESMF_AttributeSetAttPackGridCompR4List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
   ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
   type(ESMF_GridComp), intent(in) :: target
   character(len=*), intent(in) :: name
@@ -3570,18 +3533,17 @@ subroutine ESMF_AttributeSetAttPackGridCompR4_N(target, name, value, attpack, ke
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetAttPackGridCompR4_N
+end subroutine ESMF_AttributeSetAttPackGridCompR4List
 
 !==============================================================================
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetObjGridCompR4_N()"
-subroutine ESMF_AttributeSetObjGridCompR4_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+#define ESMF_METHOD "ESMF_AttributeSetObjGridCompR4List()"
+subroutine ESMF_AttributeSetObjGridCompR4List(target, name, valueList, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_GridComp), intent(inout) :: target
   character(len=*), intent(in) :: name
-  real(ESMF_KIND_R4), dimension(:), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  real(ESMF_KIND_R4), dimension(:), intent(in) :: valueList
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -3604,13 +3566,13 @@ subroutine ESMF_AttributeSetObjGridCompR4_N(target, name, value, keywordEnforcer
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetObjGridCompR4_N
+end subroutine ESMF_AttributeSetObjGridCompR4List
 
 
 #undef  ESMF_METHOD
@@ -3650,12 +3612,11 @@ end subroutine ESMF_AttributeSetAttPackGridCompR8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjGridCompR8()"
-subroutine ESMF_AttributeSetObjGridCompR8(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+subroutine ESMF_AttributeSetObjGridCompR8(target, name, value, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_GridComp), intent(inout) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R8), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -3688,8 +3649,8 @@ end subroutine ESMF_AttributeSetObjGridCompR8
 
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetAttPackGridCompR8_N()"
-subroutine ESMF_AttributeSetAttPackGridCompR8_N(target, name, value, attpack, keywordEnforcer, itemcount, rc)
+#define ESMF_METHOD "ESMF_AttributeSetAttPackGridCompR8List()"
+subroutine ESMF_AttributeSetAttPackGridCompR8List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
   ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
   type(ESMF_GridComp), intent(in) :: target
   character(len=*), intent(in) :: name
@@ -3718,18 +3679,17 @@ subroutine ESMF_AttributeSetAttPackGridCompR8_N(target, name, value, attpack, ke
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetAttPackGridCompR8_N
+end subroutine ESMF_AttributeSetAttPackGridCompR8List
 
 !==============================================================================
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetObjGridCompR8_N()"
-subroutine ESMF_AttributeSetObjGridCompR8_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+#define ESMF_METHOD "ESMF_AttributeSetObjGridCompR8List()"
+subroutine ESMF_AttributeSetObjGridCompR8List(target, name, valueList, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_GridComp), intent(inout) :: target
   character(len=*), intent(in) :: name
-  real(ESMF_KIND_R8), dimension(:), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  real(ESMF_KIND_R8), dimension(:), intent(in) :: valueList
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -3752,13 +3712,13 @@ subroutine ESMF_AttributeSetObjGridCompR8_N(target, name, value, keywordEnforcer
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetObjGridCompR8_N
+end subroutine ESMF_AttributeSetObjGridCompR8List
 
 
 #undef  ESMF_METHOD
@@ -3798,12 +3758,11 @@ end subroutine ESMF_AttributeSetAttPackGridCompI4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjGridCompI4()"
-subroutine ESMF_AttributeSetObjGridCompI4(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+subroutine ESMF_AttributeSetObjGridCompI4(target, name, value, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_GridComp), intent(inout) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I4), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -3836,8 +3795,8 @@ end subroutine ESMF_AttributeSetObjGridCompI4
 
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetAttPackGridCompI4_N()"
-subroutine ESMF_AttributeSetAttPackGridCompI4_N(target, name, value, attpack, keywordEnforcer, itemcount, rc)
+#define ESMF_METHOD "ESMF_AttributeSetAttPackGridCompI4List()"
+subroutine ESMF_AttributeSetAttPackGridCompI4List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
   ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
   type(ESMF_GridComp), intent(in) :: target
   character(len=*), intent(in) :: name
@@ -3866,18 +3825,17 @@ subroutine ESMF_AttributeSetAttPackGridCompI4_N(target, name, value, attpack, ke
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetAttPackGridCompI4_N
+end subroutine ESMF_AttributeSetAttPackGridCompI4List
 
 !==============================================================================
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetObjGridCompI4_N()"
-subroutine ESMF_AttributeSetObjGridCompI4_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+#define ESMF_METHOD "ESMF_AttributeSetObjGridCompI4List()"
+subroutine ESMF_AttributeSetObjGridCompI4List(target, name, valueList, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_GridComp), intent(inout) :: target
   character(len=*), intent(in) :: name
-  integer(ESMF_KIND_I4), dimension(:), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  integer(ESMF_KIND_I4), dimension(:), intent(in) :: valueList
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -3900,13 +3858,13 @@ subroutine ESMF_AttributeSetObjGridCompI4_N(target, name, value, keywordEnforcer
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetObjGridCompI4_N
+end subroutine ESMF_AttributeSetObjGridCompI4List
 
 
 #undef  ESMF_METHOD
@@ -3946,12 +3904,11 @@ end subroutine ESMF_AttributeSetAttPackGridCompI8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjGridCompI8()"
-subroutine ESMF_AttributeSetObjGridCompI8(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+subroutine ESMF_AttributeSetObjGridCompI8(target, name, value, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_GridComp), intent(inout) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I8), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -3984,8 +3941,8 @@ end subroutine ESMF_AttributeSetObjGridCompI8
 
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetAttPackGridCompI8_N()"
-subroutine ESMF_AttributeSetAttPackGridCompI8_N(target, name, value, attpack, keywordEnforcer, itemcount, rc)
+#define ESMF_METHOD "ESMF_AttributeSetAttPackGridCompI8List()"
+subroutine ESMF_AttributeSetAttPackGridCompI8List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
   ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
   type(ESMF_GridComp), intent(in) :: target
   character(len=*), intent(in) :: name
@@ -4014,18 +3971,17 @@ subroutine ESMF_AttributeSetAttPackGridCompI8_N(target, name, value, attpack, ke
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetAttPackGridCompI8_N
+end subroutine ESMF_AttributeSetAttPackGridCompI8List
 
 !==============================================================================
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetObjGridCompI8_N()"
-subroutine ESMF_AttributeSetObjGridCompI8_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+#define ESMF_METHOD "ESMF_AttributeSetObjGridCompI8List()"
+subroutine ESMF_AttributeSetObjGridCompI8List(target, name, valueList, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_GridComp), intent(inout) :: target
   character(len=*), intent(in) :: name
-  integer(ESMF_KIND_I8), dimension(:), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  integer(ESMF_KIND_I8), dimension(:), intent(in) :: valueList
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -4048,13 +4004,13 @@ subroutine ESMF_AttributeSetObjGridCompI8_N(target, name, value, keywordEnforcer
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetObjGridCompI8_N
+end subroutine ESMF_AttributeSetObjGridCompI8List
 
 
 #undef  ESMF_METHOD
@@ -4094,12 +4050,11 @@ end subroutine ESMF_AttributeSetAttPackGridCompCH
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjGridCompCH()"
-subroutine ESMF_AttributeSetObjGridCompCH(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+subroutine ESMF_AttributeSetObjGridCompCH(target, name, value, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_GridComp), intent(inout) :: target
   character(len=*), intent(in) :: name
   character(len=*), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -4132,8 +4087,8 @@ end subroutine ESMF_AttributeSetObjGridCompCH
 
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetAttPackGridCompCH_N()"
-subroutine ESMF_AttributeSetAttPackGridCompCH_N(target, name, value, attpack, keywordEnforcer, itemcount, rc)
+#define ESMF_METHOD "ESMF_AttributeSetAttPackGridCompCHList()"
+subroutine ESMF_AttributeSetAttPackGridCompCHList(target, name, value, attpack, keywordEnforcer, itemcount, rc)
   ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
   type(ESMF_GridComp), intent(in) :: target
   character(len=*), intent(in) :: name
@@ -4162,18 +4117,17 @@ subroutine ESMF_AttributeSetAttPackGridCompCH_N(target, name, value, attpack, ke
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetAttPackGridCompCH_N
+end subroutine ESMF_AttributeSetAttPackGridCompCHList
 
 !==============================================================================
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetObjGridCompCH_N()"
-subroutine ESMF_AttributeSetObjGridCompCH_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+#define ESMF_METHOD "ESMF_AttributeSetObjGridCompCHList()"
+subroutine ESMF_AttributeSetObjGridCompCHList(target, name, valueList, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_GridComp), intent(inout) :: target
   character(len=*), intent(in) :: name
-  character(len=*), dimension(:), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  character(len=*), dimension(:), intent(in) :: valueList
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -4196,13 +4150,13 @@ subroutine ESMF_AttributeSetObjGridCompCH_N(target, name, value, keywordEnforcer
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetObjGridCompCH_N
+end subroutine ESMF_AttributeSetObjGridCompCHList
 
 
 #undef  ESMF_METHOD
@@ -4242,12 +4196,11 @@ end subroutine ESMF_AttributeSetAttPackGridCompLG
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjGridCompLG()"
-subroutine ESMF_AttributeSetObjGridCompLG(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+subroutine ESMF_AttributeSetObjGridCompLG(target, name, value, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_GridComp), intent(inout) :: target
   character(len=*), intent(in) :: name
   logical, intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -4280,8 +4233,8 @@ end subroutine ESMF_AttributeSetObjGridCompLG
 
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetAttPackGridCompLG_N()"
-subroutine ESMF_AttributeSetAttPackGridCompLG_N(target, name, value, attpack, keywordEnforcer, itemcount, rc)
+#define ESMF_METHOD "ESMF_AttributeSetAttPackGridCompLGList()"
+subroutine ESMF_AttributeSetAttPackGridCompLGList(target, name, value, attpack, keywordEnforcer, itemcount, rc)
   ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
   type(ESMF_GridComp), intent(in) :: target
   character(len=*), intent(in) :: name
@@ -4310,18 +4263,17 @@ subroutine ESMF_AttributeSetAttPackGridCompLG_N(target, name, value, attpack, ke
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetAttPackGridCompLG_N
+end subroutine ESMF_AttributeSetAttPackGridCompLGList
 
 !==============================================================================
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetObjGridCompLG_N()"
-subroutine ESMF_AttributeSetObjGridCompLG_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+#define ESMF_METHOD "ESMF_AttributeSetObjGridCompLGList()"
+subroutine ESMF_AttributeSetObjGridCompLGList(target, name, valueList, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_GridComp), intent(inout) :: target
   character(len=*), intent(in) :: name
-  logical, dimension(:), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  logical, dimension(:), intent(in) :: valueList
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -4344,13 +4296,13 @@ subroutine ESMF_AttributeSetObjGridCompLG_N(target, name, value, keywordEnforcer
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetObjGridCompLG_N
+end subroutine ESMF_AttributeSetObjGridCompLGList
 
 
 #undef  ESMF_METHOD
@@ -4390,12 +4342,11 @@ end subroutine ESMF_AttributeSetAttPackSciCompR4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjSciCompR4()"
-subroutine ESMF_AttributeSetObjSciCompR4(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+subroutine ESMF_AttributeSetObjSciCompR4(target, name, value, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_SciComp), intent(inout) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R4), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -4428,8 +4379,8 @@ end subroutine ESMF_AttributeSetObjSciCompR4
 
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetAttPackSciCompR4_N()"
-subroutine ESMF_AttributeSetAttPackSciCompR4_N(target, name, value, attpack, keywordEnforcer, itemcount, rc)
+#define ESMF_METHOD "ESMF_AttributeSetAttPackSciCompR4List()"
+subroutine ESMF_AttributeSetAttPackSciCompR4List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
   ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
   type(ESMF_SciComp), intent(in) :: target
   character(len=*), intent(in) :: name
@@ -4458,18 +4409,17 @@ subroutine ESMF_AttributeSetAttPackSciCompR4_N(target, name, value, attpack, key
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetAttPackSciCompR4_N
+end subroutine ESMF_AttributeSetAttPackSciCompR4List
 
 !==============================================================================
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetObjSciCompR4_N()"
-subroutine ESMF_AttributeSetObjSciCompR4_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+#define ESMF_METHOD "ESMF_AttributeSetObjSciCompR4List()"
+subroutine ESMF_AttributeSetObjSciCompR4List(target, name, valueList, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_SciComp), intent(inout) :: target
   character(len=*), intent(in) :: name
-  real(ESMF_KIND_R4), dimension(:), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  real(ESMF_KIND_R4), dimension(:), intent(in) :: valueList
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -4492,13 +4442,13 @@ subroutine ESMF_AttributeSetObjSciCompR4_N(target, name, value, keywordEnforcer,
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetObjSciCompR4_N
+end subroutine ESMF_AttributeSetObjSciCompR4List
 
 
 #undef  ESMF_METHOD
@@ -4538,12 +4488,11 @@ end subroutine ESMF_AttributeSetAttPackSciCompR8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjSciCompR8()"
-subroutine ESMF_AttributeSetObjSciCompR8(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+subroutine ESMF_AttributeSetObjSciCompR8(target, name, value, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_SciComp), intent(inout) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R8), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -4576,8 +4525,8 @@ end subroutine ESMF_AttributeSetObjSciCompR8
 
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetAttPackSciCompR8_N()"
-subroutine ESMF_AttributeSetAttPackSciCompR8_N(target, name, value, attpack, keywordEnforcer, itemcount, rc)
+#define ESMF_METHOD "ESMF_AttributeSetAttPackSciCompR8List()"
+subroutine ESMF_AttributeSetAttPackSciCompR8List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
   ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
   type(ESMF_SciComp), intent(in) :: target
   character(len=*), intent(in) :: name
@@ -4606,18 +4555,17 @@ subroutine ESMF_AttributeSetAttPackSciCompR8_N(target, name, value, attpack, key
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetAttPackSciCompR8_N
+end subroutine ESMF_AttributeSetAttPackSciCompR8List
 
 !==============================================================================
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetObjSciCompR8_N()"
-subroutine ESMF_AttributeSetObjSciCompR8_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+#define ESMF_METHOD "ESMF_AttributeSetObjSciCompR8List()"
+subroutine ESMF_AttributeSetObjSciCompR8List(target, name, valueList, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_SciComp), intent(inout) :: target
   character(len=*), intent(in) :: name
-  real(ESMF_KIND_R8), dimension(:), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  real(ESMF_KIND_R8), dimension(:), intent(in) :: valueList
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -4640,13 +4588,13 @@ subroutine ESMF_AttributeSetObjSciCompR8_N(target, name, value, keywordEnforcer,
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetObjSciCompR8_N
+end subroutine ESMF_AttributeSetObjSciCompR8List
 
 
 #undef  ESMF_METHOD
@@ -4686,12 +4634,11 @@ end subroutine ESMF_AttributeSetAttPackSciCompI4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjSciCompI4()"
-subroutine ESMF_AttributeSetObjSciCompI4(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+subroutine ESMF_AttributeSetObjSciCompI4(target, name, value, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_SciComp), intent(inout) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I4), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -4724,8 +4671,8 @@ end subroutine ESMF_AttributeSetObjSciCompI4
 
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetAttPackSciCompI4_N()"
-subroutine ESMF_AttributeSetAttPackSciCompI4_N(target, name, value, attpack, keywordEnforcer, itemcount, rc)
+#define ESMF_METHOD "ESMF_AttributeSetAttPackSciCompI4List()"
+subroutine ESMF_AttributeSetAttPackSciCompI4List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
   ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
   type(ESMF_SciComp), intent(in) :: target
   character(len=*), intent(in) :: name
@@ -4754,18 +4701,17 @@ subroutine ESMF_AttributeSetAttPackSciCompI4_N(target, name, value, attpack, key
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetAttPackSciCompI4_N
+end subroutine ESMF_AttributeSetAttPackSciCompI4List
 
 !==============================================================================
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetObjSciCompI4_N()"
-subroutine ESMF_AttributeSetObjSciCompI4_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+#define ESMF_METHOD "ESMF_AttributeSetObjSciCompI4List()"
+subroutine ESMF_AttributeSetObjSciCompI4List(target, name, valueList, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_SciComp), intent(inout) :: target
   character(len=*), intent(in) :: name
-  integer(ESMF_KIND_I4), dimension(:), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  integer(ESMF_KIND_I4), dimension(:), intent(in) :: valueList
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -4788,13 +4734,13 @@ subroutine ESMF_AttributeSetObjSciCompI4_N(target, name, value, keywordEnforcer,
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetObjSciCompI4_N
+end subroutine ESMF_AttributeSetObjSciCompI4List
 
 
 #undef  ESMF_METHOD
@@ -4834,12 +4780,11 @@ end subroutine ESMF_AttributeSetAttPackSciCompI8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjSciCompI8()"
-subroutine ESMF_AttributeSetObjSciCompI8(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+subroutine ESMF_AttributeSetObjSciCompI8(target, name, value, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_SciComp), intent(inout) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I8), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -4872,8 +4817,8 @@ end subroutine ESMF_AttributeSetObjSciCompI8
 
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetAttPackSciCompI8_N()"
-subroutine ESMF_AttributeSetAttPackSciCompI8_N(target, name, value, attpack, keywordEnforcer, itemcount, rc)
+#define ESMF_METHOD "ESMF_AttributeSetAttPackSciCompI8List()"
+subroutine ESMF_AttributeSetAttPackSciCompI8List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
   ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
   type(ESMF_SciComp), intent(in) :: target
   character(len=*), intent(in) :: name
@@ -4902,18 +4847,17 @@ subroutine ESMF_AttributeSetAttPackSciCompI8_N(target, name, value, attpack, key
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetAttPackSciCompI8_N
+end subroutine ESMF_AttributeSetAttPackSciCompI8List
 
 !==============================================================================
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetObjSciCompI8_N()"
-subroutine ESMF_AttributeSetObjSciCompI8_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+#define ESMF_METHOD "ESMF_AttributeSetObjSciCompI8List()"
+subroutine ESMF_AttributeSetObjSciCompI8List(target, name, valueList, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_SciComp), intent(inout) :: target
   character(len=*), intent(in) :: name
-  integer(ESMF_KIND_I8), dimension(:), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  integer(ESMF_KIND_I8), dimension(:), intent(in) :: valueList
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -4936,13 +4880,13 @@ subroutine ESMF_AttributeSetObjSciCompI8_N(target, name, value, keywordEnforcer,
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetObjSciCompI8_N
+end subroutine ESMF_AttributeSetObjSciCompI8List
 
 
 #undef  ESMF_METHOD
@@ -4982,12 +4926,11 @@ end subroutine ESMF_AttributeSetAttPackSciCompCH
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjSciCompCH()"
-subroutine ESMF_AttributeSetObjSciCompCH(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+subroutine ESMF_AttributeSetObjSciCompCH(target, name, value, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_SciComp), intent(inout) :: target
   character(len=*), intent(in) :: name
   character(len=*), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -5020,8 +4963,8 @@ end subroutine ESMF_AttributeSetObjSciCompCH
 
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetAttPackSciCompCH_N()"
-subroutine ESMF_AttributeSetAttPackSciCompCH_N(target, name, value, attpack, keywordEnforcer, itemcount, rc)
+#define ESMF_METHOD "ESMF_AttributeSetAttPackSciCompCHList()"
+subroutine ESMF_AttributeSetAttPackSciCompCHList(target, name, value, attpack, keywordEnforcer, itemcount, rc)
   ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
   type(ESMF_SciComp), intent(in) :: target
   character(len=*), intent(in) :: name
@@ -5050,18 +4993,17 @@ subroutine ESMF_AttributeSetAttPackSciCompCH_N(target, name, value, attpack, key
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetAttPackSciCompCH_N
+end subroutine ESMF_AttributeSetAttPackSciCompCHList
 
 !==============================================================================
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetObjSciCompCH_N()"
-subroutine ESMF_AttributeSetObjSciCompCH_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+#define ESMF_METHOD "ESMF_AttributeSetObjSciCompCHList()"
+subroutine ESMF_AttributeSetObjSciCompCHList(target, name, valueList, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_SciComp), intent(inout) :: target
   character(len=*), intent(in) :: name
-  character(len=*), dimension(:), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  character(len=*), dimension(:), intent(in) :: valueList
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -5084,13 +5026,13 @@ subroutine ESMF_AttributeSetObjSciCompCH_N(target, name, value, keywordEnforcer,
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetObjSciCompCH_N
+end subroutine ESMF_AttributeSetObjSciCompCHList
 
 
 #undef  ESMF_METHOD
@@ -5130,12 +5072,11 @@ end subroutine ESMF_AttributeSetAttPackSciCompLG
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjSciCompLG()"
-subroutine ESMF_AttributeSetObjSciCompLG(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+subroutine ESMF_AttributeSetObjSciCompLG(target, name, value, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_SciComp), intent(inout) :: target
   character(len=*), intent(in) :: name
   logical, intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -5168,8 +5109,8 @@ end subroutine ESMF_AttributeSetObjSciCompLG
 
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetAttPackSciCompLG_N()"
-subroutine ESMF_AttributeSetAttPackSciCompLG_N(target, name, value, attpack, keywordEnforcer, itemcount, rc)
+#define ESMF_METHOD "ESMF_AttributeSetAttPackSciCompLGList()"
+subroutine ESMF_AttributeSetAttPackSciCompLGList(target, name, value, attpack, keywordEnforcer, itemcount, rc)
   ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
   type(ESMF_SciComp), intent(in) :: target
   character(len=*), intent(in) :: name
@@ -5198,18 +5139,17 @@ subroutine ESMF_AttributeSetAttPackSciCompLG_N(target, name, value, attpack, key
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetAttPackSciCompLG_N
+end subroutine ESMF_AttributeSetAttPackSciCompLGList
 
 !==============================================================================
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetObjSciCompLG_N()"
-subroutine ESMF_AttributeSetObjSciCompLG_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+#define ESMF_METHOD "ESMF_AttributeSetObjSciCompLGList()"
+subroutine ESMF_AttributeSetObjSciCompLGList(target, name, valueList, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_SciComp), intent(inout) :: target
   character(len=*), intent(in) :: name
-  logical, dimension(:), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  logical, dimension(:), intent(in) :: valueList
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -5232,13 +5172,13 @@ subroutine ESMF_AttributeSetObjSciCompLG_N(target, name, value, keywordEnforcer,
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetObjSciCompLG_N
+end subroutine ESMF_AttributeSetObjSciCompLGList
 
 
 #undef  ESMF_METHOD
@@ -5278,12 +5218,11 @@ end subroutine ESMF_AttributeSetAttPackDistGridR4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjDistGridR4()"
-subroutine ESMF_AttributeSetObjDistGridR4(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+subroutine ESMF_AttributeSetObjDistGridR4(target, name, value, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_DistGrid), intent(inout) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R4), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -5316,8 +5255,8 @@ end subroutine ESMF_AttributeSetObjDistGridR4
 
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetAttPackDistGridR4_N()"
-subroutine ESMF_AttributeSetAttPackDistGridR4_N(target, name, value, attpack, keywordEnforcer, itemcount, rc)
+#define ESMF_METHOD "ESMF_AttributeSetAttPackDistGridR4List()"
+subroutine ESMF_AttributeSetAttPackDistGridR4List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
   ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
   type(ESMF_DistGrid), intent(in) :: target
   character(len=*), intent(in) :: name
@@ -5346,18 +5285,17 @@ subroutine ESMF_AttributeSetAttPackDistGridR4_N(target, name, value, attpack, ke
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetAttPackDistGridR4_N
+end subroutine ESMF_AttributeSetAttPackDistGridR4List
 
 !==============================================================================
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetObjDistGridR4_N()"
-subroutine ESMF_AttributeSetObjDistGridR4_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+#define ESMF_METHOD "ESMF_AttributeSetObjDistGridR4List()"
+subroutine ESMF_AttributeSetObjDistGridR4List(target, name, valueList, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_DistGrid), intent(inout) :: target
   character(len=*), intent(in) :: name
-  real(ESMF_KIND_R4), dimension(:), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  real(ESMF_KIND_R4), dimension(:), intent(in) :: valueList
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -5380,13 +5318,13 @@ subroutine ESMF_AttributeSetObjDistGridR4_N(target, name, value, keywordEnforcer
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetObjDistGridR4_N
+end subroutine ESMF_AttributeSetObjDistGridR4List
 
 
 #undef  ESMF_METHOD
@@ -5426,12 +5364,11 @@ end subroutine ESMF_AttributeSetAttPackDistGridR8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjDistGridR8()"
-subroutine ESMF_AttributeSetObjDistGridR8(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+subroutine ESMF_AttributeSetObjDistGridR8(target, name, value, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_DistGrid), intent(inout) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R8), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -5464,8 +5401,8 @@ end subroutine ESMF_AttributeSetObjDistGridR8
 
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetAttPackDistGridR8_N()"
-subroutine ESMF_AttributeSetAttPackDistGridR8_N(target, name, value, attpack, keywordEnforcer, itemcount, rc)
+#define ESMF_METHOD "ESMF_AttributeSetAttPackDistGridR8List()"
+subroutine ESMF_AttributeSetAttPackDistGridR8List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
   ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
   type(ESMF_DistGrid), intent(in) :: target
   character(len=*), intent(in) :: name
@@ -5494,18 +5431,17 @@ subroutine ESMF_AttributeSetAttPackDistGridR8_N(target, name, value, attpack, ke
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetAttPackDistGridR8_N
+end subroutine ESMF_AttributeSetAttPackDistGridR8List
 
 !==============================================================================
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetObjDistGridR8_N()"
-subroutine ESMF_AttributeSetObjDistGridR8_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+#define ESMF_METHOD "ESMF_AttributeSetObjDistGridR8List()"
+subroutine ESMF_AttributeSetObjDistGridR8List(target, name, valueList, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_DistGrid), intent(inout) :: target
   character(len=*), intent(in) :: name
-  real(ESMF_KIND_R8), dimension(:), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  real(ESMF_KIND_R8), dimension(:), intent(in) :: valueList
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -5528,13 +5464,13 @@ subroutine ESMF_AttributeSetObjDistGridR8_N(target, name, value, keywordEnforcer
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetObjDistGridR8_N
+end subroutine ESMF_AttributeSetObjDistGridR8List
 
 
 #undef  ESMF_METHOD
@@ -5574,12 +5510,11 @@ end subroutine ESMF_AttributeSetAttPackDistGridI4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjDistGridI4()"
-subroutine ESMF_AttributeSetObjDistGridI4(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+subroutine ESMF_AttributeSetObjDistGridI4(target, name, value, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_DistGrid), intent(inout) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I4), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -5612,8 +5547,8 @@ end subroutine ESMF_AttributeSetObjDistGridI4
 
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetAttPackDistGridI4_N()"
-subroutine ESMF_AttributeSetAttPackDistGridI4_N(target, name, value, attpack, keywordEnforcer, itemcount, rc)
+#define ESMF_METHOD "ESMF_AttributeSetAttPackDistGridI4List()"
+subroutine ESMF_AttributeSetAttPackDistGridI4List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
   ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
   type(ESMF_DistGrid), intent(in) :: target
   character(len=*), intent(in) :: name
@@ -5642,18 +5577,17 @@ subroutine ESMF_AttributeSetAttPackDistGridI4_N(target, name, value, attpack, ke
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetAttPackDistGridI4_N
+end subroutine ESMF_AttributeSetAttPackDistGridI4List
 
 !==============================================================================
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetObjDistGridI4_N()"
-subroutine ESMF_AttributeSetObjDistGridI4_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+#define ESMF_METHOD "ESMF_AttributeSetObjDistGridI4List()"
+subroutine ESMF_AttributeSetObjDistGridI4List(target, name, valueList, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_DistGrid), intent(inout) :: target
   character(len=*), intent(in) :: name
-  integer(ESMF_KIND_I4), dimension(:), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  integer(ESMF_KIND_I4), dimension(:), intent(in) :: valueList
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -5676,13 +5610,13 @@ subroutine ESMF_AttributeSetObjDistGridI4_N(target, name, value, keywordEnforcer
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetObjDistGridI4_N
+end subroutine ESMF_AttributeSetObjDistGridI4List
 
 
 #undef  ESMF_METHOD
@@ -5722,12 +5656,11 @@ end subroutine ESMF_AttributeSetAttPackDistGridI8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjDistGridI8()"
-subroutine ESMF_AttributeSetObjDistGridI8(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+subroutine ESMF_AttributeSetObjDistGridI8(target, name, value, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_DistGrid), intent(inout) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I8), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -5760,8 +5693,8 @@ end subroutine ESMF_AttributeSetObjDistGridI8
 
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetAttPackDistGridI8_N()"
-subroutine ESMF_AttributeSetAttPackDistGridI8_N(target, name, value, attpack, keywordEnforcer, itemcount, rc)
+#define ESMF_METHOD "ESMF_AttributeSetAttPackDistGridI8List()"
+subroutine ESMF_AttributeSetAttPackDistGridI8List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
   ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
   type(ESMF_DistGrid), intent(in) :: target
   character(len=*), intent(in) :: name
@@ -5790,18 +5723,17 @@ subroutine ESMF_AttributeSetAttPackDistGridI8_N(target, name, value, attpack, ke
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetAttPackDistGridI8_N
+end subroutine ESMF_AttributeSetAttPackDistGridI8List
 
 !==============================================================================
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetObjDistGridI8_N()"
-subroutine ESMF_AttributeSetObjDistGridI8_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+#define ESMF_METHOD "ESMF_AttributeSetObjDistGridI8List()"
+subroutine ESMF_AttributeSetObjDistGridI8List(target, name, valueList, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_DistGrid), intent(inout) :: target
   character(len=*), intent(in) :: name
-  integer(ESMF_KIND_I8), dimension(:), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  integer(ESMF_KIND_I8), dimension(:), intent(in) :: valueList
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -5824,13 +5756,13 @@ subroutine ESMF_AttributeSetObjDistGridI8_N(target, name, value, keywordEnforcer
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetObjDistGridI8_N
+end subroutine ESMF_AttributeSetObjDistGridI8List
 
 
 #undef  ESMF_METHOD
@@ -5870,12 +5802,11 @@ end subroutine ESMF_AttributeSetAttPackDistGridCH
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjDistGridCH()"
-subroutine ESMF_AttributeSetObjDistGridCH(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+subroutine ESMF_AttributeSetObjDistGridCH(target, name, value, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_DistGrid), intent(inout) :: target
   character(len=*), intent(in) :: name
   character(len=*), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -5908,8 +5839,8 @@ end subroutine ESMF_AttributeSetObjDistGridCH
 
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetAttPackDistGridCH_N()"
-subroutine ESMF_AttributeSetAttPackDistGridCH_N(target, name, value, attpack, keywordEnforcer, itemcount, rc)
+#define ESMF_METHOD "ESMF_AttributeSetAttPackDistGridCHList()"
+subroutine ESMF_AttributeSetAttPackDistGridCHList(target, name, value, attpack, keywordEnforcer, itemcount, rc)
   ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
   type(ESMF_DistGrid), intent(in) :: target
   character(len=*), intent(in) :: name
@@ -5938,18 +5869,17 @@ subroutine ESMF_AttributeSetAttPackDistGridCH_N(target, name, value, attpack, ke
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetAttPackDistGridCH_N
+end subroutine ESMF_AttributeSetAttPackDistGridCHList
 
 !==============================================================================
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetObjDistGridCH_N()"
-subroutine ESMF_AttributeSetObjDistGridCH_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+#define ESMF_METHOD "ESMF_AttributeSetObjDistGridCHList()"
+subroutine ESMF_AttributeSetObjDistGridCHList(target, name, valueList, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_DistGrid), intent(inout) :: target
   character(len=*), intent(in) :: name
-  character(len=*), dimension(:), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  character(len=*), dimension(:), intent(in) :: valueList
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -5972,13 +5902,13 @@ subroutine ESMF_AttributeSetObjDistGridCH_N(target, name, value, keywordEnforcer
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetObjDistGridCH_N
+end subroutine ESMF_AttributeSetObjDistGridCHList
 
 
 #undef  ESMF_METHOD
@@ -6018,12 +5948,11 @@ end subroutine ESMF_AttributeSetAttPackDistGridLG
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjDistGridLG()"
-subroutine ESMF_AttributeSetObjDistGridLG(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+subroutine ESMF_AttributeSetObjDistGridLG(target, name, value, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_DistGrid), intent(inout) :: target
   character(len=*), intent(in) :: name
   logical, intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -6056,8 +5985,8 @@ end subroutine ESMF_AttributeSetObjDistGridLG
 
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetAttPackDistGridLG_N()"
-subroutine ESMF_AttributeSetAttPackDistGridLG_N(target, name, value, attpack, keywordEnforcer, itemcount, rc)
+#define ESMF_METHOD "ESMF_AttributeSetAttPackDistGridLGList()"
+subroutine ESMF_AttributeSetAttPackDistGridLGList(target, name, value, attpack, keywordEnforcer, itemcount, rc)
   ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
   type(ESMF_DistGrid), intent(in) :: target
   character(len=*), intent(in) :: name
@@ -6086,18 +6015,17 @@ subroutine ESMF_AttributeSetAttPackDistGridLG_N(target, name, value, attpack, ke
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetAttPackDistGridLG_N
+end subroutine ESMF_AttributeSetAttPackDistGridLGList
 
 !==============================================================================
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetObjDistGridLG_N()"
-subroutine ESMF_AttributeSetObjDistGridLG_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+#define ESMF_METHOD "ESMF_AttributeSetObjDistGridLGList()"
+subroutine ESMF_AttributeSetObjDistGridLGList(target, name, valueList, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_DistGrid), intent(inout) :: target
   character(len=*), intent(in) :: name
-  logical, dimension(:), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  logical, dimension(:), intent(in) :: valueList
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -6120,13 +6048,13 @@ subroutine ESMF_AttributeSetObjDistGridLG_N(target, name, value, keywordEnforcer
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetObjDistGridLG_N
+end subroutine ESMF_AttributeSetObjDistGridLGList
 
 
 #undef  ESMF_METHOD
@@ -6166,12 +6094,11 @@ end subroutine ESMF_AttributeSetAttPackFieldR4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjFieldR4()"
-subroutine ESMF_AttributeSetObjFieldR4(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+subroutine ESMF_AttributeSetObjFieldR4(target, name, value, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_Field), intent(inout) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R4), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -6204,8 +6131,8 @@ end subroutine ESMF_AttributeSetObjFieldR4
 
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetAttPackFieldR4_N()"
-subroutine ESMF_AttributeSetAttPackFieldR4_N(target, name, value, attpack, keywordEnforcer, itemcount, rc)
+#define ESMF_METHOD "ESMF_AttributeSetAttPackFieldR4List()"
+subroutine ESMF_AttributeSetAttPackFieldR4List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
   ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
   type(ESMF_Field), intent(in) :: target
   character(len=*), intent(in) :: name
@@ -6234,18 +6161,17 @@ subroutine ESMF_AttributeSetAttPackFieldR4_N(target, name, value, attpack, keywo
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetAttPackFieldR4_N
+end subroutine ESMF_AttributeSetAttPackFieldR4List
 
 !==============================================================================
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetObjFieldR4_N()"
-subroutine ESMF_AttributeSetObjFieldR4_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+#define ESMF_METHOD "ESMF_AttributeSetObjFieldR4List()"
+subroutine ESMF_AttributeSetObjFieldR4List(target, name, valueList, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_Field), intent(inout) :: target
   character(len=*), intent(in) :: name
-  real(ESMF_KIND_R4), dimension(:), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  real(ESMF_KIND_R4), dimension(:), intent(in) :: valueList
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -6268,13 +6194,13 @@ subroutine ESMF_AttributeSetObjFieldR4_N(target, name, value, keywordEnforcer, c
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetObjFieldR4_N
+end subroutine ESMF_AttributeSetObjFieldR4List
 
 
 #undef  ESMF_METHOD
@@ -6314,12 +6240,11 @@ end subroutine ESMF_AttributeSetAttPackFieldR8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjFieldR8()"
-subroutine ESMF_AttributeSetObjFieldR8(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+subroutine ESMF_AttributeSetObjFieldR8(target, name, value, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_Field), intent(inout) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R8), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -6352,8 +6277,8 @@ end subroutine ESMF_AttributeSetObjFieldR8
 
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetAttPackFieldR8_N()"
-subroutine ESMF_AttributeSetAttPackFieldR8_N(target, name, value, attpack, keywordEnforcer, itemcount, rc)
+#define ESMF_METHOD "ESMF_AttributeSetAttPackFieldR8List()"
+subroutine ESMF_AttributeSetAttPackFieldR8List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
   ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
   type(ESMF_Field), intent(in) :: target
   character(len=*), intent(in) :: name
@@ -6382,18 +6307,17 @@ subroutine ESMF_AttributeSetAttPackFieldR8_N(target, name, value, attpack, keywo
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetAttPackFieldR8_N
+end subroutine ESMF_AttributeSetAttPackFieldR8List
 
 !==============================================================================
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetObjFieldR8_N()"
-subroutine ESMF_AttributeSetObjFieldR8_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+#define ESMF_METHOD "ESMF_AttributeSetObjFieldR8List()"
+subroutine ESMF_AttributeSetObjFieldR8List(target, name, valueList, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_Field), intent(inout) :: target
   character(len=*), intent(in) :: name
-  real(ESMF_KIND_R8), dimension(:), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  real(ESMF_KIND_R8), dimension(:), intent(in) :: valueList
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -6416,13 +6340,13 @@ subroutine ESMF_AttributeSetObjFieldR8_N(target, name, value, keywordEnforcer, c
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetObjFieldR8_N
+end subroutine ESMF_AttributeSetObjFieldR8List
 
 
 #undef  ESMF_METHOD
@@ -6462,12 +6386,11 @@ end subroutine ESMF_AttributeSetAttPackFieldI4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjFieldI4()"
-subroutine ESMF_AttributeSetObjFieldI4(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+subroutine ESMF_AttributeSetObjFieldI4(target, name, value, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_Field), intent(inout) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I4), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -6500,8 +6423,8 @@ end subroutine ESMF_AttributeSetObjFieldI4
 
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetAttPackFieldI4_N()"
-subroutine ESMF_AttributeSetAttPackFieldI4_N(target, name, value, attpack, keywordEnforcer, itemcount, rc)
+#define ESMF_METHOD "ESMF_AttributeSetAttPackFieldI4List()"
+subroutine ESMF_AttributeSetAttPackFieldI4List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
   ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
   type(ESMF_Field), intent(in) :: target
   character(len=*), intent(in) :: name
@@ -6530,18 +6453,17 @@ subroutine ESMF_AttributeSetAttPackFieldI4_N(target, name, value, attpack, keywo
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetAttPackFieldI4_N
+end subroutine ESMF_AttributeSetAttPackFieldI4List
 
 !==============================================================================
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetObjFieldI4_N()"
-subroutine ESMF_AttributeSetObjFieldI4_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+#define ESMF_METHOD "ESMF_AttributeSetObjFieldI4List()"
+subroutine ESMF_AttributeSetObjFieldI4List(target, name, valueList, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_Field), intent(inout) :: target
   character(len=*), intent(in) :: name
-  integer(ESMF_KIND_I4), dimension(:), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  integer(ESMF_KIND_I4), dimension(:), intent(in) :: valueList
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -6564,13 +6486,13 @@ subroutine ESMF_AttributeSetObjFieldI4_N(target, name, value, keywordEnforcer, c
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetObjFieldI4_N
+end subroutine ESMF_AttributeSetObjFieldI4List
 
 
 #undef  ESMF_METHOD
@@ -6610,12 +6532,11 @@ end subroutine ESMF_AttributeSetAttPackFieldI8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjFieldI8()"
-subroutine ESMF_AttributeSetObjFieldI8(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+subroutine ESMF_AttributeSetObjFieldI8(target, name, value, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_Field), intent(inout) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I8), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -6648,8 +6569,8 @@ end subroutine ESMF_AttributeSetObjFieldI8
 
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetAttPackFieldI8_N()"
-subroutine ESMF_AttributeSetAttPackFieldI8_N(target, name, value, attpack, keywordEnforcer, itemcount, rc)
+#define ESMF_METHOD "ESMF_AttributeSetAttPackFieldI8List()"
+subroutine ESMF_AttributeSetAttPackFieldI8List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
   ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
   type(ESMF_Field), intent(in) :: target
   character(len=*), intent(in) :: name
@@ -6678,18 +6599,17 @@ subroutine ESMF_AttributeSetAttPackFieldI8_N(target, name, value, attpack, keywo
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetAttPackFieldI8_N
+end subroutine ESMF_AttributeSetAttPackFieldI8List
 
 !==============================================================================
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetObjFieldI8_N()"
-subroutine ESMF_AttributeSetObjFieldI8_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+#define ESMF_METHOD "ESMF_AttributeSetObjFieldI8List()"
+subroutine ESMF_AttributeSetObjFieldI8List(target, name, valueList, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_Field), intent(inout) :: target
   character(len=*), intent(in) :: name
-  integer(ESMF_KIND_I8), dimension(:), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  integer(ESMF_KIND_I8), dimension(:), intent(in) :: valueList
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -6712,13 +6632,13 @@ subroutine ESMF_AttributeSetObjFieldI8_N(target, name, value, keywordEnforcer, c
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetObjFieldI8_N
+end subroutine ESMF_AttributeSetObjFieldI8List
 
 
 #undef  ESMF_METHOD
@@ -6758,12 +6678,11 @@ end subroutine ESMF_AttributeSetAttPackFieldCH
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjFieldCH()"
-subroutine ESMF_AttributeSetObjFieldCH(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+subroutine ESMF_AttributeSetObjFieldCH(target, name, value, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_Field), intent(inout) :: target
   character(len=*), intent(in) :: name
   character(len=*), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -6796,8 +6715,8 @@ end subroutine ESMF_AttributeSetObjFieldCH
 
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetAttPackFieldCH_N()"
-subroutine ESMF_AttributeSetAttPackFieldCH_N(target, name, value, attpack, keywordEnforcer, itemcount, rc)
+#define ESMF_METHOD "ESMF_AttributeSetAttPackFieldCHList()"
+subroutine ESMF_AttributeSetAttPackFieldCHList(target, name, value, attpack, keywordEnforcer, itemcount, rc)
   ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
   type(ESMF_Field), intent(in) :: target
   character(len=*), intent(in) :: name
@@ -6826,18 +6745,17 @@ subroutine ESMF_AttributeSetAttPackFieldCH_N(target, name, value, attpack, keywo
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetAttPackFieldCH_N
+end subroutine ESMF_AttributeSetAttPackFieldCHList
 
 !==============================================================================
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetObjFieldCH_N()"
-subroutine ESMF_AttributeSetObjFieldCH_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+#define ESMF_METHOD "ESMF_AttributeSetObjFieldCHList()"
+subroutine ESMF_AttributeSetObjFieldCHList(target, name, valueList, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_Field), intent(inout) :: target
   character(len=*), intent(in) :: name
-  character(len=*), dimension(:), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  character(len=*), dimension(:), intent(in) :: valueList
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -6860,13 +6778,13 @@ subroutine ESMF_AttributeSetObjFieldCH_N(target, name, value, keywordEnforcer, c
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetObjFieldCH_N
+end subroutine ESMF_AttributeSetObjFieldCHList
 
 
 #undef  ESMF_METHOD
@@ -6906,12 +6824,11 @@ end subroutine ESMF_AttributeSetAttPackFieldLG
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjFieldLG()"
-subroutine ESMF_AttributeSetObjFieldLG(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+subroutine ESMF_AttributeSetObjFieldLG(target, name, value, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_Field), intent(inout) :: target
   character(len=*), intent(in) :: name
   logical, intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -6944,8 +6861,8 @@ end subroutine ESMF_AttributeSetObjFieldLG
 
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetAttPackFieldLG_N()"
-subroutine ESMF_AttributeSetAttPackFieldLG_N(target, name, value, attpack, keywordEnforcer, itemcount, rc)
+#define ESMF_METHOD "ESMF_AttributeSetAttPackFieldLGList()"
+subroutine ESMF_AttributeSetAttPackFieldLGList(target, name, value, attpack, keywordEnforcer, itemcount, rc)
   ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
   type(ESMF_Field), intent(in) :: target
   character(len=*), intent(in) :: name
@@ -6974,18 +6891,17 @@ subroutine ESMF_AttributeSetAttPackFieldLG_N(target, name, value, attpack, keywo
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetAttPackFieldLG_N
+end subroutine ESMF_AttributeSetAttPackFieldLGList
 
 !==============================================================================
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetObjFieldLG_N()"
-subroutine ESMF_AttributeSetObjFieldLG_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+#define ESMF_METHOD "ESMF_AttributeSetObjFieldLGList()"
+subroutine ESMF_AttributeSetObjFieldLGList(target, name, valueList, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_Field), intent(inout) :: target
   character(len=*), intent(in) :: name
-  logical, dimension(:), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  logical, dimension(:), intent(in) :: valueList
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -7008,13 +6924,13 @@ subroutine ESMF_AttributeSetObjFieldLG_N(target, name, value, keywordEnforcer, c
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetObjFieldLG_N
+end subroutine ESMF_AttributeSetObjFieldLGList
 
 
 #undef  ESMF_METHOD
@@ -7054,12 +6970,11 @@ end subroutine ESMF_AttributeSetAttPackFieldBundleR4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjFieldBundleR4()"
-subroutine ESMF_AttributeSetObjFieldBundleR4(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+subroutine ESMF_AttributeSetObjFieldBundleR4(target, name, value, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_FieldBundle), intent(inout) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R4), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -7092,8 +7007,8 @@ end subroutine ESMF_AttributeSetObjFieldBundleR4
 
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetAttPackFieldBundleR4_N()"
-subroutine ESMF_AttributeSetAttPackFieldBundleR4_N(target, name, value, attpack, keywordEnforcer, itemcount, rc)
+#define ESMF_METHOD "ESMF_AttributeSetAttPackFieldBundleR4List()"
+subroutine ESMF_AttributeSetAttPackFieldBundleR4List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
   ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
   type(ESMF_FieldBundle), intent(in) :: target
   character(len=*), intent(in) :: name
@@ -7122,18 +7037,17 @@ subroutine ESMF_AttributeSetAttPackFieldBundleR4_N(target, name, value, attpack,
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetAttPackFieldBundleR4_N
+end subroutine ESMF_AttributeSetAttPackFieldBundleR4List
 
 !==============================================================================
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetObjFieldBundleR4_N()"
-subroutine ESMF_AttributeSetObjFieldBundleR4_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+#define ESMF_METHOD "ESMF_AttributeSetObjFieldBundleR4List()"
+subroutine ESMF_AttributeSetObjFieldBundleR4List(target, name, valueList, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_FieldBundle), intent(inout) :: target
   character(len=*), intent(in) :: name
-  real(ESMF_KIND_R4), dimension(:), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  real(ESMF_KIND_R4), dimension(:), intent(in) :: valueList
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -7156,13 +7070,13 @@ subroutine ESMF_AttributeSetObjFieldBundleR4_N(target, name, value, keywordEnfor
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetObjFieldBundleR4_N
+end subroutine ESMF_AttributeSetObjFieldBundleR4List
 
 
 #undef  ESMF_METHOD
@@ -7202,12 +7116,11 @@ end subroutine ESMF_AttributeSetAttPackFieldBundleR8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjFieldBundleR8()"
-subroutine ESMF_AttributeSetObjFieldBundleR8(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+subroutine ESMF_AttributeSetObjFieldBundleR8(target, name, value, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_FieldBundle), intent(inout) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R8), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -7240,8 +7153,8 @@ end subroutine ESMF_AttributeSetObjFieldBundleR8
 
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetAttPackFieldBundleR8_N()"
-subroutine ESMF_AttributeSetAttPackFieldBundleR8_N(target, name, value, attpack, keywordEnforcer, itemcount, rc)
+#define ESMF_METHOD "ESMF_AttributeSetAttPackFieldBundleR8List()"
+subroutine ESMF_AttributeSetAttPackFieldBundleR8List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
   ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
   type(ESMF_FieldBundle), intent(in) :: target
   character(len=*), intent(in) :: name
@@ -7270,18 +7183,17 @@ subroutine ESMF_AttributeSetAttPackFieldBundleR8_N(target, name, value, attpack,
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetAttPackFieldBundleR8_N
+end subroutine ESMF_AttributeSetAttPackFieldBundleR8List
 
 !==============================================================================
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetObjFieldBundleR8_N()"
-subroutine ESMF_AttributeSetObjFieldBundleR8_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+#define ESMF_METHOD "ESMF_AttributeSetObjFieldBundleR8List()"
+subroutine ESMF_AttributeSetObjFieldBundleR8List(target, name, valueList, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_FieldBundle), intent(inout) :: target
   character(len=*), intent(in) :: name
-  real(ESMF_KIND_R8), dimension(:), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  real(ESMF_KIND_R8), dimension(:), intent(in) :: valueList
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -7304,13 +7216,13 @@ subroutine ESMF_AttributeSetObjFieldBundleR8_N(target, name, value, keywordEnfor
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetObjFieldBundleR8_N
+end subroutine ESMF_AttributeSetObjFieldBundleR8List
 
 
 #undef  ESMF_METHOD
@@ -7350,12 +7262,11 @@ end subroutine ESMF_AttributeSetAttPackFieldBundleI4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjFieldBundleI4()"
-subroutine ESMF_AttributeSetObjFieldBundleI4(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+subroutine ESMF_AttributeSetObjFieldBundleI4(target, name, value, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_FieldBundle), intent(inout) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I4), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -7388,8 +7299,8 @@ end subroutine ESMF_AttributeSetObjFieldBundleI4
 
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetAttPackFieldBundleI4_N()"
-subroutine ESMF_AttributeSetAttPackFieldBundleI4_N(target, name, value, attpack, keywordEnforcer, itemcount, rc)
+#define ESMF_METHOD "ESMF_AttributeSetAttPackFieldBundleI4List()"
+subroutine ESMF_AttributeSetAttPackFieldBundleI4List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
   ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
   type(ESMF_FieldBundle), intent(in) :: target
   character(len=*), intent(in) :: name
@@ -7418,18 +7329,17 @@ subroutine ESMF_AttributeSetAttPackFieldBundleI4_N(target, name, value, attpack,
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetAttPackFieldBundleI4_N
+end subroutine ESMF_AttributeSetAttPackFieldBundleI4List
 
 !==============================================================================
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetObjFieldBundleI4_N()"
-subroutine ESMF_AttributeSetObjFieldBundleI4_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+#define ESMF_METHOD "ESMF_AttributeSetObjFieldBundleI4List()"
+subroutine ESMF_AttributeSetObjFieldBundleI4List(target, name, valueList, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_FieldBundle), intent(inout) :: target
   character(len=*), intent(in) :: name
-  integer(ESMF_KIND_I4), dimension(:), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  integer(ESMF_KIND_I4), dimension(:), intent(in) :: valueList
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -7452,13 +7362,13 @@ subroutine ESMF_AttributeSetObjFieldBundleI4_N(target, name, value, keywordEnfor
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetObjFieldBundleI4_N
+end subroutine ESMF_AttributeSetObjFieldBundleI4List
 
 
 #undef  ESMF_METHOD
@@ -7498,12 +7408,11 @@ end subroutine ESMF_AttributeSetAttPackFieldBundleI8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjFieldBundleI8()"
-subroutine ESMF_AttributeSetObjFieldBundleI8(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+subroutine ESMF_AttributeSetObjFieldBundleI8(target, name, value, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_FieldBundle), intent(inout) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I8), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -7536,8 +7445,8 @@ end subroutine ESMF_AttributeSetObjFieldBundleI8
 
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetAttPackFieldBundleI8_N()"
-subroutine ESMF_AttributeSetAttPackFieldBundleI8_N(target, name, value, attpack, keywordEnforcer, itemcount, rc)
+#define ESMF_METHOD "ESMF_AttributeSetAttPackFieldBundleI8List()"
+subroutine ESMF_AttributeSetAttPackFieldBundleI8List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
   ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
   type(ESMF_FieldBundle), intent(in) :: target
   character(len=*), intent(in) :: name
@@ -7566,18 +7475,17 @@ subroutine ESMF_AttributeSetAttPackFieldBundleI8_N(target, name, value, attpack,
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetAttPackFieldBundleI8_N
+end subroutine ESMF_AttributeSetAttPackFieldBundleI8List
 
 !==============================================================================
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetObjFieldBundleI8_N()"
-subroutine ESMF_AttributeSetObjFieldBundleI8_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+#define ESMF_METHOD "ESMF_AttributeSetObjFieldBundleI8List()"
+subroutine ESMF_AttributeSetObjFieldBundleI8List(target, name, valueList, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_FieldBundle), intent(inout) :: target
   character(len=*), intent(in) :: name
-  integer(ESMF_KIND_I8), dimension(:), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  integer(ESMF_KIND_I8), dimension(:), intent(in) :: valueList
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -7600,13 +7508,13 @@ subroutine ESMF_AttributeSetObjFieldBundleI8_N(target, name, value, keywordEnfor
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetObjFieldBundleI8_N
+end subroutine ESMF_AttributeSetObjFieldBundleI8List
 
 
 #undef  ESMF_METHOD
@@ -7646,12 +7554,11 @@ end subroutine ESMF_AttributeSetAttPackFieldBundleCH
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjFieldBundleCH()"
-subroutine ESMF_AttributeSetObjFieldBundleCH(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+subroutine ESMF_AttributeSetObjFieldBundleCH(target, name, value, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_FieldBundle), intent(inout) :: target
   character(len=*), intent(in) :: name
   character(len=*), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -7684,8 +7591,8 @@ end subroutine ESMF_AttributeSetObjFieldBundleCH
 
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetAttPackFieldBundleCH_N()"
-subroutine ESMF_AttributeSetAttPackFieldBundleCH_N(target, name, value, attpack, keywordEnforcer, itemcount, rc)
+#define ESMF_METHOD "ESMF_AttributeSetAttPackFieldBundleCHList()"
+subroutine ESMF_AttributeSetAttPackFieldBundleCHList(target, name, value, attpack, keywordEnforcer, itemcount, rc)
   ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
   type(ESMF_FieldBundle), intent(in) :: target
   character(len=*), intent(in) :: name
@@ -7714,18 +7621,17 @@ subroutine ESMF_AttributeSetAttPackFieldBundleCH_N(target, name, value, attpack,
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetAttPackFieldBundleCH_N
+end subroutine ESMF_AttributeSetAttPackFieldBundleCHList
 
 !==============================================================================
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetObjFieldBundleCH_N()"
-subroutine ESMF_AttributeSetObjFieldBundleCH_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+#define ESMF_METHOD "ESMF_AttributeSetObjFieldBundleCHList()"
+subroutine ESMF_AttributeSetObjFieldBundleCHList(target, name, valueList, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_FieldBundle), intent(inout) :: target
   character(len=*), intent(in) :: name
-  character(len=*), dimension(:), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  character(len=*), dimension(:), intent(in) :: valueList
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -7748,13 +7654,13 @@ subroutine ESMF_AttributeSetObjFieldBundleCH_N(target, name, value, keywordEnfor
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetObjFieldBundleCH_N
+end subroutine ESMF_AttributeSetObjFieldBundleCHList
 
 
 #undef  ESMF_METHOD
@@ -7794,12 +7700,11 @@ end subroutine ESMF_AttributeSetAttPackFieldBundleLG
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjFieldBundleLG()"
-subroutine ESMF_AttributeSetObjFieldBundleLG(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+subroutine ESMF_AttributeSetObjFieldBundleLG(target, name, value, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_FieldBundle), intent(inout) :: target
   character(len=*), intent(in) :: name
   logical, intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -7832,8 +7737,8 @@ end subroutine ESMF_AttributeSetObjFieldBundleLG
 
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetAttPackFieldBundleLG_N()"
-subroutine ESMF_AttributeSetAttPackFieldBundleLG_N(target, name, value, attpack, keywordEnforcer, itemcount, rc)
+#define ESMF_METHOD "ESMF_AttributeSetAttPackFieldBundleLGList()"
+subroutine ESMF_AttributeSetAttPackFieldBundleLGList(target, name, value, attpack, keywordEnforcer, itemcount, rc)
   ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
   type(ESMF_FieldBundle), intent(in) :: target
   character(len=*), intent(in) :: name
@@ -7862,18 +7767,17 @@ subroutine ESMF_AttributeSetAttPackFieldBundleLG_N(target, name, value, attpack,
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetAttPackFieldBundleLG_N
+end subroutine ESMF_AttributeSetAttPackFieldBundleLGList
 
 !==============================================================================
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetObjFieldBundleLG_N()"
-subroutine ESMF_AttributeSetObjFieldBundleLG_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+#define ESMF_METHOD "ESMF_AttributeSetObjFieldBundleLGList()"
+subroutine ESMF_AttributeSetObjFieldBundleLGList(target, name, valueList, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_FieldBundle), intent(inout) :: target
   character(len=*), intent(in) :: name
-  logical, dimension(:), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  logical, dimension(:), intent(in) :: valueList
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -7896,13 +7800,13 @@ subroutine ESMF_AttributeSetObjFieldBundleLG_N(target, name, value, keywordEnfor
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetObjFieldBundleLG_N
+end subroutine ESMF_AttributeSetObjFieldBundleLGList
 
 
 #undef  ESMF_METHOD
@@ -7942,12 +7846,11 @@ end subroutine ESMF_AttributeSetAttPackGridR4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjGridR4()"
-subroutine ESMF_AttributeSetObjGridR4(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+subroutine ESMF_AttributeSetObjGridR4(target, name, value, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_Grid), intent(inout) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R4), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -7980,8 +7883,8 @@ end subroutine ESMF_AttributeSetObjGridR4
 
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetAttPackGridR4_N()"
-subroutine ESMF_AttributeSetAttPackGridR4_N(target, name, value, attpack, keywordEnforcer, itemcount, rc)
+#define ESMF_METHOD "ESMF_AttributeSetAttPackGridR4List()"
+subroutine ESMF_AttributeSetAttPackGridR4List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
   ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
   type(ESMF_Grid), intent(in) :: target
   character(len=*), intent(in) :: name
@@ -8010,18 +7913,17 @@ subroutine ESMF_AttributeSetAttPackGridR4_N(target, name, value, attpack, keywor
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetAttPackGridR4_N
+end subroutine ESMF_AttributeSetAttPackGridR4List
 
 !==============================================================================
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetObjGridR4_N()"
-subroutine ESMF_AttributeSetObjGridR4_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+#define ESMF_METHOD "ESMF_AttributeSetObjGridR4List()"
+subroutine ESMF_AttributeSetObjGridR4List(target, name, valueList, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_Grid), intent(inout) :: target
   character(len=*), intent(in) :: name
-  real(ESMF_KIND_R4), dimension(:), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  real(ESMF_KIND_R4), dimension(:), intent(in) :: valueList
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -8044,13 +7946,13 @@ subroutine ESMF_AttributeSetObjGridR4_N(target, name, value, keywordEnforcer, co
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetObjGridR4_N
+end subroutine ESMF_AttributeSetObjGridR4List
 
 
 #undef  ESMF_METHOD
@@ -8090,12 +7992,11 @@ end subroutine ESMF_AttributeSetAttPackGridR8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjGridR8()"
-subroutine ESMF_AttributeSetObjGridR8(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+subroutine ESMF_AttributeSetObjGridR8(target, name, value, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_Grid), intent(inout) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R8), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -8128,8 +8029,8 @@ end subroutine ESMF_AttributeSetObjGridR8
 
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetAttPackGridR8_N()"
-subroutine ESMF_AttributeSetAttPackGridR8_N(target, name, value, attpack, keywordEnforcer, itemcount, rc)
+#define ESMF_METHOD "ESMF_AttributeSetAttPackGridR8List()"
+subroutine ESMF_AttributeSetAttPackGridR8List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
   ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
   type(ESMF_Grid), intent(in) :: target
   character(len=*), intent(in) :: name
@@ -8158,18 +8059,17 @@ subroutine ESMF_AttributeSetAttPackGridR8_N(target, name, value, attpack, keywor
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetAttPackGridR8_N
+end subroutine ESMF_AttributeSetAttPackGridR8List
 
 !==============================================================================
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetObjGridR8_N()"
-subroutine ESMF_AttributeSetObjGridR8_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+#define ESMF_METHOD "ESMF_AttributeSetObjGridR8List()"
+subroutine ESMF_AttributeSetObjGridR8List(target, name, valueList, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_Grid), intent(inout) :: target
   character(len=*), intent(in) :: name
-  real(ESMF_KIND_R8), dimension(:), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  real(ESMF_KIND_R8), dimension(:), intent(in) :: valueList
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -8192,13 +8092,13 @@ subroutine ESMF_AttributeSetObjGridR8_N(target, name, value, keywordEnforcer, co
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetObjGridR8_N
+end subroutine ESMF_AttributeSetObjGridR8List
 
 
 #undef  ESMF_METHOD
@@ -8238,12 +8138,11 @@ end subroutine ESMF_AttributeSetAttPackGridI4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjGridI4()"
-subroutine ESMF_AttributeSetObjGridI4(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+subroutine ESMF_AttributeSetObjGridI4(target, name, value, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_Grid), intent(inout) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I4), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -8276,8 +8175,8 @@ end subroutine ESMF_AttributeSetObjGridI4
 
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetAttPackGridI4_N()"
-subroutine ESMF_AttributeSetAttPackGridI4_N(target, name, value, attpack, keywordEnforcer, itemcount, rc)
+#define ESMF_METHOD "ESMF_AttributeSetAttPackGridI4List()"
+subroutine ESMF_AttributeSetAttPackGridI4List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
   ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
   type(ESMF_Grid), intent(in) :: target
   character(len=*), intent(in) :: name
@@ -8306,18 +8205,17 @@ subroutine ESMF_AttributeSetAttPackGridI4_N(target, name, value, attpack, keywor
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetAttPackGridI4_N
+end subroutine ESMF_AttributeSetAttPackGridI4List
 
 !==============================================================================
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetObjGridI4_N()"
-subroutine ESMF_AttributeSetObjGridI4_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+#define ESMF_METHOD "ESMF_AttributeSetObjGridI4List()"
+subroutine ESMF_AttributeSetObjGridI4List(target, name, valueList, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_Grid), intent(inout) :: target
   character(len=*), intent(in) :: name
-  integer(ESMF_KIND_I4), dimension(:), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  integer(ESMF_KIND_I4), dimension(:), intent(in) :: valueList
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -8340,13 +8238,13 @@ subroutine ESMF_AttributeSetObjGridI4_N(target, name, value, keywordEnforcer, co
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetObjGridI4_N
+end subroutine ESMF_AttributeSetObjGridI4List
 
 
 #undef  ESMF_METHOD
@@ -8386,12 +8284,11 @@ end subroutine ESMF_AttributeSetAttPackGridI8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjGridI8()"
-subroutine ESMF_AttributeSetObjGridI8(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+subroutine ESMF_AttributeSetObjGridI8(target, name, value, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_Grid), intent(inout) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I8), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -8424,8 +8321,8 @@ end subroutine ESMF_AttributeSetObjGridI8
 
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetAttPackGridI8_N()"
-subroutine ESMF_AttributeSetAttPackGridI8_N(target, name, value, attpack, keywordEnforcer, itemcount, rc)
+#define ESMF_METHOD "ESMF_AttributeSetAttPackGridI8List()"
+subroutine ESMF_AttributeSetAttPackGridI8List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
   ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
   type(ESMF_Grid), intent(in) :: target
   character(len=*), intent(in) :: name
@@ -8454,18 +8351,17 @@ subroutine ESMF_AttributeSetAttPackGridI8_N(target, name, value, attpack, keywor
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetAttPackGridI8_N
+end subroutine ESMF_AttributeSetAttPackGridI8List
 
 !==============================================================================
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetObjGridI8_N()"
-subroutine ESMF_AttributeSetObjGridI8_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+#define ESMF_METHOD "ESMF_AttributeSetObjGridI8List()"
+subroutine ESMF_AttributeSetObjGridI8List(target, name, valueList, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_Grid), intent(inout) :: target
   character(len=*), intent(in) :: name
-  integer(ESMF_KIND_I8), dimension(:), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  integer(ESMF_KIND_I8), dimension(:), intent(in) :: valueList
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -8488,13 +8384,13 @@ subroutine ESMF_AttributeSetObjGridI8_N(target, name, value, keywordEnforcer, co
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetObjGridI8_N
+end subroutine ESMF_AttributeSetObjGridI8List
 
 
 #undef  ESMF_METHOD
@@ -8534,12 +8430,11 @@ end subroutine ESMF_AttributeSetAttPackGridCH
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjGridCH()"
-subroutine ESMF_AttributeSetObjGridCH(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+subroutine ESMF_AttributeSetObjGridCH(target, name, value, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_Grid), intent(inout) :: target
   character(len=*), intent(in) :: name
   character(len=*), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -8572,8 +8467,8 @@ end subroutine ESMF_AttributeSetObjGridCH
 
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetAttPackGridCH_N()"
-subroutine ESMF_AttributeSetAttPackGridCH_N(target, name, value, attpack, keywordEnforcer, itemcount, rc)
+#define ESMF_METHOD "ESMF_AttributeSetAttPackGridCHList()"
+subroutine ESMF_AttributeSetAttPackGridCHList(target, name, value, attpack, keywordEnforcer, itemcount, rc)
   ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
   type(ESMF_Grid), intent(in) :: target
   character(len=*), intent(in) :: name
@@ -8602,18 +8497,17 @@ subroutine ESMF_AttributeSetAttPackGridCH_N(target, name, value, attpack, keywor
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetAttPackGridCH_N
+end subroutine ESMF_AttributeSetAttPackGridCHList
 
 !==============================================================================
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetObjGridCH_N()"
-subroutine ESMF_AttributeSetObjGridCH_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+#define ESMF_METHOD "ESMF_AttributeSetObjGridCHList()"
+subroutine ESMF_AttributeSetObjGridCHList(target, name, valueList, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_Grid), intent(inout) :: target
   character(len=*), intent(in) :: name
-  character(len=*), dimension(:), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  character(len=*), dimension(:), intent(in) :: valueList
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -8636,13 +8530,13 @@ subroutine ESMF_AttributeSetObjGridCH_N(target, name, value, keywordEnforcer, co
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetObjGridCH_N
+end subroutine ESMF_AttributeSetObjGridCHList
 
 
 #undef  ESMF_METHOD
@@ -8682,12 +8576,11 @@ end subroutine ESMF_AttributeSetAttPackGridLG
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjGridLG()"
-subroutine ESMF_AttributeSetObjGridLG(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+subroutine ESMF_AttributeSetObjGridLG(target, name, value, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_Grid), intent(inout) :: target
   character(len=*), intent(in) :: name
   logical, intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -8720,8 +8613,8 @@ end subroutine ESMF_AttributeSetObjGridLG
 
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetAttPackGridLG_N()"
-subroutine ESMF_AttributeSetAttPackGridLG_N(target, name, value, attpack, keywordEnforcer, itemcount, rc)
+#define ESMF_METHOD "ESMF_AttributeSetAttPackGridLGList()"
+subroutine ESMF_AttributeSetAttPackGridLGList(target, name, value, attpack, keywordEnforcer, itemcount, rc)
   ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
   type(ESMF_Grid), intent(in) :: target
   character(len=*), intent(in) :: name
@@ -8750,18 +8643,17 @@ subroutine ESMF_AttributeSetAttPackGridLG_N(target, name, value, attpack, keywor
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetAttPackGridLG_N
+end subroutine ESMF_AttributeSetAttPackGridLGList
 
 !==============================================================================
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetObjGridLG_N()"
-subroutine ESMF_AttributeSetObjGridLG_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+#define ESMF_METHOD "ESMF_AttributeSetObjGridLGList()"
+subroutine ESMF_AttributeSetObjGridLGList(target, name, valueList, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_Grid), intent(inout) :: target
   character(len=*), intent(in) :: name
-  logical, dimension(:), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  logical, dimension(:), intent(in) :: valueList
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -8784,13 +8676,13 @@ subroutine ESMF_AttributeSetObjGridLG_N(target, name, value, keywordEnforcer, co
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetObjGridLG_N
+end subroutine ESMF_AttributeSetObjGridLGList
 
 
 #undef  ESMF_METHOD
@@ -8830,12 +8722,11 @@ end subroutine ESMF_AttributeSetAttPackStateR4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjStateR4()"
-subroutine ESMF_AttributeSetObjStateR4(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+subroutine ESMF_AttributeSetObjStateR4(target, name, value, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_State), intent(inout) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R4), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -8868,8 +8759,8 @@ end subroutine ESMF_AttributeSetObjStateR4
 
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetAttPackStateR4_N()"
-subroutine ESMF_AttributeSetAttPackStateR4_N(target, name, value, attpack, keywordEnforcer, itemcount, rc)
+#define ESMF_METHOD "ESMF_AttributeSetAttPackStateR4List()"
+subroutine ESMF_AttributeSetAttPackStateR4List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
   ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
   type(ESMF_State), intent(in) :: target
   character(len=*), intent(in) :: name
@@ -8898,18 +8789,17 @@ subroutine ESMF_AttributeSetAttPackStateR4_N(target, name, value, attpack, keywo
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetAttPackStateR4_N
+end subroutine ESMF_AttributeSetAttPackStateR4List
 
 !==============================================================================
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetObjStateR4_N()"
-subroutine ESMF_AttributeSetObjStateR4_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+#define ESMF_METHOD "ESMF_AttributeSetObjStateR4List()"
+subroutine ESMF_AttributeSetObjStateR4List(target, name, valueList, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_State), intent(inout) :: target
   character(len=*), intent(in) :: name
-  real(ESMF_KIND_R4), dimension(:), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  real(ESMF_KIND_R4), dimension(:), intent(in) :: valueList
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -8932,13 +8822,13 @@ subroutine ESMF_AttributeSetObjStateR4_N(target, name, value, keywordEnforcer, c
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetObjStateR4_N
+end subroutine ESMF_AttributeSetObjStateR4List
 
 
 #undef  ESMF_METHOD
@@ -8978,12 +8868,11 @@ end subroutine ESMF_AttributeSetAttPackStateR8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjStateR8()"
-subroutine ESMF_AttributeSetObjStateR8(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+subroutine ESMF_AttributeSetObjStateR8(target, name, value, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_State), intent(inout) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R8), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -9016,8 +8905,8 @@ end subroutine ESMF_AttributeSetObjStateR8
 
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetAttPackStateR8_N()"
-subroutine ESMF_AttributeSetAttPackStateR8_N(target, name, value, attpack, keywordEnforcer, itemcount, rc)
+#define ESMF_METHOD "ESMF_AttributeSetAttPackStateR8List()"
+subroutine ESMF_AttributeSetAttPackStateR8List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
   ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
   type(ESMF_State), intent(in) :: target
   character(len=*), intent(in) :: name
@@ -9046,18 +8935,17 @@ subroutine ESMF_AttributeSetAttPackStateR8_N(target, name, value, attpack, keywo
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetAttPackStateR8_N
+end subroutine ESMF_AttributeSetAttPackStateR8List
 
 !==============================================================================
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetObjStateR8_N()"
-subroutine ESMF_AttributeSetObjStateR8_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+#define ESMF_METHOD "ESMF_AttributeSetObjStateR8List()"
+subroutine ESMF_AttributeSetObjStateR8List(target, name, valueList, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_State), intent(inout) :: target
   character(len=*), intent(in) :: name
-  real(ESMF_KIND_R8), dimension(:), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  real(ESMF_KIND_R8), dimension(:), intent(in) :: valueList
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -9080,13 +8968,13 @@ subroutine ESMF_AttributeSetObjStateR8_N(target, name, value, keywordEnforcer, c
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetObjStateR8_N
+end subroutine ESMF_AttributeSetObjStateR8List
 
 
 #undef  ESMF_METHOD
@@ -9126,12 +9014,11 @@ end subroutine ESMF_AttributeSetAttPackStateI4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjStateI4()"
-subroutine ESMF_AttributeSetObjStateI4(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+subroutine ESMF_AttributeSetObjStateI4(target, name, value, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_State), intent(inout) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I4), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -9164,8 +9051,8 @@ end subroutine ESMF_AttributeSetObjStateI4
 
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetAttPackStateI4_N()"
-subroutine ESMF_AttributeSetAttPackStateI4_N(target, name, value, attpack, keywordEnforcer, itemcount, rc)
+#define ESMF_METHOD "ESMF_AttributeSetAttPackStateI4List()"
+subroutine ESMF_AttributeSetAttPackStateI4List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
   ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
   type(ESMF_State), intent(in) :: target
   character(len=*), intent(in) :: name
@@ -9194,18 +9081,17 @@ subroutine ESMF_AttributeSetAttPackStateI4_N(target, name, value, attpack, keywo
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetAttPackStateI4_N
+end subroutine ESMF_AttributeSetAttPackStateI4List
 
 !==============================================================================
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetObjStateI4_N()"
-subroutine ESMF_AttributeSetObjStateI4_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+#define ESMF_METHOD "ESMF_AttributeSetObjStateI4List()"
+subroutine ESMF_AttributeSetObjStateI4List(target, name, valueList, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_State), intent(inout) :: target
   character(len=*), intent(in) :: name
-  integer(ESMF_KIND_I4), dimension(:), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  integer(ESMF_KIND_I4), dimension(:), intent(in) :: valueList
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -9228,13 +9114,13 @@ subroutine ESMF_AttributeSetObjStateI4_N(target, name, value, keywordEnforcer, c
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetObjStateI4_N
+end subroutine ESMF_AttributeSetObjStateI4List
 
 
 #undef  ESMF_METHOD
@@ -9274,12 +9160,11 @@ end subroutine ESMF_AttributeSetAttPackStateI8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjStateI8()"
-subroutine ESMF_AttributeSetObjStateI8(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+subroutine ESMF_AttributeSetObjStateI8(target, name, value, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_State), intent(inout) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I8), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -9312,8 +9197,8 @@ end subroutine ESMF_AttributeSetObjStateI8
 
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetAttPackStateI8_N()"
-subroutine ESMF_AttributeSetAttPackStateI8_N(target, name, value, attpack, keywordEnforcer, itemcount, rc)
+#define ESMF_METHOD "ESMF_AttributeSetAttPackStateI8List()"
+subroutine ESMF_AttributeSetAttPackStateI8List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
   ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
   type(ESMF_State), intent(in) :: target
   character(len=*), intent(in) :: name
@@ -9342,18 +9227,17 @@ subroutine ESMF_AttributeSetAttPackStateI8_N(target, name, value, attpack, keywo
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetAttPackStateI8_N
+end subroutine ESMF_AttributeSetAttPackStateI8List
 
 !==============================================================================
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetObjStateI8_N()"
-subroutine ESMF_AttributeSetObjStateI8_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+#define ESMF_METHOD "ESMF_AttributeSetObjStateI8List()"
+subroutine ESMF_AttributeSetObjStateI8List(target, name, valueList, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_State), intent(inout) :: target
   character(len=*), intent(in) :: name
-  integer(ESMF_KIND_I8), dimension(:), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  integer(ESMF_KIND_I8), dimension(:), intent(in) :: valueList
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -9376,13 +9260,13 @@ subroutine ESMF_AttributeSetObjStateI8_N(target, name, value, keywordEnforcer, c
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetObjStateI8_N
+end subroutine ESMF_AttributeSetObjStateI8List
 
 
 #undef  ESMF_METHOD
@@ -9422,12 +9306,11 @@ end subroutine ESMF_AttributeSetAttPackStateCH
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjStateCH()"
-subroutine ESMF_AttributeSetObjStateCH(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+subroutine ESMF_AttributeSetObjStateCH(target, name, value, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_State), intent(inout) :: target
   character(len=*), intent(in) :: name
   character(len=*), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -9460,8 +9343,8 @@ end subroutine ESMF_AttributeSetObjStateCH
 
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetAttPackStateCH_N()"
-subroutine ESMF_AttributeSetAttPackStateCH_N(target, name, value, attpack, keywordEnforcer, itemcount, rc)
+#define ESMF_METHOD "ESMF_AttributeSetAttPackStateCHList()"
+subroutine ESMF_AttributeSetAttPackStateCHList(target, name, value, attpack, keywordEnforcer, itemcount, rc)
   ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
   type(ESMF_State), intent(in) :: target
   character(len=*), intent(in) :: name
@@ -9490,18 +9373,17 @@ subroutine ESMF_AttributeSetAttPackStateCH_N(target, name, value, attpack, keywo
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetAttPackStateCH_N
+end subroutine ESMF_AttributeSetAttPackStateCHList
 
 !==============================================================================
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetObjStateCH_N()"
-subroutine ESMF_AttributeSetObjStateCH_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+#define ESMF_METHOD "ESMF_AttributeSetObjStateCHList()"
+subroutine ESMF_AttributeSetObjStateCHList(target, name, valueList, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_State), intent(inout) :: target
   character(len=*), intent(in) :: name
-  character(len=*), dimension(:), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  character(len=*), dimension(:), intent(in) :: valueList
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -9524,13 +9406,13 @@ subroutine ESMF_AttributeSetObjStateCH_N(target, name, value, keywordEnforcer, c
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetObjStateCH_N
+end subroutine ESMF_AttributeSetObjStateCHList
 
 
 #undef  ESMF_METHOD
@@ -9570,12 +9452,11 @@ end subroutine ESMF_AttributeSetAttPackStateLG
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjStateLG()"
-subroutine ESMF_AttributeSetObjStateLG(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+subroutine ESMF_AttributeSetObjStateLG(target, name, value, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_State), intent(inout) :: target
   character(len=*), intent(in) :: name
   logical, intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -9608,8 +9489,8 @@ end subroutine ESMF_AttributeSetObjStateLG
 
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetAttPackStateLG_N()"
-subroutine ESMF_AttributeSetAttPackStateLG_N(target, name, value, attpack, keywordEnforcer, itemcount, rc)
+#define ESMF_METHOD "ESMF_AttributeSetAttPackStateLGList()"
+subroutine ESMF_AttributeSetAttPackStateLGList(target, name, value, attpack, keywordEnforcer, itemcount, rc)
   ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
   type(ESMF_State), intent(in) :: target
   character(len=*), intent(in) :: name
@@ -9638,18 +9519,17 @@ subroutine ESMF_AttributeSetAttPackStateLG_N(target, name, value, attpack, keywo
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetAttPackStateLG_N
+end subroutine ESMF_AttributeSetAttPackStateLGList
 
 !==============================================================================
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetObjStateLG_N()"
-subroutine ESMF_AttributeSetObjStateLG_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+#define ESMF_METHOD "ESMF_AttributeSetObjStateLGList()"
+subroutine ESMF_AttributeSetObjStateLGList(target, name, valueList, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_State), intent(inout) :: target
   character(len=*), intent(in) :: name
-  logical, dimension(:), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  logical, dimension(:), intent(in) :: valueList
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -9672,13 +9552,13 @@ subroutine ESMF_AttributeSetObjStateLG_N(target, name, value, keywordEnforcer, c
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetObjStateLG_N
+end subroutine ESMF_AttributeSetObjStateLGList
 
 
 #undef  ESMF_METHOD
@@ -9718,12 +9598,11 @@ end subroutine ESMF_AttributeSetAttPackLocStreamR4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjLocStreamR4()"
-subroutine ESMF_AttributeSetObjLocStreamR4(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+subroutine ESMF_AttributeSetObjLocStreamR4(target, name, value, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_LocStream), intent(inout) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R4), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -9756,8 +9635,8 @@ end subroutine ESMF_AttributeSetObjLocStreamR4
 
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetAttPackLocStreamR4_N()"
-subroutine ESMF_AttributeSetAttPackLocStreamR4_N(target, name, value, attpack, keywordEnforcer, itemcount, rc)
+#define ESMF_METHOD "ESMF_AttributeSetAttPackLocStreamR4List()"
+subroutine ESMF_AttributeSetAttPackLocStreamR4List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
   ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
   type(ESMF_LocStream), intent(in) :: target
   character(len=*), intent(in) :: name
@@ -9786,18 +9665,17 @@ subroutine ESMF_AttributeSetAttPackLocStreamR4_N(target, name, value, attpack, k
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetAttPackLocStreamR4_N
+end subroutine ESMF_AttributeSetAttPackLocStreamR4List
 
 !==============================================================================
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetObjLocStreamR4_N()"
-subroutine ESMF_AttributeSetObjLocStreamR4_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+#define ESMF_METHOD "ESMF_AttributeSetObjLocStreamR4List()"
+subroutine ESMF_AttributeSetObjLocStreamR4List(target, name, valueList, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_LocStream), intent(inout) :: target
   character(len=*), intent(in) :: name
-  real(ESMF_KIND_R4), dimension(:), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  real(ESMF_KIND_R4), dimension(:), intent(in) :: valueList
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -9820,13 +9698,13 @@ subroutine ESMF_AttributeSetObjLocStreamR4_N(target, name, value, keywordEnforce
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetObjLocStreamR4_N
+end subroutine ESMF_AttributeSetObjLocStreamR4List
 
 
 #undef  ESMF_METHOD
@@ -9866,12 +9744,11 @@ end subroutine ESMF_AttributeSetAttPackLocStreamR8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjLocStreamR8()"
-subroutine ESMF_AttributeSetObjLocStreamR8(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+subroutine ESMF_AttributeSetObjLocStreamR8(target, name, value, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_LocStream), intent(inout) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R8), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -9904,8 +9781,8 @@ end subroutine ESMF_AttributeSetObjLocStreamR8
 
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetAttPackLocStreamR8_N()"
-subroutine ESMF_AttributeSetAttPackLocStreamR8_N(target, name, value, attpack, keywordEnforcer, itemcount, rc)
+#define ESMF_METHOD "ESMF_AttributeSetAttPackLocStreamR8List()"
+subroutine ESMF_AttributeSetAttPackLocStreamR8List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
   ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
   type(ESMF_LocStream), intent(in) :: target
   character(len=*), intent(in) :: name
@@ -9934,18 +9811,17 @@ subroutine ESMF_AttributeSetAttPackLocStreamR8_N(target, name, value, attpack, k
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetAttPackLocStreamR8_N
+end subroutine ESMF_AttributeSetAttPackLocStreamR8List
 
 !==============================================================================
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetObjLocStreamR8_N()"
-subroutine ESMF_AttributeSetObjLocStreamR8_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+#define ESMF_METHOD "ESMF_AttributeSetObjLocStreamR8List()"
+subroutine ESMF_AttributeSetObjLocStreamR8List(target, name, valueList, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_LocStream), intent(inout) :: target
   character(len=*), intent(in) :: name
-  real(ESMF_KIND_R8), dimension(:), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  real(ESMF_KIND_R8), dimension(:), intent(in) :: valueList
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -9968,13 +9844,13 @@ subroutine ESMF_AttributeSetObjLocStreamR8_N(target, name, value, keywordEnforce
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetObjLocStreamR8_N
+end subroutine ESMF_AttributeSetObjLocStreamR8List
 
 
 #undef  ESMF_METHOD
@@ -10014,12 +9890,11 @@ end subroutine ESMF_AttributeSetAttPackLocStreamI4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjLocStreamI4()"
-subroutine ESMF_AttributeSetObjLocStreamI4(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+subroutine ESMF_AttributeSetObjLocStreamI4(target, name, value, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_LocStream), intent(inout) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I4), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -10052,8 +9927,8 @@ end subroutine ESMF_AttributeSetObjLocStreamI4
 
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetAttPackLocStreamI4_N()"
-subroutine ESMF_AttributeSetAttPackLocStreamI4_N(target, name, value, attpack, keywordEnforcer, itemcount, rc)
+#define ESMF_METHOD "ESMF_AttributeSetAttPackLocStreamI4List()"
+subroutine ESMF_AttributeSetAttPackLocStreamI4List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
   ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
   type(ESMF_LocStream), intent(in) :: target
   character(len=*), intent(in) :: name
@@ -10082,18 +9957,17 @@ subroutine ESMF_AttributeSetAttPackLocStreamI4_N(target, name, value, attpack, k
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetAttPackLocStreamI4_N
+end subroutine ESMF_AttributeSetAttPackLocStreamI4List
 
 !==============================================================================
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetObjLocStreamI4_N()"
-subroutine ESMF_AttributeSetObjLocStreamI4_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+#define ESMF_METHOD "ESMF_AttributeSetObjLocStreamI4List()"
+subroutine ESMF_AttributeSetObjLocStreamI4List(target, name, valueList, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_LocStream), intent(inout) :: target
   character(len=*), intent(in) :: name
-  integer(ESMF_KIND_I4), dimension(:), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  integer(ESMF_KIND_I4), dimension(:), intent(in) :: valueList
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -10116,13 +9990,13 @@ subroutine ESMF_AttributeSetObjLocStreamI4_N(target, name, value, keywordEnforce
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetObjLocStreamI4_N
+end subroutine ESMF_AttributeSetObjLocStreamI4List
 
 
 #undef  ESMF_METHOD
@@ -10162,12 +10036,11 @@ end subroutine ESMF_AttributeSetAttPackLocStreamI8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjLocStreamI8()"
-subroutine ESMF_AttributeSetObjLocStreamI8(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+subroutine ESMF_AttributeSetObjLocStreamI8(target, name, value, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_LocStream), intent(inout) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I8), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -10200,8 +10073,8 @@ end subroutine ESMF_AttributeSetObjLocStreamI8
 
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetAttPackLocStreamI8_N()"
-subroutine ESMF_AttributeSetAttPackLocStreamI8_N(target, name, value, attpack, keywordEnforcer, itemcount, rc)
+#define ESMF_METHOD "ESMF_AttributeSetAttPackLocStreamI8List()"
+subroutine ESMF_AttributeSetAttPackLocStreamI8List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
   ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
   type(ESMF_LocStream), intent(in) :: target
   character(len=*), intent(in) :: name
@@ -10230,18 +10103,17 @@ subroutine ESMF_AttributeSetAttPackLocStreamI8_N(target, name, value, attpack, k
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetAttPackLocStreamI8_N
+end subroutine ESMF_AttributeSetAttPackLocStreamI8List
 
 !==============================================================================
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetObjLocStreamI8_N()"
-subroutine ESMF_AttributeSetObjLocStreamI8_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+#define ESMF_METHOD "ESMF_AttributeSetObjLocStreamI8List()"
+subroutine ESMF_AttributeSetObjLocStreamI8List(target, name, valueList, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_LocStream), intent(inout) :: target
   character(len=*), intent(in) :: name
-  integer(ESMF_KIND_I8), dimension(:), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  integer(ESMF_KIND_I8), dimension(:), intent(in) :: valueList
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -10264,13 +10136,13 @@ subroutine ESMF_AttributeSetObjLocStreamI8_N(target, name, value, keywordEnforce
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetObjLocStreamI8_N
+end subroutine ESMF_AttributeSetObjLocStreamI8List
 
 
 #undef  ESMF_METHOD
@@ -10310,12 +10182,11 @@ end subroutine ESMF_AttributeSetAttPackLocStreamCH
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjLocStreamCH()"
-subroutine ESMF_AttributeSetObjLocStreamCH(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+subroutine ESMF_AttributeSetObjLocStreamCH(target, name, value, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_LocStream), intent(inout) :: target
   character(len=*), intent(in) :: name
   character(len=*), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -10348,8 +10219,8 @@ end subroutine ESMF_AttributeSetObjLocStreamCH
 
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetAttPackLocStreamCH_N()"
-subroutine ESMF_AttributeSetAttPackLocStreamCH_N(target, name, value, attpack, keywordEnforcer, itemcount, rc)
+#define ESMF_METHOD "ESMF_AttributeSetAttPackLocStreamCHList()"
+subroutine ESMF_AttributeSetAttPackLocStreamCHList(target, name, value, attpack, keywordEnforcer, itemcount, rc)
   ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
   type(ESMF_LocStream), intent(in) :: target
   character(len=*), intent(in) :: name
@@ -10378,18 +10249,17 @@ subroutine ESMF_AttributeSetAttPackLocStreamCH_N(target, name, value, attpack, k
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetAttPackLocStreamCH_N
+end subroutine ESMF_AttributeSetAttPackLocStreamCHList
 
 !==============================================================================
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetObjLocStreamCH_N()"
-subroutine ESMF_AttributeSetObjLocStreamCH_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+#define ESMF_METHOD "ESMF_AttributeSetObjLocStreamCHList()"
+subroutine ESMF_AttributeSetObjLocStreamCHList(target, name, valueList, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_LocStream), intent(inout) :: target
   character(len=*), intent(in) :: name
-  character(len=*), dimension(:), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  character(len=*), dimension(:), intent(in) :: valueList
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -10412,13 +10282,13 @@ subroutine ESMF_AttributeSetObjLocStreamCH_N(target, name, value, keywordEnforce
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetObjLocStreamCH_N
+end subroutine ESMF_AttributeSetObjLocStreamCHList
 
 
 #undef  ESMF_METHOD
@@ -10458,12 +10328,11 @@ end subroutine ESMF_AttributeSetAttPackLocStreamLG
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetObjLocStreamLG()"
-subroutine ESMF_AttributeSetObjLocStreamLG(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+subroutine ESMF_AttributeSetObjLocStreamLG(target, name, value, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_LocStream), intent(inout) :: target
   character(len=*), intent(in) :: name
   logical, intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -10496,8 +10365,8 @@ end subroutine ESMF_AttributeSetObjLocStreamLG
 
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetAttPackLocStreamLG_N()"
-subroutine ESMF_AttributeSetAttPackLocStreamLG_N(target, name, value, attpack, keywordEnforcer, itemcount, rc)
+#define ESMF_METHOD "ESMF_AttributeSetAttPackLocStreamLGList()"
+subroutine ESMF_AttributeSetAttPackLocStreamLGList(target, name, value, attpack, keywordEnforcer, itemcount, rc)
   ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
   type(ESMF_LocStream), intent(in) :: target
   character(len=*), intent(in) :: name
@@ -10526,18 +10395,17 @@ subroutine ESMF_AttributeSetAttPackLocStreamLG_N(target, name, value, attpack, k
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetAttPackLocStreamLG_N
+end subroutine ESMF_AttributeSetAttPackLocStreamLGList
 
 !==============================================================================
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeSetObjLocStreamLG_N()"
-subroutine ESMF_AttributeSetObjLocStreamLG_N(target, name, value, keywordEnforcer, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
+#define ESMF_METHOD "ESMF_AttributeSetObjLocStreamLGList()"
+subroutine ESMF_AttributeSetObjLocStreamLGList(target, name, valueList, convention, purpose, attPackInstanceName, itemcount, attnestflag, rc)
   ! 39.11.38/40 - attPackInstanceName is NOOP, attnestflag is NOOP
   type(ESMF_LocStream), intent(inout) :: target
   character(len=*), intent(in) :: name
-  logical, dimension(:), intent(in) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  logical, dimension(:), intent(in) :: valueList
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -10560,13 +10428,13 @@ subroutine ESMF_AttributeSetObjLocStreamLG_N(target, name, value, keywordEnforce
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeSetObjLocStreamLG_N
+end subroutine ESMF_AttributeSetObjLocStreamLGList
 
 !==============================================================================
 ! ESMF_AttributeGet ===========================================================
@@ -17178,14 +17046,13 @@ end subroutine ESMF_AttributeGetObjLocStreamLG
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetListAttPackArrayR4()"
-subroutine ESMF_AttributeGetListAttPackArrayR4(target, name, attpack, value, keywordEnforcer, defaultvalue, attnestflag, itemcount, isPresent, rc)
+subroutine ESMF_AttributeGetListAttPackArrayR4(target, name, attpack, valueList, defaultvalueList, attnestflag, itemcount, isPresent, rc)
   ! 39.11.9
   type(ESMF_Array), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  real(ESMF_KIND_R4), dimension(:), allocatable, intent(out) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  real(ESMF_KIND_R4), dimension(:), intent(in), optional :: defaultvalue
+  real(ESMF_KIND_R4), dimension(:), intent(out) :: valueList
+  real(ESMF_KIND_R4), dimension(:), intent(in), optional :: defaultvalueList
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(out), optional :: itemcount
   logical, intent(out), optional :: isPresent
@@ -17211,20 +17078,20 @@ subroutine ESMF_AttributeGetListAttPackArrayR4(target, name, attpack, value, key
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2Get(attpack%info, key, value, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
-    if (present(defaultvalue)) then
-      if (size(defaultvalue) /= size(value)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalue) /= size(value)", ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(defaultvalueList)) then
+      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
       endif
-      do ii=1,size(defaultvalue)
-        value(ii) = defaultvalue(ii)
+      do ii=1,size(defaultvalueList)
+        valueList(ii) = defaultvalueList(ii)
       enddo
-      if (present(itemcount)) itemcount = size(defaultvalue)
+      if (present(itemcount)) itemcount = SIZE(defaultvalueList)
     else
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//trim(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//TRIM(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   endif
 
@@ -17271,9 +17138,8 @@ subroutine ESMF_AttributeGetListObjArrayR4(target, name, valueList, defaultvalue
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    !tdk:todo: enable to work with character arrays
-
-
+    call ESMF_Info2GetListAllocated(info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
     if (present(defaultvalueList)) then
@@ -17298,14 +17164,13 @@ end subroutine ESMF_AttributeGetListObjArrayR4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetListAttPackArrayR8()"
-subroutine ESMF_AttributeGetListAttPackArrayR8(target, name, attpack, value, keywordEnforcer, defaultvalue, attnestflag, itemcount, isPresent, rc)
+subroutine ESMF_AttributeGetListAttPackArrayR8(target, name, attpack, valueList, defaultvalueList, attnestflag, itemcount, isPresent, rc)
   ! 39.11.9
   type(ESMF_Array), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  real(ESMF_KIND_R8), dimension(:), allocatable, intent(out) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  real(ESMF_KIND_R8), dimension(:), intent(in), optional :: defaultvalue
+  real(ESMF_KIND_R8), dimension(:), intent(out) :: valueList
+  real(ESMF_KIND_R8), dimension(:), intent(in), optional :: defaultvalueList
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(out), optional :: itemcount
   logical, intent(out), optional :: isPresent
@@ -17331,20 +17196,20 @@ subroutine ESMF_AttributeGetListAttPackArrayR8(target, name, attpack, value, key
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2Get(attpack%info, key, value, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
-    if (present(defaultvalue)) then
-      if (size(defaultvalue) /= size(value)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalue) /= size(value)", ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(defaultvalueList)) then
+      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
       endif
-      do ii=1,size(defaultvalue)
-        value(ii) = defaultvalue(ii)
+      do ii=1,size(defaultvalueList)
+        valueList(ii) = defaultvalueList(ii)
       enddo
-      if (present(itemcount)) itemcount = size(defaultvalue)
+      if (present(itemcount)) itemcount = SIZE(defaultvalueList)
     else
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//trim(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//TRIM(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   endif
 
@@ -17391,9 +17256,8 @@ subroutine ESMF_AttributeGetListObjArrayR8(target, name, valueList, defaultvalue
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    !tdk:todo: enable to work with character arrays
-
-
+    call ESMF_Info2GetListAllocated(info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
     if (present(defaultvalueList)) then
@@ -17418,14 +17282,13 @@ end subroutine ESMF_AttributeGetListObjArrayR8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetListAttPackArrayI4()"
-subroutine ESMF_AttributeGetListAttPackArrayI4(target, name, attpack, value, keywordEnforcer, defaultvalue, attnestflag, itemcount, isPresent, rc)
+subroutine ESMF_AttributeGetListAttPackArrayI4(target, name, attpack, valueList, defaultvalueList, attnestflag, itemcount, isPresent, rc)
   ! 39.11.9
   type(ESMF_Array), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  integer(ESMF_KIND_I4), dimension(:), allocatable, intent(out) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  integer(ESMF_KIND_I4), dimension(:), intent(in), optional :: defaultvalue
+  integer(ESMF_KIND_I4), dimension(:), intent(out) :: valueList
+  integer(ESMF_KIND_I4), dimension(:), intent(in), optional :: defaultvalueList
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(out), optional :: itemcount
   logical, intent(out), optional :: isPresent
@@ -17451,20 +17314,20 @@ subroutine ESMF_AttributeGetListAttPackArrayI4(target, name, attpack, value, key
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2Get(attpack%info, key, value, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
-    if (present(defaultvalue)) then
-      if (size(defaultvalue) /= size(value)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalue) /= size(value)", ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(defaultvalueList)) then
+      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
       endif
-      do ii=1,size(defaultvalue)
-        value(ii) = defaultvalue(ii)
+      do ii=1,size(defaultvalueList)
+        valueList(ii) = defaultvalueList(ii)
       enddo
-      if (present(itemcount)) itemcount = size(defaultvalue)
+      if (present(itemcount)) itemcount = SIZE(defaultvalueList)
     else
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//trim(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//TRIM(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   endif
 
@@ -17511,9 +17374,8 @@ subroutine ESMF_AttributeGetListObjArrayI4(target, name, valueList, defaultvalue
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    !tdk:todo: enable to work with character arrays
-
-
+    call ESMF_Info2GetListAllocated(info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
     if (present(defaultvalueList)) then
@@ -17538,14 +17400,13 @@ end subroutine ESMF_AttributeGetListObjArrayI4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetListAttPackArrayI8()"
-subroutine ESMF_AttributeGetListAttPackArrayI8(target, name, attpack, value, keywordEnforcer, defaultvalue, attnestflag, itemcount, isPresent, rc)
+subroutine ESMF_AttributeGetListAttPackArrayI8(target, name, attpack, valueList, defaultvalueList, attnestflag, itemcount, isPresent, rc)
   ! 39.11.9
   type(ESMF_Array), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  integer(ESMF_KIND_I8), dimension(:), allocatable, intent(out) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  integer(ESMF_KIND_I8), dimension(:), intent(in), optional :: defaultvalue
+  integer(ESMF_KIND_I8), dimension(:), intent(out) :: valueList
+  integer(ESMF_KIND_I8), dimension(:), intent(in), optional :: defaultvalueList
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(out), optional :: itemcount
   logical, intent(out), optional :: isPresent
@@ -17571,20 +17432,20 @@ subroutine ESMF_AttributeGetListAttPackArrayI8(target, name, attpack, value, key
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2Get(attpack%info, key, value, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
-    if (present(defaultvalue)) then
-      if (size(defaultvalue) /= size(value)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalue) /= size(value)", ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(defaultvalueList)) then
+      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
       endif
-      do ii=1,size(defaultvalue)
-        value(ii) = defaultvalue(ii)
+      do ii=1,size(defaultvalueList)
+        valueList(ii) = defaultvalueList(ii)
       enddo
-      if (present(itemcount)) itemcount = size(defaultvalue)
+      if (present(itemcount)) itemcount = SIZE(defaultvalueList)
     else
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//trim(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//TRIM(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   endif
 
@@ -17631,9 +17492,8 @@ subroutine ESMF_AttributeGetListObjArrayI8(target, name, valueList, defaultvalue
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    !tdk:todo: enable to work with character arrays
-
-
+    call ESMF_Info2GetListAllocated(info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
     if (present(defaultvalueList)) then
@@ -17658,14 +17518,13 @@ end subroutine ESMF_AttributeGetListObjArrayI8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetListAttPackArrayCH()"
-subroutine ESMF_AttributeGetListAttPackArrayCH(target, name, attpack, value, keywordEnforcer, defaultvalue, attnestflag, itemcount, isPresent, rc)
+subroutine ESMF_AttributeGetListAttPackArrayCH(target, name, attpack, valueList, defaultvalueList, attnestflag, itemcount, isPresent, rc)
   ! 39.11.9
   type(ESMF_Array), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  character(len=*), dimension(:), allocatable, intent(out) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  character(len=*), dimension(:), intent(in), optional :: defaultvalue
+  character(len=*), dimension(:), intent(out) :: valueList
+  character(len=*), dimension(:), intent(in), optional :: defaultvalueList
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(out), optional :: itemcount
   logical, intent(out), optional :: isPresent
@@ -17691,20 +17550,20 @@ subroutine ESMF_AttributeGetListAttPackArrayCH(target, name, attpack, value, key
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2Get(attpack%info, key, value, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
-    if (present(defaultvalue)) then
-      if (size(defaultvalue) /= size(value)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalue) /= size(value)", ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(defaultvalueList)) then
+      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
       endif
-      do ii=1,size(defaultvalue)
-        value(ii) = defaultvalue(ii)
+      do ii=1,size(defaultvalueList)
+        valueList(ii) = defaultvalueList(ii)
       enddo
-      if (present(itemcount)) itemcount = size(defaultvalue)
+      if (present(itemcount)) itemcount = SIZE(defaultvalueList)
     else
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//trim(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//TRIM(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   endif
 
@@ -17751,9 +17610,8 @@ subroutine ESMF_AttributeGetListObjArrayCH(target, name, valueList, defaultvalue
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    !tdk:todo: enable to work with character arrays
-
-
+    call ESMF_Info2GetListAllocated(info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
     if (present(defaultvalueList)) then
@@ -17778,14 +17636,13 @@ end subroutine ESMF_AttributeGetListObjArrayCH
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetListAttPackArrayLG()"
-subroutine ESMF_AttributeGetListAttPackArrayLG(target, name, attpack, value, keywordEnforcer, defaultvalue, attnestflag, itemcount, isPresent, rc)
+subroutine ESMF_AttributeGetListAttPackArrayLG(target, name, attpack, valueList, defaultvalueList, attnestflag, itemcount, isPresent, rc)
   ! 39.11.9
   type(ESMF_Array), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  logical, dimension(:), allocatable, intent(out) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  logical, dimension(:), intent(in), optional :: defaultvalue
+  logical, dimension(:), intent(out) :: valueList
+  logical, dimension(:), intent(in), optional :: defaultvalueList
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(out), optional :: itemcount
   logical, intent(out), optional :: isPresent
@@ -17811,20 +17668,20 @@ subroutine ESMF_AttributeGetListAttPackArrayLG(target, name, attpack, value, key
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2Get(attpack%info, key, value, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
-    if (present(defaultvalue)) then
-      if (size(defaultvalue) /= size(value)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalue) /= size(value)", ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(defaultvalueList)) then
+      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
       endif
-      do ii=1,size(defaultvalue)
-        value(ii) = defaultvalue(ii)
+      do ii=1,size(defaultvalueList)
+        valueList(ii) = defaultvalueList(ii)
       enddo
-      if (present(itemcount)) itemcount = size(defaultvalue)
+      if (present(itemcount)) itemcount = SIZE(defaultvalueList)
     else
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//trim(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//TRIM(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   endif
 
@@ -17871,9 +17728,8 @@ subroutine ESMF_AttributeGetListObjArrayLG(target, name, valueList, defaultvalue
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    !tdk:todo: enable to work with character arrays
-
-
+    call ESMF_Info2GetListAllocated(info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
     if (present(defaultvalueList)) then
@@ -17898,14 +17754,13 @@ end subroutine ESMF_AttributeGetListObjArrayLG
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetListAttPackArrayBundleR4()"
-subroutine ESMF_AttributeGetListAttPackArrayBundleR4(target, name, attpack, value, keywordEnforcer, defaultvalue, attnestflag, itemcount, isPresent, rc)
+subroutine ESMF_AttributeGetListAttPackArrayBundleR4(target, name, attpack, valueList, defaultvalueList, attnestflag, itemcount, isPresent, rc)
   ! 39.11.9
   type(ESMF_ArrayBundle), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  real(ESMF_KIND_R4), dimension(:), allocatable, intent(out) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  real(ESMF_KIND_R4), dimension(:), intent(in), optional :: defaultvalue
+  real(ESMF_KIND_R4), dimension(:), intent(out) :: valueList
+  real(ESMF_KIND_R4), dimension(:), intent(in), optional :: defaultvalueList
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(out), optional :: itemcount
   logical, intent(out), optional :: isPresent
@@ -17931,20 +17786,20 @@ subroutine ESMF_AttributeGetListAttPackArrayBundleR4(target, name, attpack, valu
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2Get(attpack%info, key, value, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
-    if (present(defaultvalue)) then
-      if (size(defaultvalue) /= size(value)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalue) /= size(value)", ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(defaultvalueList)) then
+      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
       endif
-      do ii=1,size(defaultvalue)
-        value(ii) = defaultvalue(ii)
+      do ii=1,size(defaultvalueList)
+        valueList(ii) = defaultvalueList(ii)
       enddo
-      if (present(itemcount)) itemcount = size(defaultvalue)
+      if (present(itemcount)) itemcount = SIZE(defaultvalueList)
     else
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//trim(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//TRIM(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   endif
 
@@ -17991,9 +17846,8 @@ subroutine ESMF_AttributeGetListObjArrayBundleR4(target, name, valueList, defaul
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    !tdk:todo: enable to work with character arrays
-
-
+    call ESMF_Info2GetListAllocated(info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
     if (present(defaultvalueList)) then
@@ -18018,14 +17872,13 @@ end subroutine ESMF_AttributeGetListObjArrayBundleR4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetListAttPackArrayBundleR8()"
-subroutine ESMF_AttributeGetListAttPackArrayBundleR8(target, name, attpack, value, keywordEnforcer, defaultvalue, attnestflag, itemcount, isPresent, rc)
+subroutine ESMF_AttributeGetListAttPackArrayBundleR8(target, name, attpack, valueList, defaultvalueList, attnestflag, itemcount, isPresent, rc)
   ! 39.11.9
   type(ESMF_ArrayBundle), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  real(ESMF_KIND_R8), dimension(:), allocatable, intent(out) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  real(ESMF_KIND_R8), dimension(:), intent(in), optional :: defaultvalue
+  real(ESMF_KIND_R8), dimension(:), intent(out) :: valueList
+  real(ESMF_KIND_R8), dimension(:), intent(in), optional :: defaultvalueList
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(out), optional :: itemcount
   logical, intent(out), optional :: isPresent
@@ -18051,20 +17904,20 @@ subroutine ESMF_AttributeGetListAttPackArrayBundleR8(target, name, attpack, valu
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2Get(attpack%info, key, value, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
-    if (present(defaultvalue)) then
-      if (size(defaultvalue) /= size(value)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalue) /= size(value)", ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(defaultvalueList)) then
+      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
       endif
-      do ii=1,size(defaultvalue)
-        value(ii) = defaultvalue(ii)
+      do ii=1,size(defaultvalueList)
+        valueList(ii) = defaultvalueList(ii)
       enddo
-      if (present(itemcount)) itemcount = size(defaultvalue)
+      if (present(itemcount)) itemcount = SIZE(defaultvalueList)
     else
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//trim(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//TRIM(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   endif
 
@@ -18111,9 +17964,8 @@ subroutine ESMF_AttributeGetListObjArrayBundleR8(target, name, valueList, defaul
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    !tdk:todo: enable to work with character arrays
-
-
+    call ESMF_Info2GetListAllocated(info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
     if (present(defaultvalueList)) then
@@ -18138,14 +17990,13 @@ end subroutine ESMF_AttributeGetListObjArrayBundleR8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetListAttPackArrayBundleI4()"
-subroutine ESMF_AttributeGetListAttPackArrayBundleI4(target, name, attpack, value, keywordEnforcer, defaultvalue, attnestflag, itemcount, isPresent, rc)
+subroutine ESMF_AttributeGetListAttPackArrayBundleI4(target, name, attpack, valueList, defaultvalueList, attnestflag, itemcount, isPresent, rc)
   ! 39.11.9
   type(ESMF_ArrayBundle), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  integer(ESMF_KIND_I4), dimension(:), allocatable, intent(out) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  integer(ESMF_KIND_I4), dimension(:), intent(in), optional :: defaultvalue
+  integer(ESMF_KIND_I4), dimension(:), intent(out) :: valueList
+  integer(ESMF_KIND_I4), dimension(:), intent(in), optional :: defaultvalueList
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(out), optional :: itemcount
   logical, intent(out), optional :: isPresent
@@ -18171,20 +18022,20 @@ subroutine ESMF_AttributeGetListAttPackArrayBundleI4(target, name, attpack, valu
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2Get(attpack%info, key, value, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
-    if (present(defaultvalue)) then
-      if (size(defaultvalue) /= size(value)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalue) /= size(value)", ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(defaultvalueList)) then
+      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
       endif
-      do ii=1,size(defaultvalue)
-        value(ii) = defaultvalue(ii)
+      do ii=1,size(defaultvalueList)
+        valueList(ii) = defaultvalueList(ii)
       enddo
-      if (present(itemcount)) itemcount = size(defaultvalue)
+      if (present(itemcount)) itemcount = SIZE(defaultvalueList)
     else
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//trim(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//TRIM(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   endif
 
@@ -18231,9 +18082,8 @@ subroutine ESMF_AttributeGetListObjArrayBundleI4(target, name, valueList, defaul
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    !tdk:todo: enable to work with character arrays
-
-
+    call ESMF_Info2GetListAllocated(info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
     if (present(defaultvalueList)) then
@@ -18258,14 +18108,13 @@ end subroutine ESMF_AttributeGetListObjArrayBundleI4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetListAttPackArrayBundleI8()"
-subroutine ESMF_AttributeGetListAttPackArrayBundleI8(target, name, attpack, value, keywordEnforcer, defaultvalue, attnestflag, itemcount, isPresent, rc)
+subroutine ESMF_AttributeGetListAttPackArrayBundleI8(target, name, attpack, valueList, defaultvalueList, attnestflag, itemcount, isPresent, rc)
   ! 39.11.9
   type(ESMF_ArrayBundle), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  integer(ESMF_KIND_I8), dimension(:), allocatable, intent(out) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  integer(ESMF_KIND_I8), dimension(:), intent(in), optional :: defaultvalue
+  integer(ESMF_KIND_I8), dimension(:), intent(out) :: valueList
+  integer(ESMF_KIND_I8), dimension(:), intent(in), optional :: defaultvalueList
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(out), optional :: itemcount
   logical, intent(out), optional :: isPresent
@@ -18291,20 +18140,20 @@ subroutine ESMF_AttributeGetListAttPackArrayBundleI8(target, name, attpack, valu
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2Get(attpack%info, key, value, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
-    if (present(defaultvalue)) then
-      if (size(defaultvalue) /= size(value)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalue) /= size(value)", ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(defaultvalueList)) then
+      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
       endif
-      do ii=1,size(defaultvalue)
-        value(ii) = defaultvalue(ii)
+      do ii=1,size(defaultvalueList)
+        valueList(ii) = defaultvalueList(ii)
       enddo
-      if (present(itemcount)) itemcount = size(defaultvalue)
+      if (present(itemcount)) itemcount = SIZE(defaultvalueList)
     else
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//trim(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//TRIM(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   endif
 
@@ -18351,9 +18200,8 @@ subroutine ESMF_AttributeGetListObjArrayBundleI8(target, name, valueList, defaul
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    !tdk:todo: enable to work with character arrays
-
-
+    call ESMF_Info2GetListAllocated(info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
     if (present(defaultvalueList)) then
@@ -18378,14 +18226,13 @@ end subroutine ESMF_AttributeGetListObjArrayBundleI8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetListAttPackArrayBundleCH()"
-subroutine ESMF_AttributeGetListAttPackArrayBundleCH(target, name, attpack, value, keywordEnforcer, defaultvalue, attnestflag, itemcount, isPresent, rc)
+subroutine ESMF_AttributeGetListAttPackArrayBundleCH(target, name, attpack, valueList, defaultvalueList, attnestflag, itemcount, isPresent, rc)
   ! 39.11.9
   type(ESMF_ArrayBundle), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  character(len=*), dimension(:), allocatable, intent(out) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  character(len=*), dimension(:), intent(in), optional :: defaultvalue
+  character(len=*), dimension(:), intent(out) :: valueList
+  character(len=*), dimension(:), intent(in), optional :: defaultvalueList
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(out), optional :: itemcount
   logical, intent(out), optional :: isPresent
@@ -18411,20 +18258,20 @@ subroutine ESMF_AttributeGetListAttPackArrayBundleCH(target, name, attpack, valu
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2Get(attpack%info, key, value, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
-    if (present(defaultvalue)) then
-      if (size(defaultvalue) /= size(value)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalue) /= size(value)", ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(defaultvalueList)) then
+      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
       endif
-      do ii=1,size(defaultvalue)
-        value(ii) = defaultvalue(ii)
+      do ii=1,size(defaultvalueList)
+        valueList(ii) = defaultvalueList(ii)
       enddo
-      if (present(itemcount)) itemcount = size(defaultvalue)
+      if (present(itemcount)) itemcount = SIZE(defaultvalueList)
     else
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//trim(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//TRIM(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   endif
 
@@ -18471,9 +18318,8 @@ subroutine ESMF_AttributeGetListObjArrayBundleCH(target, name, valueList, defaul
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    !tdk:todo: enable to work with character arrays
-
-
+    call ESMF_Info2GetListAllocated(info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
     if (present(defaultvalueList)) then
@@ -18498,14 +18344,13 @@ end subroutine ESMF_AttributeGetListObjArrayBundleCH
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetListAttPackArrayBundleLG()"
-subroutine ESMF_AttributeGetListAttPackArrayBundleLG(target, name, attpack, value, keywordEnforcer, defaultvalue, attnestflag, itemcount, isPresent, rc)
+subroutine ESMF_AttributeGetListAttPackArrayBundleLG(target, name, attpack, valueList, defaultvalueList, attnestflag, itemcount, isPresent, rc)
   ! 39.11.9
   type(ESMF_ArrayBundle), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  logical, dimension(:), allocatable, intent(out) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  logical, dimension(:), intent(in), optional :: defaultvalue
+  logical, dimension(:), intent(out) :: valueList
+  logical, dimension(:), intent(in), optional :: defaultvalueList
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(out), optional :: itemcount
   logical, intent(out), optional :: isPresent
@@ -18531,20 +18376,20 @@ subroutine ESMF_AttributeGetListAttPackArrayBundleLG(target, name, attpack, valu
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2Get(attpack%info, key, value, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
-    if (present(defaultvalue)) then
-      if (size(defaultvalue) /= size(value)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalue) /= size(value)", ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(defaultvalueList)) then
+      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
       endif
-      do ii=1,size(defaultvalue)
-        value(ii) = defaultvalue(ii)
+      do ii=1,size(defaultvalueList)
+        valueList(ii) = defaultvalueList(ii)
       enddo
-      if (present(itemcount)) itemcount = size(defaultvalue)
+      if (present(itemcount)) itemcount = SIZE(defaultvalueList)
     else
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//trim(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//TRIM(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   endif
 
@@ -18591,9 +18436,8 @@ subroutine ESMF_AttributeGetListObjArrayBundleLG(target, name, valueList, defaul
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    !tdk:todo: enable to work with character arrays
-
-
+    call ESMF_Info2GetListAllocated(info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
     if (present(defaultvalueList)) then
@@ -18618,14 +18462,13 @@ end subroutine ESMF_AttributeGetListObjArrayBundleLG
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetListAttPackCplCompR4()"
-subroutine ESMF_AttributeGetListAttPackCplCompR4(target, name, attpack, value, keywordEnforcer, defaultvalue, attnestflag, itemcount, isPresent, rc)
+subroutine ESMF_AttributeGetListAttPackCplCompR4(target, name, attpack, valueList, defaultvalueList, attnestflag, itemcount, isPresent, rc)
   ! 39.11.9
   type(ESMF_CplComp), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  real(ESMF_KIND_R4), dimension(:), allocatable, intent(out) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  real(ESMF_KIND_R4), dimension(:), intent(in), optional :: defaultvalue
+  real(ESMF_KIND_R4), dimension(:), intent(out) :: valueList
+  real(ESMF_KIND_R4), dimension(:), intent(in), optional :: defaultvalueList
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(out), optional :: itemcount
   logical, intent(out), optional :: isPresent
@@ -18651,20 +18494,20 @@ subroutine ESMF_AttributeGetListAttPackCplCompR4(target, name, attpack, value, k
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2Get(attpack%info, key, value, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
-    if (present(defaultvalue)) then
-      if (size(defaultvalue) /= size(value)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalue) /= size(value)", ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(defaultvalueList)) then
+      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
       endif
-      do ii=1,size(defaultvalue)
-        value(ii) = defaultvalue(ii)
+      do ii=1,size(defaultvalueList)
+        valueList(ii) = defaultvalueList(ii)
       enddo
-      if (present(itemcount)) itemcount = size(defaultvalue)
+      if (present(itemcount)) itemcount = SIZE(defaultvalueList)
     else
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//trim(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//TRIM(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   endif
 
@@ -18711,9 +18554,8 @@ subroutine ESMF_AttributeGetListObjCplCompR4(target, name, valueList, defaultval
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    !tdk:todo: enable to work with character arrays
-
-
+    call ESMF_Info2GetListAllocated(info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
     if (present(defaultvalueList)) then
@@ -18738,14 +18580,13 @@ end subroutine ESMF_AttributeGetListObjCplCompR4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetListAttPackCplCompR8()"
-subroutine ESMF_AttributeGetListAttPackCplCompR8(target, name, attpack, value, keywordEnforcer, defaultvalue, attnestflag, itemcount, isPresent, rc)
+subroutine ESMF_AttributeGetListAttPackCplCompR8(target, name, attpack, valueList, defaultvalueList, attnestflag, itemcount, isPresent, rc)
   ! 39.11.9
   type(ESMF_CplComp), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  real(ESMF_KIND_R8), dimension(:), allocatable, intent(out) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  real(ESMF_KIND_R8), dimension(:), intent(in), optional :: defaultvalue
+  real(ESMF_KIND_R8), dimension(:), intent(out) :: valueList
+  real(ESMF_KIND_R8), dimension(:), intent(in), optional :: defaultvalueList
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(out), optional :: itemcount
   logical, intent(out), optional :: isPresent
@@ -18771,20 +18612,20 @@ subroutine ESMF_AttributeGetListAttPackCplCompR8(target, name, attpack, value, k
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2Get(attpack%info, key, value, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
-    if (present(defaultvalue)) then
-      if (size(defaultvalue) /= size(value)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalue) /= size(value)", ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(defaultvalueList)) then
+      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
       endif
-      do ii=1,size(defaultvalue)
-        value(ii) = defaultvalue(ii)
+      do ii=1,size(defaultvalueList)
+        valueList(ii) = defaultvalueList(ii)
       enddo
-      if (present(itemcount)) itemcount = size(defaultvalue)
+      if (present(itemcount)) itemcount = SIZE(defaultvalueList)
     else
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//trim(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//TRIM(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   endif
 
@@ -18831,9 +18672,8 @@ subroutine ESMF_AttributeGetListObjCplCompR8(target, name, valueList, defaultval
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    !tdk:todo: enable to work with character arrays
-
-
+    call ESMF_Info2GetListAllocated(info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
     if (present(defaultvalueList)) then
@@ -18858,14 +18698,13 @@ end subroutine ESMF_AttributeGetListObjCplCompR8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetListAttPackCplCompI4()"
-subroutine ESMF_AttributeGetListAttPackCplCompI4(target, name, attpack, value, keywordEnforcer, defaultvalue, attnestflag, itemcount, isPresent, rc)
+subroutine ESMF_AttributeGetListAttPackCplCompI4(target, name, attpack, valueList, defaultvalueList, attnestflag, itemcount, isPresent, rc)
   ! 39.11.9
   type(ESMF_CplComp), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  integer(ESMF_KIND_I4), dimension(:), allocatable, intent(out) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  integer(ESMF_KIND_I4), dimension(:), intent(in), optional :: defaultvalue
+  integer(ESMF_KIND_I4), dimension(:), intent(out) :: valueList
+  integer(ESMF_KIND_I4), dimension(:), intent(in), optional :: defaultvalueList
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(out), optional :: itemcount
   logical, intent(out), optional :: isPresent
@@ -18891,20 +18730,20 @@ subroutine ESMF_AttributeGetListAttPackCplCompI4(target, name, attpack, value, k
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2Get(attpack%info, key, value, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
-    if (present(defaultvalue)) then
-      if (size(defaultvalue) /= size(value)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalue) /= size(value)", ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(defaultvalueList)) then
+      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
       endif
-      do ii=1,size(defaultvalue)
-        value(ii) = defaultvalue(ii)
+      do ii=1,size(defaultvalueList)
+        valueList(ii) = defaultvalueList(ii)
       enddo
-      if (present(itemcount)) itemcount = size(defaultvalue)
+      if (present(itemcount)) itemcount = SIZE(defaultvalueList)
     else
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//trim(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//TRIM(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   endif
 
@@ -18951,9 +18790,8 @@ subroutine ESMF_AttributeGetListObjCplCompI4(target, name, valueList, defaultval
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    !tdk:todo: enable to work with character arrays
-
-
+    call ESMF_Info2GetListAllocated(info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
     if (present(defaultvalueList)) then
@@ -18978,14 +18816,13 @@ end subroutine ESMF_AttributeGetListObjCplCompI4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetListAttPackCplCompI8()"
-subroutine ESMF_AttributeGetListAttPackCplCompI8(target, name, attpack, value, keywordEnforcer, defaultvalue, attnestflag, itemcount, isPresent, rc)
+subroutine ESMF_AttributeGetListAttPackCplCompI8(target, name, attpack, valueList, defaultvalueList, attnestflag, itemcount, isPresent, rc)
   ! 39.11.9
   type(ESMF_CplComp), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  integer(ESMF_KIND_I8), dimension(:), allocatable, intent(out) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  integer(ESMF_KIND_I8), dimension(:), intent(in), optional :: defaultvalue
+  integer(ESMF_KIND_I8), dimension(:), intent(out) :: valueList
+  integer(ESMF_KIND_I8), dimension(:), intent(in), optional :: defaultvalueList
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(out), optional :: itemcount
   logical, intent(out), optional :: isPresent
@@ -19011,20 +18848,20 @@ subroutine ESMF_AttributeGetListAttPackCplCompI8(target, name, attpack, value, k
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2Get(attpack%info, key, value, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
-    if (present(defaultvalue)) then
-      if (size(defaultvalue) /= size(value)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalue) /= size(value)", ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(defaultvalueList)) then
+      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
       endif
-      do ii=1,size(defaultvalue)
-        value(ii) = defaultvalue(ii)
+      do ii=1,size(defaultvalueList)
+        valueList(ii) = defaultvalueList(ii)
       enddo
-      if (present(itemcount)) itemcount = size(defaultvalue)
+      if (present(itemcount)) itemcount = SIZE(defaultvalueList)
     else
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//trim(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//TRIM(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   endif
 
@@ -19071,9 +18908,8 @@ subroutine ESMF_AttributeGetListObjCplCompI8(target, name, valueList, defaultval
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    !tdk:todo: enable to work with character arrays
-
-
+    call ESMF_Info2GetListAllocated(info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
     if (present(defaultvalueList)) then
@@ -19098,14 +18934,13 @@ end subroutine ESMF_AttributeGetListObjCplCompI8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetListAttPackCplCompCH()"
-subroutine ESMF_AttributeGetListAttPackCplCompCH(target, name, attpack, value, keywordEnforcer, defaultvalue, attnestflag, itemcount, isPresent, rc)
+subroutine ESMF_AttributeGetListAttPackCplCompCH(target, name, attpack, valueList, defaultvalueList, attnestflag, itemcount, isPresent, rc)
   ! 39.11.9
   type(ESMF_CplComp), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  character(len=*), dimension(:), allocatable, intent(out) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  character(len=*), dimension(:), intent(in), optional :: defaultvalue
+  character(len=*), dimension(:), intent(out) :: valueList
+  character(len=*), dimension(:), intent(in), optional :: defaultvalueList
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(out), optional :: itemcount
   logical, intent(out), optional :: isPresent
@@ -19131,20 +18966,20 @@ subroutine ESMF_AttributeGetListAttPackCplCompCH(target, name, attpack, value, k
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2Get(attpack%info, key, value, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
-    if (present(defaultvalue)) then
-      if (size(defaultvalue) /= size(value)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalue) /= size(value)", ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(defaultvalueList)) then
+      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
       endif
-      do ii=1,size(defaultvalue)
-        value(ii) = defaultvalue(ii)
+      do ii=1,size(defaultvalueList)
+        valueList(ii) = defaultvalueList(ii)
       enddo
-      if (present(itemcount)) itemcount = size(defaultvalue)
+      if (present(itemcount)) itemcount = SIZE(defaultvalueList)
     else
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//trim(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//TRIM(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   endif
 
@@ -19191,9 +19026,8 @@ subroutine ESMF_AttributeGetListObjCplCompCH(target, name, valueList, defaultval
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    !tdk:todo: enable to work with character arrays
-
-
+    call ESMF_Info2GetListAllocated(info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
     if (present(defaultvalueList)) then
@@ -19218,14 +19052,13 @@ end subroutine ESMF_AttributeGetListObjCplCompCH
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetListAttPackCplCompLG()"
-subroutine ESMF_AttributeGetListAttPackCplCompLG(target, name, attpack, value, keywordEnforcer, defaultvalue, attnestflag, itemcount, isPresent, rc)
+subroutine ESMF_AttributeGetListAttPackCplCompLG(target, name, attpack, valueList, defaultvalueList, attnestflag, itemcount, isPresent, rc)
   ! 39.11.9
   type(ESMF_CplComp), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  logical, dimension(:), allocatable, intent(out) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  logical, dimension(:), intent(in), optional :: defaultvalue
+  logical, dimension(:), intent(out) :: valueList
+  logical, dimension(:), intent(in), optional :: defaultvalueList
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(out), optional :: itemcount
   logical, intent(out), optional :: isPresent
@@ -19251,20 +19084,20 @@ subroutine ESMF_AttributeGetListAttPackCplCompLG(target, name, attpack, value, k
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2Get(attpack%info, key, value, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
-    if (present(defaultvalue)) then
-      if (size(defaultvalue) /= size(value)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalue) /= size(value)", ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(defaultvalueList)) then
+      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
       endif
-      do ii=1,size(defaultvalue)
-        value(ii) = defaultvalue(ii)
+      do ii=1,size(defaultvalueList)
+        valueList(ii) = defaultvalueList(ii)
       enddo
-      if (present(itemcount)) itemcount = size(defaultvalue)
+      if (present(itemcount)) itemcount = SIZE(defaultvalueList)
     else
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//trim(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//TRIM(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   endif
 
@@ -19311,9 +19144,8 @@ subroutine ESMF_AttributeGetListObjCplCompLG(target, name, valueList, defaultval
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    !tdk:todo: enable to work with character arrays
-
-
+    call ESMF_Info2GetListAllocated(info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
     if (present(defaultvalueList)) then
@@ -19338,14 +19170,13 @@ end subroutine ESMF_AttributeGetListObjCplCompLG
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetListAttPackGridCompR4()"
-subroutine ESMF_AttributeGetListAttPackGridCompR4(target, name, attpack, value, keywordEnforcer, defaultvalue, attnestflag, itemcount, isPresent, rc)
+subroutine ESMF_AttributeGetListAttPackGridCompR4(target, name, attpack, valueList, defaultvalueList, attnestflag, itemcount, isPresent, rc)
   ! 39.11.9
   type(ESMF_GridComp), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  real(ESMF_KIND_R4), dimension(:), allocatable, intent(out) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  real(ESMF_KIND_R4), dimension(:), intent(in), optional :: defaultvalue
+  real(ESMF_KIND_R4), dimension(:), intent(out) :: valueList
+  real(ESMF_KIND_R4), dimension(:), intent(in), optional :: defaultvalueList
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(out), optional :: itemcount
   logical, intent(out), optional :: isPresent
@@ -19371,20 +19202,20 @@ subroutine ESMF_AttributeGetListAttPackGridCompR4(target, name, attpack, value, 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2Get(attpack%info, key, value, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
-    if (present(defaultvalue)) then
-      if (size(defaultvalue) /= size(value)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalue) /= size(value)", ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(defaultvalueList)) then
+      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
       endif
-      do ii=1,size(defaultvalue)
-        value(ii) = defaultvalue(ii)
+      do ii=1,size(defaultvalueList)
+        valueList(ii) = defaultvalueList(ii)
       enddo
-      if (present(itemcount)) itemcount = size(defaultvalue)
+      if (present(itemcount)) itemcount = SIZE(defaultvalueList)
     else
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//trim(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//TRIM(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   endif
 
@@ -19431,9 +19262,8 @@ subroutine ESMF_AttributeGetListObjGridCompR4(target, name, valueList, defaultva
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    !tdk:todo: enable to work with character arrays
-
-
+    call ESMF_Info2GetListAllocated(info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
     if (present(defaultvalueList)) then
@@ -19458,14 +19288,13 @@ end subroutine ESMF_AttributeGetListObjGridCompR4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetListAttPackGridCompR8()"
-subroutine ESMF_AttributeGetListAttPackGridCompR8(target, name, attpack, value, keywordEnforcer, defaultvalue, attnestflag, itemcount, isPresent, rc)
+subroutine ESMF_AttributeGetListAttPackGridCompR8(target, name, attpack, valueList, defaultvalueList, attnestflag, itemcount, isPresent, rc)
   ! 39.11.9
   type(ESMF_GridComp), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  real(ESMF_KIND_R8), dimension(:), allocatable, intent(out) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  real(ESMF_KIND_R8), dimension(:), intent(in), optional :: defaultvalue
+  real(ESMF_KIND_R8), dimension(:), intent(out) :: valueList
+  real(ESMF_KIND_R8), dimension(:), intent(in), optional :: defaultvalueList
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(out), optional :: itemcount
   logical, intent(out), optional :: isPresent
@@ -19491,20 +19320,20 @@ subroutine ESMF_AttributeGetListAttPackGridCompR8(target, name, attpack, value, 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2Get(attpack%info, key, value, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
-    if (present(defaultvalue)) then
-      if (size(defaultvalue) /= size(value)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalue) /= size(value)", ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(defaultvalueList)) then
+      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
       endif
-      do ii=1,size(defaultvalue)
-        value(ii) = defaultvalue(ii)
+      do ii=1,size(defaultvalueList)
+        valueList(ii) = defaultvalueList(ii)
       enddo
-      if (present(itemcount)) itemcount = size(defaultvalue)
+      if (present(itemcount)) itemcount = SIZE(defaultvalueList)
     else
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//trim(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//TRIM(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   endif
 
@@ -19551,9 +19380,8 @@ subroutine ESMF_AttributeGetListObjGridCompR8(target, name, valueList, defaultva
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    !tdk:todo: enable to work with character arrays
-
-
+    call ESMF_Info2GetListAllocated(info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
     if (present(defaultvalueList)) then
@@ -19578,14 +19406,13 @@ end subroutine ESMF_AttributeGetListObjGridCompR8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetListAttPackGridCompI4()"
-subroutine ESMF_AttributeGetListAttPackGridCompI4(target, name, attpack, value, keywordEnforcer, defaultvalue, attnestflag, itemcount, isPresent, rc)
+subroutine ESMF_AttributeGetListAttPackGridCompI4(target, name, attpack, valueList, defaultvalueList, attnestflag, itemcount, isPresent, rc)
   ! 39.11.9
   type(ESMF_GridComp), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  integer(ESMF_KIND_I4), dimension(:), allocatable, intent(out) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  integer(ESMF_KIND_I4), dimension(:), intent(in), optional :: defaultvalue
+  integer(ESMF_KIND_I4), dimension(:), intent(out) :: valueList
+  integer(ESMF_KIND_I4), dimension(:), intent(in), optional :: defaultvalueList
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(out), optional :: itemcount
   logical, intent(out), optional :: isPresent
@@ -19611,20 +19438,20 @@ subroutine ESMF_AttributeGetListAttPackGridCompI4(target, name, attpack, value, 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2Get(attpack%info, key, value, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
-    if (present(defaultvalue)) then
-      if (size(defaultvalue) /= size(value)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalue) /= size(value)", ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(defaultvalueList)) then
+      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
       endif
-      do ii=1,size(defaultvalue)
-        value(ii) = defaultvalue(ii)
+      do ii=1,size(defaultvalueList)
+        valueList(ii) = defaultvalueList(ii)
       enddo
-      if (present(itemcount)) itemcount = size(defaultvalue)
+      if (present(itemcount)) itemcount = SIZE(defaultvalueList)
     else
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//trim(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//TRIM(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   endif
 
@@ -19671,9 +19498,8 @@ subroutine ESMF_AttributeGetListObjGridCompI4(target, name, valueList, defaultva
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    !tdk:todo: enable to work with character arrays
-
-
+    call ESMF_Info2GetListAllocated(info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
     if (present(defaultvalueList)) then
@@ -19698,14 +19524,13 @@ end subroutine ESMF_AttributeGetListObjGridCompI4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetListAttPackGridCompI8()"
-subroutine ESMF_AttributeGetListAttPackGridCompI8(target, name, attpack, value, keywordEnforcer, defaultvalue, attnestflag, itemcount, isPresent, rc)
+subroutine ESMF_AttributeGetListAttPackGridCompI8(target, name, attpack, valueList, defaultvalueList, attnestflag, itemcount, isPresent, rc)
   ! 39.11.9
   type(ESMF_GridComp), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  integer(ESMF_KIND_I8), dimension(:), allocatable, intent(out) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  integer(ESMF_KIND_I8), dimension(:), intent(in), optional :: defaultvalue
+  integer(ESMF_KIND_I8), dimension(:), intent(out) :: valueList
+  integer(ESMF_KIND_I8), dimension(:), intent(in), optional :: defaultvalueList
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(out), optional :: itemcount
   logical, intent(out), optional :: isPresent
@@ -19731,20 +19556,20 @@ subroutine ESMF_AttributeGetListAttPackGridCompI8(target, name, attpack, value, 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2Get(attpack%info, key, value, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
-    if (present(defaultvalue)) then
-      if (size(defaultvalue) /= size(value)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalue) /= size(value)", ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(defaultvalueList)) then
+      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
       endif
-      do ii=1,size(defaultvalue)
-        value(ii) = defaultvalue(ii)
+      do ii=1,size(defaultvalueList)
+        valueList(ii) = defaultvalueList(ii)
       enddo
-      if (present(itemcount)) itemcount = size(defaultvalue)
+      if (present(itemcount)) itemcount = SIZE(defaultvalueList)
     else
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//trim(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//TRIM(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   endif
 
@@ -19791,9 +19616,8 @@ subroutine ESMF_AttributeGetListObjGridCompI8(target, name, valueList, defaultva
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    !tdk:todo: enable to work with character arrays
-
-
+    call ESMF_Info2GetListAllocated(info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
     if (present(defaultvalueList)) then
@@ -19818,14 +19642,13 @@ end subroutine ESMF_AttributeGetListObjGridCompI8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetListAttPackGridCompCH()"
-subroutine ESMF_AttributeGetListAttPackGridCompCH(target, name, attpack, value, keywordEnforcer, defaultvalue, attnestflag, itemcount, isPresent, rc)
+subroutine ESMF_AttributeGetListAttPackGridCompCH(target, name, attpack, valueList, defaultvalueList, attnestflag, itemcount, isPresent, rc)
   ! 39.11.9
   type(ESMF_GridComp), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  character(len=*), dimension(:), allocatable, intent(out) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  character(len=*), dimension(:), intent(in), optional :: defaultvalue
+  character(len=*), dimension(:), intent(out) :: valueList
+  character(len=*), dimension(:), intent(in), optional :: defaultvalueList
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(out), optional :: itemcount
   logical, intent(out), optional :: isPresent
@@ -19851,20 +19674,20 @@ subroutine ESMF_AttributeGetListAttPackGridCompCH(target, name, attpack, value, 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2Get(attpack%info, key, value, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
-    if (present(defaultvalue)) then
-      if (size(defaultvalue) /= size(value)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalue) /= size(value)", ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(defaultvalueList)) then
+      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
       endif
-      do ii=1,size(defaultvalue)
-        value(ii) = defaultvalue(ii)
+      do ii=1,size(defaultvalueList)
+        valueList(ii) = defaultvalueList(ii)
       enddo
-      if (present(itemcount)) itemcount = size(defaultvalue)
+      if (present(itemcount)) itemcount = SIZE(defaultvalueList)
     else
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//trim(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//TRIM(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   endif
 
@@ -19911,9 +19734,8 @@ subroutine ESMF_AttributeGetListObjGridCompCH(target, name, valueList, defaultva
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    !tdk:todo: enable to work with character arrays
-
-
+    call ESMF_Info2GetListAllocated(info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
     if (present(defaultvalueList)) then
@@ -19938,14 +19760,13 @@ end subroutine ESMF_AttributeGetListObjGridCompCH
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetListAttPackGridCompLG()"
-subroutine ESMF_AttributeGetListAttPackGridCompLG(target, name, attpack, value, keywordEnforcer, defaultvalue, attnestflag, itemcount, isPresent, rc)
+subroutine ESMF_AttributeGetListAttPackGridCompLG(target, name, attpack, valueList, defaultvalueList, attnestflag, itemcount, isPresent, rc)
   ! 39.11.9
   type(ESMF_GridComp), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  logical, dimension(:), allocatable, intent(out) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  logical, dimension(:), intent(in), optional :: defaultvalue
+  logical, dimension(:), intent(out) :: valueList
+  logical, dimension(:), intent(in), optional :: defaultvalueList
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(out), optional :: itemcount
   logical, intent(out), optional :: isPresent
@@ -19971,20 +19792,20 @@ subroutine ESMF_AttributeGetListAttPackGridCompLG(target, name, attpack, value, 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2Get(attpack%info, key, value, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
-    if (present(defaultvalue)) then
-      if (size(defaultvalue) /= size(value)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalue) /= size(value)", ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(defaultvalueList)) then
+      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
       endif
-      do ii=1,size(defaultvalue)
-        value(ii) = defaultvalue(ii)
+      do ii=1,size(defaultvalueList)
+        valueList(ii) = defaultvalueList(ii)
       enddo
-      if (present(itemcount)) itemcount = size(defaultvalue)
+      if (present(itemcount)) itemcount = SIZE(defaultvalueList)
     else
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//trim(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//TRIM(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   endif
 
@@ -20031,9 +19852,8 @@ subroutine ESMF_AttributeGetListObjGridCompLG(target, name, valueList, defaultva
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    !tdk:todo: enable to work with character arrays
-
-
+    call ESMF_Info2GetListAllocated(info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
     if (present(defaultvalueList)) then
@@ -20058,14 +19878,13 @@ end subroutine ESMF_AttributeGetListObjGridCompLG
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetListAttPackSciCompR4()"
-subroutine ESMF_AttributeGetListAttPackSciCompR4(target, name, attpack, value, keywordEnforcer, defaultvalue, attnestflag, itemcount, isPresent, rc)
+subroutine ESMF_AttributeGetListAttPackSciCompR4(target, name, attpack, valueList, defaultvalueList, attnestflag, itemcount, isPresent, rc)
   ! 39.11.9
   type(ESMF_SciComp), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  real(ESMF_KIND_R4), dimension(:), allocatable, intent(out) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  real(ESMF_KIND_R4), dimension(:), intent(in), optional :: defaultvalue
+  real(ESMF_KIND_R4), dimension(:), intent(out) :: valueList
+  real(ESMF_KIND_R4), dimension(:), intent(in), optional :: defaultvalueList
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(out), optional :: itemcount
   logical, intent(out), optional :: isPresent
@@ -20091,20 +19910,20 @@ subroutine ESMF_AttributeGetListAttPackSciCompR4(target, name, attpack, value, k
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2Get(attpack%info, key, value, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
-    if (present(defaultvalue)) then
-      if (size(defaultvalue) /= size(value)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalue) /= size(value)", ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(defaultvalueList)) then
+      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
       endif
-      do ii=1,size(defaultvalue)
-        value(ii) = defaultvalue(ii)
+      do ii=1,size(defaultvalueList)
+        valueList(ii) = defaultvalueList(ii)
       enddo
-      if (present(itemcount)) itemcount = size(defaultvalue)
+      if (present(itemcount)) itemcount = SIZE(defaultvalueList)
     else
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//trim(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//TRIM(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   endif
 
@@ -20151,9 +19970,8 @@ subroutine ESMF_AttributeGetListObjSciCompR4(target, name, valueList, defaultval
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    !tdk:todo: enable to work with character arrays
-
-
+    call ESMF_Info2GetListAllocated(info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
     if (present(defaultvalueList)) then
@@ -20178,14 +19996,13 @@ end subroutine ESMF_AttributeGetListObjSciCompR4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetListAttPackSciCompR8()"
-subroutine ESMF_AttributeGetListAttPackSciCompR8(target, name, attpack, value, keywordEnforcer, defaultvalue, attnestflag, itemcount, isPresent, rc)
+subroutine ESMF_AttributeGetListAttPackSciCompR8(target, name, attpack, valueList, defaultvalueList, attnestflag, itemcount, isPresent, rc)
   ! 39.11.9
   type(ESMF_SciComp), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  real(ESMF_KIND_R8), dimension(:), allocatable, intent(out) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  real(ESMF_KIND_R8), dimension(:), intent(in), optional :: defaultvalue
+  real(ESMF_KIND_R8), dimension(:), intent(out) :: valueList
+  real(ESMF_KIND_R8), dimension(:), intent(in), optional :: defaultvalueList
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(out), optional :: itemcount
   logical, intent(out), optional :: isPresent
@@ -20211,20 +20028,20 @@ subroutine ESMF_AttributeGetListAttPackSciCompR8(target, name, attpack, value, k
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2Get(attpack%info, key, value, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
-    if (present(defaultvalue)) then
-      if (size(defaultvalue) /= size(value)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalue) /= size(value)", ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(defaultvalueList)) then
+      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
       endif
-      do ii=1,size(defaultvalue)
-        value(ii) = defaultvalue(ii)
+      do ii=1,size(defaultvalueList)
+        valueList(ii) = defaultvalueList(ii)
       enddo
-      if (present(itemcount)) itemcount = size(defaultvalue)
+      if (present(itemcount)) itemcount = SIZE(defaultvalueList)
     else
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//trim(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//TRIM(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   endif
 
@@ -20271,9 +20088,8 @@ subroutine ESMF_AttributeGetListObjSciCompR8(target, name, valueList, defaultval
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    !tdk:todo: enable to work with character arrays
-
-
+    call ESMF_Info2GetListAllocated(info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
     if (present(defaultvalueList)) then
@@ -20298,14 +20114,13 @@ end subroutine ESMF_AttributeGetListObjSciCompR8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetListAttPackSciCompI4()"
-subroutine ESMF_AttributeGetListAttPackSciCompI4(target, name, attpack, value, keywordEnforcer, defaultvalue, attnestflag, itemcount, isPresent, rc)
+subroutine ESMF_AttributeGetListAttPackSciCompI4(target, name, attpack, valueList, defaultvalueList, attnestflag, itemcount, isPresent, rc)
   ! 39.11.9
   type(ESMF_SciComp), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  integer(ESMF_KIND_I4), dimension(:), allocatable, intent(out) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  integer(ESMF_KIND_I4), dimension(:), intent(in), optional :: defaultvalue
+  integer(ESMF_KIND_I4), dimension(:), intent(out) :: valueList
+  integer(ESMF_KIND_I4), dimension(:), intent(in), optional :: defaultvalueList
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(out), optional :: itemcount
   logical, intent(out), optional :: isPresent
@@ -20331,20 +20146,20 @@ subroutine ESMF_AttributeGetListAttPackSciCompI4(target, name, attpack, value, k
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2Get(attpack%info, key, value, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
-    if (present(defaultvalue)) then
-      if (size(defaultvalue) /= size(value)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalue) /= size(value)", ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(defaultvalueList)) then
+      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
       endif
-      do ii=1,size(defaultvalue)
-        value(ii) = defaultvalue(ii)
+      do ii=1,size(defaultvalueList)
+        valueList(ii) = defaultvalueList(ii)
       enddo
-      if (present(itemcount)) itemcount = size(defaultvalue)
+      if (present(itemcount)) itemcount = SIZE(defaultvalueList)
     else
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//trim(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//TRIM(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   endif
 
@@ -20391,9 +20206,8 @@ subroutine ESMF_AttributeGetListObjSciCompI4(target, name, valueList, defaultval
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    !tdk:todo: enable to work with character arrays
-
-
+    call ESMF_Info2GetListAllocated(info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
     if (present(defaultvalueList)) then
@@ -20418,14 +20232,13 @@ end subroutine ESMF_AttributeGetListObjSciCompI4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetListAttPackSciCompI8()"
-subroutine ESMF_AttributeGetListAttPackSciCompI8(target, name, attpack, value, keywordEnforcer, defaultvalue, attnestflag, itemcount, isPresent, rc)
+subroutine ESMF_AttributeGetListAttPackSciCompI8(target, name, attpack, valueList, defaultvalueList, attnestflag, itemcount, isPresent, rc)
   ! 39.11.9
   type(ESMF_SciComp), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  integer(ESMF_KIND_I8), dimension(:), allocatable, intent(out) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  integer(ESMF_KIND_I8), dimension(:), intent(in), optional :: defaultvalue
+  integer(ESMF_KIND_I8), dimension(:), intent(out) :: valueList
+  integer(ESMF_KIND_I8), dimension(:), intent(in), optional :: defaultvalueList
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(out), optional :: itemcount
   logical, intent(out), optional :: isPresent
@@ -20451,20 +20264,20 @@ subroutine ESMF_AttributeGetListAttPackSciCompI8(target, name, attpack, value, k
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2Get(attpack%info, key, value, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
-    if (present(defaultvalue)) then
-      if (size(defaultvalue) /= size(value)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalue) /= size(value)", ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(defaultvalueList)) then
+      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
       endif
-      do ii=1,size(defaultvalue)
-        value(ii) = defaultvalue(ii)
+      do ii=1,size(defaultvalueList)
+        valueList(ii) = defaultvalueList(ii)
       enddo
-      if (present(itemcount)) itemcount = size(defaultvalue)
+      if (present(itemcount)) itemcount = SIZE(defaultvalueList)
     else
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//trim(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//TRIM(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   endif
 
@@ -20511,9 +20324,8 @@ subroutine ESMF_AttributeGetListObjSciCompI8(target, name, valueList, defaultval
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    !tdk:todo: enable to work with character arrays
-
-
+    call ESMF_Info2GetListAllocated(info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
     if (present(defaultvalueList)) then
@@ -20538,14 +20350,13 @@ end subroutine ESMF_AttributeGetListObjSciCompI8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetListAttPackSciCompCH()"
-subroutine ESMF_AttributeGetListAttPackSciCompCH(target, name, attpack, value, keywordEnforcer, defaultvalue, attnestflag, itemcount, isPresent, rc)
+subroutine ESMF_AttributeGetListAttPackSciCompCH(target, name, attpack, valueList, defaultvalueList, attnestflag, itemcount, isPresent, rc)
   ! 39.11.9
   type(ESMF_SciComp), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  character(len=*), dimension(:), allocatable, intent(out) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  character(len=*), dimension(:), intent(in), optional :: defaultvalue
+  character(len=*), dimension(:), intent(out) :: valueList
+  character(len=*), dimension(:), intent(in), optional :: defaultvalueList
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(out), optional :: itemcount
   logical, intent(out), optional :: isPresent
@@ -20571,20 +20382,20 @@ subroutine ESMF_AttributeGetListAttPackSciCompCH(target, name, attpack, value, k
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2Get(attpack%info, key, value, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
-    if (present(defaultvalue)) then
-      if (size(defaultvalue) /= size(value)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalue) /= size(value)", ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(defaultvalueList)) then
+      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
       endif
-      do ii=1,size(defaultvalue)
-        value(ii) = defaultvalue(ii)
+      do ii=1,size(defaultvalueList)
+        valueList(ii) = defaultvalueList(ii)
       enddo
-      if (present(itemcount)) itemcount = size(defaultvalue)
+      if (present(itemcount)) itemcount = SIZE(defaultvalueList)
     else
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//trim(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//TRIM(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   endif
 
@@ -20631,9 +20442,8 @@ subroutine ESMF_AttributeGetListObjSciCompCH(target, name, valueList, defaultval
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    !tdk:todo: enable to work with character arrays
-
-
+    call ESMF_Info2GetListAllocated(info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
     if (present(defaultvalueList)) then
@@ -20658,14 +20468,13 @@ end subroutine ESMF_AttributeGetListObjSciCompCH
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetListAttPackSciCompLG()"
-subroutine ESMF_AttributeGetListAttPackSciCompLG(target, name, attpack, value, keywordEnforcer, defaultvalue, attnestflag, itemcount, isPresent, rc)
+subroutine ESMF_AttributeGetListAttPackSciCompLG(target, name, attpack, valueList, defaultvalueList, attnestflag, itemcount, isPresent, rc)
   ! 39.11.9
   type(ESMF_SciComp), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  logical, dimension(:), allocatable, intent(out) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  logical, dimension(:), intent(in), optional :: defaultvalue
+  logical, dimension(:), intent(out) :: valueList
+  logical, dimension(:), intent(in), optional :: defaultvalueList
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(out), optional :: itemcount
   logical, intent(out), optional :: isPresent
@@ -20691,20 +20500,20 @@ subroutine ESMF_AttributeGetListAttPackSciCompLG(target, name, attpack, value, k
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2Get(attpack%info, key, value, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
-    if (present(defaultvalue)) then
-      if (size(defaultvalue) /= size(value)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalue) /= size(value)", ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(defaultvalueList)) then
+      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
       endif
-      do ii=1,size(defaultvalue)
-        value(ii) = defaultvalue(ii)
+      do ii=1,size(defaultvalueList)
+        valueList(ii) = defaultvalueList(ii)
       enddo
-      if (present(itemcount)) itemcount = size(defaultvalue)
+      if (present(itemcount)) itemcount = SIZE(defaultvalueList)
     else
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//trim(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//TRIM(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   endif
 
@@ -20751,9 +20560,8 @@ subroutine ESMF_AttributeGetListObjSciCompLG(target, name, valueList, defaultval
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    !tdk:todo: enable to work with character arrays
-
-
+    call ESMF_Info2GetListAllocated(info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
     if (present(defaultvalueList)) then
@@ -20778,14 +20586,13 @@ end subroutine ESMF_AttributeGetListObjSciCompLG
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetListAttPackDistGridR4()"
-subroutine ESMF_AttributeGetListAttPackDistGridR4(target, name, attpack, value, keywordEnforcer, defaultvalue, attnestflag, itemcount, isPresent, rc)
+subroutine ESMF_AttributeGetListAttPackDistGridR4(target, name, attpack, valueList, defaultvalueList, attnestflag, itemcount, isPresent, rc)
   ! 39.11.9
   type(ESMF_DistGrid), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  real(ESMF_KIND_R4), dimension(:), allocatable, intent(out) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  real(ESMF_KIND_R4), dimension(:), intent(in), optional :: defaultvalue
+  real(ESMF_KIND_R4), dimension(:), intent(out) :: valueList
+  real(ESMF_KIND_R4), dimension(:), intent(in), optional :: defaultvalueList
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(out), optional :: itemcount
   logical, intent(out), optional :: isPresent
@@ -20811,20 +20618,20 @@ subroutine ESMF_AttributeGetListAttPackDistGridR4(target, name, attpack, value, 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2Get(attpack%info, key, value, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
-    if (present(defaultvalue)) then
-      if (size(defaultvalue) /= size(value)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalue) /= size(value)", ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(defaultvalueList)) then
+      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
       endif
-      do ii=1,size(defaultvalue)
-        value(ii) = defaultvalue(ii)
+      do ii=1,size(defaultvalueList)
+        valueList(ii) = defaultvalueList(ii)
       enddo
-      if (present(itemcount)) itemcount = size(defaultvalue)
+      if (present(itemcount)) itemcount = SIZE(defaultvalueList)
     else
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//trim(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//TRIM(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   endif
 
@@ -20871,9 +20678,8 @@ subroutine ESMF_AttributeGetListObjDistGridR4(target, name, valueList, defaultva
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    !tdk:todo: enable to work with character arrays
-
-
+    call ESMF_Info2GetListAllocated(info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
     if (present(defaultvalueList)) then
@@ -20898,14 +20704,13 @@ end subroutine ESMF_AttributeGetListObjDistGridR4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetListAttPackDistGridR8()"
-subroutine ESMF_AttributeGetListAttPackDistGridR8(target, name, attpack, value, keywordEnforcer, defaultvalue, attnestflag, itemcount, isPresent, rc)
+subroutine ESMF_AttributeGetListAttPackDistGridR8(target, name, attpack, valueList, defaultvalueList, attnestflag, itemcount, isPresent, rc)
   ! 39.11.9
   type(ESMF_DistGrid), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  real(ESMF_KIND_R8), dimension(:), allocatable, intent(out) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  real(ESMF_KIND_R8), dimension(:), intent(in), optional :: defaultvalue
+  real(ESMF_KIND_R8), dimension(:), intent(out) :: valueList
+  real(ESMF_KIND_R8), dimension(:), intent(in), optional :: defaultvalueList
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(out), optional :: itemcount
   logical, intent(out), optional :: isPresent
@@ -20931,20 +20736,20 @@ subroutine ESMF_AttributeGetListAttPackDistGridR8(target, name, attpack, value, 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2Get(attpack%info, key, value, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
-    if (present(defaultvalue)) then
-      if (size(defaultvalue) /= size(value)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalue) /= size(value)", ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(defaultvalueList)) then
+      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
       endif
-      do ii=1,size(defaultvalue)
-        value(ii) = defaultvalue(ii)
+      do ii=1,size(defaultvalueList)
+        valueList(ii) = defaultvalueList(ii)
       enddo
-      if (present(itemcount)) itemcount = size(defaultvalue)
+      if (present(itemcount)) itemcount = SIZE(defaultvalueList)
     else
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//trim(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//TRIM(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   endif
 
@@ -20991,9 +20796,8 @@ subroutine ESMF_AttributeGetListObjDistGridR8(target, name, valueList, defaultva
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    !tdk:todo: enable to work with character arrays
-
-
+    call ESMF_Info2GetListAllocated(info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
     if (present(defaultvalueList)) then
@@ -21018,14 +20822,13 @@ end subroutine ESMF_AttributeGetListObjDistGridR8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetListAttPackDistGridI4()"
-subroutine ESMF_AttributeGetListAttPackDistGridI4(target, name, attpack, value, keywordEnforcer, defaultvalue, attnestflag, itemcount, isPresent, rc)
+subroutine ESMF_AttributeGetListAttPackDistGridI4(target, name, attpack, valueList, defaultvalueList, attnestflag, itemcount, isPresent, rc)
   ! 39.11.9
   type(ESMF_DistGrid), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  integer(ESMF_KIND_I4), dimension(:), allocatable, intent(out) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  integer(ESMF_KIND_I4), dimension(:), intent(in), optional :: defaultvalue
+  integer(ESMF_KIND_I4), dimension(:), intent(out) :: valueList
+  integer(ESMF_KIND_I4), dimension(:), intent(in), optional :: defaultvalueList
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(out), optional :: itemcount
   logical, intent(out), optional :: isPresent
@@ -21051,20 +20854,20 @@ subroutine ESMF_AttributeGetListAttPackDistGridI4(target, name, attpack, value, 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2Get(attpack%info, key, value, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
-    if (present(defaultvalue)) then
-      if (size(defaultvalue) /= size(value)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalue) /= size(value)", ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(defaultvalueList)) then
+      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
       endif
-      do ii=1,size(defaultvalue)
-        value(ii) = defaultvalue(ii)
+      do ii=1,size(defaultvalueList)
+        valueList(ii) = defaultvalueList(ii)
       enddo
-      if (present(itemcount)) itemcount = size(defaultvalue)
+      if (present(itemcount)) itemcount = SIZE(defaultvalueList)
     else
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//trim(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//TRIM(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   endif
 
@@ -21111,9 +20914,8 @@ subroutine ESMF_AttributeGetListObjDistGridI4(target, name, valueList, defaultva
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    !tdk:todo: enable to work with character arrays
-
-
+    call ESMF_Info2GetListAllocated(info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
     if (present(defaultvalueList)) then
@@ -21138,14 +20940,13 @@ end subroutine ESMF_AttributeGetListObjDistGridI4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetListAttPackDistGridI8()"
-subroutine ESMF_AttributeGetListAttPackDistGridI8(target, name, attpack, value, keywordEnforcer, defaultvalue, attnestflag, itemcount, isPresent, rc)
+subroutine ESMF_AttributeGetListAttPackDistGridI8(target, name, attpack, valueList, defaultvalueList, attnestflag, itemcount, isPresent, rc)
   ! 39.11.9
   type(ESMF_DistGrid), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  integer(ESMF_KIND_I8), dimension(:), allocatable, intent(out) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  integer(ESMF_KIND_I8), dimension(:), intent(in), optional :: defaultvalue
+  integer(ESMF_KIND_I8), dimension(:), intent(out) :: valueList
+  integer(ESMF_KIND_I8), dimension(:), intent(in), optional :: defaultvalueList
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(out), optional :: itemcount
   logical, intent(out), optional :: isPresent
@@ -21171,20 +20972,20 @@ subroutine ESMF_AttributeGetListAttPackDistGridI8(target, name, attpack, value, 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2Get(attpack%info, key, value, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
-    if (present(defaultvalue)) then
-      if (size(defaultvalue) /= size(value)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalue) /= size(value)", ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(defaultvalueList)) then
+      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
       endif
-      do ii=1,size(defaultvalue)
-        value(ii) = defaultvalue(ii)
+      do ii=1,size(defaultvalueList)
+        valueList(ii) = defaultvalueList(ii)
       enddo
-      if (present(itemcount)) itemcount = size(defaultvalue)
+      if (present(itemcount)) itemcount = SIZE(defaultvalueList)
     else
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//trim(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//TRIM(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   endif
 
@@ -21231,9 +21032,8 @@ subroutine ESMF_AttributeGetListObjDistGridI8(target, name, valueList, defaultva
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    !tdk:todo: enable to work with character arrays
-
-
+    call ESMF_Info2GetListAllocated(info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
     if (present(defaultvalueList)) then
@@ -21258,14 +21058,13 @@ end subroutine ESMF_AttributeGetListObjDistGridI8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetListAttPackDistGridCH()"
-subroutine ESMF_AttributeGetListAttPackDistGridCH(target, name, attpack, value, keywordEnforcer, defaultvalue, attnestflag, itemcount, isPresent, rc)
+subroutine ESMF_AttributeGetListAttPackDistGridCH(target, name, attpack, valueList, defaultvalueList, attnestflag, itemcount, isPresent, rc)
   ! 39.11.9
   type(ESMF_DistGrid), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  character(len=*), dimension(:), allocatable, intent(out) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  character(len=*), dimension(:), intent(in), optional :: defaultvalue
+  character(len=*), dimension(:), intent(out) :: valueList
+  character(len=*), dimension(:), intent(in), optional :: defaultvalueList
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(out), optional :: itemcount
   logical, intent(out), optional :: isPresent
@@ -21291,20 +21090,20 @@ subroutine ESMF_AttributeGetListAttPackDistGridCH(target, name, attpack, value, 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2Get(attpack%info, key, value, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
-    if (present(defaultvalue)) then
-      if (size(defaultvalue) /= size(value)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalue) /= size(value)", ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(defaultvalueList)) then
+      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
       endif
-      do ii=1,size(defaultvalue)
-        value(ii) = defaultvalue(ii)
+      do ii=1,size(defaultvalueList)
+        valueList(ii) = defaultvalueList(ii)
       enddo
-      if (present(itemcount)) itemcount = size(defaultvalue)
+      if (present(itemcount)) itemcount = SIZE(defaultvalueList)
     else
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//trim(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//TRIM(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   endif
 
@@ -21351,9 +21150,8 @@ subroutine ESMF_AttributeGetListObjDistGridCH(target, name, valueList, defaultva
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    !tdk:todo: enable to work with character arrays
-
-
+    call ESMF_Info2GetListAllocated(info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
     if (present(defaultvalueList)) then
@@ -21378,14 +21176,13 @@ end subroutine ESMF_AttributeGetListObjDistGridCH
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetListAttPackDistGridLG()"
-subroutine ESMF_AttributeGetListAttPackDistGridLG(target, name, attpack, value, keywordEnforcer, defaultvalue, attnestflag, itemcount, isPresent, rc)
+subroutine ESMF_AttributeGetListAttPackDistGridLG(target, name, attpack, valueList, defaultvalueList, attnestflag, itemcount, isPresent, rc)
   ! 39.11.9
   type(ESMF_DistGrid), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  logical, dimension(:), allocatable, intent(out) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  logical, dimension(:), intent(in), optional :: defaultvalue
+  logical, dimension(:), intent(out) :: valueList
+  logical, dimension(:), intent(in), optional :: defaultvalueList
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(out), optional :: itemcount
   logical, intent(out), optional :: isPresent
@@ -21411,20 +21208,20 @@ subroutine ESMF_AttributeGetListAttPackDistGridLG(target, name, attpack, value, 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2Get(attpack%info, key, value, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
-    if (present(defaultvalue)) then
-      if (size(defaultvalue) /= size(value)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalue) /= size(value)", ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(defaultvalueList)) then
+      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
       endif
-      do ii=1,size(defaultvalue)
-        value(ii) = defaultvalue(ii)
+      do ii=1,size(defaultvalueList)
+        valueList(ii) = defaultvalueList(ii)
       enddo
-      if (present(itemcount)) itemcount = size(defaultvalue)
+      if (present(itemcount)) itemcount = SIZE(defaultvalueList)
     else
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//trim(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//TRIM(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   endif
 
@@ -21471,9 +21268,8 @@ subroutine ESMF_AttributeGetListObjDistGridLG(target, name, valueList, defaultva
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    !tdk:todo: enable to work with character arrays
-
-
+    call ESMF_Info2GetListAllocated(info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
     if (present(defaultvalueList)) then
@@ -21498,14 +21294,13 @@ end subroutine ESMF_AttributeGetListObjDistGridLG
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetListAttPackFieldR4()"
-subroutine ESMF_AttributeGetListAttPackFieldR4(target, name, attpack, value, keywordEnforcer, defaultvalue, attnestflag, itemcount, isPresent, rc)
+subroutine ESMF_AttributeGetListAttPackFieldR4(target, name, attpack, valueList, defaultvalueList, attnestflag, itemcount, isPresent, rc)
   ! 39.11.9
   type(ESMF_Field), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  real(ESMF_KIND_R4), dimension(:), allocatable, intent(out) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  real(ESMF_KIND_R4), dimension(:), intent(in), optional :: defaultvalue
+  real(ESMF_KIND_R4), dimension(:), intent(out) :: valueList
+  real(ESMF_KIND_R4), dimension(:), intent(in), optional :: defaultvalueList
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(out), optional :: itemcount
   logical, intent(out), optional :: isPresent
@@ -21531,20 +21326,20 @@ subroutine ESMF_AttributeGetListAttPackFieldR4(target, name, attpack, value, key
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2Get(attpack%info, key, value, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
-    if (present(defaultvalue)) then
-      if (size(defaultvalue) /= size(value)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalue) /= size(value)", ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(defaultvalueList)) then
+      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
       endif
-      do ii=1,size(defaultvalue)
-        value(ii) = defaultvalue(ii)
+      do ii=1,size(defaultvalueList)
+        valueList(ii) = defaultvalueList(ii)
       enddo
-      if (present(itemcount)) itemcount = size(defaultvalue)
+      if (present(itemcount)) itemcount = SIZE(defaultvalueList)
     else
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//trim(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//TRIM(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   endif
 
@@ -21591,9 +21386,8 @@ subroutine ESMF_AttributeGetListObjFieldR4(target, name, valueList, defaultvalue
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    !tdk:todo: enable to work with character arrays
-
-
+    call ESMF_Info2GetListAllocated(info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
     if (present(defaultvalueList)) then
@@ -21618,14 +21412,13 @@ end subroutine ESMF_AttributeGetListObjFieldR4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetListAttPackFieldR8()"
-subroutine ESMF_AttributeGetListAttPackFieldR8(target, name, attpack, value, keywordEnforcer, defaultvalue, attnestflag, itemcount, isPresent, rc)
+subroutine ESMF_AttributeGetListAttPackFieldR8(target, name, attpack, valueList, defaultvalueList, attnestflag, itemcount, isPresent, rc)
   ! 39.11.9
   type(ESMF_Field), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  real(ESMF_KIND_R8), dimension(:), allocatable, intent(out) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  real(ESMF_KIND_R8), dimension(:), intent(in), optional :: defaultvalue
+  real(ESMF_KIND_R8), dimension(:), intent(out) :: valueList
+  real(ESMF_KIND_R8), dimension(:), intent(in), optional :: defaultvalueList
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(out), optional :: itemcount
   logical, intent(out), optional :: isPresent
@@ -21651,20 +21444,20 @@ subroutine ESMF_AttributeGetListAttPackFieldR8(target, name, attpack, value, key
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2Get(attpack%info, key, value, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
-    if (present(defaultvalue)) then
-      if (size(defaultvalue) /= size(value)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalue) /= size(value)", ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(defaultvalueList)) then
+      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
       endif
-      do ii=1,size(defaultvalue)
-        value(ii) = defaultvalue(ii)
+      do ii=1,size(defaultvalueList)
+        valueList(ii) = defaultvalueList(ii)
       enddo
-      if (present(itemcount)) itemcount = size(defaultvalue)
+      if (present(itemcount)) itemcount = SIZE(defaultvalueList)
     else
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//trim(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//TRIM(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   endif
 
@@ -21711,9 +21504,8 @@ subroutine ESMF_AttributeGetListObjFieldR8(target, name, valueList, defaultvalue
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    !tdk:todo: enable to work with character arrays
-
-
+    call ESMF_Info2GetListAllocated(info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
     if (present(defaultvalueList)) then
@@ -21738,14 +21530,13 @@ end subroutine ESMF_AttributeGetListObjFieldR8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetListAttPackFieldI4()"
-subroutine ESMF_AttributeGetListAttPackFieldI4(target, name, attpack, value, keywordEnforcer, defaultvalue, attnestflag, itemcount, isPresent, rc)
+subroutine ESMF_AttributeGetListAttPackFieldI4(target, name, attpack, valueList, defaultvalueList, attnestflag, itemcount, isPresent, rc)
   ! 39.11.9
   type(ESMF_Field), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  integer(ESMF_KIND_I4), dimension(:), allocatable, intent(out) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  integer(ESMF_KIND_I4), dimension(:), intent(in), optional :: defaultvalue
+  integer(ESMF_KIND_I4), dimension(:), intent(out) :: valueList
+  integer(ESMF_KIND_I4), dimension(:), intent(in), optional :: defaultvalueList
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(out), optional :: itemcount
   logical, intent(out), optional :: isPresent
@@ -21771,20 +21562,20 @@ subroutine ESMF_AttributeGetListAttPackFieldI4(target, name, attpack, value, key
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2Get(attpack%info, key, value, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
-    if (present(defaultvalue)) then
-      if (size(defaultvalue) /= size(value)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalue) /= size(value)", ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(defaultvalueList)) then
+      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
       endif
-      do ii=1,size(defaultvalue)
-        value(ii) = defaultvalue(ii)
+      do ii=1,size(defaultvalueList)
+        valueList(ii) = defaultvalueList(ii)
       enddo
-      if (present(itemcount)) itemcount = size(defaultvalue)
+      if (present(itemcount)) itemcount = SIZE(defaultvalueList)
     else
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//trim(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//TRIM(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   endif
 
@@ -21831,9 +21622,8 @@ subroutine ESMF_AttributeGetListObjFieldI4(target, name, valueList, defaultvalue
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    !tdk:todo: enable to work with character arrays
-
-
+    call ESMF_Info2GetListAllocated(info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
     if (present(defaultvalueList)) then
@@ -21858,14 +21648,13 @@ end subroutine ESMF_AttributeGetListObjFieldI4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetListAttPackFieldI8()"
-subroutine ESMF_AttributeGetListAttPackFieldI8(target, name, attpack, value, keywordEnforcer, defaultvalue, attnestflag, itemcount, isPresent, rc)
+subroutine ESMF_AttributeGetListAttPackFieldI8(target, name, attpack, valueList, defaultvalueList, attnestflag, itemcount, isPresent, rc)
   ! 39.11.9
   type(ESMF_Field), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  integer(ESMF_KIND_I8), dimension(:), allocatable, intent(out) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  integer(ESMF_KIND_I8), dimension(:), intent(in), optional :: defaultvalue
+  integer(ESMF_KIND_I8), dimension(:), intent(out) :: valueList
+  integer(ESMF_KIND_I8), dimension(:), intent(in), optional :: defaultvalueList
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(out), optional :: itemcount
   logical, intent(out), optional :: isPresent
@@ -21891,20 +21680,20 @@ subroutine ESMF_AttributeGetListAttPackFieldI8(target, name, attpack, value, key
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2Get(attpack%info, key, value, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
-    if (present(defaultvalue)) then
-      if (size(defaultvalue) /= size(value)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalue) /= size(value)", ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(defaultvalueList)) then
+      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
       endif
-      do ii=1,size(defaultvalue)
-        value(ii) = defaultvalue(ii)
+      do ii=1,size(defaultvalueList)
+        valueList(ii) = defaultvalueList(ii)
       enddo
-      if (present(itemcount)) itemcount = size(defaultvalue)
+      if (present(itemcount)) itemcount = SIZE(defaultvalueList)
     else
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//trim(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//TRIM(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   endif
 
@@ -21951,9 +21740,8 @@ subroutine ESMF_AttributeGetListObjFieldI8(target, name, valueList, defaultvalue
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    !tdk:todo: enable to work with character arrays
-
-
+    call ESMF_Info2GetListAllocated(info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
     if (present(defaultvalueList)) then
@@ -21978,14 +21766,13 @@ end subroutine ESMF_AttributeGetListObjFieldI8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetListAttPackFieldCH()"
-subroutine ESMF_AttributeGetListAttPackFieldCH(target, name, attpack, value, keywordEnforcer, defaultvalue, attnestflag, itemcount, isPresent, rc)
+subroutine ESMF_AttributeGetListAttPackFieldCH(target, name, attpack, valueList, defaultvalueList, attnestflag, itemcount, isPresent, rc)
   ! 39.11.9
   type(ESMF_Field), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  character(len=*), dimension(:), allocatable, intent(out) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  character(len=*), dimension(:), intent(in), optional :: defaultvalue
+  character(len=*), dimension(:), intent(out) :: valueList
+  character(len=*), dimension(:), intent(in), optional :: defaultvalueList
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(out), optional :: itemcount
   logical, intent(out), optional :: isPresent
@@ -22011,20 +21798,20 @@ subroutine ESMF_AttributeGetListAttPackFieldCH(target, name, attpack, value, key
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2Get(attpack%info, key, value, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
-    if (present(defaultvalue)) then
-      if (size(defaultvalue) /= size(value)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalue) /= size(value)", ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(defaultvalueList)) then
+      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
       endif
-      do ii=1,size(defaultvalue)
-        value(ii) = defaultvalue(ii)
+      do ii=1,size(defaultvalueList)
+        valueList(ii) = defaultvalueList(ii)
       enddo
-      if (present(itemcount)) itemcount = size(defaultvalue)
+      if (present(itemcount)) itemcount = SIZE(defaultvalueList)
     else
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//trim(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//TRIM(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   endif
 
@@ -22071,9 +21858,8 @@ subroutine ESMF_AttributeGetListObjFieldCH(target, name, valueList, defaultvalue
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    !tdk:todo: enable to work with character arrays
-
-
+    call ESMF_Info2GetListAllocated(info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
     if (present(defaultvalueList)) then
@@ -22098,14 +21884,13 @@ end subroutine ESMF_AttributeGetListObjFieldCH
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetListAttPackFieldLG()"
-subroutine ESMF_AttributeGetListAttPackFieldLG(target, name, attpack, value, keywordEnforcer, defaultvalue, attnestflag, itemcount, isPresent, rc)
+subroutine ESMF_AttributeGetListAttPackFieldLG(target, name, attpack, valueList, defaultvalueList, attnestflag, itemcount, isPresent, rc)
   ! 39.11.9
   type(ESMF_Field), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  logical, dimension(:), allocatable, intent(out) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  logical, dimension(:), intent(in), optional :: defaultvalue
+  logical, dimension(:), intent(out) :: valueList
+  logical, dimension(:), intent(in), optional :: defaultvalueList
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(out), optional :: itemcount
   logical, intent(out), optional :: isPresent
@@ -22131,20 +21916,20 @@ subroutine ESMF_AttributeGetListAttPackFieldLG(target, name, attpack, value, key
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2Get(attpack%info, key, value, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
-    if (present(defaultvalue)) then
-      if (size(defaultvalue) /= size(value)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalue) /= size(value)", ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(defaultvalueList)) then
+      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
       endif
-      do ii=1,size(defaultvalue)
-        value(ii) = defaultvalue(ii)
+      do ii=1,size(defaultvalueList)
+        valueList(ii) = defaultvalueList(ii)
       enddo
-      if (present(itemcount)) itemcount = size(defaultvalue)
+      if (present(itemcount)) itemcount = SIZE(defaultvalueList)
     else
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//trim(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//TRIM(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   endif
 
@@ -22191,9 +21976,8 @@ subroutine ESMF_AttributeGetListObjFieldLG(target, name, valueList, defaultvalue
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    !tdk:todo: enable to work with character arrays
-
-
+    call ESMF_Info2GetListAllocated(info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
     if (present(defaultvalueList)) then
@@ -22218,14 +22002,13 @@ end subroutine ESMF_AttributeGetListObjFieldLG
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetListAttPackFieldBundleR4()"
-subroutine ESMF_AttributeGetListAttPackFieldBundleR4(target, name, attpack, value, keywordEnforcer, defaultvalue, attnestflag, itemcount, isPresent, rc)
+subroutine ESMF_AttributeGetListAttPackFieldBundleR4(target, name, attpack, valueList, defaultvalueList, attnestflag, itemcount, isPresent, rc)
   ! 39.11.9
   type(ESMF_FieldBundle), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  real(ESMF_KIND_R4), dimension(:), allocatable, intent(out) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  real(ESMF_KIND_R4), dimension(:), intent(in), optional :: defaultvalue
+  real(ESMF_KIND_R4), dimension(:), intent(out) :: valueList
+  real(ESMF_KIND_R4), dimension(:), intent(in), optional :: defaultvalueList
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(out), optional :: itemcount
   logical, intent(out), optional :: isPresent
@@ -22251,20 +22034,20 @@ subroutine ESMF_AttributeGetListAttPackFieldBundleR4(target, name, attpack, valu
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2Get(attpack%info, key, value, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
-    if (present(defaultvalue)) then
-      if (size(defaultvalue) /= size(value)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalue) /= size(value)", ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(defaultvalueList)) then
+      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
       endif
-      do ii=1,size(defaultvalue)
-        value(ii) = defaultvalue(ii)
+      do ii=1,size(defaultvalueList)
+        valueList(ii) = defaultvalueList(ii)
       enddo
-      if (present(itemcount)) itemcount = size(defaultvalue)
+      if (present(itemcount)) itemcount = SIZE(defaultvalueList)
     else
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//trim(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//TRIM(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   endif
 
@@ -22311,9 +22094,8 @@ subroutine ESMF_AttributeGetListObjFieldBundleR4(target, name, valueList, defaul
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    !tdk:todo: enable to work with character arrays
-
-
+    call ESMF_Info2GetListAllocated(info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
     if (present(defaultvalueList)) then
@@ -22338,14 +22120,13 @@ end subroutine ESMF_AttributeGetListObjFieldBundleR4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetListAttPackFieldBundleR8()"
-subroutine ESMF_AttributeGetListAttPackFieldBundleR8(target, name, attpack, value, keywordEnforcer, defaultvalue, attnestflag, itemcount, isPresent, rc)
+subroutine ESMF_AttributeGetListAttPackFieldBundleR8(target, name, attpack, valueList, defaultvalueList, attnestflag, itemcount, isPresent, rc)
   ! 39.11.9
   type(ESMF_FieldBundle), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  real(ESMF_KIND_R8), dimension(:), allocatable, intent(out) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  real(ESMF_KIND_R8), dimension(:), intent(in), optional :: defaultvalue
+  real(ESMF_KIND_R8), dimension(:), intent(out) :: valueList
+  real(ESMF_KIND_R8), dimension(:), intent(in), optional :: defaultvalueList
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(out), optional :: itemcount
   logical, intent(out), optional :: isPresent
@@ -22371,20 +22152,20 @@ subroutine ESMF_AttributeGetListAttPackFieldBundleR8(target, name, attpack, valu
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2Get(attpack%info, key, value, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
-    if (present(defaultvalue)) then
-      if (size(defaultvalue) /= size(value)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalue) /= size(value)", ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(defaultvalueList)) then
+      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
       endif
-      do ii=1,size(defaultvalue)
-        value(ii) = defaultvalue(ii)
+      do ii=1,size(defaultvalueList)
+        valueList(ii) = defaultvalueList(ii)
       enddo
-      if (present(itemcount)) itemcount = size(defaultvalue)
+      if (present(itemcount)) itemcount = SIZE(defaultvalueList)
     else
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//trim(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//TRIM(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   endif
 
@@ -22431,9 +22212,8 @@ subroutine ESMF_AttributeGetListObjFieldBundleR8(target, name, valueList, defaul
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    !tdk:todo: enable to work with character arrays
-
-
+    call ESMF_Info2GetListAllocated(info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
     if (present(defaultvalueList)) then
@@ -22458,14 +22238,13 @@ end subroutine ESMF_AttributeGetListObjFieldBundleR8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetListAttPackFieldBundleI4()"
-subroutine ESMF_AttributeGetListAttPackFieldBundleI4(target, name, attpack, value, keywordEnforcer, defaultvalue, attnestflag, itemcount, isPresent, rc)
+subroutine ESMF_AttributeGetListAttPackFieldBundleI4(target, name, attpack, valueList, defaultvalueList, attnestflag, itemcount, isPresent, rc)
   ! 39.11.9
   type(ESMF_FieldBundle), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  integer(ESMF_KIND_I4), dimension(:), allocatable, intent(out) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  integer(ESMF_KIND_I4), dimension(:), intent(in), optional :: defaultvalue
+  integer(ESMF_KIND_I4), dimension(:), intent(out) :: valueList
+  integer(ESMF_KIND_I4), dimension(:), intent(in), optional :: defaultvalueList
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(out), optional :: itemcount
   logical, intent(out), optional :: isPresent
@@ -22491,20 +22270,20 @@ subroutine ESMF_AttributeGetListAttPackFieldBundleI4(target, name, attpack, valu
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2Get(attpack%info, key, value, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
-    if (present(defaultvalue)) then
-      if (size(defaultvalue) /= size(value)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalue) /= size(value)", ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(defaultvalueList)) then
+      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
       endif
-      do ii=1,size(defaultvalue)
-        value(ii) = defaultvalue(ii)
+      do ii=1,size(defaultvalueList)
+        valueList(ii) = defaultvalueList(ii)
       enddo
-      if (present(itemcount)) itemcount = size(defaultvalue)
+      if (present(itemcount)) itemcount = SIZE(defaultvalueList)
     else
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//trim(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//TRIM(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   endif
 
@@ -22551,9 +22330,8 @@ subroutine ESMF_AttributeGetListObjFieldBundleI4(target, name, valueList, defaul
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    !tdk:todo: enable to work with character arrays
-
-
+    call ESMF_Info2GetListAllocated(info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
     if (present(defaultvalueList)) then
@@ -22578,14 +22356,13 @@ end subroutine ESMF_AttributeGetListObjFieldBundleI4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetListAttPackFieldBundleI8()"
-subroutine ESMF_AttributeGetListAttPackFieldBundleI8(target, name, attpack, value, keywordEnforcer, defaultvalue, attnestflag, itemcount, isPresent, rc)
+subroutine ESMF_AttributeGetListAttPackFieldBundleI8(target, name, attpack, valueList, defaultvalueList, attnestflag, itemcount, isPresent, rc)
   ! 39.11.9
   type(ESMF_FieldBundle), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  integer(ESMF_KIND_I8), dimension(:), allocatable, intent(out) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  integer(ESMF_KIND_I8), dimension(:), intent(in), optional :: defaultvalue
+  integer(ESMF_KIND_I8), dimension(:), intent(out) :: valueList
+  integer(ESMF_KIND_I8), dimension(:), intent(in), optional :: defaultvalueList
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(out), optional :: itemcount
   logical, intent(out), optional :: isPresent
@@ -22611,20 +22388,20 @@ subroutine ESMF_AttributeGetListAttPackFieldBundleI8(target, name, attpack, valu
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2Get(attpack%info, key, value, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
-    if (present(defaultvalue)) then
-      if (size(defaultvalue) /= size(value)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalue) /= size(value)", ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(defaultvalueList)) then
+      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
       endif
-      do ii=1,size(defaultvalue)
-        value(ii) = defaultvalue(ii)
+      do ii=1,size(defaultvalueList)
+        valueList(ii) = defaultvalueList(ii)
       enddo
-      if (present(itemcount)) itemcount = size(defaultvalue)
+      if (present(itemcount)) itemcount = SIZE(defaultvalueList)
     else
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//trim(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//TRIM(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   endif
 
@@ -22671,9 +22448,8 @@ subroutine ESMF_AttributeGetListObjFieldBundleI8(target, name, valueList, defaul
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    !tdk:todo: enable to work with character arrays
-
-
+    call ESMF_Info2GetListAllocated(info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
     if (present(defaultvalueList)) then
@@ -22698,14 +22474,13 @@ end subroutine ESMF_AttributeGetListObjFieldBundleI8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetListAttPackFieldBundleCH()"
-subroutine ESMF_AttributeGetListAttPackFieldBundleCH(target, name, attpack, value, keywordEnforcer, defaultvalue, attnestflag, itemcount, isPresent, rc)
+subroutine ESMF_AttributeGetListAttPackFieldBundleCH(target, name, attpack, valueList, defaultvalueList, attnestflag, itemcount, isPresent, rc)
   ! 39.11.9
   type(ESMF_FieldBundle), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  character(len=*), dimension(:), allocatable, intent(out) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  character(len=*), dimension(:), intent(in), optional :: defaultvalue
+  character(len=*), dimension(:), intent(out) :: valueList
+  character(len=*), dimension(:), intent(in), optional :: defaultvalueList
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(out), optional :: itemcount
   logical, intent(out), optional :: isPresent
@@ -22731,20 +22506,20 @@ subroutine ESMF_AttributeGetListAttPackFieldBundleCH(target, name, attpack, valu
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2Get(attpack%info, key, value, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
-    if (present(defaultvalue)) then
-      if (size(defaultvalue) /= size(value)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalue) /= size(value)", ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(defaultvalueList)) then
+      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
       endif
-      do ii=1,size(defaultvalue)
-        value(ii) = defaultvalue(ii)
+      do ii=1,size(defaultvalueList)
+        valueList(ii) = defaultvalueList(ii)
       enddo
-      if (present(itemcount)) itemcount = size(defaultvalue)
+      if (present(itemcount)) itemcount = SIZE(defaultvalueList)
     else
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//trim(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//TRIM(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   endif
 
@@ -22791,9 +22566,8 @@ subroutine ESMF_AttributeGetListObjFieldBundleCH(target, name, valueList, defaul
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    !tdk:todo: enable to work with character arrays
-
-
+    call ESMF_Info2GetListAllocated(info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
     if (present(defaultvalueList)) then
@@ -22818,14 +22592,13 @@ end subroutine ESMF_AttributeGetListObjFieldBundleCH
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetListAttPackFieldBundleLG()"
-subroutine ESMF_AttributeGetListAttPackFieldBundleLG(target, name, attpack, value, keywordEnforcer, defaultvalue, attnestflag, itemcount, isPresent, rc)
+subroutine ESMF_AttributeGetListAttPackFieldBundleLG(target, name, attpack, valueList, defaultvalueList, attnestflag, itemcount, isPresent, rc)
   ! 39.11.9
   type(ESMF_FieldBundle), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  logical, dimension(:), allocatable, intent(out) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  logical, dimension(:), intent(in), optional :: defaultvalue
+  logical, dimension(:), intent(out) :: valueList
+  logical, dimension(:), intent(in), optional :: defaultvalueList
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(out), optional :: itemcount
   logical, intent(out), optional :: isPresent
@@ -22851,20 +22624,20 @@ subroutine ESMF_AttributeGetListAttPackFieldBundleLG(target, name, attpack, valu
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2Get(attpack%info, key, value, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
-    if (present(defaultvalue)) then
-      if (size(defaultvalue) /= size(value)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalue) /= size(value)", ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(defaultvalueList)) then
+      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
       endif
-      do ii=1,size(defaultvalue)
-        value(ii) = defaultvalue(ii)
+      do ii=1,size(defaultvalueList)
+        valueList(ii) = defaultvalueList(ii)
       enddo
-      if (present(itemcount)) itemcount = size(defaultvalue)
+      if (present(itemcount)) itemcount = SIZE(defaultvalueList)
     else
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//trim(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//TRIM(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   endif
 
@@ -22911,9 +22684,8 @@ subroutine ESMF_AttributeGetListObjFieldBundleLG(target, name, valueList, defaul
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    !tdk:todo: enable to work with character arrays
-
-
+    call ESMF_Info2GetListAllocated(info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
     if (present(defaultvalueList)) then
@@ -22938,14 +22710,13 @@ end subroutine ESMF_AttributeGetListObjFieldBundleLG
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetListAttPackGridR4()"
-subroutine ESMF_AttributeGetListAttPackGridR4(target, name, attpack, value, keywordEnforcer, defaultvalue, attnestflag, itemcount, isPresent, rc)
+subroutine ESMF_AttributeGetListAttPackGridR4(target, name, attpack, valueList, defaultvalueList, attnestflag, itemcount, isPresent, rc)
   ! 39.11.9
   type(ESMF_Grid), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  real(ESMF_KIND_R4), dimension(:), allocatable, intent(out) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  real(ESMF_KIND_R4), dimension(:), intent(in), optional :: defaultvalue
+  real(ESMF_KIND_R4), dimension(:), intent(out) :: valueList
+  real(ESMF_KIND_R4), dimension(:), intent(in), optional :: defaultvalueList
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(out), optional :: itemcount
   logical, intent(out), optional :: isPresent
@@ -22971,20 +22742,20 @@ subroutine ESMF_AttributeGetListAttPackGridR4(target, name, attpack, value, keyw
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2Get(attpack%info, key, value, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
-    if (present(defaultvalue)) then
-      if (size(defaultvalue) /= size(value)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalue) /= size(value)", ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(defaultvalueList)) then
+      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
       endif
-      do ii=1,size(defaultvalue)
-        value(ii) = defaultvalue(ii)
+      do ii=1,size(defaultvalueList)
+        valueList(ii) = defaultvalueList(ii)
       enddo
-      if (present(itemcount)) itemcount = size(defaultvalue)
+      if (present(itemcount)) itemcount = SIZE(defaultvalueList)
     else
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//trim(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//TRIM(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   endif
 
@@ -23031,9 +22802,8 @@ subroutine ESMF_AttributeGetListObjGridR4(target, name, valueList, defaultvalueL
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    !tdk:todo: enable to work with character arrays
-
-
+    call ESMF_Info2GetListAllocated(info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
     if (present(defaultvalueList)) then
@@ -23058,14 +22828,13 @@ end subroutine ESMF_AttributeGetListObjGridR4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetListAttPackGridR8()"
-subroutine ESMF_AttributeGetListAttPackGridR8(target, name, attpack, value, keywordEnforcer, defaultvalue, attnestflag, itemcount, isPresent, rc)
+subroutine ESMF_AttributeGetListAttPackGridR8(target, name, attpack, valueList, defaultvalueList, attnestflag, itemcount, isPresent, rc)
   ! 39.11.9
   type(ESMF_Grid), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  real(ESMF_KIND_R8), dimension(:), allocatable, intent(out) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  real(ESMF_KIND_R8), dimension(:), intent(in), optional :: defaultvalue
+  real(ESMF_KIND_R8), dimension(:), intent(out) :: valueList
+  real(ESMF_KIND_R8), dimension(:), intent(in), optional :: defaultvalueList
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(out), optional :: itemcount
   logical, intent(out), optional :: isPresent
@@ -23091,20 +22860,20 @@ subroutine ESMF_AttributeGetListAttPackGridR8(target, name, attpack, value, keyw
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2Get(attpack%info, key, value, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
-    if (present(defaultvalue)) then
-      if (size(defaultvalue) /= size(value)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalue) /= size(value)", ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(defaultvalueList)) then
+      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
       endif
-      do ii=1,size(defaultvalue)
-        value(ii) = defaultvalue(ii)
+      do ii=1,size(defaultvalueList)
+        valueList(ii) = defaultvalueList(ii)
       enddo
-      if (present(itemcount)) itemcount = size(defaultvalue)
+      if (present(itemcount)) itemcount = SIZE(defaultvalueList)
     else
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//trim(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//TRIM(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   endif
 
@@ -23151,9 +22920,8 @@ subroutine ESMF_AttributeGetListObjGridR8(target, name, valueList, defaultvalueL
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    !tdk:todo: enable to work with character arrays
-
-
+    call ESMF_Info2GetListAllocated(info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
     if (present(defaultvalueList)) then
@@ -23178,14 +22946,13 @@ end subroutine ESMF_AttributeGetListObjGridR8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetListAttPackGridI4()"
-subroutine ESMF_AttributeGetListAttPackGridI4(target, name, attpack, value, keywordEnforcer, defaultvalue, attnestflag, itemcount, isPresent, rc)
+subroutine ESMF_AttributeGetListAttPackGridI4(target, name, attpack, valueList, defaultvalueList, attnestflag, itemcount, isPresent, rc)
   ! 39.11.9
   type(ESMF_Grid), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  integer(ESMF_KIND_I4), dimension(:), allocatable, intent(out) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  integer(ESMF_KIND_I4), dimension(:), intent(in), optional :: defaultvalue
+  integer(ESMF_KIND_I4), dimension(:), intent(out) :: valueList
+  integer(ESMF_KIND_I4), dimension(:), intent(in), optional :: defaultvalueList
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(out), optional :: itemcount
   logical, intent(out), optional :: isPresent
@@ -23211,20 +22978,20 @@ subroutine ESMF_AttributeGetListAttPackGridI4(target, name, attpack, value, keyw
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2Get(attpack%info, key, value, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
-    if (present(defaultvalue)) then
-      if (size(defaultvalue) /= size(value)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalue) /= size(value)", ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(defaultvalueList)) then
+      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
       endif
-      do ii=1,size(defaultvalue)
-        value(ii) = defaultvalue(ii)
+      do ii=1,size(defaultvalueList)
+        valueList(ii) = defaultvalueList(ii)
       enddo
-      if (present(itemcount)) itemcount = size(defaultvalue)
+      if (present(itemcount)) itemcount = SIZE(defaultvalueList)
     else
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//trim(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//TRIM(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   endif
 
@@ -23271,9 +23038,8 @@ subroutine ESMF_AttributeGetListObjGridI4(target, name, valueList, defaultvalueL
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    !tdk:todo: enable to work with character arrays
-
-
+    call ESMF_Info2GetListAllocated(info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
     if (present(defaultvalueList)) then
@@ -23298,14 +23064,13 @@ end subroutine ESMF_AttributeGetListObjGridI4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetListAttPackGridI8()"
-subroutine ESMF_AttributeGetListAttPackGridI8(target, name, attpack, value, keywordEnforcer, defaultvalue, attnestflag, itemcount, isPresent, rc)
+subroutine ESMF_AttributeGetListAttPackGridI8(target, name, attpack, valueList, defaultvalueList, attnestflag, itemcount, isPresent, rc)
   ! 39.11.9
   type(ESMF_Grid), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  integer(ESMF_KIND_I8), dimension(:), allocatable, intent(out) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  integer(ESMF_KIND_I8), dimension(:), intent(in), optional :: defaultvalue
+  integer(ESMF_KIND_I8), dimension(:), intent(out) :: valueList
+  integer(ESMF_KIND_I8), dimension(:), intent(in), optional :: defaultvalueList
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(out), optional :: itemcount
   logical, intent(out), optional :: isPresent
@@ -23331,20 +23096,20 @@ subroutine ESMF_AttributeGetListAttPackGridI8(target, name, attpack, value, keyw
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2Get(attpack%info, key, value, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
-    if (present(defaultvalue)) then
-      if (size(defaultvalue) /= size(value)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalue) /= size(value)", ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(defaultvalueList)) then
+      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
       endif
-      do ii=1,size(defaultvalue)
-        value(ii) = defaultvalue(ii)
+      do ii=1,size(defaultvalueList)
+        valueList(ii) = defaultvalueList(ii)
       enddo
-      if (present(itemcount)) itemcount = size(defaultvalue)
+      if (present(itemcount)) itemcount = SIZE(defaultvalueList)
     else
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//trim(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//TRIM(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   endif
 
@@ -23391,9 +23156,8 @@ subroutine ESMF_AttributeGetListObjGridI8(target, name, valueList, defaultvalueL
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    !tdk:todo: enable to work with character arrays
-
-
+    call ESMF_Info2GetListAllocated(info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
     if (present(defaultvalueList)) then
@@ -23418,14 +23182,13 @@ end subroutine ESMF_AttributeGetListObjGridI8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetListAttPackGridCH()"
-subroutine ESMF_AttributeGetListAttPackGridCH(target, name, attpack, value, keywordEnforcer, defaultvalue, attnestflag, itemcount, isPresent, rc)
+subroutine ESMF_AttributeGetListAttPackGridCH(target, name, attpack, valueList, defaultvalueList, attnestflag, itemcount, isPresent, rc)
   ! 39.11.9
   type(ESMF_Grid), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  character(len=*), dimension(:), allocatable, intent(out) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  character(len=*), dimension(:), intent(in), optional :: defaultvalue
+  character(len=*), dimension(:), intent(out) :: valueList
+  character(len=*), dimension(:), intent(in), optional :: defaultvalueList
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(out), optional :: itemcount
   logical, intent(out), optional :: isPresent
@@ -23451,20 +23214,20 @@ subroutine ESMF_AttributeGetListAttPackGridCH(target, name, attpack, value, keyw
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2Get(attpack%info, key, value, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
-    if (present(defaultvalue)) then
-      if (size(defaultvalue) /= size(value)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalue) /= size(value)", ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(defaultvalueList)) then
+      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
       endif
-      do ii=1,size(defaultvalue)
-        value(ii) = defaultvalue(ii)
+      do ii=1,size(defaultvalueList)
+        valueList(ii) = defaultvalueList(ii)
       enddo
-      if (present(itemcount)) itemcount = size(defaultvalue)
+      if (present(itemcount)) itemcount = SIZE(defaultvalueList)
     else
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//trim(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//TRIM(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   endif
 
@@ -23511,9 +23274,8 @@ subroutine ESMF_AttributeGetListObjGridCH(target, name, valueList, defaultvalueL
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    !tdk:todo: enable to work with character arrays
-
-
+    call ESMF_Info2GetListAllocated(info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
     if (present(defaultvalueList)) then
@@ -23538,14 +23300,13 @@ end subroutine ESMF_AttributeGetListObjGridCH
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetListAttPackGridLG()"
-subroutine ESMF_AttributeGetListAttPackGridLG(target, name, attpack, value, keywordEnforcer, defaultvalue, attnestflag, itemcount, isPresent, rc)
+subroutine ESMF_AttributeGetListAttPackGridLG(target, name, attpack, valueList, defaultvalueList, attnestflag, itemcount, isPresent, rc)
   ! 39.11.9
   type(ESMF_Grid), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  logical, dimension(:), allocatable, intent(out) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  logical, dimension(:), intent(in), optional :: defaultvalue
+  logical, dimension(:), intent(out) :: valueList
+  logical, dimension(:), intent(in), optional :: defaultvalueList
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(out), optional :: itemcount
   logical, intent(out), optional :: isPresent
@@ -23571,20 +23332,20 @@ subroutine ESMF_AttributeGetListAttPackGridLG(target, name, attpack, value, keyw
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2Get(attpack%info, key, value, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
-    if (present(defaultvalue)) then
-      if (size(defaultvalue) /= size(value)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalue) /= size(value)", ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(defaultvalueList)) then
+      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
       endif
-      do ii=1,size(defaultvalue)
-        value(ii) = defaultvalue(ii)
+      do ii=1,size(defaultvalueList)
+        valueList(ii) = defaultvalueList(ii)
       enddo
-      if (present(itemcount)) itemcount = size(defaultvalue)
+      if (present(itemcount)) itemcount = SIZE(defaultvalueList)
     else
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//trim(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//TRIM(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   endif
 
@@ -23631,9 +23392,8 @@ subroutine ESMF_AttributeGetListObjGridLG(target, name, valueList, defaultvalueL
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    !tdk:todo: enable to work with character arrays
-
-
+    call ESMF_Info2GetListAllocated(info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
     if (present(defaultvalueList)) then
@@ -23658,14 +23418,13 @@ end subroutine ESMF_AttributeGetListObjGridLG
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetListAttPackStateR4()"
-subroutine ESMF_AttributeGetListAttPackStateR4(target, name, attpack, value, keywordEnforcer, defaultvalue, attnestflag, itemcount, isPresent, rc)
+subroutine ESMF_AttributeGetListAttPackStateR4(target, name, attpack, valueList, defaultvalueList, attnestflag, itemcount, isPresent, rc)
   ! 39.11.9
   type(ESMF_State), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  real(ESMF_KIND_R4), dimension(:), allocatable, intent(out) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  real(ESMF_KIND_R4), dimension(:), intent(in), optional :: defaultvalue
+  real(ESMF_KIND_R4), dimension(:), intent(out) :: valueList
+  real(ESMF_KIND_R4), dimension(:), intent(in), optional :: defaultvalueList
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(out), optional :: itemcount
   logical, intent(out), optional :: isPresent
@@ -23691,20 +23450,20 @@ subroutine ESMF_AttributeGetListAttPackStateR4(target, name, attpack, value, key
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2Get(attpack%info, key, value, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
-    if (present(defaultvalue)) then
-      if (size(defaultvalue) /= size(value)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalue) /= size(value)", ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(defaultvalueList)) then
+      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
       endif
-      do ii=1,size(defaultvalue)
-        value(ii) = defaultvalue(ii)
+      do ii=1,size(defaultvalueList)
+        valueList(ii) = defaultvalueList(ii)
       enddo
-      if (present(itemcount)) itemcount = size(defaultvalue)
+      if (present(itemcount)) itemcount = SIZE(defaultvalueList)
     else
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//trim(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//TRIM(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   endif
 
@@ -23751,9 +23510,8 @@ subroutine ESMF_AttributeGetListObjStateR4(target, name, valueList, defaultvalue
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    !tdk:todo: enable to work with character arrays
-
-
+    call ESMF_Info2GetListAllocated(info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
     if (present(defaultvalueList)) then
@@ -23778,14 +23536,13 @@ end subroutine ESMF_AttributeGetListObjStateR4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetListAttPackStateR8()"
-subroutine ESMF_AttributeGetListAttPackStateR8(target, name, attpack, value, keywordEnforcer, defaultvalue, attnestflag, itemcount, isPresent, rc)
+subroutine ESMF_AttributeGetListAttPackStateR8(target, name, attpack, valueList, defaultvalueList, attnestflag, itemcount, isPresent, rc)
   ! 39.11.9
   type(ESMF_State), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  real(ESMF_KIND_R8), dimension(:), allocatable, intent(out) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  real(ESMF_KIND_R8), dimension(:), intent(in), optional :: defaultvalue
+  real(ESMF_KIND_R8), dimension(:), intent(out) :: valueList
+  real(ESMF_KIND_R8), dimension(:), intent(in), optional :: defaultvalueList
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(out), optional :: itemcount
   logical, intent(out), optional :: isPresent
@@ -23811,20 +23568,20 @@ subroutine ESMF_AttributeGetListAttPackStateR8(target, name, attpack, value, key
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2Get(attpack%info, key, value, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
-    if (present(defaultvalue)) then
-      if (size(defaultvalue) /= size(value)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalue) /= size(value)", ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(defaultvalueList)) then
+      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
       endif
-      do ii=1,size(defaultvalue)
-        value(ii) = defaultvalue(ii)
+      do ii=1,size(defaultvalueList)
+        valueList(ii) = defaultvalueList(ii)
       enddo
-      if (present(itemcount)) itemcount = size(defaultvalue)
+      if (present(itemcount)) itemcount = SIZE(defaultvalueList)
     else
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//trim(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//TRIM(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   endif
 
@@ -23871,9 +23628,8 @@ subroutine ESMF_AttributeGetListObjStateR8(target, name, valueList, defaultvalue
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    !tdk:todo: enable to work with character arrays
-
-
+    call ESMF_Info2GetListAllocated(info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
     if (present(defaultvalueList)) then
@@ -23898,14 +23654,13 @@ end subroutine ESMF_AttributeGetListObjStateR8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetListAttPackStateI4()"
-subroutine ESMF_AttributeGetListAttPackStateI4(target, name, attpack, value, keywordEnforcer, defaultvalue, attnestflag, itemcount, isPresent, rc)
+subroutine ESMF_AttributeGetListAttPackStateI4(target, name, attpack, valueList, defaultvalueList, attnestflag, itemcount, isPresent, rc)
   ! 39.11.9
   type(ESMF_State), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  integer(ESMF_KIND_I4), dimension(:), allocatable, intent(out) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  integer(ESMF_KIND_I4), dimension(:), intent(in), optional :: defaultvalue
+  integer(ESMF_KIND_I4), dimension(:), intent(out) :: valueList
+  integer(ESMF_KIND_I4), dimension(:), intent(in), optional :: defaultvalueList
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(out), optional :: itemcount
   logical, intent(out), optional :: isPresent
@@ -23931,20 +23686,20 @@ subroutine ESMF_AttributeGetListAttPackStateI4(target, name, attpack, value, key
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2Get(attpack%info, key, value, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
-    if (present(defaultvalue)) then
-      if (size(defaultvalue) /= size(value)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalue) /= size(value)", ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(defaultvalueList)) then
+      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
       endif
-      do ii=1,size(defaultvalue)
-        value(ii) = defaultvalue(ii)
+      do ii=1,size(defaultvalueList)
+        valueList(ii) = defaultvalueList(ii)
       enddo
-      if (present(itemcount)) itemcount = size(defaultvalue)
+      if (present(itemcount)) itemcount = SIZE(defaultvalueList)
     else
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//trim(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//TRIM(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   endif
 
@@ -23991,9 +23746,8 @@ subroutine ESMF_AttributeGetListObjStateI4(target, name, valueList, defaultvalue
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    !tdk:todo: enable to work with character arrays
-
-
+    call ESMF_Info2GetListAllocated(info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
     if (present(defaultvalueList)) then
@@ -24018,14 +23772,13 @@ end subroutine ESMF_AttributeGetListObjStateI4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetListAttPackStateI8()"
-subroutine ESMF_AttributeGetListAttPackStateI8(target, name, attpack, value, keywordEnforcer, defaultvalue, attnestflag, itemcount, isPresent, rc)
+subroutine ESMF_AttributeGetListAttPackStateI8(target, name, attpack, valueList, defaultvalueList, attnestflag, itemcount, isPresent, rc)
   ! 39.11.9
   type(ESMF_State), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  integer(ESMF_KIND_I8), dimension(:), allocatable, intent(out) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  integer(ESMF_KIND_I8), dimension(:), intent(in), optional :: defaultvalue
+  integer(ESMF_KIND_I8), dimension(:), intent(out) :: valueList
+  integer(ESMF_KIND_I8), dimension(:), intent(in), optional :: defaultvalueList
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(out), optional :: itemcount
   logical, intent(out), optional :: isPresent
@@ -24051,20 +23804,20 @@ subroutine ESMF_AttributeGetListAttPackStateI8(target, name, attpack, value, key
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2Get(attpack%info, key, value, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
-    if (present(defaultvalue)) then
-      if (size(defaultvalue) /= size(value)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalue) /= size(value)", ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(defaultvalueList)) then
+      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
       endif
-      do ii=1,size(defaultvalue)
-        value(ii) = defaultvalue(ii)
+      do ii=1,size(defaultvalueList)
+        valueList(ii) = defaultvalueList(ii)
       enddo
-      if (present(itemcount)) itemcount = size(defaultvalue)
+      if (present(itemcount)) itemcount = SIZE(defaultvalueList)
     else
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//trim(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//TRIM(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   endif
 
@@ -24111,9 +23864,8 @@ subroutine ESMF_AttributeGetListObjStateI8(target, name, valueList, defaultvalue
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    !tdk:todo: enable to work with character arrays
-
-
+    call ESMF_Info2GetListAllocated(info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
     if (present(defaultvalueList)) then
@@ -24138,14 +23890,13 @@ end subroutine ESMF_AttributeGetListObjStateI8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetListAttPackStateCH()"
-subroutine ESMF_AttributeGetListAttPackStateCH(target, name, attpack, value, keywordEnforcer, defaultvalue, attnestflag, itemcount, isPresent, rc)
+subroutine ESMF_AttributeGetListAttPackStateCH(target, name, attpack, valueList, defaultvalueList, attnestflag, itemcount, isPresent, rc)
   ! 39.11.9
   type(ESMF_State), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  character(len=*), dimension(:), allocatable, intent(out) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  character(len=*), dimension(:), intent(in), optional :: defaultvalue
+  character(len=*), dimension(:), intent(out) :: valueList
+  character(len=*), dimension(:), intent(in), optional :: defaultvalueList
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(out), optional :: itemcount
   logical, intent(out), optional :: isPresent
@@ -24171,20 +23922,20 @@ subroutine ESMF_AttributeGetListAttPackStateCH(target, name, attpack, value, key
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2Get(attpack%info, key, value, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
-    if (present(defaultvalue)) then
-      if (size(defaultvalue) /= size(value)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalue) /= size(value)", ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(defaultvalueList)) then
+      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
       endif
-      do ii=1,size(defaultvalue)
-        value(ii) = defaultvalue(ii)
+      do ii=1,size(defaultvalueList)
+        valueList(ii) = defaultvalueList(ii)
       enddo
-      if (present(itemcount)) itemcount = size(defaultvalue)
+      if (present(itemcount)) itemcount = SIZE(defaultvalueList)
     else
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//trim(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//TRIM(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   endif
 
@@ -24231,9 +23982,8 @@ subroutine ESMF_AttributeGetListObjStateCH(target, name, valueList, defaultvalue
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    !tdk:todo: enable to work with character arrays
-
-
+    call ESMF_Info2GetListAllocated(info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
     if (present(defaultvalueList)) then
@@ -24258,14 +24008,13 @@ end subroutine ESMF_AttributeGetListObjStateCH
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetListAttPackStateLG()"
-subroutine ESMF_AttributeGetListAttPackStateLG(target, name, attpack, value, keywordEnforcer, defaultvalue, attnestflag, itemcount, isPresent, rc)
+subroutine ESMF_AttributeGetListAttPackStateLG(target, name, attpack, valueList, defaultvalueList, attnestflag, itemcount, isPresent, rc)
   ! 39.11.9
   type(ESMF_State), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  logical, dimension(:), allocatable, intent(out) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  logical, dimension(:), intent(in), optional :: defaultvalue
+  logical, dimension(:), intent(out) :: valueList
+  logical, dimension(:), intent(in), optional :: defaultvalueList
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(out), optional :: itemcount
   logical, intent(out), optional :: isPresent
@@ -24291,20 +24040,20 @@ subroutine ESMF_AttributeGetListAttPackStateLG(target, name, attpack, value, key
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2Get(attpack%info, key, value, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
-    if (present(defaultvalue)) then
-      if (size(defaultvalue) /= size(value)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalue) /= size(value)", ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(defaultvalueList)) then
+      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
       endif
-      do ii=1,size(defaultvalue)
-        value(ii) = defaultvalue(ii)
+      do ii=1,size(defaultvalueList)
+        valueList(ii) = defaultvalueList(ii)
       enddo
-      if (present(itemcount)) itemcount = size(defaultvalue)
+      if (present(itemcount)) itemcount = SIZE(defaultvalueList)
     else
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//trim(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//TRIM(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   endif
 
@@ -24351,9 +24100,8 @@ subroutine ESMF_AttributeGetListObjStateLG(target, name, valueList, defaultvalue
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    !tdk:todo: enable to work with character arrays
-
-
+    call ESMF_Info2GetListAllocated(info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
     if (present(defaultvalueList)) then
@@ -24378,14 +24126,13 @@ end subroutine ESMF_AttributeGetListObjStateLG
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetListAttPackLocStreamR4()"
-subroutine ESMF_AttributeGetListAttPackLocStreamR4(target, name, attpack, value, keywordEnforcer, defaultvalue, attnestflag, itemcount, isPresent, rc)
+subroutine ESMF_AttributeGetListAttPackLocStreamR4(target, name, attpack, valueList, defaultvalueList, attnestflag, itemcount, isPresent, rc)
   ! 39.11.9
   type(ESMF_LocStream), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  real(ESMF_KIND_R4), dimension(:), allocatable, intent(out) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  real(ESMF_KIND_R4), dimension(:), intent(in), optional :: defaultvalue
+  real(ESMF_KIND_R4), dimension(:), intent(out) :: valueList
+  real(ESMF_KIND_R4), dimension(:), intent(in), optional :: defaultvalueList
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(out), optional :: itemcount
   logical, intent(out), optional :: isPresent
@@ -24411,20 +24158,20 @@ subroutine ESMF_AttributeGetListAttPackLocStreamR4(target, name, attpack, value,
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2Get(attpack%info, key, value, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
-    if (present(defaultvalue)) then
-      if (size(defaultvalue) /= size(value)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalue) /= size(value)", ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(defaultvalueList)) then
+      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
       endif
-      do ii=1,size(defaultvalue)
-        value(ii) = defaultvalue(ii)
+      do ii=1,size(defaultvalueList)
+        valueList(ii) = defaultvalueList(ii)
       enddo
-      if (present(itemcount)) itemcount = size(defaultvalue)
+      if (present(itemcount)) itemcount = SIZE(defaultvalueList)
     else
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//trim(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//TRIM(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   endif
 
@@ -24471,9 +24218,8 @@ subroutine ESMF_AttributeGetListObjLocStreamR4(target, name, valueList, defaultv
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    !tdk:todo: enable to work with character arrays
-
-
+    call ESMF_Info2GetListAllocated(info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
     if (present(defaultvalueList)) then
@@ -24498,14 +24244,13 @@ end subroutine ESMF_AttributeGetListObjLocStreamR4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetListAttPackLocStreamR8()"
-subroutine ESMF_AttributeGetListAttPackLocStreamR8(target, name, attpack, value, keywordEnforcer, defaultvalue, attnestflag, itemcount, isPresent, rc)
+subroutine ESMF_AttributeGetListAttPackLocStreamR8(target, name, attpack, valueList, defaultvalueList, attnestflag, itemcount, isPresent, rc)
   ! 39.11.9
   type(ESMF_LocStream), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  real(ESMF_KIND_R8), dimension(:), allocatable, intent(out) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  real(ESMF_KIND_R8), dimension(:), intent(in), optional :: defaultvalue
+  real(ESMF_KIND_R8), dimension(:), intent(out) :: valueList
+  real(ESMF_KIND_R8), dimension(:), intent(in), optional :: defaultvalueList
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(out), optional :: itemcount
   logical, intent(out), optional :: isPresent
@@ -24531,20 +24276,20 @@ subroutine ESMF_AttributeGetListAttPackLocStreamR8(target, name, attpack, value,
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2Get(attpack%info, key, value, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
-    if (present(defaultvalue)) then
-      if (size(defaultvalue) /= size(value)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalue) /= size(value)", ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(defaultvalueList)) then
+      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
       endif
-      do ii=1,size(defaultvalue)
-        value(ii) = defaultvalue(ii)
+      do ii=1,size(defaultvalueList)
+        valueList(ii) = defaultvalueList(ii)
       enddo
-      if (present(itemcount)) itemcount = size(defaultvalue)
+      if (present(itemcount)) itemcount = SIZE(defaultvalueList)
     else
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//trim(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//TRIM(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   endif
 
@@ -24591,9 +24336,8 @@ subroutine ESMF_AttributeGetListObjLocStreamR8(target, name, valueList, defaultv
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    !tdk:todo: enable to work with character arrays
-
-
+    call ESMF_Info2GetListAllocated(info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
     if (present(defaultvalueList)) then
@@ -24618,14 +24362,13 @@ end subroutine ESMF_AttributeGetListObjLocStreamR8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetListAttPackLocStreamI4()"
-subroutine ESMF_AttributeGetListAttPackLocStreamI4(target, name, attpack, value, keywordEnforcer, defaultvalue, attnestflag, itemcount, isPresent, rc)
+subroutine ESMF_AttributeGetListAttPackLocStreamI4(target, name, attpack, valueList, defaultvalueList, attnestflag, itemcount, isPresent, rc)
   ! 39.11.9
   type(ESMF_LocStream), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  integer(ESMF_KIND_I4), dimension(:), allocatable, intent(out) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  integer(ESMF_KIND_I4), dimension(:), intent(in), optional :: defaultvalue
+  integer(ESMF_KIND_I4), dimension(:), intent(out) :: valueList
+  integer(ESMF_KIND_I4), dimension(:), intent(in), optional :: defaultvalueList
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(out), optional :: itemcount
   logical, intent(out), optional :: isPresent
@@ -24651,20 +24394,20 @@ subroutine ESMF_AttributeGetListAttPackLocStreamI4(target, name, attpack, value,
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2Get(attpack%info, key, value, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
-    if (present(defaultvalue)) then
-      if (size(defaultvalue) /= size(value)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalue) /= size(value)", ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(defaultvalueList)) then
+      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
       endif
-      do ii=1,size(defaultvalue)
-        value(ii) = defaultvalue(ii)
+      do ii=1,size(defaultvalueList)
+        valueList(ii) = defaultvalueList(ii)
       enddo
-      if (present(itemcount)) itemcount = size(defaultvalue)
+      if (present(itemcount)) itemcount = SIZE(defaultvalueList)
     else
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//trim(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//TRIM(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   endif
 
@@ -24711,9 +24454,8 @@ subroutine ESMF_AttributeGetListObjLocStreamI4(target, name, valueList, defaultv
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    !tdk:todo: enable to work with character arrays
-
-
+    call ESMF_Info2GetListAllocated(info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
     if (present(defaultvalueList)) then
@@ -24738,14 +24480,13 @@ end subroutine ESMF_AttributeGetListObjLocStreamI4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetListAttPackLocStreamI8()"
-subroutine ESMF_AttributeGetListAttPackLocStreamI8(target, name, attpack, value, keywordEnforcer, defaultvalue, attnestflag, itemcount, isPresent, rc)
+subroutine ESMF_AttributeGetListAttPackLocStreamI8(target, name, attpack, valueList, defaultvalueList, attnestflag, itemcount, isPresent, rc)
   ! 39.11.9
   type(ESMF_LocStream), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  integer(ESMF_KIND_I8), dimension(:), allocatable, intent(out) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  integer(ESMF_KIND_I8), dimension(:), intent(in), optional :: defaultvalue
+  integer(ESMF_KIND_I8), dimension(:), intent(out) :: valueList
+  integer(ESMF_KIND_I8), dimension(:), intent(in), optional :: defaultvalueList
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(out), optional :: itemcount
   logical, intent(out), optional :: isPresent
@@ -24771,20 +24512,20 @@ subroutine ESMF_AttributeGetListAttPackLocStreamI8(target, name, attpack, value,
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2Get(attpack%info, key, value, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
-    if (present(defaultvalue)) then
-      if (size(defaultvalue) /= size(value)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalue) /= size(value)", ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(defaultvalueList)) then
+      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
       endif
-      do ii=1,size(defaultvalue)
-        value(ii) = defaultvalue(ii)
+      do ii=1,size(defaultvalueList)
+        valueList(ii) = defaultvalueList(ii)
       enddo
-      if (present(itemcount)) itemcount = size(defaultvalue)
+      if (present(itemcount)) itemcount = SIZE(defaultvalueList)
     else
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//trim(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//TRIM(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   endif
 
@@ -24831,9 +24572,8 @@ subroutine ESMF_AttributeGetListObjLocStreamI8(target, name, valueList, defaultv
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    !tdk:todo: enable to work with character arrays
-
-
+    call ESMF_Info2GetListAllocated(info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
     if (present(defaultvalueList)) then
@@ -24858,14 +24598,13 @@ end subroutine ESMF_AttributeGetListObjLocStreamI8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetListAttPackLocStreamCH()"
-subroutine ESMF_AttributeGetListAttPackLocStreamCH(target, name, attpack, value, keywordEnforcer, defaultvalue, attnestflag, itemcount, isPresent, rc)
+subroutine ESMF_AttributeGetListAttPackLocStreamCH(target, name, attpack, valueList, defaultvalueList, attnestflag, itemcount, isPresent, rc)
   ! 39.11.9
   type(ESMF_LocStream), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  character(len=*), dimension(:), allocatable, intent(out) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  character(len=*), dimension(:), intent(in), optional :: defaultvalue
+  character(len=*), dimension(:), intent(out) :: valueList
+  character(len=*), dimension(:), intent(in), optional :: defaultvalueList
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(out), optional :: itemcount
   logical, intent(out), optional :: isPresent
@@ -24891,20 +24630,20 @@ subroutine ESMF_AttributeGetListAttPackLocStreamCH(target, name, attpack, value,
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2Get(attpack%info, key, value, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
-    if (present(defaultvalue)) then
-      if (size(defaultvalue) /= size(value)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalue) /= size(value)", ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(defaultvalueList)) then
+      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
       endif
-      do ii=1,size(defaultvalue)
-        value(ii) = defaultvalue(ii)
+      do ii=1,size(defaultvalueList)
+        valueList(ii) = defaultvalueList(ii)
       enddo
-      if (present(itemcount)) itemcount = size(defaultvalue)
+      if (present(itemcount)) itemcount = SIZE(defaultvalueList)
     else
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//trim(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//TRIM(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   endif
 
@@ -24951,9 +24690,8 @@ subroutine ESMF_AttributeGetListObjLocStreamCH(target, name, valueList, defaultv
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    !tdk:todo: enable to work with character arrays
-
-
+    call ESMF_Info2GetListAllocated(info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
     if (present(defaultvalueList)) then
@@ -24978,14 +24716,13 @@ end subroutine ESMF_AttributeGetListObjLocStreamCH
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetListAttPackLocStreamLG()"
-subroutine ESMF_AttributeGetListAttPackLocStreamLG(target, name, attpack, value, keywordEnforcer, defaultvalue, attnestflag, itemcount, isPresent, rc)
+subroutine ESMF_AttributeGetListAttPackLocStreamLG(target, name, attpack, valueList, defaultvalueList, attnestflag, itemcount, isPresent, rc)
   ! 39.11.9
   type(ESMF_LocStream), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  logical, dimension(:), allocatable, intent(out) :: value
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  logical, dimension(:), intent(in), optional :: defaultvalue
+  logical, dimension(:), intent(out) :: valueList
+  logical, dimension(:), intent(in), optional :: defaultvalueList
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(out), optional :: itemcount
   logical, intent(out), optional :: isPresent
@@ -25011,20 +24748,20 @@ subroutine ESMF_AttributeGetListAttPackLocStreamLG(target, name, attpack, value,
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2Get(attpack%info, key, value, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
-    if (present(defaultvalue)) then
-      if (size(defaultvalue) /= size(value)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalue) /= size(value)", ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(defaultvalueList)) then
+      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
       endif
-      do ii=1,size(defaultvalue)
-        value(ii) = defaultvalue(ii)
+      do ii=1,size(defaultvalueList)
+        valueList(ii) = defaultvalueList(ii)
       enddo
-      if (present(itemcount)) itemcount = size(defaultvalue)
+      if (present(itemcount)) itemcount = SIZE(defaultvalueList)
     else
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//trim(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="The key '"//TRIM(name)//"' is not present and no default value is provided", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   endif
 
@@ -25071,9 +24808,8 @@ subroutine ESMF_AttributeGetListObjLocStreamLG(target, name, valueList, defaultv
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    !tdk:todo: enable to work with character arrays
-
-
+    call ESMF_Info2GetListAllocated(info, key, valueList, nelements=nelements, attnestflag=attnestflag, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = nelements
   else
     if (present(defaultvalueList)) then

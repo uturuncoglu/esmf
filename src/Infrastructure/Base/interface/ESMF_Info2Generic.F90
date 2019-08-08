@@ -5,7 +5,7 @@
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_Info2GetR4()"
 subroutine ESMF_Info2GetR4(info, key, value, default, idx, attnestflag, rc)
-  type(ESMF_Info2), intent(inout) :: info
+  type(ESMF_Info2), intent(in) :: info
   character(len=*), intent(in) :: key
   real(ESMF_KIND_R4), intent(out) :: value
   real(ESMF_KIND_R4), intent(in), optional :: default
@@ -59,7 +59,7 @@ end subroutine ESMF_Info2GetR4
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_Info2GetR8()"
 subroutine ESMF_Info2GetR8(info, key, value, default, idx, attnestflag, rc)
-  type(ESMF_Info2), intent(inout) :: info
+  type(ESMF_Info2), intent(in) :: info
   character(len=*), intent(in) :: key
   real(ESMF_KIND_R8), intent(out) :: value
   real(ESMF_KIND_R8), intent(in), optional :: default
@@ -113,7 +113,7 @@ end subroutine ESMF_Info2GetR8
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_Info2GetI4()"
 subroutine ESMF_Info2GetI4(info, key, value, default, idx, attnestflag, rc)
-  type(ESMF_Info2), intent(inout) :: info
+  type(ESMF_Info2), intent(in) :: info
   character(len=*), intent(in) :: key
   integer(ESMF_KIND_I4), intent(out) :: value
   integer(ESMF_KIND_I4), intent(in), optional :: default
@@ -167,7 +167,7 @@ end subroutine ESMF_Info2GetI4
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_Info2GetI8()"
 subroutine ESMF_Info2GetI8(info, key, value, default, idx, attnestflag, rc)
-  type(ESMF_Info2), intent(inout) :: info
+  type(ESMF_Info2), intent(in) :: info
   character(len=*), intent(in) :: key
   integer(ESMF_KIND_I8), intent(out) :: value
   integer(ESMF_KIND_I8), intent(in), optional :: default
@@ -221,7 +221,7 @@ end subroutine ESMF_Info2GetI8
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_Info2GetLG()"
 subroutine ESMF_Info2GetLG(info, key, value, default, idx, attnestflag, rc)
-  type(ESMF_Info2), intent(inout) :: info
+  type(ESMF_Info2), intent(in) :: info
   character(len=*), intent(in) :: key
   logical, intent(inout) :: value
   logical, intent(in), optional :: default
@@ -281,10 +281,10 @@ end subroutine ESMF_Info2GetLG
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_Info2GetArrayR4()"
 subroutine ESMF_Info2GetArrayR4(info, key, values, nelements, attnestflag, rc)
-  type(ESMF_Info2), intent(inout) :: info
+  type(ESMF_Info2), intent(in) :: info
   character(len=*), intent(in) :: key
-  real(ESMF_KIND_R4), dimension(:), allocatable, intent(out) :: values
-  integer, intent(inout) :: nelements
+  real(ESMF_KIND_R4), dimension(:),  allocatable, intent(out) :: values
+  integer, intent(out) :: nelements
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
@@ -303,7 +303,7 @@ subroutine ESMF_Info2GetArrayR4(info, key, values, nelements, attnestflag, rc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   ! Allocate the outgoing storage array and call into C to fill the array
-  if (.not. allocated(values)) allocate(values(nelements))
+  allocate(values(nelements))
   call c_info_get_array_R4(&
     info%ptr, &
     trim(key)//C_NULL_CHAR, &
@@ -317,12 +317,12 @@ subroutine ESMF_Info2GetArrayR4(info, key, values, nelements, attnestflag, rc)
 end subroutine ESMF_Info2GetArrayR4
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_Info2GetArrayR8()"
-subroutine ESMF_Info2GetArrayR8(info, key, values, nelements, attnestflag, rc)
-  type(ESMF_Info2), intent(inout) :: info
+#define ESMF_METHOD "ESMF_Info2GetArrayR4Allocated()"
+subroutine ESMF_Info2GetArrayR4Allocated(info, key, values, nelements, attnestflag, rc)
+  type(ESMF_Info2), intent(in) :: info
   character(len=*), intent(in) :: key
-  real(ESMF_KIND_R8), dimension(:), allocatable, intent(out) :: values
-  integer, intent(inout) :: nelements
+  real(ESMF_KIND_R4), dimension(:), intent(out) :: values
+  integer, intent(out) :: nelements
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
@@ -341,7 +341,45 @@ subroutine ESMF_Info2GetArrayR8(info, key, values, nelements, attnestflag, rc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   ! Allocate the outgoing storage array and call into C to fill the array
-  if (.not. allocated(values)) allocate(values(nelements))
+  
+  call c_info_get_array_R4(&
+    info%ptr, &
+    trim(key)//C_NULL_CHAR, &
+    values, &
+    nelements, &
+    localrc, &
+    recursive)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  
+  if (present(rc)) rc = ESMF_SUCCESS
+end subroutine ESMF_Info2GetArrayR4Allocated
+
+#undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_Info2GetArrayR8()"
+subroutine ESMF_Info2GetArrayR8(info, key, values, nelements, attnestflag, rc)
+  type(ESMF_Info2), intent(in) :: info
+  character(len=*), intent(in) :: key
+  real(ESMF_KIND_R8), dimension(:),  allocatable, intent(out) :: values
+  integer, intent(out) :: nelements
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
+  integer, intent(inout), optional :: rc
+
+  integer :: localrc
+  logical(C_BOOL) :: recursive=.false.
+  
+  localrc = ESMF_FAILURE
+  if (present(rc)) rc = ESMF_FAILURE
+
+  if (present(attnestflag)) then
+    if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = .true.
+  end if
+
+  ! Get the array size from the info store
+  call ESMF_Info2Inquire(info, key=key, count=nelements, attnestflag=attnestflag, rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  ! Allocate the outgoing storage array and call into C to fill the array
+  allocate(values(nelements))
   call c_info_get_array_R8(&
     info%ptr, &
     trim(key)//C_NULL_CHAR, &
@@ -355,12 +393,12 @@ subroutine ESMF_Info2GetArrayR8(info, key, values, nelements, attnestflag, rc)
 end subroutine ESMF_Info2GetArrayR8
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_Info2GetArrayI4()"
-subroutine ESMF_Info2GetArrayI4(info, key, values, nelements, attnestflag, rc)
-  type(ESMF_Info2), intent(inout) :: info
+#define ESMF_METHOD "ESMF_Info2GetArrayR8Allocated()"
+subroutine ESMF_Info2GetArrayR8Allocated(info, key, values, nelements, attnestflag, rc)
+  type(ESMF_Info2), intent(in) :: info
   character(len=*), intent(in) :: key
-  integer(ESMF_KIND_I4), dimension(:), allocatable, intent(out) :: values
-  integer, intent(inout) :: nelements
+  real(ESMF_KIND_R8), dimension(:), intent(out) :: values
+  integer, intent(out) :: nelements
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
@@ -379,7 +417,45 @@ subroutine ESMF_Info2GetArrayI4(info, key, values, nelements, attnestflag, rc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   ! Allocate the outgoing storage array and call into C to fill the array
-  if (.not. allocated(values)) allocate(values(nelements))
+  
+  call c_info_get_array_R8(&
+    info%ptr, &
+    trim(key)//C_NULL_CHAR, &
+    values, &
+    nelements, &
+    localrc, &
+    recursive)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  
+  if (present(rc)) rc = ESMF_SUCCESS
+end subroutine ESMF_Info2GetArrayR8Allocated
+
+#undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_Info2GetArrayI4()"
+subroutine ESMF_Info2GetArrayI4(info, key, values, nelements, attnestflag, rc)
+  type(ESMF_Info2), intent(in) :: info
+  character(len=*), intent(in) :: key
+  integer(ESMF_KIND_I4), dimension(:),  allocatable, intent(out) :: values
+  integer, intent(out) :: nelements
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
+  integer, intent(inout), optional :: rc
+
+  integer :: localrc
+  logical(C_BOOL) :: recursive=.false.
+  
+  localrc = ESMF_FAILURE
+  if (present(rc)) rc = ESMF_FAILURE
+
+  if (present(attnestflag)) then
+    if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = .true.
+  end if
+
+  ! Get the array size from the info store
+  call ESMF_Info2Inquire(info, key=key, count=nelements, attnestflag=attnestflag, rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  ! Allocate the outgoing storage array and call into C to fill the array
+  allocate(values(nelements))
   call c_info_get_array_I4(&
     info%ptr, &
     trim(key)//C_NULL_CHAR, &
@@ -393,12 +469,12 @@ subroutine ESMF_Info2GetArrayI4(info, key, values, nelements, attnestflag, rc)
 end subroutine ESMF_Info2GetArrayI4
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_Info2GetArrayI8()"
-subroutine ESMF_Info2GetArrayI8(info, key, values, nelements, attnestflag, rc)
-  type(ESMF_Info2), intent(inout) :: info
+#define ESMF_METHOD "ESMF_Info2GetArrayI4Allocated()"
+subroutine ESMF_Info2GetArrayI4Allocated(info, key, values, nelements, attnestflag, rc)
+  type(ESMF_Info2), intent(in) :: info
   character(len=*), intent(in) :: key
-  integer(ESMF_KIND_I8), dimension(:), allocatable, intent(out) :: values
-  integer, intent(inout) :: nelements
+  integer(ESMF_KIND_I4), dimension(:), intent(out) :: values
+  integer, intent(out) :: nelements
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
@@ -417,7 +493,45 @@ subroutine ESMF_Info2GetArrayI8(info, key, values, nelements, attnestflag, rc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   ! Allocate the outgoing storage array and call into C to fill the array
-  if (.not. allocated(values)) allocate(values(nelements))
+  
+  call c_info_get_array_I4(&
+    info%ptr, &
+    trim(key)//C_NULL_CHAR, &
+    values, &
+    nelements, &
+    localrc, &
+    recursive)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  
+  if (present(rc)) rc = ESMF_SUCCESS
+end subroutine ESMF_Info2GetArrayI4Allocated
+
+#undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_Info2GetArrayI8()"
+subroutine ESMF_Info2GetArrayI8(info, key, values, nelements, attnestflag, rc)
+  type(ESMF_Info2), intent(in) :: info
+  character(len=*), intent(in) :: key
+  integer(ESMF_KIND_I8), dimension(:),  allocatable, intent(out) :: values
+  integer, intent(out) :: nelements
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
+  integer, intent(inout), optional :: rc
+
+  integer :: localrc
+  logical(C_BOOL) :: recursive=.false.
+  
+  localrc = ESMF_FAILURE
+  if (present(rc)) rc = ESMF_FAILURE
+
+  if (present(attnestflag)) then
+    if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = .true.
+  end if
+
+  ! Get the array size from the info store
+  call ESMF_Info2Inquire(info, key=key, count=nelements, attnestflag=attnestflag, rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  ! Allocate the outgoing storage array and call into C to fill the array
+  allocate(values(nelements))
   call c_info_get_array_I8(&
     info%ptr, &
     trim(key)//C_NULL_CHAR, &
@@ -431,12 +545,50 @@ subroutine ESMF_Info2GetArrayI8(info, key, values, nelements, attnestflag, rc)
 end subroutine ESMF_Info2GetArrayI8
 
 #undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_Info2GetArrayI8Allocated()"
+subroutine ESMF_Info2GetArrayI8Allocated(info, key, values, nelements, attnestflag, rc)
+  type(ESMF_Info2), intent(in) :: info
+  character(len=*), intent(in) :: key
+  integer(ESMF_KIND_I8), dimension(:), intent(out) :: values
+  integer, intent(out) :: nelements
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
+  integer, intent(inout), optional :: rc
+
+  integer :: localrc
+  logical(C_BOOL) :: recursive=.false.
+  
+  localrc = ESMF_FAILURE
+  if (present(rc)) rc = ESMF_FAILURE
+
+  if (present(attnestflag)) then
+    if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = .true.
+  end if
+
+  ! Get the array size from the info store
+  call ESMF_Info2Inquire(info, key=key, count=nelements, attnestflag=attnestflag, rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  ! Allocate the outgoing storage array and call into C to fill the array
+  
+  call c_info_get_array_I8(&
+    info%ptr, &
+    trim(key)//C_NULL_CHAR, &
+    values, &
+    nelements, &
+    localrc, &
+    recursive)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  
+  if (present(rc)) rc = ESMF_SUCCESS
+end subroutine ESMF_Info2GetArrayI8Allocated
+
+#undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_Info2GetArrayLG()"
 subroutine ESMF_Info2GetArrayLG(info, key, values, nelements, attnestflag, rc)
-  type(ESMF_Info2), intent(inout) :: info
+  type(ESMF_Info2), intent(in) :: info
   character(len=*), intent(in) :: key
-  logical, dimension(:), allocatable, intent(out) :: values
-  integer, intent(inout) :: nelements
+  logical, dimension(:),  allocatable, intent(out) :: values
+  integer, intent(out) :: nelements
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
@@ -457,6 +609,7 @@ subroutine ESMF_Info2GetArrayLG(info, key, values, nelements, attnestflag, rc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   ! Allocate the outgoing storage array and call into C to fill the array
+  allocate(values(nelements))
   allocate(local_values(nelements))
   call c_info_get_array_LG(&
     info%ptr, &
@@ -467,7 +620,6 @@ subroutine ESMF_Info2GetArrayLG(info, key, values, nelements, attnestflag, rc)
     recursive)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   
-  if (.not. allocated(values)) allocate(values(nelements))
   do ii=1,SIZE(values)
     values(ii) = local_values(ii)
   enddo
@@ -475,6 +627,52 @@ subroutine ESMF_Info2GetArrayLG(info, key, values, nelements, attnestflag, rc)
   
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_Info2GetArrayLG
+
+#undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_Info2GetArrayLGAllocated()"
+subroutine ESMF_Info2GetArrayLGAllocated(info, key, values, nelements, attnestflag, rc)
+  type(ESMF_Info2), intent(in) :: info
+  character(len=*), intent(in) :: key
+  logical, dimension(:), intent(out) :: values
+  integer, intent(out) :: nelements
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
+  integer, intent(inout), optional :: rc
+
+  integer :: localrc
+  logical(C_BOOL) :: recursive=.false.
+  integer :: ii
+  logical(C_BOOL), dimension(:), allocatable :: local_values
+  
+  localrc = ESMF_FAILURE
+  if (present(rc)) rc = ESMF_FAILURE
+
+  if (present(attnestflag)) then
+    if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = .true.
+  end if
+
+  ! Get the array size from the info store
+  call ESMF_Info2Inquire(info, key=key, count=nelements, attnestflag=attnestflag, rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  ! Allocate the outgoing storage array and call into C to fill the array
+  
+  allocate(local_values(nelements))
+  call c_info_get_array_LG(&
+    info%ptr, &
+    trim(key)//C_NULL_CHAR, &
+    local_values, &
+    nelements, &
+    localrc, &
+    recursive)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  
+  do ii=1,SIZE(values)
+    values(ii) = local_values(ii)
+  enddo
+  deallocate(local_values)
+  
+  if (present(rc)) rc = ESMF_SUCCESS
+end subroutine ESMF_Info2GetArrayLGAllocated
 
 !------------------------------------------------------------------------------
 ! Set (Scalar) ----------------------------------------------------------------

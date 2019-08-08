@@ -45,6 +45,7 @@ implicit none
 
 !private
 !public :: ESMF_Info2
+!tdk:todo: need to specify public interfaces
 
 include "ESMF_Info2CDef.F90"
 include "ESMF_Info2CDefGeneric.F90"
@@ -59,6 +60,7 @@ interface ESMF_Info2Create
   module procedure ESMF_Info2CreateByParse
 end interface ESMF_Info2Create
 
+!tdk:todo: rename GetArray* to GetList*
 interface ESMF_Info2Get
   module procedure ESMF_Info2GetI4
   module procedure ESMF_Info2GetI8
@@ -73,6 +75,15 @@ interface ESMF_Info2Get
   module procedure ESMF_Info2GetArrayLG
   module procedure ESMF_Info2GetArrayCH
 end interface ESMF_Info2Get
+
+interface ESMF_Info2GetListAllocated
+  module procedure ESMF_Info2GetArrayI4Allocated
+  module procedure ESMF_Info2GetArrayI8Allocated
+  module procedure ESMF_Info2GetArrayR4Allocated
+  module procedure ESMF_Info2GetArrayR8Allocated
+  module procedure ESMF_Info2GetArrayLGAllocated
+  module procedure ESMF_Info2GetArrayCHAllocated
+end interface ESMF_Info2GetListAllocated
 
 interface ESMF_Info2Set
   module procedure ESMF_Info2SetI4
@@ -604,7 +615,7 @@ end subroutine ESMF_Info2WriteJSON
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_Info2GetCH()"
 subroutine ESMF_Info2GetCH(info, key, value, default, idx, attnestflag, rc)
-  type(ESMF_Info2), intent(inout) :: info
+  type(ESMF_Info2), intent(in) :: info
   character(len=*), intent(in) :: key
   character(len=*), intent(inout), target :: value
   character(len=*), intent(in), optional :: default
@@ -652,10 +663,10 @@ end subroutine ESMF_Info2GetCH
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_Info2GetArrayCH()"
 subroutine ESMF_Info2GetArrayCH(info, key, values, nelements, attnestflag, rc)
-  type(ESMF_Info2), intent(inout) :: info
+  type(ESMF_Info2), intent(in) :: info
   character(len=*), intent(in) :: key
   character(len=*), dimension(:), allocatable, intent(out) :: values
-  integer(C_INT), target, intent(inout) :: nelements
+  integer(C_INT), intent(out) :: nelements
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
@@ -670,7 +681,7 @@ subroutine ESMF_Info2GetArrayCH(info, key, values, nelements, attnestflag, rc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   ! Allocate the outgoing storage array and call into C to fill the array
-  if (.not. allocated(values)) allocate(values(nelements))
+  allocate(values(nelements))
   do ii=1,nelements
     call ESMF_Info2GetCH(info, key, values(ii), idx=ii, attnestflag=attnestflag, &
       rc=localrc)
@@ -681,12 +692,13 @@ subroutine ESMF_Info2GetArrayCH(info, key, values, nelements, attnestflag, rc)
 end subroutine ESMF_Info2GetArrayCH
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_Info2GetArrayCHAlloc()"
-subroutine ESMF_Info2GetArrayCHAlloc(info, key, values, nelements, rc)
-  type(ESMF_Info2), intent(inout) :: info
+#define ESMF_METHOD "ESMF_Info2GetArrayCHAllocated()"
+subroutine ESMF_Info2GetArrayCHAllocated(info, key, values, nelements, attnestflag, rc)
+  type(ESMF_Info2), intent(in) :: info
   character(len=*), intent(in) :: key
-  character(len=*), dimension(:), allocatable, intent(out) :: values
-  integer(C_INT), target, intent(inout) :: nelements
+  character(len=*), dimension(:), intent(out) :: values
+  integer(C_INT), intent(out) :: nelements
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc, ii
@@ -696,18 +708,17 @@ subroutine ESMF_Info2GetArrayCHAlloc(info, key, values, nelements, rc)
 
   ! Get the array size from the attributes store
   call ESMF_Info2Inquire(info, key=trim(key)//C_NULL_CHAR, count=nelements, &
-                              rc=localrc)
+    attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  ! Allocate the outgoing storage array and call into C to fill the array
-  allocate(values(nelements))
   do ii=1,nelements
-    call ESMF_Info2GetCH(info, key, values(ii), idx=ii, rc=localrc)
+    call ESMF_Info2GetCH(info, key, values(ii), idx=ii, attnestflag=attnestflag, &
+      rc=localrc)
   enddo
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_Info2GetArrayCHAlloc
+end subroutine ESMF_Info2GetArrayCHAllocated
 
 !------------------------------------------------------------------------------
 
