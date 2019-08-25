@@ -8,7 +8,7 @@
 // NASA Goddard Space Flight Center.
 // Licensed under the University of Illinois-NCSA License.
 
-#define ESMC_FILENAME "./src/Infrastructure/Attribute/src/ESMC_Info2CDefGeneric.C"
+#define ESMC_FILENAME "./src/Infrastructure/Base/src/ESMC_Info2CDefGeneric.C"
 
 // Info C-Fortran method implementation (body) file
 
@@ -44,82 +44,78 @@ using json = nlohmann::json;
 
 extern "C" {
 
+//-----------------------------------------------------------------------------
+// InfoGet --------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_Info2GetR4()"
-void ESMC_Info2GetR4(ESMCI::Info2 *info, char *key, float &value,
-  int &rc, float *def, int *index, bool recursive) {
+void ESMC_Info2GetR4(ESMCI::Info2 *info, char *key, float &value, int &rc, float *def, int *index, bool recursive) {
   rc = ESMF_FAILURE;
-  std::string localKey(key);
   try {
-    value = info->get<float>(localKey, rc, def, index, recursive);
+    std::string local_key(key);
+    value = info->get<float>(local_key, rc, def, index, recursive);
   }
-  ESMF_CATCH_ISOC;
+  ESMF_CATCH_ISOC
 }
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_Info2GetR8()"
-void ESMC_Info2GetR8(ESMCI::Info2 *info, char *key, double &value,
-  int &rc, double *def, int *index, bool recursive) {
+void ESMC_Info2GetR8(ESMCI::Info2 *info, char *key, double &value, int &rc, double *def, int *index, bool recursive) {
   rc = ESMF_FAILURE;
-  std::string localKey(key);
   try {
-    value = info->get<double>(localKey, rc, def, index, recursive);
+    std::string local_key(key);
+    value = info->get<double>(local_key, rc, def, index, recursive);
   }
-  ESMF_CATCH_ISOC;
+  ESMF_CATCH_ISOC
 }
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_Info2GetI4()"
-void ESMC_Info2GetI4(ESMCI::Info2 *info, char *key, int &value,
-  int &rc, int *def, int *index, bool recursive) {
+void ESMC_Info2GetI4(ESMCI::Info2 *info, char *key, int &value, int &rc, int *def, int *index, bool recursive) {
   rc = ESMF_FAILURE;
-  std::string localKey(key);
   try {
-    value = info->get<int>(localKey, rc, def, index, recursive);
+    std::string local_key(key);
+    value = info->get<int>(local_key, rc, def, index, recursive);
   }
-  ESMF_CATCH_ISOC;
+  ESMF_CATCH_ISOC
 }
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_Info2GetI8()"
-void ESMC_Info2GetI8(ESMCI::Info2 *info, char *key, long int &value,
-  int &rc, long int *def, int *index, bool recursive) {
+void ESMC_Info2GetI8(ESMCI::Info2 *info, char *key, long int &value, int &rc, long int *def, int *index, bool recursive) {
   rc = ESMF_FAILURE;
-  std::string localKey(key);
   try {
-    value = info->get<long int>(localKey, rc, def, index, recursive);
+    std::string local_key(key);
+    value = info->get<long int>(local_key, rc, def, index, recursive);
   }
-  ESMF_CATCH_ISOC;
+  ESMF_CATCH_ISOC
 }
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_Info2GetLG()"
-void ESMC_Info2GetLG(ESMCI::Info2 *info, char *key, bool &value,
-  int &rc, bool *def, int *index, bool recursive) {
+void ESMC_Info2GetLG(ESMCI::Info2 *info, char *key, bool &value, int &rc, bool *def, int *index, bool recursive) {
   rc = ESMF_FAILURE;
-  std::string localKey(key);
   try {
-    value = info->get<bool>(localKey, rc, def, index, recursive);
+    std::string local_key(key);
+    value = info->get<bool>(local_key, rc, def, index, recursive);
   }
-  ESMF_CATCH_ISOC;
+  ESMF_CATCH_ISOC
 }
-
-//-----------------------------------------------------------------------------
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_Info2GetArrayR4()"
-void ESMC_Info2GetArrayR4(ESMCI::Info2 *info, char *key,
-                               float *values, int &count, int &rc, bool recursive) {
+void ESMC_Info2GetArrayR4(ESMCI::Info2 *info, char *key, float *value, int &count, int &rc, bool recursive) {
   rc = ESMF_FAILURE;
-  std::string localKey(key);
   try {
-    const json *j = info->getPointer(localKey, rc, recursive);
+    std::string local_key(key);
+    const json *j = info->getPointer(local_key, rc, recursive);
     const json::array_t *ap = j->get_ptr<const json::array_t *>();
 
     count = (int)ap->size();
     for (int ii=0; ii<count; ii++) {
       try {
-        values[ii] = ap->at(ii);
+        value[ii] = ap->at(ii);
       }
       catch (std::out_of_range &exc) {
         ESMF_CHECKERR_STD("ESMF_RC_ARG_OUTOFRANGE", ESMF_RC_ARG_OUTOFRANGE, std::string(exc.what()), rc);
@@ -131,18 +127,17 @@ void ESMC_Info2GetArrayR4(ESMCI::Info2 *info, char *key,
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_Info2GetArrayR8()"
-void ESMC_Info2GetArrayR8(ESMCI::Info2 *info, char *key,
-                               double *values, int &count, int &rc, bool recursive) {
+void ESMC_Info2GetArrayR8(ESMCI::Info2 *info, char *key, double *value, int &count, int &rc, bool recursive) {
   rc = ESMF_FAILURE;
-  std::string localKey(key);
   try {
-    const json *j = info->getPointer(localKey, rc, recursive);
+    std::string local_key(key);
+    const json *j = info->getPointer(local_key, rc, recursive);
     const json::array_t *ap = j->get_ptr<const json::array_t *>();
 
     count = (int)ap->size();
     for (int ii=0; ii<count; ii++) {
       try {
-        values[ii] = ap->at(ii);
+        value[ii] = ap->at(ii);
       }
       catch (std::out_of_range &exc) {
         ESMF_CHECKERR_STD("ESMF_RC_ARG_OUTOFRANGE", ESMF_RC_ARG_OUTOFRANGE, std::string(exc.what()), rc);
@@ -154,18 +149,17 @@ void ESMC_Info2GetArrayR8(ESMCI::Info2 *info, char *key,
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_Info2GetArrayI4()"
-void ESMC_Info2GetArrayI4(ESMCI::Info2 *info, char *key,
-                               int *values, int &count, int &rc, bool recursive) {
+void ESMC_Info2GetArrayI4(ESMCI::Info2 *info, char *key, int *value, int &count, int &rc, bool recursive) {
   rc = ESMF_FAILURE;
-  std::string localKey(key);
   try {
-    const json *j = info->getPointer(localKey, rc, recursive);
+    std::string local_key(key);
+    const json *j = info->getPointer(local_key, rc, recursive);
     const json::array_t *ap = j->get_ptr<const json::array_t *>();
 
     count = (int)ap->size();
     for (int ii=0; ii<count; ii++) {
       try {
-        values[ii] = ap->at(ii);
+        value[ii] = ap->at(ii);
       }
       catch (std::out_of_range &exc) {
         ESMF_CHECKERR_STD("ESMF_RC_ARG_OUTOFRANGE", ESMF_RC_ARG_OUTOFRANGE, std::string(exc.what()), rc);
@@ -177,18 +171,17 @@ void ESMC_Info2GetArrayI4(ESMCI::Info2 *info, char *key,
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_Info2GetArrayI8()"
-void ESMC_Info2GetArrayI8(ESMCI::Info2 *info, char *key,
-                               long int *values, int &count, int &rc, bool recursive) {
+void ESMC_Info2GetArrayI8(ESMCI::Info2 *info, char *key, long int *value, int &count, int &rc, bool recursive) {
   rc = ESMF_FAILURE;
-  std::string localKey(key);
   try {
-    const json *j = info->getPointer(localKey, rc, recursive);
+    std::string local_key(key);
+    const json *j = info->getPointer(local_key, rc, recursive);
     const json::array_t *ap = j->get_ptr<const json::array_t *>();
 
     count = (int)ap->size();
     for (int ii=0; ii<count; ii++) {
       try {
-        values[ii] = ap->at(ii);
+        value[ii] = ap->at(ii);
       }
       catch (std::out_of_range &exc) {
         ESMF_CHECKERR_STD("ESMF_RC_ARG_OUTOFRANGE", ESMF_RC_ARG_OUTOFRANGE, std::string(exc.what()), rc);
@@ -200,18 +193,17 @@ void ESMC_Info2GetArrayI8(ESMCI::Info2 *info, char *key,
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_Info2GetArrayLG()"
-void ESMC_Info2GetArrayLG(ESMCI::Info2 *info, char *key,
-                               bool *values, int &count, int &rc, bool recursive) {
+void ESMC_Info2GetArrayLG(ESMCI::Info2 *info, char *key, bool *value, int &count, int &rc, bool recursive) {
   rc = ESMF_FAILURE;
-  std::string localKey(key);
   try {
-    const json *j = info->getPointer(localKey, rc, recursive);
+    std::string local_key(key);
+    const json *j = info->getPointer(local_key, rc, recursive);
     const json::array_t *ap = j->get_ptr<const json::array_t *>();
 
     count = (int)ap->size();
     for (int ii=0; ii<count; ii++) {
       try {
-        values[ii] = ap->at(ii);
+        value[ii] = ap->at(ii);
       }
       catch (std::out_of_range &exc) {
         ESMF_CHECKERR_STD("ESMF_RC_ARG_OUTOFRANGE", ESMF_RC_ARG_OUTOFRANGE, std::string(exc.what()), rc);
@@ -222,127 +214,147 @@ void ESMC_Info2GetArrayLG(ESMCI::Info2 *info, char *key,
 }
 
 //-----------------------------------------------------------------------------
+// InfoSet --------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_Info2SetR4()"
-void ESMC_Info2SetR4(ESMCI::Info2 *info, char *key, float &value,
-                              bool &force, int &rc, int *index) {
+void ESMC_Info2SetR4(ESMCI::Info2 *info, char *key, float &value, bool &force, int &rc, int *index, char *pkey) {
   rc = ESMF_FAILURE;
-  std::string localKey(key);
   try {
-    info->set<float>(localKey, value, force, rc, index);
+    std::string local_key(key);
+    std::string local_pkey(pkey);
+    std::string *local_pkeyp = nullptr;
+    if (local_pkey.size() != 0) {local_pkeyp = &local_pkey;}
+    info->set<float>(local_key, value, force, rc, index, local_pkeyp);
   }
-  ESMF_CATCH_ISOC;
+  ESMF_CATCH_ISOC
 }
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_Info2SetR8()"
-void ESMC_Info2SetR8(ESMCI::Info2 *info, char *key, double &value,
-                              bool &force, int &rc, int *index) {
+void ESMC_Info2SetR8(ESMCI::Info2 *info, char *key, double &value, bool &force, int &rc, int *index, char *pkey) {
   rc = ESMF_FAILURE;
-  std::string localKey(key);
   try {
-    info->set<double>(localKey, value, force, rc, index);
+    std::string local_key(key);
+    std::string local_pkey(pkey);
+    std::string *local_pkeyp = nullptr;
+    if (local_pkey.size() != 0) {local_pkeyp = &local_pkey;}
+    info->set<double>(local_key, value, force, rc, index, local_pkeyp);
   }
-  ESMF_CATCH_ISOC;
+  ESMF_CATCH_ISOC
 }
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_Info2SetI4()"
-void ESMC_Info2SetI4(ESMCI::Info2 *info, char *key, int &value,
-                              bool &force, int &rc, int *index) {
+void ESMC_Info2SetI4(ESMCI::Info2 *info, char *key, int &value, bool &force, int &rc, int *index, char *pkey) {
   rc = ESMF_FAILURE;
-  std::string localKey(key);
   try {
-    info->set<int>(localKey, value, force, rc, index);
+    std::string local_key(key);
+    std::string local_pkey(pkey);
+    std::string *local_pkeyp = nullptr;
+    if (local_pkey.size() != 0) {local_pkeyp = &local_pkey;}
+    info->set<int>(local_key, value, force, rc, index, local_pkeyp);
   }
-  ESMF_CATCH_ISOC;
+  ESMF_CATCH_ISOC
 }
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_Info2SetI8()"
-void ESMC_Info2SetI8(ESMCI::Info2 *info, char *key, long int &value,
-                              bool &force, int &rc, int *index) {
+void ESMC_Info2SetI8(ESMCI::Info2 *info, char *key, long int &value, bool &force, int &rc, int *index, char *pkey) {
   rc = ESMF_FAILURE;
-  std::string localKey(key);
   try {
-    info->set<long int>(localKey, value, force, rc, index);
+    std::string local_key(key);
+    std::string local_pkey(pkey);
+    std::string *local_pkeyp = nullptr;
+    if (local_pkey.size() != 0) {local_pkeyp = &local_pkey;}
+    info->set<long int>(local_key, value, force, rc, index, local_pkeyp);
   }
-  ESMF_CATCH_ISOC;
+  ESMF_CATCH_ISOC
 }
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_Info2SetLG()"
-void ESMC_Info2SetLG(ESMCI::Info2 *info, char *key, bool &value,
-                              bool &force, int &rc, int *index) {
+void ESMC_Info2SetLG(ESMCI::Info2 *info, char *key, bool &value, bool &force, int &rc, int *index, char *pkey) {
   rc = ESMF_FAILURE;
-  std::string localKey(key);
   try {
-    info->set<bool>(localKey, value, force, rc, index);
+    std::string local_key(key);
+    std::string local_pkey(pkey);
+    std::string *local_pkeyp = nullptr;
+    if (local_pkey.size() != 0) {local_pkeyp = &local_pkey;}
+    info->set<bool>(local_key, value, force, rc, index, local_pkeyp);
   }
-  ESMF_CATCH_ISOC;
+  ESMF_CATCH_ISOC
 }
-
-//-----------------------------------------------------------------------------
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_Info2SetArrayR4()"
-void ESMC_Info2SetArrayR4(ESMCI::Info2 *info, char *key,
-                               float *values, int &count, bool &force, int &rc) {
+void ESMC_Info2SetArrayR4(ESMCI::Info2 *info, char *key, float *value, int &count, bool &force, int &rc, char *pkey) {
   rc = ESMF_FAILURE;
-  std::string localKey(key);
   try {
-    info->set<float>(localKey, values, count, force, rc);
+    std::string local_key(key);
+    std::string local_pkey(pkey);
+    std::string *local_pkeyp = nullptr;
+    if (local_pkey.size() != 0) {local_pkeyp = &local_pkey;}
+    info->set<float>(local_key, value, count, force, rc, local_pkeyp);
   }
-  ESMF_CATCH_ISOC;
+  ESMF_CATCH_ISOC
 }
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_Info2SetArrayR8()"
-void ESMC_Info2SetArrayR8(ESMCI::Info2 *info, char *key,
-                               double *values, int &count, bool &force, int &rc) {
+void ESMC_Info2SetArrayR8(ESMCI::Info2 *info, char *key, double *value, int &count, bool &force, int &rc, char *pkey) {
   rc = ESMF_FAILURE;
-  std::string localKey(key);
   try {
-    info->set<double>(localKey, values, count, force, rc);
+    std::string local_key(key);
+    std::string local_pkey(pkey);
+    std::string *local_pkeyp = nullptr;
+    if (local_pkey.size() != 0) {local_pkeyp = &local_pkey;}
+    info->set<double>(local_key, value, count, force, rc, local_pkeyp);
   }
-  ESMF_CATCH_ISOC;
+  ESMF_CATCH_ISOC
 }
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_Info2SetArrayI4()"
-void ESMC_Info2SetArrayI4(ESMCI::Info2 *info, char *key,
-                               int *values, int &count, bool &force, int &rc) {
+void ESMC_Info2SetArrayI4(ESMCI::Info2 *info, char *key, int *value, int &count, bool &force, int &rc, char *pkey) {
   rc = ESMF_FAILURE;
-  std::string localKey(key);
   try {
-    info->set<int>(localKey, values, count, force, rc);
+    std::string local_key(key);
+    std::string local_pkey(pkey);
+    std::string *local_pkeyp = nullptr;
+    if (local_pkey.size() != 0) {local_pkeyp = &local_pkey;}
+    info->set<int>(local_key, value, count, force, rc, local_pkeyp);
   }
-  ESMF_CATCH_ISOC;
+  ESMF_CATCH_ISOC
 }
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_Info2SetArrayI8()"
-void ESMC_Info2SetArrayI8(ESMCI::Info2 *info, char *key,
-                               long int *values, int &count, bool &force, int &rc) {
+void ESMC_Info2SetArrayI8(ESMCI::Info2 *info, char *key, long int *value, int &count, bool &force, int &rc, char *pkey) {
   rc = ESMF_FAILURE;
-  std::string localKey(key);
   try {
-    info->set<long int>(localKey, values, count, force, rc);
+    std::string local_key(key);
+    std::string local_pkey(pkey);
+    std::string *local_pkeyp = nullptr;
+    if (local_pkey.size() != 0) {local_pkeyp = &local_pkey;}
+    info->set<long int>(local_key, value, count, force, rc, local_pkeyp);
   }
-  ESMF_CATCH_ISOC;
+  ESMF_CATCH_ISOC
 }
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_Info2SetArrayLG()"
-void ESMC_Info2SetArrayLG(ESMCI::Info2 *info, char *key,
-                               bool *values, int &count, bool &force, int &rc) {
+void ESMC_Info2SetArrayLG(ESMCI::Info2 *info, char *key, bool *value, int &count, bool &force, int &rc, char *pkey) {
   rc = ESMF_FAILURE;
-  std::string localKey(key);
   try {
-    info->set<bool>(localKey, values, count, force, rc);
+    std::string local_key(key);
+    std::string local_pkey(pkey);
+    std::string *local_pkeyp = nullptr;
+    if (local_pkey.size() != 0) {local_pkeyp = &local_pkey;}
+    info->set<bool>(local_key, value, count, force, rc, local_pkeyp);
   }
-  ESMF_CATCH_ISOC;
+  ESMF_CATCH_ISOC
 }
 
 }  // extern "C"

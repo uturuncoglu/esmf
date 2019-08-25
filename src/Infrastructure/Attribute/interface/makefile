@@ -2,9 +2,9 @@
 
 ALL: build_here 
 
-SOURCEC	  = ESMCI_Attribute_F.C
+SOURCEC	  =
 SOURCEF	  =
-SOURCEH	  = 
+SOURCEH	  =
 
 OBJSC     = $(addsuffix .o, $(basename $(SOURCEC)))
 OBJSF     = $(addsuffix .o, $(basename $(SOURCEF)))

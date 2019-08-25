@@ -117,4 +117,7 @@ module ESMF
     
     use ESMF_IOScripMod, only: ESMF_SparseMatrixWrite
 
+    use ESMF_Info2Mod
+    use ESMF_InfoSyncMod
+
 end module ESMF

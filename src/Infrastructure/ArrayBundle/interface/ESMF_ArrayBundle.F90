@@ -657,7 +657,6 @@ type(ESMF_KeywordEnforcer), optional:: keywordEnforcer ! must use keywords below
     integer                 :: arrayCount, i
     type(ESMF_Pointer), allocatable :: arrayPointerList(:)
     integer                       :: len_name
-    type(ESMF_Logical)            :: linkChange
     type(ESMF_Logical)            :: multiflagArg
     type(ESMF_Logical)            :: relaxedflagArg
 

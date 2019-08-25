@@ -102,7 +102,7 @@ void ESMC_Info2CopyForAttribute(const ESMCI::Info2* src, ESMCI::Info2* dst, int&
     dst->getStorageRefWritable() = src->getStorageRef();
   }
   ESMF_CATCH_INFO
-    rc = ESMF_SUCCESS;
+  rc = ESMF_SUCCESS;
 }
 
 #undef  ESMC_METHOD
@@ -123,7 +123,7 @@ ESMCI::Info2* ESMC_Info2CreateByKey(ESMCI::Info2 *srcInfo,
     json new_storage = srcInfo->get<json>(local_key, rc);
     info = new ESMCI::Info2(std::move(new_storage));
   }
-  ESMF_CATCH_ISOC;
+  ESMF_CATCH_ISOC
   return info;
 }
 
@@ -136,7 +136,7 @@ ESMCI::Info2* ESMC_Info2CreateByParse(char *payload, int& rc) {
     std::string local_payload(payload);
     info = new ESMCI::Info2(payload, rc);
   }
-  ESMF_CATCH_ISOC;
+  ESMF_CATCH_ISOC
   return info;
 }
 
@@ -195,7 +195,7 @@ void ESMC_Info2Erase(ESMCI::Info2* info, char* keyParent,
       info->erase(localkeyParent, localkeyChild, rc, recursive);
     }
   }
-  ESMF_CATCH_ISOC;
+  ESMF_CATCH_ISOC
 }
 
 #undef ESMC_METHOD
@@ -209,7 +209,7 @@ void ESMC_Info2Inquire(ESMCI::Info2 *info, ESMCI::Info2 *inq,
     json &inqref = inq->getStorageRefWritable();
     inqref = std::move(jinq);
   }
-  ESMF_CATCH_ISOC;
+  ESMF_CATCH_ISOC
 }
 
 #undef  ESMC_METHOD
@@ -220,7 +220,7 @@ void ESMC_Info2IsEqual(ESMCI::Info2 *lhs, ESMCI::Info2 *rhs,
   try {
     res = lhs->getStorageRef() == rhs->getStorageRef();
   }
-  ESMF_CATCH_ISOC;
+  ESMF_CATCH_ISOC
   rc = ESMF_SUCCESS;
 }
 
@@ -232,7 +232,7 @@ void ESMC_Info2IsPresent(ESMCI::Info2 *info, char *key, bool &res, int &rc,
   try {
     res = info->hasKey(local_key, rc, isptr, recursive);
   }
-  ESMF_CATCH_ISOC;
+  ESMF_CATCH_ISOC
 }
 
 #undef  ESMC_METHOD
@@ -242,7 +242,7 @@ void ESMC_Info2IsSet(ESMCI::Info2 *info, char *key, int &isSet, int &rc) {
   try {
     isSet = info->isSetNull(local_key, rc);
   }
-  ESMF_CATCH_ISOC;
+  ESMF_CATCH_ISOC
 }
 
 #undef  ESMC_METHOD
@@ -252,7 +252,7 @@ void ESMC_Info2Print(ESMCI::Info2 *info, int &indent, int &rc) {
   try {
     std::cout << info->dump(indent, rc) << std::endl;
   }
-  ESMF_CATCH_ISOC;
+  ESMF_CATCH_ISOC
 }
 
 #undef  ESMC_METHOD
@@ -262,20 +262,20 @@ void ESMC_Info2Update(ESMCI::Info2 *lhs, ESMCI::Info2 *rhs, int &rc) {
   try {
     lhs->update(*rhs, rc);
   }
-  ESMF_CATCH_ISOC;
+  ESMF_CATCH_ISOC
 }
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_Info2BaseSyncDo"
-void ESMC_Info2BaseSyncDo(std::vector<long int> &base_addresses, int &rootPet, int &rc) {
+void ESMC_Info2BaseSyncDo(const std::vector<long int> &base_addresses, const int &rootPet, const long int &vmAddress, int &rc) {
   rc = ESMF_FAILURE;
   try {
-    ESMCI::VM *vm = ESMCI::VM::getCurrent(&rc);
-    ESMF_CHECKERR_STD("", rc, "Did not get current VM", rc);
+    void *v = (void *)vmAddress;
+    ESMCI::VM *vm = reinterpret_cast<ESMCI::VM *>(v);
     int localPet = vm->getLocalPet();
     json j = json::object();
     if (localPet == rootPet) {
-      // For each base address, blind-cast to an infoibutes object and determine
+      // For each base address, blind-cast to an Info object and determine
       // if that object has been updated (dirty). If it has been updated, then
       // stick its serialized string representation inside a JSON map. For
       // broadcasting.
@@ -285,14 +285,17 @@ void ESMC_Info2BaseSyncDo(std::vector<long int> &base_addresses, int &rootPet, i
         if (is_dirty) {
           try {
             j[std::to_string(ii)] = info->getStorageRef().dump();
+            // This data will be broadcast and we can consider the object
+            // clean.
+            info->setDirty(false);
           }
-          ESMF_CATCH_JSON;
+          ESMF_CATCH_JSON
         }
       }
     }
     // Broadcast the update map.
     ESMCI::Info2 binfo(std::move(j));
-    broadcastInfo(&binfo, rootPet, rc);
+    broadcastInfo(&binfo, rootPet, *vm, rc);
     // Update for each string key/index in the update map.
     const json &storage = binfo.getStorageRef();
     int ikey;
@@ -303,17 +306,22 @@ void ESMC_Info2BaseSyncDo(std::vector<long int> &base_addresses, int &rootPet, i
       // map.
       ESMCI::Info2 rhs(it.value(), rc);
       try {
-        if (localPet != rootPet) { info_to_update->update(rhs, rc); }
+        if (localPet != rootPet) {
+          info_to_update->update(rhs, rc);
+          // Since this is part of the sync operation, we do not consider this
+          // data dirty after the update.
+          info_to_update->setDirty(false);
+        }
       }
-      ESMF_CATCH_JSON;
+      ESMF_CATCH_JSON
     }
   }
-  ESMF_CATCH_ISOC;
+  ESMF_CATCH_ISOC
 }
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_Info2BaseSync()"
-void ESMC_Info2BaseSync(ESMCI::Info2 *inqstate, int &rootPet, int &rc) {
+void ESMC_Info2BaseSync(ESMCI::Info2 *inqstate, int &rootPet, long int &vmAddress, int &rc) {
   rc = ESMF_FAILURE;
   try {
     const json &j_inqstate = inqstate->getStorageRef();
@@ -321,25 +329,28 @@ void ESMC_Info2BaseSync(ESMCI::Info2 *inqstate, int &rootPet, int &rc) {
     updateDirtyInfo(j_inqstate, &ctr, nullptr);
     std::vector<long int> base_addresses(ctr, 0);
     updateDirtyInfo(j_inqstate, nullptr, &base_addresses);
-    ESMC_Info2BaseSyncDo(base_addresses, rootPet, rc);
+    ESMC_Info2BaseSyncDo(base_addresses, rootPet, vmAddress, rc);
   }
-  ESMF_CATCH_ISOC;
+  ESMF_CATCH_ISOC
 }
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_Info2Broadcast()"
 void ESMC_Info2Broadcast(ESMCI::Info2 *info, int &rootPet, int &rc) {
+  //tdk:todo: consider adding vm as an optional argument
   rc = ESMF_FAILURE;
+  ESMCI::VM *vm = ESMCI::VM::getCurrent(&rc);
+  ESMF_CHECKERR_STD("", rc, "Did not get current VM", rc);
+
   try {
-    broadcastInfo(info, rootPet, rc);
+    broadcastInfo(info, rootPet, *vm, rc);
   }
-  ESMF_CATCH_ISOC;
+  ESMF_CATCH_ISOC
 }
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_Info2ReadJSON()"
-void ESMC_Info2ReadJSON(ESMCI::Info2 *info, char *filename,
-                             int &rc) {
+void ESMC_Info2ReadJSON(ESMCI::Info2 *info, char *filename, int &rc) {
   rc = ESMF_FAILURE;
   std::string filename2(filename);
   try {
@@ -359,13 +370,12 @@ void ESMC_Info2ReadJSON(ESMCI::Info2 *info, char *filename,
     out = move(j);
     rc = ESMF_SUCCESS;
   }
-  ESMF_CATCH_ISOC;
+  ESMF_CATCH_ISOC
 }
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_Info2WriteJSON()"
-void ESMC_Info2WriteJSON(ESMCI::Info2 *info, char *filename,
-  int &rc) {
+void ESMC_Info2WriteJSON(ESMCI::Info2 *info, char *filename, int &rc) {
   rc = ESMF_FAILURE;
   std::string filename2(filename);
   try {
@@ -421,7 +431,7 @@ void ESMC_Info2GetCH(ESMCI::Info2* info, char *key, char *value,
   try {
     as_str = info->get<std::string>(local_key, rc, def_str_ptr, index);
   }
-  ESMF_CATCH_ISOC;
+  ESMF_CATCH_ISOC
   // Transfer the string characters into the Fortran character array using
   // spaces to fill the Fortran array if we are past the max string length.
   for (int ii = 0; ii < vlen; ++ii) {
@@ -445,7 +455,7 @@ void ESMC_Info2SetCH(ESMCI::Info2 *info, char *key, char *value,
   try {
     info->set<std::string>(localKey, localValue, force, rc, index);
   }
-  ESMF_CATCH_ISOC;
+  ESMF_CATCH_ISOC
 }
 
 #undef  ESMC_METHOD
@@ -457,7 +467,7 @@ void ESMC_Info2SetINFO(ESMCI::Info2 *info, char *key,
   try {
     info->set(localKey, *value, force, rc);
   }
-  ESMF_CATCH_ISOC;
+  ESMF_CATCH_ISOC
 }
 
 #undef  ESMC_METHOD
@@ -469,7 +479,7 @@ void ESMC_Info2SetNULL(ESMCI::Info2 *info, char *key, bool &force,
   try {
     info->set(localKey, force, rc);
   }
-  ESMF_CATCH_ISOC;
+  ESMF_CATCH_ISOC
 }
 
 #undef  ESMC_METHOD
@@ -483,7 +493,7 @@ void ESMC_Info2SetArrayCH(ESMCI::Info2 *info, char *key, int &count,
   try {
     info->set<std::vector<std::string>>(localKey, nullptr, count, force, rc);
   }
-  ESMF_CATCH_ISOC;
+  ESMF_CATCH_ISOC
 }
 
 }  // extern "C"

@@ -172,11 +172,12 @@ interface
 
   !=============================================================================
 
-  subroutine c_info_base_sync(inqstate, rootPet, rc) bind(C, name="ESMC_Info2BaseSync")
+  subroutine c_info_base_sync(inqstate, rootPet, vmAddress, rc) bind(C, name="ESMC_Info2BaseSync")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: inqstate
     integer(C_INT), intent(in) :: rootPet
+    integer(C_LONG), intent(in) :: vmAddress
     integer(C_INT), intent(inout) :: rc
   end subroutine
 
@@ -245,14 +246,15 @@ interface
     integer(C_INT), intent(inout) :: rc
   end subroutine c_info_set_NULL
 
-  subroutine c_info_set_array_CH(info, key, nelements, force, rc) bind(C, name="ESMC_Info2SetArrayCH")
+  subroutine c_info_set_array_CH(info, key, itemcount, force, rc, pkey) bind(C, name="ESMC_Info2SetArrayCH")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: info
     character(kind=C_CHAR), intent(in) :: key(*)
-    integer(C_INT), intent(in) :: nelements
+    integer(C_INT), intent(in) :: itemcount
     logical(C_BOOL), intent(in) :: force
     integer(C_INT), intent(inout) :: rc
+    character(kind=C_CHAR), intent(in) :: pkey(*)
   end subroutine c_info_set_array_CH
 
 end interface

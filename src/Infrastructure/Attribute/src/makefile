@@ -3,13 +3,11 @@
 # default rule if no explicit target is given to make
 ALL: build_here
 
-SOURCEC	  = ESMCI_Attribute.C ESMCI_AttributeUpdate.C \
-            ESMCI_Metadata.C \
+SOURCEC	  = ESMCI_Metadata.C \
             ESMCI_IOHandle.C \
             ESMCI_TestUtilAttributes.C
 SOURCEF	  =
-STOREH    = ESMCI_Attribute.h \
-            ESMCI_Metadata.h \
+STOREH    = ESMCI_Metadata.h \
             ESMCI_IOHandle.h \
             ESMCI_TestUtilAttributes.h
 

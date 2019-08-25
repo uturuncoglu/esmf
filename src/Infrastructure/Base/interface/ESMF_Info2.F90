@@ -45,6 +45,7 @@ implicit none
 
 !private
 !public :: ESMF_Info2
+
 !tdk:todo: need to specify public interfaces
 
 include "ESMF_Info2CDef.F90"
@@ -351,7 +352,7 @@ end subroutine ESMF_Info2Remove
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_Info2Inquire()"
 subroutine ESMF_Info2Inquire(info, key, count, countTotal, jsonType, isArray, &
-  isDirty, attPackCount, attnestflag, idx, typekind, ikey, rc)
+  isDirty, attPackCount, attnestflag, idx, typekind, ikey, isPresent, rc)
 
   type(ESMF_Info2), intent(in) :: info
   character(len=*), intent(in), optional :: key
@@ -365,6 +366,7 @@ subroutine ESMF_Info2Inquire(info, key, count, countTotal, jsonType, isArray, &
   integer(C_INT), intent(in), optional :: idx
   type(ESMF_TypeKind_Flag), intent(out), optional :: typekind
   character(len=*), intent(out), optional :: ikey
+  logical, intent(out), optional :: isPresent !tdk:todo: implement for both key and idx (index is out of range for example)
   integer, intent(inout), optional :: rc
 
   integer :: localrc, esmc_typekind
@@ -662,11 +664,11 @@ end subroutine ESMF_Info2GetCH
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_Info2GetArrayCH()"
-subroutine ESMF_Info2GetArrayCH(info, key, values, nelements, attnestflag, rc)
+subroutine ESMF_Info2GetArrayCH(info, key, values, itemcount, attnestflag, rc)
   type(ESMF_Info2), intent(in) :: info
   character(len=*), intent(in) :: key
   character(len=*), dimension(:), allocatable, intent(out) :: values
-  integer(C_INT), intent(out) :: nelements
+  integer(C_INT), intent(out) :: itemcount
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
@@ -676,13 +678,13 @@ subroutine ESMF_Info2GetArrayCH(info, key, values, nelements, attnestflag, rc)
   if (present(rc)) rc = ESMF_FAILURE
 
   ! Get the array size from the attributes store
-  call ESMF_Info2Inquire(info, key=trim(key)//C_NULL_CHAR, count=nelements, &
+  call ESMF_Info2Inquire(info, key=trim(key)//C_NULL_CHAR, count=itemcount, &
     attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   ! Allocate the outgoing storage array and call into C to fill the array
-  allocate(values(nelements))
-  do ii=1,nelements
+  allocate(values(itemcount))
+  do ii=1,itemcount
     call ESMF_Info2GetCH(info, key, values(ii), idx=ii, attnestflag=attnestflag, &
       rc=localrc)
   enddo
@@ -693,11 +695,11 @@ end subroutine ESMF_Info2GetArrayCH
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_Info2GetArrayCHAllocated()"
-subroutine ESMF_Info2GetArrayCHAllocated(info, key, values, nelements, attnestflag, rc)
+subroutine ESMF_Info2GetArrayCHAllocated(info, key, values, itemcount, attnestflag, rc)
   type(ESMF_Info2), intent(in) :: info
   character(len=*), intent(in) :: key
   character(len=*), dimension(:), intent(out) :: values
-  integer(C_INT), intent(out) :: nelements
+  integer(C_INT), intent(out) :: itemcount
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
@@ -707,11 +709,11 @@ subroutine ESMF_Info2GetArrayCHAllocated(info, key, values, nelements, attnestfl
   if (present(rc)) rc = ESMF_FAILURE
 
   ! Get the array size from the attributes store
-  call ESMF_Info2Inquire(info, key=trim(key)//C_NULL_CHAR, count=nelements, &
+  call ESMF_Info2Inquire(info, key=trim(key)//C_NULL_CHAR, count=itemcount, &
     attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  do ii=1,nelements
+  do ii=1,itemcount
     call ESMF_Info2GetCH(info, key, values(ii), idx=ii, attnestflag=attnestflag, &
       rc=localrc)
   enddo
@@ -783,16 +785,18 @@ end subroutine ESMF_Info2SetINFO
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_Info2SetArrayCH()"
-subroutine ESMF_Info2SetArrayCH(info, key, values, force, rc)
+subroutine ESMF_Info2SetArrayCH(info, key, values, force, pkey, rc)
   type(ESMF_Info2), intent(inout) :: info
   character(len=*), intent(in) :: key
   character(len=*), dimension(:), intent(in) :: values
   logical, intent(in), optional :: force
+  character(len=*), intent(in), optional :: pkey
   integer, intent(inout), optional :: rc
 
   integer :: localrc, ii
   integer(C_INT) :: idx
   logical(C_BOOL) :: local_force
+  character(:), allocatable :: local_pkey
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
@@ -803,9 +807,15 @@ subroutine ESMF_Info2SetArrayCH(info, key, values, force, rc)
     local_force = .true.
   end if
 
+  if (present(pkey)) then
+    local_pkey = pkey//C_NULL_CHAR
+  else
+    local_pkey = ""//C_NULL_CHAR
+  end if
+
   ! Allocate storage in C
   call c_info_set_array_CH(info%ptr, trim(key)//C_NULL_CHAR, &
-    SIZE(values), local_force, localrc)
+    SIZE(values), local_force, localrc, local_pkey)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
     rcToReturn=rc)) return
 

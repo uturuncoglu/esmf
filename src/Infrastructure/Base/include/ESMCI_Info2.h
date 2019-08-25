@@ -151,6 +151,7 @@ public:
   json inquire(key_t& key, int& rc, bool recursive = false, const int *idx = nullptr) const;
 
   bool isDirty() const {return this->dirty;}
+  void setDirty(bool flag) {this->dirty = flag;}
 
   bool isSetNull(key_t &key, int &rc) const;
 
@@ -161,21 +162,27 @@ public:
   void serialize(char *buffer, int *length, int *offset,
     ESMC_InquireFlag inquireflag, int &rc);
 
-  void set(key_t &key, const ESMCI::Info2 &info, bool force, int &rc);
-  void set(key_t &key, bool force, int &rc);  // set null
+  void set(key_t &key, json &&j, bool force, int &rc, const int *index = nullptr,
+    const key_t * const pkey = nullptr);
+  void set(key_t &key, const ESMCI::Info2 &info, bool force, int &rc,
+    const key_t * const pkey = nullptr);
+  void set(key_t &key, bool force, int &rc, const int *index = nullptr,
+    const key_t * const pkey = nullptr);  // set null
   template <typename T>
-  void set(key_t& key, T value, bool force, int& rc, const int *index = nullptr);
+  void set(key_t &key, T value, bool force, int &rc, const int *index = nullptr,
+    const key_t * const pkey = nullptr);
   template <typename T>
-  void set(key_t& key, T *values, int count, bool force, int& rc);
+  void set(key_t &key, T *values, int count, bool force, int &rc,
+    const key_t * const pkey = nullptr);
 
-  void update(const Info2& info, int& rc);
+  void update(const Info2 &info, int &rc);
 
   int ESMC_Print(bool tofile, const char *filename, bool append) const;
 };
 
 //-----------------------------------------------------------------------------
 
-void broadcastInfo(ESMCI::Info2* info, int rootPet, int& rc);
+void broadcastInfo(ESMCI::Info2* info, int rootPet, const ESMCI::VM &vm, int &rc);
 
 //-----------------------------------------------------------------------------
 

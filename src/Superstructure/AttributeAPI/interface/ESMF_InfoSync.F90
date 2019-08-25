@@ -11,6 +11,7 @@
 !==============================================================================
 
 #define FILENAME "src/Superstructure/AttributeAPI/interface/ESMF_Info2Sync.F90"
+!tdk:todo: public types
 
 #include "ESMF_Macros.inc"
 #include "ESMF.h"
@@ -75,6 +76,8 @@ contains
    getInfoSciComp, getInfoDistGrid, getInfoField, getInfoFieldBundle, getInfoGrid, &
    getInfoState, getInfoLocStream
 end type ESMF_Inquire
+
+include "ESMF_InfoSyncGenericInterface.F90"
 
 contains
 
@@ -1066,29 +1069,9 @@ function getInfoLocStream(target, rc) result(info)
 end function getInfoLocStream
 
 !===============================================================================
-!===============================================================================
+! ESMF_InfoSync ================================================================
 !===============================================================================
 
-#undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_Info2StateSync()"
-subroutine ESMF_Info2StateSync(state, rootPet, rc)
-  !tdk:doc
-  type(ESMF_State), intent(inout) :: state
-  integer, intent(in) :: rootPet
-  type(ESMF_Inquire) :: einq
-  integer, intent(inout), optional :: rc
-  integer :: localrc
-
-  if (present(rc)) rc = ESMF_RC_NOT_IMPL
-  einq = einq%Create(addBaseAddress=.true., addObjectInfo=.false., rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
-  call einq%Update(state, "", rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
-  call c_info_base_sync(einq%info%ptr, rootPet, localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
-  call einq%Destroy(rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
-  if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_Info2StateSync
+#include "ESMF_InfoSyncGeneric.F90"
 
 end module ESMF_InfoSyncMod
