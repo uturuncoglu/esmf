@@ -70,7 +70,7 @@ program ESMF_Info2SyncUTest
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
   !----------------------------------------------------------------------------
 
-  call ESMF_VMGetGlobal(vm, rc=rc)
+  call ESMF_VMGetCurrent(vm, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
   call ESMF_VMGet(vm, petCount=petCount, localPet=localPet, rc=rc)
@@ -176,7 +176,7 @@ program ESMF_Info2SyncUTest
   end if
   call ESMF_Info2Broadcast(desired_attrs, 0)
 
-  call ESMF_Info2StateSync(state, rootPet, rc=rc)
+  call ESMF_InfoSync(state, rootPet, vm, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
   einq = einq%Create(addObjectInfo=.true., rc=rc)

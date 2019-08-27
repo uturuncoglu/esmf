@@ -5,7 +5,7 @@ run:  run_unit_tests
 
 LOCDIR	  = src/Infrastructure/Base/tests
 
-#TESTS_BUILD = $(ESMF_TESTDIR)/ESMC_Info2UTest
+#TESTS_BUILD = $(ESMF_TESTDIR)/ESMF_Info2ArrayUTest
 TESTS_BUILD   = $(ESMF_TESTDIR)/ESMF_BaseUTest \
                 $(ESMF_TESTDIR)/ESMC_NlohmannJSONUTest \
                 $(ESMF_TESTDIR)/ESMC_Info2UTest \
@@ -50,7 +50,7 @@ RUN_ESMF_BaseUTest:
 RUN_ESMF_BaseUTestUNI:
 	$(MAKE) TNAME=Base NP=1 ftest
 
-# Info ==================================================================
+ Info ==================================================================
 
 RUN_ESMC_NlohmannJSONUTest:
 	$(MAKE) TNAME=NlohmannJSON NP=4 ctest

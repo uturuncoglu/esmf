@@ -64,7 +64,7 @@ interface
     implicit none
     type(C_PTR), value :: info
     character(C_CHAR), intent(in) :: key(*)
-    real(C_FLOAT), dimension(:), intent(out) :: value
+    real(C_FLOAT), dimension(*), intent(out) :: value
     integer(C_INT), intent(out) :: itemcount
     integer(C_INT), intent(inout) :: rc
     logical(C_BOOL), intent(in) :: recursive
@@ -75,7 +75,7 @@ interface
     implicit none
     type(C_PTR), value :: info
     character(C_CHAR), intent(in) :: key(*)
-    real(C_DOUBLE), dimension(:), intent(out) :: value
+    real(C_DOUBLE), dimension(*), intent(out) :: value
     integer(C_INT), intent(out) :: itemcount
     integer(C_INT), intent(inout) :: rc
     logical(C_BOOL), intent(in) :: recursive
@@ -86,7 +86,7 @@ interface
     implicit none
     type(C_PTR), value :: info
     character(C_CHAR), intent(in) :: key(*)
-    integer(C_INT), dimension(:), intent(out) :: value
+    integer(C_INT), dimension(*), intent(out) :: value
     integer(C_INT), intent(out) :: itemcount
     integer(C_INT), intent(inout) :: rc
     logical(C_BOOL), intent(in) :: recursive
@@ -97,7 +97,7 @@ interface
     implicit none
     type(C_PTR), value :: info
     character(C_CHAR), intent(in) :: key(*)
-    integer(C_LONG), dimension(:), intent(out) :: value
+    integer(C_LONG), dimension(*), intent(out) :: value
     integer(C_INT), intent(out) :: itemcount
     integer(C_INT), intent(inout) :: rc
     logical(C_BOOL), intent(in) :: recursive
@@ -108,7 +108,7 @@ interface
     implicit none
     type(C_PTR), value :: info
     character(C_CHAR), intent(in) :: key(*)
-    logical(C_BOOL), dimension(:), intent(out) :: value
+    logical(C_BOOL), dimension(*), intent(out) :: value
     integer(C_INT), intent(out) :: itemcount
     integer(C_INT), intent(inout) :: rc
     logical(C_BOOL), intent(in) :: recursive
@@ -195,7 +195,7 @@ interface
     implicit none
     type(C_PTR), value :: info
     character(kind=C_CHAR), intent(in) :: key(*)
-    real(C_FLOAT), dimension(:), intent(in) :: value
+    real(C_FLOAT), dimension(*), intent(in) :: value
     integer(C_INT), intent(in) :: itemcount
     logical(C_BOOL), intent(in) :: force
     integer(C_INT), intent(inout) :: rc
@@ -207,7 +207,7 @@ interface
     implicit none
     type(C_PTR), value :: info
     character(kind=C_CHAR), intent(in) :: key(*)
-    real(C_DOUBLE), dimension(:), intent(in) :: value
+    real(C_DOUBLE), dimension(*), intent(in) :: value
     integer(C_INT), intent(in) :: itemcount
     logical(C_BOOL), intent(in) :: force
     integer(C_INT), intent(inout) :: rc
@@ -219,7 +219,7 @@ interface
     implicit none
     type(C_PTR), value :: info
     character(kind=C_CHAR), intent(in) :: key(*)
-    integer(C_INT), dimension(:), intent(in) :: value
+    integer(C_INT), dimension(*), intent(in) :: value
     integer(C_INT), intent(in) :: itemcount
     logical(C_BOOL), intent(in) :: force
     integer(C_INT), intent(inout) :: rc
@@ -231,7 +231,7 @@ interface
     implicit none
     type(C_PTR), value :: info
     character(kind=C_CHAR), intent(in) :: key(*)
-    integer(C_LONG), dimension(:), intent(in) :: value
+    integer(C_LONG), dimension(*), intent(in) :: value
     integer(C_INT), intent(in) :: itemcount
     logical(C_BOOL), intent(in) :: force
     integer(C_INT), intent(inout) :: rc
@@ -244,7 +244,7 @@ interface
     implicit none
     type(C_PTR), value :: info
     character(kind=C_CHAR), intent(in) :: key(*)
-    logical(C_BOOL), dimension(:), intent(in) :: value
+    logical(C_BOOL), dimension(*), intent(in) :: value
     integer(C_INT), intent(in) :: itemcount
     logical(C_BOOL), intent(in) :: force
     integer(C_INT), intent(inout) :: rc

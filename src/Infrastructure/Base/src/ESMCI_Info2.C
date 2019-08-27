@@ -830,10 +830,14 @@ void Info2::set(key_t &key, json &&j, bool force, int &rc, const int *index,
     assert(jobject);
 
     bool has_key = true;  // Safer to assume the key exists
-    try {
-      bool has_key = handleHasKey(this, key, force, rc);
+    // Only check for the key's existence if there is no index. If an index is
+    // provided, then the key must exist to set it.
+    if (!index) {
+      try {
+        has_key = handleHasKey(this, key, force, rc);
+      }
+      ESMF_CATCH_PASSTHRU
     }
-    ESMF_CATCH_PASSTHRU
 
     try {
       const json::json_pointer jpkey = this->formatKey(key, rc);
@@ -852,7 +856,7 @@ void Info2::set(key_t &key, json &&j, bool force, int &rc, const int *index,
         json::array_t &jarray = jarrayp->get_ref<json::array_t&>();
         if (jarray.size() > 0) {
           json::value_t jarray_type = json_array_type(jarray);
-          if (!j.is_null() && jarray_type != j.type()) {
+          if (!j.is_null() && jarray_type != json::value_t::null && jarray_type != j.type()) {
             const std::string msg = "Target JSON array for index has a different type. ESMF JSON arrays used in Info are type safe";
             ESMF_CHECKERR_STD("ESMC_RC_OBJ_BAD", ESMC_RC_OBJ_BAD, msg, rc);
           }
@@ -871,7 +875,10 @@ void Info2::set(key_t &key, json &&j, bool force, int &rc, const int *index,
           }
           ESMF_CATCH_PASSTHRU
         }
-        jobject->get_ref<json::object_t&>()[jpkey] = std::move(j);
+        try {
+          (*jobject)[jpkey] = std::move(j);
+        }
+        ESMF_CATCH_JSON
       }
     }
     ESMF_CATCH_PASSTHRU

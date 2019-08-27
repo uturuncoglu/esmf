@@ -322,7 +322,7 @@ program ESMF_Info2ArrayUTest
   failed = .false.
 
   call ESMF_Info2Set(info, "logicalkey", .false., idx=55, rc=rc)
-  call ESMF_Test((rc==ESMF_RC_ARG_OUTOFRANGE), name, failMsg, result, ESMF_SRCLINE)
+  call ESMF_Test((rc/=ESMF_SUCCESS), name, failMsg, result, ESMF_SRCLINE)
   !----------------------------------------------------------------------------
 
   !----------------------------------------------------------------------------
@@ -332,8 +332,7 @@ program ESMF_Info2ArrayUTest
   failed = .false.
 
   call ESMF_Info2Set(info, "logicalkey", 55, idx=1, rc=rc)
-  !if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
-  call ESMF_Test((rc==ESMC_RC_ARG_BAD), name, failMsg, result, ESMF_SRCLINE)
+  call ESMF_Test((rc==ESMC_RC_OBJ_BAD), name, failMsg, result, ESMF_SRCLINE)
   !----------------------------------------------------------------------------
 
   !----------------------------------------------------------------------------

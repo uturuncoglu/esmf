@@ -46,11 +46,8 @@ void finalizeFailure(int& rc, char failMsg[], string msg) {
 void testbroadcastInfo(int& rc, char failMsg[]) {
   rc = ESMF_FAILURE;
 
-  ESMCI::VM *vm = nullptr;
-  try {
-    vm = ESMCI::VM::getCurrent(&rc);
-  }
-  ESMF_CATCH_PASSTHRU
+  ESMCI::VM *vm = ESMCI::VM::getCurrent(&rc);
+  ESMF_CHECKERR_STD("", rc, "Did not get current VM", rc);
 
   int localPet = vm->getLocalPet();
   int petCount = vm->getPetCount();
@@ -67,14 +64,14 @@ void testbroadcastInfo(int& rc, char failMsg[]) {
 
   int desired = 5;
   if (localPet == rootPet) {
-  try {
-      info.set("foo", desired, false, rc);
-  }
-  ESMF_CATCH_PASSTHRU
+    try {
+        info.set("foo", desired, false, rc);
+    }
+    ESMF_CATCH_PASSTHRU
   }
 
   try {
-    ESMCI::broadcastInfo(&info, rootPet, rc);
+    ESMCI::broadcastInfo(&info, rootPet, *vm, rc);
   }
   ESMF_CATCH_PASSTHRU
 
