@@ -433,7 +433,7 @@ T Info2::get(key_t &key, int &rc, const T *def, const int *index, bool recursive
       if (def) {
         ret = *def;
       } else {
-        ESMF_THROW_JSON(e, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc)
+        ESMF_THROW_JSON(e, "ESMF_RC_ATTR_NOTSET", ESMF_RC_ATTR_NOTSET, rc)
       }
     }
   }

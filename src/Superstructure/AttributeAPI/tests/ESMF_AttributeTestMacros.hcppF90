@@ -530,16 +530,6 @@
       call ESMF_Test((rc==ESMF_SUCCESS), name, failMsg, result, ESMF_SRCLINE) @\
       !---------------------------------------------------------------------- @\
  @\
-      !mtag_ex @\
-      ! Get a constant numerical Attribute from mobj Test @\
-      ! expect fail because this will default to I4 @\
-      call ESMF_AttributeGet(mname, name="ConstantI8", value=outConstantI8, rc=rc) @\
-      write(failMsg, *) "Did not return ESMC_RC_ATTR_WRONGTYPE" @\
-      write(name, *) "Getting a constant I8 Attribute from mobj Test" @\
-      call ESMF_Test((rc==ESMC_RC_ATTR_WRONGTYPE), & @\
-                      name, failMsg, result, ESMF_SRCLINE) @\
-      !---------------------------------------------------------------------- @\
- @\
       !---------------------------------------------------------------------- @\
       !  ESMF_I8 list @\
       !---------------------------------------------------------------------- @\
@@ -660,17 +650,6 @@
       write(failMsg, *) "Did not return ESMF_SUCCESS" @\
       write(name, *) "Adding a constant I8 list Attribute to mobj Test" @\
       call ESMF_Test((rc==ESMF_SUCCESS), name, failMsg, result, ESMF_SRCLINE) @\
-      !---------------------------------------------------------------------- @\
- @\
-      !mtag_ex @\
-      ! Get a constant numerical Attribute from mobj Test @\
-      ! expect fail because this will default to I4 @\
-      call ESMF_AttributeGet(mname, name="ConstantI8l", & @\
-        valueList=outConstantI8l, rc=rc) @\
-      write(failMsg, *) "Did not return ESMC_RC_ATTR_WRONGTYPE" @\
-      write(name, *) "Getting a constant I8 list Attribute from mobj Test" @\
-      call ESMF_Test((rc==ESMC_RC_ATTR_WRONGTYPE), & @\
-                      name, failMsg, result, ESMF_SRCLINE) @\
       !---------------------------------------------------------------------- @\
  @\
       !---------------------------------------------------------------------- @\
@@ -980,16 +959,6 @@
       call ESMF_Test((rc==ESMF_SUCCESS), name, failMsg, result, ESMF_SRCLINE) @\
       !---------------------------------------------------------------------- @\
  @\
-      !mtag_nex @\
-      ! Get a constant numerical Attribute from mobj Test @\
-      ! expect fail because this will default to R4 @\
-      call ESMF_AttributeGet(mname, name="ConstantR8", value=outConstantR8, rc=rc) @\
-      write(failMsg, *) "Did not return ESMC_RC_ATTR_WRONGTYPE" @\
-      write(name, *) "Getting a constant R8 Attribute from mobj Test" @\
-      call ESMF_Test((rc==ESMC_RC_ATTR_WRONGTYPE), & @\
-                      name, failMsg, result, ESMF_SRCLINE) @\
-      !---------------------------------------------------------------------- @\
- @\
       !---------------------------------------------------------------------- @\
       !  ESMF_R8 list @\
       !---------------------------------------------------------------------- @\
@@ -1110,16 +1079,6 @@
       write(failMsg, *) "Did not return ESMF_SUCCESS" @\
       write(name, *) "Adding a constant R8 list Attribute to mobj Test" @\
       call ESMF_Test((rc==ESMF_SUCCESS), name, failMsg, result, ESMF_SRCLINE) @\
-      !---------------------------------------------------------------------- @\
- @\
-      !mtag_nex @\
-      ! Get a constant numerical Attribute from mobj Test @\
-      call ESMF_AttributeGet(mname, name="ConstantR8l", & @\
-        valueList=outConstantR8l, rc=rc) @\
-      write(failMsg, *) "Did not return ESMC_RC_ATTR_WRONGTYPE" @\
-      write(name, *) "Getting a constant R8 list Attribute from mobj Test" @\
-      call ESMF_Test((rc==ESMC_RC_ATTR_WRONGTYPE), & @\
-                      name, failMsg, result, ESMF_SRCLINE) @\
       !---------------------------------------------------------------------- @\
  @\
       !---------------------------------------------------------------------- @\
