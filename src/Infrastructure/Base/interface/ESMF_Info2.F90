@@ -325,10 +325,11 @@ subroutine ESMF_Info2Remove(info, keyParent, keyChild, attnestflag, rc)
 
   integer :: localrc
   character(len=ESMF_MAXSTR) :: localkeyChild !tdk:todo: change this to an allocated
-  logical(C_BOOL) :: recursive=.false.
+  logical(C_BOOL) :: recursive
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
+  recursive = .false.
 
   if (present(keyChild)) then
     localkeyChild = keyChild
@@ -372,22 +373,21 @@ subroutine ESMF_Info2Inquire(info, key, count, countTotal, jsonType, isArray, &
   integer :: localrc, esmc_typekind
   type(ESMF_Info2) :: inq
   character(:), allocatable :: local_key
-  logical(C_BOOL) :: recursive=.false.
+  integer :: recursive
   integer(C_INT), target :: local_idx
   type(C_PTR) :: local_idx_ptr
 
-  localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
+  localrc = ESMF_FAILURE
+  recursive = 0 !false
 
   if (present(key)) then
-    allocate(character(len(trim(key)))::local_key)
     local_key = trim(key)
   else
-    allocate(character(0)::local_key)
     local_key = ""
   end if
   if (present(attnestflag)) then
-    if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = .true.
+    if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = 1 !true
   end if
   if (present(idx)) then
     local_idx = idx - 1  ! Shift to C (zero-based) indexing
@@ -459,11 +459,12 @@ function ESMF_Info2IsPresent(info, key, attnestflag, isPointer, rc) result(is_pr
   integer :: localrc
   integer(C_INT) :: isPointer_forC
   logical(C_BOOL) :: local_is_present
-  logical(C_BOOL) :: recursive=.false.
+  logical(C_BOOL) :: recursive
 
   is_present = .false.
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
+  recursive = .false.
 
   if (present(attnestflag)) then
     if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = .true.
@@ -629,10 +630,11 @@ subroutine ESMF_Info2GetCH(info, key, value, default, idx, attnestflag, rc)
   integer(C_INT), target :: local_idx
   character(len=ESMF_MAXSTR), target :: local_default
   type(C_PTR) :: local_default_ptr, local_idx_ptr
-  logical(C_BOOL) :: recursive=.false.
+  logical(C_BOOL) :: recursive
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
+  recursive = .false.
 
   ! Handle optional arguments for C ###########################################
 
@@ -712,6 +714,10 @@ subroutine ESMF_Info2GetArrayCHAllocated(info, key, values, itemcount, attnestfl
   call ESMF_Info2Inquire(info, key=trim(key)//C_NULL_CHAR, count=itemcount, &
     attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  if (itemcount /= SIZE(values)) then
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="values allocation size does not match size in Info storage", ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
 
   do ii=1,itemcount
     call ESMF_Info2GetCH(info, key, values(ii), idx=ii, attnestflag=attnestflag, &

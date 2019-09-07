@@ -25722,7 +25722,7 @@ subroutine ESMF_AttributeGetCountArray(target, count, keywordEnforcer, conventio
   ! 39.11.15
   type(ESMF_Array), intent(in) :: target
   integer, intent(inout) :: count
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   type(ESMF_AttGetCountFlag), intent(in), optional :: attcountflag
@@ -25744,7 +25744,7 @@ subroutine ESMF_AttributeGetCountArray(target, count, keywordEnforcer, conventio
     call format_key(key, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   else
-    key = ""
+    key = ESMF_ATTR_DEFAULT_ROOTKEY
   end if
 
   info = einq%GetInfo(target, rc=localrc)
@@ -25781,7 +25781,7 @@ subroutine ESMF_AttributeGetInfoByNamAPArray(target, name, attpack, keywordEnfor
   type(ESMF_Array), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   type(ESMF_TypeKind_Flag), intent(out), optional :: typekind
   integer, intent(out), optional :: itemCount
@@ -25826,7 +25826,7 @@ subroutine ESMF_AttributeGetInfoByNamArray(target, name, keywordEnforcer, conven
   ! 39.11.17
   type(ESMF_Array), intent(in) :: target
   character(len=*), intent(in) :: name
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -25922,7 +25922,7 @@ subroutine ESMF_AttributeGetAttPackArray(target, convention, purpose, keywordEnf
   type(ESMF_Array), intent(in) :: target
   character(len=*), intent(in) :: convention
   character(len=*), intent(in) :: purpose
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character (len = *), intent(in), optional :: attPackInstanceName  !tdk: noop, no suppor for attpackinstancename
   type(ESMF_AttPack), intent(inout), optional :: attpack
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag !tdk: noop, are there nested conventions and purposes?
@@ -25967,7 +25967,7 @@ subroutine ESMF_AttributeGetCountArrayBundle(target, count, keywordEnforcer, con
   ! 39.11.15
   type(ESMF_ArrayBundle), intent(in) :: target
   integer, intent(inout) :: count
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   type(ESMF_AttGetCountFlag), intent(in), optional :: attcountflag
@@ -25989,7 +25989,7 @@ subroutine ESMF_AttributeGetCountArrayBundle(target, count, keywordEnforcer, con
     call format_key(key, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   else
-    key = ""
+    key = ESMF_ATTR_DEFAULT_ROOTKEY
   end if
 
   info = einq%GetInfo(target, rc=localrc)
@@ -26026,7 +26026,7 @@ subroutine ESMF_AttributeGetInfoByNamAPArrayBundle(target, name, attpack, keywor
   type(ESMF_ArrayBundle), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   type(ESMF_TypeKind_Flag), intent(out), optional :: typekind
   integer, intent(out), optional :: itemCount
@@ -26071,7 +26071,7 @@ subroutine ESMF_AttributeGetInfoByNamArrayBundle(target, name, keywordEnforcer, 
   ! 39.11.17
   type(ESMF_ArrayBundle), intent(in) :: target
   character(len=*), intent(in) :: name
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -26167,7 +26167,7 @@ subroutine ESMF_AttributeGetAttPackArrayBundle(target, convention, purpose, keyw
   type(ESMF_ArrayBundle), intent(in) :: target
   character(len=*), intent(in) :: convention
   character(len=*), intent(in) :: purpose
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character (len = *), intent(in), optional :: attPackInstanceName  !tdk: noop, no suppor for attpackinstancename
   type(ESMF_AttPack), intent(inout), optional :: attpack
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag !tdk: noop, are there nested conventions and purposes?
@@ -26212,7 +26212,7 @@ subroutine ESMF_AttributeGetCountCplComp(target, count, keywordEnforcer, convent
   ! 39.11.15
   type(ESMF_CplComp), intent(in) :: target
   integer, intent(inout) :: count
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   type(ESMF_AttGetCountFlag), intent(in), optional :: attcountflag
@@ -26234,7 +26234,7 @@ subroutine ESMF_AttributeGetCountCplComp(target, count, keywordEnforcer, convent
     call format_key(key, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   else
-    key = ""
+    key = ESMF_ATTR_DEFAULT_ROOTKEY
   end if
 
   info = einq%GetInfo(target, rc=localrc)
@@ -26271,7 +26271,7 @@ subroutine ESMF_AttributeGetInfoByNamAPCplComp(target, name, attpack, keywordEnf
   type(ESMF_CplComp), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   type(ESMF_TypeKind_Flag), intent(out), optional :: typekind
   integer, intent(out), optional :: itemCount
@@ -26316,7 +26316,7 @@ subroutine ESMF_AttributeGetInfoByNamCplComp(target, name, keywordEnforcer, conv
   ! 39.11.17
   type(ESMF_CplComp), intent(in) :: target
   character(len=*), intent(in) :: name
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -26412,7 +26412,7 @@ subroutine ESMF_AttributeGetAttPackCplComp(target, convention, purpose, keywordE
   type(ESMF_CplComp), intent(in) :: target
   character(len=*), intent(in) :: convention
   character(len=*), intent(in) :: purpose
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character (len = *), intent(in), optional :: attPackInstanceName  !tdk: noop, no suppor for attpackinstancename
   type(ESMF_AttPack), intent(inout), optional :: attpack
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag !tdk: noop, are there nested conventions and purposes?
@@ -26457,7 +26457,7 @@ subroutine ESMF_AttributeGetCountGridComp(target, count, keywordEnforcer, conven
   ! 39.11.15
   type(ESMF_GridComp), intent(in) :: target
   integer, intent(inout) :: count
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   type(ESMF_AttGetCountFlag), intent(in), optional :: attcountflag
@@ -26479,7 +26479,7 @@ subroutine ESMF_AttributeGetCountGridComp(target, count, keywordEnforcer, conven
     call format_key(key, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   else
-    key = ""
+    key = ESMF_ATTR_DEFAULT_ROOTKEY
   end if
 
   info = einq%GetInfo(target, rc=localrc)
@@ -26516,7 +26516,7 @@ subroutine ESMF_AttributeGetInfoByNamAPGridComp(target, name, attpack, keywordEn
   type(ESMF_GridComp), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   type(ESMF_TypeKind_Flag), intent(out), optional :: typekind
   integer, intent(out), optional :: itemCount
@@ -26561,7 +26561,7 @@ subroutine ESMF_AttributeGetInfoByNamGridComp(target, name, keywordEnforcer, con
   ! 39.11.17
   type(ESMF_GridComp), intent(in) :: target
   character(len=*), intent(in) :: name
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -26657,7 +26657,7 @@ subroutine ESMF_AttributeGetAttPackGridComp(target, convention, purpose, keyword
   type(ESMF_GridComp), intent(in) :: target
   character(len=*), intent(in) :: convention
   character(len=*), intent(in) :: purpose
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character (len = *), intent(in), optional :: attPackInstanceName  !tdk: noop, no suppor for attpackinstancename
   type(ESMF_AttPack), intent(inout), optional :: attpack
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag !tdk: noop, are there nested conventions and purposes?
@@ -26702,7 +26702,7 @@ subroutine ESMF_AttributeGetCountSciComp(target, count, keywordEnforcer, convent
   ! 39.11.15
   type(ESMF_SciComp), intent(in) :: target
   integer, intent(inout) :: count
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   type(ESMF_AttGetCountFlag), intent(in), optional :: attcountflag
@@ -26724,7 +26724,7 @@ subroutine ESMF_AttributeGetCountSciComp(target, count, keywordEnforcer, convent
     call format_key(key, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   else
-    key = ""
+    key = ESMF_ATTR_DEFAULT_ROOTKEY
   end if
 
   info = einq%GetInfo(target, rc=localrc)
@@ -26761,7 +26761,7 @@ subroutine ESMF_AttributeGetInfoByNamAPSciComp(target, name, attpack, keywordEnf
   type(ESMF_SciComp), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   type(ESMF_TypeKind_Flag), intent(out), optional :: typekind
   integer, intent(out), optional :: itemCount
@@ -26806,7 +26806,7 @@ subroutine ESMF_AttributeGetInfoByNamSciComp(target, name, keywordEnforcer, conv
   ! 39.11.17
   type(ESMF_SciComp), intent(in) :: target
   character(len=*), intent(in) :: name
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -26902,7 +26902,7 @@ subroutine ESMF_AttributeGetAttPackSciComp(target, convention, purpose, keywordE
   type(ESMF_SciComp), intent(in) :: target
   character(len=*), intent(in) :: convention
   character(len=*), intent(in) :: purpose
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character (len = *), intent(in), optional :: attPackInstanceName  !tdk: noop, no suppor for attpackinstancename
   type(ESMF_AttPack), intent(inout), optional :: attpack
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag !tdk: noop, are there nested conventions and purposes?
@@ -26947,7 +26947,7 @@ subroutine ESMF_AttributeGetCountDistGrid(target, count, keywordEnforcer, conven
   ! 39.11.15
   type(ESMF_DistGrid), intent(in) :: target
   integer, intent(inout) :: count
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   type(ESMF_AttGetCountFlag), intent(in), optional :: attcountflag
@@ -26969,7 +26969,7 @@ subroutine ESMF_AttributeGetCountDistGrid(target, count, keywordEnforcer, conven
     call format_key(key, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   else
-    key = ""
+    key = ESMF_ATTR_DEFAULT_ROOTKEY
   end if
 
   info = einq%GetInfo(target, rc=localrc)
@@ -27006,7 +27006,7 @@ subroutine ESMF_AttributeGetInfoByNamAPDistGrid(target, name, attpack, keywordEn
   type(ESMF_DistGrid), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   type(ESMF_TypeKind_Flag), intent(out), optional :: typekind
   integer, intent(out), optional :: itemCount
@@ -27051,7 +27051,7 @@ subroutine ESMF_AttributeGetInfoByNamDistGrid(target, name, keywordEnforcer, con
   ! 39.11.17
   type(ESMF_DistGrid), intent(in) :: target
   character(len=*), intent(in) :: name
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -27147,7 +27147,7 @@ subroutine ESMF_AttributeGetAttPackDistGrid(target, convention, purpose, keyword
   type(ESMF_DistGrid), intent(in) :: target
   character(len=*), intent(in) :: convention
   character(len=*), intent(in) :: purpose
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character (len = *), intent(in), optional :: attPackInstanceName  !tdk: noop, no suppor for attpackinstancename
   type(ESMF_AttPack), intent(inout), optional :: attpack
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag !tdk: noop, are there nested conventions and purposes?
@@ -27192,7 +27192,7 @@ subroutine ESMF_AttributeGetCountField(target, count, keywordEnforcer, conventio
   ! 39.11.15
   type(ESMF_Field), intent(in) :: target
   integer, intent(inout) :: count
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   type(ESMF_AttGetCountFlag), intent(in), optional :: attcountflag
@@ -27214,7 +27214,7 @@ subroutine ESMF_AttributeGetCountField(target, count, keywordEnforcer, conventio
     call format_key(key, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   else
-    key = ""
+    key = ESMF_ATTR_DEFAULT_ROOTKEY
   end if
 
   info = einq%GetInfo(target, rc=localrc)
@@ -27251,7 +27251,7 @@ subroutine ESMF_AttributeGetInfoByNamAPField(target, name, attpack, keywordEnfor
   type(ESMF_Field), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   type(ESMF_TypeKind_Flag), intent(out), optional :: typekind
   integer, intent(out), optional :: itemCount
@@ -27296,7 +27296,7 @@ subroutine ESMF_AttributeGetInfoByNamField(target, name, keywordEnforcer, conven
   ! 39.11.17
   type(ESMF_Field), intent(in) :: target
   character(len=*), intent(in) :: name
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -27392,7 +27392,7 @@ subroutine ESMF_AttributeGetAttPackField(target, convention, purpose, keywordEnf
   type(ESMF_Field), intent(in) :: target
   character(len=*), intent(in) :: convention
   character(len=*), intent(in) :: purpose
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character (len = *), intent(in), optional :: attPackInstanceName  !tdk: noop, no suppor for attpackinstancename
   type(ESMF_AttPack), intent(inout), optional :: attpack
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag !tdk: noop, are there nested conventions and purposes?
@@ -27437,7 +27437,7 @@ subroutine ESMF_AttributeGetCountFieldBundle(target, count, keywordEnforcer, con
   ! 39.11.15
   type(ESMF_FieldBundle), intent(in) :: target
   integer, intent(inout) :: count
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   type(ESMF_AttGetCountFlag), intent(in), optional :: attcountflag
@@ -27459,7 +27459,7 @@ subroutine ESMF_AttributeGetCountFieldBundle(target, count, keywordEnforcer, con
     call format_key(key, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   else
-    key = ""
+    key = ESMF_ATTR_DEFAULT_ROOTKEY
   end if
 
   info = einq%GetInfo(target, rc=localrc)
@@ -27496,7 +27496,7 @@ subroutine ESMF_AttributeGetInfoByNamAPFieldBundle(target, name, attpack, keywor
   type(ESMF_FieldBundle), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   type(ESMF_TypeKind_Flag), intent(out), optional :: typekind
   integer, intent(out), optional :: itemCount
@@ -27541,7 +27541,7 @@ subroutine ESMF_AttributeGetInfoByNamFieldBundle(target, name, keywordEnforcer, 
   ! 39.11.17
   type(ESMF_FieldBundle), intent(in) :: target
   character(len=*), intent(in) :: name
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -27637,7 +27637,7 @@ subroutine ESMF_AttributeGetAttPackFieldBundle(target, convention, purpose, keyw
   type(ESMF_FieldBundle), intent(in) :: target
   character(len=*), intent(in) :: convention
   character(len=*), intent(in) :: purpose
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character (len = *), intent(in), optional :: attPackInstanceName  !tdk: noop, no suppor for attpackinstancename
   type(ESMF_AttPack), intent(inout), optional :: attpack
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag !tdk: noop, are there nested conventions and purposes?
@@ -27682,7 +27682,7 @@ subroutine ESMF_AttributeGetCountGrid(target, count, keywordEnforcer, convention
   ! 39.11.15
   type(ESMF_Grid), intent(in) :: target
   integer, intent(inout) :: count
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   type(ESMF_AttGetCountFlag), intent(in), optional :: attcountflag
@@ -27704,7 +27704,7 @@ subroutine ESMF_AttributeGetCountGrid(target, count, keywordEnforcer, convention
     call format_key(key, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   else
-    key = ""
+    key = ESMF_ATTR_DEFAULT_ROOTKEY
   end if
 
   info = einq%GetInfo(target, rc=localrc)
@@ -27741,7 +27741,7 @@ subroutine ESMF_AttributeGetInfoByNamAPGrid(target, name, attpack, keywordEnforc
   type(ESMF_Grid), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   type(ESMF_TypeKind_Flag), intent(out), optional :: typekind
   integer, intent(out), optional :: itemCount
@@ -27786,7 +27786,7 @@ subroutine ESMF_AttributeGetInfoByNamGrid(target, name, keywordEnforcer, convent
   ! 39.11.17
   type(ESMF_Grid), intent(in) :: target
   character(len=*), intent(in) :: name
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -27882,7 +27882,7 @@ subroutine ESMF_AttributeGetAttPackGrid(target, convention, purpose, keywordEnfo
   type(ESMF_Grid), intent(in) :: target
   character(len=*), intent(in) :: convention
   character(len=*), intent(in) :: purpose
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character (len = *), intent(in), optional :: attPackInstanceName  !tdk: noop, no suppor for attpackinstancename
   type(ESMF_AttPack), intent(inout), optional :: attpack
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag !tdk: noop, are there nested conventions and purposes?
@@ -27927,7 +27927,7 @@ subroutine ESMF_AttributeGetCountState(target, count, keywordEnforcer, conventio
   ! 39.11.15
   type(ESMF_State), intent(in) :: target
   integer, intent(inout) :: count
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   type(ESMF_AttGetCountFlag), intent(in), optional :: attcountflag
@@ -27949,7 +27949,7 @@ subroutine ESMF_AttributeGetCountState(target, count, keywordEnforcer, conventio
     call format_key(key, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   else
-    key = ""
+    key = ESMF_ATTR_DEFAULT_ROOTKEY
   end if
 
   info = einq%GetInfo(target, rc=localrc)
@@ -27986,7 +27986,7 @@ subroutine ESMF_AttributeGetInfoByNamAPState(target, name, attpack, keywordEnfor
   type(ESMF_State), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   type(ESMF_TypeKind_Flag), intent(out), optional :: typekind
   integer, intent(out), optional :: itemCount
@@ -28031,7 +28031,7 @@ subroutine ESMF_AttributeGetInfoByNamState(target, name, keywordEnforcer, conven
   ! 39.11.17
   type(ESMF_State), intent(in) :: target
   character(len=*), intent(in) :: name
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -28127,7 +28127,7 @@ subroutine ESMF_AttributeGetAttPackState(target, convention, purpose, keywordEnf
   type(ESMF_State), intent(in) :: target
   character(len=*), intent(in) :: convention
   character(len=*), intent(in) :: purpose
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character (len = *), intent(in), optional :: attPackInstanceName  !tdk: noop, no suppor for attpackinstancename
   type(ESMF_AttPack), intent(inout), optional :: attpack
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag !tdk: noop, are there nested conventions and purposes?
@@ -28172,7 +28172,7 @@ subroutine ESMF_AttributeGetCountLocStream(target, count, keywordEnforcer, conve
   ! 39.11.15
   type(ESMF_LocStream), intent(in) :: target
   integer, intent(inout) :: count
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   type(ESMF_AttGetCountFlag), intent(in), optional :: attcountflag
@@ -28194,7 +28194,7 @@ subroutine ESMF_AttributeGetCountLocStream(target, count, keywordEnforcer, conve
     call format_key(key, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   else
-    key = ""
+    key = ESMF_ATTR_DEFAULT_ROOTKEY
   end if
 
   info = einq%GetInfo(target, rc=localrc)
@@ -28231,7 +28231,7 @@ subroutine ESMF_AttributeGetInfoByNamAPLocStream(target, name, attpack, keywordE
   type(ESMF_LocStream), intent(in) :: target
   character(len=*), intent(in) :: name
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   type(ESMF_TypeKind_Flag), intent(out), optional :: typekind
   integer, intent(out), optional :: itemCount
@@ -28276,7 +28276,7 @@ subroutine ESMF_AttributeGetInfoByNamLocStream(target, name, keywordEnforcer, co
   ! 39.11.17
   type(ESMF_LocStream), intent(in) :: target
   character(len=*), intent(in) :: name
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   character(len=*), intent(in), optional :: attPackInstanceName
@@ -28372,7 +28372,7 @@ subroutine ESMF_AttributeGetAttPackLocStream(target, convention, purpose, keywor
   type(ESMF_LocStream), intent(in) :: target
   character(len=*), intent(in) :: convention
   character(len=*), intent(in) :: purpose
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character (len = *), intent(in), optional :: attPackInstanceName  !tdk: noop, no suppor for attpackinstancename
   type(ESMF_AttPack), intent(inout), optional :: attpack
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag !tdk: noop, are there nested conventions and purposes?
@@ -30067,7 +30067,7 @@ subroutine ESMF_AttributeReadArray(target, filename, keywordenforcer, rc)
   ! 39.11.32 - removed schemaFileName
   type(ESMF_Array), intent(inout) :: target
   character(len=*), intent(in) :: fileName
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(inout), optional :: rc
 
   integer :: localrc
@@ -30099,7 +30099,7 @@ subroutine ESMF_AttributeReadArrayBundle(target, filename, keywordenforcer, rc)
   ! 39.11.32 - removed schemaFileName
   type(ESMF_ArrayBundle), intent(inout) :: target
   character(len=*), intent(in) :: fileName
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(inout), optional :: rc
 
   integer :: localrc
@@ -30131,7 +30131,7 @@ subroutine ESMF_AttributeReadCplComp(target, filename, keywordenforcer, rc)
   ! 39.11.32 - removed schemaFileName
   type(ESMF_CplComp), intent(inout) :: target
   character(len=*), intent(in) :: fileName
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(inout), optional :: rc
 
   integer :: localrc
@@ -30163,7 +30163,7 @@ subroutine ESMF_AttributeReadGridComp(target, filename, keywordenforcer, rc)
   ! 39.11.32 - removed schemaFileName
   type(ESMF_GridComp), intent(inout) :: target
   character(len=*), intent(in) :: fileName
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(inout), optional :: rc
 
   integer :: localrc
@@ -30195,7 +30195,7 @@ subroutine ESMF_AttributeReadSciComp(target, filename, keywordenforcer, rc)
   ! 39.11.32 - removed schemaFileName
   type(ESMF_SciComp), intent(inout) :: target
   character(len=*), intent(in) :: fileName
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(inout), optional :: rc
 
   integer :: localrc
@@ -30227,7 +30227,7 @@ subroutine ESMF_AttributeReadDistGrid(target, filename, keywordenforcer, rc)
   ! 39.11.32 - removed schemaFileName
   type(ESMF_DistGrid), intent(inout) :: target
   character(len=*), intent(in) :: fileName
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(inout), optional :: rc
 
   integer :: localrc
@@ -30259,7 +30259,7 @@ subroutine ESMF_AttributeReadField(target, filename, keywordenforcer, rc)
   ! 39.11.32 - removed schemaFileName
   type(ESMF_Field), intent(inout) :: target
   character(len=*), intent(in) :: fileName
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(inout), optional :: rc
 
   integer :: localrc
@@ -30291,7 +30291,7 @@ subroutine ESMF_AttributeReadFieldBundle(target, filename, keywordenforcer, rc)
   ! 39.11.32 - removed schemaFileName
   type(ESMF_FieldBundle), intent(inout) :: target
   character(len=*), intent(in) :: fileName
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(inout), optional :: rc
 
   integer :: localrc
@@ -30323,7 +30323,7 @@ subroutine ESMF_AttributeReadGrid(target, filename, keywordenforcer, rc)
   ! 39.11.32 - removed schemaFileName
   type(ESMF_Grid), intent(inout) :: target
   character(len=*), intent(in) :: fileName
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(inout), optional :: rc
 
   integer :: localrc
@@ -30355,7 +30355,7 @@ subroutine ESMF_AttributeReadState(target, filename, keywordenforcer, rc)
   ! 39.11.32 - removed schemaFileName
   type(ESMF_State), intent(inout) :: target
   character(len=*), intent(in) :: fileName
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(inout), optional :: rc
 
   integer :: localrc
@@ -30387,7 +30387,7 @@ subroutine ESMF_AttributeReadLocStream(target, filename, keywordenforcer, rc)
   ! 39.11.32 - removed schemaFileName
   type(ESMF_LocStream), intent(inout) :: target
   character(len=*), intent(in) :: fileName
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(inout), optional :: rc
 
   integer :: localrc
@@ -30561,7 +30561,7 @@ subroutine ESMF_AttributeWriteArray(target, filename, keywordenforcer, conventio
   ! 39.11.42 - removed attwriteflag
   type(ESMF_Array), intent(inout) :: target
   character(len=*), intent(in) :: fileName
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   integer, intent(inout), optional :: rc
@@ -30607,7 +30607,7 @@ subroutine ESMF_AttributeWriteArrayBundle(target, filename, keywordenforcer, con
   ! 39.11.42 - removed attwriteflag
   type(ESMF_ArrayBundle), intent(inout) :: target
   character(len=*), intent(in) :: fileName
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   integer, intent(inout), optional :: rc
@@ -30653,7 +30653,7 @@ subroutine ESMF_AttributeWriteCplComp(target, filename, keywordenforcer, convent
   ! 39.11.42 - removed attwriteflag
   type(ESMF_CplComp), intent(inout) :: target
   character(len=*), intent(in) :: fileName
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   integer, intent(inout), optional :: rc
@@ -30699,7 +30699,7 @@ subroutine ESMF_AttributeWriteGridComp(target, filename, keywordenforcer, conven
   ! 39.11.42 - removed attwriteflag
   type(ESMF_GridComp), intent(inout) :: target
   character(len=*), intent(in) :: fileName
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   integer, intent(inout), optional :: rc
@@ -30745,7 +30745,7 @@ subroutine ESMF_AttributeWriteSciComp(target, filename, keywordenforcer, convent
   ! 39.11.42 - removed attwriteflag
   type(ESMF_SciComp), intent(inout) :: target
   character(len=*), intent(in) :: fileName
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   integer, intent(inout), optional :: rc
@@ -30791,7 +30791,7 @@ subroutine ESMF_AttributeWriteDistGrid(target, filename, keywordenforcer, conven
   ! 39.11.42 - removed attwriteflag
   type(ESMF_DistGrid), intent(inout) :: target
   character(len=*), intent(in) :: fileName
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   integer, intent(inout), optional :: rc
@@ -30837,7 +30837,7 @@ subroutine ESMF_AttributeWriteField(target, filename, keywordenforcer, conventio
   ! 39.11.42 - removed attwriteflag
   type(ESMF_Field), intent(inout) :: target
   character(len=*), intent(in) :: fileName
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   integer, intent(inout), optional :: rc
@@ -30883,7 +30883,7 @@ subroutine ESMF_AttributeWriteFieldBundle(target, filename, keywordenforcer, con
   ! 39.11.42 - removed attwriteflag
   type(ESMF_FieldBundle), intent(inout) :: target
   character(len=*), intent(in) :: fileName
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   integer, intent(inout), optional :: rc
@@ -30929,7 +30929,7 @@ subroutine ESMF_AttributeWriteGrid(target, filename, keywordenforcer, convention
   ! 39.11.42 - removed attwriteflag
   type(ESMF_Grid), intent(inout) :: target
   character(len=*), intent(in) :: fileName
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   integer, intent(inout), optional :: rc
@@ -30975,7 +30975,7 @@ subroutine ESMF_AttributeWriteState(target, filename, keywordenforcer, conventio
   ! 39.11.42 - removed attwriteflag
   type(ESMF_State), intent(inout) :: target
   character(len=*), intent(in) :: fileName
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   integer, intent(inout), optional :: rc
@@ -31021,7 +31021,7 @@ subroutine ESMF_AttributeWriteLocStream(target, filename, keywordenforcer, conve
   ! 39.11.42 - removed attwriteflag
   type(ESMF_LocStream), intent(inout) :: target
   character(len=*), intent(in) :: fileName
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
   integer, intent(inout), optional :: rc

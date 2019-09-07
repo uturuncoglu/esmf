@@ -1768,7 +1768,7 @@
       call ESMF_AttributeGet(mname, count=count, rc=rc) @\
       write(failMsg, *) "Did not return ESMF_SUCCESS or wrong value" @\
       write(name, *) "Getting the Attribute count from a mobj Test" @\
-      call ESMF_Test((rc==ESMF_SUCCESS).and.(count.ge.0), & @\
+      call ESMF_Test((rc==ESMF_SUCCESS).and.(count.ge.10), & @\
                       name, failMsg, result, ESMF_SRCLINE) @\
       !---------------------------------------------------------------------- @\
  @\
@@ -1842,7 +1842,7 @@
  @\
       !mtag_ex @\
       ! Get Attribute info by num from a mobj Test @\
-      call ESMF_AttributeGet(mname, attributeIndex=count, name=attrnameOut, & @\
+      call ESMF_AttributeGet(mname, attributeIndex=39, name=attrnameOut, & @\
         typekind=attrTK, itemcount=items, rc=rc) @\
       write(failMsg, *) "Did not return ESMF_SUCCESS or wrong value" @\
       write(name, *) "Getting Attribute info by num from a mobj Test" @\

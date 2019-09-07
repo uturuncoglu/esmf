@@ -17,11 +17,12 @@ subroutine ESMF_Info2GetR4(info, key, value, default, idx, attnestflag, rc)
   real(C_FLOAT), target :: local_default
   integer(C_INT), target :: local_idx
   type(C_PTR) :: local_default_ptr, local_idx_ptr
-  logical(C_BOOL) :: recursive=.false.
+  logical(C_BOOL) :: recursive
 
   ! Set up local return code
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
+  recursive = .false.
 
   ! Handle optional arguments for C ###########################################
 
@@ -71,11 +72,12 @@ subroutine ESMF_Info2GetR8(info, key, value, default, idx, attnestflag, rc)
   real(C_DOUBLE), target :: local_default
   integer(C_INT), target :: local_idx
   type(C_PTR) :: local_default_ptr, local_idx_ptr
-  logical(C_BOOL) :: recursive=.false.
+  logical(C_BOOL) :: recursive
 
   ! Set up local return code
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
+  recursive = .false.
 
   ! Handle optional arguments for C ###########################################
 
@@ -125,11 +127,12 @@ subroutine ESMF_Info2GetI4(info, key, value, default, idx, attnestflag, rc)
   integer(C_INT), target :: local_default
   integer(C_INT), target :: local_idx
   type(C_PTR) :: local_default_ptr, local_idx_ptr
-  logical(C_BOOL) :: recursive=.false.
+  logical(C_BOOL) :: recursive
 
   ! Set up local return code
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
+  recursive = .false.
 
   ! Handle optional arguments for C ###########################################
 
@@ -179,11 +182,12 @@ subroutine ESMF_Info2GetI8(info, key, value, default, idx, attnestflag, rc)
   integer(C_LONG), target :: local_default
   integer(C_INT), target :: local_idx
   type(C_PTR) :: local_default_ptr, local_idx_ptr
-  logical(C_BOOL) :: recursive=.false.
+  logical(C_BOOL) :: recursive
 
   ! Set up local return code
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
+  recursive = .false.
 
   ! Handle optional arguments for C ###########################################
 
@@ -234,11 +238,12 @@ subroutine ESMF_Info2GetLG(info, key, value, default, idx, attnestflag, rc)
   logical(C_BOOL) :: local_value
   integer(C_INT), target :: local_idx
   type(C_PTR) :: local_default_ptr, local_idx_ptr
-  logical(C_BOOL) :: recursive=.false.
+  logical(C_BOOL) :: recursive
 
   ! Set up local return code
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
+  recursive = .false.
 
   ! Handle optional arguments for C ###########################################
 
@@ -289,10 +294,11 @@ subroutine ESMF_Info2GetArrayR4(info, key, values, itemcount, attnestflag, rc)
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  logical(C_BOOL) :: recursive=.false.
+  logical(C_BOOL) :: recursive
   
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
+  recursive = .false.
 
   if (present(attnestflag)) then
     if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = .true.
@@ -301,6 +307,8 @@ subroutine ESMF_Info2GetArrayR4(info, key, values, itemcount, attnestflag, rc)
   ! Get the array size from the info store
   call ESMF_Info2Inquire(info, key=key, count=itemcount, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  
 
   ! Allocate the outgoing storage array and call into C to fill the array
   allocate(values(itemcount))
@@ -327,10 +335,11 @@ subroutine ESMF_Info2GetArrayR4Allocated(info, key, values, itemcount, attnestfl
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  logical(C_BOOL) :: recursive=.false.
+  logical(C_BOOL) :: recursive
   
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
+  recursive = .false.
 
   if (present(attnestflag)) then
     if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = .true.
@@ -339,6 +348,12 @@ subroutine ESMF_Info2GetArrayR4Allocated(info, key, values, itemcount, attnestfl
   ! Get the array size from the info store
   call ESMF_Info2Inquire(info, key=key, count=itemcount, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  
+  if (itemcount /= SIZE(values)) then
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="values allocation size does not match size in Info storage", ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+  
 
   ! Allocate the outgoing storage array and call into C to fill the array
   
@@ -365,10 +380,11 @@ subroutine ESMF_Info2GetArrayR8(info, key, values, itemcount, attnestflag, rc)
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  logical(C_BOOL) :: recursive=.false.
+  logical(C_BOOL) :: recursive
   
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
+  recursive = .false.
 
   if (present(attnestflag)) then
     if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = .true.
@@ -377,6 +393,8 @@ subroutine ESMF_Info2GetArrayR8(info, key, values, itemcount, attnestflag, rc)
   ! Get the array size from the info store
   call ESMF_Info2Inquire(info, key=key, count=itemcount, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  
 
   ! Allocate the outgoing storage array and call into C to fill the array
   allocate(values(itemcount))
@@ -403,10 +421,11 @@ subroutine ESMF_Info2GetArrayR8Allocated(info, key, values, itemcount, attnestfl
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  logical(C_BOOL) :: recursive=.false.
+  logical(C_BOOL) :: recursive
   
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
+  recursive = .false.
 
   if (present(attnestflag)) then
     if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = .true.
@@ -415,6 +434,12 @@ subroutine ESMF_Info2GetArrayR8Allocated(info, key, values, itemcount, attnestfl
   ! Get the array size from the info store
   call ESMF_Info2Inquire(info, key=key, count=itemcount, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  
+  if (itemcount /= SIZE(values)) then
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="values allocation size does not match size in Info storage", ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+  
 
   ! Allocate the outgoing storage array and call into C to fill the array
   
@@ -441,10 +466,11 @@ subroutine ESMF_Info2GetArrayI4(info, key, values, itemcount, attnestflag, rc)
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  logical(C_BOOL) :: recursive=.false.
+  logical(C_BOOL) :: recursive
   
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
+  recursive = .false.
 
   if (present(attnestflag)) then
     if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = .true.
@@ -453,6 +479,8 @@ subroutine ESMF_Info2GetArrayI4(info, key, values, itemcount, attnestflag, rc)
   ! Get the array size from the info store
   call ESMF_Info2Inquire(info, key=key, count=itemcount, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  
 
   ! Allocate the outgoing storage array and call into C to fill the array
   allocate(values(itemcount))
@@ -479,10 +507,11 @@ subroutine ESMF_Info2GetArrayI4Allocated(info, key, values, itemcount, attnestfl
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  logical(C_BOOL) :: recursive=.false.
+  logical(C_BOOL) :: recursive
   
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
+  recursive = .false.
 
   if (present(attnestflag)) then
     if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = .true.
@@ -491,6 +520,12 @@ subroutine ESMF_Info2GetArrayI4Allocated(info, key, values, itemcount, attnestfl
   ! Get the array size from the info store
   call ESMF_Info2Inquire(info, key=key, count=itemcount, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  
+  if (itemcount /= SIZE(values)) then
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="values allocation size does not match size in Info storage", ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+  
 
   ! Allocate the outgoing storage array and call into C to fill the array
   
@@ -517,10 +552,11 @@ subroutine ESMF_Info2GetArrayI8(info, key, values, itemcount, attnestflag, rc)
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  logical(C_BOOL) :: recursive=.false.
+  logical(C_BOOL) :: recursive
   
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
+  recursive = .false.
 
   if (present(attnestflag)) then
     if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = .true.
@@ -529,6 +565,8 @@ subroutine ESMF_Info2GetArrayI8(info, key, values, itemcount, attnestflag, rc)
   ! Get the array size from the info store
   call ESMF_Info2Inquire(info, key=key, count=itemcount, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  
 
   ! Allocate the outgoing storage array and call into C to fill the array
   allocate(values(itemcount))
@@ -555,10 +593,11 @@ subroutine ESMF_Info2GetArrayI8Allocated(info, key, values, itemcount, attnestfl
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  logical(C_BOOL) :: recursive=.false.
+  logical(C_BOOL) :: recursive
   
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
+  recursive = .false.
 
   if (present(attnestflag)) then
     if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = .true.
@@ -567,6 +606,12 @@ subroutine ESMF_Info2GetArrayI8Allocated(info, key, values, itemcount, attnestfl
   ! Get the array size from the info store
   call ESMF_Info2Inquire(info, key=key, count=itemcount, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  
+  if (itemcount /= SIZE(values)) then
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="values allocation size does not match size in Info storage", ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+  
 
   ! Allocate the outgoing storage array and call into C to fill the array
   
@@ -593,12 +638,13 @@ subroutine ESMF_Info2GetArrayLG(info, key, values, itemcount, attnestflag, rc)
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  logical(C_BOOL) :: recursive=.false.
+  logical(C_BOOL) :: recursive
   integer :: ii
   logical(C_BOOL), dimension(:), allocatable :: local_values
   
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
+  recursive = .false.
 
   if (present(attnestflag)) then
     if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = .true.
@@ -607,6 +653,8 @@ subroutine ESMF_Info2GetArrayLG(info, key, values, itemcount, attnestflag, rc)
   ! Get the array size from the info store
   call ESMF_Info2Inquire(info, key=key, count=itemcount, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  
 
   ! Allocate the outgoing storage array and call into C to fill the array
   allocate(values(itemcount))
@@ -639,12 +687,13 @@ subroutine ESMF_Info2GetArrayLGAllocated(info, key, values, itemcount, attnestfl
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  logical(C_BOOL) :: recursive=.false.
+  logical(C_BOOL) :: recursive
   integer :: ii
   logical(C_BOOL), dimension(:), allocatable :: local_values
   
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
+  recursive = .false.
 
   if (present(attnestflag)) then
     if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = .true.
@@ -653,6 +702,12 @@ subroutine ESMF_Info2GetArrayLGAllocated(info, key, values, itemcount, attnestfl
   ! Get the array size from the info store
   call ESMF_Info2Inquire(info, key=key, count=itemcount, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  
+  if (itemcount /= SIZE(values)) then
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="values allocation size does not match size in Info storage", ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+  
 
   ! Allocate the outgoing storage array and call into C to fill the array
   

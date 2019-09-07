@@ -172,7 +172,7 @@ void testGet(int& rc, char failMsg[]) {
     info.get<int>("blah", rc);
     return finalizeFailure(rc, failMsg, "Error not raised for missing key");
   } catch (esmf_info_error& err) {
-    if (err.getReturnCode() != ESMC_RC_NOT_FOUND) {
+    if (err.getReturnCode() != ESMF_RC_ATTR_NOTSET) {
       return finalizeFailure(rc, failMsg, "Wrong error return code");
     }
   }
@@ -824,6 +824,19 @@ void testInquire(int& rc, char failMsg[]) {
   ESMF_CATCH_PASSTHRU
   if (inq.at("key") != "x") {
     return finalizeFailure(rc, failMsg, "Did not use object index correctly");
+  }
+
+  // Test the size of a character value
+  json j2;
+  j2["character"] = "name";
+  ESMCI::Info2 info2(j2);
+  json inq2;
+  try {
+    inq2 = info2.inquire("character", rc);
+  }
+  ESMF_CATCH_PASSTHRU
+  if (inq2.at("count") != 1) {
+    return finalizeFailure(rc, failMsg, "Wrong count");
   }
 }
 

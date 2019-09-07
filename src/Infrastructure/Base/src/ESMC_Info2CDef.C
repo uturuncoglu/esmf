@@ -201,8 +201,10 @@ void ESMC_Info2Erase(ESMCI::Info2* info, char* keyParent,
 #undef ESMC_METHOD
 #define ESMC_METHOD "ESMC_Info2Inquire()"
 void ESMC_Info2Inquire(ESMCI::Info2 *info, ESMCI::Info2 *inq,
-                            char *key, bool recursive, int *idx, int &rc) {
+                            char *key, int &fortran_recursive, int *idx, int &rc) {
   rc = ESMF_FAILURE;
+  bool recursive = false;
+  if (fortran_recursive == 1) {recursive = true;}
   try {
     std::string localKey(key);
     json jinq = info->inquire(localKey, rc, recursive, idx);

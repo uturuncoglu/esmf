@@ -361,7 +361,6 @@ int main(void) {
   json *storagep = nullptr;
   json &egen = jjp["ESMF"]["General"];
   storagep = &egen;
-  std::cout << storagep->dump() << std::endl;  //tdk:p
 
   if (refj.at("woohoo") != 111 &&
       refj.at("nest").at("woot") != 768 &&

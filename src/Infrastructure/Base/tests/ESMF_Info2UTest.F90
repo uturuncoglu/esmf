@@ -499,8 +499,6 @@ program ESMF_Info2UTest
     failed = .true.
   end if
 
-!  call ESMF_Info2Print(attrs10, rc=rc) !tdk:p
-
   call ESMF_Info2Destroy(attrs10, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 

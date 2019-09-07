@@ -61,7 +61,6 @@ void testCreateArray(int& rc, char failMsg[]) {
 
   json jsonParms = createTestDistDims();
   jsonParms[ESMFARG::VARIABLENAME] = "foo";
-//  std::cout << "JSON Parms for Array = " << jsonParms.dump(2) << std::endl; //tdk:p
   ESMCI::Array* arr = meta.createArray(*distgrid, jsonParms, rc);
   ESMF_CHECKERR_STD("", rc, "Array creation failed", rc);
 
@@ -112,7 +111,6 @@ void testCreateDistGrid(int& rc, char failMsg[]) {
   rc = ESMF_FAILURE;
 
   json root = createTestJSONMetadata(rc);
-//  std::cout << "JSON Test Metadata = " << root.dump(2) << std::endl; //tdk:p
   Metadata meta(move(root));
 
   // Test creating with distributed dimension names ===========================
@@ -287,7 +285,6 @@ void testCreateArrayBundle(int& rc, char failMsg[]) {
   ESMCI::ArrayBundle* arrb = meta.createArrayBundle(*distgrid, arrayList, arrParms,
     rc);
   ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
-  arrb->print(); //tdk:p
 
   rc = ESMCI::ArrayBundle::destroy(&arrb);
   ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);

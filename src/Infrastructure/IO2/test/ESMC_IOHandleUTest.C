@@ -272,15 +272,12 @@ void testReadWrite1DArrayIsolated(int& rc, char failMsg[]) {
     ioh.write(*arr, rc);
     ESMF_CHECKERR_STD("", rc, "Did not write array", rc);
 
-//    std::cout << ioh.PIOArgs.dump(2) << std::endl;  //tdk:p
-
     if (ioh.PIOArgs.size() != 1) {
       return finalizeFailure(rc, failMsg, "PIO args wrong size");
     }
 
     // Fill the array that is identical to the write array ====================
 
-//    std::cout << ioh.PIOArgs.dump() << std::endl;  //tdk:p
     ioh.read(*arr2fill, rc);
     ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
 
@@ -382,10 +379,6 @@ void testReadWrite1DArrayZeroLength(int& rc, char failMsg[]) {
     buffer[0] = -999;
   }
 
-//  std::cout << meta.dump(2, rc) << std::endl;  //tdk:p
-//  distgrid->print(); //tdk:p
-//  arr->print(); //tdk:p
-
   // Read/write data to netCDF ================================================
 
   IOHandle ioh;
@@ -477,7 +470,6 @@ void testWrite3DArray(int& rc, char failMsg[]) {
 
     ESMCI::Array *arr = meta.createArray(*distgrid, jsonParms, rc);
     ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
-//    arr->print(); //tdk:p
 
     vector <dimsize_t> arrshp = getArrayShape(*arr, ESMC_INDEX_DELOCAL, rc);
 //  std::reverse(arrshp.begin(), arrshp.end());  // Reverse to Fortran order
@@ -528,8 +520,6 @@ void testWrite3DArray(int& rc, char failMsg[]) {
 
     ioh.write(*arr, rc);
     ESMF_CHECKERR_STD("", rc, "Did not write array", rc);
-
-//    std::cout << ioh.PIOArgs.dump(2) << std::endl;  //tdk:p
 
     ioh.close(rc);
     ESMF_CHECKERR_STD("", rc, "Did not close", rc);
@@ -614,7 +604,6 @@ void testWriteUnlimDimArray(int& rc, char failMsg[]) {
   if (arr->getRank() != (desired_rank - 1)) {
     return finalizeFailure(rc, failMsg, "Wrong rank: 2!="+to_string(arr->getRank()));
   }
-//  arr->print(); //tdk:p
 
   // Create IOHandle ==========================================================
 
@@ -735,7 +724,6 @@ void testWriteArrayBundle(int& rc, char failMsg[]) {
 //
 //  ESMCI::Array *arr = meta.createArray(*distgrid, arrParms, rc);
 //  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
-////  arr->print(); //tdk:p
 //
 //  tdk:TODO: add destroys
 //  rc = ESMCI::Array::destroy(&arr);

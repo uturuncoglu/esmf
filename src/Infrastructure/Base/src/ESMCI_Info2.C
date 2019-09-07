@@ -606,8 +606,10 @@ json Info2::inquire(key_t &key, int &rc, bool recursive, const int *idx) const {
     std::size_t count_total = 0;
     if (!sk.is_array() && recursive) {
       update_json_count(count, count_total, sk, true);
-    } else {
+    } else if (sk.is_structured()) {
       count = sk.size();
+    } else {
+      count = 1;
     }
     j["count"] = count;
     j["countTotal"] = count_total;
@@ -616,8 +618,14 @@ json Info2::inquire(key_t &key, int &rc, bool recursive, const int *idx) const {
     bool is_array = false;
     if (sk.is_array()) {
       is_array = true;
-      const json &e = sk[0];
-      json_typename = e.type_name();
+      if (sk.size() == 0) {
+        json j_null;
+        json_typename = j_null.type_name();
+      }
+      else {
+        const json &e = sk[0];
+        json_typename = e.type_name();
+      }
     } else {
       json_typename = sk.type_name();
     }
