@@ -193,11 +193,15 @@
       !mtag_ex @\
       ! Add ASCII characters to an Attribute on an Array Test @\
       correct = .true. @\
-      inASCII = "!""#$%&'()*+,-./0123456789:;<=>?" @\
+      ! NOTE (bekozi): Remove the forward slash / from list of possible keys. This is @\
+      ! used by JSON Pointer Syntax and creates nests which break these tests. @\
+      inASCII = "!""#$%&'()*+,-.0123456789:;<=>?" @\
       inASCII = ESMF_StringConcat (trim (inASCII), "ABCDEFGHIJKLMNOPQRSTUVWXYZ") @\
       inASCII = ESMF_StringConcat (trim (inASCII), "[\]^_`") @\
       inASCII = ESMF_StringConcat (trim (inASCII), "abcdefghijklmnopqrstuvwxyz") @\
-      inASCII = ESMF_StringConcat (trim (inASCII), "{|}~") @\
+      ! NOTE (bekozi): Remove the tilda ~ from list of possible keys. This is @\
+      ! used by JSON Pointer Syntax is not valid without an integer index after. @\
+      inASCII = ESMF_StringConcat (trim (inASCII), "{|}") @\
       do i=1,len_trim(inASCII) @\
         call ESMF_AttributeSet(mname, name=inASCII(i:i), value=inASCII, rc=rc) @\
         if (rc /= ESMF_SUCCESS) then @\
@@ -1842,7 +1846,7 @@
  @\
       !mtag_ex @\
       ! Get Attribute info by num from a mobj Test @\
-      call ESMF_AttributeGet(mname, attributeIndex=39, name=attrnameOut, & @\
+      call ESMF_AttributeGet(mname, attributeIndex=38, name=attrnameOut, & @\
         typekind=attrTK, itemcount=items, rc=rc) @\
       write(failMsg, *) "Did not return ESMF_SUCCESS or wrong value" @\
       write(name, *) "Getting Attribute info by num from a mobj Test" @\

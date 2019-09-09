@@ -228,11 +228,14 @@ void ESMC_Info2IsEqual(ESMCI::Info2 *lhs, ESMCI::Info2 *rhs,
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_Info2IsPresent()"
-void ESMC_Info2IsPresent(ESMCI::Info2 *info, char *key, bool &res, int &rc,
-        bool &recursive, int &isptr) {
+void ESMC_Info2IsPresent(ESMCI::Info2 *info, char *key, int &fortran_bool_res,
+        int &rc, int &fortran_bool_recursive, int &fortran_bool_isptr) {
   std::string local_key(key);
+  bool recursive = (fortran_bool_recursive == 1) ? true:false;
+  bool isptr = (fortran_bool_isptr == 1) ? true:false;
   try {
-    res = info->hasKey(local_key, rc, isptr, recursive);
+    bool res = info->hasKey(local_key, rc, isptr, recursive);
+    fortran_bool_res = (res == true) ? 1:0;
   }
   ESMF_CATCH_ISOC
 }

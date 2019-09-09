@@ -133,9 +133,9 @@ interface
     implicit none
     type(C_PTR), value :: info
     character(C_CHAR), intent(in) :: key(*)
-    logical(C_BOOL), intent(inout) :: res
+    integer(C_INT), intent(inout) :: res
     integer(C_INT), intent(inout) :: rc
-    logical(C_BOOL), intent(in) :: recursive
+    integer(C_INT), intent(in) :: recursive
     integer(C_INT), intent(in) :: isptr
   end subroutine c_info_is_present
 
