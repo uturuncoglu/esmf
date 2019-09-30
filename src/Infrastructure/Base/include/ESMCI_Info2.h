@@ -63,6 +63,7 @@ class VM;
 typedef const std::string key_t;
 typedef std::vector<json> const *vecjson_t;
 typedef json::array_t const *arrjson_t;
+typedef std::unordered_map<std::string, std::size_t> count_map_t;
 
 enum ESMC_ISOCType {C_INT, C_LONG, C_FLOAT, C_DOUBLE, C_CHAR};
 
@@ -73,6 +74,8 @@ class esmf_info_error : public std::exception
 public:
   esmf_info_error(key_t &code_name, int rc, key_t &msg);
 
+  key_t getCodeName() {return this->code_name;}
+
   int getReturnCode() {return this->rc;}
 
   const char* what() const noexcept {return this->msg.c_str();}
@@ -80,14 +83,17 @@ public:
 private:
   std::string msg;
   int rc;
+  key_t code_name;
 };
 
 //-----------------------------------------------------------------------------
 
 void alignOffset(int &offset);
 std::size_t get_attpack_count(const json &j);
+json::iterator find_by_index(json &j, std::size_t index, bool recursive, bool attr_compliance, std::size_t *index_current = nullptr, bool *found = nullptr);
 void update_json_pointer(const json &j, json const **jdp, const json::json_pointer &key, bool recursive);
-void update_json_count(std::size_t &count, std::size_t &count_total, const json &j, bool recursive);
+count_map_t create_json_attribute_count_map(void);
+void update_json_attribute_count_map(count_map_t &counts, const json &j, bool first);
 bool isIn(key_t& target, const std::vector<std::string>& container);
 bool isIn(const std::vector<std::string>& target, const std::vector<std::string>& container);
 bool isIn(key_t& target, const json& j);
@@ -148,7 +154,8 @@ public:
   bool hasKey(key_t &key, int &rc, bool isptr = false, bool recursive = false) const;
   bool hasKey(const json::json_pointer &jp, int& rc, bool recursive = false) const;
 
-  json inquire(key_t& key, int& rc, bool recursive = false, const int *idx = nullptr) const;
+  json inquire(key_t& key, int& rc, bool recursive = false, const int *idx = nullptr,
+    bool attr_compliance = false) const;
 
   bool isDirty() const {return this->dirty;}
   void setDirty(bool flag) {this->dirty = flag;}

@@ -709,7 +709,7 @@ program ESMF_Info2UTest
   attrs_inq = ESMF_Info2Create(to_parse, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-  call ESMF_Info2Inquire(attrs_inq, count=count, isArray=isArray, &
+  call ESMF_Info2Inquire(attrs_inq, size=count, isArray=isArray, &
     isDirty=isDirty, jsonType=jsonType, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 

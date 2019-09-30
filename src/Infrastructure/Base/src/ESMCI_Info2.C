@@ -53,6 +53,8 @@ namespace ESMCI {
 // Helper Functions -----------------------------------------------------------
 //-----------------------------------------------------------------------------
 
+void break_here() {} //tdk:rm
+
 #undef  ESMC_METHOD
 #define ESMC_METHOD "alignOffset()"
 void alignOffset(int &offset) {
@@ -64,7 +66,10 @@ void alignOffset(int &offset) {
 #define ESMC_METHOD "is_attpack()"
 bool is_attpack(const json &j) {
   bool ret = false;
-  if (j.is_object() && j.size()==1 && j.cbegin().value().is_object()) {
+  if (j.is_object()) {
+    for (json::const_iterator it=j.cbegin(); it!=j.cend(); it++) {
+      if (!it.value().is_object()) { break; }
+    }
     ret = true;
   }
   return ret;
@@ -82,6 +87,7 @@ std::size_t get_attpack_count(const json &j) {
   return ret;
 }
 
+//tdk:rm
 #undef  ESMC_METHOD
 #define ESMC_METHOD "update_json_count()"
 void update_json_count(std::size_t &count, std::size_t &count_total, const json &j, bool recursive) {
@@ -109,8 +115,56 @@ void update_json_count(std::size_t &count, std::size_t &count_total, const json 
 }
 
 #undef  ESMC_METHOD
+#define ESMC_METHOD "create_json_attribute_count_map()"
+count_map_t create_json_attribute_count_map(void) {
+  // Test:
+  // Notes:
+  count_map_t counts;
+  counts.reserve(4);
+  counts["attPackCount"] = 0;
+  counts["attPackCountTotal"] = 0;
+  counts["attrCount"] = 0;
+  counts["attrCountTotal"] = 0;
+  return counts;
+}
+
+#undef  ESMC_METHOD
+#define ESMC_METHOD "update_json_attribute_count_map()"
+void update_json_attribute_count_map(count_map_t &counts, const json &j, bool first) {
+  // Test: test_update_json_attribute_count_map
+  // Notes:
+  assert(j.is_object());
+  std::size_t attpack_count = 0;
+  std::size_t attr_count = 0;
+  std::cout << ESMC_METHOD << " first=" << first << std::endl;  //tdk:p
+  for (json::const_iterator it=j.cbegin(); it!=j.cend(); it++) {
+    std::cout << "update_json_attribute_count_map it.key()=" << it.key() << std::endl;  //tdk:p
+    std::cout << "update_json_attribute_count_map it.value()=" << it.value() << std::endl;  //tdk:p
+    if (is_attpack(it.value())) {
+      for (json::const_iterator it2=it.value().cbegin(); it2!=it.value().cend(); it2++) {
+        assert(it2.value().is_object());
+        attpack_count++;
+        if (first) counts.at("attPackCount")++;
+        counts.at("attPackCountTotal")++;
+        update_json_attribute_count_map(counts, it2.value(), false);
+      }
+    } else {
+      // Only AttPack objects are allowed with the legacy ESMF Attribute
+      // JSON proxy storage. This means a convention and purpose are required
+      // to create the expected nesting structure.
+      assert(!it.value().is_object());
+      attr_count++;
+    }
+
+  }
+  if (first) counts.at("attrCount") = attr_count;
+  counts.at("attrCountTotal") += attr_count;
+}
+
+#undef  ESMC_METHOD
 #define ESMC_METHOD "update_json_pointer(<const>)"
-void update_json_pointer(const json &j, json const **jdp, const json::json_pointer &key, bool recursive) {
+void update_json_pointer(const json &j, json const **jdp, const json::json_pointer &key,
+  bool recursive) {
   // Test: test_update_json_pointer
   // Notes:
   // Throws: json::out_of_range when key not found
@@ -132,7 +186,8 @@ void update_json_pointer(const json &j, json const **jdp, const json::json_point
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "update_json_pointer(<non-const>)"
-void update_json_pointer(json &j, json **jdp, const json::json_pointer &key, bool recursive) {
+void update_json_pointer(json &j, json **jdp, const json::json_pointer &key,
+  bool recursive) {
   // Test: test_update_json_pointer (for const overload)
   // Notes:
   // Throws: json::out_of_range when key not found
@@ -143,6 +198,104 @@ void update_json_pointer(json &j, json **jdp, const json::json_pointer &key, boo
       for (json::iterator it=j.begin(); it!=j.end(); it++) {
         if (it.value().is_object()) {
           update_json_pointer(it.value(), jdp, key, true);
+        }
+      }
+    }
+    if (!*jdp) {
+      throw(e);
+    }
+  }
+}
+
+#undef  ESMC_METHOD
+#define ESMC_METHOD "update_json_pointer(<non-const> + container)"
+void update_json_pointer(json &j, json **jdp, const json::json_pointer &key,
+                         bool recursive, json **container) {
+  // Test: test_update_json_pointer (for const overload)
+  // Notes:
+  // Throws: json::out_of_range when key not found
+  try {
+    *jdp = &(j.at(key));
+    *container = &j;
+  } catch (json::out_of_range &e) {
+    if (recursive) {
+      for (json::iterator it=j.begin(); it!=j.end(); it++) {
+        if (it.value().is_object()) {
+          update_json_pointer(it.value(), jdp, key, true, container);
+        }
+      }
+    }
+    if (!*jdp) {
+      throw(e);
+    }
+  }
+}
+
+#undef  ESMC_METHOD
+#define ESMC_METHOD "find_by_index()"
+json::iterator find_by_index(json &j, const std::size_t index_target, bool recursive,
+  bool attr_compliance, std::size_t *index_current, bool *found) {
+  // Test: test_find_by_index
+  // Notes:
+  // Throws:
+  std::cout << ESMC_METHOD << " entering" << std::endl;  //tdk:p
+  assert(j.is_object()); //tdk:todo: convert asserts of this kind to functions throwing an esmf_info_error
+  esmf_info_error exc("ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, "index out of range");
+  std::size_t local_index_default = 0;
+  std::size_t *local_index_current = nullptr;
+  bool local_found = false;
+  bool first = false;
+  json::iterator ret;
+  if (index_current) {
+    local_index_current = index_current;
+  } else {
+    first = true;
+    found = &local_found;
+    local_index_current = &local_index_default;
+  }
+  std::cout << ESMC_METHOD << " index_target=" << index_target << std::endl;  //tdk:p
+  for (json::iterator it=j.begin(); it!=j.end(); it++) {
+    std::cout << ESMC_METHOD << " *local_index_current@loop start=" << *local_index_current << std::endl;  //tdk:p
+    if (attr_compliance && is_attpack(it.value())) continue;
+    if ((*local_index_current) == index_target) {
+      ret = it;
+      *found = true;
+      break;
+    }
+    (*local_index_current)++; //tdk:resume
+    std::cout << ESMC_METHOD << " *local_index_current@increment=" << *local_index_current << std::endl;  //tdk:p
+  }
+  if (!(*found) && recursive && attr_compliance) {
+    for (json::iterator it=j.begin(); it!=j.end(); it++) {
+      if (is_attpack(it.value())) {
+        for (json::iterator it2=it.value().begin(); it2!=it.value().end(); it2++) {
+          assert(it2.value().is_object());
+          std::cout << ESMC_METHOD << " calling find_by_index@attr_compliance" << std::endl;  //tdk:p
+          ret = find_by_index(it2.value(), index_target, recursive, attr_compliance, local_index_current, found);
+          if (*found) break;
+        }
+      }
+    }
+  }
+  if (first && !(*found)) throw exc;
+  return ret;
+}
+
+#undef  ESMC_METHOD
+#define ESMC_METHOD "update_json_pointer(<non-const> + container)"
+void update_json_pointer(json &j, json **jdp, int index, bool recursive,
+  json **container) {
+  // Test: test_update_json_pointer (for const overload)
+  // Notes:
+  // Throws: json::out_of_range when key not found
+  try {
+//    *jdp = &(j.at(key));
+//    *container = &j;
+  } catch (json::out_of_range &e) {
+    if (recursive) {
+      for (json::iterator it=j.begin(); it!=j.end(); it++) {
+        if (it.value().is_object()) {
+//          update_json_pointer(it.value(), jdp, index, true, container);
         }
       }
     }
@@ -331,15 +484,34 @@ std::string Info2::dump(int indent, int& rc) const {
 #define ESMC_METHOD "Info2::erase()"
 void Info2::erase(key_t &keyParent, key_t &keyChild, int &rc, bool recursive) {
   // Exceptions: ESMCI::esmf_info_error
-
+  std::cout << "Info2::erase keyParent=" << keyParent << std::endl;  //tdk:p
+  std::cout << "Info2::erase keyChild=" << keyChild << std::endl;  //tdk:p
+  std::cout << "Info2::erase recursive=" << recursive << std::endl;  //tdk:p
+  std::cout << "Info2::erase this->dump1=" << this->dump(2, rc) << std::endl;  //tdk:p
   rc = ESMF_FAILURE;
   try {
     json::json_pointer key = this->formatKey(keyParent, rc);
     try {
       json &j = this->getStorageRefWritable();
       json *jp = nullptr;
+      json *container = nullptr;
       update_json_pointer(j, &jp, key, recursive);
       assert(jp);
+      if (recursive) {
+        try {
+          key = this->formatKey(keyChild, rc);
+          json *dummy = nullptr;
+          std::cout << "Info2::erase key-before-container=" << key << std::endl;  //tdk:p
+          std::cout << "Info2::erase jp->dump1(2)=" << jp->dump(2) << std::endl;  //tdk:p
+          update_json_pointer(*jp, &dummy, key, recursive, &container);
+          assert(dummy);
+          assert(container);
+          std::cout << "Info2::erase container->dump=" << container->dump(2) << std::endl;  //tdk:p
+          jp = container;
+        }
+        ESMF_CATCH_INFO
+      }
+      std::cout << "Info2::erase jp->dump2(2)=" << jp->dump(2) << std::endl;  //tdk:p
       json &found = jp->at(keyChild); // Check that the key exists
       jp->erase(keyChild);
     }
@@ -348,6 +520,7 @@ void Info2::erase(key_t &keyParent, key_t &keyChild, int &rc, bool recursive) {
   ESMF_CATCH_INFO
   this->dirty = true;
   rc = ESMF_SUCCESS;
+  std::cout << "Info2::erase this->dump2=" << this->dump(2, rc) << std::endl;  //tdk:p
   return;
 };
 
@@ -355,7 +528,6 @@ void Info2::erase(key_t &keyParent, key_t &keyChild, int &rc, bool recursive) {
 #define ESMC_METHOD "Info2::formatKey()"
 json::json_pointer Info2::formatKey(key_t& key, int& rc) {
   // Exceptions:  ESMCI:esmf_info_error
-
   rc = ESMF_FAILURE;
   std::string localKey;
 
@@ -385,7 +557,12 @@ json::json_pointer Info2::formatKey(key_t& key, int& rc) {
 template <typename T>
 T Info2::get(key_t &key, int &rc, const T *def, const int *index, bool recursive, std::string *ikey) const {
   // Exceptions:  ESMCI:esmf_info_error
-
+  std::cout << "Info2::get this->dump=" << this->dump(2, rc) << std::endl;  //tdk:p
+  std::cout << "Info2::get key=" << key << std::endl;  //tdk:p
+  if (index) std::cout << "Info2::get *index=" << *index << std::endl;  //tdk:p
+  std::cout << "Info2::get recursive=" << recursive << std::endl;  //tdk:p
+  if (ikey) std::cout << "Info2::get *ikey=" << *ikey << std::endl;  //tdk:p
+  if (def) std::cout << "Info2::get *def=" << *def << std::endl;  //tdk:p
   rc = ESMF_FAILURE;
   T ret;
   try {
@@ -427,7 +604,11 @@ T Info2::get(key_t &key, int &rc, const T *def, const int *index, bool recursive
           ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, msg, rc);
         }
       } else {
-        ret = *jp;
+        if (jp->is_null() && def) {
+          ret = *def;
+        } else {
+          ret = *jp;
+        }
       }
     } catch (json::out_of_range &e) {
       if (def) {
@@ -504,8 +685,6 @@ json const * Info2::getPointer(key_t& key, int& rc, bool recursive) const {
 #define ESMC_METHOD "Info2::hasKey()"
 bool Info2::hasKey(key_t& key, int& rc, bool isptr, bool recursive) const {
   // Exceptions:  ESMCI::esmf_info_error
-  // isptr is optional
-
   rc = ESMF_FAILURE;
   bool ret;
   if (isptr || recursive) {
@@ -539,7 +718,8 @@ bool Info2::hasKey(const json::json_pointer &jp, int& rc, bool recursive) const 
   // for an explanation.
   try {
     try {
-      storage.at(jp);
+      json const *dummy = nullptr;
+      update_json_pointer(storage, &dummy, jp, recursive);
       ret = true;
     }
     catch (json::out_of_range& e) {
@@ -548,28 +728,30 @@ bool Info2::hasKey(const json::json_pointer &jp, int& rc, bool recursive) const 
   }
   ESMF_CATCH_PASSTHRU
   rc = ESMF_SUCCESS;
+  std::cout << "Info2::hasKey ret=" << ret << std::endl;  //tdk:p
   return ret;
 }
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Info2::inquire()"
-json Info2::inquire(key_t &key, int &rc, bool recursive, const int *idx) const {
+json Info2::inquire(key_t &key, int &rc, bool recursive, const int *idx, bool attr_compliance) const {
   // Test: testInquire
-  // Notes: if key="" then the base storage object is used; recursive=true is
-  //  equivalent to turning on the attnestflag
+  // Notes:
+  std::cout << "Info2::inquire this->dump=" << this->dump(2, rc) << std::endl;  //tdk:p
+  std::cout << "Info2::inquire key=" << key << std::endl;  //tdk:p
+  std::cout << "Info2::inquire recursive=" << recursive << std::endl;  //tdk:p
+  if (idx) {std::cout << "Info2::inquire idx=" << *idx << std::endl;}  //tdk:p
   rc = ESMF_FAILURE;
   json j = json::object();
   try {
     j["isDirty"] = this->isDirty();
     j["key"] = json::value_t::null;
     const json *sp = &(this->getStorageRef());
-    std::size_t attPackCount = 0;
-    if (key!="") {
+    try {
       json::json_pointer jp = this->formatKey(key, rc);
       update_json_pointer(this->getStorageRef(), &sp, jp, recursive);
-    } else {
-      attPackCount = get_attpack_count(*sp);
     }
+    ESMF_CATCH_PASSTHRU
     if (idx) {
       if (sp->is_array()) {
         try {
@@ -580,40 +762,40 @@ json Info2::inquire(key_t &key, int &rc, bool recursive, const int *idx) const {
                             e.what(), rc)
         }
       } else if (sp->is_object()) {
-        if (*idx >= (int)sp->size()) {
-          std::string msg = "'idx' greater than object count";
-          ESMF_CHECKERR_STD("ESMC_RC_ARG_OUTOFRANGE", ESMC_RC_ARG_OUTOFRANGE,
-                            msg, rc)
-        }
-        int ctr = 0;
-        for (json::const_iterator it=sp->cbegin(); it!=sp->cend(); it++) {
-          if (ctr == *idx) {
-            sp = &(it.value());
-            j["key"] = it.key();
-            break;
-          } else {
-            ctr++;
-          }
-        }
+        json::iterator it = find_by_index(const_cast<json&>(*sp), (std::size_t)(*idx), recursive, attr_compliance);
+        j["key"] = it.key();
       } else {
         std::string msg = "'idx' only supported for JSON arrays or objects";
         ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, msg, rc);
       }
     }
+
+    // Counting ---------------------------------------------------------------
+
     const json &sk = *sp;
-    j["ESMC_TypeKind_Flag"] = json_type_to_esmf_typekind(sk);
-    std::size_t count = 0;
-    std::size_t count_total = 0;
-    if (!sk.is_array() && recursive) {
-      update_json_count(count, count_total, sk, true);
-    } else if (sk.is_structured()) {
-      count = sk.size();
+    count_map_t counts = create_json_attribute_count_map();
+    std::cout << "Info2::inquire sk.dump=" << sk.dump(1) << std::endl;  //tdk:p
+    auto sk_size = sk.size();
+    if (sk.is_object()) {
+      std::cout << "Info2::inquire calling update_json_count" << std::endl;  //tdk:p
+      update_json_attribute_count_map(counts, sk, true);
     } else {
-      count = 1;
+      // All counts are one if the JSON type is not object
+      for (std::pair<std::string, int> element : counts)
+      {
+        element.second = 1;
+      }
     }
-    j["count"] = count;
-    j["countTotal"] = count_total;
-    j["attPackCount"] = attPackCount;
+    j["size"] = sk.size();
+    // Bring over information from the count map
+    for (std::pair<std::string, int> element : counts)
+    {
+      j[element.first] = element.second;
+    }
+
+    // Type inquire -----------------------------------------------------------
+
+    j["ESMC_TypeKind_Flag"] = json_type_to_esmf_typekind(sk);
     std::string json_typename;
     bool is_array = false;
     if (sk.is_array()) {
@@ -634,6 +816,7 @@ json Info2::inquire(key_t &key, int &rc, bool recursive, const int *idx) const {
   }
   ESMF_CATCH_INFO
   rc = ESMF_SUCCESS;
+  std::cout << "Info2::inquire j.dump=" << j.dump(2) << std::endl;  //tdk:p
   return j;
 }
 
@@ -814,6 +997,12 @@ void Info2::set(key_t &key, json &&j, bool force, int &rc, const int *index,
   // Test:
   // Notes: parent key (pkey) must exist in the map
   //tdk:question: should force also override type differences? setting to null is always allowed.
+  std::cout << "Info2::set this->dump(2, rc)=" << this->dump(2, rc) << std::endl;  //tdk:p
+  std::cout << "Info2::set key=" << key << std::endl;  //tdk:p
+  std::cout << "Info2::set j.dump()=" << j.dump() << std::endl;  //tdk:p
+  std::cout << "Info2::set force=" << force << std::endl;  //tdk:p
+  if (index) {std::cout << "Info2::set *index=" << *index << std::endl;} //tdk:p
+  if (pkey) {std::cout << "Info2::set *pkey=" << *pkey << std::endl;} //tdk:p
   rc = ESMF_FAILURE;
   try {
     json *jobject = nullptr;

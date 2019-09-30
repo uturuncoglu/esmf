@@ -222,7 +222,7 @@ interface
     integer(C_INT) :: vlen
     integer(C_INT), intent(inout) :: rc
     type(C_PTR), value :: default, idx
-    logical(C_BOOL), intent(in) :: recursive
+    integer(C_INT), intent(in) :: recursive
   end subroutine c_info_get_CH
 
   !=============================================================================

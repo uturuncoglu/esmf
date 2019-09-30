@@ -207,7 +207,7 @@ void ESMC_Info2Inquire(ESMCI::Info2 *info, ESMCI::Info2 *inq,
   if (fortran_recursive == 1) {recursive = true;}
   try {
     std::string localKey(key);
-    json jinq = info->inquire(localKey, rc, recursive, idx);
+    json jinq = info->inquire(localKey, rc, recursive, idx, true);
     json &inqref = inq->getStorageRefWritable();
     inqref = std::move(jinq);
   }
@@ -236,6 +236,11 @@ void ESMC_Info2IsPresent(ESMCI::Info2 *info, char *key, int &fortran_bool_res,
   try {
     bool res = info->hasKey(local_key, rc, isptr, recursive);
     fortran_bool_res = (res == true) ? 1:0;
+    std::cout << "ESMC_Info2IsPresent local_key=" << local_key << std::endl;  //tdk:p
+    std::cout << "ESMC_Info2IsPresent res=" << res << std::endl;  //tdk:p
+    std::cout << "ESMC_Info2IsPresent fortran_bool_res=" << fortran_bool_res << std::endl;  //tdk:p
+    std::cout << "ESMC_Info2IsPresent recursive=" << recursive << std::endl;  //tdk:p
+    std::cout << "ESMC_Info2IsPresent isptr=" << isptr << std::endl;  //tdk:p
   }
   ESMF_CATCH_ISOC
 }
@@ -418,11 +423,13 @@ void ESMC_Info2WriteJSON(ESMCI::Info2 *info, char *filename, int &rc) {
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_Info2GetCH()"
 void ESMC_Info2GetCH(ESMCI::Info2* info, char *key, char *value,
-  int &vlen, int &rc, char *def, int *index) {
+  int &vlen, int &rc, char *def, int *index, int &fortran_bool_recursive) {
   // String pointer used to define the default value if present
   std::string *def_str_ptr;
   // String object that holds the default if present
   std::string def_str;
+  // Convert from Fortran integer to bool
+  bool recursive = (fortran_bool_recursive == 1) ? true:false;
   if (def) {
     // Set the default pointer to the string object created from the char
     // array from Fortran
@@ -434,7 +441,7 @@ void ESMC_Info2GetCH(ESMCI::Info2* info, char *key, char *value,
   std::string as_str;
   std::string local_key(key);
   try {
-    as_str = info->get<std::string>(local_key, rc, def_str_ptr, index);
+    as_str = info->get<std::string>(local_key, rc, def_str_ptr, index, recursive);
   }
   ESMF_CATCH_ISOC
   // Transfer the string characters into the Fortran character array using
@@ -453,12 +460,32 @@ void ESMC_Info2GetCH(ESMCI::Info2* info, char *key, char *value,
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_Info2SetCH()"
 void ESMC_Info2SetCH(ESMCI::Info2 *info, char *key, char *value,
-                              bool &force, int &rc, int *index) {
+                              bool &force, int &rc, int *index, char *pkey) {
   rc = ESMF_FAILURE;
-  std::string localKey(key);
-  std::string localValue(value);
+  std::string local_key(key);
+  std::string local_value(value);
+  std::string local_pkey(pkey);
+  std::string *local_pkeyp = nullptr;
+  if (local_pkey.size() != 0) {local_pkeyp = &local_pkey;}
   try {
-    info->set<std::string>(localKey, localValue, force, rc, index);
+    info->set<std::string>(local_key, local_value, force, rc, index, local_pkeyp);
+  }
+  ESMF_CATCH_ISOC
+}
+
+#undef  ESMC_METHOD
+#define ESMC_METHOD "ESMC_Info2SetArrayCH()"
+void ESMC_Info2SetArrayCH(ESMCI::Info2 *info, char *key, int &count,
+                          bool &force, int &rc, char *pkey) {
+  // Notes:
+  //  * Only allocates storage. Does not actually insert anything!
+  rc = ESMF_FAILURE;
+  std::string local_key(key);
+  std::string local_pkey(pkey);
+  std::string *local_pkeyp = nullptr;
+  if (local_pkey.size() != 0) {local_pkeyp = &local_pkey;}
+  try {
+    info->set<std::vector<std::string>>(local_key, nullptr, count, force, rc, local_pkeyp);
   }
   ESMF_CATCH_ISOC
 }
@@ -468,9 +495,9 @@ void ESMC_Info2SetCH(ESMCI::Info2 *info, char *key, char *value,
 void ESMC_Info2SetINFO(ESMCI::Info2 *info, char *key,
   ESMCI::Info2 *value, bool &force, int &rc) {
   rc = ESMF_FAILURE;
-  std::string localKey(key);
+  std::string local_key(key);
   try {
-    info->set(localKey, *value, force, rc);
+    info->set(local_key, *value, force, rc);
   }
   ESMF_CATCH_ISOC
 }
@@ -480,25 +507,10 @@ void ESMC_Info2SetINFO(ESMCI::Info2 *info, char *key,
 void ESMC_Info2SetNULL(ESMCI::Info2 *info, char *key, bool &force,
   int &rc) {
   rc = ESMF_FAILURE;
-  std::string localKey(key);
+  std::string local_key(key);
   try {
-    info->set(localKey, force, rc);
+    info->set(local_key, force, rc);
   }
   ESMF_CATCH_ISOC
 }
-
-#undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_Info2SetArrayCH()"
-void ESMC_Info2SetArrayCH(ESMCI::Info2 *info, char *key, int &count,
-  bool &force, int &rc) {
-  // Notes:
-  //  * Only allocates storage. Does not actually insert anything!
-  rc = ESMF_FAILURE;
-  std::string localKey(key);
-  try {
-    info->set<std::vector<std::string>>(localKey, nullptr, count, force, rc);
-  }
-  ESMF_CATCH_ISOC
-}
-
 }  // extern "C"

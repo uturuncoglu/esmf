@@ -17,12 +17,12 @@ subroutine ESMF_Info2GetR4(info, key, value, default, idx, attnestflag, rc)
   real(C_FLOAT), target :: local_default
   integer(C_INT), target :: local_idx
   type(C_PTR) :: local_default_ptr, local_idx_ptr
-  logical(C_BOOL) :: recursive
+  integer(C_INT) :: recursive
 
   ! Set up local return code
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
-  recursive = .false.
+  recursive = 0 !false
 
   ! Handle optional arguments for C ###########################################
 
@@ -39,7 +39,7 @@ subroutine ESMF_Info2GetR4(info, key, value, default, idx, attnestflag, rc)
     local_idx_ptr = C_NULL_PTR
   end if
   if (present(attnestflag)) then
-    if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = .true.
+    if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = 1 !true
   end if
 
   ! Call C ####################################################################
@@ -72,12 +72,12 @@ subroutine ESMF_Info2GetR8(info, key, value, default, idx, attnestflag, rc)
   real(C_DOUBLE), target :: local_default
   integer(C_INT), target :: local_idx
   type(C_PTR) :: local_default_ptr, local_idx_ptr
-  logical(C_BOOL) :: recursive
+  integer(C_INT) :: recursive
 
   ! Set up local return code
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
-  recursive = .false.
+  recursive = 0 !false
 
   ! Handle optional arguments for C ###########################################
 
@@ -94,7 +94,7 @@ subroutine ESMF_Info2GetR8(info, key, value, default, idx, attnestflag, rc)
     local_idx_ptr = C_NULL_PTR
   end if
   if (present(attnestflag)) then
-    if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = .true.
+    if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = 1 !true
   end if
 
   ! Call C ####################################################################
@@ -127,12 +127,12 @@ subroutine ESMF_Info2GetI4(info, key, value, default, idx, attnestflag, rc)
   integer(C_INT), target :: local_default
   integer(C_INT), target :: local_idx
   type(C_PTR) :: local_default_ptr, local_idx_ptr
-  logical(C_BOOL) :: recursive
+  integer(C_INT) :: recursive
 
   ! Set up local return code
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
-  recursive = .false.
+  recursive = 0 !false
 
   ! Handle optional arguments for C ###########################################
 
@@ -149,7 +149,7 @@ subroutine ESMF_Info2GetI4(info, key, value, default, idx, attnestflag, rc)
     local_idx_ptr = C_NULL_PTR
   end if
   if (present(attnestflag)) then
-    if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = .true.
+    if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = 1 !true
   end if
 
   ! Call C ####################################################################
@@ -182,12 +182,12 @@ subroutine ESMF_Info2GetI8(info, key, value, default, idx, attnestflag, rc)
   integer(C_LONG), target :: local_default
   integer(C_INT), target :: local_idx
   type(C_PTR) :: local_default_ptr, local_idx_ptr
-  logical(C_BOOL) :: recursive
+  integer(C_INT) :: recursive
 
   ! Set up local return code
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
-  recursive = .false.
+  recursive = 0 !false
 
   ! Handle optional arguments for C ###########################################
 
@@ -204,7 +204,7 @@ subroutine ESMF_Info2GetI8(info, key, value, default, idx, attnestflag, rc)
     local_idx_ptr = C_NULL_PTR
   end if
   if (present(attnestflag)) then
-    if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = .true.
+    if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = 1 !true
   end if
 
   ! Call C ####################################################################
@@ -238,12 +238,12 @@ subroutine ESMF_Info2GetLG(info, key, value, default, idx, attnestflag, rc)
   logical(C_BOOL) :: local_value
   integer(C_INT), target :: local_idx
   type(C_PTR) :: local_default_ptr, local_idx_ptr
-  logical(C_BOOL) :: recursive
+  integer(C_INT) :: recursive
 
   ! Set up local return code
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
-  recursive = .false.
+  recursive = 0 !false
 
   ! Handle optional arguments for C ###########################################
 
@@ -260,7 +260,7 @@ subroutine ESMF_Info2GetLG(info, key, value, default, idx, attnestflag, rc)
     local_idx_ptr = C_NULL_PTR
   end if
   if (present(attnestflag)) then
-    if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = .true.
+    if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = 1 !true
   end if
 
   ! Call C ####################################################################
@@ -294,18 +294,18 @@ subroutine ESMF_Info2GetArrayR4(info, key, values, itemcount, attnestflag, rc)
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  logical(C_BOOL) :: recursive
+  integer(C_INT) :: recursive
   
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
-  recursive = .false.
+  recursive = 0 !false
 
   if (present(attnestflag)) then
-    if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = .true.
+    if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = 1 !true
   end if
 
   ! Get the array size from the info store
-  call ESMF_Info2Inquire(info, key=key, count=itemcount, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Inquire(info, key=key, size=itemcount, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   
@@ -335,18 +335,18 @@ subroutine ESMF_Info2GetArrayR4Allocated(info, key, values, itemcount, attnestfl
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  logical(C_BOOL) :: recursive
+  integer(C_INT) :: recursive
   
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
-  recursive = .false.
+  recursive = 0 !false
 
   if (present(attnestflag)) then
-    if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = .true.
+    if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = 1 !true
   end if
 
   ! Get the array size from the info store
-  call ESMF_Info2Inquire(info, key=key, count=itemcount, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Inquire(info, key=key, size=itemcount, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   
@@ -380,18 +380,18 @@ subroutine ESMF_Info2GetArrayR8(info, key, values, itemcount, attnestflag, rc)
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  logical(C_BOOL) :: recursive
+  integer(C_INT) :: recursive
   
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
-  recursive = .false.
+  recursive = 0 !false
 
   if (present(attnestflag)) then
-    if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = .true.
+    if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = 1 !true
   end if
 
   ! Get the array size from the info store
-  call ESMF_Info2Inquire(info, key=key, count=itemcount, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Inquire(info, key=key, size=itemcount, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   
@@ -421,18 +421,18 @@ subroutine ESMF_Info2GetArrayR8Allocated(info, key, values, itemcount, attnestfl
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  logical(C_BOOL) :: recursive
+  integer(C_INT) :: recursive
   
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
-  recursive = .false.
+  recursive = 0 !false
 
   if (present(attnestflag)) then
-    if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = .true.
+    if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = 1 !true
   end if
 
   ! Get the array size from the info store
-  call ESMF_Info2Inquire(info, key=key, count=itemcount, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Inquire(info, key=key, size=itemcount, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   
@@ -466,18 +466,18 @@ subroutine ESMF_Info2GetArrayI4(info, key, values, itemcount, attnestflag, rc)
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  logical(C_BOOL) :: recursive
+  integer(C_INT) :: recursive
   
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
-  recursive = .false.
+  recursive = 0 !false
 
   if (present(attnestflag)) then
-    if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = .true.
+    if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = 1 !true
   end if
 
   ! Get the array size from the info store
-  call ESMF_Info2Inquire(info, key=key, count=itemcount, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Inquire(info, key=key, size=itemcount, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   
@@ -507,18 +507,18 @@ subroutine ESMF_Info2GetArrayI4Allocated(info, key, values, itemcount, attnestfl
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  logical(C_BOOL) :: recursive
+  integer(C_INT) :: recursive
   
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
-  recursive = .false.
+  recursive = 0 !false
 
   if (present(attnestflag)) then
-    if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = .true.
+    if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = 1 !true
   end if
 
   ! Get the array size from the info store
-  call ESMF_Info2Inquire(info, key=key, count=itemcount, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Inquire(info, key=key, size=itemcount, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   
@@ -552,18 +552,18 @@ subroutine ESMF_Info2GetArrayI8(info, key, values, itemcount, attnestflag, rc)
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  logical(C_BOOL) :: recursive
+  integer(C_INT) :: recursive
   
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
-  recursive = .false.
+  recursive = 0 !false
 
   if (present(attnestflag)) then
-    if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = .true.
+    if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = 1 !true
   end if
 
   ! Get the array size from the info store
-  call ESMF_Info2Inquire(info, key=key, count=itemcount, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Inquire(info, key=key, size=itemcount, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   
@@ -593,18 +593,18 @@ subroutine ESMF_Info2GetArrayI8Allocated(info, key, values, itemcount, attnestfl
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  logical(C_BOOL) :: recursive
+  integer(C_INT) :: recursive
   
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
-  recursive = .false.
+  recursive = 0 !false
 
   if (present(attnestflag)) then
-    if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = .true.
+    if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = 1 !true
   end if
 
   ! Get the array size from the info store
-  call ESMF_Info2Inquire(info, key=key, count=itemcount, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Inquire(info, key=key, size=itemcount, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   
@@ -638,20 +638,20 @@ subroutine ESMF_Info2GetArrayLG(info, key, values, itemcount, attnestflag, rc)
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  logical(C_BOOL) :: recursive
+  integer(C_INT) :: recursive
   integer :: ii
   logical(C_BOOL), dimension(:), allocatable :: local_values
   
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
-  recursive = .false.
+  recursive = 0 !false
 
   if (present(attnestflag)) then
-    if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = .true.
+    if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = 1 !true
   end if
 
   ! Get the array size from the info store
-  call ESMF_Info2Inquire(info, key=key, count=itemcount, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Inquire(info, key=key, size=itemcount, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   
@@ -687,20 +687,20 @@ subroutine ESMF_Info2GetArrayLGAllocated(info, key, values, itemcount, attnestfl
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  logical(C_BOOL) :: recursive
+  integer(C_INT) :: recursive
   integer :: ii
   logical(C_BOOL), dimension(:), allocatable :: local_values
   
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
-  recursive = .false.
+  recursive = 0 !false
 
   if (present(attnestflag)) then
-    if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = .true.
+    if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = 1 !true
   end if
 
   ! Get the array size from the info store
-  call ESMF_Info2Inquire(info, key=key, count=itemcount, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Inquire(info, key=key, size=itemcount, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   
@@ -765,7 +765,7 @@ subroutine ESMF_Info2SetR4(info, key, value, force, idx, pkey, rc)
     local_idx_ptr = C_NULL_PTR
   end if
   if (present(pkey)) then
-    local_pkey = pkey//C_NULL_CHAR
+    local_pkey = TRIM(pkey)//C_NULL_CHAR
   else
     local_pkey = ""//C_NULL_CHAR
   end if
@@ -815,7 +815,7 @@ subroutine ESMF_Info2SetR8(info, key, value, force, idx, pkey, rc)
     local_idx_ptr = C_NULL_PTR
   end if
   if (present(pkey)) then
-    local_pkey = pkey//C_NULL_CHAR
+    local_pkey = TRIM(pkey)//C_NULL_CHAR
   else
     local_pkey = ""//C_NULL_CHAR
   end if
@@ -865,7 +865,7 @@ subroutine ESMF_Info2SetI4(info, key, value, force, idx, pkey, rc)
     local_idx_ptr = C_NULL_PTR
   end if
   if (present(pkey)) then
-    local_pkey = pkey//C_NULL_CHAR
+    local_pkey = TRIM(pkey)//C_NULL_CHAR
   else
     local_pkey = ""//C_NULL_CHAR
   end if
@@ -915,7 +915,7 @@ subroutine ESMF_Info2SetI8(info, key, value, force, idx, pkey, rc)
     local_idx_ptr = C_NULL_PTR
   end if
   if (present(pkey)) then
-    local_pkey = pkey//C_NULL_CHAR
+    local_pkey = TRIM(pkey)//C_NULL_CHAR
   else
     local_pkey = ""//C_NULL_CHAR
   end if
@@ -965,7 +965,7 @@ subroutine ESMF_Info2SetCH(info, key, value, force, idx, pkey, rc)
     local_idx_ptr = C_NULL_PTR
   end if
   if (present(pkey)) then
-    local_pkey = pkey//C_NULL_CHAR
+    local_pkey = TRIM(pkey)//C_NULL_CHAR
   else
     local_pkey = ""//C_NULL_CHAR
   end if
@@ -1015,7 +1015,7 @@ subroutine ESMF_Info2SetLG(info, key, value, force, idx, pkey, rc)
     local_idx_ptr = C_NULL_PTR
   end if
   if (present(pkey)) then
-    local_pkey = pkey//C_NULL_CHAR
+    local_pkey = TRIM(pkey)//C_NULL_CHAR
   else
     local_pkey = ""//C_NULL_CHAR
   end if
@@ -1061,7 +1061,7 @@ subroutine ESMF_Info2SetArrayR4(info, key, values, force, pkey, rc)
     local_force = .true.
   end if
   if (present(pkey)) then
-    local_pkey = pkey//C_NULL_CHAR
+    local_pkey = TRIM(pkey)//C_NULL_CHAR
   else
     local_pkey = ""//C_NULL_CHAR
   end if
@@ -1101,7 +1101,7 @@ subroutine ESMF_Info2SetArrayR8(info, key, values, force, pkey, rc)
     local_force = .true.
   end if
   if (present(pkey)) then
-    local_pkey = pkey//C_NULL_CHAR
+    local_pkey = TRIM(pkey)//C_NULL_CHAR
   else
     local_pkey = ""//C_NULL_CHAR
   end if
@@ -1141,7 +1141,7 @@ subroutine ESMF_Info2SetArrayI4(info, key, values, force, pkey, rc)
     local_force = .true.
   end if
   if (present(pkey)) then
-    local_pkey = pkey//C_NULL_CHAR
+    local_pkey = TRIM(pkey)//C_NULL_CHAR
   else
     local_pkey = ""//C_NULL_CHAR
   end if
@@ -1181,7 +1181,7 @@ subroutine ESMF_Info2SetArrayI8(info, key, values, force, pkey, rc)
     local_force = .true.
   end if
   if (present(pkey)) then
-    local_pkey = pkey//C_NULL_CHAR
+    local_pkey = TRIM(pkey)//C_NULL_CHAR
   else
     local_pkey = ""//C_NULL_CHAR
   end if
@@ -1223,7 +1223,7 @@ subroutine ESMF_Info2SetArrayLG(info, key, values, force, pkey, rc)
     local_force = .true.
   end if
   if (present(pkey)) then
-    local_pkey = pkey//C_NULL_CHAR
+    local_pkey = TRIM(pkey)//C_NULL_CHAR
   else
     local_pkey = ""//C_NULL_CHAR
   end if

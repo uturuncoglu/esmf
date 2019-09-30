@@ -12,7 +12,7 @@ interface
     real(C_FLOAT), intent(out) :: value
     integer(C_INT), intent(inout) :: rc
     type(C_PTR), value :: default, idx
-    logical(C_BOOL), intent(in) :: recursive
+    integer(C_INT), intent(in) :: recursive
   end subroutine c_info_get_R4
 
   subroutine c_info_get_R8(info, key, value, rc, default, idx, recursive) bind(C, name="ESMC_Info2GetR8")
@@ -23,7 +23,7 @@ interface
     real(C_DOUBLE), intent(out) :: value
     integer(C_INT), intent(inout) :: rc
     type(C_PTR), value :: default, idx
-    logical(C_BOOL), intent(in) :: recursive
+    integer(C_INT), intent(in) :: recursive
   end subroutine c_info_get_R8
 
   subroutine c_info_get_I4(info, key, value, rc, default, idx, recursive) bind(C, name="ESMC_Info2GetI4")
@@ -34,7 +34,7 @@ interface
     integer(C_INT), intent(out) :: value
     integer(C_INT), intent(inout) :: rc
     type(C_PTR), value :: default, idx
-    logical(C_BOOL), intent(in) :: recursive
+    integer(C_INT), intent(in) :: recursive
   end subroutine c_info_get_I4
 
   subroutine c_info_get_I8(info, key, value, rc, default, idx, recursive) bind(C, name="ESMC_Info2GetI8")
@@ -45,7 +45,7 @@ interface
     integer(C_LONG), intent(out) :: value
     integer(C_INT), intent(inout) :: rc
     type(C_PTR), value :: default, idx
-    logical(C_BOOL), intent(in) :: recursive
+    integer(C_INT), intent(in) :: recursive
   end subroutine c_info_get_I8
 
   subroutine c_info_get_LG(info, key, value, rc, default, idx, recursive) bind(C, name="ESMC_Info2GetLG")
@@ -56,7 +56,7 @@ interface
     logical(C_BOOL), intent(out) :: value
     integer(C_INT), intent(inout) :: rc
     type(C_PTR), value :: default, idx
-    logical(C_BOOL), intent(in) :: recursive
+    integer(C_INT), intent(in) :: recursive
   end subroutine c_info_get_LG
 
   subroutine c_info_get_array_R4(info, key, value, itemcount, rc, recursive) bind(C, name="ESMC_Info2GetArrayR4")
@@ -67,7 +67,7 @@ interface
     real(C_FLOAT), dimension(*), intent(out) :: value
     integer(C_INT), intent(out) :: itemcount
     integer(C_INT), intent(inout) :: rc
-    logical(C_BOOL), intent(in) :: recursive
+    integer(C_INT), intent(in) :: recursive
   end subroutine c_info_get_array_R4
 
   subroutine c_info_get_array_R8(info, key, value, itemcount, rc, recursive) bind(C, name="ESMC_Info2GetArrayR8")
@@ -78,7 +78,7 @@ interface
     real(C_DOUBLE), dimension(*), intent(out) :: value
     integer(C_INT), intent(out) :: itemcount
     integer(C_INT), intent(inout) :: rc
-    logical(C_BOOL), intent(in) :: recursive
+    integer(C_INT), intent(in) :: recursive
   end subroutine c_info_get_array_R8
 
   subroutine c_info_get_array_I4(info, key, value, itemcount, rc, recursive) bind(C, name="ESMC_Info2GetArrayI4")
@@ -89,7 +89,7 @@ interface
     integer(C_INT), dimension(*), intent(out) :: value
     integer(C_INT), intent(out) :: itemcount
     integer(C_INT), intent(inout) :: rc
-    logical(C_BOOL), intent(in) :: recursive
+    integer(C_INT), intent(in) :: recursive
   end subroutine c_info_get_array_I4
 
   subroutine c_info_get_array_I8(info, key, value, itemcount, rc, recursive) bind(C, name="ESMC_Info2GetArrayI8")
@@ -100,7 +100,7 @@ interface
     integer(C_LONG), dimension(*), intent(out) :: value
     integer(C_INT), intent(out) :: itemcount
     integer(C_INT), intent(inout) :: rc
-    logical(C_BOOL), intent(in) :: recursive
+    integer(C_INT), intent(in) :: recursive
   end subroutine c_info_get_array_I8
 
   subroutine c_info_get_array_LG(info, key, value, itemcount, rc, recursive) bind(C, name="ESMC_Info2GetArrayLG")
@@ -111,7 +111,7 @@ interface
     logical(C_BOOL), dimension(*), intent(out) :: value
     integer(C_INT), intent(out) :: itemcount
     integer(C_INT), intent(inout) :: rc
-    logical(C_BOOL), intent(in) :: recursive
+    integer(C_INT), intent(in) :: recursive
   end subroutine c_info_get_array_LG
 
 !===============================================================================

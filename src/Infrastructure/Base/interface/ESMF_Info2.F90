@@ -324,7 +324,7 @@ subroutine ESMF_Info2Remove(info, keyParent, keyChild, attnestflag, rc)
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(len=ESMF_MAXSTR) :: localkeyChild !tdk:todo: change this to an allocated
+  character(:), allocatable :: localkeyChild
   logical(C_BOOL) :: recursive
 
   localrc = ESMF_FAILURE
@@ -352,26 +352,29 @@ end subroutine ESMF_Info2Remove
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_Info2Inquire()"
-subroutine ESMF_Info2Inquire(info, key, count, countTotal, jsonType, isArray, &
-  isDirty, attPackCount, attnestflag, idx, typekind, ikey, isPresent, rc)
+subroutine ESMF_Info2Inquire(info, key, size, attrCount, attrCountTotal, jsonType, &
+  isArray, isDirty, attPackCount, attPackCountTotal, attnestflag, idx, typekind, &
+  ikey, isPresent, rc)
 
   type(ESMF_Info2), intent(in) :: info
   character(len=*), intent(in), optional :: key
-  integer(C_INT), intent(out), optional :: count
-  integer(C_INT), intent(out), optional :: countTotal
+  integer(C_INT), intent(out), optional :: size
+  integer(C_INT), intent(out), optional :: attrCount
+  integer(C_INT), intent(out), optional :: attrCountTotal
   character(len=*), intent(out), optional :: jsonType
   logical, intent(out), optional :: isArray
   logical, intent(out), optional :: isDirty
   integer(C_INT), intent(out), optional :: attPackCount
+  integer(C_INT), intent(out), optional :: attPackCountTotal
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer(C_INT), intent(in), optional :: idx
   type(ESMF_TypeKind_Flag), intent(out), optional :: typekind
   character(len=*), intent(out), optional :: ikey
-  logical, intent(out), optional :: isPresent !tdk:todo: implement for both key and idx (index is out of range for example)
+  logical, intent(out), optional :: isPresent
   integer, intent(inout), optional :: rc
 
-  integer :: localrc, esmc_typekind
-  type(ESMF_Info2) :: inq
+  integer :: localrc, esmc_typekind, local_size
+  type(ESMF_Info2) :: inq, inq2
   character(:), allocatable :: local_key
   integer :: recursive
   integer(C_INT), target :: local_idx
@@ -396,6 +399,16 @@ subroutine ESMF_Info2Inquire(info, key, count, countTotal, jsonType, isArray, &
     local_idx_ptr = C_NULL_PTR
   end if
 
+  if (present(isPresent)) then
+    if (LEN(key) > 0) then
+      isPresent = ESMF_Info2IsPresent(info, local_key, isPointer=.true., &
+        attnestflag=attnestflag, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      isPresent = .true.
+    end if
+  end if
+
   inq = ESMF_Info2Create(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -403,9 +416,17 @@ subroutine ESMF_Info2Inquire(info, key, count, countTotal, jsonType, isArray, &
    local_idx_ptr, localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  if (present(count)) then
-    call ESMF_Info2Get(inq, "count", count, rc=localrc)
+  if (present(size)) then
+      call ESMF_Info2Get(inq, "size", size, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+  if (present(attrCount)) then
+    call ESMF_Info2Get(inq, "attrCount", attrCount, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+  if (present(attrCountTotal)) then
+      call ESMF_Info2Get(inq, "attrCountTotal", attrCountTotal, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   end if
   if (present(jsonType)) then
     call ESMF_Info2Get(inq, "jsonType", jsonType, rc=localrc)
@@ -423,9 +444,9 @@ subroutine ESMF_Info2Inquire(info, key, count, countTotal, jsonType, isArray, &
     call ESMF_Info2Get(inq, "attPackCount", attPackCount, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   end if
-  if (present(countTotal)) then
-    call ESMF_Info2Get(inq, "countTotal", countTotal, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  if (present(attPackCountTotal)) then
+      call ESMF_Info2Get(inq, "attPackCountTotal", attPackCountTotal, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   end if
   if (present(typekind)) then
     call ESMF_Info2Get(inq, "ESMC_TypeKind_Flag", esmc_typekind, rc=localrc)
@@ -435,6 +456,30 @@ subroutine ESMF_Info2Inquire(info, key, count, countTotal, jsonType, isArray, &
   if (present(ikey)) then
     call ESMF_Info2Get(inq, "key", ikey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+  if (present(idx)) then
+    if (present(isPresent)) then
+      if (isPresent) then
+          inq2 = ESMF_Info2Create(rc=localrc)
+          if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+          call c_info_inquire(info%ptr, inq2%ptr, local_key//C_NULL_CHAR, recursive, &
+            C_NULL_PTR, localrc)
+          if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+          call ESMF_Info2Get(inq2, "size", local_size, rc=localrc)
+          if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+          print *, "ESMF_Info2Inquire idx=", idx !tdk:p
+          print *, "ESMF_Info2Inquire local_size=", local_size !tdk:p
+          if (idx > local_size) then
+            isPresent = .false.
+          end if
+
+          call ESMF_Info2Destroy(inq2, rc=localrc)
+          if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+       end if
+    end if
   end if
 
   call ESMF_Info2Destroy(inq, rc=rc)
@@ -477,10 +522,11 @@ function ESMF_Info2IsPresent(info, key, attnestflag, isPointer, rc) result(is_pr
   end if
 
   if (local_isPointer) then
-    isPointer_forC = 1
+    isPointer_forC = 1 !true
   else
-    isPointer_forC = 0
+    isPointer_forC = 0 !false
   end if
+  print *, "ESMF_Info2IsPresent recursive=", recursive !tdk:p
   call c_info_is_present(info%ptr, trim(key)//C_NULL_CHAR, local_is_present, &
     localrc, recursive, isPointer_forC)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
@@ -634,8 +680,9 @@ subroutine ESMF_Info2GetCH(info, key, value, default, idx, attnestflag, rc)
   integer(C_INT), target :: local_idx
   character(len=ESMF_MAXSTR), target :: local_default
   type(C_PTR) :: local_default_ptr, local_idx_ptr
-  logical(C_BOOL) :: recursive
+  integer(C_INT) :: recursive
 
+  recursive = 0 !false
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
   recursive = .false.
@@ -655,7 +702,7 @@ subroutine ESMF_Info2GetCH(info, key, value, default, idx, attnestflag, rc)
     local_idx_ptr = C_NULL_PTR
   end if
   if (present(attnestflag)) then
-    if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = .true.
+    if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = 1 !true
   end if
 
   ! Call C ####################################################################
@@ -684,7 +731,7 @@ subroutine ESMF_Info2GetArrayCH(info, key, values, itemcount, attnestflag, rc)
   if (present(rc)) rc = ESMF_FAILURE
 
   ! Get the array size from the attributes store
-  call ESMF_Info2Inquire(info, key=trim(key)//C_NULL_CHAR, count=itemcount, &
+  call ESMF_Info2Inquire(info, key=trim(key)//C_NULL_CHAR, size=itemcount, &
     attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -715,7 +762,7 @@ subroutine ESMF_Info2GetArrayCHAllocated(info, key, values, itemcount, attnestfl
   if (present(rc)) rc = ESMF_FAILURE
 
   ! Get the array size from the attributes store
-  call ESMF_Info2Inquire(info, key=trim(key)//C_NULL_CHAR, count=itemcount, &
+  call ESMF_Info2Inquire(info, key=trim(key)//C_NULL_CHAR, size=itemcount, &
     attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -818,7 +865,7 @@ subroutine ESMF_Info2SetArrayCH(info, key, values, force, pkey, rc)
   end if
 
   if (present(pkey)) then
-    local_pkey = pkey//C_NULL_CHAR
+    local_pkey = TRIM(pkey)//C_NULL_CHAR
   else
     local_pkey = ""//C_NULL_CHAR
   end if
@@ -831,7 +878,7 @@ subroutine ESMF_Info2SetArrayCH(info, key, values, force, pkey, rc)
 
   ! Set each character element in the underlying store
   do ii=1,SIZE(values)
-    call ESMF_Info2SetCH(info, key, values(ii), idx=ii, rc=localrc)
+    call ESMF_Info2SetCH(info, key, values(ii), idx=ii, pkey=local_pkey, rc=localrc)
   enddo
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
     rcToReturn=rc)) return

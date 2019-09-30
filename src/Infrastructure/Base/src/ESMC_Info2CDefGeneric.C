@@ -50,10 +50,11 @@ extern "C" {
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_Info2GetR4()"
-void ESMC_Info2GetR4(ESMCI::Info2 *info, char *key, float &value, int &rc, float *def, int *index, bool recursive) {
+void ESMC_Info2GetR4(ESMCI::Info2 *info, char *key, float &value, int &rc, float *def, int *index, int &fortran_bool_recursive) {
   rc = ESMF_FAILURE;
   try {
     std::string local_key(key);
+    bool recursive = (fortran_bool_recursive == 1) ? true:false;
     value = info->get<float>(local_key, rc, def, index, recursive);
   }
   ESMF_CATCH_ISOC
@@ -61,10 +62,11 @@ void ESMC_Info2GetR4(ESMCI::Info2 *info, char *key, float &value, int &rc, float
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_Info2GetR8()"
-void ESMC_Info2GetR8(ESMCI::Info2 *info, char *key, double &value, int &rc, double *def, int *index, bool recursive) {
+void ESMC_Info2GetR8(ESMCI::Info2 *info, char *key, double &value, int &rc, double *def, int *index, int &fortran_bool_recursive) {
   rc = ESMF_FAILURE;
   try {
     std::string local_key(key);
+    bool recursive = (fortran_bool_recursive == 1) ? true:false;
     value = info->get<double>(local_key, rc, def, index, recursive);
   }
   ESMF_CATCH_ISOC
@@ -72,10 +74,11 @@ void ESMC_Info2GetR8(ESMCI::Info2 *info, char *key, double &value, int &rc, doub
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_Info2GetI4()"
-void ESMC_Info2GetI4(ESMCI::Info2 *info, char *key, int &value, int &rc, int *def, int *index, bool recursive) {
+void ESMC_Info2GetI4(ESMCI::Info2 *info, char *key, int &value, int &rc, int *def, int *index, int &fortran_bool_recursive) {
   rc = ESMF_FAILURE;
   try {
     std::string local_key(key);
+    bool recursive = (fortran_bool_recursive == 1) ? true:false;
     value = info->get<int>(local_key, rc, def, index, recursive);
   }
   ESMF_CATCH_ISOC
@@ -83,10 +86,11 @@ void ESMC_Info2GetI4(ESMCI::Info2 *info, char *key, int &value, int &rc, int *de
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_Info2GetI8()"
-void ESMC_Info2GetI8(ESMCI::Info2 *info, char *key, long int &value, int &rc, long int *def, int *index, bool recursive) {
+void ESMC_Info2GetI8(ESMCI::Info2 *info, char *key, long int &value, int &rc, long int *def, int *index, int &fortran_bool_recursive) {
   rc = ESMF_FAILURE;
   try {
     std::string local_key(key);
+    bool recursive = (fortran_bool_recursive == 1) ? true:false;
     value = info->get<long int>(local_key, rc, def, index, recursive);
   }
   ESMF_CATCH_ISOC
@@ -94,10 +98,11 @@ void ESMC_Info2GetI8(ESMCI::Info2 *info, char *key, long int &value, int &rc, lo
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_Info2GetLG()"
-void ESMC_Info2GetLG(ESMCI::Info2 *info, char *key, bool &value, int &rc, bool *def, int *index, bool recursive) {
+void ESMC_Info2GetLG(ESMCI::Info2 *info, char *key, bool &value, int &rc, bool *def, int *index, int &fortran_bool_recursive) {
   rc = ESMF_FAILURE;
   try {
     std::string local_key(key);
+    bool recursive = (fortran_bool_recursive == 1) ? true:false;
     value = info->get<bool>(local_key, rc, def, index, recursive);
   }
   ESMF_CATCH_ISOC
@@ -105,10 +110,11 @@ void ESMC_Info2GetLG(ESMCI::Info2 *info, char *key, bool &value, int &rc, bool *
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_Info2GetArrayR4()"
-void ESMC_Info2GetArrayR4(ESMCI::Info2 *info, char *key, float *value, int &count, int &rc, bool recursive) {
+void ESMC_Info2GetArrayR4(ESMCI::Info2 *info, char *key, float *value, int &count, int &rc, int &fortran_bool_recursive) {
   rc = ESMF_FAILURE;
   try {
     std::string local_key(key);
+    bool recursive = (fortran_bool_recursive == 1) ? true:false;
     const json *j = info->getPointer(local_key, rc, recursive);
     const json::array_t *ap = j->get_ptr<const json::array_t *>();
 
@@ -127,10 +133,11 @@ void ESMC_Info2GetArrayR4(ESMCI::Info2 *info, char *key, float *value, int &coun
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_Info2GetArrayR8()"
-void ESMC_Info2GetArrayR8(ESMCI::Info2 *info, char *key, double *value, int &count, int &rc, bool recursive) {
+void ESMC_Info2GetArrayR8(ESMCI::Info2 *info, char *key, double *value, int &count, int &rc, int &fortran_bool_recursive) {
   rc = ESMF_FAILURE;
   try {
     std::string local_key(key);
+    bool recursive = (fortran_bool_recursive == 1) ? true:false;
     const json *j = info->getPointer(local_key, rc, recursive);
     const json::array_t *ap = j->get_ptr<const json::array_t *>();
 
@@ -149,10 +156,11 @@ void ESMC_Info2GetArrayR8(ESMCI::Info2 *info, char *key, double *value, int &cou
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_Info2GetArrayI4()"
-void ESMC_Info2GetArrayI4(ESMCI::Info2 *info, char *key, int *value, int &count, int &rc, bool recursive) {
+void ESMC_Info2GetArrayI4(ESMCI::Info2 *info, char *key, int *value, int &count, int &rc, int &fortran_bool_recursive) {
   rc = ESMF_FAILURE;
   try {
     std::string local_key(key);
+    bool recursive = (fortran_bool_recursive == 1) ? true:false;
     const json *j = info->getPointer(local_key, rc, recursive);
     const json::array_t *ap = j->get_ptr<const json::array_t *>();
 
@@ -171,10 +179,11 @@ void ESMC_Info2GetArrayI4(ESMCI::Info2 *info, char *key, int *value, int &count,
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_Info2GetArrayI8()"
-void ESMC_Info2GetArrayI8(ESMCI::Info2 *info, char *key, long int *value, int &count, int &rc, bool recursive) {
+void ESMC_Info2GetArrayI8(ESMCI::Info2 *info, char *key, long int *value, int &count, int &rc, int &fortran_bool_recursive) {
   rc = ESMF_FAILURE;
   try {
     std::string local_key(key);
+    bool recursive = (fortran_bool_recursive == 1) ? true:false;
     const json *j = info->getPointer(local_key, rc, recursive);
     const json::array_t *ap = j->get_ptr<const json::array_t *>();
 
@@ -193,10 +202,11 @@ void ESMC_Info2GetArrayI8(ESMCI::Info2 *info, char *key, long int *value, int &c
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_Info2GetArrayLG()"
-void ESMC_Info2GetArrayLG(ESMCI::Info2 *info, char *key, bool *value, int &count, int &rc, bool recursive) {
+void ESMC_Info2GetArrayLG(ESMCI::Info2 *info, char *key, bool *value, int &count, int &rc, int &fortran_bool_recursive) {
   rc = ESMF_FAILURE;
   try {
     std::string local_key(key);
+    bool recursive = (fortran_bool_recursive == 1) ? true:false;
     const json *j = info->getPointer(local_key, rc, recursive);
     const json::array_t *ap = j->get_ptr<const json::array_t *>();
 
@@ -224,6 +234,7 @@ void ESMC_Info2SetR4(ESMCI::Info2 *info, char *key, float &value, bool &force, i
   try {
     std::string local_key(key);
     std::string local_pkey(pkey);
+    std::cout << "ESMC_Info2SetR4 local_pkey=" << local_pkey << std::endl;  //tdk:p
     std::string *local_pkeyp = nullptr;
     if (local_pkey.size() != 0) {local_pkeyp = &local_pkey;}
     info->set<float>(local_key, value, force, rc, index, local_pkeyp);
@@ -238,6 +249,7 @@ void ESMC_Info2SetR8(ESMCI::Info2 *info, char *key, double &value, bool &force, 
   try {
     std::string local_key(key);
     std::string local_pkey(pkey);
+    std::cout << "ESMC_Info2SetR8 local_pkey=" << local_pkey << std::endl;  //tdk:p
     std::string *local_pkeyp = nullptr;
     if (local_pkey.size() != 0) {local_pkeyp = &local_pkey;}
     info->set<double>(local_key, value, force, rc, index, local_pkeyp);
@@ -252,6 +264,7 @@ void ESMC_Info2SetI4(ESMCI::Info2 *info, char *key, int &value, bool &force, int
   try {
     std::string local_key(key);
     std::string local_pkey(pkey);
+    std::cout << "ESMC_Info2SetI4 local_pkey=" << local_pkey << std::endl;  //tdk:p
     std::string *local_pkeyp = nullptr;
     if (local_pkey.size() != 0) {local_pkeyp = &local_pkey;}
     info->set<int>(local_key, value, force, rc, index, local_pkeyp);
@@ -266,6 +279,7 @@ void ESMC_Info2SetI8(ESMCI::Info2 *info, char *key, long int &value, bool &force
   try {
     std::string local_key(key);
     std::string local_pkey(pkey);
+    std::cout << "ESMC_Info2SetI8 local_pkey=" << local_pkey << std::endl;  //tdk:p
     std::string *local_pkeyp = nullptr;
     if (local_pkey.size() != 0) {local_pkeyp = &local_pkey;}
     info->set<long int>(local_key, value, force, rc, index, local_pkeyp);
@@ -280,6 +294,7 @@ void ESMC_Info2SetLG(ESMCI::Info2 *info, char *key, bool &value, bool &force, in
   try {
     std::string local_key(key);
     std::string local_pkey(pkey);
+    std::cout << "ESMC_Info2SetLG local_pkey=" << local_pkey << std::endl;  //tdk:p
     std::string *local_pkeyp = nullptr;
     if (local_pkey.size() != 0) {local_pkeyp = &local_pkey;}
     info->set<bool>(local_key, value, force, rc, index, local_pkeyp);
@@ -294,6 +309,7 @@ void ESMC_Info2SetArrayR4(ESMCI::Info2 *info, char *key, float *value, int &coun
   try {
     std::string local_key(key);
     std::string local_pkey(pkey);
+    std::cout << "ESMC_Info2SetArrayR4 local_pkey=" << local_pkey << std::endl;  //tdk:p
     std::string *local_pkeyp = nullptr;
     if (local_pkey.size() != 0) {local_pkeyp = &local_pkey;}
     info->set<float>(local_key, value, count, force, rc, local_pkeyp);
@@ -308,6 +324,7 @@ void ESMC_Info2SetArrayR8(ESMCI::Info2 *info, char *key, double *value, int &cou
   try {
     std::string local_key(key);
     std::string local_pkey(pkey);
+    std::cout << "ESMC_Info2SetArrayR8 local_pkey=" << local_pkey << std::endl;  //tdk:p
     std::string *local_pkeyp = nullptr;
     if (local_pkey.size() != 0) {local_pkeyp = &local_pkey;}
     info->set<double>(local_key, value, count, force, rc, local_pkeyp);
@@ -322,6 +339,7 @@ void ESMC_Info2SetArrayI4(ESMCI::Info2 *info, char *key, int *value, int &count,
   try {
     std::string local_key(key);
     std::string local_pkey(pkey);
+    std::cout << "ESMC_Info2SetArrayI4 local_pkey=" << local_pkey << std::endl;  //tdk:p
     std::string *local_pkeyp = nullptr;
     if (local_pkey.size() != 0) {local_pkeyp = &local_pkey;}
     info->set<int>(local_key, value, count, force, rc, local_pkeyp);
@@ -336,6 +354,7 @@ void ESMC_Info2SetArrayI8(ESMCI::Info2 *info, char *key, long int *value, int &c
   try {
     std::string local_key(key);
     std::string local_pkey(pkey);
+    std::cout << "ESMC_Info2SetArrayI8 local_pkey=" << local_pkey << std::endl;  //tdk:p
     std::string *local_pkeyp = nullptr;
     if (local_pkey.size() != 0) {local_pkeyp = &local_pkey;}
     info->set<long int>(local_key, value, count, force, rc, local_pkeyp);
@@ -350,6 +369,7 @@ void ESMC_Info2SetArrayLG(ESMCI::Info2 *info, char *key, bool *value, int &count
   try {
     std::string local_key(key);
     std::string local_pkey(pkey);
+    std::cout << "ESMC_Info2SetArrayLG local_pkey=" << local_pkey << std::endl;  //tdk:p
     std::string *local_pkeyp = nullptr;
     if (local_pkey.size() != 0) {local_pkeyp = &local_pkey;}
     info->set<bool>(local_key, value, count, force, rc, local_pkeyp);

@@ -35,6 +35,8 @@ using namespace std;
 //EOP
 //-----------------------------------------------------------------------------
 
+void break_here() {} //tdk:rm
+
 void finalizeFailure(int& rc, char failMsg[], string msg) {
   rc = ESMF_FAILURE;
   strcpy(failMsg, msg.c_str());
@@ -447,25 +449,29 @@ void test_get_attpack_count(int& rc, char failMsg[]) {
 }
 
 #undef ESMC_METHOD
-#define ESMC_METHOD "test_update_json_count()"
-void test_update_json_count(int& rc, char failMsg[]) {
+#define ESMC_METHOD "test_update_json_attribute_count_map()"
+void test_update_json_attribute_count_map(int& rc, char failMsg[]) {
   rc = ESMF_FAILURE;
 
   json j;
   j["ESMF"]["General"]["foo"] = 5;
   j["ESMF"]["General"]["fool"] = 55;
+  j["ESMF"]["General"]["very"]["specific"]["first"] = "kinda";
+  j["ESMF"]["General"]["very"]["specific"]["second"] = "probably";
+  j["ESMF"]["General"]["very"]["specific"]["third"] = "maybe";
+  j["ESMF"]["FOOBAR"]["foo_instance"] = "certainly";
   j["NUOPC"]["General"]["foo2"] = 3;
   j["NUOPC"]["General"]["fool2"] = 33;
 
-  std::size_t c = 0;
-  std::size_t ct = 0;
-  update_json_count(c, ct, j, false);
-  if (c!=2) {return finalizeFailure(rc, failMsg, "Recursive count incorrect");}
+  auto counts = create_json_attribute_count_map();
+  std::cout << "tdk: test start" << std::endl;  //tdk:p
+  update_json_attribute_count_map(counts, j, true);
+  std::cout << "tdk: test end" << std::endl;  //tdk:p
 
-  c = 0;
-  ct = 0;
-  update_json_count(c, ct, j, true);
-  if (c!=4) {return finalizeFailure(rc, failMsg, "Recursive count incorrect");}
+  if (counts.at("attPackCountTotal") != 4) return finalizeFailure(rc, failMsg, "attPackCountTotal incorrect");
+  if (counts.at("attrCountTotal") != 8) return finalizeFailure(rc, failMsg, "attrCountTotal incorrect");
+  if (counts.at("attrCount") != 0) return finalizeFailure(rc, failMsg, "attrCount incorrect");
+  if (counts.at("attPackCount") != 3) return finalizeFailure(rc, failMsg, "attPackCount incorrect");
 
   rc = ESMF_SUCCESS;
 }
@@ -794,16 +800,16 @@ void testInquire(int& rc, char failMsg[]) {
     inq = info.inquire("/ESMF/General", rc);
   }
   ESMF_CATCH_PASSTHRU
-  if(inq.at("count")!=2) {
-    return finalizeFailure(rc, failMsg, "Wrong inquire count with key");
+  if(inq.at("size")!=2) {
+    return finalizeFailure(rc, failMsg, "Wrong inquire size with key");
   }
 
   try {
     inq = info.inquire("", rc, true);
   }
   ESMF_CATCH_PASSTHRU
-  if(inq.at("count")!=4) {
-    return finalizeFailure(rc, failMsg, "Wrong inquire count with recursive");
+  if(inq.at("attrCountTotal")!=4) {
+    return finalizeFailure(rc, failMsg, "Wrong inquire attribute count with recursive");
   }
 
   info.getStorageRefWritable()["NUOPC"]["General"]["foobar"] = {3, 4, 5};
@@ -835,8 +841,8 @@ void testInquire(int& rc, char failMsg[]) {
     inq2 = info2.inquire("character", rc);
   }
   ESMF_CATCH_PASSTHRU
-  if (inq2.at("count") != 1) {
-    return finalizeFailure(rc, failMsg, "Wrong count");
+  if (inq2.at("size") != 1) {
+    return finalizeFailure(rc, failMsg, "Wrong size");
   }
 }
 
@@ -1007,6 +1013,58 @@ void test_infoview_update_ptr(int& rc, char failMsg[]) {
   rc = ESMF_SUCCESS;
 };
 
+#undef  ESMC_METHOD
+#define ESMC_METHOD "test_find_by_index()"
+void test_find_by_index(int& rc, char failMsg[]) {
+  rc = ESMF_FAILURE;
+
+  json j;
+  j["0"] = 0;
+  j["1"] = 1;
+  j["2"] = 2;
+  j["nest"]["3"] = 3;
+  j["nest"]["4"] = 4;
+  j["nest"]["5"] = 5;
+
+  json::iterator it = find_by_index(j, 1, false, false);
+  if (it.key() != "1") {return finalizeFailure(rc, failMsg, "wrong key found for 1");}
+  if (it.value() != 1) {return finalizeFailure(rc, failMsg, "wrong index found for 1");}
+
+
+  it = find_by_index(j, 3, true, false);
+  if (it.key() != "nest") {return finalizeFailure(rc, failMsg, "wrong key found for 4");}
+
+  try {
+    it = find_by_index(j, 10, true, false);
+    return finalizeFailure(rc, failMsg, "did not catch out of range");
+  }
+  catch (esmf_info_error &exc) {
+    if (exc.getReturnCode() != ESMC_RC_NOT_FOUND) {
+      return finalizeFailure(rc, failMsg, "wrong rc");
+    }
+  }
+
+  std::cout << ESMC_METHOD << " starting attpack test" << std::endl;  //tdk:p
+  json jattrs;
+  jattrs["NUOPC"]["General"]["0"] = 0;
+  jattrs["NUOPC"]["General"]["1"] = 1;
+  jattrs["NUOPC"]["General"]["2"] = 2;
+  jattrs["NUOPC"]["Instance"]["3"] = 3;
+  jattrs["NUOPC"]["Instance"]["4"] = 4;
+  jattrs["NUOPC"]["Instance"]["5"] = 5;
+
+  it = find_by_index(jattrs, 2, true, true);
+  if (it.key() != "2") {return finalizeFailure(rc, failMsg, "wrong key found for 2 with attr");}
+  if (it.value() != 2) {return finalizeFailure(rc, failMsg, "wrong index found for 2 with attr");}
+
+  it = find_by_index(jattrs, 4, true, true);
+  std::cout << ESMC_METHOD << " it.value()=" << it.value() << std::endl;  //tdk:p
+  if (it.key() != "4") {return finalizeFailure(rc, failMsg, "wrong key found for 4 with attr");}
+  if (it.value() != 4) {return finalizeFailure(rc, failMsg, "wrong index found for 4 with attr");}
+
+  rc = ESMF_SUCCESS;
+};
+
 int main(void) {
 
   char name[80];
@@ -1113,8 +1171,8 @@ int main(void) {
 
   //---------------------------------------------------------------------------
   //NEX_UTest
-  strcpy(name, "Info recursive counting");
-  test_update_json_count(rc, failMsg);
+  strcpy(name, "Info test_update_json_attribute_count_map");
+  test_update_json_attribute_count_map(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //---------------------------------------------------------------------------
 
@@ -1150,6 +1208,13 @@ int main(void) {
   //NEX_UTest
   strcpy(name, "Info testGetInfoObject");
   testGetInfoObject(rc, failMsg);
+  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
+  //---------------------------------------------------------------------------
+
+  //---------------------------------------------------------------------------
+  //NEX_UTest
+  strcpy(name, "Info test_find_by_index");
+  test_find_by_index(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //---------------------------------------------------------------------------
 

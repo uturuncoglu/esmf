@@ -11,7 +11,7 @@
 !====================================================================================
 #define ESMF_FILENAME "src/Superstructure/AttributeAPI/interface/ESMF_Attribute.F90"
 !====================================================================================
-!tdk:todo: add ESMF_AttributeAdd* interfaces
+
 
 #include "ESMF.h"
 
@@ -70,9 +70,10 @@ public ESMF_AttPack
 !------------------------------------------------------------------------------
 
 character(*), parameter :: ESMF_ATTR_DEFAULT_CONVENTION="ESMF"
-character(*), parameter :: ESMF_ATTR_DEFAULT_PURPOSE   ="General"
-character(*), parameter :: ESMF_ATTR_DEFAULT_ROOTKEY   ="/ESMF/General"
-     logical, parameter :: ESMF_ATTR_DEFAULT_FORCE     =.true.
+character(*), parameter :: ESMF_ATTR_DEFAULT_PURPOSE ="General"
+character(*), parameter :: ESMF_ATTR_DEFAULT_ROOTKEY ="/ESMF/General"
+     logical, parameter :: ESMF_ATTR_DEFAULT_FORCE =.true.
+type(ESMF_AttNest_Flag), parameter :: ESMF_ATTR_DEFAULT_ATTNEST = ESMF_ATTNEST_ON !tdk:todo: ensure this default is used - the default in info interfaces is for it to be OFF
 
 type ESMF_AttPack
   character(:), allocatable :: root_key
@@ -641,6 +642,17 @@ interface ESMF_AttributeGet
   module procedure ESMF_AttributeGetCountGrid
   module procedure ESMF_AttributeGetCountState
   module procedure ESMF_AttributeGetCountLocStream
+  module procedure ESMF_AttributeGetCountAttPackArray
+  module procedure ESMF_AttributeGetCountAttPackArrayBundle
+  module procedure ESMF_AttributeGetCountAttPackCplComp
+  module procedure ESMF_AttributeGetCountAttPackGridComp
+  module procedure ESMF_AttributeGetCountAttPackSciComp
+  module procedure ESMF_AttributeGetCountAttPackDistGrid
+  module procedure ESMF_AttributeGetCountAttPackField
+  module procedure ESMF_AttributeGetCountAttPackFieldBundle
+  module procedure ESMF_AttributeGetCountAttPackGrid
+  module procedure ESMF_AttributeGetCountAttPackState
+  module procedure ESMF_AttributeGetCountAttPackLocStream
   module procedure ESMF_AttributeGetInfoByNamAPArray
   module procedure ESMF_AttributeGetInfoByNamAPArrayBundle
   module procedure ESMF_AttributeGetInfoByNamAPCplComp
@@ -790,7 +802,7 @@ subroutine attpack_initialize(self, info, convention, purpose, rootKey, rc)
 
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   localrc = ESMF_FAILURE
-  if (present(rootKey)) then
+  if (.not. present(rootKey)) then
     if (present(convention)) then
       local_convention = convention
     else
@@ -915,29 +927,73 @@ subroutine ESMF_AttributeAddAttPackStdInfo(info, convention, purpose, attrList, 
   type(ESMF_AttPack), intent(out), optional :: attpack
   integer, intent(inout), optional :: rc
 
-  integer :: localrc, ii
-  character(:), allocatable :: key
-  type(ESMF_Info2) :: tmp_info
+  integer :: localrc, ii, nest_conv_count
+  character(:), allocatable :: key, key_nest_get, key_nest_set
+  type(ESMF_Info2) :: tmp_info, tmp_nest_info
+  logical :: is_present
 
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   localrc = ESMF_FAILURE
 
   !tdk:todo: test for reasonable presence. need nestPurpose if nestConvention for example
 
+  print *, "ESMF_AddAttPackStdInfo info print=" !tdk:p
+  call ESMF_Info2Print(info, 2) !tdk:p
+
+  key = "/"//TRIM(convention)//"/"//TRIM(purpose)
   if (present(nestConvention)) then
-    key = "/"//nestConvention//"/"//nestPurpose//"/"//convention//"/"//purpose
+    print *, "ESMF_AddAttPackStdInfo nestConvent is present" !tdk:p
+    key_nest_get = "/"//TRIM(nestConvention)//"/"//TRIM(nestPurpose)
+    key_nest_set = key//key_nest_get
   else
-    key = "/"//convention//"/"//purpose
+    key_nest_get = ""
+    key_nest_set = ""
   end if
 
-  tmp_info = ESMF_Info2Create(rc=localrc)
+  print *, "ESMF_AddAttPackStdInfo key=", key !tdk:p
+  print *, "ESMF_AddAttPackStdInfo key_nest_get=", key_nest_get !tdk:p
+  print *, "ESMF_AddAttPackStdInfo key_nest_set=", key_nest_set !tdk:p
+
+  ! Only create a package if it doesn't exist
+  is_present = ESMF_Info2IsPresent(info, key, isPointer=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, tmp_info, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  if (.not. is_present) then
+    tmp_info = ESMF_Info2Create(rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Destroy(tmp_info, rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    call ESMF_Info2Set(info, key, tmp_info, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    call ESMF_Info2Destroy(tmp_info, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    if (present(nestConvention)) then
+       tmp_nest_info = ESMF_Info2Create(info, key_nest_get, rc=localrc)
+       if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+       call ESMF_Info2Set(info, key_nest_set, tmp_nest_info, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+       if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+       call ESMF_Info2Destroy(tmp_nest_info, rc=localrc)
+       if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+       call ESMF_Info2Remove(info, nestConvention, keyChild=nestPurpose, rc=localrc)
+       if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+       ! -----------------------------------------------------------------------
+       ! If the nestConvention now has no members, remove it as well
+
+       call ESMF_Info2Inquire(info, nestConvention, attrCount=nest_conv_count, rc=localrc)
+       if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+       if (nest_conv_count == 0) then
+         call ESMF_Info2Remove(info, nestConvention, rc=localrc)
+         if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+       end if
+       ! -----------------------------------------------------------------------
+    end if
+  end if
 
   if (present(attrList)) then
     do ii=1,SIZE(attrList)
@@ -1287,18 +1343,19 @@ end subroutine ESMF_AttributeAddAttPackStdLocStream
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackArrayR4()"
-subroutine ESMF_AttributeSetAttPackArrayR4(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackArrayR4(target, name, value, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_Array), intent(in) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R4), intent(in) :: value
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -1306,13 +1363,16 @@ subroutine ESMF_AttributeSetAttPackArrayR4(target, name, value, attpack, keyword
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackArray name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackArray pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -1345,11 +1405,11 @@ subroutine ESMF_AttributeSetObjArrayR4(target, name, value, convention, purpose,
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -1357,6 +1417,9 @@ subroutine ESMF_AttributeSetObjArrayR4(target, name, value, convention, purpose,
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -1374,18 +1437,19 @@ end subroutine ESMF_AttributeSetObjArrayR4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackArrayR4List()"
-subroutine ESMF_AttributeSetAttPackArrayR4List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackArrayR4List(target, name, valueList, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_Array), intent(in) :: target
   character(len=*), intent(in) :: name
-  real(ESMF_KIND_R4), dimension(:), intent(in) :: value
+  real(ESMF_KIND_R4), dimension(:), intent(in) :: valueList
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -1393,13 +1457,16 @@ subroutine ESMF_AttributeSetAttPackArrayR4List(target, name, value, attpack, key
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackArray name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackArray pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -1432,11 +1499,11 @@ subroutine ESMF_AttributeSetObjArrayR4List(target, name, valueList, convention, 
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -1444,6 +1511,9 @@ subroutine ESMF_AttributeSetObjArrayR4List(target, name, valueList, convention, 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -1461,18 +1531,19 @@ end subroutine ESMF_AttributeSetObjArrayR4List
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackArrayR8()"
-subroutine ESMF_AttributeSetAttPackArrayR8(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackArrayR8(target, name, value, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_Array), intent(in) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R8), intent(in) :: value
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -1480,13 +1551,16 @@ subroutine ESMF_AttributeSetAttPackArrayR8(target, name, value, attpack, keyword
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackArray name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackArray pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -1519,11 +1593,11 @@ subroutine ESMF_AttributeSetObjArrayR8(target, name, value, convention, purpose,
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -1531,6 +1605,9 @@ subroutine ESMF_AttributeSetObjArrayR8(target, name, value, convention, purpose,
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -1548,18 +1625,19 @@ end subroutine ESMF_AttributeSetObjArrayR8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackArrayR8List()"
-subroutine ESMF_AttributeSetAttPackArrayR8List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackArrayR8List(target, name, valueList, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_Array), intent(in) :: target
   character(len=*), intent(in) :: name
-  real(ESMF_KIND_R8), dimension(:), intent(in) :: value
+  real(ESMF_KIND_R8), dimension(:), intent(in) :: valueList
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -1567,13 +1645,16 @@ subroutine ESMF_AttributeSetAttPackArrayR8List(target, name, value, attpack, key
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackArray name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackArray pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -1606,11 +1687,11 @@ subroutine ESMF_AttributeSetObjArrayR8List(target, name, valueList, convention, 
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -1618,6 +1699,9 @@ subroutine ESMF_AttributeSetObjArrayR8List(target, name, valueList, convention, 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -1635,18 +1719,19 @@ end subroutine ESMF_AttributeSetObjArrayR8List
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackArrayI4()"
-subroutine ESMF_AttributeSetAttPackArrayI4(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackArrayI4(target, name, value, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_Array), intent(in) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I4), intent(in) :: value
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -1654,13 +1739,16 @@ subroutine ESMF_AttributeSetAttPackArrayI4(target, name, value, attpack, keyword
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackArray name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackArray pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -1693,11 +1781,11 @@ subroutine ESMF_AttributeSetObjArrayI4(target, name, value, convention, purpose,
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -1705,6 +1793,9 @@ subroutine ESMF_AttributeSetObjArrayI4(target, name, value, convention, purpose,
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -1722,18 +1813,19 @@ end subroutine ESMF_AttributeSetObjArrayI4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackArrayI4List()"
-subroutine ESMF_AttributeSetAttPackArrayI4List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackArrayI4List(target, name, valueList, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_Array), intent(in) :: target
   character(len=*), intent(in) :: name
-  integer(ESMF_KIND_I4), dimension(:), intent(in) :: value
+  integer(ESMF_KIND_I4), dimension(:), intent(in) :: valueList
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -1741,13 +1833,16 @@ subroutine ESMF_AttributeSetAttPackArrayI4List(target, name, value, attpack, key
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackArray name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackArray pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -1780,11 +1875,11 @@ subroutine ESMF_AttributeSetObjArrayI4List(target, name, valueList, convention, 
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -1792,6 +1887,9 @@ subroutine ESMF_AttributeSetObjArrayI4List(target, name, valueList, convention, 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -1809,18 +1907,19 @@ end subroutine ESMF_AttributeSetObjArrayI4List
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackArrayI8()"
-subroutine ESMF_AttributeSetAttPackArrayI8(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackArrayI8(target, name, value, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_Array), intent(in) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I8), intent(in) :: value
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -1828,13 +1927,16 @@ subroutine ESMF_AttributeSetAttPackArrayI8(target, name, value, attpack, keyword
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackArray name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackArray pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -1867,11 +1969,11 @@ subroutine ESMF_AttributeSetObjArrayI8(target, name, value, convention, purpose,
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -1879,6 +1981,9 @@ subroutine ESMF_AttributeSetObjArrayI8(target, name, value, convention, purpose,
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -1896,18 +2001,19 @@ end subroutine ESMF_AttributeSetObjArrayI8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackArrayI8List()"
-subroutine ESMF_AttributeSetAttPackArrayI8List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackArrayI8List(target, name, valueList, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_Array), intent(in) :: target
   character(len=*), intent(in) :: name
-  integer(ESMF_KIND_I8), dimension(:), intent(in) :: value
+  integer(ESMF_KIND_I8), dimension(:), intent(in) :: valueList
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -1915,13 +2021,16 @@ subroutine ESMF_AttributeSetAttPackArrayI8List(target, name, value, attpack, key
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackArray name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackArray pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -1954,11 +2063,11 @@ subroutine ESMF_AttributeSetObjArrayI8List(target, name, valueList, convention, 
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -1966,6 +2075,9 @@ subroutine ESMF_AttributeSetObjArrayI8List(target, name, valueList, convention, 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -1983,18 +2095,19 @@ end subroutine ESMF_AttributeSetObjArrayI8List
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackArrayCH()"
-subroutine ESMF_AttributeSetAttPackArrayCH(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackArrayCH(target, name, value, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_Array), intent(in) :: target
   character(len=*), intent(in) :: name
   character(len=*), intent(in) :: value
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -2002,13 +2115,16 @@ subroutine ESMF_AttributeSetAttPackArrayCH(target, name, value, attpack, keyword
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackArray name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackArray pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -2041,11 +2157,11 @@ subroutine ESMF_AttributeSetObjArrayCH(target, name, value, convention, purpose,
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -2053,6 +2169,9 @@ subroutine ESMF_AttributeSetObjArrayCH(target, name, value, convention, purpose,
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -2070,18 +2189,19 @@ end subroutine ESMF_AttributeSetObjArrayCH
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackArrayCHList()"
-subroutine ESMF_AttributeSetAttPackArrayCHList(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackArrayCHList(target, name, valueList, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_Array), intent(in) :: target
   character(len=*), intent(in) :: name
-  character(len=*), dimension(:), intent(in) :: value
+  character(len=*), dimension(:), intent(in) :: valueList
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -2089,13 +2209,16 @@ subroutine ESMF_AttributeSetAttPackArrayCHList(target, name, value, attpack, key
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackArray name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackArray pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -2128,11 +2251,11 @@ subroutine ESMF_AttributeSetObjArrayCHList(target, name, valueList, convention, 
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -2140,6 +2263,9 @@ subroutine ESMF_AttributeSetObjArrayCHList(target, name, valueList, convention, 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -2157,18 +2283,19 @@ end subroutine ESMF_AttributeSetObjArrayCHList
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackArrayLG()"
-subroutine ESMF_AttributeSetAttPackArrayLG(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackArrayLG(target, name, value, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_Array), intent(in) :: target
   character(len=*), intent(in) :: name
   logical, intent(in) :: value
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -2176,13 +2303,16 @@ subroutine ESMF_AttributeSetAttPackArrayLG(target, name, value, attpack, keyword
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackArray name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackArray pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -2215,11 +2345,11 @@ subroutine ESMF_AttributeSetObjArrayLG(target, name, value, convention, purpose,
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -2227,6 +2357,9 @@ subroutine ESMF_AttributeSetObjArrayLG(target, name, value, convention, purpose,
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -2244,18 +2377,19 @@ end subroutine ESMF_AttributeSetObjArrayLG
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackArrayLGList()"
-subroutine ESMF_AttributeSetAttPackArrayLGList(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackArrayLGList(target, name, valueList, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_Array), intent(in) :: target
   character(len=*), intent(in) :: name
-  logical, dimension(:), intent(in) :: value
+  logical, dimension(:), intent(in) :: valueList
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -2263,13 +2397,16 @@ subroutine ESMF_AttributeSetAttPackArrayLGList(target, name, value, attpack, key
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackArray name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackArray pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -2302,11 +2439,11 @@ subroutine ESMF_AttributeSetObjArrayLGList(target, name, valueList, convention, 
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -2314,6 +2451,9 @@ subroutine ESMF_AttributeSetObjArrayLGList(target, name, valueList, convention, 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -2331,18 +2471,19 @@ end subroutine ESMF_AttributeSetObjArrayLGList
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackArrayBundleR4()"
-subroutine ESMF_AttributeSetAttPackArrayBundleR4(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackArrayBundleR4(target, name, value, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_ArrayBundle), intent(in) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R4), intent(in) :: value
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -2350,13 +2491,16 @@ subroutine ESMF_AttributeSetAttPackArrayBundleR4(target, name, value, attpack, k
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackArrayBundle name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackArrayBundle pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -2389,11 +2533,11 @@ subroutine ESMF_AttributeSetObjArrayBundleR4(target, name, value, convention, pu
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -2401,6 +2545,9 @@ subroutine ESMF_AttributeSetObjArrayBundleR4(target, name, value, convention, pu
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -2418,18 +2565,19 @@ end subroutine ESMF_AttributeSetObjArrayBundleR4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackArrayBundleR4List()"
-subroutine ESMF_AttributeSetAttPackArrayBundleR4List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackArrayBundleR4List(target, name, valueList, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_ArrayBundle), intent(in) :: target
   character(len=*), intent(in) :: name
-  real(ESMF_KIND_R4), dimension(:), intent(in) :: value
+  real(ESMF_KIND_R4), dimension(:), intent(in) :: valueList
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -2437,13 +2585,16 @@ subroutine ESMF_AttributeSetAttPackArrayBundleR4List(target, name, value, attpac
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackArrayBundle name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackArrayBundle pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -2476,11 +2627,11 @@ subroutine ESMF_AttributeSetObjArrayBundleR4List(target, name, valueList, conven
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -2488,6 +2639,9 @@ subroutine ESMF_AttributeSetObjArrayBundleR4List(target, name, valueList, conven
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -2505,18 +2659,19 @@ end subroutine ESMF_AttributeSetObjArrayBundleR4List
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackArrayBundleR8()"
-subroutine ESMF_AttributeSetAttPackArrayBundleR8(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackArrayBundleR8(target, name, value, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_ArrayBundle), intent(in) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R8), intent(in) :: value
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -2524,13 +2679,16 @@ subroutine ESMF_AttributeSetAttPackArrayBundleR8(target, name, value, attpack, k
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackArrayBundle name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackArrayBundle pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -2563,11 +2721,11 @@ subroutine ESMF_AttributeSetObjArrayBundleR8(target, name, value, convention, pu
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -2575,6 +2733,9 @@ subroutine ESMF_AttributeSetObjArrayBundleR8(target, name, value, convention, pu
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -2592,18 +2753,19 @@ end subroutine ESMF_AttributeSetObjArrayBundleR8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackArrayBundleR8List()"
-subroutine ESMF_AttributeSetAttPackArrayBundleR8List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackArrayBundleR8List(target, name, valueList, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_ArrayBundle), intent(in) :: target
   character(len=*), intent(in) :: name
-  real(ESMF_KIND_R8), dimension(:), intent(in) :: value
+  real(ESMF_KIND_R8), dimension(:), intent(in) :: valueList
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -2611,13 +2773,16 @@ subroutine ESMF_AttributeSetAttPackArrayBundleR8List(target, name, value, attpac
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackArrayBundle name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackArrayBundle pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -2650,11 +2815,11 @@ subroutine ESMF_AttributeSetObjArrayBundleR8List(target, name, valueList, conven
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -2662,6 +2827,9 @@ subroutine ESMF_AttributeSetObjArrayBundleR8List(target, name, valueList, conven
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -2679,18 +2847,19 @@ end subroutine ESMF_AttributeSetObjArrayBundleR8List
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackArrayBundleI4()"
-subroutine ESMF_AttributeSetAttPackArrayBundleI4(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackArrayBundleI4(target, name, value, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_ArrayBundle), intent(in) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I4), intent(in) :: value
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -2698,13 +2867,16 @@ subroutine ESMF_AttributeSetAttPackArrayBundleI4(target, name, value, attpack, k
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackArrayBundle name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackArrayBundle pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -2737,11 +2909,11 @@ subroutine ESMF_AttributeSetObjArrayBundleI4(target, name, value, convention, pu
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -2749,6 +2921,9 @@ subroutine ESMF_AttributeSetObjArrayBundleI4(target, name, value, convention, pu
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -2766,18 +2941,19 @@ end subroutine ESMF_AttributeSetObjArrayBundleI4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackArrayBundleI4List()"
-subroutine ESMF_AttributeSetAttPackArrayBundleI4List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackArrayBundleI4List(target, name, valueList, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_ArrayBundle), intent(in) :: target
   character(len=*), intent(in) :: name
-  integer(ESMF_KIND_I4), dimension(:), intent(in) :: value
+  integer(ESMF_KIND_I4), dimension(:), intent(in) :: valueList
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -2785,13 +2961,16 @@ subroutine ESMF_AttributeSetAttPackArrayBundleI4List(target, name, value, attpac
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackArrayBundle name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackArrayBundle pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -2824,11 +3003,11 @@ subroutine ESMF_AttributeSetObjArrayBundleI4List(target, name, valueList, conven
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -2836,6 +3015,9 @@ subroutine ESMF_AttributeSetObjArrayBundleI4List(target, name, valueList, conven
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -2853,18 +3035,19 @@ end subroutine ESMF_AttributeSetObjArrayBundleI4List
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackArrayBundleI8()"
-subroutine ESMF_AttributeSetAttPackArrayBundleI8(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackArrayBundleI8(target, name, value, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_ArrayBundle), intent(in) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I8), intent(in) :: value
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -2872,13 +3055,16 @@ subroutine ESMF_AttributeSetAttPackArrayBundleI8(target, name, value, attpack, k
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackArrayBundle name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackArrayBundle pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -2911,11 +3097,11 @@ subroutine ESMF_AttributeSetObjArrayBundleI8(target, name, value, convention, pu
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -2923,6 +3109,9 @@ subroutine ESMF_AttributeSetObjArrayBundleI8(target, name, value, convention, pu
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -2940,18 +3129,19 @@ end subroutine ESMF_AttributeSetObjArrayBundleI8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackArrayBundleI8List()"
-subroutine ESMF_AttributeSetAttPackArrayBundleI8List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackArrayBundleI8List(target, name, valueList, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_ArrayBundle), intent(in) :: target
   character(len=*), intent(in) :: name
-  integer(ESMF_KIND_I8), dimension(:), intent(in) :: value
+  integer(ESMF_KIND_I8), dimension(:), intent(in) :: valueList
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -2959,13 +3149,16 @@ subroutine ESMF_AttributeSetAttPackArrayBundleI8List(target, name, value, attpac
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackArrayBundle name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackArrayBundle pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -2998,11 +3191,11 @@ subroutine ESMF_AttributeSetObjArrayBundleI8List(target, name, valueList, conven
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -3010,6 +3203,9 @@ subroutine ESMF_AttributeSetObjArrayBundleI8List(target, name, valueList, conven
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -3027,18 +3223,19 @@ end subroutine ESMF_AttributeSetObjArrayBundleI8List
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackArrayBundleCH()"
-subroutine ESMF_AttributeSetAttPackArrayBundleCH(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackArrayBundleCH(target, name, value, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_ArrayBundle), intent(in) :: target
   character(len=*), intent(in) :: name
   character(len=*), intent(in) :: value
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -3046,13 +3243,16 @@ subroutine ESMF_AttributeSetAttPackArrayBundleCH(target, name, value, attpack, k
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackArrayBundle name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackArrayBundle pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -3085,11 +3285,11 @@ subroutine ESMF_AttributeSetObjArrayBundleCH(target, name, value, convention, pu
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -3097,6 +3297,9 @@ subroutine ESMF_AttributeSetObjArrayBundleCH(target, name, value, convention, pu
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -3114,18 +3317,19 @@ end subroutine ESMF_AttributeSetObjArrayBundleCH
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackArrayBundleCHList()"
-subroutine ESMF_AttributeSetAttPackArrayBundleCHList(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackArrayBundleCHList(target, name, valueList, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_ArrayBundle), intent(in) :: target
   character(len=*), intent(in) :: name
-  character(len=*), dimension(:), intent(in) :: value
+  character(len=*), dimension(:), intent(in) :: valueList
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -3133,13 +3337,16 @@ subroutine ESMF_AttributeSetAttPackArrayBundleCHList(target, name, value, attpac
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackArrayBundle name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackArrayBundle pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -3172,11 +3379,11 @@ subroutine ESMF_AttributeSetObjArrayBundleCHList(target, name, valueList, conven
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -3184,6 +3391,9 @@ subroutine ESMF_AttributeSetObjArrayBundleCHList(target, name, valueList, conven
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -3201,18 +3411,19 @@ end subroutine ESMF_AttributeSetObjArrayBundleCHList
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackArrayBundleLG()"
-subroutine ESMF_AttributeSetAttPackArrayBundleLG(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackArrayBundleLG(target, name, value, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_ArrayBundle), intent(in) :: target
   character(len=*), intent(in) :: name
   logical, intent(in) :: value
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -3220,13 +3431,16 @@ subroutine ESMF_AttributeSetAttPackArrayBundleLG(target, name, value, attpack, k
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackArrayBundle name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackArrayBundle pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -3259,11 +3473,11 @@ subroutine ESMF_AttributeSetObjArrayBundleLG(target, name, value, convention, pu
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -3271,6 +3485,9 @@ subroutine ESMF_AttributeSetObjArrayBundleLG(target, name, value, convention, pu
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -3288,18 +3505,19 @@ end subroutine ESMF_AttributeSetObjArrayBundleLG
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackArrayBundleLGList()"
-subroutine ESMF_AttributeSetAttPackArrayBundleLGList(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackArrayBundleLGList(target, name, valueList, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_ArrayBundle), intent(in) :: target
   character(len=*), intent(in) :: name
-  logical, dimension(:), intent(in) :: value
+  logical, dimension(:), intent(in) :: valueList
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -3307,13 +3525,16 @@ subroutine ESMF_AttributeSetAttPackArrayBundleLGList(target, name, value, attpac
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackArrayBundle name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackArrayBundle pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -3346,11 +3567,11 @@ subroutine ESMF_AttributeSetObjArrayBundleLGList(target, name, valueList, conven
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -3358,6 +3579,9 @@ subroutine ESMF_AttributeSetObjArrayBundleLGList(target, name, valueList, conven
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -3375,18 +3599,19 @@ end subroutine ESMF_AttributeSetObjArrayBundleLGList
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackCplCompR4()"
-subroutine ESMF_AttributeSetAttPackCplCompR4(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackCplCompR4(target, name, value, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_CplComp), intent(in) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R4), intent(in) :: value
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -3394,13 +3619,16 @@ subroutine ESMF_AttributeSetAttPackCplCompR4(target, name, value, attpack, keywo
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackCplComp name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackCplComp pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -3433,11 +3661,11 @@ subroutine ESMF_AttributeSetObjCplCompR4(target, name, value, convention, purpos
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -3445,6 +3673,9 @@ subroutine ESMF_AttributeSetObjCplCompR4(target, name, value, convention, purpos
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -3462,18 +3693,19 @@ end subroutine ESMF_AttributeSetObjCplCompR4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackCplCompR4List()"
-subroutine ESMF_AttributeSetAttPackCplCompR4List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackCplCompR4List(target, name, valueList, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_CplComp), intent(in) :: target
   character(len=*), intent(in) :: name
-  real(ESMF_KIND_R4), dimension(:), intent(in) :: value
+  real(ESMF_KIND_R4), dimension(:), intent(in) :: valueList
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -3481,13 +3713,16 @@ subroutine ESMF_AttributeSetAttPackCplCompR4List(target, name, value, attpack, k
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackCplComp name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackCplComp pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -3520,11 +3755,11 @@ subroutine ESMF_AttributeSetObjCplCompR4List(target, name, valueList, convention
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -3532,6 +3767,9 @@ subroutine ESMF_AttributeSetObjCplCompR4List(target, name, valueList, convention
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -3549,18 +3787,19 @@ end subroutine ESMF_AttributeSetObjCplCompR4List
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackCplCompR8()"
-subroutine ESMF_AttributeSetAttPackCplCompR8(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackCplCompR8(target, name, value, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_CplComp), intent(in) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R8), intent(in) :: value
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -3568,13 +3807,16 @@ subroutine ESMF_AttributeSetAttPackCplCompR8(target, name, value, attpack, keywo
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackCplComp name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackCplComp pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -3607,11 +3849,11 @@ subroutine ESMF_AttributeSetObjCplCompR8(target, name, value, convention, purpos
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -3619,6 +3861,9 @@ subroutine ESMF_AttributeSetObjCplCompR8(target, name, value, convention, purpos
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -3636,18 +3881,19 @@ end subroutine ESMF_AttributeSetObjCplCompR8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackCplCompR8List()"
-subroutine ESMF_AttributeSetAttPackCplCompR8List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackCplCompR8List(target, name, valueList, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_CplComp), intent(in) :: target
   character(len=*), intent(in) :: name
-  real(ESMF_KIND_R8), dimension(:), intent(in) :: value
+  real(ESMF_KIND_R8), dimension(:), intent(in) :: valueList
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -3655,13 +3901,16 @@ subroutine ESMF_AttributeSetAttPackCplCompR8List(target, name, value, attpack, k
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackCplComp name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackCplComp pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -3694,11 +3943,11 @@ subroutine ESMF_AttributeSetObjCplCompR8List(target, name, valueList, convention
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -3706,6 +3955,9 @@ subroutine ESMF_AttributeSetObjCplCompR8List(target, name, valueList, convention
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -3723,18 +3975,19 @@ end subroutine ESMF_AttributeSetObjCplCompR8List
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackCplCompI4()"
-subroutine ESMF_AttributeSetAttPackCplCompI4(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackCplCompI4(target, name, value, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_CplComp), intent(in) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I4), intent(in) :: value
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -3742,13 +3995,16 @@ subroutine ESMF_AttributeSetAttPackCplCompI4(target, name, value, attpack, keywo
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackCplComp name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackCplComp pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -3781,11 +4037,11 @@ subroutine ESMF_AttributeSetObjCplCompI4(target, name, value, convention, purpos
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -3793,6 +4049,9 @@ subroutine ESMF_AttributeSetObjCplCompI4(target, name, value, convention, purpos
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -3810,18 +4069,19 @@ end subroutine ESMF_AttributeSetObjCplCompI4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackCplCompI4List()"
-subroutine ESMF_AttributeSetAttPackCplCompI4List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackCplCompI4List(target, name, valueList, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_CplComp), intent(in) :: target
   character(len=*), intent(in) :: name
-  integer(ESMF_KIND_I4), dimension(:), intent(in) :: value
+  integer(ESMF_KIND_I4), dimension(:), intent(in) :: valueList
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -3829,13 +4089,16 @@ subroutine ESMF_AttributeSetAttPackCplCompI4List(target, name, value, attpack, k
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackCplComp name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackCplComp pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -3868,11 +4131,11 @@ subroutine ESMF_AttributeSetObjCplCompI4List(target, name, valueList, convention
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -3880,6 +4143,9 @@ subroutine ESMF_AttributeSetObjCplCompI4List(target, name, valueList, convention
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -3897,18 +4163,19 @@ end subroutine ESMF_AttributeSetObjCplCompI4List
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackCplCompI8()"
-subroutine ESMF_AttributeSetAttPackCplCompI8(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackCplCompI8(target, name, value, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_CplComp), intent(in) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I8), intent(in) :: value
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -3916,13 +4183,16 @@ subroutine ESMF_AttributeSetAttPackCplCompI8(target, name, value, attpack, keywo
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackCplComp name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackCplComp pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -3955,11 +4225,11 @@ subroutine ESMF_AttributeSetObjCplCompI8(target, name, value, convention, purpos
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -3967,6 +4237,9 @@ subroutine ESMF_AttributeSetObjCplCompI8(target, name, value, convention, purpos
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -3984,18 +4257,19 @@ end subroutine ESMF_AttributeSetObjCplCompI8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackCplCompI8List()"
-subroutine ESMF_AttributeSetAttPackCplCompI8List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackCplCompI8List(target, name, valueList, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_CplComp), intent(in) :: target
   character(len=*), intent(in) :: name
-  integer(ESMF_KIND_I8), dimension(:), intent(in) :: value
+  integer(ESMF_KIND_I8), dimension(:), intent(in) :: valueList
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -4003,13 +4277,16 @@ subroutine ESMF_AttributeSetAttPackCplCompI8List(target, name, value, attpack, k
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackCplComp name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackCplComp pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -4042,11 +4319,11 @@ subroutine ESMF_AttributeSetObjCplCompI8List(target, name, valueList, convention
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -4054,6 +4331,9 @@ subroutine ESMF_AttributeSetObjCplCompI8List(target, name, valueList, convention
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -4071,18 +4351,19 @@ end subroutine ESMF_AttributeSetObjCplCompI8List
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackCplCompCH()"
-subroutine ESMF_AttributeSetAttPackCplCompCH(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackCplCompCH(target, name, value, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_CplComp), intent(in) :: target
   character(len=*), intent(in) :: name
   character(len=*), intent(in) :: value
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -4090,13 +4371,16 @@ subroutine ESMF_AttributeSetAttPackCplCompCH(target, name, value, attpack, keywo
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackCplComp name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackCplComp pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -4129,11 +4413,11 @@ subroutine ESMF_AttributeSetObjCplCompCH(target, name, value, convention, purpos
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -4141,6 +4425,9 @@ subroutine ESMF_AttributeSetObjCplCompCH(target, name, value, convention, purpos
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -4158,18 +4445,19 @@ end subroutine ESMF_AttributeSetObjCplCompCH
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackCplCompCHList()"
-subroutine ESMF_AttributeSetAttPackCplCompCHList(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackCplCompCHList(target, name, valueList, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_CplComp), intent(in) :: target
   character(len=*), intent(in) :: name
-  character(len=*), dimension(:), intent(in) :: value
+  character(len=*), dimension(:), intent(in) :: valueList
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -4177,13 +4465,16 @@ subroutine ESMF_AttributeSetAttPackCplCompCHList(target, name, value, attpack, k
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackCplComp name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackCplComp pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -4216,11 +4507,11 @@ subroutine ESMF_AttributeSetObjCplCompCHList(target, name, valueList, convention
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -4228,6 +4519,9 @@ subroutine ESMF_AttributeSetObjCplCompCHList(target, name, valueList, convention
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -4245,18 +4539,19 @@ end subroutine ESMF_AttributeSetObjCplCompCHList
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackCplCompLG()"
-subroutine ESMF_AttributeSetAttPackCplCompLG(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackCplCompLG(target, name, value, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_CplComp), intent(in) :: target
   character(len=*), intent(in) :: name
   logical, intent(in) :: value
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -4264,13 +4559,16 @@ subroutine ESMF_AttributeSetAttPackCplCompLG(target, name, value, attpack, keywo
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackCplComp name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackCplComp pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -4303,11 +4601,11 @@ subroutine ESMF_AttributeSetObjCplCompLG(target, name, value, convention, purpos
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -4315,6 +4613,9 @@ subroutine ESMF_AttributeSetObjCplCompLG(target, name, value, convention, purpos
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -4332,18 +4633,19 @@ end subroutine ESMF_AttributeSetObjCplCompLG
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackCplCompLGList()"
-subroutine ESMF_AttributeSetAttPackCplCompLGList(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackCplCompLGList(target, name, valueList, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_CplComp), intent(in) :: target
   character(len=*), intent(in) :: name
-  logical, dimension(:), intent(in) :: value
+  logical, dimension(:), intent(in) :: valueList
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -4351,13 +4653,16 @@ subroutine ESMF_AttributeSetAttPackCplCompLGList(target, name, value, attpack, k
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackCplComp name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackCplComp pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -4390,11 +4695,11 @@ subroutine ESMF_AttributeSetObjCplCompLGList(target, name, valueList, convention
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -4402,6 +4707,9 @@ subroutine ESMF_AttributeSetObjCplCompLGList(target, name, valueList, convention
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -4419,18 +4727,19 @@ end subroutine ESMF_AttributeSetObjCplCompLGList
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackGridCompR4()"
-subroutine ESMF_AttributeSetAttPackGridCompR4(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackGridCompR4(target, name, value, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_GridComp), intent(in) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R4), intent(in) :: value
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -4438,13 +4747,16 @@ subroutine ESMF_AttributeSetAttPackGridCompR4(target, name, value, attpack, keyw
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackGridComp name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackGridComp pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -4477,11 +4789,11 @@ subroutine ESMF_AttributeSetObjGridCompR4(target, name, value, convention, purpo
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -4489,6 +4801,9 @@ subroutine ESMF_AttributeSetObjGridCompR4(target, name, value, convention, purpo
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -4506,18 +4821,19 @@ end subroutine ESMF_AttributeSetObjGridCompR4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackGridCompR4List()"
-subroutine ESMF_AttributeSetAttPackGridCompR4List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackGridCompR4List(target, name, valueList, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_GridComp), intent(in) :: target
   character(len=*), intent(in) :: name
-  real(ESMF_KIND_R4), dimension(:), intent(in) :: value
+  real(ESMF_KIND_R4), dimension(:), intent(in) :: valueList
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -4525,13 +4841,16 @@ subroutine ESMF_AttributeSetAttPackGridCompR4List(target, name, value, attpack, 
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackGridComp name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackGridComp pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -4564,11 +4883,11 @@ subroutine ESMF_AttributeSetObjGridCompR4List(target, name, valueList, conventio
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -4576,6 +4895,9 @@ subroutine ESMF_AttributeSetObjGridCompR4List(target, name, valueList, conventio
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -4593,18 +4915,19 @@ end subroutine ESMF_AttributeSetObjGridCompR4List
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackGridCompR8()"
-subroutine ESMF_AttributeSetAttPackGridCompR8(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackGridCompR8(target, name, value, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_GridComp), intent(in) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R8), intent(in) :: value
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -4612,13 +4935,16 @@ subroutine ESMF_AttributeSetAttPackGridCompR8(target, name, value, attpack, keyw
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackGridComp name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackGridComp pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -4651,11 +4977,11 @@ subroutine ESMF_AttributeSetObjGridCompR8(target, name, value, convention, purpo
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -4663,6 +4989,9 @@ subroutine ESMF_AttributeSetObjGridCompR8(target, name, value, convention, purpo
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -4680,18 +5009,19 @@ end subroutine ESMF_AttributeSetObjGridCompR8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackGridCompR8List()"
-subroutine ESMF_AttributeSetAttPackGridCompR8List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackGridCompR8List(target, name, valueList, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_GridComp), intent(in) :: target
   character(len=*), intent(in) :: name
-  real(ESMF_KIND_R8), dimension(:), intent(in) :: value
+  real(ESMF_KIND_R8), dimension(:), intent(in) :: valueList
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -4699,13 +5029,16 @@ subroutine ESMF_AttributeSetAttPackGridCompR8List(target, name, value, attpack, 
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackGridComp name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackGridComp pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -4738,11 +5071,11 @@ subroutine ESMF_AttributeSetObjGridCompR8List(target, name, valueList, conventio
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -4750,6 +5083,9 @@ subroutine ESMF_AttributeSetObjGridCompR8List(target, name, valueList, conventio
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -4767,18 +5103,19 @@ end subroutine ESMF_AttributeSetObjGridCompR8List
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackGridCompI4()"
-subroutine ESMF_AttributeSetAttPackGridCompI4(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackGridCompI4(target, name, value, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_GridComp), intent(in) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I4), intent(in) :: value
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -4786,13 +5123,16 @@ subroutine ESMF_AttributeSetAttPackGridCompI4(target, name, value, attpack, keyw
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackGridComp name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackGridComp pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -4825,11 +5165,11 @@ subroutine ESMF_AttributeSetObjGridCompI4(target, name, value, convention, purpo
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -4837,6 +5177,9 @@ subroutine ESMF_AttributeSetObjGridCompI4(target, name, value, convention, purpo
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -4854,18 +5197,19 @@ end subroutine ESMF_AttributeSetObjGridCompI4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackGridCompI4List()"
-subroutine ESMF_AttributeSetAttPackGridCompI4List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackGridCompI4List(target, name, valueList, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_GridComp), intent(in) :: target
   character(len=*), intent(in) :: name
-  integer(ESMF_KIND_I4), dimension(:), intent(in) :: value
+  integer(ESMF_KIND_I4), dimension(:), intent(in) :: valueList
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -4873,13 +5217,16 @@ subroutine ESMF_AttributeSetAttPackGridCompI4List(target, name, value, attpack, 
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackGridComp name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackGridComp pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -4912,11 +5259,11 @@ subroutine ESMF_AttributeSetObjGridCompI4List(target, name, valueList, conventio
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -4924,6 +5271,9 @@ subroutine ESMF_AttributeSetObjGridCompI4List(target, name, valueList, conventio
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -4941,18 +5291,19 @@ end subroutine ESMF_AttributeSetObjGridCompI4List
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackGridCompI8()"
-subroutine ESMF_AttributeSetAttPackGridCompI8(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackGridCompI8(target, name, value, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_GridComp), intent(in) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I8), intent(in) :: value
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -4960,13 +5311,16 @@ subroutine ESMF_AttributeSetAttPackGridCompI8(target, name, value, attpack, keyw
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackGridComp name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackGridComp pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -4999,11 +5353,11 @@ subroutine ESMF_AttributeSetObjGridCompI8(target, name, value, convention, purpo
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -5011,6 +5365,9 @@ subroutine ESMF_AttributeSetObjGridCompI8(target, name, value, convention, purpo
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -5028,18 +5385,19 @@ end subroutine ESMF_AttributeSetObjGridCompI8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackGridCompI8List()"
-subroutine ESMF_AttributeSetAttPackGridCompI8List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackGridCompI8List(target, name, valueList, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_GridComp), intent(in) :: target
   character(len=*), intent(in) :: name
-  integer(ESMF_KIND_I8), dimension(:), intent(in) :: value
+  integer(ESMF_KIND_I8), dimension(:), intent(in) :: valueList
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -5047,13 +5405,16 @@ subroutine ESMF_AttributeSetAttPackGridCompI8List(target, name, value, attpack, 
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackGridComp name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackGridComp pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -5086,11 +5447,11 @@ subroutine ESMF_AttributeSetObjGridCompI8List(target, name, valueList, conventio
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -5098,6 +5459,9 @@ subroutine ESMF_AttributeSetObjGridCompI8List(target, name, valueList, conventio
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -5115,18 +5479,19 @@ end subroutine ESMF_AttributeSetObjGridCompI8List
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackGridCompCH()"
-subroutine ESMF_AttributeSetAttPackGridCompCH(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackGridCompCH(target, name, value, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_GridComp), intent(in) :: target
   character(len=*), intent(in) :: name
   character(len=*), intent(in) :: value
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -5134,13 +5499,16 @@ subroutine ESMF_AttributeSetAttPackGridCompCH(target, name, value, attpack, keyw
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackGridComp name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackGridComp pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -5173,11 +5541,11 @@ subroutine ESMF_AttributeSetObjGridCompCH(target, name, value, convention, purpo
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -5185,6 +5553,9 @@ subroutine ESMF_AttributeSetObjGridCompCH(target, name, value, convention, purpo
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -5202,18 +5573,19 @@ end subroutine ESMF_AttributeSetObjGridCompCH
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackGridCompCHList()"
-subroutine ESMF_AttributeSetAttPackGridCompCHList(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackGridCompCHList(target, name, valueList, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_GridComp), intent(in) :: target
   character(len=*), intent(in) :: name
-  character(len=*), dimension(:), intent(in) :: value
+  character(len=*), dimension(:), intent(in) :: valueList
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -5221,13 +5593,16 @@ subroutine ESMF_AttributeSetAttPackGridCompCHList(target, name, value, attpack, 
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackGridComp name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackGridComp pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -5260,11 +5635,11 @@ subroutine ESMF_AttributeSetObjGridCompCHList(target, name, valueList, conventio
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -5272,6 +5647,9 @@ subroutine ESMF_AttributeSetObjGridCompCHList(target, name, valueList, conventio
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -5289,18 +5667,19 @@ end subroutine ESMF_AttributeSetObjGridCompCHList
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackGridCompLG()"
-subroutine ESMF_AttributeSetAttPackGridCompLG(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackGridCompLG(target, name, value, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_GridComp), intent(in) :: target
   character(len=*), intent(in) :: name
   logical, intent(in) :: value
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -5308,13 +5687,16 @@ subroutine ESMF_AttributeSetAttPackGridCompLG(target, name, value, attpack, keyw
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackGridComp name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackGridComp pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -5347,11 +5729,11 @@ subroutine ESMF_AttributeSetObjGridCompLG(target, name, value, convention, purpo
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -5359,6 +5741,9 @@ subroutine ESMF_AttributeSetObjGridCompLG(target, name, value, convention, purpo
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -5376,18 +5761,19 @@ end subroutine ESMF_AttributeSetObjGridCompLG
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackGridCompLGList()"
-subroutine ESMF_AttributeSetAttPackGridCompLGList(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackGridCompLGList(target, name, valueList, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_GridComp), intent(in) :: target
   character(len=*), intent(in) :: name
-  logical, dimension(:), intent(in) :: value
+  logical, dimension(:), intent(in) :: valueList
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -5395,13 +5781,16 @@ subroutine ESMF_AttributeSetAttPackGridCompLGList(target, name, value, attpack, 
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackGridComp name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackGridComp pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -5434,11 +5823,11 @@ subroutine ESMF_AttributeSetObjGridCompLGList(target, name, valueList, conventio
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -5446,6 +5835,9 @@ subroutine ESMF_AttributeSetObjGridCompLGList(target, name, valueList, conventio
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -5463,18 +5855,19 @@ end subroutine ESMF_AttributeSetObjGridCompLGList
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackSciCompR4()"
-subroutine ESMF_AttributeSetAttPackSciCompR4(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackSciCompR4(target, name, value, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_SciComp), intent(in) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R4), intent(in) :: value
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -5482,13 +5875,16 @@ subroutine ESMF_AttributeSetAttPackSciCompR4(target, name, value, attpack, keywo
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackSciComp name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackSciComp pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -5521,11 +5917,11 @@ subroutine ESMF_AttributeSetObjSciCompR4(target, name, value, convention, purpos
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -5533,6 +5929,9 @@ subroutine ESMF_AttributeSetObjSciCompR4(target, name, value, convention, purpos
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -5550,18 +5949,19 @@ end subroutine ESMF_AttributeSetObjSciCompR4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackSciCompR4List()"
-subroutine ESMF_AttributeSetAttPackSciCompR4List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackSciCompR4List(target, name, valueList, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_SciComp), intent(in) :: target
   character(len=*), intent(in) :: name
-  real(ESMF_KIND_R4), dimension(:), intent(in) :: value
+  real(ESMF_KIND_R4), dimension(:), intent(in) :: valueList
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -5569,13 +5969,16 @@ subroutine ESMF_AttributeSetAttPackSciCompR4List(target, name, value, attpack, k
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackSciComp name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackSciComp pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -5608,11 +6011,11 @@ subroutine ESMF_AttributeSetObjSciCompR4List(target, name, valueList, convention
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -5620,6 +6023,9 @@ subroutine ESMF_AttributeSetObjSciCompR4List(target, name, valueList, convention
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -5637,18 +6043,19 @@ end subroutine ESMF_AttributeSetObjSciCompR4List
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackSciCompR8()"
-subroutine ESMF_AttributeSetAttPackSciCompR8(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackSciCompR8(target, name, value, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_SciComp), intent(in) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R8), intent(in) :: value
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -5656,13 +6063,16 @@ subroutine ESMF_AttributeSetAttPackSciCompR8(target, name, value, attpack, keywo
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackSciComp name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackSciComp pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -5695,11 +6105,11 @@ subroutine ESMF_AttributeSetObjSciCompR8(target, name, value, convention, purpos
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -5707,6 +6117,9 @@ subroutine ESMF_AttributeSetObjSciCompR8(target, name, value, convention, purpos
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -5724,18 +6137,19 @@ end subroutine ESMF_AttributeSetObjSciCompR8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackSciCompR8List()"
-subroutine ESMF_AttributeSetAttPackSciCompR8List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackSciCompR8List(target, name, valueList, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_SciComp), intent(in) :: target
   character(len=*), intent(in) :: name
-  real(ESMF_KIND_R8), dimension(:), intent(in) :: value
+  real(ESMF_KIND_R8), dimension(:), intent(in) :: valueList
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -5743,13 +6157,16 @@ subroutine ESMF_AttributeSetAttPackSciCompR8List(target, name, value, attpack, k
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackSciComp name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackSciComp pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -5782,11 +6199,11 @@ subroutine ESMF_AttributeSetObjSciCompR8List(target, name, valueList, convention
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -5794,6 +6211,9 @@ subroutine ESMF_AttributeSetObjSciCompR8List(target, name, valueList, convention
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -5811,18 +6231,19 @@ end subroutine ESMF_AttributeSetObjSciCompR8List
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackSciCompI4()"
-subroutine ESMF_AttributeSetAttPackSciCompI4(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackSciCompI4(target, name, value, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_SciComp), intent(in) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I4), intent(in) :: value
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -5830,13 +6251,16 @@ subroutine ESMF_AttributeSetAttPackSciCompI4(target, name, value, attpack, keywo
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackSciComp name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackSciComp pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -5869,11 +6293,11 @@ subroutine ESMF_AttributeSetObjSciCompI4(target, name, value, convention, purpos
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -5881,6 +6305,9 @@ subroutine ESMF_AttributeSetObjSciCompI4(target, name, value, convention, purpos
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -5898,18 +6325,19 @@ end subroutine ESMF_AttributeSetObjSciCompI4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackSciCompI4List()"
-subroutine ESMF_AttributeSetAttPackSciCompI4List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackSciCompI4List(target, name, valueList, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_SciComp), intent(in) :: target
   character(len=*), intent(in) :: name
-  integer(ESMF_KIND_I4), dimension(:), intent(in) :: value
+  integer(ESMF_KIND_I4), dimension(:), intent(in) :: valueList
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -5917,13 +6345,16 @@ subroutine ESMF_AttributeSetAttPackSciCompI4List(target, name, value, attpack, k
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackSciComp name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackSciComp pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -5956,11 +6387,11 @@ subroutine ESMF_AttributeSetObjSciCompI4List(target, name, valueList, convention
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -5968,6 +6399,9 @@ subroutine ESMF_AttributeSetObjSciCompI4List(target, name, valueList, convention
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -5985,18 +6419,19 @@ end subroutine ESMF_AttributeSetObjSciCompI4List
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackSciCompI8()"
-subroutine ESMF_AttributeSetAttPackSciCompI8(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackSciCompI8(target, name, value, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_SciComp), intent(in) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I8), intent(in) :: value
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -6004,13 +6439,16 @@ subroutine ESMF_AttributeSetAttPackSciCompI8(target, name, value, attpack, keywo
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackSciComp name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackSciComp pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -6043,11 +6481,11 @@ subroutine ESMF_AttributeSetObjSciCompI8(target, name, value, convention, purpos
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -6055,6 +6493,9 @@ subroutine ESMF_AttributeSetObjSciCompI8(target, name, value, convention, purpos
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -6072,18 +6513,19 @@ end subroutine ESMF_AttributeSetObjSciCompI8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackSciCompI8List()"
-subroutine ESMF_AttributeSetAttPackSciCompI8List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackSciCompI8List(target, name, valueList, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_SciComp), intent(in) :: target
   character(len=*), intent(in) :: name
-  integer(ESMF_KIND_I8), dimension(:), intent(in) :: value
+  integer(ESMF_KIND_I8), dimension(:), intent(in) :: valueList
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -6091,13 +6533,16 @@ subroutine ESMF_AttributeSetAttPackSciCompI8List(target, name, value, attpack, k
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackSciComp name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackSciComp pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -6130,11 +6575,11 @@ subroutine ESMF_AttributeSetObjSciCompI8List(target, name, valueList, convention
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -6142,6 +6587,9 @@ subroutine ESMF_AttributeSetObjSciCompI8List(target, name, valueList, convention
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -6159,18 +6607,19 @@ end subroutine ESMF_AttributeSetObjSciCompI8List
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackSciCompCH()"
-subroutine ESMF_AttributeSetAttPackSciCompCH(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackSciCompCH(target, name, value, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_SciComp), intent(in) :: target
   character(len=*), intent(in) :: name
   character(len=*), intent(in) :: value
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -6178,13 +6627,16 @@ subroutine ESMF_AttributeSetAttPackSciCompCH(target, name, value, attpack, keywo
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackSciComp name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackSciComp pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -6217,11 +6669,11 @@ subroutine ESMF_AttributeSetObjSciCompCH(target, name, value, convention, purpos
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -6229,6 +6681,9 @@ subroutine ESMF_AttributeSetObjSciCompCH(target, name, value, convention, purpos
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -6246,18 +6701,19 @@ end subroutine ESMF_AttributeSetObjSciCompCH
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackSciCompCHList()"
-subroutine ESMF_AttributeSetAttPackSciCompCHList(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackSciCompCHList(target, name, valueList, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_SciComp), intent(in) :: target
   character(len=*), intent(in) :: name
-  character(len=*), dimension(:), intent(in) :: value
+  character(len=*), dimension(:), intent(in) :: valueList
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -6265,13 +6721,16 @@ subroutine ESMF_AttributeSetAttPackSciCompCHList(target, name, value, attpack, k
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackSciComp name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackSciComp pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -6304,11 +6763,11 @@ subroutine ESMF_AttributeSetObjSciCompCHList(target, name, valueList, convention
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -6316,6 +6775,9 @@ subroutine ESMF_AttributeSetObjSciCompCHList(target, name, valueList, convention
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -6333,18 +6795,19 @@ end subroutine ESMF_AttributeSetObjSciCompCHList
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackSciCompLG()"
-subroutine ESMF_AttributeSetAttPackSciCompLG(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackSciCompLG(target, name, value, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_SciComp), intent(in) :: target
   character(len=*), intent(in) :: name
   logical, intent(in) :: value
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -6352,13 +6815,16 @@ subroutine ESMF_AttributeSetAttPackSciCompLG(target, name, value, attpack, keywo
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackSciComp name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackSciComp pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -6391,11 +6857,11 @@ subroutine ESMF_AttributeSetObjSciCompLG(target, name, value, convention, purpos
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -6403,6 +6869,9 @@ subroutine ESMF_AttributeSetObjSciCompLG(target, name, value, convention, purpos
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -6420,18 +6889,19 @@ end subroutine ESMF_AttributeSetObjSciCompLG
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackSciCompLGList()"
-subroutine ESMF_AttributeSetAttPackSciCompLGList(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackSciCompLGList(target, name, valueList, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_SciComp), intent(in) :: target
   character(len=*), intent(in) :: name
-  logical, dimension(:), intent(in) :: value
+  logical, dimension(:), intent(in) :: valueList
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -6439,13 +6909,16 @@ subroutine ESMF_AttributeSetAttPackSciCompLGList(target, name, value, attpack, k
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackSciComp name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackSciComp pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -6478,11 +6951,11 @@ subroutine ESMF_AttributeSetObjSciCompLGList(target, name, valueList, convention
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -6490,6 +6963,9 @@ subroutine ESMF_AttributeSetObjSciCompLGList(target, name, valueList, convention
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -6507,18 +6983,19 @@ end subroutine ESMF_AttributeSetObjSciCompLGList
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackDistGridR4()"
-subroutine ESMF_AttributeSetAttPackDistGridR4(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackDistGridR4(target, name, value, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_DistGrid), intent(in) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R4), intent(in) :: value
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -6526,13 +7003,16 @@ subroutine ESMF_AttributeSetAttPackDistGridR4(target, name, value, attpack, keyw
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackDistGrid name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackDistGrid pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -6565,11 +7045,11 @@ subroutine ESMF_AttributeSetObjDistGridR4(target, name, value, convention, purpo
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -6577,6 +7057,9 @@ subroutine ESMF_AttributeSetObjDistGridR4(target, name, value, convention, purpo
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -6594,18 +7077,19 @@ end subroutine ESMF_AttributeSetObjDistGridR4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackDistGridR4List()"
-subroutine ESMF_AttributeSetAttPackDistGridR4List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackDistGridR4List(target, name, valueList, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_DistGrid), intent(in) :: target
   character(len=*), intent(in) :: name
-  real(ESMF_KIND_R4), dimension(:), intent(in) :: value
+  real(ESMF_KIND_R4), dimension(:), intent(in) :: valueList
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -6613,13 +7097,16 @@ subroutine ESMF_AttributeSetAttPackDistGridR4List(target, name, value, attpack, 
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackDistGrid name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackDistGrid pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -6652,11 +7139,11 @@ subroutine ESMF_AttributeSetObjDistGridR4List(target, name, valueList, conventio
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -6664,6 +7151,9 @@ subroutine ESMF_AttributeSetObjDistGridR4List(target, name, valueList, conventio
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -6681,18 +7171,19 @@ end subroutine ESMF_AttributeSetObjDistGridR4List
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackDistGridR8()"
-subroutine ESMF_AttributeSetAttPackDistGridR8(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackDistGridR8(target, name, value, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_DistGrid), intent(in) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R8), intent(in) :: value
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -6700,13 +7191,16 @@ subroutine ESMF_AttributeSetAttPackDistGridR8(target, name, value, attpack, keyw
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackDistGrid name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackDistGrid pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -6739,11 +7233,11 @@ subroutine ESMF_AttributeSetObjDistGridR8(target, name, value, convention, purpo
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -6751,6 +7245,9 @@ subroutine ESMF_AttributeSetObjDistGridR8(target, name, value, convention, purpo
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -6768,18 +7265,19 @@ end subroutine ESMF_AttributeSetObjDistGridR8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackDistGridR8List()"
-subroutine ESMF_AttributeSetAttPackDistGridR8List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackDistGridR8List(target, name, valueList, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_DistGrid), intent(in) :: target
   character(len=*), intent(in) :: name
-  real(ESMF_KIND_R8), dimension(:), intent(in) :: value
+  real(ESMF_KIND_R8), dimension(:), intent(in) :: valueList
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -6787,13 +7285,16 @@ subroutine ESMF_AttributeSetAttPackDistGridR8List(target, name, value, attpack, 
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackDistGrid name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackDistGrid pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -6826,11 +7327,11 @@ subroutine ESMF_AttributeSetObjDistGridR8List(target, name, valueList, conventio
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -6838,6 +7339,9 @@ subroutine ESMF_AttributeSetObjDistGridR8List(target, name, valueList, conventio
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -6855,18 +7359,19 @@ end subroutine ESMF_AttributeSetObjDistGridR8List
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackDistGridI4()"
-subroutine ESMF_AttributeSetAttPackDistGridI4(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackDistGridI4(target, name, value, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_DistGrid), intent(in) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I4), intent(in) :: value
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -6874,13 +7379,16 @@ subroutine ESMF_AttributeSetAttPackDistGridI4(target, name, value, attpack, keyw
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackDistGrid name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackDistGrid pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -6913,11 +7421,11 @@ subroutine ESMF_AttributeSetObjDistGridI4(target, name, value, convention, purpo
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -6925,6 +7433,9 @@ subroutine ESMF_AttributeSetObjDistGridI4(target, name, value, convention, purpo
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -6942,18 +7453,19 @@ end subroutine ESMF_AttributeSetObjDistGridI4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackDistGridI4List()"
-subroutine ESMF_AttributeSetAttPackDistGridI4List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackDistGridI4List(target, name, valueList, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_DistGrid), intent(in) :: target
   character(len=*), intent(in) :: name
-  integer(ESMF_KIND_I4), dimension(:), intent(in) :: value
+  integer(ESMF_KIND_I4), dimension(:), intent(in) :: valueList
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -6961,13 +7473,16 @@ subroutine ESMF_AttributeSetAttPackDistGridI4List(target, name, value, attpack, 
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackDistGrid name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackDistGrid pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -7000,11 +7515,11 @@ subroutine ESMF_AttributeSetObjDistGridI4List(target, name, valueList, conventio
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -7012,6 +7527,9 @@ subroutine ESMF_AttributeSetObjDistGridI4List(target, name, valueList, conventio
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -7029,18 +7547,19 @@ end subroutine ESMF_AttributeSetObjDistGridI4List
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackDistGridI8()"
-subroutine ESMF_AttributeSetAttPackDistGridI8(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackDistGridI8(target, name, value, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_DistGrid), intent(in) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I8), intent(in) :: value
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -7048,13 +7567,16 @@ subroutine ESMF_AttributeSetAttPackDistGridI8(target, name, value, attpack, keyw
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackDistGrid name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackDistGrid pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -7087,11 +7609,11 @@ subroutine ESMF_AttributeSetObjDistGridI8(target, name, value, convention, purpo
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -7099,6 +7621,9 @@ subroutine ESMF_AttributeSetObjDistGridI8(target, name, value, convention, purpo
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -7116,18 +7641,19 @@ end subroutine ESMF_AttributeSetObjDistGridI8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackDistGridI8List()"
-subroutine ESMF_AttributeSetAttPackDistGridI8List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackDistGridI8List(target, name, valueList, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_DistGrid), intent(in) :: target
   character(len=*), intent(in) :: name
-  integer(ESMF_KIND_I8), dimension(:), intent(in) :: value
+  integer(ESMF_KIND_I8), dimension(:), intent(in) :: valueList
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -7135,13 +7661,16 @@ subroutine ESMF_AttributeSetAttPackDistGridI8List(target, name, value, attpack, 
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackDistGrid name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackDistGrid pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -7174,11 +7703,11 @@ subroutine ESMF_AttributeSetObjDistGridI8List(target, name, valueList, conventio
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -7186,6 +7715,9 @@ subroutine ESMF_AttributeSetObjDistGridI8List(target, name, valueList, conventio
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -7203,18 +7735,19 @@ end subroutine ESMF_AttributeSetObjDistGridI8List
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackDistGridCH()"
-subroutine ESMF_AttributeSetAttPackDistGridCH(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackDistGridCH(target, name, value, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_DistGrid), intent(in) :: target
   character(len=*), intent(in) :: name
   character(len=*), intent(in) :: value
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -7222,13 +7755,16 @@ subroutine ESMF_AttributeSetAttPackDistGridCH(target, name, value, attpack, keyw
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackDistGrid name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackDistGrid pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -7261,11 +7797,11 @@ subroutine ESMF_AttributeSetObjDistGridCH(target, name, value, convention, purpo
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -7273,6 +7809,9 @@ subroutine ESMF_AttributeSetObjDistGridCH(target, name, value, convention, purpo
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -7290,18 +7829,19 @@ end subroutine ESMF_AttributeSetObjDistGridCH
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackDistGridCHList()"
-subroutine ESMF_AttributeSetAttPackDistGridCHList(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackDistGridCHList(target, name, valueList, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_DistGrid), intent(in) :: target
   character(len=*), intent(in) :: name
-  character(len=*), dimension(:), intent(in) :: value
+  character(len=*), dimension(:), intent(in) :: valueList
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -7309,13 +7849,16 @@ subroutine ESMF_AttributeSetAttPackDistGridCHList(target, name, value, attpack, 
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackDistGrid name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackDistGrid pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -7348,11 +7891,11 @@ subroutine ESMF_AttributeSetObjDistGridCHList(target, name, valueList, conventio
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -7360,6 +7903,9 @@ subroutine ESMF_AttributeSetObjDistGridCHList(target, name, valueList, conventio
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -7377,18 +7923,19 @@ end subroutine ESMF_AttributeSetObjDistGridCHList
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackDistGridLG()"
-subroutine ESMF_AttributeSetAttPackDistGridLG(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackDistGridLG(target, name, value, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_DistGrid), intent(in) :: target
   character(len=*), intent(in) :: name
   logical, intent(in) :: value
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -7396,13 +7943,16 @@ subroutine ESMF_AttributeSetAttPackDistGridLG(target, name, value, attpack, keyw
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackDistGrid name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackDistGrid pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -7435,11 +7985,11 @@ subroutine ESMF_AttributeSetObjDistGridLG(target, name, value, convention, purpo
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -7447,6 +7997,9 @@ subroutine ESMF_AttributeSetObjDistGridLG(target, name, value, convention, purpo
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -7464,18 +8017,19 @@ end subroutine ESMF_AttributeSetObjDistGridLG
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackDistGridLGList()"
-subroutine ESMF_AttributeSetAttPackDistGridLGList(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackDistGridLGList(target, name, valueList, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_DistGrid), intent(in) :: target
   character(len=*), intent(in) :: name
-  logical, dimension(:), intent(in) :: value
+  logical, dimension(:), intent(in) :: valueList
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -7483,13 +8037,16 @@ subroutine ESMF_AttributeSetAttPackDistGridLGList(target, name, value, attpack, 
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackDistGrid name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackDistGrid pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -7522,11 +8079,11 @@ subroutine ESMF_AttributeSetObjDistGridLGList(target, name, valueList, conventio
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -7534,6 +8091,9 @@ subroutine ESMF_AttributeSetObjDistGridLGList(target, name, valueList, conventio
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -7551,18 +8111,19 @@ end subroutine ESMF_AttributeSetObjDistGridLGList
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackFieldR4()"
-subroutine ESMF_AttributeSetAttPackFieldR4(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackFieldR4(target, name, value, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_Field), intent(in) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R4), intent(in) :: value
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -7570,13 +8131,16 @@ subroutine ESMF_AttributeSetAttPackFieldR4(target, name, value, attpack, keyword
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackField name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackField pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -7609,11 +8173,11 @@ subroutine ESMF_AttributeSetObjFieldR4(target, name, value, convention, purpose,
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -7621,6 +8185,9 @@ subroutine ESMF_AttributeSetObjFieldR4(target, name, value, convention, purpose,
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -7638,18 +8205,19 @@ end subroutine ESMF_AttributeSetObjFieldR4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackFieldR4List()"
-subroutine ESMF_AttributeSetAttPackFieldR4List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackFieldR4List(target, name, valueList, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_Field), intent(in) :: target
   character(len=*), intent(in) :: name
-  real(ESMF_KIND_R4), dimension(:), intent(in) :: value
+  real(ESMF_KIND_R4), dimension(:), intent(in) :: valueList
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -7657,13 +8225,16 @@ subroutine ESMF_AttributeSetAttPackFieldR4List(target, name, value, attpack, key
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackField name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackField pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -7696,11 +8267,11 @@ subroutine ESMF_AttributeSetObjFieldR4List(target, name, valueList, convention, 
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -7708,6 +8279,9 @@ subroutine ESMF_AttributeSetObjFieldR4List(target, name, valueList, convention, 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -7725,18 +8299,19 @@ end subroutine ESMF_AttributeSetObjFieldR4List
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackFieldR8()"
-subroutine ESMF_AttributeSetAttPackFieldR8(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackFieldR8(target, name, value, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_Field), intent(in) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R8), intent(in) :: value
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -7744,13 +8319,16 @@ subroutine ESMF_AttributeSetAttPackFieldR8(target, name, value, attpack, keyword
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackField name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackField pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -7783,11 +8361,11 @@ subroutine ESMF_AttributeSetObjFieldR8(target, name, value, convention, purpose,
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -7795,6 +8373,9 @@ subroutine ESMF_AttributeSetObjFieldR8(target, name, value, convention, purpose,
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -7812,18 +8393,19 @@ end subroutine ESMF_AttributeSetObjFieldR8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackFieldR8List()"
-subroutine ESMF_AttributeSetAttPackFieldR8List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackFieldR8List(target, name, valueList, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_Field), intent(in) :: target
   character(len=*), intent(in) :: name
-  real(ESMF_KIND_R8), dimension(:), intent(in) :: value
+  real(ESMF_KIND_R8), dimension(:), intent(in) :: valueList
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -7831,13 +8413,16 @@ subroutine ESMF_AttributeSetAttPackFieldR8List(target, name, value, attpack, key
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackField name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackField pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -7870,11 +8455,11 @@ subroutine ESMF_AttributeSetObjFieldR8List(target, name, valueList, convention, 
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -7882,6 +8467,9 @@ subroutine ESMF_AttributeSetObjFieldR8List(target, name, valueList, convention, 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -7899,18 +8487,19 @@ end subroutine ESMF_AttributeSetObjFieldR8List
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackFieldI4()"
-subroutine ESMF_AttributeSetAttPackFieldI4(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackFieldI4(target, name, value, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_Field), intent(in) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I4), intent(in) :: value
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -7918,13 +8507,16 @@ subroutine ESMF_AttributeSetAttPackFieldI4(target, name, value, attpack, keyword
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackField name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackField pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -7957,11 +8549,11 @@ subroutine ESMF_AttributeSetObjFieldI4(target, name, value, convention, purpose,
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -7969,6 +8561,9 @@ subroutine ESMF_AttributeSetObjFieldI4(target, name, value, convention, purpose,
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -7986,18 +8581,19 @@ end subroutine ESMF_AttributeSetObjFieldI4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackFieldI4List()"
-subroutine ESMF_AttributeSetAttPackFieldI4List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackFieldI4List(target, name, valueList, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_Field), intent(in) :: target
   character(len=*), intent(in) :: name
-  integer(ESMF_KIND_I4), dimension(:), intent(in) :: value
+  integer(ESMF_KIND_I4), dimension(:), intent(in) :: valueList
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -8005,13 +8601,16 @@ subroutine ESMF_AttributeSetAttPackFieldI4List(target, name, value, attpack, key
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackField name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackField pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -8044,11 +8643,11 @@ subroutine ESMF_AttributeSetObjFieldI4List(target, name, valueList, convention, 
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -8056,6 +8655,9 @@ subroutine ESMF_AttributeSetObjFieldI4List(target, name, valueList, convention, 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -8073,18 +8675,19 @@ end subroutine ESMF_AttributeSetObjFieldI4List
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackFieldI8()"
-subroutine ESMF_AttributeSetAttPackFieldI8(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackFieldI8(target, name, value, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_Field), intent(in) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I8), intent(in) :: value
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -8092,13 +8695,16 @@ subroutine ESMF_AttributeSetAttPackFieldI8(target, name, value, attpack, keyword
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackField name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackField pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -8131,11 +8737,11 @@ subroutine ESMF_AttributeSetObjFieldI8(target, name, value, convention, purpose,
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -8143,6 +8749,9 @@ subroutine ESMF_AttributeSetObjFieldI8(target, name, value, convention, purpose,
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -8160,18 +8769,19 @@ end subroutine ESMF_AttributeSetObjFieldI8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackFieldI8List()"
-subroutine ESMF_AttributeSetAttPackFieldI8List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackFieldI8List(target, name, valueList, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_Field), intent(in) :: target
   character(len=*), intent(in) :: name
-  integer(ESMF_KIND_I8), dimension(:), intent(in) :: value
+  integer(ESMF_KIND_I8), dimension(:), intent(in) :: valueList
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -8179,13 +8789,16 @@ subroutine ESMF_AttributeSetAttPackFieldI8List(target, name, value, attpack, key
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackField name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackField pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -8218,11 +8831,11 @@ subroutine ESMF_AttributeSetObjFieldI8List(target, name, valueList, convention, 
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -8230,6 +8843,9 @@ subroutine ESMF_AttributeSetObjFieldI8List(target, name, valueList, convention, 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -8247,18 +8863,19 @@ end subroutine ESMF_AttributeSetObjFieldI8List
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackFieldCH()"
-subroutine ESMF_AttributeSetAttPackFieldCH(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackFieldCH(target, name, value, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_Field), intent(in) :: target
   character(len=*), intent(in) :: name
   character(len=*), intent(in) :: value
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -8266,13 +8883,16 @@ subroutine ESMF_AttributeSetAttPackFieldCH(target, name, value, attpack, keyword
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackField name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackField pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -8305,11 +8925,11 @@ subroutine ESMF_AttributeSetObjFieldCH(target, name, value, convention, purpose,
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -8317,6 +8937,9 @@ subroutine ESMF_AttributeSetObjFieldCH(target, name, value, convention, purpose,
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -8334,18 +8957,19 @@ end subroutine ESMF_AttributeSetObjFieldCH
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackFieldCHList()"
-subroutine ESMF_AttributeSetAttPackFieldCHList(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackFieldCHList(target, name, valueList, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_Field), intent(in) :: target
   character(len=*), intent(in) :: name
-  character(len=*), dimension(:), intent(in) :: value
+  character(len=*), dimension(:), intent(in) :: valueList
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -8353,13 +8977,16 @@ subroutine ESMF_AttributeSetAttPackFieldCHList(target, name, value, attpack, key
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackField name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackField pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -8392,11 +9019,11 @@ subroutine ESMF_AttributeSetObjFieldCHList(target, name, valueList, convention, 
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -8404,6 +9031,9 @@ subroutine ESMF_AttributeSetObjFieldCHList(target, name, valueList, convention, 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -8421,18 +9051,19 @@ end subroutine ESMF_AttributeSetObjFieldCHList
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackFieldLG()"
-subroutine ESMF_AttributeSetAttPackFieldLG(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackFieldLG(target, name, value, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_Field), intent(in) :: target
   character(len=*), intent(in) :: name
   logical, intent(in) :: value
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -8440,13 +9071,16 @@ subroutine ESMF_AttributeSetAttPackFieldLG(target, name, value, attpack, keyword
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackField name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackField pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -8479,11 +9113,11 @@ subroutine ESMF_AttributeSetObjFieldLG(target, name, value, convention, purpose,
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -8491,6 +9125,9 @@ subroutine ESMF_AttributeSetObjFieldLG(target, name, value, convention, purpose,
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -8508,18 +9145,19 @@ end subroutine ESMF_AttributeSetObjFieldLG
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackFieldLGList()"
-subroutine ESMF_AttributeSetAttPackFieldLGList(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackFieldLGList(target, name, valueList, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_Field), intent(in) :: target
   character(len=*), intent(in) :: name
-  logical, dimension(:), intent(in) :: value
+  logical, dimension(:), intent(in) :: valueList
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -8527,13 +9165,16 @@ subroutine ESMF_AttributeSetAttPackFieldLGList(target, name, value, attpack, key
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackField name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackField pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -8566,11 +9207,11 @@ subroutine ESMF_AttributeSetObjFieldLGList(target, name, valueList, convention, 
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -8578,6 +9219,9 @@ subroutine ESMF_AttributeSetObjFieldLGList(target, name, valueList, convention, 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -8595,18 +9239,19 @@ end subroutine ESMF_AttributeSetObjFieldLGList
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackFieldBundleR4()"
-subroutine ESMF_AttributeSetAttPackFieldBundleR4(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackFieldBundleR4(target, name, value, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_FieldBundle), intent(in) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R4), intent(in) :: value
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -8614,13 +9259,16 @@ subroutine ESMF_AttributeSetAttPackFieldBundleR4(target, name, value, attpack, k
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackFieldBundle name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackFieldBundle pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -8653,11 +9301,11 @@ subroutine ESMF_AttributeSetObjFieldBundleR4(target, name, value, convention, pu
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -8665,6 +9313,9 @@ subroutine ESMF_AttributeSetObjFieldBundleR4(target, name, value, convention, pu
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -8682,18 +9333,19 @@ end subroutine ESMF_AttributeSetObjFieldBundleR4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackFieldBundleR4List()"
-subroutine ESMF_AttributeSetAttPackFieldBundleR4List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackFieldBundleR4List(target, name, valueList, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_FieldBundle), intent(in) :: target
   character(len=*), intent(in) :: name
-  real(ESMF_KIND_R4), dimension(:), intent(in) :: value
+  real(ESMF_KIND_R4), dimension(:), intent(in) :: valueList
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -8701,13 +9353,16 @@ subroutine ESMF_AttributeSetAttPackFieldBundleR4List(target, name, value, attpac
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackFieldBundle name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackFieldBundle pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -8740,11 +9395,11 @@ subroutine ESMF_AttributeSetObjFieldBundleR4List(target, name, valueList, conven
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -8752,6 +9407,9 @@ subroutine ESMF_AttributeSetObjFieldBundleR4List(target, name, valueList, conven
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -8769,18 +9427,19 @@ end subroutine ESMF_AttributeSetObjFieldBundleR4List
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackFieldBundleR8()"
-subroutine ESMF_AttributeSetAttPackFieldBundleR8(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackFieldBundleR8(target, name, value, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_FieldBundle), intent(in) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R8), intent(in) :: value
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -8788,13 +9447,16 @@ subroutine ESMF_AttributeSetAttPackFieldBundleR8(target, name, value, attpack, k
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackFieldBundle name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackFieldBundle pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -8827,11 +9489,11 @@ subroutine ESMF_AttributeSetObjFieldBundleR8(target, name, value, convention, pu
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -8839,6 +9501,9 @@ subroutine ESMF_AttributeSetObjFieldBundleR8(target, name, value, convention, pu
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -8856,18 +9521,19 @@ end subroutine ESMF_AttributeSetObjFieldBundleR8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackFieldBundleR8List()"
-subroutine ESMF_AttributeSetAttPackFieldBundleR8List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackFieldBundleR8List(target, name, valueList, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_FieldBundle), intent(in) :: target
   character(len=*), intent(in) :: name
-  real(ESMF_KIND_R8), dimension(:), intent(in) :: value
+  real(ESMF_KIND_R8), dimension(:), intent(in) :: valueList
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -8875,13 +9541,16 @@ subroutine ESMF_AttributeSetAttPackFieldBundleR8List(target, name, value, attpac
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackFieldBundle name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackFieldBundle pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -8914,11 +9583,11 @@ subroutine ESMF_AttributeSetObjFieldBundleR8List(target, name, valueList, conven
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -8926,6 +9595,9 @@ subroutine ESMF_AttributeSetObjFieldBundleR8List(target, name, valueList, conven
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -8943,18 +9615,19 @@ end subroutine ESMF_AttributeSetObjFieldBundleR8List
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackFieldBundleI4()"
-subroutine ESMF_AttributeSetAttPackFieldBundleI4(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackFieldBundleI4(target, name, value, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_FieldBundle), intent(in) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I4), intent(in) :: value
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -8962,13 +9635,16 @@ subroutine ESMF_AttributeSetAttPackFieldBundleI4(target, name, value, attpack, k
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackFieldBundle name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackFieldBundle pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -9001,11 +9677,11 @@ subroutine ESMF_AttributeSetObjFieldBundleI4(target, name, value, convention, pu
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -9013,6 +9689,9 @@ subroutine ESMF_AttributeSetObjFieldBundleI4(target, name, value, convention, pu
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -9030,18 +9709,19 @@ end subroutine ESMF_AttributeSetObjFieldBundleI4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackFieldBundleI4List()"
-subroutine ESMF_AttributeSetAttPackFieldBundleI4List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackFieldBundleI4List(target, name, valueList, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_FieldBundle), intent(in) :: target
   character(len=*), intent(in) :: name
-  integer(ESMF_KIND_I4), dimension(:), intent(in) :: value
+  integer(ESMF_KIND_I4), dimension(:), intent(in) :: valueList
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -9049,13 +9729,16 @@ subroutine ESMF_AttributeSetAttPackFieldBundleI4List(target, name, value, attpac
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackFieldBundle name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackFieldBundle pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -9088,11 +9771,11 @@ subroutine ESMF_AttributeSetObjFieldBundleI4List(target, name, valueList, conven
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -9100,6 +9783,9 @@ subroutine ESMF_AttributeSetObjFieldBundleI4List(target, name, valueList, conven
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -9117,18 +9803,19 @@ end subroutine ESMF_AttributeSetObjFieldBundleI4List
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackFieldBundleI8()"
-subroutine ESMF_AttributeSetAttPackFieldBundleI8(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackFieldBundleI8(target, name, value, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_FieldBundle), intent(in) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I8), intent(in) :: value
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -9136,13 +9823,16 @@ subroutine ESMF_AttributeSetAttPackFieldBundleI8(target, name, value, attpack, k
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackFieldBundle name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackFieldBundle pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -9175,11 +9865,11 @@ subroutine ESMF_AttributeSetObjFieldBundleI8(target, name, value, convention, pu
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -9187,6 +9877,9 @@ subroutine ESMF_AttributeSetObjFieldBundleI8(target, name, value, convention, pu
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -9204,18 +9897,19 @@ end subroutine ESMF_AttributeSetObjFieldBundleI8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackFieldBundleI8List()"
-subroutine ESMF_AttributeSetAttPackFieldBundleI8List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackFieldBundleI8List(target, name, valueList, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_FieldBundle), intent(in) :: target
   character(len=*), intent(in) :: name
-  integer(ESMF_KIND_I8), dimension(:), intent(in) :: value
+  integer(ESMF_KIND_I8), dimension(:), intent(in) :: valueList
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -9223,13 +9917,16 @@ subroutine ESMF_AttributeSetAttPackFieldBundleI8List(target, name, value, attpac
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackFieldBundle name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackFieldBundle pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -9262,11 +9959,11 @@ subroutine ESMF_AttributeSetObjFieldBundleI8List(target, name, valueList, conven
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -9274,6 +9971,9 @@ subroutine ESMF_AttributeSetObjFieldBundleI8List(target, name, valueList, conven
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -9291,18 +9991,19 @@ end subroutine ESMF_AttributeSetObjFieldBundleI8List
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackFieldBundleCH()"
-subroutine ESMF_AttributeSetAttPackFieldBundleCH(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackFieldBundleCH(target, name, value, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_FieldBundle), intent(in) :: target
   character(len=*), intent(in) :: name
   character(len=*), intent(in) :: value
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -9310,13 +10011,16 @@ subroutine ESMF_AttributeSetAttPackFieldBundleCH(target, name, value, attpack, k
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackFieldBundle name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackFieldBundle pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -9349,11 +10053,11 @@ subroutine ESMF_AttributeSetObjFieldBundleCH(target, name, value, convention, pu
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -9361,6 +10065,9 @@ subroutine ESMF_AttributeSetObjFieldBundleCH(target, name, value, convention, pu
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -9378,18 +10085,19 @@ end subroutine ESMF_AttributeSetObjFieldBundleCH
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackFieldBundleCHList()"
-subroutine ESMF_AttributeSetAttPackFieldBundleCHList(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackFieldBundleCHList(target, name, valueList, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_FieldBundle), intent(in) :: target
   character(len=*), intent(in) :: name
-  character(len=*), dimension(:), intent(in) :: value
+  character(len=*), dimension(:), intent(in) :: valueList
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -9397,13 +10105,16 @@ subroutine ESMF_AttributeSetAttPackFieldBundleCHList(target, name, value, attpac
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackFieldBundle name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackFieldBundle pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -9436,11 +10147,11 @@ subroutine ESMF_AttributeSetObjFieldBundleCHList(target, name, valueList, conven
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -9448,6 +10159,9 @@ subroutine ESMF_AttributeSetObjFieldBundleCHList(target, name, valueList, conven
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -9465,18 +10179,19 @@ end subroutine ESMF_AttributeSetObjFieldBundleCHList
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackFieldBundleLG()"
-subroutine ESMF_AttributeSetAttPackFieldBundleLG(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackFieldBundleLG(target, name, value, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_FieldBundle), intent(in) :: target
   character(len=*), intent(in) :: name
   logical, intent(in) :: value
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -9484,13 +10199,16 @@ subroutine ESMF_AttributeSetAttPackFieldBundleLG(target, name, value, attpack, k
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackFieldBundle name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackFieldBundle pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -9523,11 +10241,11 @@ subroutine ESMF_AttributeSetObjFieldBundleLG(target, name, value, convention, pu
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -9535,6 +10253,9 @@ subroutine ESMF_AttributeSetObjFieldBundleLG(target, name, value, convention, pu
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -9552,18 +10273,19 @@ end subroutine ESMF_AttributeSetObjFieldBundleLG
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackFieldBundleLGList()"
-subroutine ESMF_AttributeSetAttPackFieldBundleLGList(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackFieldBundleLGList(target, name, valueList, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_FieldBundle), intent(in) :: target
   character(len=*), intent(in) :: name
-  logical, dimension(:), intent(in) :: value
+  logical, dimension(:), intent(in) :: valueList
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -9571,13 +10293,16 @@ subroutine ESMF_AttributeSetAttPackFieldBundleLGList(target, name, value, attpac
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackFieldBundle name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackFieldBundle pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -9610,11 +10335,11 @@ subroutine ESMF_AttributeSetObjFieldBundleLGList(target, name, valueList, conven
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -9622,6 +10347,9 @@ subroutine ESMF_AttributeSetObjFieldBundleLGList(target, name, valueList, conven
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -9639,18 +10367,19 @@ end subroutine ESMF_AttributeSetObjFieldBundleLGList
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackGridR4()"
-subroutine ESMF_AttributeSetAttPackGridR4(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackGridR4(target, name, value, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_Grid), intent(in) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R4), intent(in) :: value
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -9658,13 +10387,16 @@ subroutine ESMF_AttributeSetAttPackGridR4(target, name, value, attpack, keywordE
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackGrid name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackGrid pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -9697,11 +10429,11 @@ subroutine ESMF_AttributeSetObjGridR4(target, name, value, convention, purpose, 
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -9709,6 +10441,9 @@ subroutine ESMF_AttributeSetObjGridR4(target, name, value, convention, purpose, 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -9726,18 +10461,19 @@ end subroutine ESMF_AttributeSetObjGridR4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackGridR4List()"
-subroutine ESMF_AttributeSetAttPackGridR4List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackGridR4List(target, name, valueList, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_Grid), intent(in) :: target
   character(len=*), intent(in) :: name
-  real(ESMF_KIND_R4), dimension(:), intent(in) :: value
+  real(ESMF_KIND_R4), dimension(:), intent(in) :: valueList
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -9745,13 +10481,16 @@ subroutine ESMF_AttributeSetAttPackGridR4List(target, name, value, attpack, keyw
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackGrid name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackGrid pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -9784,11 +10523,11 @@ subroutine ESMF_AttributeSetObjGridR4List(target, name, valueList, convention, p
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -9796,6 +10535,9 @@ subroutine ESMF_AttributeSetObjGridR4List(target, name, valueList, convention, p
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -9813,18 +10555,19 @@ end subroutine ESMF_AttributeSetObjGridR4List
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackGridR8()"
-subroutine ESMF_AttributeSetAttPackGridR8(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackGridR8(target, name, value, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_Grid), intent(in) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R8), intent(in) :: value
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -9832,13 +10575,16 @@ subroutine ESMF_AttributeSetAttPackGridR8(target, name, value, attpack, keywordE
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackGrid name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackGrid pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -9871,11 +10617,11 @@ subroutine ESMF_AttributeSetObjGridR8(target, name, value, convention, purpose, 
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -9883,6 +10629,9 @@ subroutine ESMF_AttributeSetObjGridR8(target, name, value, convention, purpose, 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -9900,18 +10649,19 @@ end subroutine ESMF_AttributeSetObjGridR8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackGridR8List()"
-subroutine ESMF_AttributeSetAttPackGridR8List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackGridR8List(target, name, valueList, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_Grid), intent(in) :: target
   character(len=*), intent(in) :: name
-  real(ESMF_KIND_R8), dimension(:), intent(in) :: value
+  real(ESMF_KIND_R8), dimension(:), intent(in) :: valueList
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -9919,13 +10669,16 @@ subroutine ESMF_AttributeSetAttPackGridR8List(target, name, value, attpack, keyw
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackGrid name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackGrid pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -9958,11 +10711,11 @@ subroutine ESMF_AttributeSetObjGridR8List(target, name, valueList, convention, p
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -9970,6 +10723,9 @@ subroutine ESMF_AttributeSetObjGridR8List(target, name, valueList, convention, p
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -9987,18 +10743,19 @@ end subroutine ESMF_AttributeSetObjGridR8List
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackGridI4()"
-subroutine ESMF_AttributeSetAttPackGridI4(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackGridI4(target, name, value, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_Grid), intent(in) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I4), intent(in) :: value
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -10006,13 +10763,16 @@ subroutine ESMF_AttributeSetAttPackGridI4(target, name, value, attpack, keywordE
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackGrid name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackGrid pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -10045,11 +10805,11 @@ subroutine ESMF_AttributeSetObjGridI4(target, name, value, convention, purpose, 
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -10057,6 +10817,9 @@ subroutine ESMF_AttributeSetObjGridI4(target, name, value, convention, purpose, 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -10074,18 +10837,19 @@ end subroutine ESMF_AttributeSetObjGridI4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackGridI4List()"
-subroutine ESMF_AttributeSetAttPackGridI4List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackGridI4List(target, name, valueList, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_Grid), intent(in) :: target
   character(len=*), intent(in) :: name
-  integer(ESMF_KIND_I4), dimension(:), intent(in) :: value
+  integer(ESMF_KIND_I4), dimension(:), intent(in) :: valueList
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -10093,13 +10857,16 @@ subroutine ESMF_AttributeSetAttPackGridI4List(target, name, value, attpack, keyw
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackGrid name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackGrid pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -10132,11 +10899,11 @@ subroutine ESMF_AttributeSetObjGridI4List(target, name, valueList, convention, p
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -10144,6 +10911,9 @@ subroutine ESMF_AttributeSetObjGridI4List(target, name, valueList, convention, p
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -10161,18 +10931,19 @@ end subroutine ESMF_AttributeSetObjGridI4List
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackGridI8()"
-subroutine ESMF_AttributeSetAttPackGridI8(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackGridI8(target, name, value, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_Grid), intent(in) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I8), intent(in) :: value
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -10180,13 +10951,16 @@ subroutine ESMF_AttributeSetAttPackGridI8(target, name, value, attpack, keywordE
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackGrid name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackGrid pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -10219,11 +10993,11 @@ subroutine ESMF_AttributeSetObjGridI8(target, name, value, convention, purpose, 
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -10231,6 +11005,9 @@ subroutine ESMF_AttributeSetObjGridI8(target, name, value, convention, purpose, 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -10248,18 +11025,19 @@ end subroutine ESMF_AttributeSetObjGridI8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackGridI8List()"
-subroutine ESMF_AttributeSetAttPackGridI8List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackGridI8List(target, name, valueList, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_Grid), intent(in) :: target
   character(len=*), intent(in) :: name
-  integer(ESMF_KIND_I8), dimension(:), intent(in) :: value
+  integer(ESMF_KIND_I8), dimension(:), intent(in) :: valueList
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -10267,13 +11045,16 @@ subroutine ESMF_AttributeSetAttPackGridI8List(target, name, value, attpack, keyw
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackGrid name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackGrid pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -10306,11 +11087,11 @@ subroutine ESMF_AttributeSetObjGridI8List(target, name, valueList, convention, p
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -10318,6 +11099,9 @@ subroutine ESMF_AttributeSetObjGridI8List(target, name, valueList, convention, p
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -10335,18 +11119,19 @@ end subroutine ESMF_AttributeSetObjGridI8List
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackGridCH()"
-subroutine ESMF_AttributeSetAttPackGridCH(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackGridCH(target, name, value, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_Grid), intent(in) :: target
   character(len=*), intent(in) :: name
   character(len=*), intent(in) :: value
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -10354,13 +11139,16 @@ subroutine ESMF_AttributeSetAttPackGridCH(target, name, value, attpack, keywordE
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackGrid name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackGrid pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -10393,11 +11181,11 @@ subroutine ESMF_AttributeSetObjGridCH(target, name, value, convention, purpose, 
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -10405,6 +11193,9 @@ subroutine ESMF_AttributeSetObjGridCH(target, name, value, convention, purpose, 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -10422,18 +11213,19 @@ end subroutine ESMF_AttributeSetObjGridCH
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackGridCHList()"
-subroutine ESMF_AttributeSetAttPackGridCHList(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackGridCHList(target, name, valueList, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_Grid), intent(in) :: target
   character(len=*), intent(in) :: name
-  character(len=*), dimension(:), intent(in) :: value
+  character(len=*), dimension(:), intent(in) :: valueList
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -10441,13 +11233,16 @@ subroutine ESMF_AttributeSetAttPackGridCHList(target, name, value, attpack, keyw
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackGrid name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackGrid pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -10480,11 +11275,11 @@ subroutine ESMF_AttributeSetObjGridCHList(target, name, valueList, convention, p
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -10492,6 +11287,9 @@ subroutine ESMF_AttributeSetObjGridCHList(target, name, valueList, convention, p
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -10509,18 +11307,19 @@ end subroutine ESMF_AttributeSetObjGridCHList
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackGridLG()"
-subroutine ESMF_AttributeSetAttPackGridLG(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackGridLG(target, name, value, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_Grid), intent(in) :: target
   character(len=*), intent(in) :: name
   logical, intent(in) :: value
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -10528,13 +11327,16 @@ subroutine ESMF_AttributeSetAttPackGridLG(target, name, value, attpack, keywordE
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackGrid name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackGrid pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -10567,11 +11369,11 @@ subroutine ESMF_AttributeSetObjGridLG(target, name, value, convention, purpose, 
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -10579,6 +11381,9 @@ subroutine ESMF_AttributeSetObjGridLG(target, name, value, convention, purpose, 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -10596,18 +11401,19 @@ end subroutine ESMF_AttributeSetObjGridLG
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackGridLGList()"
-subroutine ESMF_AttributeSetAttPackGridLGList(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackGridLGList(target, name, valueList, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_Grid), intent(in) :: target
   character(len=*), intent(in) :: name
-  logical, dimension(:), intent(in) :: value
+  logical, dimension(:), intent(in) :: valueList
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -10615,13 +11421,16 @@ subroutine ESMF_AttributeSetAttPackGridLGList(target, name, value, attpack, keyw
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackGrid name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackGrid pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -10654,11 +11463,11 @@ subroutine ESMF_AttributeSetObjGridLGList(target, name, valueList, convention, p
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -10666,6 +11475,9 @@ subroutine ESMF_AttributeSetObjGridLGList(target, name, valueList, convention, p
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -10683,18 +11495,19 @@ end subroutine ESMF_AttributeSetObjGridLGList
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackStateR4()"
-subroutine ESMF_AttributeSetAttPackStateR4(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackStateR4(target, name, value, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_State), intent(in) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R4), intent(in) :: value
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -10702,13 +11515,16 @@ subroutine ESMF_AttributeSetAttPackStateR4(target, name, value, attpack, keyword
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackState name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackState pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -10741,11 +11557,11 @@ subroutine ESMF_AttributeSetObjStateR4(target, name, value, convention, purpose,
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -10753,6 +11569,9 @@ subroutine ESMF_AttributeSetObjStateR4(target, name, value, convention, purpose,
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -10770,18 +11589,19 @@ end subroutine ESMF_AttributeSetObjStateR4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackStateR4List()"
-subroutine ESMF_AttributeSetAttPackStateR4List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackStateR4List(target, name, valueList, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_State), intent(in) :: target
   character(len=*), intent(in) :: name
-  real(ESMF_KIND_R4), dimension(:), intent(in) :: value
+  real(ESMF_KIND_R4), dimension(:), intent(in) :: valueList
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -10789,13 +11609,16 @@ subroutine ESMF_AttributeSetAttPackStateR4List(target, name, value, attpack, key
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackState name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackState pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -10828,11 +11651,11 @@ subroutine ESMF_AttributeSetObjStateR4List(target, name, valueList, convention, 
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -10840,6 +11663,9 @@ subroutine ESMF_AttributeSetObjStateR4List(target, name, valueList, convention, 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -10857,18 +11683,19 @@ end subroutine ESMF_AttributeSetObjStateR4List
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackStateR8()"
-subroutine ESMF_AttributeSetAttPackStateR8(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackStateR8(target, name, value, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_State), intent(in) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R8), intent(in) :: value
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -10876,13 +11703,16 @@ subroutine ESMF_AttributeSetAttPackStateR8(target, name, value, attpack, keyword
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackState name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackState pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -10915,11 +11745,11 @@ subroutine ESMF_AttributeSetObjStateR8(target, name, value, convention, purpose,
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -10927,6 +11757,9 @@ subroutine ESMF_AttributeSetObjStateR8(target, name, value, convention, purpose,
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -10944,18 +11777,19 @@ end subroutine ESMF_AttributeSetObjStateR8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackStateR8List()"
-subroutine ESMF_AttributeSetAttPackStateR8List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackStateR8List(target, name, valueList, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_State), intent(in) :: target
   character(len=*), intent(in) :: name
-  real(ESMF_KIND_R8), dimension(:), intent(in) :: value
+  real(ESMF_KIND_R8), dimension(:), intent(in) :: valueList
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -10963,13 +11797,16 @@ subroutine ESMF_AttributeSetAttPackStateR8List(target, name, value, attpack, key
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackState name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackState pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -11002,11 +11839,11 @@ subroutine ESMF_AttributeSetObjStateR8List(target, name, valueList, convention, 
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -11014,6 +11851,9 @@ subroutine ESMF_AttributeSetObjStateR8List(target, name, valueList, convention, 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -11031,18 +11871,19 @@ end subroutine ESMF_AttributeSetObjStateR8List
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackStateI4()"
-subroutine ESMF_AttributeSetAttPackStateI4(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackStateI4(target, name, value, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_State), intent(in) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I4), intent(in) :: value
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -11050,13 +11891,16 @@ subroutine ESMF_AttributeSetAttPackStateI4(target, name, value, attpack, keyword
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackState name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackState pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -11089,11 +11933,11 @@ subroutine ESMF_AttributeSetObjStateI4(target, name, value, convention, purpose,
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -11101,6 +11945,9 @@ subroutine ESMF_AttributeSetObjStateI4(target, name, value, convention, purpose,
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -11118,18 +11965,19 @@ end subroutine ESMF_AttributeSetObjStateI4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackStateI4List()"
-subroutine ESMF_AttributeSetAttPackStateI4List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackStateI4List(target, name, valueList, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_State), intent(in) :: target
   character(len=*), intent(in) :: name
-  integer(ESMF_KIND_I4), dimension(:), intent(in) :: value
+  integer(ESMF_KIND_I4), dimension(:), intent(in) :: valueList
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -11137,13 +11985,16 @@ subroutine ESMF_AttributeSetAttPackStateI4List(target, name, value, attpack, key
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackState name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackState pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -11176,11 +12027,11 @@ subroutine ESMF_AttributeSetObjStateI4List(target, name, valueList, convention, 
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -11188,6 +12039,9 @@ subroutine ESMF_AttributeSetObjStateI4List(target, name, valueList, convention, 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -11205,18 +12059,19 @@ end subroutine ESMF_AttributeSetObjStateI4List
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackStateI8()"
-subroutine ESMF_AttributeSetAttPackStateI8(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackStateI8(target, name, value, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_State), intent(in) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I8), intent(in) :: value
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -11224,13 +12079,16 @@ subroutine ESMF_AttributeSetAttPackStateI8(target, name, value, attpack, keyword
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackState name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackState pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -11263,11 +12121,11 @@ subroutine ESMF_AttributeSetObjStateI8(target, name, value, convention, purpose,
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -11275,6 +12133,9 @@ subroutine ESMF_AttributeSetObjStateI8(target, name, value, convention, purpose,
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -11292,18 +12153,19 @@ end subroutine ESMF_AttributeSetObjStateI8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackStateI8List()"
-subroutine ESMF_AttributeSetAttPackStateI8List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackStateI8List(target, name, valueList, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_State), intent(in) :: target
   character(len=*), intent(in) :: name
-  integer(ESMF_KIND_I8), dimension(:), intent(in) :: value
+  integer(ESMF_KIND_I8), dimension(:), intent(in) :: valueList
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -11311,13 +12173,16 @@ subroutine ESMF_AttributeSetAttPackStateI8List(target, name, value, attpack, key
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackState name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackState pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -11350,11 +12215,11 @@ subroutine ESMF_AttributeSetObjStateI8List(target, name, valueList, convention, 
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -11362,6 +12227,9 @@ subroutine ESMF_AttributeSetObjStateI8List(target, name, valueList, convention, 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -11379,18 +12247,19 @@ end subroutine ESMF_AttributeSetObjStateI8List
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackStateCH()"
-subroutine ESMF_AttributeSetAttPackStateCH(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackStateCH(target, name, value, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_State), intent(in) :: target
   character(len=*), intent(in) :: name
   character(len=*), intent(in) :: value
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -11398,13 +12267,16 @@ subroutine ESMF_AttributeSetAttPackStateCH(target, name, value, attpack, keyword
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackState name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackState pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -11437,11 +12309,11 @@ subroutine ESMF_AttributeSetObjStateCH(target, name, value, convention, purpose,
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -11449,6 +12321,9 @@ subroutine ESMF_AttributeSetObjStateCH(target, name, value, convention, purpose,
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -11466,18 +12341,19 @@ end subroutine ESMF_AttributeSetObjStateCH
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackStateCHList()"
-subroutine ESMF_AttributeSetAttPackStateCHList(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackStateCHList(target, name, valueList, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_State), intent(in) :: target
   character(len=*), intent(in) :: name
-  character(len=*), dimension(:), intent(in) :: value
+  character(len=*), dimension(:), intent(in) :: valueList
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -11485,13 +12361,16 @@ subroutine ESMF_AttributeSetAttPackStateCHList(target, name, value, attpack, key
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackState name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackState pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -11524,11 +12403,11 @@ subroutine ESMF_AttributeSetObjStateCHList(target, name, valueList, convention, 
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -11536,6 +12415,9 @@ subroutine ESMF_AttributeSetObjStateCHList(target, name, valueList, convention, 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -11553,18 +12435,19 @@ end subroutine ESMF_AttributeSetObjStateCHList
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackStateLG()"
-subroutine ESMF_AttributeSetAttPackStateLG(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackStateLG(target, name, value, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_State), intent(in) :: target
   character(len=*), intent(in) :: name
   logical, intent(in) :: value
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -11572,13 +12455,16 @@ subroutine ESMF_AttributeSetAttPackStateLG(target, name, value, attpack, keyword
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackState name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackState pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -11611,11 +12497,11 @@ subroutine ESMF_AttributeSetObjStateLG(target, name, value, convention, purpose,
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -11623,6 +12509,9 @@ subroutine ESMF_AttributeSetObjStateLG(target, name, value, convention, purpose,
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -11640,18 +12529,19 @@ end subroutine ESMF_AttributeSetObjStateLG
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackStateLGList()"
-subroutine ESMF_AttributeSetAttPackStateLGList(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackStateLGList(target, name, valueList, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_State), intent(in) :: target
   character(len=*), intent(in) :: name
-  logical, dimension(:), intent(in) :: value
+  logical, dimension(:), intent(in) :: valueList
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -11659,13 +12549,16 @@ subroutine ESMF_AttributeSetAttPackStateLGList(target, name, value, attpack, key
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackState name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackState pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -11698,11 +12591,11 @@ subroutine ESMF_AttributeSetObjStateLGList(target, name, valueList, convention, 
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -11710,6 +12603,9 @@ subroutine ESMF_AttributeSetObjStateLGList(target, name, valueList, convention, 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -11727,18 +12623,19 @@ end subroutine ESMF_AttributeSetObjStateLGList
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackLocStreamR4()"
-subroutine ESMF_AttributeSetAttPackLocStreamR4(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackLocStreamR4(target, name, value, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_LocStream), intent(in) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R4), intent(in) :: value
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -11746,13 +12643,16 @@ subroutine ESMF_AttributeSetAttPackLocStreamR4(target, name, value, attpack, key
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackLocStream name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackLocStream pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -11785,11 +12685,11 @@ subroutine ESMF_AttributeSetObjLocStreamR4(target, name, value, convention, purp
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -11797,6 +12697,9 @@ subroutine ESMF_AttributeSetObjLocStreamR4(target, name, value, convention, purp
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -11814,18 +12717,19 @@ end subroutine ESMF_AttributeSetObjLocStreamR4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackLocStreamR4List()"
-subroutine ESMF_AttributeSetAttPackLocStreamR4List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackLocStreamR4List(target, name, valueList, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_LocStream), intent(in) :: target
   character(len=*), intent(in) :: name
-  real(ESMF_KIND_R4), dimension(:), intent(in) :: value
+  real(ESMF_KIND_R4), dimension(:), intent(in) :: valueList
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -11833,13 +12737,16 @@ subroutine ESMF_AttributeSetAttPackLocStreamR4List(target, name, value, attpack,
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackLocStream name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackLocStream pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -11872,11 +12779,11 @@ subroutine ESMF_AttributeSetObjLocStreamR4List(target, name, valueList, conventi
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -11884,6 +12791,9 @@ subroutine ESMF_AttributeSetObjLocStreamR4List(target, name, valueList, conventi
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -11901,18 +12811,19 @@ end subroutine ESMF_AttributeSetObjLocStreamR4List
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackLocStreamR8()"
-subroutine ESMF_AttributeSetAttPackLocStreamR8(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackLocStreamR8(target, name, value, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_LocStream), intent(in) :: target
   character(len=*), intent(in) :: name
   real(ESMF_KIND_R8), intent(in) :: value
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -11920,13 +12831,16 @@ subroutine ESMF_AttributeSetAttPackLocStreamR8(target, name, value, attpack, key
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackLocStream name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackLocStream pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -11959,11 +12873,11 @@ subroutine ESMF_AttributeSetObjLocStreamR8(target, name, value, convention, purp
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -11971,6 +12885,9 @@ subroutine ESMF_AttributeSetObjLocStreamR8(target, name, value, convention, purp
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -11988,18 +12905,19 @@ end subroutine ESMF_AttributeSetObjLocStreamR8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackLocStreamR8List()"
-subroutine ESMF_AttributeSetAttPackLocStreamR8List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackLocStreamR8List(target, name, valueList, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_LocStream), intent(in) :: target
   character(len=*), intent(in) :: name
-  real(ESMF_KIND_R8), dimension(:), intent(in) :: value
+  real(ESMF_KIND_R8), dimension(:), intent(in) :: valueList
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -12007,13 +12925,16 @@ subroutine ESMF_AttributeSetAttPackLocStreamR8List(target, name, value, attpack,
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackLocStream name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackLocStream pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -12046,11 +12967,11 @@ subroutine ESMF_AttributeSetObjLocStreamR8List(target, name, valueList, conventi
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -12058,6 +12979,9 @@ subroutine ESMF_AttributeSetObjLocStreamR8List(target, name, valueList, conventi
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -12075,18 +12999,19 @@ end subroutine ESMF_AttributeSetObjLocStreamR8List
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackLocStreamI4()"
-subroutine ESMF_AttributeSetAttPackLocStreamI4(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackLocStreamI4(target, name, value, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_LocStream), intent(in) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I4), intent(in) :: value
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -12094,13 +13019,16 @@ subroutine ESMF_AttributeSetAttPackLocStreamI4(target, name, value, attpack, key
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackLocStream name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackLocStream pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -12133,11 +13061,11 @@ subroutine ESMF_AttributeSetObjLocStreamI4(target, name, value, convention, purp
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -12145,6 +13073,9 @@ subroutine ESMF_AttributeSetObjLocStreamI4(target, name, value, convention, purp
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -12162,18 +13093,19 @@ end subroutine ESMF_AttributeSetObjLocStreamI4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackLocStreamI4List()"
-subroutine ESMF_AttributeSetAttPackLocStreamI4List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackLocStreamI4List(target, name, valueList, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_LocStream), intent(in) :: target
   character(len=*), intent(in) :: name
-  integer(ESMF_KIND_I4), dimension(:), intent(in) :: value
+  integer(ESMF_KIND_I4), dimension(:), intent(in) :: valueList
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -12181,13 +13113,16 @@ subroutine ESMF_AttributeSetAttPackLocStreamI4List(target, name, value, attpack,
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackLocStream name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackLocStream pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -12220,11 +13155,11 @@ subroutine ESMF_AttributeSetObjLocStreamI4List(target, name, valueList, conventi
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -12232,6 +13167,9 @@ subroutine ESMF_AttributeSetObjLocStreamI4List(target, name, valueList, conventi
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -12249,18 +13187,19 @@ end subroutine ESMF_AttributeSetObjLocStreamI4List
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackLocStreamI8()"
-subroutine ESMF_AttributeSetAttPackLocStreamI8(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackLocStreamI8(target, name, value, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_LocStream), intent(in) :: target
   character(len=*), intent(in) :: name
   integer(ESMF_KIND_I8), intent(in) :: value
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -12268,13 +13207,16 @@ subroutine ESMF_AttributeSetAttPackLocStreamI8(target, name, value, attpack, key
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackLocStream name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackLocStream pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -12307,11 +13249,11 @@ subroutine ESMF_AttributeSetObjLocStreamI8(target, name, value, convention, purp
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -12319,6 +13261,9 @@ subroutine ESMF_AttributeSetObjLocStreamI8(target, name, value, convention, purp
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -12336,18 +13281,19 @@ end subroutine ESMF_AttributeSetObjLocStreamI8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackLocStreamI8List()"
-subroutine ESMF_AttributeSetAttPackLocStreamI8List(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackLocStreamI8List(target, name, valueList, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_LocStream), intent(in) :: target
   character(len=*), intent(in) :: name
-  integer(ESMF_KIND_I8), dimension(:), intent(in) :: value
+  integer(ESMF_KIND_I8), dimension(:), intent(in) :: valueList
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -12355,13 +13301,16 @@ subroutine ESMF_AttributeSetAttPackLocStreamI8List(target, name, value, attpack,
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackLocStream name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackLocStream pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -12394,11 +13343,11 @@ subroutine ESMF_AttributeSetObjLocStreamI8List(target, name, valueList, conventi
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -12406,6 +13355,9 @@ subroutine ESMF_AttributeSetObjLocStreamI8List(target, name, valueList, conventi
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -12423,18 +13375,19 @@ end subroutine ESMF_AttributeSetObjLocStreamI8List
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackLocStreamCH()"
-subroutine ESMF_AttributeSetAttPackLocStreamCH(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackLocStreamCH(target, name, value, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_LocStream), intent(in) :: target
   character(len=*), intent(in) :: name
   character(len=*), intent(in) :: value
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -12442,13 +13395,16 @@ subroutine ESMF_AttributeSetAttPackLocStreamCH(target, name, value, attpack, key
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackLocStream name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackLocStream pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -12481,11 +13437,11 @@ subroutine ESMF_AttributeSetObjLocStreamCH(target, name, value, convention, purp
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -12493,6 +13449,9 @@ subroutine ESMF_AttributeSetObjLocStreamCH(target, name, value, convention, purp
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -12510,18 +13469,19 @@ end subroutine ESMF_AttributeSetObjLocStreamCH
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackLocStreamCHList()"
-subroutine ESMF_AttributeSetAttPackLocStreamCHList(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackLocStreamCHList(target, name, valueList, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_LocStream), intent(in) :: target
   character(len=*), intent(in) :: name
-  character(len=*), dimension(:), intent(in) :: value
+  character(len=*), dimension(:), intent(in) :: valueList
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -12529,13 +13489,16 @@ subroutine ESMF_AttributeSetAttPackLocStreamCHList(target, name, value, attpack,
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackLocStream name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackLocStream pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -12568,11 +13531,11 @@ subroutine ESMF_AttributeSetObjLocStreamCHList(target, name, valueList, conventi
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -12580,6 +13543,9 @@ subroutine ESMF_AttributeSetObjLocStreamCHList(target, name, valueList, conventi
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -12597,18 +13563,19 @@ end subroutine ESMF_AttributeSetObjLocStreamCHList
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackLocStreamLG()"
-subroutine ESMF_AttributeSetAttPackLocStreamLG(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackLocStreamLG(target, name, value, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_LocStream), intent(in) :: target
   character(len=*), intent(in) :: name
   logical, intent(in) :: value
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -12616,13 +13583,16 @@ subroutine ESMF_AttributeSetAttPackLocStreamLG(target, name, value, attpack, key
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackLocStream name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackLocStream pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -12655,11 +13625,11 @@ subroutine ESMF_AttributeSetObjLocStreamLG(target, name, value, convention, purp
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -12667,6 +13637,9 @@ subroutine ESMF_AttributeSetObjLocStreamLG(target, name, value, convention, purp
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -12684,18 +13657,19 @@ end subroutine ESMF_AttributeSetObjLocStreamLG
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeSetAttPackLocStreamLGList()"
-subroutine ESMF_AttributeSetAttPackLocStreamLGList(target, name, value, attpack, keywordEnforcer, itemcount, rc)
-  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP
+subroutine ESMF_AttributeSetAttPackLocStreamLGList(target, name, valueList, attpack, keywordEnforcer, itemcount, attnestflag, rc)
+  ! 39.11.35/37 - Target is a NOOP only the attpack is used; itemcount is NOOP; attnestflag is NOOP
   type(ESMF_LocStream), intent(in) :: target
   character(len=*), intent(in) :: name
-  logical, dimension(:), intent(in) :: value
+  logical, dimension(:), intent(in) :: valueList
   type(ESMF_AttPack), intent(inout) :: attpack
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   integer, intent(in), optional :: itemcount
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  character(:), allocatable :: key
+  character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
 
   localrc = ESMF_FAILURE
@@ -12703,13 +13677,16 @@ subroutine ESMF_AttributeSetAttPackLocStreamLGList(target, name, value, attpack,
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
 
-  key = attpack%formatKey(rc=localrc)
+  pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+  print *, "ESMF_AttributeSetAttPackLocStream name=", name  !tdk:p
+  print *, "ESMF_AttributeSetAttPackLocStream pkey=", pkey  !tdk:p
+
+  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -12742,11 +13719,11 @@ subroutine ESMF_AttributeSetObjLocStreamLGList(target, name, valueList, conventi
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
 
-  if (present(attnestflag)) then
-    local_attnestflag = attnestflag
-  else
-    local_attnestflag = ESMF_ATTNEST_OFF
-  end if
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -12754,6 +13731,9 @@ subroutine ESMF_AttributeSetObjLocStreamLGList(target, name, valueList, conventi
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+    print *, "ESMF_AttributeSet name=", name  !tdk:p
+    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -12795,6 +13775,9 @@ subroutine ESMF_AttributeGetAttPackArrayR4(target, name, attpack, value, default
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetAttPackArray  key=", key !tdk:p
+  print *, "ESMF_AttributeGetAttPackArray  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
 
   if (present(isPresent)) then
     isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
@@ -12843,6 +13826,8 @@ subroutine ESMF_AttributeGetObjArrayR4(target, name, value, defaultvalue, conven
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
+  print *, "ESMF_AttributeGetObjArray calling ESMF_Info2Get" !tdk:p
+
   call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -12874,6 +13859,9 @@ subroutine ESMF_AttributeGetAttPackArrayR8(target, name, attpack, value, default
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetAttPackArray  key=", key !tdk:p
+  print *, "ESMF_AttributeGetAttPackArray  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
 
   if (present(isPresent)) then
     isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
@@ -12922,6 +13910,8 @@ subroutine ESMF_AttributeGetObjArrayR8(target, name, value, defaultvalue, conven
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
+  print *, "ESMF_AttributeGetObjArray calling ESMF_Info2Get" !tdk:p
+
   call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -12953,6 +13943,9 @@ subroutine ESMF_AttributeGetAttPackArrayI4(target, name, attpack, value, default
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetAttPackArray  key=", key !tdk:p
+  print *, "ESMF_AttributeGetAttPackArray  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
 
   if (present(isPresent)) then
     isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
@@ -13001,6 +13994,8 @@ subroutine ESMF_AttributeGetObjArrayI4(target, name, value, defaultvalue, conven
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
+  print *, "ESMF_AttributeGetObjArray calling ESMF_Info2Get" !tdk:p
+
   call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -13032,6 +14027,9 @@ subroutine ESMF_AttributeGetAttPackArrayI8(target, name, attpack, value, default
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetAttPackArray  key=", key !tdk:p
+  print *, "ESMF_AttributeGetAttPackArray  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
 
   if (present(isPresent)) then
     isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
@@ -13080,6 +14078,8 @@ subroutine ESMF_AttributeGetObjArrayI8(target, name, value, defaultvalue, conven
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
+  print *, "ESMF_AttributeGetObjArray calling ESMF_Info2Get" !tdk:p
+
   call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -13111,6 +14111,9 @@ subroutine ESMF_AttributeGetAttPackArrayCH(target, name, attpack, value, default
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetAttPackArray  key=", key !tdk:p
+  print *, "ESMF_AttributeGetAttPackArray  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
 
   if (present(isPresent)) then
     isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
@@ -13159,6 +14162,8 @@ subroutine ESMF_AttributeGetObjArrayCH(target, name, value, defaultvalue, conven
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
+  print *, "ESMF_AttributeGetObjArray calling ESMF_Info2Get" !tdk:p
+
   call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -13190,6 +14195,9 @@ subroutine ESMF_AttributeGetAttPackArrayLG(target, name, attpack, value, default
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetAttPackArray  key=", key !tdk:p
+  print *, "ESMF_AttributeGetAttPackArray  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
 
   if (present(isPresent)) then
     isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
@@ -13238,6 +14246,8 @@ subroutine ESMF_AttributeGetObjArrayLG(target, name, value, defaultvalue, conven
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
+  print *, "ESMF_AttributeGetObjArray calling ESMF_Info2Get" !tdk:p
+
   call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -13269,6 +14279,9 @@ subroutine ESMF_AttributeGetAttPackArrayBundleR4(target, name, attpack, value, d
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetAttPackArrayBundle  key=", key !tdk:p
+  print *, "ESMF_AttributeGetAttPackArrayBundle  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
 
   if (present(isPresent)) then
     isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
@@ -13317,6 +14330,8 @@ subroutine ESMF_AttributeGetObjArrayBundleR4(target, name, value, defaultvalue, 
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
+  print *, "ESMF_AttributeGetObjArrayBundle calling ESMF_Info2Get" !tdk:p
+
   call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -13348,6 +14363,9 @@ subroutine ESMF_AttributeGetAttPackArrayBundleR8(target, name, attpack, value, d
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetAttPackArrayBundle  key=", key !tdk:p
+  print *, "ESMF_AttributeGetAttPackArrayBundle  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
 
   if (present(isPresent)) then
     isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
@@ -13396,6 +14414,8 @@ subroutine ESMF_AttributeGetObjArrayBundleR8(target, name, value, defaultvalue, 
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
+  print *, "ESMF_AttributeGetObjArrayBundle calling ESMF_Info2Get" !tdk:p
+
   call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -13427,6 +14447,9 @@ subroutine ESMF_AttributeGetAttPackArrayBundleI4(target, name, attpack, value, d
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetAttPackArrayBundle  key=", key !tdk:p
+  print *, "ESMF_AttributeGetAttPackArrayBundle  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
 
   if (present(isPresent)) then
     isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
@@ -13475,6 +14498,8 @@ subroutine ESMF_AttributeGetObjArrayBundleI4(target, name, value, defaultvalue, 
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
+  print *, "ESMF_AttributeGetObjArrayBundle calling ESMF_Info2Get" !tdk:p
+
   call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -13506,6 +14531,9 @@ subroutine ESMF_AttributeGetAttPackArrayBundleI8(target, name, attpack, value, d
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetAttPackArrayBundle  key=", key !tdk:p
+  print *, "ESMF_AttributeGetAttPackArrayBundle  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
 
   if (present(isPresent)) then
     isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
@@ -13554,6 +14582,8 @@ subroutine ESMF_AttributeGetObjArrayBundleI8(target, name, value, defaultvalue, 
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
+  print *, "ESMF_AttributeGetObjArrayBundle calling ESMF_Info2Get" !tdk:p
+
   call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -13585,6 +14615,9 @@ subroutine ESMF_AttributeGetAttPackArrayBundleCH(target, name, attpack, value, d
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetAttPackArrayBundle  key=", key !tdk:p
+  print *, "ESMF_AttributeGetAttPackArrayBundle  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
 
   if (present(isPresent)) then
     isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
@@ -13633,6 +14666,8 @@ subroutine ESMF_AttributeGetObjArrayBundleCH(target, name, value, defaultvalue, 
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
+  print *, "ESMF_AttributeGetObjArrayBundle calling ESMF_Info2Get" !tdk:p
+
   call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -13664,6 +14699,9 @@ subroutine ESMF_AttributeGetAttPackArrayBundleLG(target, name, attpack, value, d
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetAttPackArrayBundle  key=", key !tdk:p
+  print *, "ESMF_AttributeGetAttPackArrayBundle  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
 
   if (present(isPresent)) then
     isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
@@ -13712,6 +14750,8 @@ subroutine ESMF_AttributeGetObjArrayBundleLG(target, name, value, defaultvalue, 
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
+  print *, "ESMF_AttributeGetObjArrayBundle calling ESMF_Info2Get" !tdk:p
+
   call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -13743,6 +14783,9 @@ subroutine ESMF_AttributeGetAttPackCplCompR4(target, name, attpack, value, defau
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetAttPackCplComp  key=", key !tdk:p
+  print *, "ESMF_AttributeGetAttPackCplComp  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
 
   if (present(isPresent)) then
     isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
@@ -13791,6 +14834,8 @@ subroutine ESMF_AttributeGetObjCplCompR4(target, name, value, defaultvalue, conv
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
+  print *, "ESMF_AttributeGetObjCplComp calling ESMF_Info2Get" !tdk:p
+
   call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -13822,6 +14867,9 @@ subroutine ESMF_AttributeGetAttPackCplCompR8(target, name, attpack, value, defau
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetAttPackCplComp  key=", key !tdk:p
+  print *, "ESMF_AttributeGetAttPackCplComp  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
 
   if (present(isPresent)) then
     isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
@@ -13870,6 +14918,8 @@ subroutine ESMF_AttributeGetObjCplCompR8(target, name, value, defaultvalue, conv
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
+  print *, "ESMF_AttributeGetObjCplComp calling ESMF_Info2Get" !tdk:p
+
   call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -13901,6 +14951,9 @@ subroutine ESMF_AttributeGetAttPackCplCompI4(target, name, attpack, value, defau
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetAttPackCplComp  key=", key !tdk:p
+  print *, "ESMF_AttributeGetAttPackCplComp  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
 
   if (present(isPresent)) then
     isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
@@ -13949,6 +15002,8 @@ subroutine ESMF_AttributeGetObjCplCompI4(target, name, value, defaultvalue, conv
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
+  print *, "ESMF_AttributeGetObjCplComp calling ESMF_Info2Get" !tdk:p
+
   call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -13980,6 +15035,9 @@ subroutine ESMF_AttributeGetAttPackCplCompI8(target, name, attpack, value, defau
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetAttPackCplComp  key=", key !tdk:p
+  print *, "ESMF_AttributeGetAttPackCplComp  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
 
   if (present(isPresent)) then
     isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
@@ -14028,6 +15086,8 @@ subroutine ESMF_AttributeGetObjCplCompI8(target, name, value, defaultvalue, conv
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
+  print *, "ESMF_AttributeGetObjCplComp calling ESMF_Info2Get" !tdk:p
+
   call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -14059,6 +15119,9 @@ subroutine ESMF_AttributeGetAttPackCplCompCH(target, name, attpack, value, defau
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetAttPackCplComp  key=", key !tdk:p
+  print *, "ESMF_AttributeGetAttPackCplComp  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
 
   if (present(isPresent)) then
     isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
@@ -14107,6 +15170,8 @@ subroutine ESMF_AttributeGetObjCplCompCH(target, name, value, defaultvalue, conv
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
+  print *, "ESMF_AttributeGetObjCplComp calling ESMF_Info2Get" !tdk:p
+
   call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -14138,6 +15203,9 @@ subroutine ESMF_AttributeGetAttPackCplCompLG(target, name, attpack, value, defau
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetAttPackCplComp  key=", key !tdk:p
+  print *, "ESMF_AttributeGetAttPackCplComp  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
 
   if (present(isPresent)) then
     isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
@@ -14186,6 +15254,8 @@ subroutine ESMF_AttributeGetObjCplCompLG(target, name, value, defaultvalue, conv
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
+  print *, "ESMF_AttributeGetObjCplComp calling ESMF_Info2Get" !tdk:p
+
   call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -14217,6 +15287,9 @@ subroutine ESMF_AttributeGetAttPackGridCompR4(target, name, attpack, value, defa
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetAttPackGridComp  key=", key !tdk:p
+  print *, "ESMF_AttributeGetAttPackGridComp  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
 
   if (present(isPresent)) then
     isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
@@ -14265,6 +15338,8 @@ subroutine ESMF_AttributeGetObjGridCompR4(target, name, value, defaultvalue, con
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
+  print *, "ESMF_AttributeGetObjGridComp calling ESMF_Info2Get" !tdk:p
+
   call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -14296,6 +15371,9 @@ subroutine ESMF_AttributeGetAttPackGridCompR8(target, name, attpack, value, defa
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetAttPackGridComp  key=", key !tdk:p
+  print *, "ESMF_AttributeGetAttPackGridComp  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
 
   if (present(isPresent)) then
     isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
@@ -14344,6 +15422,8 @@ subroutine ESMF_AttributeGetObjGridCompR8(target, name, value, defaultvalue, con
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
+  print *, "ESMF_AttributeGetObjGridComp calling ESMF_Info2Get" !tdk:p
+
   call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -14375,6 +15455,9 @@ subroutine ESMF_AttributeGetAttPackGridCompI4(target, name, attpack, value, defa
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetAttPackGridComp  key=", key !tdk:p
+  print *, "ESMF_AttributeGetAttPackGridComp  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
 
   if (present(isPresent)) then
     isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
@@ -14423,6 +15506,8 @@ subroutine ESMF_AttributeGetObjGridCompI4(target, name, value, defaultvalue, con
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
+  print *, "ESMF_AttributeGetObjGridComp calling ESMF_Info2Get" !tdk:p
+
   call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -14454,6 +15539,9 @@ subroutine ESMF_AttributeGetAttPackGridCompI8(target, name, attpack, value, defa
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetAttPackGridComp  key=", key !tdk:p
+  print *, "ESMF_AttributeGetAttPackGridComp  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
 
   if (present(isPresent)) then
     isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
@@ -14502,6 +15590,8 @@ subroutine ESMF_AttributeGetObjGridCompI8(target, name, value, defaultvalue, con
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
+  print *, "ESMF_AttributeGetObjGridComp calling ESMF_Info2Get" !tdk:p
+
   call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -14533,6 +15623,9 @@ subroutine ESMF_AttributeGetAttPackGridCompCH(target, name, attpack, value, defa
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetAttPackGridComp  key=", key !tdk:p
+  print *, "ESMF_AttributeGetAttPackGridComp  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
 
   if (present(isPresent)) then
     isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
@@ -14581,6 +15674,8 @@ subroutine ESMF_AttributeGetObjGridCompCH(target, name, value, defaultvalue, con
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
+  print *, "ESMF_AttributeGetObjGridComp calling ESMF_Info2Get" !tdk:p
+
   call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -14612,6 +15707,9 @@ subroutine ESMF_AttributeGetAttPackGridCompLG(target, name, attpack, value, defa
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetAttPackGridComp  key=", key !tdk:p
+  print *, "ESMF_AttributeGetAttPackGridComp  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
 
   if (present(isPresent)) then
     isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
@@ -14660,6 +15758,8 @@ subroutine ESMF_AttributeGetObjGridCompLG(target, name, value, defaultvalue, con
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
+  print *, "ESMF_AttributeGetObjGridComp calling ESMF_Info2Get" !tdk:p
+
   call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -14691,6 +15791,9 @@ subroutine ESMF_AttributeGetAttPackSciCompR4(target, name, attpack, value, defau
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetAttPackSciComp  key=", key !tdk:p
+  print *, "ESMF_AttributeGetAttPackSciComp  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
 
   if (present(isPresent)) then
     isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
@@ -14739,6 +15842,8 @@ subroutine ESMF_AttributeGetObjSciCompR4(target, name, value, defaultvalue, conv
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
+  print *, "ESMF_AttributeGetObjSciComp calling ESMF_Info2Get" !tdk:p
+
   call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -14770,6 +15875,9 @@ subroutine ESMF_AttributeGetAttPackSciCompR8(target, name, attpack, value, defau
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetAttPackSciComp  key=", key !tdk:p
+  print *, "ESMF_AttributeGetAttPackSciComp  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
 
   if (present(isPresent)) then
     isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
@@ -14818,6 +15926,8 @@ subroutine ESMF_AttributeGetObjSciCompR8(target, name, value, defaultvalue, conv
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
+  print *, "ESMF_AttributeGetObjSciComp calling ESMF_Info2Get" !tdk:p
+
   call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -14849,6 +15959,9 @@ subroutine ESMF_AttributeGetAttPackSciCompI4(target, name, attpack, value, defau
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetAttPackSciComp  key=", key !tdk:p
+  print *, "ESMF_AttributeGetAttPackSciComp  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
 
   if (present(isPresent)) then
     isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
@@ -14897,6 +16010,8 @@ subroutine ESMF_AttributeGetObjSciCompI4(target, name, value, defaultvalue, conv
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
+  print *, "ESMF_AttributeGetObjSciComp calling ESMF_Info2Get" !tdk:p
+
   call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -14928,6 +16043,9 @@ subroutine ESMF_AttributeGetAttPackSciCompI8(target, name, attpack, value, defau
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetAttPackSciComp  key=", key !tdk:p
+  print *, "ESMF_AttributeGetAttPackSciComp  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
 
   if (present(isPresent)) then
     isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
@@ -14976,6 +16094,8 @@ subroutine ESMF_AttributeGetObjSciCompI8(target, name, value, defaultvalue, conv
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
+  print *, "ESMF_AttributeGetObjSciComp calling ESMF_Info2Get" !tdk:p
+
   call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -15007,6 +16127,9 @@ subroutine ESMF_AttributeGetAttPackSciCompCH(target, name, attpack, value, defau
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetAttPackSciComp  key=", key !tdk:p
+  print *, "ESMF_AttributeGetAttPackSciComp  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
 
   if (present(isPresent)) then
     isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
@@ -15055,6 +16178,8 @@ subroutine ESMF_AttributeGetObjSciCompCH(target, name, value, defaultvalue, conv
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
+  print *, "ESMF_AttributeGetObjSciComp calling ESMF_Info2Get" !tdk:p
+
   call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -15086,6 +16211,9 @@ subroutine ESMF_AttributeGetAttPackSciCompLG(target, name, attpack, value, defau
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetAttPackSciComp  key=", key !tdk:p
+  print *, "ESMF_AttributeGetAttPackSciComp  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
 
   if (present(isPresent)) then
     isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
@@ -15134,6 +16262,8 @@ subroutine ESMF_AttributeGetObjSciCompLG(target, name, value, defaultvalue, conv
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
+  print *, "ESMF_AttributeGetObjSciComp calling ESMF_Info2Get" !tdk:p
+
   call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -15165,6 +16295,9 @@ subroutine ESMF_AttributeGetAttPackDistGridR4(target, name, attpack, value, defa
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetAttPackDistGrid  key=", key !tdk:p
+  print *, "ESMF_AttributeGetAttPackDistGrid  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
 
   if (present(isPresent)) then
     isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
@@ -15213,6 +16346,8 @@ subroutine ESMF_AttributeGetObjDistGridR4(target, name, value, defaultvalue, con
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
+  print *, "ESMF_AttributeGetObjDistGrid calling ESMF_Info2Get" !tdk:p
+
   call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -15244,6 +16379,9 @@ subroutine ESMF_AttributeGetAttPackDistGridR8(target, name, attpack, value, defa
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetAttPackDistGrid  key=", key !tdk:p
+  print *, "ESMF_AttributeGetAttPackDistGrid  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
 
   if (present(isPresent)) then
     isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
@@ -15292,6 +16430,8 @@ subroutine ESMF_AttributeGetObjDistGridR8(target, name, value, defaultvalue, con
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
+  print *, "ESMF_AttributeGetObjDistGrid calling ESMF_Info2Get" !tdk:p
+
   call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -15323,6 +16463,9 @@ subroutine ESMF_AttributeGetAttPackDistGridI4(target, name, attpack, value, defa
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetAttPackDistGrid  key=", key !tdk:p
+  print *, "ESMF_AttributeGetAttPackDistGrid  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
 
   if (present(isPresent)) then
     isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
@@ -15371,6 +16514,8 @@ subroutine ESMF_AttributeGetObjDistGridI4(target, name, value, defaultvalue, con
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
+  print *, "ESMF_AttributeGetObjDistGrid calling ESMF_Info2Get" !tdk:p
+
   call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -15402,6 +16547,9 @@ subroutine ESMF_AttributeGetAttPackDistGridI8(target, name, attpack, value, defa
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetAttPackDistGrid  key=", key !tdk:p
+  print *, "ESMF_AttributeGetAttPackDistGrid  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
 
   if (present(isPresent)) then
     isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
@@ -15450,6 +16598,8 @@ subroutine ESMF_AttributeGetObjDistGridI8(target, name, value, defaultvalue, con
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
+  print *, "ESMF_AttributeGetObjDistGrid calling ESMF_Info2Get" !tdk:p
+
   call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -15481,6 +16631,9 @@ subroutine ESMF_AttributeGetAttPackDistGridCH(target, name, attpack, value, defa
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetAttPackDistGrid  key=", key !tdk:p
+  print *, "ESMF_AttributeGetAttPackDistGrid  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
 
   if (present(isPresent)) then
     isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
@@ -15529,6 +16682,8 @@ subroutine ESMF_AttributeGetObjDistGridCH(target, name, value, defaultvalue, con
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
+  print *, "ESMF_AttributeGetObjDistGrid calling ESMF_Info2Get" !tdk:p
+
   call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -15560,6 +16715,9 @@ subroutine ESMF_AttributeGetAttPackDistGridLG(target, name, attpack, value, defa
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetAttPackDistGrid  key=", key !tdk:p
+  print *, "ESMF_AttributeGetAttPackDistGrid  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
 
   if (present(isPresent)) then
     isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
@@ -15608,6 +16766,8 @@ subroutine ESMF_AttributeGetObjDistGridLG(target, name, value, defaultvalue, con
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
+  print *, "ESMF_AttributeGetObjDistGrid calling ESMF_Info2Get" !tdk:p
+
   call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -15639,6 +16799,9 @@ subroutine ESMF_AttributeGetAttPackFieldR4(target, name, attpack, value, default
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetAttPackField  key=", key !tdk:p
+  print *, "ESMF_AttributeGetAttPackField  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
 
   if (present(isPresent)) then
     isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
@@ -15687,6 +16850,8 @@ subroutine ESMF_AttributeGetObjFieldR4(target, name, value, defaultvalue, conven
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
+  print *, "ESMF_AttributeGetObjField calling ESMF_Info2Get" !tdk:p
+
   call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -15718,6 +16883,9 @@ subroutine ESMF_AttributeGetAttPackFieldR8(target, name, attpack, value, default
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetAttPackField  key=", key !tdk:p
+  print *, "ESMF_AttributeGetAttPackField  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
 
   if (present(isPresent)) then
     isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
@@ -15766,6 +16934,8 @@ subroutine ESMF_AttributeGetObjFieldR8(target, name, value, defaultvalue, conven
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
+  print *, "ESMF_AttributeGetObjField calling ESMF_Info2Get" !tdk:p
+
   call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -15797,6 +16967,9 @@ subroutine ESMF_AttributeGetAttPackFieldI4(target, name, attpack, value, default
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetAttPackField  key=", key !tdk:p
+  print *, "ESMF_AttributeGetAttPackField  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
 
   if (present(isPresent)) then
     isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
@@ -15845,6 +17018,8 @@ subroutine ESMF_AttributeGetObjFieldI4(target, name, value, defaultvalue, conven
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
+  print *, "ESMF_AttributeGetObjField calling ESMF_Info2Get" !tdk:p
+
   call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -15876,6 +17051,9 @@ subroutine ESMF_AttributeGetAttPackFieldI8(target, name, attpack, value, default
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetAttPackField  key=", key !tdk:p
+  print *, "ESMF_AttributeGetAttPackField  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
 
   if (present(isPresent)) then
     isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
@@ -15924,6 +17102,8 @@ subroutine ESMF_AttributeGetObjFieldI8(target, name, value, defaultvalue, conven
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
+  print *, "ESMF_AttributeGetObjField calling ESMF_Info2Get" !tdk:p
+
   call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -15955,6 +17135,9 @@ subroutine ESMF_AttributeGetAttPackFieldCH(target, name, attpack, value, default
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetAttPackField  key=", key !tdk:p
+  print *, "ESMF_AttributeGetAttPackField  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
 
   if (present(isPresent)) then
     isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
@@ -16003,6 +17186,8 @@ subroutine ESMF_AttributeGetObjFieldCH(target, name, value, defaultvalue, conven
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
+  print *, "ESMF_AttributeGetObjField calling ESMF_Info2Get" !tdk:p
+
   call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -16034,6 +17219,9 @@ subroutine ESMF_AttributeGetAttPackFieldLG(target, name, attpack, value, default
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetAttPackField  key=", key !tdk:p
+  print *, "ESMF_AttributeGetAttPackField  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
 
   if (present(isPresent)) then
     isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
@@ -16082,6 +17270,8 @@ subroutine ESMF_AttributeGetObjFieldLG(target, name, value, defaultvalue, conven
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
+  print *, "ESMF_AttributeGetObjField calling ESMF_Info2Get" !tdk:p
+
   call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -16113,6 +17303,9 @@ subroutine ESMF_AttributeGetAttPackFieldBundleR4(target, name, attpack, value, d
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetAttPackFieldBundle  key=", key !tdk:p
+  print *, "ESMF_AttributeGetAttPackFieldBundle  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
 
   if (present(isPresent)) then
     isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
@@ -16161,6 +17354,8 @@ subroutine ESMF_AttributeGetObjFieldBundleR4(target, name, value, defaultvalue, 
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
+  print *, "ESMF_AttributeGetObjFieldBundle calling ESMF_Info2Get" !tdk:p
+
   call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -16192,6 +17387,9 @@ subroutine ESMF_AttributeGetAttPackFieldBundleR8(target, name, attpack, value, d
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetAttPackFieldBundle  key=", key !tdk:p
+  print *, "ESMF_AttributeGetAttPackFieldBundle  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
 
   if (present(isPresent)) then
     isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
@@ -16240,6 +17438,8 @@ subroutine ESMF_AttributeGetObjFieldBundleR8(target, name, value, defaultvalue, 
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
+  print *, "ESMF_AttributeGetObjFieldBundle calling ESMF_Info2Get" !tdk:p
+
   call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -16271,6 +17471,9 @@ subroutine ESMF_AttributeGetAttPackFieldBundleI4(target, name, attpack, value, d
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetAttPackFieldBundle  key=", key !tdk:p
+  print *, "ESMF_AttributeGetAttPackFieldBundle  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
 
   if (present(isPresent)) then
     isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
@@ -16319,6 +17522,8 @@ subroutine ESMF_AttributeGetObjFieldBundleI4(target, name, value, defaultvalue, 
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
+  print *, "ESMF_AttributeGetObjFieldBundle calling ESMF_Info2Get" !tdk:p
+
   call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -16350,6 +17555,9 @@ subroutine ESMF_AttributeGetAttPackFieldBundleI8(target, name, attpack, value, d
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetAttPackFieldBundle  key=", key !tdk:p
+  print *, "ESMF_AttributeGetAttPackFieldBundle  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
 
   if (present(isPresent)) then
     isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
@@ -16398,6 +17606,8 @@ subroutine ESMF_AttributeGetObjFieldBundleI8(target, name, value, defaultvalue, 
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
+  print *, "ESMF_AttributeGetObjFieldBundle calling ESMF_Info2Get" !tdk:p
+
   call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -16429,6 +17639,9 @@ subroutine ESMF_AttributeGetAttPackFieldBundleCH(target, name, attpack, value, d
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetAttPackFieldBundle  key=", key !tdk:p
+  print *, "ESMF_AttributeGetAttPackFieldBundle  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
 
   if (present(isPresent)) then
     isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
@@ -16477,6 +17690,8 @@ subroutine ESMF_AttributeGetObjFieldBundleCH(target, name, value, defaultvalue, 
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
+  print *, "ESMF_AttributeGetObjFieldBundle calling ESMF_Info2Get" !tdk:p
+
   call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -16508,6 +17723,9 @@ subroutine ESMF_AttributeGetAttPackFieldBundleLG(target, name, attpack, value, d
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetAttPackFieldBundle  key=", key !tdk:p
+  print *, "ESMF_AttributeGetAttPackFieldBundle  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
 
   if (present(isPresent)) then
     isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
@@ -16556,6 +17774,8 @@ subroutine ESMF_AttributeGetObjFieldBundleLG(target, name, value, defaultvalue, 
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
+  print *, "ESMF_AttributeGetObjFieldBundle calling ESMF_Info2Get" !tdk:p
+
   call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -16587,6 +17807,9 @@ subroutine ESMF_AttributeGetAttPackGridR4(target, name, attpack, value, defaultv
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetAttPackGrid  key=", key !tdk:p
+  print *, "ESMF_AttributeGetAttPackGrid  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
 
   if (present(isPresent)) then
     isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
@@ -16635,6 +17858,8 @@ subroutine ESMF_AttributeGetObjGridR4(target, name, value, defaultvalue, convent
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
+  print *, "ESMF_AttributeGetObjGrid calling ESMF_Info2Get" !tdk:p
+
   call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -16666,6 +17891,9 @@ subroutine ESMF_AttributeGetAttPackGridR8(target, name, attpack, value, defaultv
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetAttPackGrid  key=", key !tdk:p
+  print *, "ESMF_AttributeGetAttPackGrid  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
 
   if (present(isPresent)) then
     isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
@@ -16714,6 +17942,8 @@ subroutine ESMF_AttributeGetObjGridR8(target, name, value, defaultvalue, convent
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
+  print *, "ESMF_AttributeGetObjGrid calling ESMF_Info2Get" !tdk:p
+
   call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -16745,6 +17975,9 @@ subroutine ESMF_AttributeGetAttPackGridI4(target, name, attpack, value, defaultv
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetAttPackGrid  key=", key !tdk:p
+  print *, "ESMF_AttributeGetAttPackGrid  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
 
   if (present(isPresent)) then
     isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
@@ -16793,6 +18026,8 @@ subroutine ESMF_AttributeGetObjGridI4(target, name, value, defaultvalue, convent
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
+  print *, "ESMF_AttributeGetObjGrid calling ESMF_Info2Get" !tdk:p
+
   call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -16824,6 +18059,9 @@ subroutine ESMF_AttributeGetAttPackGridI8(target, name, attpack, value, defaultv
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetAttPackGrid  key=", key !tdk:p
+  print *, "ESMF_AttributeGetAttPackGrid  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
 
   if (present(isPresent)) then
     isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
@@ -16872,6 +18110,8 @@ subroutine ESMF_AttributeGetObjGridI8(target, name, value, defaultvalue, convent
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
+  print *, "ESMF_AttributeGetObjGrid calling ESMF_Info2Get" !tdk:p
+
   call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -16903,6 +18143,9 @@ subroutine ESMF_AttributeGetAttPackGridCH(target, name, attpack, value, defaultv
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetAttPackGrid  key=", key !tdk:p
+  print *, "ESMF_AttributeGetAttPackGrid  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
 
   if (present(isPresent)) then
     isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
@@ -16951,6 +18194,8 @@ subroutine ESMF_AttributeGetObjGridCH(target, name, value, defaultvalue, convent
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
+  print *, "ESMF_AttributeGetObjGrid calling ESMF_Info2Get" !tdk:p
+
   call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -16982,6 +18227,9 @@ subroutine ESMF_AttributeGetAttPackGridLG(target, name, attpack, value, defaultv
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetAttPackGrid  key=", key !tdk:p
+  print *, "ESMF_AttributeGetAttPackGrid  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
 
   if (present(isPresent)) then
     isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
@@ -17030,6 +18278,8 @@ subroutine ESMF_AttributeGetObjGridLG(target, name, value, defaultvalue, convent
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
+  print *, "ESMF_AttributeGetObjGrid calling ESMF_Info2Get" !tdk:p
+
   call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -17061,6 +18311,9 @@ subroutine ESMF_AttributeGetAttPackStateR4(target, name, attpack, value, default
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetAttPackState  key=", key !tdk:p
+  print *, "ESMF_AttributeGetAttPackState  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
 
   if (present(isPresent)) then
     isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
@@ -17109,6 +18362,8 @@ subroutine ESMF_AttributeGetObjStateR4(target, name, value, defaultvalue, conven
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
+  print *, "ESMF_AttributeGetObjState calling ESMF_Info2Get" !tdk:p
+
   call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -17140,6 +18395,9 @@ subroutine ESMF_AttributeGetAttPackStateR8(target, name, attpack, value, default
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetAttPackState  key=", key !tdk:p
+  print *, "ESMF_AttributeGetAttPackState  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
 
   if (present(isPresent)) then
     isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
@@ -17188,6 +18446,8 @@ subroutine ESMF_AttributeGetObjStateR8(target, name, value, defaultvalue, conven
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
+  print *, "ESMF_AttributeGetObjState calling ESMF_Info2Get" !tdk:p
+
   call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -17219,6 +18479,9 @@ subroutine ESMF_AttributeGetAttPackStateI4(target, name, attpack, value, default
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetAttPackState  key=", key !tdk:p
+  print *, "ESMF_AttributeGetAttPackState  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
 
   if (present(isPresent)) then
     isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
@@ -17267,6 +18530,8 @@ subroutine ESMF_AttributeGetObjStateI4(target, name, value, defaultvalue, conven
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
+  print *, "ESMF_AttributeGetObjState calling ESMF_Info2Get" !tdk:p
+
   call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -17298,6 +18563,9 @@ subroutine ESMF_AttributeGetAttPackStateI8(target, name, attpack, value, default
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetAttPackState  key=", key !tdk:p
+  print *, "ESMF_AttributeGetAttPackState  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
 
   if (present(isPresent)) then
     isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
@@ -17346,6 +18614,8 @@ subroutine ESMF_AttributeGetObjStateI8(target, name, value, defaultvalue, conven
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
+  print *, "ESMF_AttributeGetObjState calling ESMF_Info2Get" !tdk:p
+
   call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -17377,6 +18647,9 @@ subroutine ESMF_AttributeGetAttPackStateCH(target, name, attpack, value, default
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetAttPackState  key=", key !tdk:p
+  print *, "ESMF_AttributeGetAttPackState  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
 
   if (present(isPresent)) then
     isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
@@ -17425,6 +18698,8 @@ subroutine ESMF_AttributeGetObjStateCH(target, name, value, defaultvalue, conven
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
+  print *, "ESMF_AttributeGetObjState calling ESMF_Info2Get" !tdk:p
+
   call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -17456,6 +18731,9 @@ subroutine ESMF_AttributeGetAttPackStateLG(target, name, attpack, value, default
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetAttPackState  key=", key !tdk:p
+  print *, "ESMF_AttributeGetAttPackState  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
 
   if (present(isPresent)) then
     isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
@@ -17504,6 +18782,8 @@ subroutine ESMF_AttributeGetObjStateLG(target, name, value, defaultvalue, conven
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
+  print *, "ESMF_AttributeGetObjState calling ESMF_Info2Get" !tdk:p
+
   call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -17535,6 +18815,9 @@ subroutine ESMF_AttributeGetAttPackLocStreamR4(target, name, attpack, value, def
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetAttPackLocStream  key=", key !tdk:p
+  print *, "ESMF_AttributeGetAttPackLocStream  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
 
   if (present(isPresent)) then
     isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
@@ -17583,6 +18866,8 @@ subroutine ESMF_AttributeGetObjLocStreamR4(target, name, value, defaultvalue, co
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
+  print *, "ESMF_AttributeGetObjLocStream calling ESMF_Info2Get" !tdk:p
+
   call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -17614,6 +18899,9 @@ subroutine ESMF_AttributeGetAttPackLocStreamR8(target, name, attpack, value, def
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetAttPackLocStream  key=", key !tdk:p
+  print *, "ESMF_AttributeGetAttPackLocStream  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
 
   if (present(isPresent)) then
     isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
@@ -17662,6 +18950,8 @@ subroutine ESMF_AttributeGetObjLocStreamR8(target, name, value, defaultvalue, co
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
+  print *, "ESMF_AttributeGetObjLocStream calling ESMF_Info2Get" !tdk:p
+
   call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -17693,6 +18983,9 @@ subroutine ESMF_AttributeGetAttPackLocStreamI4(target, name, attpack, value, def
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetAttPackLocStream  key=", key !tdk:p
+  print *, "ESMF_AttributeGetAttPackLocStream  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
 
   if (present(isPresent)) then
     isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
@@ -17741,6 +19034,8 @@ subroutine ESMF_AttributeGetObjLocStreamI4(target, name, value, defaultvalue, co
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
+  print *, "ESMF_AttributeGetObjLocStream calling ESMF_Info2Get" !tdk:p
+
   call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -17772,6 +19067,9 @@ subroutine ESMF_AttributeGetAttPackLocStreamI8(target, name, attpack, value, def
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetAttPackLocStream  key=", key !tdk:p
+  print *, "ESMF_AttributeGetAttPackLocStream  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
 
   if (present(isPresent)) then
     isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
@@ -17820,6 +19118,8 @@ subroutine ESMF_AttributeGetObjLocStreamI8(target, name, value, defaultvalue, co
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
+  print *, "ESMF_AttributeGetObjLocStream calling ESMF_Info2Get" !tdk:p
+
   call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -17851,6 +19151,9 @@ subroutine ESMF_AttributeGetAttPackLocStreamCH(target, name, attpack, value, def
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetAttPackLocStream  key=", key !tdk:p
+  print *, "ESMF_AttributeGetAttPackLocStream  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
 
   if (present(isPresent)) then
     isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
@@ -17899,6 +19202,8 @@ subroutine ESMF_AttributeGetObjLocStreamCH(target, name, value, defaultvalue, co
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
+  print *, "ESMF_AttributeGetObjLocStream calling ESMF_Info2Get" !tdk:p
+
   call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -17930,6 +19235,9 @@ subroutine ESMF_AttributeGetAttPackLocStreamLG(target, name, attpack, value, def
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetAttPackLocStream  key=", key !tdk:p
+  print *, "ESMF_AttributeGetAttPackLocStream  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
 
   if (present(isPresent)) then
     isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
@@ -17978,6 +19286,8 @@ subroutine ESMF_AttributeGetObjLocStreamLG(target, name, value, defaultvalue, co
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
+  print *, "ESMF_AttributeGetObjLocStream calling ESMF_Info2Get" !tdk:p
+
   call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -18016,8 +19326,15 @@ subroutine ESMF_AttributeGetListAttPackArrayR4(target, name, attpack, valueList,
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  print *, "ESMF_AttributeGetListAttPackArray  print=", key !tdk:p
+  call ESMF_Info2Print(attpack%getPayload()) !tdk:p
+  print *, "ESMF_AttributeGetListAttPackArray  key=", key !tdk:p
+  print *, "ESMF_AttributeGetListAttPackArray  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
+
   local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetListAttPackArray  local_isPresent=", local_isPresent !tdk:p
 
   if (present(isPresent)) isPresent = local_isPresent
 
@@ -18133,8 +19450,15 @@ subroutine ESMF_AttributeGetListAttPackArrayR8(target, name, attpack, valueList,
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  print *, "ESMF_AttributeGetListAttPackArray  print=", key !tdk:p
+  call ESMF_Info2Print(attpack%getPayload()) !tdk:p
+  print *, "ESMF_AttributeGetListAttPackArray  key=", key !tdk:p
+  print *, "ESMF_AttributeGetListAttPackArray  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
+
   local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetListAttPackArray  local_isPresent=", local_isPresent !tdk:p
 
   if (present(isPresent)) isPresent = local_isPresent
 
@@ -18250,8 +19574,15 @@ subroutine ESMF_AttributeGetListAttPackArrayI4(target, name, attpack, valueList,
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  print *, "ESMF_AttributeGetListAttPackArray  print=", key !tdk:p
+  call ESMF_Info2Print(attpack%getPayload()) !tdk:p
+  print *, "ESMF_AttributeGetListAttPackArray  key=", key !tdk:p
+  print *, "ESMF_AttributeGetListAttPackArray  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
+
   local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetListAttPackArray  local_isPresent=", local_isPresent !tdk:p
 
   if (present(isPresent)) isPresent = local_isPresent
 
@@ -18367,8 +19698,15 @@ subroutine ESMF_AttributeGetListAttPackArrayI8(target, name, attpack, valueList,
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  print *, "ESMF_AttributeGetListAttPackArray  print=", key !tdk:p
+  call ESMF_Info2Print(attpack%getPayload()) !tdk:p
+  print *, "ESMF_AttributeGetListAttPackArray  key=", key !tdk:p
+  print *, "ESMF_AttributeGetListAttPackArray  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
+
   local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetListAttPackArray  local_isPresent=", local_isPresent !tdk:p
 
   if (present(isPresent)) isPresent = local_isPresent
 
@@ -18484,8 +19822,15 @@ subroutine ESMF_AttributeGetListAttPackArrayCH(target, name, attpack, valueList,
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  print *, "ESMF_AttributeGetListAttPackArray  print=", key !tdk:p
+  call ESMF_Info2Print(attpack%getPayload()) !tdk:p
+  print *, "ESMF_AttributeGetListAttPackArray  key=", key !tdk:p
+  print *, "ESMF_AttributeGetListAttPackArray  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
+
   local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetListAttPackArray  local_isPresent=", local_isPresent !tdk:p
 
   if (present(isPresent)) isPresent = local_isPresent
 
@@ -18601,8 +19946,15 @@ subroutine ESMF_AttributeGetListAttPackArrayLG(target, name, attpack, valueList,
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  print *, "ESMF_AttributeGetListAttPackArray  print=", key !tdk:p
+  call ESMF_Info2Print(attpack%getPayload()) !tdk:p
+  print *, "ESMF_AttributeGetListAttPackArray  key=", key !tdk:p
+  print *, "ESMF_AttributeGetListAttPackArray  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
+
   local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetListAttPackArray  local_isPresent=", local_isPresent !tdk:p
 
   if (present(isPresent)) isPresent = local_isPresent
 
@@ -18718,8 +20070,15 @@ subroutine ESMF_AttributeGetListAttPackArrayBundleR4(target, name, attpack, valu
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  print *, "ESMF_AttributeGetListAttPackArrayBundle  print=", key !tdk:p
+  call ESMF_Info2Print(attpack%getPayload()) !tdk:p
+  print *, "ESMF_AttributeGetListAttPackArrayBundle  key=", key !tdk:p
+  print *, "ESMF_AttributeGetListAttPackArrayBundle  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
+
   local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetListAttPackArrayBundle  local_isPresent=", local_isPresent !tdk:p
 
   if (present(isPresent)) isPresent = local_isPresent
 
@@ -18835,8 +20194,15 @@ subroutine ESMF_AttributeGetListAttPackArrayBundleR8(target, name, attpack, valu
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  print *, "ESMF_AttributeGetListAttPackArrayBundle  print=", key !tdk:p
+  call ESMF_Info2Print(attpack%getPayload()) !tdk:p
+  print *, "ESMF_AttributeGetListAttPackArrayBundle  key=", key !tdk:p
+  print *, "ESMF_AttributeGetListAttPackArrayBundle  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
+
   local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetListAttPackArrayBundle  local_isPresent=", local_isPresent !tdk:p
 
   if (present(isPresent)) isPresent = local_isPresent
 
@@ -18952,8 +20318,15 @@ subroutine ESMF_AttributeGetListAttPackArrayBundleI4(target, name, attpack, valu
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  print *, "ESMF_AttributeGetListAttPackArrayBundle  print=", key !tdk:p
+  call ESMF_Info2Print(attpack%getPayload()) !tdk:p
+  print *, "ESMF_AttributeGetListAttPackArrayBundle  key=", key !tdk:p
+  print *, "ESMF_AttributeGetListAttPackArrayBundle  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
+
   local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetListAttPackArrayBundle  local_isPresent=", local_isPresent !tdk:p
 
   if (present(isPresent)) isPresent = local_isPresent
 
@@ -19069,8 +20442,15 @@ subroutine ESMF_AttributeGetListAttPackArrayBundleI8(target, name, attpack, valu
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  print *, "ESMF_AttributeGetListAttPackArrayBundle  print=", key !tdk:p
+  call ESMF_Info2Print(attpack%getPayload()) !tdk:p
+  print *, "ESMF_AttributeGetListAttPackArrayBundle  key=", key !tdk:p
+  print *, "ESMF_AttributeGetListAttPackArrayBundle  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
+
   local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetListAttPackArrayBundle  local_isPresent=", local_isPresent !tdk:p
 
   if (present(isPresent)) isPresent = local_isPresent
 
@@ -19186,8 +20566,15 @@ subroutine ESMF_AttributeGetListAttPackArrayBundleCH(target, name, attpack, valu
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  print *, "ESMF_AttributeGetListAttPackArrayBundle  print=", key !tdk:p
+  call ESMF_Info2Print(attpack%getPayload()) !tdk:p
+  print *, "ESMF_AttributeGetListAttPackArrayBundle  key=", key !tdk:p
+  print *, "ESMF_AttributeGetListAttPackArrayBundle  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
+
   local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetListAttPackArrayBundle  local_isPresent=", local_isPresent !tdk:p
 
   if (present(isPresent)) isPresent = local_isPresent
 
@@ -19303,8 +20690,15 @@ subroutine ESMF_AttributeGetListAttPackArrayBundleLG(target, name, attpack, valu
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  print *, "ESMF_AttributeGetListAttPackArrayBundle  print=", key !tdk:p
+  call ESMF_Info2Print(attpack%getPayload()) !tdk:p
+  print *, "ESMF_AttributeGetListAttPackArrayBundle  key=", key !tdk:p
+  print *, "ESMF_AttributeGetListAttPackArrayBundle  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
+
   local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetListAttPackArrayBundle  local_isPresent=", local_isPresent !tdk:p
 
   if (present(isPresent)) isPresent = local_isPresent
 
@@ -19420,8 +20814,15 @@ subroutine ESMF_AttributeGetListAttPackCplCompR4(target, name, attpack, valueLis
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  print *, "ESMF_AttributeGetListAttPackCplComp  print=", key !tdk:p
+  call ESMF_Info2Print(attpack%getPayload()) !tdk:p
+  print *, "ESMF_AttributeGetListAttPackCplComp  key=", key !tdk:p
+  print *, "ESMF_AttributeGetListAttPackCplComp  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
+
   local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetListAttPackCplComp  local_isPresent=", local_isPresent !tdk:p
 
   if (present(isPresent)) isPresent = local_isPresent
 
@@ -19537,8 +20938,15 @@ subroutine ESMF_AttributeGetListAttPackCplCompR8(target, name, attpack, valueLis
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  print *, "ESMF_AttributeGetListAttPackCplComp  print=", key !tdk:p
+  call ESMF_Info2Print(attpack%getPayload()) !tdk:p
+  print *, "ESMF_AttributeGetListAttPackCplComp  key=", key !tdk:p
+  print *, "ESMF_AttributeGetListAttPackCplComp  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
+
   local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetListAttPackCplComp  local_isPresent=", local_isPresent !tdk:p
 
   if (present(isPresent)) isPresent = local_isPresent
 
@@ -19654,8 +21062,15 @@ subroutine ESMF_AttributeGetListAttPackCplCompI4(target, name, attpack, valueLis
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  print *, "ESMF_AttributeGetListAttPackCplComp  print=", key !tdk:p
+  call ESMF_Info2Print(attpack%getPayload()) !tdk:p
+  print *, "ESMF_AttributeGetListAttPackCplComp  key=", key !tdk:p
+  print *, "ESMF_AttributeGetListAttPackCplComp  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
+
   local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetListAttPackCplComp  local_isPresent=", local_isPresent !tdk:p
 
   if (present(isPresent)) isPresent = local_isPresent
 
@@ -19771,8 +21186,15 @@ subroutine ESMF_AttributeGetListAttPackCplCompI8(target, name, attpack, valueLis
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  print *, "ESMF_AttributeGetListAttPackCplComp  print=", key !tdk:p
+  call ESMF_Info2Print(attpack%getPayload()) !tdk:p
+  print *, "ESMF_AttributeGetListAttPackCplComp  key=", key !tdk:p
+  print *, "ESMF_AttributeGetListAttPackCplComp  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
+
   local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetListAttPackCplComp  local_isPresent=", local_isPresent !tdk:p
 
   if (present(isPresent)) isPresent = local_isPresent
 
@@ -19888,8 +21310,15 @@ subroutine ESMF_AttributeGetListAttPackCplCompCH(target, name, attpack, valueLis
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  print *, "ESMF_AttributeGetListAttPackCplComp  print=", key !tdk:p
+  call ESMF_Info2Print(attpack%getPayload()) !tdk:p
+  print *, "ESMF_AttributeGetListAttPackCplComp  key=", key !tdk:p
+  print *, "ESMF_AttributeGetListAttPackCplComp  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
+
   local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetListAttPackCplComp  local_isPresent=", local_isPresent !tdk:p
 
   if (present(isPresent)) isPresent = local_isPresent
 
@@ -20005,8 +21434,15 @@ subroutine ESMF_AttributeGetListAttPackCplCompLG(target, name, attpack, valueLis
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  print *, "ESMF_AttributeGetListAttPackCplComp  print=", key !tdk:p
+  call ESMF_Info2Print(attpack%getPayload()) !tdk:p
+  print *, "ESMF_AttributeGetListAttPackCplComp  key=", key !tdk:p
+  print *, "ESMF_AttributeGetListAttPackCplComp  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
+
   local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetListAttPackCplComp  local_isPresent=", local_isPresent !tdk:p
 
   if (present(isPresent)) isPresent = local_isPresent
 
@@ -20122,8 +21558,15 @@ subroutine ESMF_AttributeGetListAttPackGridCompR4(target, name, attpack, valueLi
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  print *, "ESMF_AttributeGetListAttPackGridComp  print=", key !tdk:p
+  call ESMF_Info2Print(attpack%getPayload()) !tdk:p
+  print *, "ESMF_AttributeGetListAttPackGridComp  key=", key !tdk:p
+  print *, "ESMF_AttributeGetListAttPackGridComp  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
+
   local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetListAttPackGridComp  local_isPresent=", local_isPresent !tdk:p
 
   if (present(isPresent)) isPresent = local_isPresent
 
@@ -20239,8 +21682,15 @@ subroutine ESMF_AttributeGetListAttPackGridCompR8(target, name, attpack, valueLi
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  print *, "ESMF_AttributeGetListAttPackGridComp  print=", key !tdk:p
+  call ESMF_Info2Print(attpack%getPayload()) !tdk:p
+  print *, "ESMF_AttributeGetListAttPackGridComp  key=", key !tdk:p
+  print *, "ESMF_AttributeGetListAttPackGridComp  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
+
   local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetListAttPackGridComp  local_isPresent=", local_isPresent !tdk:p
 
   if (present(isPresent)) isPresent = local_isPresent
 
@@ -20356,8 +21806,15 @@ subroutine ESMF_AttributeGetListAttPackGridCompI4(target, name, attpack, valueLi
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  print *, "ESMF_AttributeGetListAttPackGridComp  print=", key !tdk:p
+  call ESMF_Info2Print(attpack%getPayload()) !tdk:p
+  print *, "ESMF_AttributeGetListAttPackGridComp  key=", key !tdk:p
+  print *, "ESMF_AttributeGetListAttPackGridComp  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
+
   local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetListAttPackGridComp  local_isPresent=", local_isPresent !tdk:p
 
   if (present(isPresent)) isPresent = local_isPresent
 
@@ -20473,8 +21930,15 @@ subroutine ESMF_AttributeGetListAttPackGridCompI8(target, name, attpack, valueLi
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  print *, "ESMF_AttributeGetListAttPackGridComp  print=", key !tdk:p
+  call ESMF_Info2Print(attpack%getPayload()) !tdk:p
+  print *, "ESMF_AttributeGetListAttPackGridComp  key=", key !tdk:p
+  print *, "ESMF_AttributeGetListAttPackGridComp  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
+
   local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetListAttPackGridComp  local_isPresent=", local_isPresent !tdk:p
 
   if (present(isPresent)) isPresent = local_isPresent
 
@@ -20590,8 +22054,15 @@ subroutine ESMF_AttributeGetListAttPackGridCompCH(target, name, attpack, valueLi
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  print *, "ESMF_AttributeGetListAttPackGridComp  print=", key !tdk:p
+  call ESMF_Info2Print(attpack%getPayload()) !tdk:p
+  print *, "ESMF_AttributeGetListAttPackGridComp  key=", key !tdk:p
+  print *, "ESMF_AttributeGetListAttPackGridComp  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
+
   local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetListAttPackGridComp  local_isPresent=", local_isPresent !tdk:p
 
   if (present(isPresent)) isPresent = local_isPresent
 
@@ -20707,8 +22178,15 @@ subroutine ESMF_AttributeGetListAttPackGridCompLG(target, name, attpack, valueLi
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  print *, "ESMF_AttributeGetListAttPackGridComp  print=", key !tdk:p
+  call ESMF_Info2Print(attpack%getPayload()) !tdk:p
+  print *, "ESMF_AttributeGetListAttPackGridComp  key=", key !tdk:p
+  print *, "ESMF_AttributeGetListAttPackGridComp  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
+
   local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetListAttPackGridComp  local_isPresent=", local_isPresent !tdk:p
 
   if (present(isPresent)) isPresent = local_isPresent
 
@@ -20824,8 +22302,15 @@ subroutine ESMF_AttributeGetListAttPackSciCompR4(target, name, attpack, valueLis
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  print *, "ESMF_AttributeGetListAttPackSciComp  print=", key !tdk:p
+  call ESMF_Info2Print(attpack%getPayload()) !tdk:p
+  print *, "ESMF_AttributeGetListAttPackSciComp  key=", key !tdk:p
+  print *, "ESMF_AttributeGetListAttPackSciComp  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
+
   local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetListAttPackSciComp  local_isPresent=", local_isPresent !tdk:p
 
   if (present(isPresent)) isPresent = local_isPresent
 
@@ -20941,8 +22426,15 @@ subroutine ESMF_AttributeGetListAttPackSciCompR8(target, name, attpack, valueLis
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  print *, "ESMF_AttributeGetListAttPackSciComp  print=", key !tdk:p
+  call ESMF_Info2Print(attpack%getPayload()) !tdk:p
+  print *, "ESMF_AttributeGetListAttPackSciComp  key=", key !tdk:p
+  print *, "ESMF_AttributeGetListAttPackSciComp  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
+
   local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetListAttPackSciComp  local_isPresent=", local_isPresent !tdk:p
 
   if (present(isPresent)) isPresent = local_isPresent
 
@@ -21058,8 +22550,15 @@ subroutine ESMF_AttributeGetListAttPackSciCompI4(target, name, attpack, valueLis
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  print *, "ESMF_AttributeGetListAttPackSciComp  print=", key !tdk:p
+  call ESMF_Info2Print(attpack%getPayload()) !tdk:p
+  print *, "ESMF_AttributeGetListAttPackSciComp  key=", key !tdk:p
+  print *, "ESMF_AttributeGetListAttPackSciComp  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
+
   local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetListAttPackSciComp  local_isPresent=", local_isPresent !tdk:p
 
   if (present(isPresent)) isPresent = local_isPresent
 
@@ -21175,8 +22674,15 @@ subroutine ESMF_AttributeGetListAttPackSciCompI8(target, name, attpack, valueLis
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  print *, "ESMF_AttributeGetListAttPackSciComp  print=", key !tdk:p
+  call ESMF_Info2Print(attpack%getPayload()) !tdk:p
+  print *, "ESMF_AttributeGetListAttPackSciComp  key=", key !tdk:p
+  print *, "ESMF_AttributeGetListAttPackSciComp  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
+
   local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetListAttPackSciComp  local_isPresent=", local_isPresent !tdk:p
 
   if (present(isPresent)) isPresent = local_isPresent
 
@@ -21292,8 +22798,15 @@ subroutine ESMF_AttributeGetListAttPackSciCompCH(target, name, attpack, valueLis
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  print *, "ESMF_AttributeGetListAttPackSciComp  print=", key !tdk:p
+  call ESMF_Info2Print(attpack%getPayload()) !tdk:p
+  print *, "ESMF_AttributeGetListAttPackSciComp  key=", key !tdk:p
+  print *, "ESMF_AttributeGetListAttPackSciComp  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
+
   local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetListAttPackSciComp  local_isPresent=", local_isPresent !tdk:p
 
   if (present(isPresent)) isPresent = local_isPresent
 
@@ -21409,8 +22922,15 @@ subroutine ESMF_AttributeGetListAttPackSciCompLG(target, name, attpack, valueLis
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  print *, "ESMF_AttributeGetListAttPackSciComp  print=", key !tdk:p
+  call ESMF_Info2Print(attpack%getPayload()) !tdk:p
+  print *, "ESMF_AttributeGetListAttPackSciComp  key=", key !tdk:p
+  print *, "ESMF_AttributeGetListAttPackSciComp  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
+
   local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetListAttPackSciComp  local_isPresent=", local_isPresent !tdk:p
 
   if (present(isPresent)) isPresent = local_isPresent
 
@@ -21526,8 +23046,15 @@ subroutine ESMF_AttributeGetListAttPackDistGridR4(target, name, attpack, valueLi
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  print *, "ESMF_AttributeGetListAttPackDistGrid  print=", key !tdk:p
+  call ESMF_Info2Print(attpack%getPayload()) !tdk:p
+  print *, "ESMF_AttributeGetListAttPackDistGrid  key=", key !tdk:p
+  print *, "ESMF_AttributeGetListAttPackDistGrid  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
+
   local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetListAttPackDistGrid  local_isPresent=", local_isPresent !tdk:p
 
   if (present(isPresent)) isPresent = local_isPresent
 
@@ -21643,8 +23170,15 @@ subroutine ESMF_AttributeGetListAttPackDistGridR8(target, name, attpack, valueLi
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  print *, "ESMF_AttributeGetListAttPackDistGrid  print=", key !tdk:p
+  call ESMF_Info2Print(attpack%getPayload()) !tdk:p
+  print *, "ESMF_AttributeGetListAttPackDistGrid  key=", key !tdk:p
+  print *, "ESMF_AttributeGetListAttPackDistGrid  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
+
   local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetListAttPackDistGrid  local_isPresent=", local_isPresent !tdk:p
 
   if (present(isPresent)) isPresent = local_isPresent
 
@@ -21760,8 +23294,15 @@ subroutine ESMF_AttributeGetListAttPackDistGridI4(target, name, attpack, valueLi
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  print *, "ESMF_AttributeGetListAttPackDistGrid  print=", key !tdk:p
+  call ESMF_Info2Print(attpack%getPayload()) !tdk:p
+  print *, "ESMF_AttributeGetListAttPackDistGrid  key=", key !tdk:p
+  print *, "ESMF_AttributeGetListAttPackDistGrid  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
+
   local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetListAttPackDistGrid  local_isPresent=", local_isPresent !tdk:p
 
   if (present(isPresent)) isPresent = local_isPresent
 
@@ -21877,8 +23418,15 @@ subroutine ESMF_AttributeGetListAttPackDistGridI8(target, name, attpack, valueLi
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  print *, "ESMF_AttributeGetListAttPackDistGrid  print=", key !tdk:p
+  call ESMF_Info2Print(attpack%getPayload()) !tdk:p
+  print *, "ESMF_AttributeGetListAttPackDistGrid  key=", key !tdk:p
+  print *, "ESMF_AttributeGetListAttPackDistGrid  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
+
   local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetListAttPackDistGrid  local_isPresent=", local_isPresent !tdk:p
 
   if (present(isPresent)) isPresent = local_isPresent
 
@@ -21994,8 +23542,15 @@ subroutine ESMF_AttributeGetListAttPackDistGridCH(target, name, attpack, valueLi
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  print *, "ESMF_AttributeGetListAttPackDistGrid  print=", key !tdk:p
+  call ESMF_Info2Print(attpack%getPayload()) !tdk:p
+  print *, "ESMF_AttributeGetListAttPackDistGrid  key=", key !tdk:p
+  print *, "ESMF_AttributeGetListAttPackDistGrid  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
+
   local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetListAttPackDistGrid  local_isPresent=", local_isPresent !tdk:p
 
   if (present(isPresent)) isPresent = local_isPresent
 
@@ -22111,8 +23666,15 @@ subroutine ESMF_AttributeGetListAttPackDistGridLG(target, name, attpack, valueLi
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  print *, "ESMF_AttributeGetListAttPackDistGrid  print=", key !tdk:p
+  call ESMF_Info2Print(attpack%getPayload()) !tdk:p
+  print *, "ESMF_AttributeGetListAttPackDistGrid  key=", key !tdk:p
+  print *, "ESMF_AttributeGetListAttPackDistGrid  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
+
   local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetListAttPackDistGrid  local_isPresent=", local_isPresent !tdk:p
 
   if (present(isPresent)) isPresent = local_isPresent
 
@@ -22228,8 +23790,15 @@ subroutine ESMF_AttributeGetListAttPackFieldR4(target, name, attpack, valueList,
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  print *, "ESMF_AttributeGetListAttPackField  print=", key !tdk:p
+  call ESMF_Info2Print(attpack%getPayload()) !tdk:p
+  print *, "ESMF_AttributeGetListAttPackField  key=", key !tdk:p
+  print *, "ESMF_AttributeGetListAttPackField  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
+
   local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetListAttPackField  local_isPresent=", local_isPresent !tdk:p
 
   if (present(isPresent)) isPresent = local_isPresent
 
@@ -22345,8 +23914,15 @@ subroutine ESMF_AttributeGetListAttPackFieldR8(target, name, attpack, valueList,
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  print *, "ESMF_AttributeGetListAttPackField  print=", key !tdk:p
+  call ESMF_Info2Print(attpack%getPayload()) !tdk:p
+  print *, "ESMF_AttributeGetListAttPackField  key=", key !tdk:p
+  print *, "ESMF_AttributeGetListAttPackField  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
+
   local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetListAttPackField  local_isPresent=", local_isPresent !tdk:p
 
   if (present(isPresent)) isPresent = local_isPresent
 
@@ -22462,8 +24038,15 @@ subroutine ESMF_AttributeGetListAttPackFieldI4(target, name, attpack, valueList,
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  print *, "ESMF_AttributeGetListAttPackField  print=", key !tdk:p
+  call ESMF_Info2Print(attpack%getPayload()) !tdk:p
+  print *, "ESMF_AttributeGetListAttPackField  key=", key !tdk:p
+  print *, "ESMF_AttributeGetListAttPackField  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
+
   local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetListAttPackField  local_isPresent=", local_isPresent !tdk:p
 
   if (present(isPresent)) isPresent = local_isPresent
 
@@ -22579,8 +24162,15 @@ subroutine ESMF_AttributeGetListAttPackFieldI8(target, name, attpack, valueList,
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  print *, "ESMF_AttributeGetListAttPackField  print=", key !tdk:p
+  call ESMF_Info2Print(attpack%getPayload()) !tdk:p
+  print *, "ESMF_AttributeGetListAttPackField  key=", key !tdk:p
+  print *, "ESMF_AttributeGetListAttPackField  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
+
   local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetListAttPackField  local_isPresent=", local_isPresent !tdk:p
 
   if (present(isPresent)) isPresent = local_isPresent
 
@@ -22696,8 +24286,15 @@ subroutine ESMF_AttributeGetListAttPackFieldCH(target, name, attpack, valueList,
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  print *, "ESMF_AttributeGetListAttPackField  print=", key !tdk:p
+  call ESMF_Info2Print(attpack%getPayload()) !tdk:p
+  print *, "ESMF_AttributeGetListAttPackField  key=", key !tdk:p
+  print *, "ESMF_AttributeGetListAttPackField  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
+
   local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetListAttPackField  local_isPresent=", local_isPresent !tdk:p
 
   if (present(isPresent)) isPresent = local_isPresent
 
@@ -22813,8 +24410,15 @@ subroutine ESMF_AttributeGetListAttPackFieldLG(target, name, attpack, valueList,
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  print *, "ESMF_AttributeGetListAttPackField  print=", key !tdk:p
+  call ESMF_Info2Print(attpack%getPayload()) !tdk:p
+  print *, "ESMF_AttributeGetListAttPackField  key=", key !tdk:p
+  print *, "ESMF_AttributeGetListAttPackField  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
+
   local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetListAttPackField  local_isPresent=", local_isPresent !tdk:p
 
   if (present(isPresent)) isPresent = local_isPresent
 
@@ -22930,8 +24534,15 @@ subroutine ESMF_AttributeGetListAttPackFieldBundleR4(target, name, attpack, valu
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  print *, "ESMF_AttributeGetListAttPackFieldBundle  print=", key !tdk:p
+  call ESMF_Info2Print(attpack%getPayload()) !tdk:p
+  print *, "ESMF_AttributeGetListAttPackFieldBundle  key=", key !tdk:p
+  print *, "ESMF_AttributeGetListAttPackFieldBundle  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
+
   local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetListAttPackFieldBundle  local_isPresent=", local_isPresent !tdk:p
 
   if (present(isPresent)) isPresent = local_isPresent
 
@@ -23047,8 +24658,15 @@ subroutine ESMF_AttributeGetListAttPackFieldBundleR8(target, name, attpack, valu
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  print *, "ESMF_AttributeGetListAttPackFieldBundle  print=", key !tdk:p
+  call ESMF_Info2Print(attpack%getPayload()) !tdk:p
+  print *, "ESMF_AttributeGetListAttPackFieldBundle  key=", key !tdk:p
+  print *, "ESMF_AttributeGetListAttPackFieldBundle  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
+
   local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetListAttPackFieldBundle  local_isPresent=", local_isPresent !tdk:p
 
   if (present(isPresent)) isPresent = local_isPresent
 
@@ -23164,8 +24782,15 @@ subroutine ESMF_AttributeGetListAttPackFieldBundleI4(target, name, attpack, valu
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  print *, "ESMF_AttributeGetListAttPackFieldBundle  print=", key !tdk:p
+  call ESMF_Info2Print(attpack%getPayload()) !tdk:p
+  print *, "ESMF_AttributeGetListAttPackFieldBundle  key=", key !tdk:p
+  print *, "ESMF_AttributeGetListAttPackFieldBundle  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
+
   local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetListAttPackFieldBundle  local_isPresent=", local_isPresent !tdk:p
 
   if (present(isPresent)) isPresent = local_isPresent
 
@@ -23281,8 +24906,15 @@ subroutine ESMF_AttributeGetListAttPackFieldBundleI8(target, name, attpack, valu
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  print *, "ESMF_AttributeGetListAttPackFieldBundle  print=", key !tdk:p
+  call ESMF_Info2Print(attpack%getPayload()) !tdk:p
+  print *, "ESMF_AttributeGetListAttPackFieldBundle  key=", key !tdk:p
+  print *, "ESMF_AttributeGetListAttPackFieldBundle  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
+
   local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetListAttPackFieldBundle  local_isPresent=", local_isPresent !tdk:p
 
   if (present(isPresent)) isPresent = local_isPresent
 
@@ -23398,8 +25030,15 @@ subroutine ESMF_AttributeGetListAttPackFieldBundleCH(target, name, attpack, valu
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  print *, "ESMF_AttributeGetListAttPackFieldBundle  print=", key !tdk:p
+  call ESMF_Info2Print(attpack%getPayload()) !tdk:p
+  print *, "ESMF_AttributeGetListAttPackFieldBundle  key=", key !tdk:p
+  print *, "ESMF_AttributeGetListAttPackFieldBundle  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
+
   local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetListAttPackFieldBundle  local_isPresent=", local_isPresent !tdk:p
 
   if (present(isPresent)) isPresent = local_isPresent
 
@@ -23515,8 +25154,15 @@ subroutine ESMF_AttributeGetListAttPackFieldBundleLG(target, name, attpack, valu
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  print *, "ESMF_AttributeGetListAttPackFieldBundle  print=", key !tdk:p
+  call ESMF_Info2Print(attpack%getPayload()) !tdk:p
+  print *, "ESMF_AttributeGetListAttPackFieldBundle  key=", key !tdk:p
+  print *, "ESMF_AttributeGetListAttPackFieldBundle  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
+
   local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetListAttPackFieldBundle  local_isPresent=", local_isPresent !tdk:p
 
   if (present(isPresent)) isPresent = local_isPresent
 
@@ -23632,8 +25278,15 @@ subroutine ESMF_AttributeGetListAttPackGridR4(target, name, attpack, valueList, 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  print *, "ESMF_AttributeGetListAttPackGrid  print=", key !tdk:p
+  call ESMF_Info2Print(attpack%getPayload()) !tdk:p
+  print *, "ESMF_AttributeGetListAttPackGrid  key=", key !tdk:p
+  print *, "ESMF_AttributeGetListAttPackGrid  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
+
   local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetListAttPackGrid  local_isPresent=", local_isPresent !tdk:p
 
   if (present(isPresent)) isPresent = local_isPresent
 
@@ -23749,8 +25402,15 @@ subroutine ESMF_AttributeGetListAttPackGridR8(target, name, attpack, valueList, 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  print *, "ESMF_AttributeGetListAttPackGrid  print=", key !tdk:p
+  call ESMF_Info2Print(attpack%getPayload()) !tdk:p
+  print *, "ESMF_AttributeGetListAttPackGrid  key=", key !tdk:p
+  print *, "ESMF_AttributeGetListAttPackGrid  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
+
   local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetListAttPackGrid  local_isPresent=", local_isPresent !tdk:p
 
   if (present(isPresent)) isPresent = local_isPresent
 
@@ -23866,8 +25526,15 @@ subroutine ESMF_AttributeGetListAttPackGridI4(target, name, attpack, valueList, 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  print *, "ESMF_AttributeGetListAttPackGrid  print=", key !tdk:p
+  call ESMF_Info2Print(attpack%getPayload()) !tdk:p
+  print *, "ESMF_AttributeGetListAttPackGrid  key=", key !tdk:p
+  print *, "ESMF_AttributeGetListAttPackGrid  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
+
   local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetListAttPackGrid  local_isPresent=", local_isPresent !tdk:p
 
   if (present(isPresent)) isPresent = local_isPresent
 
@@ -23983,8 +25650,15 @@ subroutine ESMF_AttributeGetListAttPackGridI8(target, name, attpack, valueList, 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  print *, "ESMF_AttributeGetListAttPackGrid  print=", key !tdk:p
+  call ESMF_Info2Print(attpack%getPayload()) !tdk:p
+  print *, "ESMF_AttributeGetListAttPackGrid  key=", key !tdk:p
+  print *, "ESMF_AttributeGetListAttPackGrid  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
+
   local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetListAttPackGrid  local_isPresent=", local_isPresent !tdk:p
 
   if (present(isPresent)) isPresent = local_isPresent
 
@@ -24100,8 +25774,15 @@ subroutine ESMF_AttributeGetListAttPackGridCH(target, name, attpack, valueList, 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  print *, "ESMF_AttributeGetListAttPackGrid  print=", key !tdk:p
+  call ESMF_Info2Print(attpack%getPayload()) !tdk:p
+  print *, "ESMF_AttributeGetListAttPackGrid  key=", key !tdk:p
+  print *, "ESMF_AttributeGetListAttPackGrid  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
+
   local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetListAttPackGrid  local_isPresent=", local_isPresent !tdk:p
 
   if (present(isPresent)) isPresent = local_isPresent
 
@@ -24217,8 +25898,15 @@ subroutine ESMF_AttributeGetListAttPackGridLG(target, name, attpack, valueList, 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  print *, "ESMF_AttributeGetListAttPackGrid  print=", key !tdk:p
+  call ESMF_Info2Print(attpack%getPayload()) !tdk:p
+  print *, "ESMF_AttributeGetListAttPackGrid  key=", key !tdk:p
+  print *, "ESMF_AttributeGetListAttPackGrid  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
+
   local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetListAttPackGrid  local_isPresent=", local_isPresent !tdk:p
 
   if (present(isPresent)) isPresent = local_isPresent
 
@@ -24334,8 +26022,15 @@ subroutine ESMF_AttributeGetListAttPackStateR4(target, name, attpack, valueList,
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  print *, "ESMF_AttributeGetListAttPackState  print=", key !tdk:p
+  call ESMF_Info2Print(attpack%getPayload()) !tdk:p
+  print *, "ESMF_AttributeGetListAttPackState  key=", key !tdk:p
+  print *, "ESMF_AttributeGetListAttPackState  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
+
   local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetListAttPackState  local_isPresent=", local_isPresent !tdk:p
 
   if (present(isPresent)) isPresent = local_isPresent
 
@@ -24451,8 +26146,15 @@ subroutine ESMF_AttributeGetListAttPackStateR8(target, name, attpack, valueList,
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  print *, "ESMF_AttributeGetListAttPackState  print=", key !tdk:p
+  call ESMF_Info2Print(attpack%getPayload()) !tdk:p
+  print *, "ESMF_AttributeGetListAttPackState  key=", key !tdk:p
+  print *, "ESMF_AttributeGetListAttPackState  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
+
   local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetListAttPackState  local_isPresent=", local_isPresent !tdk:p
 
   if (present(isPresent)) isPresent = local_isPresent
 
@@ -24568,8 +26270,15 @@ subroutine ESMF_AttributeGetListAttPackStateI4(target, name, attpack, valueList,
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  print *, "ESMF_AttributeGetListAttPackState  print=", key !tdk:p
+  call ESMF_Info2Print(attpack%getPayload()) !tdk:p
+  print *, "ESMF_AttributeGetListAttPackState  key=", key !tdk:p
+  print *, "ESMF_AttributeGetListAttPackState  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
+
   local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetListAttPackState  local_isPresent=", local_isPresent !tdk:p
 
   if (present(isPresent)) isPresent = local_isPresent
 
@@ -24685,8 +26394,15 @@ subroutine ESMF_AttributeGetListAttPackStateI8(target, name, attpack, valueList,
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  print *, "ESMF_AttributeGetListAttPackState  print=", key !tdk:p
+  call ESMF_Info2Print(attpack%getPayload()) !tdk:p
+  print *, "ESMF_AttributeGetListAttPackState  key=", key !tdk:p
+  print *, "ESMF_AttributeGetListAttPackState  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
+
   local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetListAttPackState  local_isPresent=", local_isPresent !tdk:p
 
   if (present(isPresent)) isPresent = local_isPresent
 
@@ -24802,8 +26518,15 @@ subroutine ESMF_AttributeGetListAttPackStateCH(target, name, attpack, valueList,
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  print *, "ESMF_AttributeGetListAttPackState  print=", key !tdk:p
+  call ESMF_Info2Print(attpack%getPayload()) !tdk:p
+  print *, "ESMF_AttributeGetListAttPackState  key=", key !tdk:p
+  print *, "ESMF_AttributeGetListAttPackState  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
+
   local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetListAttPackState  local_isPresent=", local_isPresent !tdk:p
 
   if (present(isPresent)) isPresent = local_isPresent
 
@@ -24919,8 +26642,15 @@ subroutine ESMF_AttributeGetListAttPackStateLG(target, name, attpack, valueList,
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  print *, "ESMF_AttributeGetListAttPackState  print=", key !tdk:p
+  call ESMF_Info2Print(attpack%getPayload()) !tdk:p
+  print *, "ESMF_AttributeGetListAttPackState  key=", key !tdk:p
+  print *, "ESMF_AttributeGetListAttPackState  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
+
   local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetListAttPackState  local_isPresent=", local_isPresent !tdk:p
 
   if (present(isPresent)) isPresent = local_isPresent
 
@@ -25036,8 +26766,15 @@ subroutine ESMF_AttributeGetListAttPackLocStreamR4(target, name, attpack, valueL
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  print *, "ESMF_AttributeGetListAttPackLocStream  print=", key !tdk:p
+  call ESMF_Info2Print(attpack%getPayload()) !tdk:p
+  print *, "ESMF_AttributeGetListAttPackLocStream  key=", key !tdk:p
+  print *, "ESMF_AttributeGetListAttPackLocStream  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
+
   local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetListAttPackLocStream  local_isPresent=", local_isPresent !tdk:p
 
   if (present(isPresent)) isPresent = local_isPresent
 
@@ -25153,8 +26890,15 @@ subroutine ESMF_AttributeGetListAttPackLocStreamR8(target, name, attpack, valueL
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  print *, "ESMF_AttributeGetListAttPackLocStream  print=", key !tdk:p
+  call ESMF_Info2Print(attpack%getPayload()) !tdk:p
+  print *, "ESMF_AttributeGetListAttPackLocStream  key=", key !tdk:p
+  print *, "ESMF_AttributeGetListAttPackLocStream  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
+
   local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetListAttPackLocStream  local_isPresent=", local_isPresent !tdk:p
 
   if (present(isPresent)) isPresent = local_isPresent
 
@@ -25270,8 +27014,15 @@ subroutine ESMF_AttributeGetListAttPackLocStreamI4(target, name, attpack, valueL
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  print *, "ESMF_AttributeGetListAttPackLocStream  print=", key !tdk:p
+  call ESMF_Info2Print(attpack%getPayload()) !tdk:p
+  print *, "ESMF_AttributeGetListAttPackLocStream  key=", key !tdk:p
+  print *, "ESMF_AttributeGetListAttPackLocStream  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
+
   local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetListAttPackLocStream  local_isPresent=", local_isPresent !tdk:p
 
   if (present(isPresent)) isPresent = local_isPresent
 
@@ -25387,8 +27138,15 @@ subroutine ESMF_AttributeGetListAttPackLocStreamI8(target, name, attpack, valueL
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  print *, "ESMF_AttributeGetListAttPackLocStream  print=", key !tdk:p
+  call ESMF_Info2Print(attpack%getPayload()) !tdk:p
+  print *, "ESMF_AttributeGetListAttPackLocStream  key=", key !tdk:p
+  print *, "ESMF_AttributeGetListAttPackLocStream  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
+
   local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetListAttPackLocStream  local_isPresent=", local_isPresent !tdk:p
 
   if (present(isPresent)) isPresent = local_isPresent
 
@@ -25504,8 +27262,15 @@ subroutine ESMF_AttributeGetListAttPackLocStreamCH(target, name, attpack, valueL
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  print *, "ESMF_AttributeGetListAttPackLocStream  print=", key !tdk:p
+  call ESMF_Info2Print(attpack%getPayload()) !tdk:p
+  print *, "ESMF_AttributeGetListAttPackLocStream  key=", key !tdk:p
+  print *, "ESMF_AttributeGetListAttPackLocStream  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
+
   local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetListAttPackLocStream  local_isPresent=", local_isPresent !tdk:p
 
   if (present(isPresent)) isPresent = local_isPresent
 
@@ -25621,8 +27386,15 @@ subroutine ESMF_AttributeGetListAttPackLocStreamLG(target, name, attpack, valueL
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  print *, "ESMF_AttributeGetListAttPackLocStream  print=", key !tdk:p
+  call ESMF_Info2Print(attpack%getPayload()) !tdk:p
+  print *, "ESMF_AttributeGetListAttPackLocStream  key=", key !tdk:p
+  print *, "ESMF_AttributeGetListAttPackLocStream  attnestflag=", attnestflag, ESMF_ATTNEST_ON !tdk:p
+
   local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetListAttPackLocStream  local_isPresent=", local_isPresent !tdk:p
 
   if (present(isPresent)) isPresent = local_isPresent
 
@@ -25731,7 +27503,79 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   type(ESMF_Info2) :: info
   type(ESMF_AttGetCountFlag) :: l_attcountflag
+  type(ESMF_AttNest_Flag) :: local_attnestflag
   type(ESMF_Inquire) :: einq
+  integer :: countSingle, countTotal, attPackCount, localrc, attPackCountTotal
+  character(:), allocatable :: key
+
+  localrc = ESMF_FAILURE
+  if (present(rc)) rc = ESMF_RC_NOT_IMPL
+  ! Check object initialization
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
+  if (present(attcountflag)) then
+    l_attcountflag = attcountflag
+  else
+    l_attcountflag = ESMF_ATTGETCOUNT_ATTRIBUTE
+  end if
+
+  if (present(convention)) then
+    call format_key(key, "", localrc, convention=convention, purpose=purpose)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    key = ""
+  end if
+
+  info = einq%GetInfo(target, rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetCountArray key=", key !tdk:p
+  print *, "ESMF_AttributeGetCountArray local_attnestflag=", local_attnestflag, ESMF_ATTNEST_ON !tdk:p
+  call ESMF_Info2Inquire(info, key=key, attrCount=countSingle, attrCountTotal=countTotal, &
+    attPackCount=attPackCount, attnestflag=local_attnestflag, rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  if (present(attcountflag)) then
+    l_attcountflag = attcountflag
+  else
+    l_attcountflag = ESMF_ATTGETCOUNT_ATTRIBUTE
+  end if
+
+  if (l_attcountflag%value==ESMF_ATTGETCOUNT_ATTRIBUTE%value) then
+    if (local_attnestflag%value==ESMF_ATTNEST_ON%value) then
+      count = countTotal
+    else
+      count = countSingle
+    end if
+  else if (l_attcountflag%value==ESMF_ATTGETCOUNT_TOTAL%value) then
+    count = countTotal
+  else if (l_attcountflag%value==ESMF_ATTGETCOUNT_ATTPACK%value) then
+    count = attPackCount
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
+  if (present(rc)) rc = ESMF_SUCCESS
+end subroutine ESMF_AttributeGetCountArray
+
+#undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_AttributeGetCountAttPackArray()"
+subroutine ESMF_AttributeGetCountAttPackArray(target, attpack, count, keywordEnforcer, attcountflag, attnestflag, rc)
+  type(ESMF_Array), intent(in) :: target
+  type(ESMF_AttPack), intent(inout) :: attpack
+  integer, intent(inout) :: count
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  type(ESMF_AttGetCountFlag), intent(in), optional :: attcountflag
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
+  integer, intent(inout), optional :: rc
+
+  type(ESMF_AttGetCountFlag) :: l_attcountflag
   integer :: countSingle, countTotal, attPackCount, localrc
   character(:), allocatable :: key
 
@@ -25740,18 +27584,9 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
 
-  if (present(convention)) then
-    call format_key(key, "", localrc, convention=convention, purpose=purpose)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
-  else
-    key = ESMF_ATTR_DEFAULT_ROOTKEY
-  end if
-
-  info = einq%GetInfo(target, rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
-
-  call ESMF_Info2Inquire(info, key=key, count=countSingle, countTotal=countTotal, &
-    attPackCount=attPackCount, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Inquire(attpack%getPayload(), key=attpack%formatKey(), attrCount=countSingle, &
+    attrCountTotal=countTotal, attPackCount=attPackCount, attnestflag=attnestflag, &
+    rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(attcountflag)) then
@@ -25766,14 +27601,13 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
     count = countTotal
   else if (l_attcountflag%value==ESMF_ATTGETCOUNT_ATTPACK%value) then
     count = attPackCount
-  else if (l_attcountflag%value==ESMF_ATTGETCOUNT_ATTLINK%value) then
-    count = 0
   else
     if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeGetCountArray
+end subroutine ESMF_AttributeGetCountAttPackArray
+
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetInfoByNamAPArray()"
 subroutine ESMF_AttributeGetInfoByNamAPArray(target, name, attpack, keywordEnforcer, attnestflag, typekind, itemCount, isPresent, rc)
@@ -25810,7 +27644,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   if (present(isPresent)) isPresent = is_present
 
   if (is_present) then
-    call ESMF_Info2Inquire(attpack%getPayload(), key=key, count=itemCount, attnestflag=attnestflag, &
+    call ESMF_Info2Inquire(attpack%getPayload(), key=key, attrCount=itemCount, attnestflag=attnestflag, &
       typekind=typekind, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   else
@@ -25863,7 +27697,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   if (present(isPresent)) isPresent = is_present
 
   if (is_present) then
-    call ESMF_Info2Inquire(info, key=key, count=itemCount, attnestflag=attnestflag, &
+    call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, attnestflag=attnestflag, &
       typekind=typekind, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   else
@@ -25894,11 +27728,21 @@ subroutine ESMF_AttributeGetInfoByNumArray(target, attributeIndex, name, convent
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  print *, "ESMF_AttributeGetInfoByNumArray attributeIndex=", attributeIndex !tdk:p
+  print *, "ESMF_AttributeGetInfoByNumArray name=", name !tdk:p
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, "", localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -25906,12 +27750,11 @@ subroutine ESMF_AttributeGetInfoByNumArray(target, attributeIndex, name, convent
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Inquire(info, key=key, count=itemCount, typekind=typekind, &
-    idx=attributeIndex, ikey=name, isPresent=isPresent, attnestflag=attnestflag, &
+  print *, "ESMF_AttributeGetInfoByNumArray key=", key !tdk:p
+  call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, typekind=typekind, &
+    idx=attributeIndex, ikey=name, isPresent=isPresent, attnestflag=local_attnestflag, &
     rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
-
-  deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeGetInfoByNumArray
@@ -25923,29 +27766,38 @@ subroutine ESMF_AttributeGetAttPackArray(target, convention, purpose, keywordEnf
   character(len=*), intent(in) :: convention
   character(len=*), intent(in) :: purpose
 type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  character (len = *), intent(in), optional :: attPackInstanceName  !tdk: noop, no suppor for attpackinstancename
+  character (len = *), intent(in), optional :: attPackInstanceName  !tdk: noop, no support for attpackinstancename
   type(ESMF_AttPack), intent(inout), optional :: attpack
-  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag !tdk: noop, are there nested conventions and purposes?
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   logical, intent(out), optional :: isPresent
   integer, intent(out), optional :: rc
 
   integer :: localrc
   character(:), allocatable :: key
   logical :: is_present
-  type(ESMF_Info2), target, save :: info !tdk:?: is this okay? memory leak?
+  type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  print *, "ESMF_AttributeGetAttPackArray convention=", convention !tdk:p
+  print *, "ESMF_AttributeGetAttPackArray purpose=", purpose !tdk:p
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  allocate(character(LEN(TRIM(convention))+LEN(TRIM(purpose))+1)::key)
-  key = convention//"/"//purpose
-  is_present = ESMF_Info2IsPresent(info, key, rc=localrc)
+  key = TRIM(convention)//"/"//TRIM(purpose)
+  is_present = ESMF_Info2IsPresent(info, key, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
@@ -25960,6 +27812,45 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeGetAttPackArray
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetCountArrayBundle()"
@@ -25976,7 +27867,79 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   type(ESMF_Info2) :: info
   type(ESMF_AttGetCountFlag) :: l_attcountflag
+  type(ESMF_AttNest_Flag) :: local_attnestflag
   type(ESMF_Inquire) :: einq
+  integer :: countSingle, countTotal, attPackCount, localrc, attPackCountTotal
+  character(:), allocatable :: key
+
+  localrc = ESMF_FAILURE
+  if (present(rc)) rc = ESMF_RC_NOT_IMPL
+  ! Check object initialization
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
+  if (present(attcountflag)) then
+    l_attcountflag = attcountflag
+  else
+    l_attcountflag = ESMF_ATTGETCOUNT_ATTRIBUTE
+  end if
+
+  if (present(convention)) then
+    call format_key(key, "", localrc, convention=convention, purpose=purpose)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    key = ""
+  end if
+
+  info = einq%GetInfo(target, rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetCountArrayBundle key=", key !tdk:p
+  print *, "ESMF_AttributeGetCountArrayBundle local_attnestflag=", local_attnestflag, ESMF_ATTNEST_ON !tdk:p
+  call ESMF_Info2Inquire(info, key=key, attrCount=countSingle, attrCountTotal=countTotal, &
+    attPackCount=attPackCount, attnestflag=local_attnestflag, rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  if (present(attcountflag)) then
+    l_attcountflag = attcountflag
+  else
+    l_attcountflag = ESMF_ATTGETCOUNT_ATTRIBUTE
+  end if
+
+  if (l_attcountflag%value==ESMF_ATTGETCOUNT_ATTRIBUTE%value) then
+    if (local_attnestflag%value==ESMF_ATTNEST_ON%value) then
+      count = countTotal
+    else
+      count = countSingle
+    end if
+  else if (l_attcountflag%value==ESMF_ATTGETCOUNT_TOTAL%value) then
+    count = countTotal
+  else if (l_attcountflag%value==ESMF_ATTGETCOUNT_ATTPACK%value) then
+    count = attPackCount
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
+  if (present(rc)) rc = ESMF_SUCCESS
+end subroutine ESMF_AttributeGetCountArrayBundle
+
+#undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_AttributeGetCountAttPackArrayBundle()"
+subroutine ESMF_AttributeGetCountAttPackArrayBundle(target, attpack, count, keywordEnforcer, attcountflag, attnestflag, rc)
+  type(ESMF_ArrayBundle), intent(in) :: target
+  type(ESMF_AttPack), intent(inout) :: attpack
+  integer, intent(inout) :: count
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  type(ESMF_AttGetCountFlag), intent(in), optional :: attcountflag
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
+  integer, intent(inout), optional :: rc
+
+  type(ESMF_AttGetCountFlag) :: l_attcountflag
   integer :: countSingle, countTotal, attPackCount, localrc
   character(:), allocatable :: key
 
@@ -25985,18 +27948,9 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
 
-  if (present(convention)) then
-    call format_key(key, "", localrc, convention=convention, purpose=purpose)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
-  else
-    key = ESMF_ATTR_DEFAULT_ROOTKEY
-  end if
-
-  info = einq%GetInfo(target, rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
-
-  call ESMF_Info2Inquire(info, key=key, count=countSingle, countTotal=countTotal, &
-    attPackCount=attPackCount, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Inquire(attpack%getPayload(), key=attpack%formatKey(), attrCount=countSingle, &
+    attrCountTotal=countTotal, attPackCount=attPackCount, attnestflag=attnestflag, &
+    rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(attcountflag)) then
@@ -26011,14 +27965,13 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
     count = countTotal
   else if (l_attcountflag%value==ESMF_ATTGETCOUNT_ATTPACK%value) then
     count = attPackCount
-  else if (l_attcountflag%value==ESMF_ATTGETCOUNT_ATTLINK%value) then
-    count = 0
   else
     if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeGetCountArrayBundle
+end subroutine ESMF_AttributeGetCountAttPackArrayBundle
+
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetInfoByNamAPArrayBundle()"
 subroutine ESMF_AttributeGetInfoByNamAPArrayBundle(target, name, attpack, keywordEnforcer, attnestflag, typekind, itemCount, isPresent, rc)
@@ -26055,7 +28008,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   if (present(isPresent)) isPresent = is_present
 
   if (is_present) then
-    call ESMF_Info2Inquire(attpack%getPayload(), key=key, count=itemCount, attnestflag=attnestflag, &
+    call ESMF_Info2Inquire(attpack%getPayload(), key=key, attrCount=itemCount, attnestflag=attnestflag, &
       typekind=typekind, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   else
@@ -26108,7 +28061,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   if (present(isPresent)) isPresent = is_present
 
   if (is_present) then
-    call ESMF_Info2Inquire(info, key=key, count=itemCount, attnestflag=attnestflag, &
+    call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, attnestflag=attnestflag, &
       typekind=typekind, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   else
@@ -26139,11 +28092,21 @@ subroutine ESMF_AttributeGetInfoByNumArrayBundle(target, attributeIndex, name, c
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  print *, "ESMF_AttributeGetInfoByNumArrayBundle attributeIndex=", attributeIndex !tdk:p
+  print *, "ESMF_AttributeGetInfoByNumArrayBundle name=", name !tdk:p
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, "", localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -26151,12 +28114,11 @@ subroutine ESMF_AttributeGetInfoByNumArrayBundle(target, attributeIndex, name, c
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Inquire(info, key=key, count=itemCount, typekind=typekind, &
-    idx=attributeIndex, ikey=name, isPresent=isPresent, attnestflag=attnestflag, &
+  print *, "ESMF_AttributeGetInfoByNumArrayBundle key=", key !tdk:p
+  call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, typekind=typekind, &
+    idx=attributeIndex, ikey=name, isPresent=isPresent, attnestflag=local_attnestflag, &
     rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
-
-  deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeGetInfoByNumArrayBundle
@@ -26168,29 +28130,38 @@ subroutine ESMF_AttributeGetAttPackArrayBundle(target, convention, purpose, keyw
   character(len=*), intent(in) :: convention
   character(len=*), intent(in) :: purpose
 type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  character (len = *), intent(in), optional :: attPackInstanceName  !tdk: noop, no suppor for attpackinstancename
+  character (len = *), intent(in), optional :: attPackInstanceName  !tdk: noop, no support for attpackinstancename
   type(ESMF_AttPack), intent(inout), optional :: attpack
-  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag !tdk: noop, are there nested conventions and purposes?
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   logical, intent(out), optional :: isPresent
   integer, intent(out), optional :: rc
 
   integer :: localrc
   character(:), allocatable :: key
   logical :: is_present
-  type(ESMF_Info2), target, save :: info !tdk:?: is this okay? memory leak?
+  type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  print *, "ESMF_AttributeGetAttPackArrayBundle convention=", convention !tdk:p
+  print *, "ESMF_AttributeGetAttPackArrayBundle purpose=", purpose !tdk:p
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  allocate(character(LEN(TRIM(convention))+LEN(TRIM(purpose))+1)::key)
-  key = convention//"/"//purpose
-  is_present = ESMF_Info2IsPresent(info, key, rc=localrc)
+  key = TRIM(convention)//"/"//TRIM(purpose)
+  is_present = ESMF_Info2IsPresent(info, key, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
@@ -26205,6 +28176,45 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeGetAttPackArrayBundle
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetCountCplComp()"
@@ -26221,7 +28231,79 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   type(ESMF_Info2) :: info
   type(ESMF_AttGetCountFlag) :: l_attcountflag
+  type(ESMF_AttNest_Flag) :: local_attnestflag
   type(ESMF_Inquire) :: einq
+  integer :: countSingle, countTotal, attPackCount, localrc, attPackCountTotal
+  character(:), allocatable :: key
+
+  localrc = ESMF_FAILURE
+  if (present(rc)) rc = ESMF_RC_NOT_IMPL
+  ! Check object initialization
+  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
+  if (present(attcountflag)) then
+    l_attcountflag = attcountflag
+  else
+    l_attcountflag = ESMF_ATTGETCOUNT_ATTRIBUTE
+  end if
+
+  if (present(convention)) then
+    call format_key(key, "", localrc, convention=convention, purpose=purpose)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    key = ""
+  end if
+
+  info = einq%GetInfo(target, rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetCountCplComp key=", key !tdk:p
+  print *, "ESMF_AttributeGetCountCplComp local_attnestflag=", local_attnestflag, ESMF_ATTNEST_ON !tdk:p
+  call ESMF_Info2Inquire(info, key=key, attrCount=countSingle, attrCountTotal=countTotal, &
+    attPackCount=attPackCount, attnestflag=local_attnestflag, rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  if (present(attcountflag)) then
+    l_attcountflag = attcountflag
+  else
+    l_attcountflag = ESMF_ATTGETCOUNT_ATTRIBUTE
+  end if
+
+  if (l_attcountflag%value==ESMF_ATTGETCOUNT_ATTRIBUTE%value) then
+    if (local_attnestflag%value==ESMF_ATTNEST_ON%value) then
+      count = countTotal
+    else
+      count = countSingle
+    end if
+  else if (l_attcountflag%value==ESMF_ATTGETCOUNT_TOTAL%value) then
+    count = countTotal
+  else if (l_attcountflag%value==ESMF_ATTGETCOUNT_ATTPACK%value) then
+    count = attPackCount
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
+  if (present(rc)) rc = ESMF_SUCCESS
+end subroutine ESMF_AttributeGetCountCplComp
+
+#undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_AttributeGetCountAttPackCplComp()"
+subroutine ESMF_AttributeGetCountAttPackCplComp(target, attpack, count, keywordEnforcer, attcountflag, attnestflag, rc)
+  type(ESMF_CplComp), intent(in) :: target
+  type(ESMF_AttPack), intent(inout) :: attpack
+  integer, intent(inout) :: count
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  type(ESMF_AttGetCountFlag), intent(in), optional :: attcountflag
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
+  integer, intent(inout), optional :: rc
+
+  type(ESMF_AttGetCountFlag) :: l_attcountflag
   integer :: countSingle, countTotal, attPackCount, localrc
   character(:), allocatable :: key
 
@@ -26230,18 +28312,9 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
 
-  if (present(convention)) then
-    call format_key(key, "", localrc, convention=convention, purpose=purpose)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
-  else
-    key = ESMF_ATTR_DEFAULT_ROOTKEY
-  end if
-
-  info = einq%GetInfo(target, rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
-
-  call ESMF_Info2Inquire(info, key=key, count=countSingle, countTotal=countTotal, &
-    attPackCount=attPackCount, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Inquire(attpack%getPayload(), key=attpack%formatKey(), attrCount=countSingle, &
+    attrCountTotal=countTotal, attPackCount=attPackCount, attnestflag=attnestflag, &
+    rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(attcountflag)) then
@@ -26256,14 +28329,13 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
     count = countTotal
   else if (l_attcountflag%value==ESMF_ATTGETCOUNT_ATTPACK%value) then
     count = attPackCount
-  else if (l_attcountflag%value==ESMF_ATTGETCOUNT_ATTLINK%value) then
-    count = 0
   else
     if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeGetCountCplComp
+end subroutine ESMF_AttributeGetCountAttPackCplComp
+
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetInfoByNamAPCplComp()"
 subroutine ESMF_AttributeGetInfoByNamAPCplComp(target, name, attpack, keywordEnforcer, attnestflag, typekind, itemCount, isPresent, rc)
@@ -26300,7 +28372,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   if (present(isPresent)) isPresent = is_present
 
   if (is_present) then
-    call ESMF_Info2Inquire(attpack%getPayload(), key=key, count=itemCount, attnestflag=attnestflag, &
+    call ESMF_Info2Inquire(attpack%getPayload(), key=key, attrCount=itemCount, attnestflag=attnestflag, &
       typekind=typekind, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   else
@@ -26353,7 +28425,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   if (present(isPresent)) isPresent = is_present
 
   if (is_present) then
-    call ESMF_Info2Inquire(info, key=key, count=itemCount, attnestflag=attnestflag, &
+    call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, attnestflag=attnestflag, &
       typekind=typekind, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   else
@@ -26384,11 +28456,21 @@ subroutine ESMF_AttributeGetInfoByNumCplComp(target, attributeIndex, name, conve
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  print *, "ESMF_AttributeGetInfoByNumCplComp attributeIndex=", attributeIndex !tdk:p
+  print *, "ESMF_AttributeGetInfoByNumCplComp name=", name !tdk:p
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, "", localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -26396,12 +28478,11 @@ subroutine ESMF_AttributeGetInfoByNumCplComp(target, attributeIndex, name, conve
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Inquire(info, key=key, count=itemCount, typekind=typekind, &
-    idx=attributeIndex, ikey=name, isPresent=isPresent, attnestflag=attnestflag, &
+  print *, "ESMF_AttributeGetInfoByNumCplComp key=", key !tdk:p
+  call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, typekind=typekind, &
+    idx=attributeIndex, ikey=name, isPresent=isPresent, attnestflag=local_attnestflag, &
     rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
-
-  deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeGetInfoByNumCplComp
@@ -26413,29 +28494,38 @@ subroutine ESMF_AttributeGetAttPackCplComp(target, convention, purpose, keywordE
   character(len=*), intent(in) :: convention
   character(len=*), intent(in) :: purpose
 type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  character (len = *), intent(in), optional :: attPackInstanceName  !tdk: noop, no suppor for attpackinstancename
+  character (len = *), intent(in), optional :: attPackInstanceName  !tdk: noop, no support for attpackinstancename
   type(ESMF_AttPack), intent(inout), optional :: attpack
-  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag !tdk: noop, are there nested conventions and purposes?
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   logical, intent(out), optional :: isPresent
   integer, intent(out), optional :: rc
 
   integer :: localrc
   character(:), allocatable :: key
   logical :: is_present
-  type(ESMF_Info2), target, save :: info !tdk:?: is this okay? memory leak?
+  type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  print *, "ESMF_AttributeGetAttPackCplComp convention=", convention !tdk:p
+  print *, "ESMF_AttributeGetAttPackCplComp purpose=", purpose !tdk:p
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  allocate(character(LEN(TRIM(convention))+LEN(TRIM(purpose))+1)::key)
-  key = convention//"/"//purpose
-  is_present = ESMF_Info2IsPresent(info, key, rc=localrc)
+  key = TRIM(convention)//"/"//TRIM(purpose)
+  is_present = ESMF_Info2IsPresent(info, key, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
@@ -26450,6 +28540,45 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeGetAttPackCplComp
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetCountGridComp()"
@@ -26466,7 +28595,79 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   type(ESMF_Info2) :: info
   type(ESMF_AttGetCountFlag) :: l_attcountflag
+  type(ESMF_AttNest_Flag) :: local_attnestflag
   type(ESMF_Inquire) :: einq
+  integer :: countSingle, countTotal, attPackCount, localrc, attPackCountTotal
+  character(:), allocatable :: key
+
+  localrc = ESMF_FAILURE
+  if (present(rc)) rc = ESMF_RC_NOT_IMPL
+  ! Check object initialization
+  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
+  if (present(attcountflag)) then
+    l_attcountflag = attcountflag
+  else
+    l_attcountflag = ESMF_ATTGETCOUNT_ATTRIBUTE
+  end if
+
+  if (present(convention)) then
+    call format_key(key, "", localrc, convention=convention, purpose=purpose)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    key = ""
+  end if
+
+  info = einq%GetInfo(target, rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetCountGridComp key=", key !tdk:p
+  print *, "ESMF_AttributeGetCountGridComp local_attnestflag=", local_attnestflag, ESMF_ATTNEST_ON !tdk:p
+  call ESMF_Info2Inquire(info, key=key, attrCount=countSingle, attrCountTotal=countTotal, &
+    attPackCount=attPackCount, attnestflag=local_attnestflag, rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  if (present(attcountflag)) then
+    l_attcountflag = attcountflag
+  else
+    l_attcountflag = ESMF_ATTGETCOUNT_ATTRIBUTE
+  end if
+
+  if (l_attcountflag%value==ESMF_ATTGETCOUNT_ATTRIBUTE%value) then
+    if (local_attnestflag%value==ESMF_ATTNEST_ON%value) then
+      count = countTotal
+    else
+      count = countSingle
+    end if
+  else if (l_attcountflag%value==ESMF_ATTGETCOUNT_TOTAL%value) then
+    count = countTotal
+  else if (l_attcountflag%value==ESMF_ATTGETCOUNT_ATTPACK%value) then
+    count = attPackCount
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
+  if (present(rc)) rc = ESMF_SUCCESS
+end subroutine ESMF_AttributeGetCountGridComp
+
+#undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_AttributeGetCountAttPackGridComp()"
+subroutine ESMF_AttributeGetCountAttPackGridComp(target, attpack, count, keywordEnforcer, attcountflag, attnestflag, rc)
+  type(ESMF_GridComp), intent(in) :: target
+  type(ESMF_AttPack), intent(inout) :: attpack
+  integer, intent(inout) :: count
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  type(ESMF_AttGetCountFlag), intent(in), optional :: attcountflag
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
+  integer, intent(inout), optional :: rc
+
+  type(ESMF_AttGetCountFlag) :: l_attcountflag
   integer :: countSingle, countTotal, attPackCount, localrc
   character(:), allocatable :: key
 
@@ -26475,18 +28676,9 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
 
-  if (present(convention)) then
-    call format_key(key, "", localrc, convention=convention, purpose=purpose)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
-  else
-    key = ESMF_ATTR_DEFAULT_ROOTKEY
-  end if
-
-  info = einq%GetInfo(target, rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
-
-  call ESMF_Info2Inquire(info, key=key, count=countSingle, countTotal=countTotal, &
-    attPackCount=attPackCount, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Inquire(attpack%getPayload(), key=attpack%formatKey(), attrCount=countSingle, &
+    attrCountTotal=countTotal, attPackCount=attPackCount, attnestflag=attnestflag, &
+    rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(attcountflag)) then
@@ -26501,14 +28693,13 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
     count = countTotal
   else if (l_attcountflag%value==ESMF_ATTGETCOUNT_ATTPACK%value) then
     count = attPackCount
-  else if (l_attcountflag%value==ESMF_ATTGETCOUNT_ATTLINK%value) then
-    count = 0
   else
     if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeGetCountGridComp
+end subroutine ESMF_AttributeGetCountAttPackGridComp
+
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetInfoByNamAPGridComp()"
 subroutine ESMF_AttributeGetInfoByNamAPGridComp(target, name, attpack, keywordEnforcer, attnestflag, typekind, itemCount, isPresent, rc)
@@ -26545,7 +28736,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   if (present(isPresent)) isPresent = is_present
 
   if (is_present) then
-    call ESMF_Info2Inquire(attpack%getPayload(), key=key, count=itemCount, attnestflag=attnestflag, &
+    call ESMF_Info2Inquire(attpack%getPayload(), key=key, attrCount=itemCount, attnestflag=attnestflag, &
       typekind=typekind, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   else
@@ -26598,7 +28789,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   if (present(isPresent)) isPresent = is_present
 
   if (is_present) then
-    call ESMF_Info2Inquire(info, key=key, count=itemCount, attnestflag=attnestflag, &
+    call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, attnestflag=attnestflag, &
       typekind=typekind, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   else
@@ -26629,11 +28820,21 @@ subroutine ESMF_AttributeGetInfoByNumGridComp(target, attributeIndex, name, conv
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  print *, "ESMF_AttributeGetInfoByNumGridComp attributeIndex=", attributeIndex !tdk:p
+  print *, "ESMF_AttributeGetInfoByNumGridComp name=", name !tdk:p
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, "", localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -26641,12 +28842,11 @@ subroutine ESMF_AttributeGetInfoByNumGridComp(target, attributeIndex, name, conv
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Inquire(info, key=key, count=itemCount, typekind=typekind, &
-    idx=attributeIndex, ikey=name, isPresent=isPresent, attnestflag=attnestflag, &
+  print *, "ESMF_AttributeGetInfoByNumGridComp key=", key !tdk:p
+  call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, typekind=typekind, &
+    idx=attributeIndex, ikey=name, isPresent=isPresent, attnestflag=local_attnestflag, &
     rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
-
-  deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeGetInfoByNumGridComp
@@ -26658,29 +28858,38 @@ subroutine ESMF_AttributeGetAttPackGridComp(target, convention, purpose, keyword
   character(len=*), intent(in) :: convention
   character(len=*), intent(in) :: purpose
 type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  character (len = *), intent(in), optional :: attPackInstanceName  !tdk: noop, no suppor for attpackinstancename
+  character (len = *), intent(in), optional :: attPackInstanceName  !tdk: noop, no support for attpackinstancename
   type(ESMF_AttPack), intent(inout), optional :: attpack
-  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag !tdk: noop, are there nested conventions and purposes?
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   logical, intent(out), optional :: isPresent
   integer, intent(out), optional :: rc
 
   integer :: localrc
   character(:), allocatable :: key
   logical :: is_present
-  type(ESMF_Info2), target, save :: info !tdk:?: is this okay? memory leak?
+  type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  print *, "ESMF_AttributeGetAttPackGridComp convention=", convention !tdk:p
+  print *, "ESMF_AttributeGetAttPackGridComp purpose=", purpose !tdk:p
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  allocate(character(LEN(TRIM(convention))+LEN(TRIM(purpose))+1)::key)
-  key = convention//"/"//purpose
-  is_present = ESMF_Info2IsPresent(info, key, rc=localrc)
+  key = TRIM(convention)//"/"//TRIM(purpose)
+  is_present = ESMF_Info2IsPresent(info, key, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
@@ -26695,6 +28904,45 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeGetAttPackGridComp
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetCountSciComp()"
@@ -26711,7 +28959,79 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   type(ESMF_Info2) :: info
   type(ESMF_AttGetCountFlag) :: l_attcountflag
+  type(ESMF_AttNest_Flag) :: local_attnestflag
   type(ESMF_Inquire) :: einq
+  integer :: countSingle, countTotal, attPackCount, localrc, attPackCountTotal
+  character(:), allocatable :: key
+
+  localrc = ESMF_FAILURE
+  if (present(rc)) rc = ESMF_RC_NOT_IMPL
+  ! Check object initialization
+  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
+  if (present(attcountflag)) then
+    l_attcountflag = attcountflag
+  else
+    l_attcountflag = ESMF_ATTGETCOUNT_ATTRIBUTE
+  end if
+
+  if (present(convention)) then
+    call format_key(key, "", localrc, convention=convention, purpose=purpose)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    key = ""
+  end if
+
+  info = einq%GetInfo(target, rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetCountSciComp key=", key !tdk:p
+  print *, "ESMF_AttributeGetCountSciComp local_attnestflag=", local_attnestflag, ESMF_ATTNEST_ON !tdk:p
+  call ESMF_Info2Inquire(info, key=key, attrCount=countSingle, attrCountTotal=countTotal, &
+    attPackCount=attPackCount, attnestflag=local_attnestflag, rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  if (present(attcountflag)) then
+    l_attcountflag = attcountflag
+  else
+    l_attcountflag = ESMF_ATTGETCOUNT_ATTRIBUTE
+  end if
+
+  if (l_attcountflag%value==ESMF_ATTGETCOUNT_ATTRIBUTE%value) then
+    if (local_attnestflag%value==ESMF_ATTNEST_ON%value) then
+      count = countTotal
+    else
+      count = countSingle
+    end if
+  else if (l_attcountflag%value==ESMF_ATTGETCOUNT_TOTAL%value) then
+    count = countTotal
+  else if (l_attcountflag%value==ESMF_ATTGETCOUNT_ATTPACK%value) then
+    count = attPackCount
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
+  if (present(rc)) rc = ESMF_SUCCESS
+end subroutine ESMF_AttributeGetCountSciComp
+
+#undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_AttributeGetCountAttPackSciComp()"
+subroutine ESMF_AttributeGetCountAttPackSciComp(target, attpack, count, keywordEnforcer, attcountflag, attnestflag, rc)
+  type(ESMF_SciComp), intent(in) :: target
+  type(ESMF_AttPack), intent(inout) :: attpack
+  integer, intent(inout) :: count
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  type(ESMF_AttGetCountFlag), intent(in), optional :: attcountflag
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
+  integer, intent(inout), optional :: rc
+
+  type(ESMF_AttGetCountFlag) :: l_attcountflag
   integer :: countSingle, countTotal, attPackCount, localrc
   character(:), allocatable :: key
 
@@ -26720,18 +29040,9 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
 
-  if (present(convention)) then
-    call format_key(key, "", localrc, convention=convention, purpose=purpose)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
-  else
-    key = ESMF_ATTR_DEFAULT_ROOTKEY
-  end if
-
-  info = einq%GetInfo(target, rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
-
-  call ESMF_Info2Inquire(info, key=key, count=countSingle, countTotal=countTotal, &
-    attPackCount=attPackCount, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Inquire(attpack%getPayload(), key=attpack%formatKey(), attrCount=countSingle, &
+    attrCountTotal=countTotal, attPackCount=attPackCount, attnestflag=attnestflag, &
+    rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(attcountflag)) then
@@ -26746,14 +29057,13 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
     count = countTotal
   else if (l_attcountflag%value==ESMF_ATTGETCOUNT_ATTPACK%value) then
     count = attPackCount
-  else if (l_attcountflag%value==ESMF_ATTGETCOUNT_ATTLINK%value) then
-    count = 0
   else
     if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeGetCountSciComp
+end subroutine ESMF_AttributeGetCountAttPackSciComp
+
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetInfoByNamAPSciComp()"
 subroutine ESMF_AttributeGetInfoByNamAPSciComp(target, name, attpack, keywordEnforcer, attnestflag, typekind, itemCount, isPresent, rc)
@@ -26790,7 +29100,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   if (present(isPresent)) isPresent = is_present
 
   if (is_present) then
-    call ESMF_Info2Inquire(attpack%getPayload(), key=key, count=itemCount, attnestflag=attnestflag, &
+    call ESMF_Info2Inquire(attpack%getPayload(), key=key, attrCount=itemCount, attnestflag=attnestflag, &
       typekind=typekind, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   else
@@ -26843,7 +29153,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   if (present(isPresent)) isPresent = is_present
 
   if (is_present) then
-    call ESMF_Info2Inquire(info, key=key, count=itemCount, attnestflag=attnestflag, &
+    call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, attnestflag=attnestflag, &
       typekind=typekind, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   else
@@ -26874,11 +29184,21 @@ subroutine ESMF_AttributeGetInfoByNumSciComp(target, attributeIndex, name, conve
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  print *, "ESMF_AttributeGetInfoByNumSciComp attributeIndex=", attributeIndex !tdk:p
+  print *, "ESMF_AttributeGetInfoByNumSciComp name=", name !tdk:p
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, "", localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -26886,12 +29206,11 @@ subroutine ESMF_AttributeGetInfoByNumSciComp(target, attributeIndex, name, conve
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Inquire(info, key=key, count=itemCount, typekind=typekind, &
-    idx=attributeIndex, ikey=name, isPresent=isPresent, attnestflag=attnestflag, &
+  print *, "ESMF_AttributeGetInfoByNumSciComp key=", key !tdk:p
+  call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, typekind=typekind, &
+    idx=attributeIndex, ikey=name, isPresent=isPresent, attnestflag=local_attnestflag, &
     rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
-
-  deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeGetInfoByNumSciComp
@@ -26903,29 +29222,38 @@ subroutine ESMF_AttributeGetAttPackSciComp(target, convention, purpose, keywordE
   character(len=*), intent(in) :: convention
   character(len=*), intent(in) :: purpose
 type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  character (len = *), intent(in), optional :: attPackInstanceName  !tdk: noop, no suppor for attpackinstancename
+  character (len = *), intent(in), optional :: attPackInstanceName  !tdk: noop, no support for attpackinstancename
   type(ESMF_AttPack), intent(inout), optional :: attpack
-  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag !tdk: noop, are there nested conventions and purposes?
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   logical, intent(out), optional :: isPresent
   integer, intent(out), optional :: rc
 
   integer :: localrc
   character(:), allocatable :: key
   logical :: is_present
-  type(ESMF_Info2), target, save :: info !tdk:?: is this okay? memory leak?
+  type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  print *, "ESMF_AttributeGetAttPackSciComp convention=", convention !tdk:p
+  print *, "ESMF_AttributeGetAttPackSciComp purpose=", purpose !tdk:p
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  allocate(character(LEN(TRIM(convention))+LEN(TRIM(purpose))+1)::key)
-  key = convention//"/"//purpose
-  is_present = ESMF_Info2IsPresent(info, key, rc=localrc)
+  key = TRIM(convention)//"/"//TRIM(purpose)
+  is_present = ESMF_Info2IsPresent(info, key, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
@@ -26940,6 +29268,45 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeGetAttPackSciComp
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetCountDistGrid()"
@@ -26956,7 +29323,79 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   type(ESMF_Info2) :: info
   type(ESMF_AttGetCountFlag) :: l_attcountflag
+  type(ESMF_AttNest_Flag) :: local_attnestflag
   type(ESMF_Inquire) :: einq
+  integer :: countSingle, countTotal, attPackCount, localrc, attPackCountTotal
+  character(:), allocatable :: key
+
+  localrc = ESMF_FAILURE
+  if (present(rc)) rc = ESMF_RC_NOT_IMPL
+  ! Check object initialization
+  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
+  if (present(attcountflag)) then
+    l_attcountflag = attcountflag
+  else
+    l_attcountflag = ESMF_ATTGETCOUNT_ATTRIBUTE
+  end if
+
+  if (present(convention)) then
+    call format_key(key, "", localrc, convention=convention, purpose=purpose)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    key = ""
+  end if
+
+  info = einq%GetInfo(target, rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetCountDistGrid key=", key !tdk:p
+  print *, "ESMF_AttributeGetCountDistGrid local_attnestflag=", local_attnestflag, ESMF_ATTNEST_ON !tdk:p
+  call ESMF_Info2Inquire(info, key=key, attrCount=countSingle, attrCountTotal=countTotal, &
+    attPackCount=attPackCount, attnestflag=local_attnestflag, rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  if (present(attcountflag)) then
+    l_attcountflag = attcountflag
+  else
+    l_attcountflag = ESMF_ATTGETCOUNT_ATTRIBUTE
+  end if
+
+  if (l_attcountflag%value==ESMF_ATTGETCOUNT_ATTRIBUTE%value) then
+    if (local_attnestflag%value==ESMF_ATTNEST_ON%value) then
+      count = countTotal
+    else
+      count = countSingle
+    end if
+  else if (l_attcountflag%value==ESMF_ATTGETCOUNT_TOTAL%value) then
+    count = countTotal
+  else if (l_attcountflag%value==ESMF_ATTGETCOUNT_ATTPACK%value) then
+    count = attPackCount
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
+  if (present(rc)) rc = ESMF_SUCCESS
+end subroutine ESMF_AttributeGetCountDistGrid
+
+#undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_AttributeGetCountAttPackDistGrid()"
+subroutine ESMF_AttributeGetCountAttPackDistGrid(target, attpack, count, keywordEnforcer, attcountflag, attnestflag, rc)
+  type(ESMF_DistGrid), intent(in) :: target
+  type(ESMF_AttPack), intent(inout) :: attpack
+  integer, intent(inout) :: count
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  type(ESMF_AttGetCountFlag), intent(in), optional :: attcountflag
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
+  integer, intent(inout), optional :: rc
+
+  type(ESMF_AttGetCountFlag) :: l_attcountflag
   integer :: countSingle, countTotal, attPackCount, localrc
   character(:), allocatable :: key
 
@@ -26965,18 +29404,9 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
 
-  if (present(convention)) then
-    call format_key(key, "", localrc, convention=convention, purpose=purpose)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
-  else
-    key = ESMF_ATTR_DEFAULT_ROOTKEY
-  end if
-
-  info = einq%GetInfo(target, rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
-
-  call ESMF_Info2Inquire(info, key=key, count=countSingle, countTotal=countTotal, &
-    attPackCount=attPackCount, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Inquire(attpack%getPayload(), key=attpack%formatKey(), attrCount=countSingle, &
+    attrCountTotal=countTotal, attPackCount=attPackCount, attnestflag=attnestflag, &
+    rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(attcountflag)) then
@@ -26991,14 +29421,13 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
     count = countTotal
   else if (l_attcountflag%value==ESMF_ATTGETCOUNT_ATTPACK%value) then
     count = attPackCount
-  else if (l_attcountflag%value==ESMF_ATTGETCOUNT_ATTLINK%value) then
-    count = 0
   else
     if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeGetCountDistGrid
+end subroutine ESMF_AttributeGetCountAttPackDistGrid
+
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetInfoByNamAPDistGrid()"
 subroutine ESMF_AttributeGetInfoByNamAPDistGrid(target, name, attpack, keywordEnforcer, attnestflag, typekind, itemCount, isPresent, rc)
@@ -27035,7 +29464,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   if (present(isPresent)) isPresent = is_present
 
   if (is_present) then
-    call ESMF_Info2Inquire(attpack%getPayload(), key=key, count=itemCount, attnestflag=attnestflag, &
+    call ESMF_Info2Inquire(attpack%getPayload(), key=key, attrCount=itemCount, attnestflag=attnestflag, &
       typekind=typekind, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   else
@@ -27088,7 +29517,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   if (present(isPresent)) isPresent = is_present
 
   if (is_present) then
-    call ESMF_Info2Inquire(info, key=key, count=itemCount, attnestflag=attnestflag, &
+    call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, attnestflag=attnestflag, &
       typekind=typekind, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   else
@@ -27119,11 +29548,21 @@ subroutine ESMF_AttributeGetInfoByNumDistGrid(target, attributeIndex, name, conv
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  print *, "ESMF_AttributeGetInfoByNumDistGrid attributeIndex=", attributeIndex !tdk:p
+  print *, "ESMF_AttributeGetInfoByNumDistGrid name=", name !tdk:p
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, "", localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -27131,12 +29570,11 @@ subroutine ESMF_AttributeGetInfoByNumDistGrid(target, attributeIndex, name, conv
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Inquire(info, key=key, count=itemCount, typekind=typekind, &
-    idx=attributeIndex, ikey=name, isPresent=isPresent, attnestflag=attnestflag, &
+  print *, "ESMF_AttributeGetInfoByNumDistGrid key=", key !tdk:p
+  call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, typekind=typekind, &
+    idx=attributeIndex, ikey=name, isPresent=isPresent, attnestflag=local_attnestflag, &
     rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
-
-  deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeGetInfoByNumDistGrid
@@ -27148,29 +29586,38 @@ subroutine ESMF_AttributeGetAttPackDistGrid(target, convention, purpose, keyword
   character(len=*), intent(in) :: convention
   character(len=*), intent(in) :: purpose
 type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  character (len = *), intent(in), optional :: attPackInstanceName  !tdk: noop, no suppor for attpackinstancename
+  character (len = *), intent(in), optional :: attPackInstanceName  !tdk: noop, no support for attpackinstancename
   type(ESMF_AttPack), intent(inout), optional :: attpack
-  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag !tdk: noop, are there nested conventions and purposes?
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   logical, intent(out), optional :: isPresent
   integer, intent(out), optional :: rc
 
   integer :: localrc
   character(:), allocatable :: key
   logical :: is_present
-  type(ESMF_Info2), target, save :: info !tdk:?: is this okay? memory leak?
+  type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  print *, "ESMF_AttributeGetAttPackDistGrid convention=", convention !tdk:p
+  print *, "ESMF_AttributeGetAttPackDistGrid purpose=", purpose !tdk:p
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  allocate(character(LEN(TRIM(convention))+LEN(TRIM(purpose))+1)::key)
-  key = convention//"/"//purpose
-  is_present = ESMF_Info2IsPresent(info, key, rc=localrc)
+  key = TRIM(convention)//"/"//TRIM(purpose)
+  is_present = ESMF_Info2IsPresent(info, key, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
@@ -27185,6 +29632,45 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeGetAttPackDistGrid
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetCountField()"
@@ -27201,7 +29687,79 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   type(ESMF_Info2) :: info
   type(ESMF_AttGetCountFlag) :: l_attcountflag
+  type(ESMF_AttNest_Flag) :: local_attnestflag
   type(ESMF_Inquire) :: einq
+  integer :: countSingle, countTotal, attPackCount, localrc, attPackCountTotal
+  character(:), allocatable :: key
+
+  localrc = ESMF_FAILURE
+  if (present(rc)) rc = ESMF_RC_NOT_IMPL
+  ! Check object initialization
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
+  if (present(attcountflag)) then
+    l_attcountflag = attcountflag
+  else
+    l_attcountflag = ESMF_ATTGETCOUNT_ATTRIBUTE
+  end if
+
+  if (present(convention)) then
+    call format_key(key, "", localrc, convention=convention, purpose=purpose)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    key = ""
+  end if
+
+  info = einq%GetInfo(target, rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetCountField key=", key !tdk:p
+  print *, "ESMF_AttributeGetCountField local_attnestflag=", local_attnestflag, ESMF_ATTNEST_ON !tdk:p
+  call ESMF_Info2Inquire(info, key=key, attrCount=countSingle, attrCountTotal=countTotal, &
+    attPackCount=attPackCount, attnestflag=local_attnestflag, rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  if (present(attcountflag)) then
+    l_attcountflag = attcountflag
+  else
+    l_attcountflag = ESMF_ATTGETCOUNT_ATTRIBUTE
+  end if
+
+  if (l_attcountflag%value==ESMF_ATTGETCOUNT_ATTRIBUTE%value) then
+    if (local_attnestflag%value==ESMF_ATTNEST_ON%value) then
+      count = countTotal
+    else
+      count = countSingle
+    end if
+  else if (l_attcountflag%value==ESMF_ATTGETCOUNT_TOTAL%value) then
+    count = countTotal
+  else if (l_attcountflag%value==ESMF_ATTGETCOUNT_ATTPACK%value) then
+    count = attPackCount
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
+  if (present(rc)) rc = ESMF_SUCCESS
+end subroutine ESMF_AttributeGetCountField
+
+#undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_AttributeGetCountAttPackField()"
+subroutine ESMF_AttributeGetCountAttPackField(target, attpack, count, keywordEnforcer, attcountflag, attnestflag, rc)
+  type(ESMF_Field), intent(in) :: target
+  type(ESMF_AttPack), intent(inout) :: attpack
+  integer, intent(inout) :: count
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  type(ESMF_AttGetCountFlag), intent(in), optional :: attcountflag
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
+  integer, intent(inout), optional :: rc
+
+  type(ESMF_AttGetCountFlag) :: l_attcountflag
   integer :: countSingle, countTotal, attPackCount, localrc
   character(:), allocatable :: key
 
@@ -27210,18 +29768,9 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
 
-  if (present(convention)) then
-    call format_key(key, "", localrc, convention=convention, purpose=purpose)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
-  else
-    key = ESMF_ATTR_DEFAULT_ROOTKEY
-  end if
-
-  info = einq%GetInfo(target, rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
-
-  call ESMF_Info2Inquire(info, key=key, count=countSingle, countTotal=countTotal, &
-    attPackCount=attPackCount, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Inquire(attpack%getPayload(), key=attpack%formatKey(), attrCount=countSingle, &
+    attrCountTotal=countTotal, attPackCount=attPackCount, attnestflag=attnestflag, &
+    rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(attcountflag)) then
@@ -27236,14 +29785,13 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
     count = countTotal
   else if (l_attcountflag%value==ESMF_ATTGETCOUNT_ATTPACK%value) then
     count = attPackCount
-  else if (l_attcountflag%value==ESMF_ATTGETCOUNT_ATTLINK%value) then
-    count = 0
   else
     if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeGetCountField
+end subroutine ESMF_AttributeGetCountAttPackField
+
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetInfoByNamAPField()"
 subroutine ESMF_AttributeGetInfoByNamAPField(target, name, attpack, keywordEnforcer, attnestflag, typekind, itemCount, isPresent, rc)
@@ -27280,7 +29828,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   if (present(isPresent)) isPresent = is_present
 
   if (is_present) then
-    call ESMF_Info2Inquire(attpack%getPayload(), key=key, count=itemCount, attnestflag=attnestflag, &
+    call ESMF_Info2Inquire(attpack%getPayload(), key=key, attrCount=itemCount, attnestflag=attnestflag, &
       typekind=typekind, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   else
@@ -27333,7 +29881,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   if (present(isPresent)) isPresent = is_present
 
   if (is_present) then
-    call ESMF_Info2Inquire(info, key=key, count=itemCount, attnestflag=attnestflag, &
+    call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, attnestflag=attnestflag, &
       typekind=typekind, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   else
@@ -27364,11 +29912,21 @@ subroutine ESMF_AttributeGetInfoByNumField(target, attributeIndex, name, convent
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  print *, "ESMF_AttributeGetInfoByNumField attributeIndex=", attributeIndex !tdk:p
+  print *, "ESMF_AttributeGetInfoByNumField name=", name !tdk:p
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, "", localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -27376,12 +29934,11 @@ subroutine ESMF_AttributeGetInfoByNumField(target, attributeIndex, name, convent
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Inquire(info, key=key, count=itemCount, typekind=typekind, &
-    idx=attributeIndex, ikey=name, isPresent=isPresent, attnestflag=attnestflag, &
+  print *, "ESMF_AttributeGetInfoByNumField key=", key !tdk:p
+  call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, typekind=typekind, &
+    idx=attributeIndex, ikey=name, isPresent=isPresent, attnestflag=local_attnestflag, &
     rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
-
-  deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeGetInfoByNumField
@@ -27393,29 +29950,38 @@ subroutine ESMF_AttributeGetAttPackField(target, convention, purpose, keywordEnf
   character(len=*), intent(in) :: convention
   character(len=*), intent(in) :: purpose
 type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  character (len = *), intent(in), optional :: attPackInstanceName  !tdk: noop, no suppor for attpackinstancename
+  character (len = *), intent(in), optional :: attPackInstanceName  !tdk: noop, no support for attpackinstancename
   type(ESMF_AttPack), intent(inout), optional :: attpack
-  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag !tdk: noop, are there nested conventions and purposes?
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   logical, intent(out), optional :: isPresent
   integer, intent(out), optional :: rc
 
   integer :: localrc
   character(:), allocatable :: key
   logical :: is_present
-  type(ESMF_Info2), target, save :: info !tdk:?: is this okay? memory leak?
+  type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  print *, "ESMF_AttributeGetAttPackField convention=", convention !tdk:p
+  print *, "ESMF_AttributeGetAttPackField purpose=", purpose !tdk:p
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  allocate(character(LEN(TRIM(convention))+LEN(TRIM(purpose))+1)::key)
-  key = convention//"/"//purpose
-  is_present = ESMF_Info2IsPresent(info, key, rc=localrc)
+  key = TRIM(convention)//"/"//TRIM(purpose)
+  is_present = ESMF_Info2IsPresent(info, key, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
@@ -27430,6 +29996,45 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeGetAttPackField
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetCountFieldBundle()"
@@ -27446,7 +30051,79 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   type(ESMF_Info2) :: info
   type(ESMF_AttGetCountFlag) :: l_attcountflag
+  type(ESMF_AttNest_Flag) :: local_attnestflag
   type(ESMF_Inquire) :: einq
+  integer :: countSingle, countTotal, attPackCount, localrc, attPackCountTotal
+  character(:), allocatable :: key
+
+  localrc = ESMF_FAILURE
+  if (present(rc)) rc = ESMF_RC_NOT_IMPL
+  ! Check object initialization
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
+  if (present(attcountflag)) then
+    l_attcountflag = attcountflag
+  else
+    l_attcountflag = ESMF_ATTGETCOUNT_ATTRIBUTE
+  end if
+
+  if (present(convention)) then
+    call format_key(key, "", localrc, convention=convention, purpose=purpose)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    key = ""
+  end if
+
+  info = einq%GetInfo(target, rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetCountFieldBundle key=", key !tdk:p
+  print *, "ESMF_AttributeGetCountFieldBundle local_attnestflag=", local_attnestflag, ESMF_ATTNEST_ON !tdk:p
+  call ESMF_Info2Inquire(info, key=key, attrCount=countSingle, attrCountTotal=countTotal, &
+    attPackCount=attPackCount, attnestflag=local_attnestflag, rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  if (present(attcountflag)) then
+    l_attcountflag = attcountflag
+  else
+    l_attcountflag = ESMF_ATTGETCOUNT_ATTRIBUTE
+  end if
+
+  if (l_attcountflag%value==ESMF_ATTGETCOUNT_ATTRIBUTE%value) then
+    if (local_attnestflag%value==ESMF_ATTNEST_ON%value) then
+      count = countTotal
+    else
+      count = countSingle
+    end if
+  else if (l_attcountflag%value==ESMF_ATTGETCOUNT_TOTAL%value) then
+    count = countTotal
+  else if (l_attcountflag%value==ESMF_ATTGETCOUNT_ATTPACK%value) then
+    count = attPackCount
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
+  if (present(rc)) rc = ESMF_SUCCESS
+end subroutine ESMF_AttributeGetCountFieldBundle
+
+#undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_AttributeGetCountAttPackFieldBundle()"
+subroutine ESMF_AttributeGetCountAttPackFieldBundle(target, attpack, count, keywordEnforcer, attcountflag, attnestflag, rc)
+  type(ESMF_FieldBundle), intent(in) :: target
+  type(ESMF_AttPack), intent(inout) :: attpack
+  integer, intent(inout) :: count
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  type(ESMF_AttGetCountFlag), intent(in), optional :: attcountflag
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
+  integer, intent(inout), optional :: rc
+
+  type(ESMF_AttGetCountFlag) :: l_attcountflag
   integer :: countSingle, countTotal, attPackCount, localrc
   character(:), allocatable :: key
 
@@ -27455,18 +30132,9 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
 
-  if (present(convention)) then
-    call format_key(key, "", localrc, convention=convention, purpose=purpose)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
-  else
-    key = ESMF_ATTR_DEFAULT_ROOTKEY
-  end if
-
-  info = einq%GetInfo(target, rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
-
-  call ESMF_Info2Inquire(info, key=key, count=countSingle, countTotal=countTotal, &
-    attPackCount=attPackCount, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Inquire(attpack%getPayload(), key=attpack%formatKey(), attrCount=countSingle, &
+    attrCountTotal=countTotal, attPackCount=attPackCount, attnestflag=attnestflag, &
+    rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(attcountflag)) then
@@ -27481,14 +30149,13 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
     count = countTotal
   else if (l_attcountflag%value==ESMF_ATTGETCOUNT_ATTPACK%value) then
     count = attPackCount
-  else if (l_attcountflag%value==ESMF_ATTGETCOUNT_ATTLINK%value) then
-    count = 0
   else
     if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeGetCountFieldBundle
+end subroutine ESMF_AttributeGetCountAttPackFieldBundle
+
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetInfoByNamAPFieldBundle()"
 subroutine ESMF_AttributeGetInfoByNamAPFieldBundle(target, name, attpack, keywordEnforcer, attnestflag, typekind, itemCount, isPresent, rc)
@@ -27525,7 +30192,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   if (present(isPresent)) isPresent = is_present
 
   if (is_present) then
-    call ESMF_Info2Inquire(attpack%getPayload(), key=key, count=itemCount, attnestflag=attnestflag, &
+    call ESMF_Info2Inquire(attpack%getPayload(), key=key, attrCount=itemCount, attnestflag=attnestflag, &
       typekind=typekind, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   else
@@ -27578,7 +30245,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   if (present(isPresent)) isPresent = is_present
 
   if (is_present) then
-    call ESMF_Info2Inquire(info, key=key, count=itemCount, attnestflag=attnestflag, &
+    call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, attnestflag=attnestflag, &
       typekind=typekind, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   else
@@ -27609,11 +30276,21 @@ subroutine ESMF_AttributeGetInfoByNumFieldBundle(target, attributeIndex, name, c
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  print *, "ESMF_AttributeGetInfoByNumFieldBundle attributeIndex=", attributeIndex !tdk:p
+  print *, "ESMF_AttributeGetInfoByNumFieldBundle name=", name !tdk:p
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, "", localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -27621,12 +30298,11 @@ subroutine ESMF_AttributeGetInfoByNumFieldBundle(target, attributeIndex, name, c
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Inquire(info, key=key, count=itemCount, typekind=typekind, &
-    idx=attributeIndex, ikey=name, isPresent=isPresent, attnestflag=attnestflag, &
+  print *, "ESMF_AttributeGetInfoByNumFieldBundle key=", key !tdk:p
+  call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, typekind=typekind, &
+    idx=attributeIndex, ikey=name, isPresent=isPresent, attnestflag=local_attnestflag, &
     rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
-
-  deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeGetInfoByNumFieldBundle
@@ -27638,29 +30314,38 @@ subroutine ESMF_AttributeGetAttPackFieldBundle(target, convention, purpose, keyw
   character(len=*), intent(in) :: convention
   character(len=*), intent(in) :: purpose
 type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  character (len = *), intent(in), optional :: attPackInstanceName  !tdk: noop, no suppor for attpackinstancename
+  character (len = *), intent(in), optional :: attPackInstanceName  !tdk: noop, no support for attpackinstancename
   type(ESMF_AttPack), intent(inout), optional :: attpack
-  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag !tdk: noop, are there nested conventions and purposes?
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   logical, intent(out), optional :: isPresent
   integer, intent(out), optional :: rc
 
   integer :: localrc
   character(:), allocatable :: key
   logical :: is_present
-  type(ESMF_Info2), target, save :: info !tdk:?: is this okay? memory leak?
+  type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  print *, "ESMF_AttributeGetAttPackFieldBundle convention=", convention !tdk:p
+  print *, "ESMF_AttributeGetAttPackFieldBundle purpose=", purpose !tdk:p
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  allocate(character(LEN(TRIM(convention))+LEN(TRIM(purpose))+1)::key)
-  key = convention//"/"//purpose
-  is_present = ESMF_Info2IsPresent(info, key, rc=localrc)
+  key = TRIM(convention)//"/"//TRIM(purpose)
+  is_present = ESMF_Info2IsPresent(info, key, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
@@ -27675,6 +30360,45 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeGetAttPackFieldBundle
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetCountGrid()"
@@ -27691,7 +30415,79 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   type(ESMF_Info2) :: info
   type(ESMF_AttGetCountFlag) :: l_attcountflag
+  type(ESMF_AttNest_Flag) :: local_attnestflag
   type(ESMF_Inquire) :: einq
+  integer :: countSingle, countTotal, attPackCount, localrc, attPackCountTotal
+  character(:), allocatable :: key
+
+  localrc = ESMF_FAILURE
+  if (present(rc)) rc = ESMF_RC_NOT_IMPL
+  ! Check object initialization
+  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
+  if (present(attcountflag)) then
+    l_attcountflag = attcountflag
+  else
+    l_attcountflag = ESMF_ATTGETCOUNT_ATTRIBUTE
+  end if
+
+  if (present(convention)) then
+    call format_key(key, "", localrc, convention=convention, purpose=purpose)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    key = ""
+  end if
+
+  info = einq%GetInfo(target, rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetCountGrid key=", key !tdk:p
+  print *, "ESMF_AttributeGetCountGrid local_attnestflag=", local_attnestflag, ESMF_ATTNEST_ON !tdk:p
+  call ESMF_Info2Inquire(info, key=key, attrCount=countSingle, attrCountTotal=countTotal, &
+    attPackCount=attPackCount, attnestflag=local_attnestflag, rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  if (present(attcountflag)) then
+    l_attcountflag = attcountflag
+  else
+    l_attcountflag = ESMF_ATTGETCOUNT_ATTRIBUTE
+  end if
+
+  if (l_attcountflag%value==ESMF_ATTGETCOUNT_ATTRIBUTE%value) then
+    if (local_attnestflag%value==ESMF_ATTNEST_ON%value) then
+      count = countTotal
+    else
+      count = countSingle
+    end if
+  else if (l_attcountflag%value==ESMF_ATTGETCOUNT_TOTAL%value) then
+    count = countTotal
+  else if (l_attcountflag%value==ESMF_ATTGETCOUNT_ATTPACK%value) then
+    count = attPackCount
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
+  if (present(rc)) rc = ESMF_SUCCESS
+end subroutine ESMF_AttributeGetCountGrid
+
+#undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_AttributeGetCountAttPackGrid()"
+subroutine ESMF_AttributeGetCountAttPackGrid(target, attpack, count, keywordEnforcer, attcountflag, attnestflag, rc)
+  type(ESMF_Grid), intent(in) :: target
+  type(ESMF_AttPack), intent(inout) :: attpack
+  integer, intent(inout) :: count
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  type(ESMF_AttGetCountFlag), intent(in), optional :: attcountflag
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
+  integer, intent(inout), optional :: rc
+
+  type(ESMF_AttGetCountFlag) :: l_attcountflag
   integer :: countSingle, countTotal, attPackCount, localrc
   character(:), allocatable :: key
 
@@ -27700,18 +30496,9 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
 
-  if (present(convention)) then
-    call format_key(key, "", localrc, convention=convention, purpose=purpose)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
-  else
-    key = ESMF_ATTR_DEFAULT_ROOTKEY
-  end if
-
-  info = einq%GetInfo(target, rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
-
-  call ESMF_Info2Inquire(info, key=key, count=countSingle, countTotal=countTotal, &
-    attPackCount=attPackCount, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Inquire(attpack%getPayload(), key=attpack%formatKey(), attrCount=countSingle, &
+    attrCountTotal=countTotal, attPackCount=attPackCount, attnestflag=attnestflag, &
+    rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(attcountflag)) then
@@ -27726,14 +30513,13 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
     count = countTotal
   else if (l_attcountflag%value==ESMF_ATTGETCOUNT_ATTPACK%value) then
     count = attPackCount
-  else if (l_attcountflag%value==ESMF_ATTGETCOUNT_ATTLINK%value) then
-    count = 0
   else
     if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeGetCountGrid
+end subroutine ESMF_AttributeGetCountAttPackGrid
+
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetInfoByNamAPGrid()"
 subroutine ESMF_AttributeGetInfoByNamAPGrid(target, name, attpack, keywordEnforcer, attnestflag, typekind, itemCount, isPresent, rc)
@@ -27770,7 +30556,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   if (present(isPresent)) isPresent = is_present
 
   if (is_present) then
-    call ESMF_Info2Inquire(attpack%getPayload(), key=key, count=itemCount, attnestflag=attnestflag, &
+    call ESMF_Info2Inquire(attpack%getPayload(), key=key, attrCount=itemCount, attnestflag=attnestflag, &
       typekind=typekind, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   else
@@ -27823,7 +30609,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   if (present(isPresent)) isPresent = is_present
 
   if (is_present) then
-    call ESMF_Info2Inquire(info, key=key, count=itemCount, attnestflag=attnestflag, &
+    call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, attnestflag=attnestflag, &
       typekind=typekind, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   else
@@ -27854,11 +30640,21 @@ subroutine ESMF_AttributeGetInfoByNumGrid(target, attributeIndex, name, conventi
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  print *, "ESMF_AttributeGetInfoByNumGrid attributeIndex=", attributeIndex !tdk:p
+  print *, "ESMF_AttributeGetInfoByNumGrid name=", name !tdk:p
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, "", localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -27866,12 +30662,11 @@ subroutine ESMF_AttributeGetInfoByNumGrid(target, attributeIndex, name, conventi
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Inquire(info, key=key, count=itemCount, typekind=typekind, &
-    idx=attributeIndex, ikey=name, isPresent=isPresent, attnestflag=attnestflag, &
+  print *, "ESMF_AttributeGetInfoByNumGrid key=", key !tdk:p
+  call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, typekind=typekind, &
+    idx=attributeIndex, ikey=name, isPresent=isPresent, attnestflag=local_attnestflag, &
     rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
-
-  deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeGetInfoByNumGrid
@@ -27883,29 +30678,38 @@ subroutine ESMF_AttributeGetAttPackGrid(target, convention, purpose, keywordEnfo
   character(len=*), intent(in) :: convention
   character(len=*), intent(in) :: purpose
 type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  character (len = *), intent(in), optional :: attPackInstanceName  !tdk: noop, no suppor for attpackinstancename
+  character (len = *), intent(in), optional :: attPackInstanceName  !tdk: noop, no support for attpackinstancename
   type(ESMF_AttPack), intent(inout), optional :: attpack
-  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag !tdk: noop, are there nested conventions and purposes?
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   logical, intent(out), optional :: isPresent
   integer, intent(out), optional :: rc
 
   integer :: localrc
   character(:), allocatable :: key
   logical :: is_present
-  type(ESMF_Info2), target, save :: info !tdk:?: is this okay? memory leak?
+  type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  print *, "ESMF_AttributeGetAttPackGrid convention=", convention !tdk:p
+  print *, "ESMF_AttributeGetAttPackGrid purpose=", purpose !tdk:p
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  allocate(character(LEN(TRIM(convention))+LEN(TRIM(purpose))+1)::key)
-  key = convention//"/"//purpose
-  is_present = ESMF_Info2IsPresent(info, key, rc=localrc)
+  key = TRIM(convention)//"/"//TRIM(purpose)
+  is_present = ESMF_Info2IsPresent(info, key, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
@@ -27920,6 +30724,45 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeGetAttPackGrid
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetCountState()"
@@ -27936,7 +30779,79 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   type(ESMF_Info2) :: info
   type(ESMF_AttGetCountFlag) :: l_attcountflag
+  type(ESMF_AttNest_Flag) :: local_attnestflag
   type(ESMF_Inquire) :: einq
+  integer :: countSingle, countTotal, attPackCount, localrc, attPackCountTotal
+  character(:), allocatable :: key
+
+  localrc = ESMF_FAILURE
+  if (present(rc)) rc = ESMF_RC_NOT_IMPL
+  ! Check object initialization
+  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
+  if (present(attcountflag)) then
+    l_attcountflag = attcountflag
+  else
+    l_attcountflag = ESMF_ATTGETCOUNT_ATTRIBUTE
+  end if
+
+  if (present(convention)) then
+    call format_key(key, "", localrc, convention=convention, purpose=purpose)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    key = ""
+  end if
+
+  info = einq%GetInfo(target, rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetCountState key=", key !tdk:p
+  print *, "ESMF_AttributeGetCountState local_attnestflag=", local_attnestflag, ESMF_ATTNEST_ON !tdk:p
+  call ESMF_Info2Inquire(info, key=key, attrCount=countSingle, attrCountTotal=countTotal, &
+    attPackCount=attPackCount, attnestflag=local_attnestflag, rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  if (present(attcountflag)) then
+    l_attcountflag = attcountflag
+  else
+    l_attcountflag = ESMF_ATTGETCOUNT_ATTRIBUTE
+  end if
+
+  if (l_attcountflag%value==ESMF_ATTGETCOUNT_ATTRIBUTE%value) then
+    if (local_attnestflag%value==ESMF_ATTNEST_ON%value) then
+      count = countTotal
+    else
+      count = countSingle
+    end if
+  else if (l_attcountflag%value==ESMF_ATTGETCOUNT_TOTAL%value) then
+    count = countTotal
+  else if (l_attcountflag%value==ESMF_ATTGETCOUNT_ATTPACK%value) then
+    count = attPackCount
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
+  if (present(rc)) rc = ESMF_SUCCESS
+end subroutine ESMF_AttributeGetCountState
+
+#undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_AttributeGetCountAttPackState()"
+subroutine ESMF_AttributeGetCountAttPackState(target, attpack, count, keywordEnforcer, attcountflag, attnestflag, rc)
+  type(ESMF_State), intent(in) :: target
+  type(ESMF_AttPack), intent(inout) :: attpack
+  integer, intent(inout) :: count
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  type(ESMF_AttGetCountFlag), intent(in), optional :: attcountflag
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
+  integer, intent(inout), optional :: rc
+
+  type(ESMF_AttGetCountFlag) :: l_attcountflag
   integer :: countSingle, countTotal, attPackCount, localrc
   character(:), allocatable :: key
 
@@ -27945,18 +30860,9 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
 
-  if (present(convention)) then
-    call format_key(key, "", localrc, convention=convention, purpose=purpose)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
-  else
-    key = ESMF_ATTR_DEFAULT_ROOTKEY
-  end if
-
-  info = einq%GetInfo(target, rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
-
-  call ESMF_Info2Inquire(info, key=key, count=countSingle, countTotal=countTotal, &
-    attPackCount=attPackCount, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Inquire(attpack%getPayload(), key=attpack%formatKey(), attrCount=countSingle, &
+    attrCountTotal=countTotal, attPackCount=attPackCount, attnestflag=attnestflag, &
+    rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(attcountflag)) then
@@ -27971,14 +30877,13 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
     count = countTotal
   else if (l_attcountflag%value==ESMF_ATTGETCOUNT_ATTPACK%value) then
     count = attPackCount
-  else if (l_attcountflag%value==ESMF_ATTGETCOUNT_ATTLINK%value) then
-    count = 0
   else
     if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeGetCountState
+end subroutine ESMF_AttributeGetCountAttPackState
+
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetInfoByNamAPState()"
 subroutine ESMF_AttributeGetInfoByNamAPState(target, name, attpack, keywordEnforcer, attnestflag, typekind, itemCount, isPresent, rc)
@@ -28015,7 +30920,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   if (present(isPresent)) isPresent = is_present
 
   if (is_present) then
-    call ESMF_Info2Inquire(attpack%getPayload(), key=key, count=itemCount, attnestflag=attnestflag, &
+    call ESMF_Info2Inquire(attpack%getPayload(), key=key, attrCount=itemCount, attnestflag=attnestflag, &
       typekind=typekind, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   else
@@ -28068,7 +30973,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   if (present(isPresent)) isPresent = is_present
 
   if (is_present) then
-    call ESMF_Info2Inquire(info, key=key, count=itemCount, attnestflag=attnestflag, &
+    call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, attnestflag=attnestflag, &
       typekind=typekind, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   else
@@ -28099,11 +31004,21 @@ subroutine ESMF_AttributeGetInfoByNumState(target, attributeIndex, name, convent
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  print *, "ESMF_AttributeGetInfoByNumState attributeIndex=", attributeIndex !tdk:p
+  print *, "ESMF_AttributeGetInfoByNumState name=", name !tdk:p
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, "", localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -28111,12 +31026,11 @@ subroutine ESMF_AttributeGetInfoByNumState(target, attributeIndex, name, convent
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Inquire(info, key=key, count=itemCount, typekind=typekind, &
-    idx=attributeIndex, ikey=name, isPresent=isPresent, attnestflag=attnestflag, &
+  print *, "ESMF_AttributeGetInfoByNumState key=", key !tdk:p
+  call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, typekind=typekind, &
+    idx=attributeIndex, ikey=name, isPresent=isPresent, attnestflag=local_attnestflag, &
     rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
-
-  deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeGetInfoByNumState
@@ -28128,29 +31042,38 @@ subroutine ESMF_AttributeGetAttPackState(target, convention, purpose, keywordEnf
   character(len=*), intent(in) :: convention
   character(len=*), intent(in) :: purpose
 type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  character (len = *), intent(in), optional :: attPackInstanceName  !tdk: noop, no suppor for attpackinstancename
+  character (len = *), intent(in), optional :: attPackInstanceName  !tdk: noop, no support for attpackinstancename
   type(ESMF_AttPack), intent(inout), optional :: attpack
-  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag !tdk: noop, are there nested conventions and purposes?
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   logical, intent(out), optional :: isPresent
   integer, intent(out), optional :: rc
 
   integer :: localrc
   character(:), allocatable :: key
   logical :: is_present
-  type(ESMF_Info2), target, save :: info !tdk:?: is this okay? memory leak?
+  type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  print *, "ESMF_AttributeGetAttPackState convention=", convention !tdk:p
+  print *, "ESMF_AttributeGetAttPackState purpose=", purpose !tdk:p
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  allocate(character(LEN(TRIM(convention))+LEN(TRIM(purpose))+1)::key)
-  key = convention//"/"//purpose
-  is_present = ESMF_Info2IsPresent(info, key, rc=localrc)
+  key = TRIM(convention)//"/"//TRIM(purpose)
+  is_present = ESMF_Info2IsPresent(info, key, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
@@ -28165,6 +31088,45 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeGetAttPackState
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetCountLocStream()"
@@ -28181,7 +31143,79 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   type(ESMF_Info2) :: info
   type(ESMF_AttGetCountFlag) :: l_attcountflag
+  type(ESMF_AttNest_Flag) :: local_attnestflag
   type(ESMF_Inquire) :: einq
+  integer :: countSingle, countTotal, attPackCount, localrc, attPackCountTotal
+  character(:), allocatable :: key
+
+  localrc = ESMF_FAILURE
+  if (present(rc)) rc = ESMF_RC_NOT_IMPL
+  ! Check object initialization
+  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
+  if (present(attcountflag)) then
+    l_attcountflag = attcountflag
+  else
+    l_attcountflag = ESMF_ATTGETCOUNT_ATTRIBUTE
+  end if
+
+  if (present(convention)) then
+    call format_key(key, "", localrc, convention=convention, purpose=purpose)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    key = ""
+  end if
+
+  info = einq%GetInfo(target, rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  print *, "ESMF_AttributeGetCountLocStream key=", key !tdk:p
+  print *, "ESMF_AttributeGetCountLocStream local_attnestflag=", local_attnestflag, ESMF_ATTNEST_ON !tdk:p
+  call ESMF_Info2Inquire(info, key=key, attrCount=countSingle, attrCountTotal=countTotal, &
+    attPackCount=attPackCount, attnestflag=local_attnestflag, rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  if (present(attcountflag)) then
+    l_attcountflag = attcountflag
+  else
+    l_attcountflag = ESMF_ATTGETCOUNT_ATTRIBUTE
+  end if
+
+  if (l_attcountflag%value==ESMF_ATTGETCOUNT_ATTRIBUTE%value) then
+    if (local_attnestflag%value==ESMF_ATTNEST_ON%value) then
+      count = countTotal
+    else
+      count = countSingle
+    end if
+  else if (l_attcountflag%value==ESMF_ATTGETCOUNT_TOTAL%value) then
+    count = countTotal
+  else if (l_attcountflag%value==ESMF_ATTGETCOUNT_ATTPACK%value) then
+    count = attPackCount
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
+  if (present(rc)) rc = ESMF_SUCCESS
+end subroutine ESMF_AttributeGetCountLocStream
+
+#undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_AttributeGetCountAttPackLocStream()"
+subroutine ESMF_AttributeGetCountAttPackLocStream(target, attpack, count, keywordEnforcer, attcountflag, attnestflag, rc)
+  type(ESMF_LocStream), intent(in) :: target
+  type(ESMF_AttPack), intent(inout) :: attpack
+  integer, intent(inout) :: count
+type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
+  type(ESMF_AttGetCountFlag), intent(in), optional :: attcountflag
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
+  integer, intent(inout), optional :: rc
+
+  type(ESMF_AttGetCountFlag) :: l_attcountflag
   integer :: countSingle, countTotal, attPackCount, localrc
   character(:), allocatable :: key
 
@@ -28190,18 +31224,9 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
 
-  if (present(convention)) then
-    call format_key(key, "", localrc, convention=convention, purpose=purpose)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
-  else
-    key = ESMF_ATTR_DEFAULT_ROOTKEY
-  end if
-
-  info = einq%GetInfo(target, rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
-
-  call ESMF_Info2Inquire(info, key=key, count=countSingle, countTotal=countTotal, &
-    attPackCount=attPackCount, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Inquire(attpack%getPayload(), key=attpack%formatKey(), attrCount=countSingle, &
+    attrCountTotal=countTotal, attPackCount=attPackCount, attnestflag=attnestflag, &
+    rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(attcountflag)) then
@@ -28216,14 +31241,13 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
     count = countTotal
   else if (l_attcountflag%value==ESMF_ATTGETCOUNT_ATTPACK%value) then
     count = attPackCount
-  else if (l_attcountflag%value==ESMF_ATTGETCOUNT_ATTLINK%value) then
-    count = 0
   else
     if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeGetCountLocStream
+end subroutine ESMF_AttributeGetCountAttPackLocStream
+
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetInfoByNamAPLocStream()"
 subroutine ESMF_AttributeGetInfoByNamAPLocStream(target, name, attpack, keywordEnforcer, attnestflag, typekind, itemCount, isPresent, rc)
@@ -28260,7 +31284,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   if (present(isPresent)) isPresent = is_present
 
   if (is_present) then
-    call ESMF_Info2Inquire(attpack%getPayload(), key=key, count=itemCount, attnestflag=attnestflag, &
+    call ESMF_Info2Inquire(attpack%getPayload(), key=key, attrCount=itemCount, attnestflag=attnestflag, &
       typekind=typekind, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   else
@@ -28313,7 +31337,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   if (present(isPresent)) isPresent = is_present
 
   if (is_present) then
-    call ESMF_Info2Inquire(info, key=key, count=itemCount, attnestflag=attnestflag, &
+    call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, attnestflag=attnestflag, &
       typekind=typekind, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   else
@@ -28344,11 +31368,21 @@ subroutine ESMF_AttributeGetInfoByNumLocStream(target, attributeIndex, name, con
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  print *, "ESMF_AttributeGetInfoByNumLocStream attributeIndex=", attributeIndex !tdk:p
+  print *, "ESMF_AttributeGetInfoByNumLocStream name=", name !tdk:p
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, "", localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -28356,12 +31390,11 @@ subroutine ESMF_AttributeGetInfoByNumLocStream(target, attributeIndex, name, con
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Inquire(info, key=key, count=itemCount, typekind=typekind, &
-    idx=attributeIndex, ikey=name, isPresent=isPresent, attnestflag=attnestflag, &
+  print *, "ESMF_AttributeGetInfoByNumLocStream key=", key !tdk:p
+  call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, typekind=typekind, &
+    idx=attributeIndex, ikey=name, isPresent=isPresent, attnestflag=local_attnestflag, &
     rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
-
-  deallocate(key)
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeGetInfoByNumLocStream
@@ -28373,29 +31406,38 @@ subroutine ESMF_AttributeGetAttPackLocStream(target, convention, purpose, keywor
   character(len=*), intent(in) :: convention
   character(len=*), intent(in) :: purpose
 type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  character (len = *), intent(in), optional :: attPackInstanceName  !tdk: noop, no suppor for attpackinstancename
+  character (len = *), intent(in), optional :: attPackInstanceName  !tdk: noop, no support for attpackinstancename
   type(ESMF_AttPack), intent(inout), optional :: attpack
-  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag !tdk: noop, are there nested conventions and purposes?
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   logical, intent(out), optional :: isPresent
   integer, intent(out), optional :: rc
 
   integer :: localrc
   character(:), allocatable :: key
   logical :: is_present
-  type(ESMF_Info2), target, save :: info !tdk:?: is this okay? memory leak?
+  type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  print *, "ESMF_AttributeGetAttPackLocStream convention=", convention !tdk:p
+  print *, "ESMF_AttributeGetAttPackLocStream purpose=", purpose !tdk:p
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  allocate(character(LEN(TRIM(convention))+LEN(TRIM(purpose))+1)::key)
-  key = convention//"/"//purpose
-  is_present = ESMF_Info2IsPresent(info, key, rc=localrc)
+  key = TRIM(convention)//"/"//TRIM(purpose)
+  is_present = ESMF_Info2IsPresent(info, key, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
@@ -28410,6 +31452,45 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeGetAttPackLocStream
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 !==============================================================================
 ! ESMF_AttributeRemove ========================================================
@@ -28427,21 +31508,38 @@ subroutine ESMF_AttributeRemoveAttPackArray(target, name, attpack, convention, p
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
-  integer :: localrc
+  integer :: localrc, purpsize
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
   character(:), allocatable :: keyParent, keyChild
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  print *, "ESMF_AttributeRemoveArray name=", name; !tdk:p
+  print *, "ESMF_AttributeRemoveArray convention=", convention; !tdk:p
+  print *, "ESMF_AttributeRemoveArray purpose=", purpose; !tdk:p
+  if (present(attpack)) then !tdk:p
+    print *, "ESMF_AttributeRemoveArray attpack is present" !tdk:p
+    print *, "ESMF_AttributeRemoveArray attpack%formatKey()=", attpack%formatKey() !tdk:p
+  else !tdk:p
+    print *, "ESMF_AttributeRemoveArray attpack is NOT present" !tdk:p
+  end if !tdk:p
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   ! If attpack, use target as info source
-  if (present(attpack) .and. present(name)) then
+  if (present(attpack)) then
     info = attpack%getPayload()
-  ! If no attpack, use target as info source
   else
+    ! If no attpack, use target as info source
     info = einq%GetInfo(target, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   end if
@@ -28450,24 +31548,44 @@ subroutine ESMF_AttributeRemoveAttPackArray(target, name, attpack, convention, p
   if (present(name)) then
     keyChild = name
 
-    call format_key(keyParent, "", localrc, convention=convention, purpose=purpose)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(attpack)) then
+      keyParent = attpack%formatKey(rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      call format_key(keyParent, "", localrc, convention=convention, purpose=purpose)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    end if
 
-    call ESMF_Info2Remove(info, keyParent, keyChild=keyChild, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2Remove(info, keyParent, keyChild=keyChild, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   ! Otherwise, remove the whole attpack
   else
     if (.not. present(attpack)) then
-      if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="No name or attpack provided. Nothing to remove.", &
-        ESMF_CONTEXT, rcToReturn=rc)) return
-    endif
+      if (.not. present(convention)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="No name, attpack, or conv/purp provided. Nothing to remove.", &
+          ESMF_CONTEXT, rcToReturn=rc)) return
+      else
+        call ESMF_Info2Remove(info, TRIM(convention), keyChild=TRIM(purpose), attnestflag=local_attnestflag, rc=localrc)
+        if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    keyParent = attpack%formatKey(rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+        ! Check for conventions with no purposes
+        call ESMF_Info2Inquire(info, key=TRIM(convention), size=purpsize, rc=localrc)
+        if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Remove(info, keyParent, attnestflag=attnestflag, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+        ! If there are no purposes, the convention is orphaned and should be removed
+        if (purpsize == 0) then
+          call ESMF_Info2Remove(info, "", keyChild=TRIM(convention), rc=localrc)
+          if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+        end if
+      end if
+    else
+      keyParent = attpack%formatKey(rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+      call ESMF_Info2Remove(info, keyParent, attnestflag=local_attnestflag, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    end if
   endif
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -28524,21 +31642,38 @@ subroutine ESMF_AttributeRemoveAttPackArrayBundle(target, name, attpack, convent
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
-  integer :: localrc
+  integer :: localrc, purpsize
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
   character(:), allocatable :: keyParent, keyChild
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  print *, "ESMF_AttributeRemoveArrayBundle name=", name; !tdk:p
+  print *, "ESMF_AttributeRemoveArrayBundle convention=", convention; !tdk:p
+  print *, "ESMF_AttributeRemoveArrayBundle purpose=", purpose; !tdk:p
+  if (present(attpack)) then !tdk:p
+    print *, "ESMF_AttributeRemoveArrayBundle attpack is present" !tdk:p
+    print *, "ESMF_AttributeRemoveArrayBundle attpack%formatKey()=", attpack%formatKey() !tdk:p
+  else !tdk:p
+    print *, "ESMF_AttributeRemoveArrayBundle attpack is NOT present" !tdk:p
+  end if !tdk:p
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   ! If attpack, use target as info source
-  if (present(attpack) .and. present(name)) then
+  if (present(attpack)) then
     info = attpack%getPayload()
-  ! If no attpack, use target as info source
   else
+    ! If no attpack, use target as info source
     info = einq%GetInfo(target, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   end if
@@ -28547,24 +31682,44 @@ subroutine ESMF_AttributeRemoveAttPackArrayBundle(target, name, attpack, convent
   if (present(name)) then
     keyChild = name
 
-    call format_key(keyParent, "", localrc, convention=convention, purpose=purpose)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(attpack)) then
+      keyParent = attpack%formatKey(rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      call format_key(keyParent, "", localrc, convention=convention, purpose=purpose)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    end if
 
-    call ESMF_Info2Remove(info, keyParent, keyChild=keyChild, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2Remove(info, keyParent, keyChild=keyChild, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   ! Otherwise, remove the whole attpack
   else
     if (.not. present(attpack)) then
-      if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="No name or attpack provided. Nothing to remove.", &
-        ESMF_CONTEXT, rcToReturn=rc)) return
-    endif
+      if (.not. present(convention)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="No name, attpack, or conv/purp provided. Nothing to remove.", &
+          ESMF_CONTEXT, rcToReturn=rc)) return
+      else
+        call ESMF_Info2Remove(info, TRIM(convention), keyChild=TRIM(purpose), attnestflag=local_attnestflag, rc=localrc)
+        if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    keyParent = attpack%formatKey(rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+        ! Check for conventions with no purposes
+        call ESMF_Info2Inquire(info, key=TRIM(convention), size=purpsize, rc=localrc)
+        if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Remove(info, keyParent, attnestflag=attnestflag, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+        ! If there are no purposes, the convention is orphaned and should be removed
+        if (purpsize == 0) then
+          call ESMF_Info2Remove(info, "", keyChild=TRIM(convention), rc=localrc)
+          if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+        end if
+      end if
+    else
+      keyParent = attpack%formatKey(rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+      call ESMF_Info2Remove(info, keyParent, attnestflag=local_attnestflag, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    end if
   endif
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -28621,21 +31776,38 @@ subroutine ESMF_AttributeRemoveAttPackCplComp(target, name, attpack, convention,
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
-  integer :: localrc
+  integer :: localrc, purpsize
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
   character(:), allocatable :: keyParent, keyChild
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  print *, "ESMF_AttributeRemoveCplComp name=", name; !tdk:p
+  print *, "ESMF_AttributeRemoveCplComp convention=", convention; !tdk:p
+  print *, "ESMF_AttributeRemoveCplComp purpose=", purpose; !tdk:p
+  if (present(attpack)) then !tdk:p
+    print *, "ESMF_AttributeRemoveCplComp attpack is present" !tdk:p
+    print *, "ESMF_AttributeRemoveCplComp attpack%formatKey()=", attpack%formatKey() !tdk:p
+  else !tdk:p
+    print *, "ESMF_AttributeRemoveCplComp attpack is NOT present" !tdk:p
+  end if !tdk:p
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   ! If attpack, use target as info source
-  if (present(attpack) .and. present(name)) then
+  if (present(attpack)) then
     info = attpack%getPayload()
-  ! If no attpack, use target as info source
   else
+    ! If no attpack, use target as info source
     info = einq%GetInfo(target, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   end if
@@ -28644,24 +31816,44 @@ subroutine ESMF_AttributeRemoveAttPackCplComp(target, name, attpack, convention,
   if (present(name)) then
     keyChild = name
 
-    call format_key(keyParent, "", localrc, convention=convention, purpose=purpose)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(attpack)) then
+      keyParent = attpack%formatKey(rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      call format_key(keyParent, "", localrc, convention=convention, purpose=purpose)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    end if
 
-    call ESMF_Info2Remove(info, keyParent, keyChild=keyChild, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2Remove(info, keyParent, keyChild=keyChild, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   ! Otherwise, remove the whole attpack
   else
     if (.not. present(attpack)) then
-      if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="No name or attpack provided. Nothing to remove.", &
-        ESMF_CONTEXT, rcToReturn=rc)) return
-    endif
+      if (.not. present(convention)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="No name, attpack, or conv/purp provided. Nothing to remove.", &
+          ESMF_CONTEXT, rcToReturn=rc)) return
+      else
+        call ESMF_Info2Remove(info, TRIM(convention), keyChild=TRIM(purpose), attnestflag=local_attnestflag, rc=localrc)
+        if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    keyParent = attpack%formatKey(rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+        ! Check for conventions with no purposes
+        call ESMF_Info2Inquire(info, key=TRIM(convention), size=purpsize, rc=localrc)
+        if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Remove(info, keyParent, attnestflag=attnestflag, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+        ! If there are no purposes, the convention is orphaned and should be removed
+        if (purpsize == 0) then
+          call ESMF_Info2Remove(info, "", keyChild=TRIM(convention), rc=localrc)
+          if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+        end if
+      end if
+    else
+      keyParent = attpack%formatKey(rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+      call ESMF_Info2Remove(info, keyParent, attnestflag=local_attnestflag, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    end if
   endif
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -28718,21 +31910,38 @@ subroutine ESMF_AttributeRemoveAttPackGridComp(target, name, attpack, convention
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
-  integer :: localrc
+  integer :: localrc, purpsize
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
   character(:), allocatable :: keyParent, keyChild
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  print *, "ESMF_AttributeRemoveGridComp name=", name; !tdk:p
+  print *, "ESMF_AttributeRemoveGridComp convention=", convention; !tdk:p
+  print *, "ESMF_AttributeRemoveGridComp purpose=", purpose; !tdk:p
+  if (present(attpack)) then !tdk:p
+    print *, "ESMF_AttributeRemoveGridComp attpack is present" !tdk:p
+    print *, "ESMF_AttributeRemoveGridComp attpack%formatKey()=", attpack%formatKey() !tdk:p
+  else !tdk:p
+    print *, "ESMF_AttributeRemoveGridComp attpack is NOT present" !tdk:p
+  end if !tdk:p
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   ! If attpack, use target as info source
-  if (present(attpack) .and. present(name)) then
+  if (present(attpack)) then
     info = attpack%getPayload()
-  ! If no attpack, use target as info source
   else
+    ! If no attpack, use target as info source
     info = einq%GetInfo(target, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   end if
@@ -28741,24 +31950,44 @@ subroutine ESMF_AttributeRemoveAttPackGridComp(target, name, attpack, convention
   if (present(name)) then
     keyChild = name
 
-    call format_key(keyParent, "", localrc, convention=convention, purpose=purpose)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(attpack)) then
+      keyParent = attpack%formatKey(rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      call format_key(keyParent, "", localrc, convention=convention, purpose=purpose)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    end if
 
-    call ESMF_Info2Remove(info, keyParent, keyChild=keyChild, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2Remove(info, keyParent, keyChild=keyChild, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   ! Otherwise, remove the whole attpack
   else
     if (.not. present(attpack)) then
-      if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="No name or attpack provided. Nothing to remove.", &
-        ESMF_CONTEXT, rcToReturn=rc)) return
-    endif
+      if (.not. present(convention)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="No name, attpack, or conv/purp provided. Nothing to remove.", &
+          ESMF_CONTEXT, rcToReturn=rc)) return
+      else
+        call ESMF_Info2Remove(info, TRIM(convention), keyChild=TRIM(purpose), attnestflag=local_attnestflag, rc=localrc)
+        if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    keyParent = attpack%formatKey(rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+        ! Check for conventions with no purposes
+        call ESMF_Info2Inquire(info, key=TRIM(convention), size=purpsize, rc=localrc)
+        if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Remove(info, keyParent, attnestflag=attnestflag, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+        ! If there are no purposes, the convention is orphaned and should be removed
+        if (purpsize == 0) then
+          call ESMF_Info2Remove(info, "", keyChild=TRIM(convention), rc=localrc)
+          if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+        end if
+      end if
+    else
+      keyParent = attpack%formatKey(rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+      call ESMF_Info2Remove(info, keyParent, attnestflag=local_attnestflag, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    end if
   endif
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -28815,21 +32044,38 @@ subroutine ESMF_AttributeRemoveAttPackSciComp(target, name, attpack, convention,
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
-  integer :: localrc
+  integer :: localrc, purpsize
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
   character(:), allocatable :: keyParent, keyChild
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  print *, "ESMF_AttributeRemoveSciComp name=", name; !tdk:p
+  print *, "ESMF_AttributeRemoveSciComp convention=", convention; !tdk:p
+  print *, "ESMF_AttributeRemoveSciComp purpose=", purpose; !tdk:p
+  if (present(attpack)) then !tdk:p
+    print *, "ESMF_AttributeRemoveSciComp attpack is present" !tdk:p
+    print *, "ESMF_AttributeRemoveSciComp attpack%formatKey()=", attpack%formatKey() !tdk:p
+  else !tdk:p
+    print *, "ESMF_AttributeRemoveSciComp attpack is NOT present" !tdk:p
+  end if !tdk:p
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   ! If attpack, use target as info source
-  if (present(attpack) .and. present(name)) then
+  if (present(attpack)) then
     info = attpack%getPayload()
-  ! If no attpack, use target as info source
   else
+    ! If no attpack, use target as info source
     info = einq%GetInfo(target, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   end if
@@ -28838,24 +32084,44 @@ subroutine ESMF_AttributeRemoveAttPackSciComp(target, name, attpack, convention,
   if (present(name)) then
     keyChild = name
 
-    call format_key(keyParent, "", localrc, convention=convention, purpose=purpose)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(attpack)) then
+      keyParent = attpack%formatKey(rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      call format_key(keyParent, "", localrc, convention=convention, purpose=purpose)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    end if
 
-    call ESMF_Info2Remove(info, keyParent, keyChild=keyChild, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2Remove(info, keyParent, keyChild=keyChild, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   ! Otherwise, remove the whole attpack
   else
     if (.not. present(attpack)) then
-      if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="No name or attpack provided. Nothing to remove.", &
-        ESMF_CONTEXT, rcToReturn=rc)) return
-    endif
+      if (.not. present(convention)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="No name, attpack, or conv/purp provided. Nothing to remove.", &
+          ESMF_CONTEXT, rcToReturn=rc)) return
+      else
+        call ESMF_Info2Remove(info, TRIM(convention), keyChild=TRIM(purpose), attnestflag=local_attnestflag, rc=localrc)
+        if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    keyParent = attpack%formatKey(rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+        ! Check for conventions with no purposes
+        call ESMF_Info2Inquire(info, key=TRIM(convention), size=purpsize, rc=localrc)
+        if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Remove(info, keyParent, attnestflag=attnestflag, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+        ! If there are no purposes, the convention is orphaned and should be removed
+        if (purpsize == 0) then
+          call ESMF_Info2Remove(info, "", keyChild=TRIM(convention), rc=localrc)
+          if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+        end if
+      end if
+    else
+      keyParent = attpack%formatKey(rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+      call ESMF_Info2Remove(info, keyParent, attnestflag=local_attnestflag, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    end if
   endif
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -28912,21 +32178,38 @@ subroutine ESMF_AttributeRemoveAttPackDistGrid(target, name, attpack, convention
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
-  integer :: localrc
+  integer :: localrc, purpsize
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
   character(:), allocatable :: keyParent, keyChild
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  print *, "ESMF_AttributeRemoveDistGrid name=", name; !tdk:p
+  print *, "ESMF_AttributeRemoveDistGrid convention=", convention; !tdk:p
+  print *, "ESMF_AttributeRemoveDistGrid purpose=", purpose; !tdk:p
+  if (present(attpack)) then !tdk:p
+    print *, "ESMF_AttributeRemoveDistGrid attpack is present" !tdk:p
+    print *, "ESMF_AttributeRemoveDistGrid attpack%formatKey()=", attpack%formatKey() !tdk:p
+  else !tdk:p
+    print *, "ESMF_AttributeRemoveDistGrid attpack is NOT present" !tdk:p
+  end if !tdk:p
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   ! If attpack, use target as info source
-  if (present(attpack) .and. present(name)) then
+  if (present(attpack)) then
     info = attpack%getPayload()
-  ! If no attpack, use target as info source
   else
+    ! If no attpack, use target as info source
     info = einq%GetInfo(target, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   end if
@@ -28935,24 +32218,44 @@ subroutine ESMF_AttributeRemoveAttPackDistGrid(target, name, attpack, convention
   if (present(name)) then
     keyChild = name
 
-    call format_key(keyParent, "", localrc, convention=convention, purpose=purpose)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(attpack)) then
+      keyParent = attpack%formatKey(rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      call format_key(keyParent, "", localrc, convention=convention, purpose=purpose)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    end if
 
-    call ESMF_Info2Remove(info, keyParent, keyChild=keyChild, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2Remove(info, keyParent, keyChild=keyChild, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   ! Otherwise, remove the whole attpack
   else
     if (.not. present(attpack)) then
-      if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="No name or attpack provided. Nothing to remove.", &
-        ESMF_CONTEXT, rcToReturn=rc)) return
-    endif
+      if (.not. present(convention)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="No name, attpack, or conv/purp provided. Nothing to remove.", &
+          ESMF_CONTEXT, rcToReturn=rc)) return
+      else
+        call ESMF_Info2Remove(info, TRIM(convention), keyChild=TRIM(purpose), attnestflag=local_attnestflag, rc=localrc)
+        if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    keyParent = attpack%formatKey(rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+        ! Check for conventions with no purposes
+        call ESMF_Info2Inquire(info, key=TRIM(convention), size=purpsize, rc=localrc)
+        if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Remove(info, keyParent, attnestflag=attnestflag, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+        ! If there are no purposes, the convention is orphaned and should be removed
+        if (purpsize == 0) then
+          call ESMF_Info2Remove(info, "", keyChild=TRIM(convention), rc=localrc)
+          if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+        end if
+      end if
+    else
+      keyParent = attpack%formatKey(rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+      call ESMF_Info2Remove(info, keyParent, attnestflag=local_attnestflag, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    end if
   endif
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -29009,21 +32312,38 @@ subroutine ESMF_AttributeRemoveAttPackField(target, name, attpack, convention, p
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
-  integer :: localrc
+  integer :: localrc, purpsize
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
   character(:), allocatable :: keyParent, keyChild
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  print *, "ESMF_AttributeRemoveField name=", name; !tdk:p
+  print *, "ESMF_AttributeRemoveField convention=", convention; !tdk:p
+  print *, "ESMF_AttributeRemoveField purpose=", purpose; !tdk:p
+  if (present(attpack)) then !tdk:p
+    print *, "ESMF_AttributeRemoveField attpack is present" !tdk:p
+    print *, "ESMF_AttributeRemoveField attpack%formatKey()=", attpack%formatKey() !tdk:p
+  else !tdk:p
+    print *, "ESMF_AttributeRemoveField attpack is NOT present" !tdk:p
+  end if !tdk:p
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   ! If attpack, use target as info source
-  if (present(attpack) .and. present(name)) then
+  if (present(attpack)) then
     info = attpack%getPayload()
-  ! If no attpack, use target as info source
   else
+    ! If no attpack, use target as info source
     info = einq%GetInfo(target, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   end if
@@ -29032,24 +32352,44 @@ subroutine ESMF_AttributeRemoveAttPackField(target, name, attpack, convention, p
   if (present(name)) then
     keyChild = name
 
-    call format_key(keyParent, "", localrc, convention=convention, purpose=purpose)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(attpack)) then
+      keyParent = attpack%formatKey(rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      call format_key(keyParent, "", localrc, convention=convention, purpose=purpose)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    end if
 
-    call ESMF_Info2Remove(info, keyParent, keyChild=keyChild, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2Remove(info, keyParent, keyChild=keyChild, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   ! Otherwise, remove the whole attpack
   else
     if (.not. present(attpack)) then
-      if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="No name or attpack provided. Nothing to remove.", &
-        ESMF_CONTEXT, rcToReturn=rc)) return
-    endif
+      if (.not. present(convention)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="No name, attpack, or conv/purp provided. Nothing to remove.", &
+          ESMF_CONTEXT, rcToReturn=rc)) return
+      else
+        call ESMF_Info2Remove(info, TRIM(convention), keyChild=TRIM(purpose), attnestflag=local_attnestflag, rc=localrc)
+        if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    keyParent = attpack%formatKey(rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+        ! Check for conventions with no purposes
+        call ESMF_Info2Inquire(info, key=TRIM(convention), size=purpsize, rc=localrc)
+        if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Remove(info, keyParent, attnestflag=attnestflag, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+        ! If there are no purposes, the convention is orphaned and should be removed
+        if (purpsize == 0) then
+          call ESMF_Info2Remove(info, "", keyChild=TRIM(convention), rc=localrc)
+          if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+        end if
+      end if
+    else
+      keyParent = attpack%formatKey(rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+      call ESMF_Info2Remove(info, keyParent, attnestflag=local_attnestflag, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    end if
   endif
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -29106,21 +32446,38 @@ subroutine ESMF_AttributeRemoveAttPackFieldBundle(target, name, attpack, convent
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
-  integer :: localrc
+  integer :: localrc, purpsize
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
   character(:), allocatable :: keyParent, keyChild
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  print *, "ESMF_AttributeRemoveFieldBundle name=", name; !tdk:p
+  print *, "ESMF_AttributeRemoveFieldBundle convention=", convention; !tdk:p
+  print *, "ESMF_AttributeRemoveFieldBundle purpose=", purpose; !tdk:p
+  if (present(attpack)) then !tdk:p
+    print *, "ESMF_AttributeRemoveFieldBundle attpack is present" !tdk:p
+    print *, "ESMF_AttributeRemoveFieldBundle attpack%formatKey()=", attpack%formatKey() !tdk:p
+  else !tdk:p
+    print *, "ESMF_AttributeRemoveFieldBundle attpack is NOT present" !tdk:p
+  end if !tdk:p
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   ! If attpack, use target as info source
-  if (present(attpack) .and. present(name)) then
+  if (present(attpack)) then
     info = attpack%getPayload()
-  ! If no attpack, use target as info source
   else
+    ! If no attpack, use target as info source
     info = einq%GetInfo(target, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   end if
@@ -29129,24 +32486,44 @@ subroutine ESMF_AttributeRemoveAttPackFieldBundle(target, name, attpack, convent
   if (present(name)) then
     keyChild = name
 
-    call format_key(keyParent, "", localrc, convention=convention, purpose=purpose)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(attpack)) then
+      keyParent = attpack%formatKey(rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      call format_key(keyParent, "", localrc, convention=convention, purpose=purpose)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    end if
 
-    call ESMF_Info2Remove(info, keyParent, keyChild=keyChild, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2Remove(info, keyParent, keyChild=keyChild, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   ! Otherwise, remove the whole attpack
   else
     if (.not. present(attpack)) then
-      if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="No name or attpack provided. Nothing to remove.", &
-        ESMF_CONTEXT, rcToReturn=rc)) return
-    endif
+      if (.not. present(convention)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="No name, attpack, or conv/purp provided. Nothing to remove.", &
+          ESMF_CONTEXT, rcToReturn=rc)) return
+      else
+        call ESMF_Info2Remove(info, TRIM(convention), keyChild=TRIM(purpose), attnestflag=local_attnestflag, rc=localrc)
+        if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    keyParent = attpack%formatKey(rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+        ! Check for conventions with no purposes
+        call ESMF_Info2Inquire(info, key=TRIM(convention), size=purpsize, rc=localrc)
+        if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Remove(info, keyParent, attnestflag=attnestflag, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+        ! If there are no purposes, the convention is orphaned and should be removed
+        if (purpsize == 0) then
+          call ESMF_Info2Remove(info, "", keyChild=TRIM(convention), rc=localrc)
+          if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+        end if
+      end if
+    else
+      keyParent = attpack%formatKey(rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+      call ESMF_Info2Remove(info, keyParent, attnestflag=local_attnestflag, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    end if
   endif
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -29203,21 +32580,38 @@ subroutine ESMF_AttributeRemoveAttPackGrid(target, name, attpack, convention, pu
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
-  integer :: localrc
+  integer :: localrc, purpsize
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
   character(:), allocatable :: keyParent, keyChild
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  print *, "ESMF_AttributeRemoveGrid name=", name; !tdk:p
+  print *, "ESMF_AttributeRemoveGrid convention=", convention; !tdk:p
+  print *, "ESMF_AttributeRemoveGrid purpose=", purpose; !tdk:p
+  if (present(attpack)) then !tdk:p
+    print *, "ESMF_AttributeRemoveGrid attpack is present" !tdk:p
+    print *, "ESMF_AttributeRemoveGrid attpack%formatKey()=", attpack%formatKey() !tdk:p
+  else !tdk:p
+    print *, "ESMF_AttributeRemoveGrid attpack is NOT present" !tdk:p
+  end if !tdk:p
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   ! If attpack, use target as info source
-  if (present(attpack) .and. present(name)) then
+  if (present(attpack)) then
     info = attpack%getPayload()
-  ! If no attpack, use target as info source
   else
+    ! If no attpack, use target as info source
     info = einq%GetInfo(target, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   end if
@@ -29226,24 +32620,44 @@ subroutine ESMF_AttributeRemoveAttPackGrid(target, name, attpack, convention, pu
   if (present(name)) then
     keyChild = name
 
-    call format_key(keyParent, "", localrc, convention=convention, purpose=purpose)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(attpack)) then
+      keyParent = attpack%formatKey(rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      call format_key(keyParent, "", localrc, convention=convention, purpose=purpose)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    end if
 
-    call ESMF_Info2Remove(info, keyParent, keyChild=keyChild, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2Remove(info, keyParent, keyChild=keyChild, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   ! Otherwise, remove the whole attpack
   else
     if (.not. present(attpack)) then
-      if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="No name or attpack provided. Nothing to remove.", &
-        ESMF_CONTEXT, rcToReturn=rc)) return
-    endif
+      if (.not. present(convention)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="No name, attpack, or conv/purp provided. Nothing to remove.", &
+          ESMF_CONTEXT, rcToReturn=rc)) return
+      else
+        call ESMF_Info2Remove(info, TRIM(convention), keyChild=TRIM(purpose), attnestflag=local_attnestflag, rc=localrc)
+        if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    keyParent = attpack%formatKey(rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+        ! Check for conventions with no purposes
+        call ESMF_Info2Inquire(info, key=TRIM(convention), size=purpsize, rc=localrc)
+        if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Remove(info, keyParent, attnestflag=attnestflag, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+        ! If there are no purposes, the convention is orphaned and should be removed
+        if (purpsize == 0) then
+          call ESMF_Info2Remove(info, "", keyChild=TRIM(convention), rc=localrc)
+          if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+        end if
+      end if
+    else
+      keyParent = attpack%formatKey(rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+      call ESMF_Info2Remove(info, keyParent, attnestflag=local_attnestflag, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    end if
   endif
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -29300,21 +32714,38 @@ subroutine ESMF_AttributeRemoveAttPackState(target, name, attpack, convention, p
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
-  integer :: localrc
+  integer :: localrc, purpsize
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
   character(:), allocatable :: keyParent, keyChild
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  print *, "ESMF_AttributeRemoveState name=", name; !tdk:p
+  print *, "ESMF_AttributeRemoveState convention=", convention; !tdk:p
+  print *, "ESMF_AttributeRemoveState purpose=", purpose; !tdk:p
+  if (present(attpack)) then !tdk:p
+    print *, "ESMF_AttributeRemoveState attpack is present" !tdk:p
+    print *, "ESMF_AttributeRemoveState attpack%formatKey()=", attpack%formatKey() !tdk:p
+  else !tdk:p
+    print *, "ESMF_AttributeRemoveState attpack is NOT present" !tdk:p
+  end if !tdk:p
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   ! If attpack, use target as info source
-  if (present(attpack) .and. present(name)) then
+  if (present(attpack)) then
     info = attpack%getPayload()
-  ! If no attpack, use target as info source
   else
+    ! If no attpack, use target as info source
     info = einq%GetInfo(target, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   end if
@@ -29323,24 +32754,44 @@ subroutine ESMF_AttributeRemoveAttPackState(target, name, attpack, convention, p
   if (present(name)) then
     keyChild = name
 
-    call format_key(keyParent, "", localrc, convention=convention, purpose=purpose)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(attpack)) then
+      keyParent = attpack%formatKey(rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      call format_key(keyParent, "", localrc, convention=convention, purpose=purpose)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    end if
 
-    call ESMF_Info2Remove(info, keyParent, keyChild=keyChild, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2Remove(info, keyParent, keyChild=keyChild, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   ! Otherwise, remove the whole attpack
   else
     if (.not. present(attpack)) then
-      if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="No name or attpack provided. Nothing to remove.", &
-        ESMF_CONTEXT, rcToReturn=rc)) return
-    endif
+      if (.not. present(convention)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="No name, attpack, or conv/purp provided. Nothing to remove.", &
+          ESMF_CONTEXT, rcToReturn=rc)) return
+      else
+        call ESMF_Info2Remove(info, TRIM(convention), keyChild=TRIM(purpose), attnestflag=local_attnestflag, rc=localrc)
+        if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    keyParent = attpack%formatKey(rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+        ! Check for conventions with no purposes
+        call ESMF_Info2Inquire(info, key=TRIM(convention), size=purpsize, rc=localrc)
+        if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Remove(info, keyParent, attnestflag=attnestflag, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+        ! If there are no purposes, the convention is orphaned and should be removed
+        if (purpsize == 0) then
+          call ESMF_Info2Remove(info, "", keyChild=TRIM(convention), rc=localrc)
+          if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+        end if
+      end if
+    else
+      keyParent = attpack%formatKey(rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+      call ESMF_Info2Remove(info, keyParent, attnestflag=local_attnestflag, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    end if
   endif
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -29397,21 +32848,38 @@ subroutine ESMF_AttributeRemoveAttPackLocStream(target, name, attpack, conventio
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
-  integer :: localrc
+  integer :: localrc, purpsize
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
   character(:), allocatable :: keyParent, keyChild
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  print *, "ESMF_AttributeRemoveLocStream name=", name; !tdk:p
+  print *, "ESMF_AttributeRemoveLocStream convention=", convention; !tdk:p
+  print *, "ESMF_AttributeRemoveLocStream purpose=", purpose; !tdk:p
+  if (present(attpack)) then !tdk:p
+    print *, "ESMF_AttributeRemoveLocStream attpack is present" !tdk:p
+    print *, "ESMF_AttributeRemoveLocStream attpack%formatKey()=", attpack%formatKey() !tdk:p
+  else !tdk:p
+    print *, "ESMF_AttributeRemoveLocStream attpack is NOT present" !tdk:p
+  end if !tdk:p
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   ! If attpack, use target as info source
-  if (present(attpack) .and. present(name)) then
+  if (present(attpack)) then
     info = attpack%getPayload()
-  ! If no attpack, use target as info source
   else
+    ! If no attpack, use target as info source
     info = einq%GetInfo(target, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   end if
@@ -29420,24 +32888,44 @@ subroutine ESMF_AttributeRemoveAttPackLocStream(target, name, attpack, conventio
   if (present(name)) then
     keyChild = name
 
-    call format_key(keyParent, "", localrc, convention=convention, purpose=purpose)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    if (present(attpack)) then
+      keyParent = attpack%formatKey(rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      call format_key(keyParent, "", localrc, convention=convention, purpose=purpose)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    end if
 
-    call ESMF_Info2Remove(info, keyParent, keyChild=keyChild, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2Remove(info, keyParent, keyChild=keyChild, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   ! Otherwise, remove the whole attpack
   else
     if (.not. present(attpack)) then
-      if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="No name or attpack provided. Nothing to remove.", &
-        ESMF_CONTEXT, rcToReturn=rc)) return
-    endif
+      if (.not. present(convention)) then
+        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="No name, attpack, or conv/purp provided. Nothing to remove.", &
+          ESMF_CONTEXT, rcToReturn=rc)) return
+      else
+        call ESMF_Info2Remove(info, TRIM(convention), keyChild=TRIM(purpose), attnestflag=local_attnestflag, rc=localrc)
+        if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    keyParent = attpack%formatKey(rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+        ! Check for conventions with no purposes
+        call ESMF_Info2Inquire(info, key=TRIM(convention), size=purpsize, rc=localrc)
+        if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Remove(info, keyParent, attnestflag=attnestflag, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+        ! If there are no purposes, the convention is orphaned and should be removed
+        if (purpsize == 0) then
+          call ESMF_Info2Remove(info, "", keyChild=TRIM(convention), rc=localrc)
+          if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+        end if
+      end if
+    else
+      keyParent = attpack%formatKey(rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+      call ESMF_Info2Remove(info, keyParent, attnestflag=local_attnestflag, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    end if
   endif
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -30557,13 +34045,14 @@ end subroutine ESMF_AttributeUpdateState
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeWriteArray()"
-subroutine ESMF_AttributeWriteArray(target, filename, keywordenforcer, convention, purpose, rc)
-  ! 39.11.42 - removed attwriteflag
+subroutine ESMF_AttributeWriteArray(target, filename, keywordenforcer, convention, purpose, attwriteflag, rc)
+  ! 39.11.42 - attwrite flag only supports JSON
   type(ESMF_Array), intent(inout) :: target
   character(len=*), intent(in) :: fileName
 type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
+  type(ESMF_AttWriteFlag), intent(in), optional :: attwriteflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
@@ -30603,13 +34092,14 @@ end subroutine ESMF_AttributeWriteArray
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeWriteArrayBundle()"
-subroutine ESMF_AttributeWriteArrayBundle(target, filename, keywordenforcer, convention, purpose, rc)
-  ! 39.11.42 - removed attwriteflag
+subroutine ESMF_AttributeWriteArrayBundle(target, filename, keywordenforcer, convention, purpose, attwriteflag, rc)
+  ! 39.11.42 - attwrite flag only supports JSON
   type(ESMF_ArrayBundle), intent(inout) :: target
   character(len=*), intent(in) :: fileName
 type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
+  type(ESMF_AttWriteFlag), intent(in), optional :: attwriteflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
@@ -30649,13 +34139,14 @@ end subroutine ESMF_AttributeWriteArrayBundle
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeWriteCplComp()"
-subroutine ESMF_AttributeWriteCplComp(target, filename, keywordenforcer, convention, purpose, rc)
-  ! 39.11.42 - removed attwriteflag
+subroutine ESMF_AttributeWriteCplComp(target, filename, keywordenforcer, convention, purpose, attwriteflag, rc)
+  ! 39.11.42 - attwrite flag only supports JSON
   type(ESMF_CplComp), intent(inout) :: target
   character(len=*), intent(in) :: fileName
 type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
+  type(ESMF_AttWriteFlag), intent(in), optional :: attwriteflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
@@ -30695,13 +34186,14 @@ end subroutine ESMF_AttributeWriteCplComp
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeWriteGridComp()"
-subroutine ESMF_AttributeWriteGridComp(target, filename, keywordenforcer, convention, purpose, rc)
-  ! 39.11.42 - removed attwriteflag
+subroutine ESMF_AttributeWriteGridComp(target, filename, keywordenforcer, convention, purpose, attwriteflag, rc)
+  ! 39.11.42 - attwrite flag only supports JSON
   type(ESMF_GridComp), intent(inout) :: target
   character(len=*), intent(in) :: fileName
 type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
+  type(ESMF_AttWriteFlag), intent(in), optional :: attwriteflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
@@ -30741,13 +34233,14 @@ end subroutine ESMF_AttributeWriteGridComp
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeWriteSciComp()"
-subroutine ESMF_AttributeWriteSciComp(target, filename, keywordenforcer, convention, purpose, rc)
-  ! 39.11.42 - removed attwriteflag
+subroutine ESMF_AttributeWriteSciComp(target, filename, keywordenforcer, convention, purpose, attwriteflag, rc)
+  ! 39.11.42 - attwrite flag only supports JSON
   type(ESMF_SciComp), intent(inout) :: target
   character(len=*), intent(in) :: fileName
 type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
+  type(ESMF_AttWriteFlag), intent(in), optional :: attwriteflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
@@ -30787,13 +34280,14 @@ end subroutine ESMF_AttributeWriteSciComp
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeWriteDistGrid()"
-subroutine ESMF_AttributeWriteDistGrid(target, filename, keywordenforcer, convention, purpose, rc)
-  ! 39.11.42 - removed attwriteflag
+subroutine ESMF_AttributeWriteDistGrid(target, filename, keywordenforcer, convention, purpose, attwriteflag, rc)
+  ! 39.11.42 - attwrite flag only supports JSON
   type(ESMF_DistGrid), intent(inout) :: target
   character(len=*), intent(in) :: fileName
 type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
+  type(ESMF_AttWriteFlag), intent(in), optional :: attwriteflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
@@ -30833,13 +34327,14 @@ end subroutine ESMF_AttributeWriteDistGrid
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeWriteField()"
-subroutine ESMF_AttributeWriteField(target, filename, keywordenforcer, convention, purpose, rc)
-  ! 39.11.42 - removed attwriteflag
+subroutine ESMF_AttributeWriteField(target, filename, keywordenforcer, convention, purpose, attwriteflag, rc)
+  ! 39.11.42 - attwrite flag only supports JSON
   type(ESMF_Field), intent(inout) :: target
   character(len=*), intent(in) :: fileName
 type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
+  type(ESMF_AttWriteFlag), intent(in), optional :: attwriteflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
@@ -30879,13 +34374,14 @@ end subroutine ESMF_AttributeWriteField
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeWriteFieldBundle()"
-subroutine ESMF_AttributeWriteFieldBundle(target, filename, keywordenforcer, convention, purpose, rc)
-  ! 39.11.42 - removed attwriteflag
+subroutine ESMF_AttributeWriteFieldBundle(target, filename, keywordenforcer, convention, purpose, attwriteflag, rc)
+  ! 39.11.42 - attwrite flag only supports JSON
   type(ESMF_FieldBundle), intent(inout) :: target
   character(len=*), intent(in) :: fileName
 type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
+  type(ESMF_AttWriteFlag), intent(in), optional :: attwriteflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
@@ -30925,13 +34421,14 @@ end subroutine ESMF_AttributeWriteFieldBundle
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeWriteGrid()"
-subroutine ESMF_AttributeWriteGrid(target, filename, keywordenforcer, convention, purpose, rc)
-  ! 39.11.42 - removed attwriteflag
+subroutine ESMF_AttributeWriteGrid(target, filename, keywordenforcer, convention, purpose, attwriteflag, rc)
+  ! 39.11.42 - attwrite flag only supports JSON
   type(ESMF_Grid), intent(inout) :: target
   character(len=*), intent(in) :: fileName
 type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
+  type(ESMF_AttWriteFlag), intent(in), optional :: attwriteflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
@@ -30971,13 +34468,14 @@ end subroutine ESMF_AttributeWriteGrid
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeWriteState()"
-subroutine ESMF_AttributeWriteState(target, filename, keywordenforcer, convention, purpose, rc)
-  ! 39.11.42 - removed attwriteflag
+subroutine ESMF_AttributeWriteState(target, filename, keywordenforcer, convention, purpose, attwriteflag, rc)
+  ! 39.11.42 - attwrite flag only supports JSON
   type(ESMF_State), intent(inout) :: target
   character(len=*), intent(in) :: fileName
 type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
+  type(ESMF_AttWriteFlag), intent(in), optional :: attwriteflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
@@ -31017,13 +34515,14 @@ end subroutine ESMF_AttributeWriteState
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeWriteLocStream()"
-subroutine ESMF_AttributeWriteLocStream(target, filename, keywordenforcer, convention, purpose, rc)
-  ! 39.11.42 - removed attwriteflag
+subroutine ESMF_AttributeWriteLocStream(target, filename, keywordenforcer, convention, purpose, attwriteflag, rc)
+  ! 39.11.42 - attwrite flag only supports JSON
   type(ESMF_LocStream), intent(inout) :: target
   character(len=*), intent(in) :: fileName
 type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
   character(len=*), intent(in), optional :: convention
   character(len=*), intent(in), optional :: purpose
+  type(ESMF_AttWriteFlag), intent(in), optional :: attwriteflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc
