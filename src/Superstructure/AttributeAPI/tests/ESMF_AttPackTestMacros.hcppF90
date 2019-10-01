@@ -888,13 +888,11 @@
       !---------------------------------------------------------------------- @\
  @\
       !mtag @\
-      print *, "tdk: test start" !tdk:p @\
       ! Remove the entire Attribute package from mobj Test @\
       call ESMF_AttributeRemove(mname, attpack=attpack, rc=rc) @\
       write(failMsg, *) "Did not return ESMF_SUCCESS" @\
       write(name, *) "Removing the entire Attribute package from ", mobj, " Test" @\
       call ESMF_Test((rc==ESMF_SUCCESS), name, failMsg, result, ESMF_SRCLINE) @\
-      print *, "tdk: test end" !tdk:p @\
       !---------------------------------------------------------------------- @\
  @\
 ^endif @\

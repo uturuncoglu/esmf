@@ -873,6 +873,28 @@ end function attpack_getPayload
 !==============================================================================
 
 #undef  ESMF_METHOD
+#define ESMF_METHOD "parse_json_pointer()"
+subroutine parse_json_pointer(jptr, keyParent, keyChild)
+  character(len=*), intent(in) :: jptr
+  character(:), allocatable, intent(out) :: keyParent
+  character(:), allocatable, intent(out) :: keyChild
+
+  integer :: ii, jj, kk
+  character(:), allocatable :: jptr_trim
+
+  jptr_trim = TRIM(jptr)
+
+  jj = LEN(jptr_trim)
+  do ii=1,jj-1
+    kk = jj - ii
+    if (jptr_trim(kk:kk) == '/') exit
+  end do
+
+  keyParent = jptr_trim(1:jj-ii-1)
+  keyChild = jptr_trim(jj-ii+1:jj)
+end subroutine
+
+#undef  ESMF_METHOD
 #define ESMF_METHOD "format_key()"
 subroutine format_key(key, name, rc, convention, purpose)
   character(:), allocatable, intent(out) :: key
@@ -31511,7 +31533,7 @@ subroutine ESMF_AttributeRemoveAttPackArray(target, name, attpack, convention, p
   integer :: localrc, purpsize
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
-  character(:), allocatable :: keyParent, keyChild
+  character(:), allocatable :: keyParent, keyChild, keyParent2, keyChild2
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
   print *, "ESMF_AttributeRemoveArray name=", name; !tdk:p
@@ -31583,8 +31605,20 @@ end if
       keyParent = attpack%formatKey(rc=localrc)
       if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-      call ESMF_Info2Remove(info, keyParent, attnestflag=local_attnestflag, rc=localrc)
+      call parse_json_pointer(keyParent, keyParent2, keyChild2)
+
+      call ESMF_Info2Remove(info, keyParent2, keyChild=keyChild2, attnestflag=local_attnestflag, rc=localrc)
       if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+      ! Check for conventions with no purposes
+      call ESMF_Info2Inquire(info, key=TRIM(keyParent2), size=purpsize, attnestflag=local_attnestflag, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+      ! If there are no purposes, the convention is orphaned and should be removed
+      if (purpsize == 0) then
+        call ESMF_Info2Remove(info, "", keyChild=TRIM(keyParent2(2:)), attnestflag=local_attnestflag, rc=localrc)
+        if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+      end if
     end if
   endif
 
@@ -31645,7 +31679,7 @@ subroutine ESMF_AttributeRemoveAttPackArrayBundle(target, name, attpack, convent
   integer :: localrc, purpsize
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
-  character(:), allocatable :: keyParent, keyChild
+  character(:), allocatable :: keyParent, keyChild, keyParent2, keyChild2
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
   print *, "ESMF_AttributeRemoveArrayBundle name=", name; !tdk:p
@@ -31717,8 +31751,20 @@ end if
       keyParent = attpack%formatKey(rc=localrc)
       if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-      call ESMF_Info2Remove(info, keyParent, attnestflag=local_attnestflag, rc=localrc)
+      call parse_json_pointer(keyParent, keyParent2, keyChild2)
+
+      call ESMF_Info2Remove(info, keyParent2, keyChild=keyChild2, attnestflag=local_attnestflag, rc=localrc)
       if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+      ! Check for conventions with no purposes
+      call ESMF_Info2Inquire(info, key=TRIM(keyParent2), size=purpsize, attnestflag=local_attnestflag, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+      ! If there are no purposes, the convention is orphaned and should be removed
+      if (purpsize == 0) then
+        call ESMF_Info2Remove(info, "", keyChild=TRIM(keyParent2(2:)), attnestflag=local_attnestflag, rc=localrc)
+        if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+      end if
     end if
   endif
 
@@ -31779,7 +31825,7 @@ subroutine ESMF_AttributeRemoveAttPackCplComp(target, name, attpack, convention,
   integer :: localrc, purpsize
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
-  character(:), allocatable :: keyParent, keyChild
+  character(:), allocatable :: keyParent, keyChild, keyParent2, keyChild2
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
   print *, "ESMF_AttributeRemoveCplComp name=", name; !tdk:p
@@ -31851,8 +31897,20 @@ end if
       keyParent = attpack%formatKey(rc=localrc)
       if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-      call ESMF_Info2Remove(info, keyParent, attnestflag=local_attnestflag, rc=localrc)
+      call parse_json_pointer(keyParent, keyParent2, keyChild2)
+
+      call ESMF_Info2Remove(info, keyParent2, keyChild=keyChild2, attnestflag=local_attnestflag, rc=localrc)
       if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+      ! Check for conventions with no purposes
+      call ESMF_Info2Inquire(info, key=TRIM(keyParent2), size=purpsize, attnestflag=local_attnestflag, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+      ! If there are no purposes, the convention is orphaned and should be removed
+      if (purpsize == 0) then
+        call ESMF_Info2Remove(info, "", keyChild=TRIM(keyParent2(2:)), attnestflag=local_attnestflag, rc=localrc)
+        if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+      end if
     end if
   endif
 
@@ -31913,7 +31971,7 @@ subroutine ESMF_AttributeRemoveAttPackGridComp(target, name, attpack, convention
   integer :: localrc, purpsize
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
-  character(:), allocatable :: keyParent, keyChild
+  character(:), allocatable :: keyParent, keyChild, keyParent2, keyChild2
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
   print *, "ESMF_AttributeRemoveGridComp name=", name; !tdk:p
@@ -31985,8 +32043,20 @@ end if
       keyParent = attpack%formatKey(rc=localrc)
       if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-      call ESMF_Info2Remove(info, keyParent, attnestflag=local_attnestflag, rc=localrc)
+      call parse_json_pointer(keyParent, keyParent2, keyChild2)
+
+      call ESMF_Info2Remove(info, keyParent2, keyChild=keyChild2, attnestflag=local_attnestflag, rc=localrc)
       if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+      ! Check for conventions with no purposes
+      call ESMF_Info2Inquire(info, key=TRIM(keyParent2), size=purpsize, attnestflag=local_attnestflag, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+      ! If there are no purposes, the convention is orphaned and should be removed
+      if (purpsize == 0) then
+        call ESMF_Info2Remove(info, "", keyChild=TRIM(keyParent2(2:)), attnestflag=local_attnestflag, rc=localrc)
+        if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+      end if
     end if
   endif
 
@@ -32047,7 +32117,7 @@ subroutine ESMF_AttributeRemoveAttPackSciComp(target, name, attpack, convention,
   integer :: localrc, purpsize
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
-  character(:), allocatable :: keyParent, keyChild
+  character(:), allocatable :: keyParent, keyChild, keyParent2, keyChild2
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
   print *, "ESMF_AttributeRemoveSciComp name=", name; !tdk:p
@@ -32119,8 +32189,20 @@ end if
       keyParent = attpack%formatKey(rc=localrc)
       if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-      call ESMF_Info2Remove(info, keyParent, attnestflag=local_attnestflag, rc=localrc)
+      call parse_json_pointer(keyParent, keyParent2, keyChild2)
+
+      call ESMF_Info2Remove(info, keyParent2, keyChild=keyChild2, attnestflag=local_attnestflag, rc=localrc)
       if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+      ! Check for conventions with no purposes
+      call ESMF_Info2Inquire(info, key=TRIM(keyParent2), size=purpsize, attnestflag=local_attnestflag, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+      ! If there are no purposes, the convention is orphaned and should be removed
+      if (purpsize == 0) then
+        call ESMF_Info2Remove(info, "", keyChild=TRIM(keyParent2(2:)), attnestflag=local_attnestflag, rc=localrc)
+        if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+      end if
     end if
   endif
 
@@ -32181,7 +32263,7 @@ subroutine ESMF_AttributeRemoveAttPackDistGrid(target, name, attpack, convention
   integer :: localrc, purpsize
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
-  character(:), allocatable :: keyParent, keyChild
+  character(:), allocatable :: keyParent, keyChild, keyParent2, keyChild2
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
   print *, "ESMF_AttributeRemoveDistGrid name=", name; !tdk:p
@@ -32253,8 +32335,20 @@ end if
       keyParent = attpack%formatKey(rc=localrc)
       if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-      call ESMF_Info2Remove(info, keyParent, attnestflag=local_attnestflag, rc=localrc)
+      call parse_json_pointer(keyParent, keyParent2, keyChild2)
+
+      call ESMF_Info2Remove(info, keyParent2, keyChild=keyChild2, attnestflag=local_attnestflag, rc=localrc)
       if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+      ! Check for conventions with no purposes
+      call ESMF_Info2Inquire(info, key=TRIM(keyParent2), size=purpsize, attnestflag=local_attnestflag, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+      ! If there are no purposes, the convention is orphaned and should be removed
+      if (purpsize == 0) then
+        call ESMF_Info2Remove(info, "", keyChild=TRIM(keyParent2(2:)), attnestflag=local_attnestflag, rc=localrc)
+        if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+      end if
     end if
   endif
 
@@ -32315,7 +32409,7 @@ subroutine ESMF_AttributeRemoveAttPackField(target, name, attpack, convention, p
   integer :: localrc, purpsize
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
-  character(:), allocatable :: keyParent, keyChild
+  character(:), allocatable :: keyParent, keyChild, keyParent2, keyChild2
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
   print *, "ESMF_AttributeRemoveField name=", name; !tdk:p
@@ -32387,8 +32481,20 @@ end if
       keyParent = attpack%formatKey(rc=localrc)
       if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-      call ESMF_Info2Remove(info, keyParent, attnestflag=local_attnestflag, rc=localrc)
+      call parse_json_pointer(keyParent, keyParent2, keyChild2)
+
+      call ESMF_Info2Remove(info, keyParent2, keyChild=keyChild2, attnestflag=local_attnestflag, rc=localrc)
       if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+      ! Check for conventions with no purposes
+      call ESMF_Info2Inquire(info, key=TRIM(keyParent2), size=purpsize, attnestflag=local_attnestflag, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+      ! If there are no purposes, the convention is orphaned and should be removed
+      if (purpsize == 0) then
+        call ESMF_Info2Remove(info, "", keyChild=TRIM(keyParent2(2:)), attnestflag=local_attnestflag, rc=localrc)
+        if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+      end if
     end if
   endif
 
@@ -32449,7 +32555,7 @@ subroutine ESMF_AttributeRemoveAttPackFieldBundle(target, name, attpack, convent
   integer :: localrc, purpsize
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
-  character(:), allocatable :: keyParent, keyChild
+  character(:), allocatable :: keyParent, keyChild, keyParent2, keyChild2
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
   print *, "ESMF_AttributeRemoveFieldBundle name=", name; !tdk:p
@@ -32521,8 +32627,20 @@ end if
       keyParent = attpack%formatKey(rc=localrc)
       if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-      call ESMF_Info2Remove(info, keyParent, attnestflag=local_attnestflag, rc=localrc)
+      call parse_json_pointer(keyParent, keyParent2, keyChild2)
+
+      call ESMF_Info2Remove(info, keyParent2, keyChild=keyChild2, attnestflag=local_attnestflag, rc=localrc)
       if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+      ! Check for conventions with no purposes
+      call ESMF_Info2Inquire(info, key=TRIM(keyParent2), size=purpsize, attnestflag=local_attnestflag, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+      ! If there are no purposes, the convention is orphaned and should be removed
+      if (purpsize == 0) then
+        call ESMF_Info2Remove(info, "", keyChild=TRIM(keyParent2(2:)), attnestflag=local_attnestflag, rc=localrc)
+        if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+      end if
     end if
   endif
 
@@ -32583,7 +32701,7 @@ subroutine ESMF_AttributeRemoveAttPackGrid(target, name, attpack, convention, pu
   integer :: localrc, purpsize
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
-  character(:), allocatable :: keyParent, keyChild
+  character(:), allocatable :: keyParent, keyChild, keyParent2, keyChild2
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
   print *, "ESMF_AttributeRemoveGrid name=", name; !tdk:p
@@ -32655,8 +32773,20 @@ end if
       keyParent = attpack%formatKey(rc=localrc)
       if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-      call ESMF_Info2Remove(info, keyParent, attnestflag=local_attnestflag, rc=localrc)
+      call parse_json_pointer(keyParent, keyParent2, keyChild2)
+
+      call ESMF_Info2Remove(info, keyParent2, keyChild=keyChild2, attnestflag=local_attnestflag, rc=localrc)
       if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+      ! Check for conventions with no purposes
+      call ESMF_Info2Inquire(info, key=TRIM(keyParent2), size=purpsize, attnestflag=local_attnestflag, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+      ! If there are no purposes, the convention is orphaned and should be removed
+      if (purpsize == 0) then
+        call ESMF_Info2Remove(info, "", keyChild=TRIM(keyParent2(2:)), attnestflag=local_attnestflag, rc=localrc)
+        if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+      end if
     end if
   endif
 
@@ -32717,7 +32847,7 @@ subroutine ESMF_AttributeRemoveAttPackState(target, name, attpack, convention, p
   integer :: localrc, purpsize
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
-  character(:), allocatable :: keyParent, keyChild
+  character(:), allocatable :: keyParent, keyChild, keyParent2, keyChild2
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
   print *, "ESMF_AttributeRemoveState name=", name; !tdk:p
@@ -32789,8 +32919,20 @@ end if
       keyParent = attpack%formatKey(rc=localrc)
       if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-      call ESMF_Info2Remove(info, keyParent, attnestflag=local_attnestflag, rc=localrc)
+      call parse_json_pointer(keyParent, keyParent2, keyChild2)
+
+      call ESMF_Info2Remove(info, keyParent2, keyChild=keyChild2, attnestflag=local_attnestflag, rc=localrc)
       if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+      ! Check for conventions with no purposes
+      call ESMF_Info2Inquire(info, key=TRIM(keyParent2), size=purpsize, attnestflag=local_attnestflag, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+      ! If there are no purposes, the convention is orphaned and should be removed
+      if (purpsize == 0) then
+        call ESMF_Info2Remove(info, "", keyChild=TRIM(keyParent2(2:)), attnestflag=local_attnestflag, rc=localrc)
+        if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+      end if
     end if
   endif
 
@@ -32851,7 +32993,7 @@ subroutine ESMF_AttributeRemoveAttPackLocStream(target, name, attpack, conventio
   integer :: localrc, purpsize
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
-  character(:), allocatable :: keyParent, keyChild
+  character(:), allocatable :: keyParent, keyChild, keyParent2, keyChild2
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
   print *, "ESMF_AttributeRemoveLocStream name=", name; !tdk:p
@@ -32923,8 +33065,20 @@ end if
       keyParent = attpack%formatKey(rc=localrc)
       if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-      call ESMF_Info2Remove(info, keyParent, attnestflag=local_attnestflag, rc=localrc)
+      call parse_json_pointer(keyParent, keyParent2, keyChild2)
+
+      call ESMF_Info2Remove(info, keyParent2, keyChild=keyChild2, attnestflag=local_attnestflag, rc=localrc)
       if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+      ! Check for conventions with no purposes
+      call ESMF_Info2Inquire(info, key=TRIM(keyParent2), size=purpsize, attnestflag=local_attnestflag, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+      ! If there are no purposes, the convention is orphaned and should be removed
+      if (purpsize == 0) then
+        call ESMF_Info2Remove(info, "", keyChild=TRIM(keyParent2(2:)), attnestflag=local_attnestflag, rc=localrc)
+        if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+      end if
     end if
   endif
 
