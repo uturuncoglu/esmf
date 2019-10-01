@@ -11121,6 +11121,13 @@ class json_pointer
         return not (lhs == rhs);
     }
 
+    //tdk:todo: document in README or create inherited object
+    /// added for ESMF usage in removing AttPacks for legacy Attribute
+    std::vector<std::string> copy_reference_tokens(void) {
+      std::vector<std::string> ret = this->reference_tokens;
+      return ret;
+    }
+
     /// the reference tokens
     std::vector<std::string> reference_tokens;
 };
