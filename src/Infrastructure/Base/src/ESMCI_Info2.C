@@ -138,8 +138,6 @@ void update_json_attribute_count_map(count_map_t &counts, const json &j, bool fi
   std::size_t attr_count = 0;
   std::cout << ESMC_METHOD << " first=" << first << std::endl;  //tdk:p
   for (json::const_iterator it=j.cbegin(); it!=j.cend(); it++) {
-    std::cout << "update_json_attribute_count_map it.key()=" << it.key() << std::endl;  //tdk:p
-    std::cout << "update_json_attribute_count_map it.value()=" << it.value() << std::endl;  //tdk:p
     if (is_attpack(it.value())) {
       for (json::const_iterator it2=it.value().cbegin(); it2!=it.value().cend(); it2++) {
         assert(it2.value().is_object());
@@ -238,7 +236,6 @@ json::iterator find_by_index(json &j, const std::size_t index_target, bool recur
   // Test: test_find_by_index
   // Notes:
   // Throws:
-  std::cout << ESMC_METHOD << " entering" << std::endl;  //tdk:p
   assert(j.is_object()); //tdk:todo: convert asserts of this kind to functions throwing an esmf_info_error
   esmf_info_error exc("ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, "index out of range");
   std::size_t local_index_default = 0;
@@ -253,24 +250,20 @@ json::iterator find_by_index(json &j, const std::size_t index_target, bool recur
     found = &local_found;
     local_index_current = &local_index_default;
   }
-  std::cout << ESMC_METHOD << " index_target=" << index_target << std::endl;  //tdk:p
   for (json::iterator it=j.begin(); it!=j.end(); it++) {
-    std::cout << ESMC_METHOD << " *local_index_current@loop start=" << *local_index_current << std::endl;  //tdk:p
     if (attr_compliance && is_attpack(it.value())) continue;
     if ((*local_index_current) == index_target) {
       ret = it;
       *found = true;
       break;
     }
-    (*local_index_current)++; //tdk:resume
-    std::cout << ESMC_METHOD << " *local_index_current@increment=" << *local_index_current << std::endl;  //tdk:p
+    (*local_index_current)++;
   }
   if (!(*found) && recursive && attr_compliance) {
     for (json::iterator it=j.begin(); it!=j.end(); it++) {
       if (is_attpack(it.value())) {
         for (json::iterator it2=it.value().begin(); it2!=it.value().end(); it2++) {
           assert(it2.value().is_object());
-          std::cout << ESMC_METHOD << " calling find_by_index@attr_compliance" << std::endl;  //tdk:p
           ret = find_by_index(it2.value(), index_target, recursive, attr_compliance, local_index_current, found);
           if (*found) break;
         }
@@ -747,6 +740,7 @@ json Info2::inquire(key_t &key, int &rc, bool recursive, const int *idx, bool at
     j["isDirty"] = this->isDirty();
     j["key"] = json::value_t::null;
     const json *sp = &(this->getStorageRef());
+    json it_idx;  // Use when finding by index
     try {
       json::json_pointer jp = this->formatKey(key, rc);
       update_json_pointer(this->getStorageRef(), &sp, jp, recursive);
@@ -764,6 +758,8 @@ json Info2::inquire(key_t &key, int &rc, bool recursive, const int *idx, bool at
       } else if (sp->is_object()) {
         json::iterator it = find_by_index(const_cast<json&>(*sp), (std::size_t)(*idx), recursive, attr_compliance);
         j["key"] = it.key();
+        it_idx = std::move(it.value());
+        sp = &it_idx;
       } else {
         std::string msg = "'idx' only supported for JSON arrays or objects";
         ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, msg, rc);
@@ -781,6 +777,7 @@ json Info2::inquire(key_t &key, int &rc, bool recursive, const int *idx, bool at
       update_json_attribute_count_map(counts, sk, true);
     } else {
       // All counts are one if the JSON type is not object
+      //tdk:todo: this needs to be removed i think. elements should not all be one - an integer json has not attpacks for example
       for (std::pair<std::string, int> element : counts)
       {
         element.second = 1;
@@ -813,6 +810,7 @@ json Info2::inquire(key_t &key, int &rc, bool recursive, const int *idx, bool at
     }
     j["jsonType"] = json_typename;
     j["isArray"] = is_array;
+    j["isStructured"] = sk.is_structured();
   }
   ESMF_CATCH_INFO
   rc = ESMF_SUCCESS;
@@ -1011,6 +1009,10 @@ void Info2::set(key_t &key, json &&j, bool force, int &rc, const int *index,
       // location must be an object to proceed.
       try {
         const json::json_pointer jpkey = this->formatKey(*pkey, rc);
+        bool has_pkey = this->hasKey(jpkey, rc, true);
+        if (!has_pkey) {
+          this->getStorageRefWritable()[jpkey] = json::object();
+        }
         try {
           update_json_pointer(this->getStorageRefWritable(), &jobject, jpkey, true);
         }

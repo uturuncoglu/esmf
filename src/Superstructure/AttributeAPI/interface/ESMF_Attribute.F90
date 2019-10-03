@@ -1440,8 +1440,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetArray name=", name  !tdk:p
+    print *, "ESMF_AttributeSetArray pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -1534,8 +1534,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetArray name=", name  !tdk:p
+    print *, "ESMF_AttributeSetArray pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -1628,8 +1628,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetArray name=", name  !tdk:p
+    print *, "ESMF_AttributeSetArray pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -1722,8 +1722,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetArray name=", name  !tdk:p
+    print *, "ESMF_AttributeSetArray pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -1816,8 +1816,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetArray name=", name  !tdk:p
+    print *, "ESMF_AttributeSetArray pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -1910,8 +1910,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetArray name=", name  !tdk:p
+    print *, "ESMF_AttributeSetArray pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -2004,8 +2004,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetArray name=", name  !tdk:p
+    print *, "ESMF_AttributeSetArray pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -2098,8 +2098,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetArray name=", name  !tdk:p
+    print *, "ESMF_AttributeSetArray pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -2192,8 +2192,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetArray name=", name  !tdk:p
+    print *, "ESMF_AttributeSetArray pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -2286,8 +2286,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetArray name=", name  !tdk:p
+    print *, "ESMF_AttributeSetArray pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -2380,8 +2380,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetArray name=", name  !tdk:p
+    print *, "ESMF_AttributeSetArray pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -2474,8 +2474,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetArray name=", name  !tdk:p
+    print *, "ESMF_AttributeSetArray pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -2568,8 +2568,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetArrayBundle name=", name  !tdk:p
+    print *, "ESMF_AttributeSetArrayBundle pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -2662,8 +2662,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetArrayBundle name=", name  !tdk:p
+    print *, "ESMF_AttributeSetArrayBundle pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -2756,8 +2756,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetArrayBundle name=", name  !tdk:p
+    print *, "ESMF_AttributeSetArrayBundle pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -2850,8 +2850,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetArrayBundle name=", name  !tdk:p
+    print *, "ESMF_AttributeSetArrayBundle pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -2944,8 +2944,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetArrayBundle name=", name  !tdk:p
+    print *, "ESMF_AttributeSetArrayBundle pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -3038,8 +3038,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetArrayBundle name=", name  !tdk:p
+    print *, "ESMF_AttributeSetArrayBundle pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -3132,8 +3132,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetArrayBundle name=", name  !tdk:p
+    print *, "ESMF_AttributeSetArrayBundle pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -3226,8 +3226,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetArrayBundle name=", name  !tdk:p
+    print *, "ESMF_AttributeSetArrayBundle pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -3320,8 +3320,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetArrayBundle name=", name  !tdk:p
+    print *, "ESMF_AttributeSetArrayBundle pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -3414,8 +3414,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetArrayBundle name=", name  !tdk:p
+    print *, "ESMF_AttributeSetArrayBundle pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -3508,8 +3508,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetArrayBundle name=", name  !tdk:p
+    print *, "ESMF_AttributeSetArrayBundle pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -3602,8 +3602,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetArrayBundle name=", name  !tdk:p
+    print *, "ESMF_AttributeSetArrayBundle pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -3696,8 +3696,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetCplComp name=", name  !tdk:p
+    print *, "ESMF_AttributeSetCplComp pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -3790,8 +3790,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetCplComp name=", name  !tdk:p
+    print *, "ESMF_AttributeSetCplComp pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -3884,8 +3884,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetCplComp name=", name  !tdk:p
+    print *, "ESMF_AttributeSetCplComp pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -3978,8 +3978,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetCplComp name=", name  !tdk:p
+    print *, "ESMF_AttributeSetCplComp pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -4072,8 +4072,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetCplComp name=", name  !tdk:p
+    print *, "ESMF_AttributeSetCplComp pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -4166,8 +4166,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetCplComp name=", name  !tdk:p
+    print *, "ESMF_AttributeSetCplComp pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -4260,8 +4260,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetCplComp name=", name  !tdk:p
+    print *, "ESMF_AttributeSetCplComp pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -4354,8 +4354,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetCplComp name=", name  !tdk:p
+    print *, "ESMF_AttributeSetCplComp pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -4448,8 +4448,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetCplComp name=", name  !tdk:p
+    print *, "ESMF_AttributeSetCplComp pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -4542,8 +4542,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetCplComp name=", name  !tdk:p
+    print *, "ESMF_AttributeSetCplComp pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -4636,8 +4636,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetCplComp name=", name  !tdk:p
+    print *, "ESMF_AttributeSetCplComp pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -4730,8 +4730,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetCplComp name=", name  !tdk:p
+    print *, "ESMF_AttributeSetCplComp pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -4824,8 +4824,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetGridComp name=", name  !tdk:p
+    print *, "ESMF_AttributeSetGridComp pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -4918,8 +4918,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetGridComp name=", name  !tdk:p
+    print *, "ESMF_AttributeSetGridComp pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -5012,8 +5012,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetGridComp name=", name  !tdk:p
+    print *, "ESMF_AttributeSetGridComp pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -5106,8 +5106,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetGridComp name=", name  !tdk:p
+    print *, "ESMF_AttributeSetGridComp pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -5200,8 +5200,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetGridComp name=", name  !tdk:p
+    print *, "ESMF_AttributeSetGridComp pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -5294,8 +5294,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetGridComp name=", name  !tdk:p
+    print *, "ESMF_AttributeSetGridComp pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -5388,8 +5388,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetGridComp name=", name  !tdk:p
+    print *, "ESMF_AttributeSetGridComp pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -5482,8 +5482,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetGridComp name=", name  !tdk:p
+    print *, "ESMF_AttributeSetGridComp pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -5576,8 +5576,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetGridComp name=", name  !tdk:p
+    print *, "ESMF_AttributeSetGridComp pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -5670,8 +5670,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetGridComp name=", name  !tdk:p
+    print *, "ESMF_AttributeSetGridComp pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -5764,8 +5764,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetGridComp name=", name  !tdk:p
+    print *, "ESMF_AttributeSetGridComp pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -5858,8 +5858,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetGridComp name=", name  !tdk:p
+    print *, "ESMF_AttributeSetGridComp pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -5952,8 +5952,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetSciComp name=", name  !tdk:p
+    print *, "ESMF_AttributeSetSciComp pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -6046,8 +6046,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetSciComp name=", name  !tdk:p
+    print *, "ESMF_AttributeSetSciComp pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -6140,8 +6140,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetSciComp name=", name  !tdk:p
+    print *, "ESMF_AttributeSetSciComp pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -6234,8 +6234,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetSciComp name=", name  !tdk:p
+    print *, "ESMF_AttributeSetSciComp pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -6328,8 +6328,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetSciComp name=", name  !tdk:p
+    print *, "ESMF_AttributeSetSciComp pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -6422,8 +6422,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetSciComp name=", name  !tdk:p
+    print *, "ESMF_AttributeSetSciComp pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -6516,8 +6516,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetSciComp name=", name  !tdk:p
+    print *, "ESMF_AttributeSetSciComp pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -6610,8 +6610,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetSciComp name=", name  !tdk:p
+    print *, "ESMF_AttributeSetSciComp pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -6704,8 +6704,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetSciComp name=", name  !tdk:p
+    print *, "ESMF_AttributeSetSciComp pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -6798,8 +6798,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetSciComp name=", name  !tdk:p
+    print *, "ESMF_AttributeSetSciComp pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -6892,8 +6892,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetSciComp name=", name  !tdk:p
+    print *, "ESMF_AttributeSetSciComp pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -6986,8 +6986,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetSciComp name=", name  !tdk:p
+    print *, "ESMF_AttributeSetSciComp pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -7080,8 +7080,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetDistGrid name=", name  !tdk:p
+    print *, "ESMF_AttributeSetDistGrid pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -7174,8 +7174,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetDistGrid name=", name  !tdk:p
+    print *, "ESMF_AttributeSetDistGrid pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -7268,8 +7268,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetDistGrid name=", name  !tdk:p
+    print *, "ESMF_AttributeSetDistGrid pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -7362,8 +7362,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetDistGrid name=", name  !tdk:p
+    print *, "ESMF_AttributeSetDistGrid pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -7456,8 +7456,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetDistGrid name=", name  !tdk:p
+    print *, "ESMF_AttributeSetDistGrid pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -7550,8 +7550,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetDistGrid name=", name  !tdk:p
+    print *, "ESMF_AttributeSetDistGrid pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -7644,8 +7644,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetDistGrid name=", name  !tdk:p
+    print *, "ESMF_AttributeSetDistGrid pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -7738,8 +7738,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetDistGrid name=", name  !tdk:p
+    print *, "ESMF_AttributeSetDistGrid pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -7832,8 +7832,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetDistGrid name=", name  !tdk:p
+    print *, "ESMF_AttributeSetDistGrid pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -7926,8 +7926,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetDistGrid name=", name  !tdk:p
+    print *, "ESMF_AttributeSetDistGrid pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -8020,8 +8020,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetDistGrid name=", name  !tdk:p
+    print *, "ESMF_AttributeSetDistGrid pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -8114,8 +8114,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetDistGrid name=", name  !tdk:p
+    print *, "ESMF_AttributeSetDistGrid pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -8208,8 +8208,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetField name=", name  !tdk:p
+    print *, "ESMF_AttributeSetField pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -8302,8 +8302,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetField name=", name  !tdk:p
+    print *, "ESMF_AttributeSetField pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -8396,8 +8396,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetField name=", name  !tdk:p
+    print *, "ESMF_AttributeSetField pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -8490,8 +8490,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetField name=", name  !tdk:p
+    print *, "ESMF_AttributeSetField pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -8584,8 +8584,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetField name=", name  !tdk:p
+    print *, "ESMF_AttributeSetField pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -8678,8 +8678,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetField name=", name  !tdk:p
+    print *, "ESMF_AttributeSetField pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -8772,8 +8772,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetField name=", name  !tdk:p
+    print *, "ESMF_AttributeSetField pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -8866,8 +8866,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetField name=", name  !tdk:p
+    print *, "ESMF_AttributeSetField pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -8960,8 +8960,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetField name=", name  !tdk:p
+    print *, "ESMF_AttributeSetField pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -9054,8 +9054,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetField name=", name  !tdk:p
+    print *, "ESMF_AttributeSetField pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -9148,8 +9148,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetField name=", name  !tdk:p
+    print *, "ESMF_AttributeSetField pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -9242,8 +9242,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetField name=", name  !tdk:p
+    print *, "ESMF_AttributeSetField pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -9336,8 +9336,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetFieldBundle name=", name  !tdk:p
+    print *, "ESMF_AttributeSetFieldBundle pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -9430,8 +9430,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetFieldBundle name=", name  !tdk:p
+    print *, "ESMF_AttributeSetFieldBundle pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -9524,8 +9524,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetFieldBundle name=", name  !tdk:p
+    print *, "ESMF_AttributeSetFieldBundle pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -9618,8 +9618,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetFieldBundle name=", name  !tdk:p
+    print *, "ESMF_AttributeSetFieldBundle pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -9712,8 +9712,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetFieldBundle name=", name  !tdk:p
+    print *, "ESMF_AttributeSetFieldBundle pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -9806,8 +9806,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetFieldBundle name=", name  !tdk:p
+    print *, "ESMF_AttributeSetFieldBundle pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -9900,8 +9900,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetFieldBundle name=", name  !tdk:p
+    print *, "ESMF_AttributeSetFieldBundle pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -9994,8 +9994,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetFieldBundle name=", name  !tdk:p
+    print *, "ESMF_AttributeSetFieldBundle pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -10088,8 +10088,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetFieldBundle name=", name  !tdk:p
+    print *, "ESMF_AttributeSetFieldBundle pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -10182,8 +10182,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetFieldBundle name=", name  !tdk:p
+    print *, "ESMF_AttributeSetFieldBundle pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -10276,8 +10276,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetFieldBundle name=", name  !tdk:p
+    print *, "ESMF_AttributeSetFieldBundle pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -10370,8 +10370,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetFieldBundle name=", name  !tdk:p
+    print *, "ESMF_AttributeSetFieldBundle pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -10464,8 +10464,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetGrid name=", name  !tdk:p
+    print *, "ESMF_AttributeSetGrid pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -10558,8 +10558,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetGrid name=", name  !tdk:p
+    print *, "ESMF_AttributeSetGrid pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -10652,8 +10652,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetGrid name=", name  !tdk:p
+    print *, "ESMF_AttributeSetGrid pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -10746,8 +10746,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetGrid name=", name  !tdk:p
+    print *, "ESMF_AttributeSetGrid pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -10840,8 +10840,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetGrid name=", name  !tdk:p
+    print *, "ESMF_AttributeSetGrid pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -10934,8 +10934,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetGrid name=", name  !tdk:p
+    print *, "ESMF_AttributeSetGrid pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -11028,8 +11028,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetGrid name=", name  !tdk:p
+    print *, "ESMF_AttributeSetGrid pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -11122,8 +11122,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetGrid name=", name  !tdk:p
+    print *, "ESMF_AttributeSetGrid pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -11216,8 +11216,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetGrid name=", name  !tdk:p
+    print *, "ESMF_AttributeSetGrid pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -11310,8 +11310,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetGrid name=", name  !tdk:p
+    print *, "ESMF_AttributeSetGrid pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -11404,8 +11404,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetGrid name=", name  !tdk:p
+    print *, "ESMF_AttributeSetGrid pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -11498,8 +11498,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetGrid name=", name  !tdk:p
+    print *, "ESMF_AttributeSetGrid pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -11592,8 +11592,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetState name=", name  !tdk:p
+    print *, "ESMF_AttributeSetState pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -11686,8 +11686,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetState name=", name  !tdk:p
+    print *, "ESMF_AttributeSetState pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -11780,8 +11780,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetState name=", name  !tdk:p
+    print *, "ESMF_AttributeSetState pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -11874,8 +11874,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetState name=", name  !tdk:p
+    print *, "ESMF_AttributeSetState pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -11968,8 +11968,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetState name=", name  !tdk:p
+    print *, "ESMF_AttributeSetState pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -12062,8 +12062,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetState name=", name  !tdk:p
+    print *, "ESMF_AttributeSetState pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -12156,8 +12156,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetState name=", name  !tdk:p
+    print *, "ESMF_AttributeSetState pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -12250,8 +12250,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetState name=", name  !tdk:p
+    print *, "ESMF_AttributeSetState pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -12344,8 +12344,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetState name=", name  !tdk:p
+    print *, "ESMF_AttributeSetState pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -12438,8 +12438,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetState name=", name  !tdk:p
+    print *, "ESMF_AttributeSetState pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -12532,8 +12532,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetState name=", name  !tdk:p
+    print *, "ESMF_AttributeSetState pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -12626,8 +12626,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetState name=", name  !tdk:p
+    print *, "ESMF_AttributeSetState pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -12720,8 +12720,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetLocStream name=", name  !tdk:p
+    print *, "ESMF_AttributeSetLocStream pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -12814,8 +12814,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetLocStream name=", name  !tdk:p
+    print *, "ESMF_AttributeSetLocStream pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -12908,8 +12908,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetLocStream name=", name  !tdk:p
+    print *, "ESMF_AttributeSetLocStream pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -13002,8 +13002,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetLocStream name=", name  !tdk:p
+    print *, "ESMF_AttributeSetLocStream pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -13096,8 +13096,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetLocStream name=", name  !tdk:p
+    print *, "ESMF_AttributeSetLocStream pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -13190,8 +13190,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetLocStream name=", name  !tdk:p
+    print *, "ESMF_AttributeSetLocStream pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -13284,8 +13284,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetLocStream name=", name  !tdk:p
+    print *, "ESMF_AttributeSetLocStream pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -13378,8 +13378,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetLocStream name=", name  !tdk:p
+    print *, "ESMF_AttributeSetLocStream pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -13472,8 +13472,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetLocStream name=", name  !tdk:p
+    print *, "ESMF_AttributeSetLocStream pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -13566,8 +13566,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetLocStream name=", name  !tdk:p
+    print *, "ESMF_AttributeSetLocStream pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -13660,8 +13660,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetLocStream name=", name  !tdk:p
+    print *, "ESMF_AttributeSetLocStream pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -13754,8 +13754,8 @@ end if
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    print *, "ESMF_AttributeSet name=", name  !tdk:p
-    print *, "ESMF_AttributeSet pkey=", pkey  !tdk:p
+    print *, "ESMF_AttributeSetLocStream name=", name  !tdk:p
+    print *, "ESMF_AttributeSetLocStream pkey=", pkey  !tdk:p
 
     call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -27646,7 +27646,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   integer :: countSingle, localrc
   character(:), allocatable :: key
-  logical :: is_present
+  logical :: is_present, is_structured
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -27667,8 +27667,13 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   if (is_present) then
     call ESMF_Info2Inquire(attpack%getPayload(), key=key, attrCount=itemCount, attnestflag=attnestflag, &
-      typekind=typekind, rc=localrc)
+      typekind=typekind, isStructured=is_structured, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    if (.not. is_structured) then
+      if (present(itemCount)) then
+        itemCount = 1
+      end if
+    end if
   else
     if (present(itemCount)) itemCount = 0
     if (present(typekind)) typekind = ESMF_NOKIND
@@ -27694,7 +27699,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   integer :: countSingle, localrc
   character(:), allocatable :: key
-  logical :: is_present
+  logical :: is_present, is_structured
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
 
@@ -27720,8 +27725,13 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   if (is_present) then
     call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, attnestflag=attnestflag, &
-      typekind=typekind, rc=localrc)
+      typekind=typekind, isStructured=is_structured, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    if (.not. is_structured) then
+      if (present(itemCount)) then
+        itemCount = 1
+      end if
+    end if
   else
     if (present(itemCount)) itemCount = 0
     if (present(typekind)) typekind = ESMF_NOKIND
@@ -27751,6 +27761,7 @@ subroutine ESMF_AttributeGetInfoByNumArray(target, attributeIndex, name, convent
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_structured
 
   print *, "ESMF_AttributeGetInfoByNumArray attributeIndex=", attributeIndex !tdk:p
   print *, "ESMF_AttributeGetInfoByNumArray name=", name !tdk:p
@@ -27775,8 +27786,13 @@ end if
   print *, "ESMF_AttributeGetInfoByNumArray key=", key !tdk:p
   call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, typekind=typekind, &
     idx=attributeIndex, ikey=name, isPresent=isPresent, attnestflag=local_attnestflag, &
-    rc=localrc)
+    isStructured=is_structured, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  if (.not. is_structured) then
+    if (present(itemCount)) then
+      itemCount = 1
+    end if
+  end if
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeGetInfoByNumArray
@@ -28010,7 +28026,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   integer :: countSingle, localrc
   character(:), allocatable :: key
-  logical :: is_present
+  logical :: is_present, is_structured
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -28031,8 +28047,13 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   if (is_present) then
     call ESMF_Info2Inquire(attpack%getPayload(), key=key, attrCount=itemCount, attnestflag=attnestflag, &
-      typekind=typekind, rc=localrc)
+      typekind=typekind, isStructured=is_structured, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    if (.not. is_structured) then
+      if (present(itemCount)) then
+        itemCount = 1
+      end if
+    end if
   else
     if (present(itemCount)) itemCount = 0
     if (present(typekind)) typekind = ESMF_NOKIND
@@ -28058,7 +28079,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   integer :: countSingle, localrc
   character(:), allocatable :: key
-  logical :: is_present
+  logical :: is_present, is_structured
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
 
@@ -28084,8 +28105,13 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   if (is_present) then
     call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, attnestflag=attnestflag, &
-      typekind=typekind, rc=localrc)
+      typekind=typekind, isStructured=is_structured, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    if (.not. is_structured) then
+      if (present(itemCount)) then
+        itemCount = 1
+      end if
+    end if
   else
     if (present(itemCount)) itemCount = 0
     if (present(typekind)) typekind = ESMF_NOKIND
@@ -28115,6 +28141,7 @@ subroutine ESMF_AttributeGetInfoByNumArrayBundle(target, attributeIndex, name, c
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_structured
 
   print *, "ESMF_AttributeGetInfoByNumArrayBundle attributeIndex=", attributeIndex !tdk:p
   print *, "ESMF_AttributeGetInfoByNumArrayBundle name=", name !tdk:p
@@ -28139,8 +28166,13 @@ end if
   print *, "ESMF_AttributeGetInfoByNumArrayBundle key=", key !tdk:p
   call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, typekind=typekind, &
     idx=attributeIndex, ikey=name, isPresent=isPresent, attnestflag=local_attnestflag, &
-    rc=localrc)
+    isStructured=is_structured, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  if (.not. is_structured) then
+    if (present(itemCount)) then
+      itemCount = 1
+    end if
+  end if
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeGetInfoByNumArrayBundle
@@ -28374,7 +28406,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   integer :: countSingle, localrc
   character(:), allocatable :: key
-  logical :: is_present
+  logical :: is_present, is_structured
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -28395,8 +28427,13 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   if (is_present) then
     call ESMF_Info2Inquire(attpack%getPayload(), key=key, attrCount=itemCount, attnestflag=attnestflag, &
-      typekind=typekind, rc=localrc)
+      typekind=typekind, isStructured=is_structured, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    if (.not. is_structured) then
+      if (present(itemCount)) then
+        itemCount = 1
+      end if
+    end if
   else
     if (present(itemCount)) itemCount = 0
     if (present(typekind)) typekind = ESMF_NOKIND
@@ -28422,7 +28459,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   integer :: countSingle, localrc
   character(:), allocatable :: key
-  logical :: is_present
+  logical :: is_present, is_structured
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
 
@@ -28448,8 +28485,13 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   if (is_present) then
     call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, attnestflag=attnestflag, &
-      typekind=typekind, rc=localrc)
+      typekind=typekind, isStructured=is_structured, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    if (.not. is_structured) then
+      if (present(itemCount)) then
+        itemCount = 1
+      end if
+    end if
   else
     if (present(itemCount)) itemCount = 0
     if (present(typekind)) typekind = ESMF_NOKIND
@@ -28479,6 +28521,7 @@ subroutine ESMF_AttributeGetInfoByNumCplComp(target, attributeIndex, name, conve
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_structured
 
   print *, "ESMF_AttributeGetInfoByNumCplComp attributeIndex=", attributeIndex !tdk:p
   print *, "ESMF_AttributeGetInfoByNumCplComp name=", name !tdk:p
@@ -28503,8 +28546,13 @@ end if
   print *, "ESMF_AttributeGetInfoByNumCplComp key=", key !tdk:p
   call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, typekind=typekind, &
     idx=attributeIndex, ikey=name, isPresent=isPresent, attnestflag=local_attnestflag, &
-    rc=localrc)
+    isStructured=is_structured, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  if (.not. is_structured) then
+    if (present(itemCount)) then
+      itemCount = 1
+    end if
+  end if
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeGetInfoByNumCplComp
@@ -28738,7 +28786,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   integer :: countSingle, localrc
   character(:), allocatable :: key
-  logical :: is_present
+  logical :: is_present, is_structured
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -28759,8 +28807,13 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   if (is_present) then
     call ESMF_Info2Inquire(attpack%getPayload(), key=key, attrCount=itemCount, attnestflag=attnestflag, &
-      typekind=typekind, rc=localrc)
+      typekind=typekind, isStructured=is_structured, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    if (.not. is_structured) then
+      if (present(itemCount)) then
+        itemCount = 1
+      end if
+    end if
   else
     if (present(itemCount)) itemCount = 0
     if (present(typekind)) typekind = ESMF_NOKIND
@@ -28786,7 +28839,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   integer :: countSingle, localrc
   character(:), allocatable :: key
-  logical :: is_present
+  logical :: is_present, is_structured
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
 
@@ -28812,8 +28865,13 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   if (is_present) then
     call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, attnestflag=attnestflag, &
-      typekind=typekind, rc=localrc)
+      typekind=typekind, isStructured=is_structured, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    if (.not. is_structured) then
+      if (present(itemCount)) then
+        itemCount = 1
+      end if
+    end if
   else
     if (present(itemCount)) itemCount = 0
     if (present(typekind)) typekind = ESMF_NOKIND
@@ -28843,6 +28901,7 @@ subroutine ESMF_AttributeGetInfoByNumGridComp(target, attributeIndex, name, conv
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_structured
 
   print *, "ESMF_AttributeGetInfoByNumGridComp attributeIndex=", attributeIndex !tdk:p
   print *, "ESMF_AttributeGetInfoByNumGridComp name=", name !tdk:p
@@ -28867,8 +28926,13 @@ end if
   print *, "ESMF_AttributeGetInfoByNumGridComp key=", key !tdk:p
   call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, typekind=typekind, &
     idx=attributeIndex, ikey=name, isPresent=isPresent, attnestflag=local_attnestflag, &
-    rc=localrc)
+    isStructured=is_structured, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  if (.not. is_structured) then
+    if (present(itemCount)) then
+      itemCount = 1
+    end if
+  end if
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeGetInfoByNumGridComp
@@ -29102,7 +29166,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   integer :: countSingle, localrc
   character(:), allocatable :: key
-  logical :: is_present
+  logical :: is_present, is_structured
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -29123,8 +29187,13 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   if (is_present) then
     call ESMF_Info2Inquire(attpack%getPayload(), key=key, attrCount=itemCount, attnestflag=attnestflag, &
-      typekind=typekind, rc=localrc)
+      typekind=typekind, isStructured=is_structured, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    if (.not. is_structured) then
+      if (present(itemCount)) then
+        itemCount = 1
+      end if
+    end if
   else
     if (present(itemCount)) itemCount = 0
     if (present(typekind)) typekind = ESMF_NOKIND
@@ -29150,7 +29219,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   integer :: countSingle, localrc
   character(:), allocatable :: key
-  logical :: is_present
+  logical :: is_present, is_structured
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
 
@@ -29176,8 +29245,13 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   if (is_present) then
     call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, attnestflag=attnestflag, &
-      typekind=typekind, rc=localrc)
+      typekind=typekind, isStructured=is_structured, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    if (.not. is_structured) then
+      if (present(itemCount)) then
+        itemCount = 1
+      end if
+    end if
   else
     if (present(itemCount)) itemCount = 0
     if (present(typekind)) typekind = ESMF_NOKIND
@@ -29207,6 +29281,7 @@ subroutine ESMF_AttributeGetInfoByNumSciComp(target, attributeIndex, name, conve
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_structured
 
   print *, "ESMF_AttributeGetInfoByNumSciComp attributeIndex=", attributeIndex !tdk:p
   print *, "ESMF_AttributeGetInfoByNumSciComp name=", name !tdk:p
@@ -29231,8 +29306,13 @@ end if
   print *, "ESMF_AttributeGetInfoByNumSciComp key=", key !tdk:p
   call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, typekind=typekind, &
     idx=attributeIndex, ikey=name, isPresent=isPresent, attnestflag=local_attnestflag, &
-    rc=localrc)
+    isStructured=is_structured, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  if (.not. is_structured) then
+    if (present(itemCount)) then
+      itemCount = 1
+    end if
+  end if
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeGetInfoByNumSciComp
@@ -29466,7 +29546,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   integer :: countSingle, localrc
   character(:), allocatable :: key
-  logical :: is_present
+  logical :: is_present, is_structured
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -29487,8 +29567,13 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   if (is_present) then
     call ESMF_Info2Inquire(attpack%getPayload(), key=key, attrCount=itemCount, attnestflag=attnestflag, &
-      typekind=typekind, rc=localrc)
+      typekind=typekind, isStructured=is_structured, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    if (.not. is_structured) then
+      if (present(itemCount)) then
+        itemCount = 1
+      end if
+    end if
   else
     if (present(itemCount)) itemCount = 0
     if (present(typekind)) typekind = ESMF_NOKIND
@@ -29514,7 +29599,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   integer :: countSingle, localrc
   character(:), allocatable :: key
-  logical :: is_present
+  logical :: is_present, is_structured
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
 
@@ -29540,8 +29625,13 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   if (is_present) then
     call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, attnestflag=attnestflag, &
-      typekind=typekind, rc=localrc)
+      typekind=typekind, isStructured=is_structured, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    if (.not. is_structured) then
+      if (present(itemCount)) then
+        itemCount = 1
+      end if
+    end if
   else
     if (present(itemCount)) itemCount = 0
     if (present(typekind)) typekind = ESMF_NOKIND
@@ -29571,6 +29661,7 @@ subroutine ESMF_AttributeGetInfoByNumDistGrid(target, attributeIndex, name, conv
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_structured
 
   print *, "ESMF_AttributeGetInfoByNumDistGrid attributeIndex=", attributeIndex !tdk:p
   print *, "ESMF_AttributeGetInfoByNumDistGrid name=", name !tdk:p
@@ -29595,8 +29686,13 @@ end if
   print *, "ESMF_AttributeGetInfoByNumDistGrid key=", key !tdk:p
   call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, typekind=typekind, &
     idx=attributeIndex, ikey=name, isPresent=isPresent, attnestflag=local_attnestflag, &
-    rc=localrc)
+    isStructured=is_structured, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  if (.not. is_structured) then
+    if (present(itemCount)) then
+      itemCount = 1
+    end if
+  end if
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeGetInfoByNumDistGrid
@@ -29830,7 +29926,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   integer :: countSingle, localrc
   character(:), allocatable :: key
-  logical :: is_present
+  logical :: is_present, is_structured
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -29851,8 +29947,13 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   if (is_present) then
     call ESMF_Info2Inquire(attpack%getPayload(), key=key, attrCount=itemCount, attnestflag=attnestflag, &
-      typekind=typekind, rc=localrc)
+      typekind=typekind, isStructured=is_structured, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    if (.not. is_structured) then
+      if (present(itemCount)) then
+        itemCount = 1
+      end if
+    end if
   else
     if (present(itemCount)) itemCount = 0
     if (present(typekind)) typekind = ESMF_NOKIND
@@ -29878,7 +29979,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   integer :: countSingle, localrc
   character(:), allocatable :: key
-  logical :: is_present
+  logical :: is_present, is_structured
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
 
@@ -29904,8 +30005,13 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   if (is_present) then
     call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, attnestflag=attnestflag, &
-      typekind=typekind, rc=localrc)
+      typekind=typekind, isStructured=is_structured, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    if (.not. is_structured) then
+      if (present(itemCount)) then
+        itemCount = 1
+      end if
+    end if
   else
     if (present(itemCount)) itemCount = 0
     if (present(typekind)) typekind = ESMF_NOKIND
@@ -29935,6 +30041,7 @@ subroutine ESMF_AttributeGetInfoByNumField(target, attributeIndex, name, convent
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_structured
 
   print *, "ESMF_AttributeGetInfoByNumField attributeIndex=", attributeIndex !tdk:p
   print *, "ESMF_AttributeGetInfoByNumField name=", name !tdk:p
@@ -29959,8 +30066,13 @@ end if
   print *, "ESMF_AttributeGetInfoByNumField key=", key !tdk:p
   call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, typekind=typekind, &
     idx=attributeIndex, ikey=name, isPresent=isPresent, attnestflag=local_attnestflag, &
-    rc=localrc)
+    isStructured=is_structured, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  if (.not. is_structured) then
+    if (present(itemCount)) then
+      itemCount = 1
+    end if
+  end if
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeGetInfoByNumField
@@ -30194,7 +30306,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   integer :: countSingle, localrc
   character(:), allocatable :: key
-  logical :: is_present
+  logical :: is_present, is_structured
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -30215,8 +30327,13 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   if (is_present) then
     call ESMF_Info2Inquire(attpack%getPayload(), key=key, attrCount=itemCount, attnestflag=attnestflag, &
-      typekind=typekind, rc=localrc)
+      typekind=typekind, isStructured=is_structured, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    if (.not. is_structured) then
+      if (present(itemCount)) then
+        itemCount = 1
+      end if
+    end if
   else
     if (present(itemCount)) itemCount = 0
     if (present(typekind)) typekind = ESMF_NOKIND
@@ -30242,7 +30359,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   integer :: countSingle, localrc
   character(:), allocatable :: key
-  logical :: is_present
+  logical :: is_present, is_structured
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
 
@@ -30268,8 +30385,13 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   if (is_present) then
     call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, attnestflag=attnestflag, &
-      typekind=typekind, rc=localrc)
+      typekind=typekind, isStructured=is_structured, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    if (.not. is_structured) then
+      if (present(itemCount)) then
+        itemCount = 1
+      end if
+    end if
   else
     if (present(itemCount)) itemCount = 0
     if (present(typekind)) typekind = ESMF_NOKIND
@@ -30299,6 +30421,7 @@ subroutine ESMF_AttributeGetInfoByNumFieldBundle(target, attributeIndex, name, c
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_structured
 
   print *, "ESMF_AttributeGetInfoByNumFieldBundle attributeIndex=", attributeIndex !tdk:p
   print *, "ESMF_AttributeGetInfoByNumFieldBundle name=", name !tdk:p
@@ -30323,8 +30446,13 @@ end if
   print *, "ESMF_AttributeGetInfoByNumFieldBundle key=", key !tdk:p
   call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, typekind=typekind, &
     idx=attributeIndex, ikey=name, isPresent=isPresent, attnestflag=local_attnestflag, &
-    rc=localrc)
+    isStructured=is_structured, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  if (.not. is_structured) then
+    if (present(itemCount)) then
+      itemCount = 1
+    end if
+  end if
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeGetInfoByNumFieldBundle
@@ -30558,7 +30686,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   integer :: countSingle, localrc
   character(:), allocatable :: key
-  logical :: is_present
+  logical :: is_present, is_structured
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -30579,8 +30707,13 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   if (is_present) then
     call ESMF_Info2Inquire(attpack%getPayload(), key=key, attrCount=itemCount, attnestflag=attnestflag, &
-      typekind=typekind, rc=localrc)
+      typekind=typekind, isStructured=is_structured, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    if (.not. is_structured) then
+      if (present(itemCount)) then
+        itemCount = 1
+      end if
+    end if
   else
     if (present(itemCount)) itemCount = 0
     if (present(typekind)) typekind = ESMF_NOKIND
@@ -30606,7 +30739,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   integer :: countSingle, localrc
   character(:), allocatable :: key
-  logical :: is_present
+  logical :: is_present, is_structured
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
 
@@ -30632,8 +30765,13 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   if (is_present) then
     call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, attnestflag=attnestflag, &
-      typekind=typekind, rc=localrc)
+      typekind=typekind, isStructured=is_structured, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    if (.not. is_structured) then
+      if (present(itemCount)) then
+        itemCount = 1
+      end if
+    end if
   else
     if (present(itemCount)) itemCount = 0
     if (present(typekind)) typekind = ESMF_NOKIND
@@ -30663,6 +30801,7 @@ subroutine ESMF_AttributeGetInfoByNumGrid(target, attributeIndex, name, conventi
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_structured
 
   print *, "ESMF_AttributeGetInfoByNumGrid attributeIndex=", attributeIndex !tdk:p
   print *, "ESMF_AttributeGetInfoByNumGrid name=", name !tdk:p
@@ -30687,8 +30826,13 @@ end if
   print *, "ESMF_AttributeGetInfoByNumGrid key=", key !tdk:p
   call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, typekind=typekind, &
     idx=attributeIndex, ikey=name, isPresent=isPresent, attnestflag=local_attnestflag, &
-    rc=localrc)
+    isStructured=is_structured, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  if (.not. is_structured) then
+    if (present(itemCount)) then
+      itemCount = 1
+    end if
+  end if
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeGetInfoByNumGrid
@@ -30922,7 +31066,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   integer :: countSingle, localrc
   character(:), allocatable :: key
-  logical :: is_present
+  logical :: is_present, is_structured
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -30943,8 +31087,13 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   if (is_present) then
     call ESMF_Info2Inquire(attpack%getPayload(), key=key, attrCount=itemCount, attnestflag=attnestflag, &
-      typekind=typekind, rc=localrc)
+      typekind=typekind, isStructured=is_structured, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    if (.not. is_structured) then
+      if (present(itemCount)) then
+        itemCount = 1
+      end if
+    end if
   else
     if (present(itemCount)) itemCount = 0
     if (present(typekind)) typekind = ESMF_NOKIND
@@ -30970,7 +31119,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   integer :: countSingle, localrc
   character(:), allocatable :: key
-  logical :: is_present
+  logical :: is_present, is_structured
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
 
@@ -30996,8 +31145,13 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   if (is_present) then
     call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, attnestflag=attnestflag, &
-      typekind=typekind, rc=localrc)
+      typekind=typekind, isStructured=is_structured, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    if (.not. is_structured) then
+      if (present(itemCount)) then
+        itemCount = 1
+      end if
+    end if
   else
     if (present(itemCount)) itemCount = 0
     if (present(typekind)) typekind = ESMF_NOKIND
@@ -31027,6 +31181,7 @@ subroutine ESMF_AttributeGetInfoByNumState(target, attributeIndex, name, convent
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_structured
 
   print *, "ESMF_AttributeGetInfoByNumState attributeIndex=", attributeIndex !tdk:p
   print *, "ESMF_AttributeGetInfoByNumState name=", name !tdk:p
@@ -31051,8 +31206,13 @@ end if
   print *, "ESMF_AttributeGetInfoByNumState key=", key !tdk:p
   call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, typekind=typekind, &
     idx=attributeIndex, ikey=name, isPresent=isPresent, attnestflag=local_attnestflag, &
-    rc=localrc)
+    isStructured=is_structured, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  if (.not. is_structured) then
+    if (present(itemCount)) then
+      itemCount = 1
+    end if
+  end if
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeGetInfoByNumState
@@ -31286,7 +31446,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   integer :: countSingle, localrc
   character(:), allocatable :: key
-  logical :: is_present
+  logical :: is_present, is_structured
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -31307,8 +31467,13 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   if (is_present) then
     call ESMF_Info2Inquire(attpack%getPayload(), key=key, attrCount=itemCount, attnestflag=attnestflag, &
-      typekind=typekind, rc=localrc)
+      typekind=typekind, isStructured=is_structured, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    if (.not. is_structured) then
+      if (present(itemCount)) then
+        itemCount = 1
+      end if
+    end if
   else
     if (present(itemCount)) itemCount = 0
     if (present(typekind)) typekind = ESMF_NOKIND
@@ -31334,7 +31499,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   integer :: countSingle, localrc
   character(:), allocatable :: key
-  logical :: is_present
+  logical :: is_present, is_structured
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
 
@@ -31360,8 +31525,13 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   if (is_present) then
     call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, attnestflag=attnestflag, &
-      typekind=typekind, rc=localrc)
+      typekind=typekind, isStructured=is_structured, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    if (.not. is_structured) then
+      if (present(itemCount)) then
+        itemCount = 1
+      end if
+    end if
   else
     if (present(itemCount)) itemCount = 0
     if (present(typekind)) typekind = ESMF_NOKIND
@@ -31391,6 +31561,7 @@ subroutine ESMF_AttributeGetInfoByNumLocStream(target, attributeIndex, name, con
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_structured
 
   print *, "ESMF_AttributeGetInfoByNumLocStream attributeIndex=", attributeIndex !tdk:p
   print *, "ESMF_AttributeGetInfoByNumLocStream name=", name !tdk:p
@@ -31415,8 +31586,13 @@ end if
   print *, "ESMF_AttributeGetInfoByNumLocStream key=", key !tdk:p
   call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, typekind=typekind, &
     idx=attributeIndex, ikey=name, isPresent=isPresent, attnestflag=local_attnestflag, &
-    rc=localrc)
+    isStructured=is_structured, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  if (.not. is_structured) then
+    if (present(itemCount)) then
+      itemCount = 1
+    end if
+  end if
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeGetInfoByNumLocStream
