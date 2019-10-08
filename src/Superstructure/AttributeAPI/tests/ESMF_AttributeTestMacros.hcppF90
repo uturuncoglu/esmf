@@ -1850,9 +1850,6 @@
         typekind=attrTK, itemcount=items, rc=rc) @\
       write(failMsg, *) "Did not return ESMF_SUCCESS or wrong value" @\
       write(name, *) "Getting Attribute info by num from a mobj Test" @\
-      print *, "attrTK=", attrTK !tdk:p @\
-      print *, "items=", items !tdk:p @\
-      print *, "attrName=", attrName !tdk:p @\
       call ESMF_Test((rc==ESMF_SUCCESS).and.(attrname==attrnameOut) & @\
                                        .and.(attrTK==ESMF_TYPEKIND_CHARACTER) & @\
                                        .and.(items==1), & @\

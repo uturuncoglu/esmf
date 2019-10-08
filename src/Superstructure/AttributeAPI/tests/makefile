@@ -35,9 +35,9 @@ LOCDIR = src/Superstructure/AttributeAPI/tests
 .NOTPARALLEL:
 
 #tdk:uncomm: enable appropriate attribute tests
-#TESTS_BUILD = $(ESMF_TESTDIR)/ESMF_AttributeArrayUTest
-TESTS_BUILD = $(ESMF_TESTDIR)/ESMF_AttPackArrayUTest \
-              $(ESMF_TESTDIR)/ESMF_AttributeArrayUTest
+TESTS_BUILD = $(ESMF_TESTDIR)/ESMF_AttributeFieldUTest
+#TESTS_BUILD = $(ESMF_TESTDIR)/ESMF_AttPackArrayUTest \
+#              $(ESMF_TESTDIR)/ESMF_AttributeArrayUTest
 #TESTS_BUILD = $(ESMF_TESTDIR)/ESMF_AttributeArrayUTest \
 #              $(ESMF_TESTDIR)/ESMF_AttributeABundleUTest \
 #              $(ESMF_TESTDIR)/ESMF_AttributeCplCompUTest \
@@ -48,7 +48,18 @@ TESTS_BUILD = $(ESMF_TESTDIR)/ESMF_AttPackArrayUTest \
 #              $(ESMF_TESTDIR)/ESMF_AttributeGridUTest \
 #              $(ESMF_TESTDIR)/ESMF_AttributeLocStreamUTest \
 #              $(ESMF_TESTDIR)/ESMF_AttributeSciCompUTest \
-#              $(ESMF_TESTDIR)/ESMF_AttributeStateUTest
+#              $(ESMF_TESTDIR)/ESMF_AttributeStateUTest \
+#              $(ESMF_TESTDIR)/ESMF_AttPackABundleUTest \
+#              $(ESMF_TESTDIR)/ESMF_AttPackArrayUTest \
+#              $(ESMF_TESTDIR)/ESMF_AttPackCplCompUTest \
+#              $(ESMF_TESTDIR)/ESMF_AttPackDistGridUTest \
+#              $(ESMF_TESTDIR)/ESMF_AttPackFBundleUTest \
+#              $(ESMF_TESTDIR)/ESMF_AttPackFieldUTest \
+#              $(ESMF_TESTDIR)/ESMF_AttPackGridCompUTest \
+#              $(ESMF_TESTDIR)/ESMF_AttPackGridUTest \
+#              $(ESMF_TESTDIR)/ESMF_AttPackLocStreamUTest \
+#              $(ESMF_TESTDIR)/ESMF_AttPackSciCompUTest \
+#              $(ESMF_TESTDIR)/ESMF_AttPackStateUTest
 #TESTS_BUILD = \
 #          $(ESMF_TESTDIR)/ESMF_AttributeAutoLinkUTest \
 #          $(ESMF_TESTDIR)/ESMF_AttInternalGridUTest \
