@@ -27022,7 +27022,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  print *, "ESMF_AttributeGetAttPackArray convention=", convention !tdk:p
+  call ESMF_LogWrite("ESMF_AttributeGetAttPackArray convention=")!tdk:p
   print *, "ESMF_AttributeGetAttPackArray purpose=", purpose !tdk:p
 
   localrc = ESMF_FAILURE
@@ -27039,9 +27039,14 @@ end if
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  key = TRIM(convention)//"/"//TRIM(purpose)
-  is_present = ESMF_Info2IsPresent(info, key, attnestflag=attnestflag, rc=localrc)
+  call ESMF_LogWrite("ESMF_AttributeGetAttPackArray info=") !tdk:p
+  call ESMF_LogWrite(ESMF_Info2Dump(info)) !tdk:p
+
+  key = "/"//TRIM(convention)//"/"//TRIM(purpose)
+  is_present = ESMF_Info2IsPresent(info, key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  if (is_present) call ESMF_LogWrite("attpack is present") !tdk:p
 
   if (present(isPresent)) then
     isPresent = is_present
@@ -27399,7 +27404,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  print *, "ESMF_AttributeGetAttPackArrayBundle convention=", convention !tdk:p
+  call ESMF_LogWrite("ESMF_AttributeGetAttPackArrayBundle convention=")!tdk:p
   print *, "ESMF_AttributeGetAttPackArrayBundle purpose=", purpose !tdk:p
 
   localrc = ESMF_FAILURE
@@ -27416,9 +27421,14 @@ end if
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  key = TRIM(convention)//"/"//TRIM(purpose)
-  is_present = ESMF_Info2IsPresent(info, key, attnestflag=attnestflag, rc=localrc)
+  call ESMF_LogWrite("ESMF_AttributeGetAttPackArrayBundle info=") !tdk:p
+  call ESMF_LogWrite(ESMF_Info2Dump(info)) !tdk:p
+
+  key = "/"//TRIM(convention)//"/"//TRIM(purpose)
+  is_present = ESMF_Info2IsPresent(info, key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  if (is_present) call ESMF_LogWrite("attpack is present") !tdk:p
 
   if (present(isPresent)) then
     isPresent = is_present
@@ -27776,7 +27786,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  print *, "ESMF_AttributeGetAttPackCplComp convention=", convention !tdk:p
+  call ESMF_LogWrite("ESMF_AttributeGetAttPackCplComp convention=")!tdk:p
   print *, "ESMF_AttributeGetAttPackCplComp purpose=", purpose !tdk:p
 
   localrc = ESMF_FAILURE
@@ -27793,9 +27803,14 @@ end if
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  key = TRIM(convention)//"/"//TRIM(purpose)
-  is_present = ESMF_Info2IsPresent(info, key, attnestflag=attnestflag, rc=localrc)
+  call ESMF_LogWrite("ESMF_AttributeGetAttPackCplComp info=") !tdk:p
+  call ESMF_LogWrite(ESMF_Info2Dump(info)) !tdk:p
+
+  key = "/"//TRIM(convention)//"/"//TRIM(purpose)
+  is_present = ESMF_Info2IsPresent(info, key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  if (is_present) call ESMF_LogWrite("attpack is present") !tdk:p
 
   if (present(isPresent)) then
     isPresent = is_present
@@ -28153,7 +28168,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  print *, "ESMF_AttributeGetAttPackGridComp convention=", convention !tdk:p
+  call ESMF_LogWrite("ESMF_AttributeGetAttPackGridComp convention=")!tdk:p
   print *, "ESMF_AttributeGetAttPackGridComp purpose=", purpose !tdk:p
 
   localrc = ESMF_FAILURE
@@ -28170,9 +28185,14 @@ end if
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  key = TRIM(convention)//"/"//TRIM(purpose)
-  is_present = ESMF_Info2IsPresent(info, key, attnestflag=attnestflag, rc=localrc)
+  call ESMF_LogWrite("ESMF_AttributeGetAttPackGridComp info=") !tdk:p
+  call ESMF_LogWrite(ESMF_Info2Dump(info)) !tdk:p
+
+  key = "/"//TRIM(convention)//"/"//TRIM(purpose)
+  is_present = ESMF_Info2IsPresent(info, key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  if (is_present) call ESMF_LogWrite("attpack is present") !tdk:p
 
   if (present(isPresent)) then
     isPresent = is_present
@@ -28530,7 +28550,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  print *, "ESMF_AttributeGetAttPackSciComp convention=", convention !tdk:p
+  call ESMF_LogWrite("ESMF_AttributeGetAttPackSciComp convention=")!tdk:p
   print *, "ESMF_AttributeGetAttPackSciComp purpose=", purpose !tdk:p
 
   localrc = ESMF_FAILURE
@@ -28547,9 +28567,14 @@ end if
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  key = TRIM(convention)//"/"//TRIM(purpose)
-  is_present = ESMF_Info2IsPresent(info, key, attnestflag=attnestflag, rc=localrc)
+  call ESMF_LogWrite("ESMF_AttributeGetAttPackSciComp info=") !tdk:p
+  call ESMF_LogWrite(ESMF_Info2Dump(info)) !tdk:p
+
+  key = "/"//TRIM(convention)//"/"//TRIM(purpose)
+  is_present = ESMF_Info2IsPresent(info, key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  if (is_present) call ESMF_LogWrite("attpack is present") !tdk:p
 
   if (present(isPresent)) then
     isPresent = is_present
@@ -28907,7 +28932,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  print *, "ESMF_AttributeGetAttPackDistGrid convention=", convention !tdk:p
+  call ESMF_LogWrite("ESMF_AttributeGetAttPackDistGrid convention=")!tdk:p
   print *, "ESMF_AttributeGetAttPackDistGrid purpose=", purpose !tdk:p
 
   localrc = ESMF_FAILURE
@@ -28924,9 +28949,14 @@ end if
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  key = TRIM(convention)//"/"//TRIM(purpose)
-  is_present = ESMF_Info2IsPresent(info, key, attnestflag=attnestflag, rc=localrc)
+  call ESMF_LogWrite("ESMF_AttributeGetAttPackDistGrid info=") !tdk:p
+  call ESMF_LogWrite(ESMF_Info2Dump(info)) !tdk:p
+
+  key = "/"//TRIM(convention)//"/"//TRIM(purpose)
+  is_present = ESMF_Info2IsPresent(info, key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  if (is_present) call ESMF_LogWrite("attpack is present") !tdk:p
 
   if (present(isPresent)) then
     isPresent = is_present
@@ -29284,7 +29314,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  print *, "ESMF_AttributeGetAttPackField convention=", convention !tdk:p
+  call ESMF_LogWrite("ESMF_AttributeGetAttPackField convention=")!tdk:p
   print *, "ESMF_AttributeGetAttPackField purpose=", purpose !tdk:p
 
   localrc = ESMF_FAILURE
@@ -29301,9 +29331,14 @@ end if
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  key = TRIM(convention)//"/"//TRIM(purpose)
-  is_present = ESMF_Info2IsPresent(info, key, attnestflag=attnestflag, rc=localrc)
+  call ESMF_LogWrite("ESMF_AttributeGetAttPackField info=") !tdk:p
+  call ESMF_LogWrite(ESMF_Info2Dump(info)) !tdk:p
+
+  key = "/"//TRIM(convention)//"/"//TRIM(purpose)
+  is_present = ESMF_Info2IsPresent(info, key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  if (is_present) call ESMF_LogWrite("attpack is present") !tdk:p
 
   if (present(isPresent)) then
     isPresent = is_present
@@ -29661,7 +29696,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  print *, "ESMF_AttributeGetAttPackFieldBundle convention=", convention !tdk:p
+  call ESMF_LogWrite("ESMF_AttributeGetAttPackFieldBundle convention=")!tdk:p
   print *, "ESMF_AttributeGetAttPackFieldBundle purpose=", purpose !tdk:p
 
   localrc = ESMF_FAILURE
@@ -29678,9 +29713,14 @@ end if
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  key = TRIM(convention)//"/"//TRIM(purpose)
-  is_present = ESMF_Info2IsPresent(info, key, attnestflag=attnestflag, rc=localrc)
+  call ESMF_LogWrite("ESMF_AttributeGetAttPackFieldBundle info=") !tdk:p
+  call ESMF_LogWrite(ESMF_Info2Dump(info)) !tdk:p
+
+  key = "/"//TRIM(convention)//"/"//TRIM(purpose)
+  is_present = ESMF_Info2IsPresent(info, key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  if (is_present) call ESMF_LogWrite("attpack is present") !tdk:p
 
   if (present(isPresent)) then
     isPresent = is_present
@@ -30038,7 +30078,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  print *, "ESMF_AttributeGetAttPackGrid convention=", convention !tdk:p
+  call ESMF_LogWrite("ESMF_AttributeGetAttPackGrid convention=")!tdk:p
   print *, "ESMF_AttributeGetAttPackGrid purpose=", purpose !tdk:p
 
   localrc = ESMF_FAILURE
@@ -30055,9 +30095,14 @@ end if
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  key = TRIM(convention)//"/"//TRIM(purpose)
-  is_present = ESMF_Info2IsPresent(info, key, attnestflag=attnestflag, rc=localrc)
+  call ESMF_LogWrite("ESMF_AttributeGetAttPackGrid info=") !tdk:p
+  call ESMF_LogWrite(ESMF_Info2Dump(info)) !tdk:p
+
+  key = "/"//TRIM(convention)//"/"//TRIM(purpose)
+  is_present = ESMF_Info2IsPresent(info, key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  if (is_present) call ESMF_LogWrite("attpack is present") !tdk:p
 
   if (present(isPresent)) then
     isPresent = is_present
@@ -30415,7 +30460,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  print *, "ESMF_AttributeGetAttPackState convention=", convention !tdk:p
+  call ESMF_LogWrite("ESMF_AttributeGetAttPackState convention=")!tdk:p
   print *, "ESMF_AttributeGetAttPackState purpose=", purpose !tdk:p
 
   localrc = ESMF_FAILURE
@@ -30432,9 +30477,14 @@ end if
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  key = TRIM(convention)//"/"//TRIM(purpose)
-  is_present = ESMF_Info2IsPresent(info, key, attnestflag=attnestflag, rc=localrc)
+  call ESMF_LogWrite("ESMF_AttributeGetAttPackState info=") !tdk:p
+  call ESMF_LogWrite(ESMF_Info2Dump(info)) !tdk:p
+
+  key = "/"//TRIM(convention)//"/"//TRIM(purpose)
+  is_present = ESMF_Info2IsPresent(info, key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  if (is_present) call ESMF_LogWrite("attpack is present") !tdk:p
 
   if (present(isPresent)) then
     isPresent = is_present
@@ -30792,7 +30842,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  print *, "ESMF_AttributeGetAttPackLocStream convention=", convention !tdk:p
+  call ESMF_LogWrite("ESMF_AttributeGetAttPackLocStream convention=")!tdk:p
   print *, "ESMF_AttributeGetAttPackLocStream purpose=", purpose !tdk:p
 
   localrc = ESMF_FAILURE
@@ -30809,9 +30859,14 @@ end if
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  key = TRIM(convention)//"/"//TRIM(purpose)
-  is_present = ESMF_Info2IsPresent(info, key, attnestflag=attnestflag, rc=localrc)
+  call ESMF_LogWrite("ESMF_AttributeGetAttPackLocStream info=") !tdk:p
+  call ESMF_LogWrite(ESMF_Info2Dump(info)) !tdk:p
+
+  key = "/"//TRIM(convention)//"/"//TRIM(purpose)
+  is_present = ESMF_Info2IsPresent(info, key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  if (is_present) call ESMF_LogWrite("attpack is present") !tdk:p
 
   if (present(isPresent)) then
     isPresent = is_present
@@ -33319,7 +33374,12 @@ subroutine ESMF_AttributeUpdateCplComp(target, vm, rootList, reconcile, rc)
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
 
+  call ESMF_LogWrite("entering ESMF_AttributeUpdateCplComp", ESMF_LOGMSG_INFO, rc=localrc) !tdk:p
 
+  call ESMF_InfoSync(target, rootList(1), vm, rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  call ESMF_LogWrite("leaving ESMF_AttributeUpdateCplComp", ESMF_LOGMSG_INFO, rc=localrc) !tdk:p
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeUpdateCplComp
@@ -33341,7 +33401,12 @@ subroutine ESMF_AttributeUpdateGridComp(target, vm, rootList, reconcile, rc)
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
 
+  call ESMF_LogWrite("entering ESMF_AttributeUpdateGridComp", ESMF_LOGMSG_INFO, rc=localrc) !tdk:p
 
+  call ESMF_InfoSync(target, rootList(1), vm, rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  call ESMF_LogWrite("leaving ESMF_AttributeUpdateGridComp", ESMF_LOGMSG_INFO, rc=localrc) !tdk:p
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeUpdateGridComp
@@ -33363,7 +33428,12 @@ subroutine ESMF_AttributeUpdateSciComp(target, vm, rootList, reconcile, rc)
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
 
+  call ESMF_LogWrite("entering ESMF_AttributeUpdateSciComp", ESMF_LOGMSG_INFO, rc=localrc) !tdk:p
 
+  call ESMF_InfoSync(target, rootList(1), vm, rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  call ESMF_LogWrite("leaving ESMF_AttributeUpdateSciComp", ESMF_LOGMSG_INFO, rc=localrc) !tdk:p
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeUpdateSciComp
@@ -33385,7 +33455,12 @@ subroutine ESMF_AttributeUpdateField(target, vm, rootList, reconcile, rc)
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
 
+  call ESMF_LogWrite("entering ESMF_AttributeUpdateField", ESMF_LOGMSG_INFO, rc=localrc) !tdk:p
 
+  call ESMF_InfoSync(target, rootList(1), vm, rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  call ESMF_LogWrite("leaving ESMF_AttributeUpdateField", ESMF_LOGMSG_INFO, rc=localrc) !tdk:p
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeUpdateField
@@ -33407,7 +33482,12 @@ subroutine ESMF_AttributeUpdateFieldBundle(target, vm, rootList, reconcile, rc)
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
 
+  call ESMF_LogWrite("entering ESMF_AttributeUpdateFieldBundle", ESMF_LOGMSG_INFO, rc=localrc) !tdk:p
 
+  call ESMF_InfoSync(target, rootList(1), vm, rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  call ESMF_LogWrite("leaving ESMF_AttributeUpdateFieldBundle", ESMF_LOGMSG_INFO, rc=localrc) !tdk:p
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeUpdateFieldBundle
@@ -33429,7 +33509,12 @@ subroutine ESMF_AttributeUpdateState(target, vm, rootList, reconcile, rc)
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
 
+  call ESMF_LogWrite("entering ESMF_AttributeUpdateState", ESMF_LOGMSG_INFO, rc=localrc) !tdk:p
 
+  call ESMF_InfoSync(target, rootList(1), vm, rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  call ESMF_LogWrite("leaving ESMF_AttributeUpdateState", ESMF_LOGMSG_INFO, rc=localrc) !tdk:p
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeUpdateState

@@ -1392,7 +1392,12 @@ json PackageFactory::getOrCreateJSON(key_t& key, int& rc,
 #define ESMC_METHOD "broadcastInfo()"
 void broadcastInfo(ESMCI::Info2* info, int rootPet, const ESMCI::VM &vm, int& rc) {
   // Exceptions:  ESMCI:esmf_info_error
-
+  std::string msg = std::string(ESMC_METHOD) + ":: entering"; //tdk:p
+  ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
+  msg = std::string(ESMC_METHOD) + ":: rootPet=" + std::to_string(rootPet); //tdk:p
+  ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
+  msg = std::string(ESMC_METHOD) + ":: info->dump()=" + info->dump(rc); //tdk:p
+  ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
   rc = ESMF_FAILURE;
   int localPet = vm.getLocalPet();
   std::size_t target_size = 0;  // Size of serialized info storage
@@ -1428,6 +1433,10 @@ void broadcastInfo(ESMCI::Info2* info, int rootPet, const ESMCI::VM &vm, int& rc
       ESMF_HANDLE_PASSTHRU(exc_esmf);
     }
   }
+  msg = std::string(ESMC_METHOD) + ":: info->dump()=" + info->dump(rc); //tdk:p
+  ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
+  msg = std::string(ESMC_METHOD) + ":: leaving"; //tdk:p
+  ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
   return;
 }
 

@@ -315,6 +315,8 @@ void ESMC_Info2BaseSyncDo(const std::vector<long int> &base_addresses, const int
       // This object is created from a serialized string stored in the update
       // map.
       ESMCI::Info2 rhs(it.value(), rc);
+      std::string msg = std::string(ESMC_METHOD) + " rhs.dump(2, rc)=" + rhs.dump(2, rc); //tdk:p
+      ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
       try {
         if (localPet != rootPet) {
           info_to_update->update(rhs, rc);
@@ -324,6 +326,8 @@ void ESMC_Info2BaseSyncDo(const std::vector<long int> &base_addresses, const int
         }
       }
       ESMF_CATCH_JSON
+      msg = std::string(ESMC_METHOD) + " tdk:log: info_to_update->dump(2, rc)=" + info_to_update->dump(2, rc); //tdk:p
+      ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
     }
   }
   ESMF_CATCH_ISOC
@@ -335,6 +339,10 @@ void ESMC_Info2BaseSync(ESMCI::Info2 *inqstate, int &rootPet, long int &vmAddres
   rc = ESMF_FAILURE;
   try {
     const json &j_inqstate = inqstate->getStorageRef();
+    std::string msg = std::string(ESMC_METHOD) + "j_inqstate.dump()=" + j_inqstate.dump(); //tdk:p
+    ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
+    msg = std::string(ESMC_METHOD) + "std::to_string(rootPet)=" + std::to_string(rootPet); //tdk:p
+    ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
     int ctr = 0;
     updateDirtyInfo(j_inqstate, &ctr, nullptr);
     std::vector<long int> base_addresses(ctr, 0);

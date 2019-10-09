@@ -35,7 +35,7 @@ LOCDIR = src/Superstructure/AttributeAPI/tests
 .NOTPARALLEL:
 
 #tdk:uncomm: enable appropriate attribute tests
-TESTS_BUILD = $(ESMF_TESTDIR)/ESMF_AttributeFieldUTest
+TESTS_BUILD = $(ESMF_TESTDIR)/ESMF_AttributeUpdateComponentUTest
 #TESTS_BUILD = $(ESMF_TESTDIR)/ESMF_AttPackArrayUTest \
 #              $(ESMF_TESTDIR)/ESMF_AttributeArrayUTest
 #TESTS_BUILD = $(ESMF_TESTDIR)/ESMF_AttributeArrayUTest \
