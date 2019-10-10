@@ -463,9 +463,17 @@ std::string Info2::dump(int indent, int& rc) const {
   // Exceptions: ESMCI::esmf_info_error
 
   rc = ESMF_FAILURE;
+  if (indent < 0) {
+    ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, "indent must be >= 0", rc);
+  }
   std::string ret;
+  const json &j = this->getStorageRef();
   try {
-    ret = this->getStorageRef().dump(indent);
+    if (indent == 0) {
+      ret = j.dump();
+    } else {
+      ret = j.dump(indent);
+    }
   } catch (json::type_error &e) {
     ESMF_THROW_JSON(e, "ESMC_RC_ARG_INCOMP", ESMC_RC_ARG_INCOMP, rc);
   }
@@ -845,7 +853,13 @@ void Info2::deserialize(char *buffer, int *offset, int &rc) {
   int length = ibuffer[*offset];
   // Move 4 bytes to the start of the string actual.
   (*offset) += 4;
+  std::string msg = std::string(ESMC_METHOD) + " tdk:log: std::to_string(*offset)=" + std::to_string(*offset); //tdk:p
+  ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
+  msg = std::string(ESMC_METHOD) + " tdk:log: std::to_string(length)=" + std::to_string(length); //tdk:p
+  ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
   std::string infobuffer(&(buffer[*offset]), length);
+  msg = std::string(ESMC_METHOD) + " tdk:log: infobuffer=" + infobuffer; //tdk:p
+  ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
   try {
     this->parse(infobuffer, rc);
   }
@@ -946,9 +960,7 @@ void Info2::serialize(char *buffer, int *length, int *offset,
   try {
     infobuffer = this->dump(rc);
   }
-  catch (ESMCI::esmf_info_error &exc_esmf) {
-    ESMF_HANDLE_PASSTHRU(exc_esmf);
-  }
+  ESMF_CATCH_PASSTHRU
   // Adjust the buffer length to account for string attribute representation.
   int n = (int)infobuffer.length();
   *length += n;
@@ -957,6 +969,10 @@ void Info2::serialize(char *buffer, int *length, int *offset,
   *length += 4;
   // If this is not an inquire operation, transfer the string info dump
   // into the serialization buffer. Update the offset in the process.
+  std::string msg = std::string(ESMC_METHOD) + " tdk:log: infobuffer=" + infobuffer; //tdk:p
+  ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
+  msg = std::string(ESMC_METHOD) + " tdk:log: *length=" + std::to_string(*length); //tdk:p
+  ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
   if (inquireflag != ESMF_INQUIREONLY) {
     alignOffset(*offset);
     int *ibuffer = reinterpret_cast<int*>(buffer);

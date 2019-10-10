@@ -315,11 +315,14 @@ void ESMC_Info2BaseSyncDo(const std::vector<long int> &base_addresses, const int
       // This object is created from a serialized string stored in the update
       // map.
       ESMCI::Info2 rhs(it.value(), rc);
-      std::string msg = std::string(ESMC_METHOD) + " rhs.dump(2, rc)=" + rhs.dump(2, rc); //tdk:p
+      std::string msg = std::string(ESMC_METHOD) + " it.value().dump(2)=" + it.value().dump(2); //tdk:p
       ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
       try {
         if (localPet != rootPet) {
-          info_to_update->update(rhs, rc);
+          info_to_update->getStorageRefWritable() = rhs.getStorageRef();
+          // Note (bekozi): Commented in favor or replacing to avoid tracking
+          // down removals in the root PET.
+//          info_to_update->update(rhs, rc);
           // Since this is part of the sync operation, we do not consider this
           // data dirty after the update.
           info_to_update->setDirty(false);

@@ -379,8 +379,7 @@ module ESMF_AttributeUpdateRemoveOnlyUTestMod
     call ESMF_AttributeUpdate(importState, vm, rootList=rootList, rc=rc)
     if (rc/=ESMF_SUCCESS) return
 
-    call ESMF_AttributeCopy(importState, exportState, &
-      attcopy=ESMF_ATTCOPY_REFERENCE, rc=rc)
+    call ESMF_AttributeCopy(importState, exportState, rc=rc)
     if (rc/=ESMF_SUCCESS) return
 
   end subroutine usercpl_run

@@ -78,8 +78,8 @@ program ESMF_Info2SyncUTest
 
   !----------------------------------------------------------------------------
   !NEX_UTest
-  write(name, *) "ESMF_Info2Reconcile"
-  write(failMsg, *) "Did not reconcile successfully"
+  write(name, *) "ESMF_Info2Sync"
+  write(failMsg, *) "Did not sync successfully"
   rc = ESMF_FAILURE
 
   distgrid = ESMF_DistGridCreate(minIndex=(/1,1/),maxIndex=(/10,10/), rc=rc)
