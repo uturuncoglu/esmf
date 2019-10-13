@@ -844,6 +844,7 @@ void Info2::parse(key_t& input, int& rc) {
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Info2::deserialize()"
 void Info2::deserialize(char *buffer, int *offset, int &rc) {
+  // Test: testSerializeDeserialize, testSerializeDeserialize2
   // Exceptions:  ESMCI:esmf_info_error
   rc = ESMF_FAILURE;
   alignOffset(*offset);
@@ -954,6 +955,7 @@ bool Info2::isSetNull(key_t &key, int &rc) const {
 #define ESMC_METHOD "Info2::serialize()"
 void Info2::serialize(char *buffer, int *length, int *offset,
   ESMC_InquireFlag inquireflag, int& rc) {
+  // Test: testSerializeDeserialize, testSerializeDeserialize2
   // Exceptions:  ESMCI:esmf_info_error
   rc = ESMF_FAILURE;
   std::string infobuffer;
@@ -961,29 +963,28 @@ void Info2::serialize(char *buffer, int *length, int *offset,
     infobuffer = this->dump(rc);
   }
   ESMF_CATCH_PASSTHRU
-  // Adjust the buffer length to account for string attribute representation.
-  int n = (int)infobuffer.length();
-  *length += n;
-  // Need 32 bits (4 bytes) to store the length of the string buffer for a
-  // later deserialize.
-  *length += 4;
+  alignOffset(*offset);
   // If this is not an inquire operation, transfer the string info dump
   // into the serialization buffer. Update the offset in the process.
   std::string msg = std::string(ESMC_METHOD) + " tdk:log: infobuffer=" + infobuffer; //tdk:p
   ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
   msg = std::string(ESMC_METHOD) + " tdk:log: *length=" + std::to_string(*length); //tdk:p
   ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
-  if (inquireflag != ESMF_INQUIREONLY) {
-    alignOffset(*offset);
+  int n = (int) infobuffer.length();
+  if (inquireflag == ESMF_NOINQUIRE) {
     int *ibuffer = reinterpret_cast<int*>(buffer);
     ibuffer[*offset] = n;
-    (*offset) += 4;
-    for (int ii=0; ii<n; ++ii) {
-      buffer[*offset] = infobuffer[ii];
-      (*offset)++;
-    }
-    alignOffset(*offset);
   }
+  // Need 32 bits (4 bytes) to store the length of the string buffer for a
+  // later deserialize.
+  (*offset) += 4;
+  // Adjust the offset for the length of the string representation. If not
+  // inquiring, also adjust the offset.
+  for (int ii=0; ii<n; ++ii) {
+    if (inquireflag == ESMF_NOINQUIRE) { buffer[*offset] = infobuffer[ii]; }
+    (*offset)++;
+  }
+  alignOffset(*offset);
   rc = ESMF_SUCCESS;
   return;
 }

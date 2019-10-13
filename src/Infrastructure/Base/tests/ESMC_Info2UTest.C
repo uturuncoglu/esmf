@@ -464,9 +464,7 @@ void test_update_json_attribute_count_map(int& rc, char failMsg[]) {
   j["NUOPC"]["General"]["fool2"] = 33;
 
   auto counts = create_json_attribute_count_map();
-  std::cout << "tdk: test start" << std::endl;  //tdk:p
   update_json_attribute_count_map(counts, j, true);
-  std::cout << "tdk: test end" << std::endl;  //tdk:p
 
   if (counts.at("attPackCountTotal") != 4) return finalizeFailure(rc, failMsg, "attPackCountTotal incorrect");
   if (counts.at("attrCountTotal") != 8) return finalizeFailure(rc, failMsg, "attrCountTotal incorrect");
@@ -744,22 +742,19 @@ void testSerializeDeserialize(int& rc, char failMsg[]) {
   catch (esmf_info_error &e) {
     ESMF_HANDLE_PASSTHRU(e);
   }
-  if (offset != 0) {
-    return finalizeFailure(rc, failMsg, "Should not have adjusted offset");
+  if (inquire_length != 0) {
+    return finalizeFailure(rc, failMsg, "Should not have adjusted length");
   }
+  inquire_length = offset;
   char buffer[inquire_length];
-  int length = 0;
+  offset = 0;
   try {
-    info.serialize(buffer, &length, &offset, ESMF_NOINQUIRE, rc);
+    info.serialize(buffer, &inquire_length, &offset, ESMF_NOINQUIRE, rc);
   }
   catch (esmf_info_error &e) {
     ESMF_HANDLE_PASSTHRU(e);
   }
-  int aligned_length = length;
-  alignOffset(aligned_length);
-  if (offset != aligned_length) {
-    return finalizeFailure(rc, failMsg, "Offset and length should be equal");
-  }
+
   Info2 deinfo;
   int deoffset = 0;
   try {
@@ -775,6 +770,65 @@ void testSerializeDeserialize(int& rc, char failMsg[]) {
     return finalizeFailure(rc, failMsg, "Storage not equal");
   }
   return;
+};
+
+#undef  ESMC_METHOD
+#define ESMC_METHOD "testSerializeDeserialize2()"
+void testSerializeDeserialize2(int& rc, char failMsg[]) {
+  rc = ESMF_FAILURE;
+  std::cout << "tdk: test start" << std::endl;  //tdk:p
+  try {
+    Info2 info("{\"foo\":16}", rc);
+    Info2 info2("{\"foo2\":\"a string\"}", rc);
+    Info2 info3("{\"foo3\":3.144}", rc);
+    vector<Info2*> infops = {&info, &info2, &info3};
+    int inquire_length = 0;
+    int offset = 0;
+    char *null_buffer = nullptr;
+    for (auto element : infops) {
+      try {
+        element->serialize(null_buffer, &inquire_length, &offset, ESMF_INQUIREONLY, rc);
+        std::cout << ESMC_METHOD << " std::to_string(inquire_length)=" << std::to_string(inquire_length) << std::endl;  //tdk:p
+        std::cout << ESMC_METHOD << " std::to_string(offset)=" << std::to_string(offset) << std::endl;  //tdk:p
+      }
+      ESMF_CATCH_PASSTHRU
+    }
+    inquire_length = offset;
+    offset = 0;
+    char buffer[inquire_length];
+    for (auto element : infops) {
+      try {
+        element->serialize(buffer, &inquire_length, &offset, ESMF_NOINQUIRE, rc);
+        std::cout << ESMC_METHOD << " std::to_string(inquire_length)2=" << std::to_string(inquire_length) << std::endl;  //tdk:p
+        std::cout << ESMC_METHOD << " std::to_string(offset)2=" << std::to_string(offset) << std::endl;  //tdk:p
+      }
+      ESMF_CATCH_PASSTHRU
+    }
+
+    Info2 infod;
+    Info2 info2d;
+    Info2 info3d;
+    vector<Info2*> info2ps = {&infod, &info2d, &info3d};
+    offset = 0;
+    for (auto element : info2ps) {
+      try {
+        element->deserialize(buffer, &offset, rc);
+      }
+      ESMF_CATCH_PASSTHRU
+    }
+
+    for (std::size_t ii = 0; ii < infops.size(); ++ii) {
+      Info2 *actual = info2ps[ii];
+      Info2 *desired = infops[ii];
+      std::cout << ESMC_METHOD << " actual->dump(rc)=" << actual->dump(rc) << std::endl;  //tdk:p
+      std::cout << ESMC_METHOD << " desired->dump(rc)=" << desired->dump(rc) << std::endl;  //tdk:p
+      if (actual->getStorageRef() != desired->getStorageRef()) {
+        return finalizeFailure(rc, failMsg, "Deserialized incorrect");
+      }
+    }
+  }
+  ESMF_CATCH_PASSTHRU
+  std::cout << "tdk: test end" << std::endl;  //tdk:p
 };
 
 #undef  ESMC_METHOD
@@ -1152,6 +1206,13 @@ int main(void) {
   //NEX_UTest
   strcpy(name, "Info Serialize/Deserialize");
   testSerializeDeserialize(rc, failMsg);
+  ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
+  //---------------------------------------------------------------------------
+
+  //---------------------------------------------------------------------------
+  //NEX_UTest
+  strcpy(name, "Info Serialize/Deserialize 2");
+  testSerializeDeserialize2(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //---------------------------------------------------------------------------
 
