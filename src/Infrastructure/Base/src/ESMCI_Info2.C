@@ -834,6 +834,8 @@ void Info2::parse(key_t& input, int& rc) {
   rc = ESMF_FAILURE;
   try {
     this->getStorageRefWritable() = json::parse(input);
+  } catch (json::parse_error &exc_json) {
+    ESMF_THROW_JSON(exc_json, "ESMC_RC_ARG_WRONG", ESMC_RC_ARG_WRONG, rc)
   }
   ESMF_CATCH_JSON
   rc = ESMF_SUCCESS;
@@ -846,18 +848,18 @@ void Info2::parse(key_t& input, int& rc) {
 void Info2::deserialize(char *buffer, int *offset, int &rc) {
   // Test: testSerializeDeserialize, testSerializeDeserialize2
   // Exceptions:  ESMCI:esmf_info_error
+  std::string msg = std::string(ESMC_METHOD) + " tdk:log: std::to_string(*offset)=" + std::to_string(*offset); //tdk:p
+  ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
   rc = ESMF_FAILURE;
   alignOffset(*offset);
   // Act like an integer to get the string length.
   int *ibuffer = reinterpret_cast<int*>(buffer);
   // Get the serialized string length from the buffer start.
   int length = ibuffer[*offset];
-  // Move 4 bytes to the start of the string actual.
-  (*offset) += 4;
-  std::string msg = std::string(ESMC_METHOD) + " tdk:log: std::to_string(*offset)=" + std::to_string(*offset); //tdk:p
-  ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
   msg = std::string(ESMC_METHOD) + " tdk:log: std::to_string(length)=" + std::to_string(length); //tdk:p
   ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
+  // Move 4 bytes to the start of the string actual.
+  (*offset) += 4;
   std::string infobuffer(&(buffer[*offset]), length);
   msg = std::string(ESMC_METHOD) + " tdk:log: infobuffer=" + infobuffer; //tdk:p
   ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
@@ -957,6 +959,17 @@ void Info2::serialize(char *buffer, int *length, int *offset,
   ESMC_InquireFlag inquireflag, int& rc) {
   // Test: testSerializeDeserialize, testSerializeDeserialize2
   // Exceptions:  ESMCI:esmf_info_error
+  std::string msg = std::string(ESMC_METHOD) + " tdk:log: entering"; //tdk:p
+  ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
+  if (inquireflag == ESMF_NOINQUIRE) { //tdk:p
+    ESMC_LogWrite("Info2::serialize() tdk:log: ESMF_NOINQUIRE", ESMC_LOGMSG_INFO); //tdk:p
+  } else { //tdk:p
+    ESMC_LogWrite("Info2::serialize() tdk:log: ESMF_INQUIREONLY", ESMC_LOGMSG_INFO); //tdk:p
+  } //tdk:p
+  msg = std::string(ESMC_METHOD) + " tdk:log: *length=" + std::to_string(*length); //tdk:p
+  ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
+  msg = std::string(ESMC_METHOD) + " tdk:log: *offset1=" + std::to_string(*offset); //tdk:p
+  ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
   rc = ESMF_FAILURE;
   std::string infobuffer;
   try {
@@ -964,11 +977,11 @@ void Info2::serialize(char *buffer, int *length, int *offset,
   }
   ESMF_CATCH_PASSTHRU
   alignOffset(*offset);
+  msg = std::string(ESMC_METHOD) + " tdk:log: *offset1.1=" + std::to_string(*offset); //tdk:p
+  ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
   // If this is not an inquire operation, transfer the string info dump
   // into the serialization buffer. Update the offset in the process.
-  std::string msg = std::string(ESMC_METHOD) + " tdk:log: infobuffer=" + infobuffer; //tdk:p
-  ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
-  msg = std::string(ESMC_METHOD) + " tdk:log: *length=" + std::to_string(*length); //tdk:p
+  msg = std::string(ESMC_METHOD) + " tdk:log: infobuffer=" + infobuffer; //tdk:p
   ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
   int n = (int) infobuffer.length();
   if (inquireflag == ESMF_NOINQUIRE) {
@@ -984,8 +997,14 @@ void Info2::serialize(char *buffer, int *length, int *offset,
     if (inquireflag == ESMF_NOINQUIRE) { buffer[*offset] = infobuffer[ii]; }
     (*offset)++;
   }
+  msg = std::string(ESMC_METHOD) + " tdk:log: *offset2=" + std::to_string(*offset); //tdk:p
+  ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
   alignOffset(*offset);
   rc = ESMF_SUCCESS;
+  msg = std::string(ESMC_METHOD) + " tdk:log: *offset2.1=" + std::to_string(*offset); //tdk:p
+  ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
+  msg = std::string(ESMC_METHOD) + " tdk:log: returning"; //tdk:p
+  ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
   return;
 }
 
