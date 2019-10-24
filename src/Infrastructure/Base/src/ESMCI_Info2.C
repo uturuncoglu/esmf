@@ -848,7 +848,7 @@ void Info2::parse(key_t& input, int& rc) {
 void Info2::deserialize(char *buffer, int *offset, int &rc) {
   // Test: testSerializeDeserialize, testSerializeDeserialize2
   // Exceptions:  ESMCI:esmf_info_error
-  std::string msg = std::string(ESMC_METHOD) + " tdk:log: std::to_string(*offset)=" + std::to_string(*offset); //tdk:p
+  std::string msg = std::string(ESMC_METHOD) + " std::to_string(*offset)=" + std::to_string(*offset); //tdk:p
   ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
   rc = ESMF_FAILURE;
   alignOffset(*offset);
@@ -856,12 +856,12 @@ void Info2::deserialize(char *buffer, int *offset, int &rc) {
   int *ibuffer = reinterpret_cast<int*>(buffer);
   // Get the serialized string length from the buffer start.
   int length = ibuffer[*offset];
-  msg = std::string(ESMC_METHOD) + " tdk:log: std::to_string(length)=" + std::to_string(length); //tdk:p
+  msg = std::string(ESMC_METHOD) + " std::to_string(length)=" + std::to_string(length); //tdk:p
   ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
   // Move 4 bytes to the start of the string actual.
-  (*offset) += 4;
+  (*offset) += sizeof(int);
   std::string infobuffer(&(buffer[*offset]), length);
-  msg = std::string(ESMC_METHOD) + " tdk:log: infobuffer=" + infobuffer; //tdk:p
+  msg = std::string(ESMC_METHOD) + " infobuffer=" + infobuffer; //tdk:p
   ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
   try {
     this->parse(infobuffer, rc);
@@ -959,16 +959,16 @@ void Info2::serialize(char *buffer, int *length, int *offset,
   ESMC_InquireFlag inquireflag, int& rc) {
   // Test: testSerializeDeserialize, testSerializeDeserialize2
   // Exceptions:  ESMCI:esmf_info_error
-  std::string msg = std::string(ESMC_METHOD) + " tdk:log: entering"; //tdk:p
+  std::string msg = std::string(ESMC_METHOD) + " entering"; //tdk:p
   ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
   if (inquireflag == ESMF_NOINQUIRE) { //tdk:p
-    ESMC_LogWrite("Info2::serialize() tdk:log: ESMF_NOINQUIRE", ESMC_LOGMSG_INFO); //tdk:p
+    ESMC_LogWrite("Info2::serialize() ESMF_NOINQUIRE", ESMC_LOGMSG_INFO); //tdk:p
   } else { //tdk:p
-    ESMC_LogWrite("Info2::serialize() tdk:log: ESMF_INQUIREONLY", ESMC_LOGMSG_INFO); //tdk:p
+    ESMC_LogWrite("Info2::serialize() ESMF_INQUIREONLY", ESMC_LOGMSG_INFO); //tdk:p
   } //tdk:p
-  msg = std::string(ESMC_METHOD) + " tdk:log: *length=" + std::to_string(*length); //tdk:p
+  msg = std::string(ESMC_METHOD) + " *length=" + std::to_string(*length); //tdk:p
   ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
-  msg = std::string(ESMC_METHOD) + " tdk:log: *offset1=" + std::to_string(*offset); //tdk:p
+  msg = std::string(ESMC_METHOD) + " *offset1=" + std::to_string(*offset); //tdk:p
   ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
   rc = ESMF_FAILURE;
   std::string infobuffer;
@@ -977,33 +977,35 @@ void Info2::serialize(char *buffer, int *length, int *offset,
   }
   ESMF_CATCH_PASSTHRU
   alignOffset(*offset);
-  msg = std::string(ESMC_METHOD) + " tdk:log: *offset1.1=" + std::to_string(*offset); //tdk:p
+  msg = std::string(ESMC_METHOD) + " *offset1.1=" + std::to_string(*offset); //tdk:p
   ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
   // If this is not an inquire operation, transfer the string info dump
   // into the serialization buffer. Update the offset in the process.
-  msg = std::string(ESMC_METHOD) + " tdk:log: infobuffer=" + infobuffer; //tdk:p
+  msg = std::string(ESMC_METHOD) + " infobuffer=" + infobuffer; //tdk:p
   ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
   int n = (int) infobuffer.length();
+  msg = std::string(ESMC_METHOD) + " n=" + std::to_string(n); //tdk:p
+  ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
   if (inquireflag == ESMF_NOINQUIRE) {
     int *ibuffer = reinterpret_cast<int*>(buffer);
     ibuffer[*offset] = n;
   }
   // Need 32 bits (4 bytes) to store the length of the string buffer for a
   // later deserialize.
-  (*offset) += 4;
+  (*offset) += sizeof(int);
   // Adjust the offset for the length of the string representation. If not
   // inquiring, also adjust the offset.
   for (int ii=0; ii<n; ++ii) {
     if (inquireflag == ESMF_NOINQUIRE) { buffer[*offset] = infobuffer[ii]; }
     (*offset)++;
   }
-  msg = std::string(ESMC_METHOD) + " tdk:log: *offset2=" + std::to_string(*offset); //tdk:p
+  msg = std::string(ESMC_METHOD) + " *offset2=" + std::to_string(*offset); //tdk:p
   ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
   alignOffset(*offset);
   rc = ESMF_SUCCESS;
-  msg = std::string(ESMC_METHOD) + " tdk:log: *offset2.1=" + std::to_string(*offset); //tdk:p
+  msg = std::string(ESMC_METHOD) + " *offset2.1=" + std::to_string(*offset); //tdk:p
   ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
-  msg = std::string(ESMC_METHOD) + " tdk:log: returning"; //tdk:p
+  msg = std::string(ESMC_METHOD) + " returning"; //tdk:p
   ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
   return;
 }

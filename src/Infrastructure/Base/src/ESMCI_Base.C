@@ -560,7 +560,7 @@ void ESMC_Base::constructInfo(ESMC_Base& base) { // root_info_tdk
 
   if (nlen > ESMF_MAXSTR) {
        std::string msgbuf;
-       msgbuf = "Base name " + std::string(name, nlen) + " is longer than ESMF_MAXSTR";
+       msgbuf = "Base name " + std::string(name, nlen) + ": is longer than ESMF_MAXSTR";
        ESMC_LogDefault.MsgFoundError(ESMC_RC_ARG_VALUE, msgbuf, ESMC_CONTEXT, 
            &rc);
        return rc;
@@ -569,7 +569,7 @@ void ESMC_Base::constructInfo(ESMC_Base& base) { // root_info_tdk
   // nested States.
   if (memchr (name, '/', nlen) != NULL) {
     std::string msgbuf;
-    msgbuf = "Base name " + std::string (name, nlen) + " must not have a slash (/) in its name";
+    msgbuf = "Base name " + std::string (name, nlen) + ": must not have a slash (/) in its name";
     ESMC_LogDefault.MsgFoundError (ESMC_RC_ARG_VALUE, msgbuf, ESMC_CONTEXT,
         &rc);
     return rc;
@@ -639,6 +639,8 @@ void ESMC_Base::constructInfo(ESMC_Base& base) { // root_info_tdk
     ESMCI::VMId *vmIDp;
     char *cp;
     int localrc;
+    int baseid = this->ESMC_BaseGetID(); //tdk:p
+    std::string msg; //tdk:p
 
     // Initialize local return code; assume routine not implemented
     localrc = ESMC_RC_NOT_IMPL;
@@ -681,6 +683,10 @@ void ESMC_Base::constructInfo(ESMC_Base& base) { // root_info_tdk
     localrc = vmID_remote->create();
     if (ESMC_LogDefault.MsgFoundError(localrc, ESMCI_ERR_PASSTHRU,
         ESMC_CONTEXT, &localrc)) return localrc;
+    msg = std::string(ESMC_METHOD) + ": std::to_string(baseid)=" + std::to_string(baseid); //tdk:p
+    ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
+    msg = std::string(ESMC_METHOD) + ": std::to_string(*offset) before vmID->deserialize=" + std::to_string(*offset); //tdk:p
+    ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
     localrc = vmID_remote->deserialize (buffer, offset, false);
     if (ESMC_LogDefault.MsgFoundError(localrc, ESMCI_ERR_PASSTHRU,
         ESMC_CONTEXT, &localrc)) return localrc;
@@ -693,11 +699,11 @@ void ESMC_Base::constructInfo(ESMC_Base& base) { // root_info_tdk
 
     // Deserialize the Attribute hierarchy
     if (attreconflag == ESMC_ATTRECONCILE_ON) {
-      std::string msg = std::string(ESMC_METHOD) + " tdk:log: std::to_string(this->ESMC_BaseGetID())=" + std::to_string(this->ESMC_BaseGetID()); //tdk:p
+      msg = std::string(ESMC_METHOD) + ": std::to_string(baseid)=" + std::to_string(baseid); //tdk:p
       ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
-      msg = std::string(ESMC_METHOD) + " tdk:log: std::string(this->ESMC_BaseGetClassName())=" + std::string(this->ESMC_BaseGetClassName()); //tdk:p
+      msg = std::string(ESMC_METHOD) + ": std::string(baseid)=" + std::to_string(baseid); //tdk:p
       ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
-      msg = std::string(ESMC_METHOD) + " tdk:log: std::to_string(*offset) before info deserialize=" + std::to_string(*offset); //tdk:p
+      msg = std::string(ESMC_METHOD) + ": std::to_string(*offset) before info deserialize=" + std::to_string(*offset); //tdk:p
       ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
       //tdk:todo: this throws an exception that needs to be caught
       info->deserialize(buffer, offset, localrc); //root_info_tdk
@@ -955,10 +961,9 @@ void ESMC_Base::constructInfo(ESMC_Base& base) { // root_info_tdk
     std::string msg; //tdk:p
     if (baseid==7) { //tdk:p
       msg =
-        std::string(ESMC_METHOD) + " tdk:log: entering"; //tdk:p
+        std::string(ESMC_METHOD) + ": entering"; //tdk:p
       ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
-      msg = std::string(ESMC_METHOD) + " tdk:log: std::to_string(*offset)=" +
-            std::to_string(*offset); //tdk:p
+      msg = std::string(ESMC_METHOD) + ": std::to_string(*offset)=" + std::to_string(*offset); //tdk:p
       ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
     } //tdk:p
 
@@ -1015,6 +1020,10 @@ void ESMC_Base::constructInfo(ESMC_Base& base) { // root_info_tdk
     if (*offset%8 != 0)
       *offset += 8 - *offset%8;
 // std::cout << ESMC_METHOD << ": serializing vmID at offset: " << *offset << std::endl;
+    if (baseid==7) { //tdk:p
+      msg = std::string(ESMC_METHOD) + ": std::to_string(*offset) before vmID->serialize=" + std::to_string(*offset); //tdk:p
+      ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
+    } //tdk:p
     localrc = vmID->serialize (buffer, length, offset, inquireflag);
     if (ESMC_LogDefault.MsgFoundError(localrc, ESMCI_ERR_PASSTHRU,
         ESMC_CONTEXT, &localrc)) return localrc;
@@ -1022,19 +1031,19 @@ void ESMC_Base::constructInfo(ESMC_Base& base) { // root_info_tdk
     // Serialize the Attribute hierarchy
     if (attreconflag == ESMC_ATTRECONCILE_ON) {
       if (baseid==7) { //tdk:p
-      msg = std::string(ESMC_METHOD) + " tdk:log: std::to_string(this->ESMC_BaseGetID())=" + std::to_string(this->ESMC_BaseGetID()); //tdk:p
+      msg = std::string(ESMC_METHOD) + ": std::to_string(baseid)=" + std::to_string(baseid); //tdk:p
       ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
-      msg = std::string(ESMC_METHOD) + " tdk:log: std::to_string(*length) before info=" + std::to_string(*length); //tdk:p
+      msg = std::string(ESMC_METHOD) + ": std::to_string(*length) before info=" + std::to_string(*length); //tdk:p
       ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
-      msg = std::string(ESMC_METHOD) + " tdk:log: std::to_string(*offset) before info=" + std::to_string(*offset); //tdk:p
+      msg = std::string(ESMC_METHOD) + ": std::to_string(*offset) before info=" + std::to_string(*offset); //tdk:p
       ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO);} //tdk:p
       //tdk:todo: this throws an exception that needs to be caught
       info->serialize(buffer, length, offset, inquireflag, localrc); //root_info_tdk
       if (ESMC_LogDefault.MsgFoundError(localrc, ESMCI_ERR_PASSTHRU,
         ESMC_CONTEXT, &localrc)) return localrc; //root_info_tdk
-      if (baseid==7) {msg = std::string(ESMC_METHOD) + " tdk:log: std::to_string(*length) after info=" + std::to_string(*length); //tdk:p
+      if (baseid==7) {msg = std::string(ESMC_METHOD) + ": std::to_string(*length) after info=" + std::to_string(*length); //tdk:p
       ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
-      msg = std::string(ESMC_METHOD) + " tdk:log: std::to_string(*offset) after info=" + std::to_string(*offset); //tdk:p
+      msg = std::string(ESMC_METHOD) + ": std::to_string(*offset) after info=" + std::to_string(*offset); //tdk:p
       ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO);} //tdk:p
 //      if (*offset%8 != 0)
 //        *offset += 8 - *offset%8;
@@ -1043,7 +1052,7 @@ void ESMC_Base::constructInfo(ESMC_Base& base) { // root_info_tdk
 //            ESMC_CONTEXT, &localrc)) return localrc;
     }
 
-  msg = std::string(ESMC_METHOD) + " tdk:log: returning"; //tdk:p
+  msg = std::string(ESMC_METHOD) + ": returning"; //tdk:p
   ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
 
   return ESMF_SUCCESS;

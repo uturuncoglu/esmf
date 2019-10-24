@@ -6005,6 +6005,8 @@ call ESMF_LogWrite("Aft ESMF_IOWrite", ESMF_LOGMSG_INFO, rc=rc)
       type(ESMF_AttReconcileFlag) :: lattreconflag
       type(ESMF_InquireFlag) :: linquireflag
       type(ESMF_Field), pointer :: l_fieldList(:)
+      character(len=ESMF_MAXSTR) :: logmsg !tdk:p
+      integer :: bid !tdk:p
 
       ! Initialize return code; assume routine not implemented
       if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -6022,6 +6024,12 @@ call ESMF_LogWrite("Aft ESMF_IOWrite", ESMF_LOGMSG_INFO, rc=rc)
         lattreconflag = ESMF_ATTRECONCILE_OFF
       endif
 
+      if (lattreconflag%value == ESMF_ATTRECONCILE_ON%value) then !tdk:p
+        call ESMF_LogWrite("ESMF_FieldBundleSerialize: attr reconcile ON", ESMF_LOGMSG_INFO) !tdk:p
+      else !tdk:p
+        call ESMF_LogWrite("ESMF_FieldBundleSerialize: attr reconcile OFF", ESMF_LOGMSG_INFO) !tdk:p
+      end if !tdk:p
+
       if (present (inquireflag)) then
         linquireflag = inquireflag
       else
@@ -6036,7 +6044,13 @@ call ESMF_LogWrite("Aft ESMF_IOWrite", ESMF_LOGMSG_INFO, rc=rc)
       if (ESMF_LogFoundError(localrc, &
         ESMF_ERR_PASSTHRU, &
         ESMF_CONTEXT, rcToReturn=rc)) return
-      
+
+      call ESMF_BaseGetId (bp%base, bid) !tdk:p
+      write(logmsg, "(A35,I10)") "ESMF_FieldBundleSerialize: base id=", bid !tdk:p
+      call ESMF_LogWrite(trim(logmsg), ESMF_LOGMSG_INFO) !tdk:p
+
+      write(logmsg, "(A60,I10)") "ESMF_FieldBundleSerialize: offset before ESMF_BaseSerialize=", offset !tdk:p
+      call ESMF_LogWrite(trim(logmsg), ESMF_LOGMSG_INFO) !tdk:p
       call ESMF_BaseSerialize (bp%base, buffer, offset,  &
           lattreconflag, linquireflag,  &
           rc=localrc)
@@ -6044,6 +6058,8 @@ call ESMF_LogWrite("Aft ESMF_IOWrite", ESMF_LOGMSG_INFO, rc=rc)
          ESMF_ERR_PASSTHRU, &
          ESMF_CONTEXT, rcToReturn=rc)) return
 
+      write(logmsg, "(A69,I10)") "ESMF_FieldBundleSerialize: offset before c_ESMC_FieldBundleSerialize=", offset !tdk:p
+      call ESMF_LogWrite(trim(logmsg), ESMF_LOGMSG_INFO) !tdk:p
       call c_ESMC_FieldBundleSerialize(bp%status, fieldCount, &
                                  buffer, length, offset, linquireflag, localrc)
       if (ESMF_LogFoundError(localrc, &
@@ -6051,6 +6067,8 @@ call ESMF_LogWrite("Aft ESMF_IOWrite", ESMF_LOGMSG_INFO, rc=rc)
         ESMF_CONTEXT, rcToReturn=rc)) return
 
       if(bp%status == ESMF_FBSTATUS_GRIDSET) then
+        write(logmsg, "(A64,I10)") "ESMF_FieldBundleSerialize: offset before ESMF_GeomBaseSerialize=", offset !tdk:p
+        call ESMF_LogWrite(trim(logmsg), ESMF_LOGMSG_INFO) !tdk:p
         call ESMF_GeomBaseSerialize(bp%geombase, buffer, length, offset, &
                                  lattreconflag, linquireflag, localrc)
         if (ESMF_LogFoundError(localrc, &
@@ -6060,6 +6078,8 @@ call ESMF_LogWrite("Aft ESMF_IOWrite", ESMF_LOGMSG_INFO, rc=rc)
 
       ! TODO: decide if these need to be sent before or after
       do i = 1, fieldCount
+          write(logmsg, "(A61,I10,A14,I5)") "ESMF_FieldBundleSerialize: offset before ESMF_FieldSerialize=", offset, " field counter=", i !tdk:p
+          call ESMF_LogWrite(trim(logmsg), ESMF_LOGMSG_INFO) !tdk:p
           call ESMF_FieldSerialize(l_fieldList(i), buffer, length, offset, &
                                   attreconflag=lattreconflag, &
                                   inquireflag=linquireflag, rc=localrc)
@@ -6071,6 +6091,9 @@ call ESMF_LogWrite("Aft ESMF_IOWrite", ESMF_LOGMSG_INFO, rc=rc)
       deallocate(l_fieldList)
 
       if  (present(rc)) rc = ESMF_SUCCESS
+
+      write(logmsg, "(A44,I10)") "ESMF_FieldBundleSerialize: offset returning=", offset !tdk:p
+      call ESMF_LogWrite(trim(logmsg), ESMF_LOGMSG_INFO) !tdk:p
 
     end subroutine ESMF_FieldBundleSerialize
 
@@ -6125,6 +6148,7 @@ call ESMF_LogWrite("Aft ESMF_IOWrite", ESMF_LOGMSG_INFO, rc=rc)
       type(ESMF_LocStream) :: locstream
       type(ESMF_GeomType_Flag) :: geomtype
       type(ESMF_Field), pointer :: flist(:)
+      character(len=ESMF_MAXSTR) :: logmsg !tdk:p
 
       ! Initialize return code; assume routine not implemented
       if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -6151,6 +6175,8 @@ call ESMF_LogWrite("Aft ESMF_IOWrite", ESMF_LOGMSG_INFO, rc=rc)
         ESMF_CONTEXT, rcToReturn=rc)) return
 
       ! Deserialize Base
+      write(logmsg, "(A64,I10)") "ESMF_FieldBundleDeserialize: offset before ESMF_BaseDeserialize=", offset !tdk:p
+      call ESMF_LogWrite(trim(logmsg), ESMF_LOGMSG_INFO) !tdk:p
       bp%base = ESMF_BaseDeserialize (buffer, offset=offset,  &
           attreconflag=lattreconflag, rc=localrc)
       if (ESMF_LogFoundError(localrc, &
@@ -6163,7 +6189,8 @@ call ESMF_LogWrite("Aft ESMF_IOWrite", ESMF_LOGMSG_INFO, rc=rc)
         ESMF_CONTEXT, rcToReturn=rc)) return
 
       ! Deserialize other FieldBundle members
-      
+      write(logmsg, "(A73,I10)") "ESMF_FieldBundleDeserialize: offset before c_ESMC_FieldBundleDeserialize=", offset !tdk:p
+      call ESMF_LogWrite(trim(logmsg), ESMF_LOGMSG_INFO) !tdk:p
       call c_ESMC_FieldBundleDeserialize(bp%status, fieldCount, &
                                  buffer, offset, localrc)
       if (ESMF_LogFoundError(localrc, &
@@ -6171,6 +6198,8 @@ call ESMF_LogWrite("Aft ESMF_IOWrite", ESMF_LOGMSG_INFO, rc=rc)
         ESMF_CONTEXT, rcToReturn=rc)) return
 
       if(bp%status == ESMF_FBSTATUS_GRIDSET) then
+        write(logmsg, "(A68,I10)") "ESMF_FieldBundleDeserialize: offset before ESMF_GeomBaseDeserialize=", offset !tdk:p
+        call ESMF_LogWrite(trim(logmsg), ESMF_LOGMSG_INFO) !tdk:p
         bp%geombase = ESMF_GeomBaseDeserialize(buffer, offset, &
           attreconflag=attreconflag, rc=localrc)
         if (ESMF_LogFoundError(localrc, &
@@ -6185,6 +6214,8 @@ call ESMF_LogWrite("Aft ESMF_IOWrite", ESMF_LOGMSG_INFO, rc=rc)
         ESMF_CONTEXT, rcToReturn=rc)) return
 
       do i = 1, fieldCount
+        write(logmsg, "(A64,I10,A14,I5)") "ESMF_FieldBundleDeserialize: offset before ESMF_FieldDeserialize=", offset, "field counter=", i !tdk:p
+        call ESMF_LogWrite(trim(logmsg), ESMF_LOGMSG_INFO) !tdk:p
         flist(i) = ESMF_FieldDeserialize(buffer, offset, &
                                     attreconflag=lattreconflag, rc=localrc)
         if (ESMF_LogFoundError(localrc, &
@@ -6218,6 +6249,9 @@ call ESMF_LogWrite("Aft ESMF_IOWrite", ESMF_LOGMSG_INFO, rc=rc)
       deallocate(flist)
 
       if (present(rc)) rc = ESMF_SUCCESS
+
+      write(logmsg, "(A46,I10)") "ESMF_FieldBundleDeserialize: offset returning=", offset !tdk:p
+      call ESMF_LogWrite(trim(logmsg), ESMF_LOGMSG_INFO) !tdk:p
 
     end function ESMF_FieldBundleDeserialize
 
