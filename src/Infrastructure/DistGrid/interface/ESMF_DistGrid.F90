@@ -154,6 +154,7 @@ module ESMF_DistGridMod
   public ESMF_DistGridGetInit
   public ESMF_DistGridSetInitCreated
   public ESMF_DistGridSeqIndex
+  public ESMF_DistGridGetThis
   
 !EOPI
 !------------------------------------------------------------------------------

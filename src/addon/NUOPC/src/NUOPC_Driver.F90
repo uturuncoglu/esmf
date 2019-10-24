@@ -2230,11 +2230,10 @@ module NUOPC_Driver
           if (ESMF_LogFoundError(rcToCheck=rc, msg=ESMF_LOGERR_PASSTHRU, &
             line=__LINE__, file=trim(name)//":"//FILENAME)) return  ! bail out
           if (associated(is%wrap%modelPetLists(i)%ptr)) then
-            ! use the petList to restrict the number of PETs across which the
-            ! update is synchronizing
+            ! Note (bekozi): petList is not supported in the Info backend for
+            ! AttributeUpdate since collective communication is used.
             call ESMF_AttributeUpdate(is%wrap%modelComp(i), vm, &
-              rootList=is%wrap%modelPetLists(i)%ptr(1:1), &
-              petList=is%wrap%modelPetLists(i)%ptr, reconcile=.true., &
+              rootList=is%wrap%modelPetLists(i)%ptr(1:1), reconcile=.true., &
               rc=rc)
             if (ESMF_LogFoundError(rcToCheck=rc, msg=ESMF_LOGERR_PASSTHRU, &
               line=__LINE__, file=trim(name)//":"//FILENAME, rcToReturn=rc)) &
