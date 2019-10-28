@@ -6409,6 +6409,9 @@ call ESMF_LogWrite("Aft ESMF_IOWrite", ESMF_LOGMSG_INFO, rc=rc)
       type(ESMF_InquireFlag) :: linquireflag
       type(ESMF_Field), pointer :: l_fieldList(:)
 
+      logical, parameter :: debug = .true. !tdk:revert: to .true.
+      character(len=ESMF_MAXSTR) :: logmsg
+
       ! Initialize return code; assume routine not implemented
       if (present(rc)) rc = ESMF_RC_NOT_IMPL
       localrc = ESMF_RC_NOT_IMPL
@@ -6439,13 +6442,39 @@ call ESMF_LogWrite("Aft ESMF_IOWrite", ESMF_LOGMSG_INFO, rc=rc)
       if (ESMF_LogFoundError(localrc, &
         ESMF_ERR_PASSTHRU, &
         ESMF_CONTEXT, rcToReturn=rc)) return
-      
+
+      if (debug) then
+        call ESMF_LogWrite(ESMF_METHOD // ": Calling ESMF_BaseSerialize", &
+          ESMF_LOGMSG_INFO, rc=localrc)
+        if (ESMF_LogFoundError(localrc, &
+           ESMF_ERR_PASSTHRU, &
+           ESMF_CONTEXT, rcToReturn=rc)) return
+        write(logmsg, *) ESMF_METHOD // ": offset (before)= ", offset
+        call ESMF_LogWrite(TRIM(logmsg), ESMF_LOGMSG_INFO, rc=localrc)
+        if (ESMF_LogFoundError(localrc, &
+           ESMF_ERR_PASSTHRU, &
+           ESMF_CONTEXT, rcToReturn=rc)) return
+      end if
+
       call ESMF_BaseSerialize (bp%base, buffer, offset,  &
           lattreconflag, linquireflag,  &
           rc=localrc)
       if (ESMF_LogFoundError(localrc, &
          ESMF_ERR_PASSTHRU, &
          ESMF_CONTEXT, rcToReturn=rc)) return
+
+      if (debug) then
+        write(logmsg, *) ESMF_METHOD // ": offset (after)= ", offset
+        call ESMF_LogWrite(TRIM(logmsg), ESMF_LOGMSG_INFO, rc=localrc)
+        if (ESMF_LogFoundError(localrc, &
+           ESMF_ERR_PASSTHRU, &
+           ESMF_CONTEXT, rcToReturn=rc)) return
+         logmsg = ESMF_METHOD // ": Exited ESMF_BaseSerialize"
+         call ESMF_LogWrite(logmsg, ESMF_LOGMSG_INFO, rc=localrc)
+         if (ESMF_LogFoundError(localrc, &
+            ESMF_ERR_PASSTHRU, &
+            ESMF_CONTEXT, rcToReturn=rc)) return
+       end if
 
       call c_ESMC_FieldBundleSerialize(bp%status, fieldCount, &
                                  buffer, length, offset, linquireflag, localrc)
@@ -6537,7 +6566,9 @@ call ESMF_LogWrite("Aft ESMF_IOWrite", ESMF_LOGMSG_INFO, rc=rc)
       type(ESMF_LocStream) :: locstream
       type(ESMF_GeomType_Flag) :: geomtype
       type(ESMF_Field), pointer :: flist(:)
-      type(ESMF_Logical) :: linkChange
+
+      logical, parameter :: debug = .true. !tdk:revert: to .true.
+      character(len=ESMF_MAXSTR) :: logmsg
 
       ! Initialize return code; assume routine not implemented
       if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -6563,12 +6594,33 @@ call ESMF_LogWrite("Aft ESMF_IOWrite", ESMF_LOGMSG_INFO, rc=rc)
         msg="space for new FieldBundle object", &
         ESMF_CONTEXT, rcToReturn=rc)) return
 
+      if (debug) then
+        call ESMF_LogWrite(ESMF_METHOD // ": Calling ESMF_BaseDeserialize", &
+           ESMF_LOGMSG_INFO, rc=localrc)
+        if (ESMF_LogFoundError(localrc, &
+           ESMF_ERR_PASSTHRU, &
+           ESMF_CONTEXT, rcToReturn=rc)) return
+        write(logmsg, *) ESMF_METHOD // ": offset= ", offset
+        call ESMF_LogWrite(TRIM(logmsg), ESMF_LOGMSG_INFO, rc=localrc)
+        if (ESMF_LogFoundError(localrc, &
+           ESMF_ERR_PASSTHRU, &
+           ESMF_CONTEXT, rcToReturn=rc)) return
+      end if
+
       ! Deserialize Base
       bp%base = ESMF_BaseDeserialize (buffer, offset=offset,  &
           attreconflag=lattreconflag, rc=localrc)
       if (ESMF_LogFoundError(localrc, &
         ESMF_ERR_PASSTHRU, &
         ESMF_CONTEXT, rcToReturn=rc)) return
+
+      if (debug) then
+        logmsg = ESMF_METHOD // ": Exited ESMF_BaseDeserialize"
+        call ESMF_LogWrite(logmsg, ESMF_LOGMSG_INFO, rc=localrc)
+        if (ESMF_LogFoundError(localrc, &
+           ESMF_ERR_PASSTHRU, &
+           ESMF_CONTEXT, rcToReturn=rc)) return
+      end if
 
       call ESMF_BaseSetInitCreated(bp%base, rc=localrc)
       if (ESMF_LogFoundError(localrc, &

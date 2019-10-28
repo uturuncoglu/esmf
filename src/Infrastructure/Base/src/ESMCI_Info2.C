@@ -136,7 +136,6 @@ void update_json_attribute_count_map(count_map_t &counts, const json &j, bool fi
   assert(j.is_object());
   std::size_t attpack_count = 0;
   std::size_t attr_count = 0;
-  std::cout << ESMC_METHOD << " first=" << first << std::endl;  //tdk:p
   for (json::const_iterator it=j.cbegin(); it!=j.cend(); it++) {
     if (is_attpack(it.value())) {
       for (json::const_iterator it2=it.value().cbegin(); it2!=it.value().cend(); it2++) {
@@ -485,10 +484,6 @@ std::string Info2::dump(int indent, int& rc) const {
 #define ESMC_METHOD "Info2::erase()"
 void Info2::erase(key_t &keyParent, key_t &keyChild, int &rc, bool recursive) {
   // Exceptions: ESMCI::esmf_info_error
-  std::cout << "Info2::erase keyParent=" << keyParent << std::endl;  //tdk:p
-  std::cout << "Info2::erase keyChild=" << keyChild << std::endl;  //tdk:p
-  std::cout << "Info2::erase recursive=" << recursive << std::endl;  //tdk:p
-  std::cout << "Info2::erase this->dump1=" << this->dump(2, rc) << std::endl;  //tdk:p
   rc = ESMF_FAILURE;
   try {
     json::json_pointer key = this->formatKey(keyParent, rc);
@@ -502,17 +497,13 @@ void Info2::erase(key_t &keyParent, key_t &keyChild, int &rc, bool recursive) {
         try {
           key = this->formatKey(keyChild, rc);
           json *dummy = nullptr;
-          std::cout << "Info2::erase key-before-container=" << key << std::endl;  //tdk:p
-          std::cout << "Info2::erase jp->dump1(2)=" << jp->dump(2) << std::endl;  //tdk:p
           update_json_pointer(*jp, &dummy, key, recursive, &container);
           assert(dummy);
           assert(container);
-          std::cout << "Info2::erase container->dump=" << container->dump(2) << std::endl;  //tdk:p
           jp = container;
         }
         ESMF_CATCH_INFO
       }
-      std::cout << "Info2::erase jp->dump2(2)=" << jp->dump(2) << std::endl;  //tdk:p
       json &found = jp->at(keyChild); // Check that the key exists
       jp->erase(keyChild);
     }
@@ -521,7 +512,6 @@ void Info2::erase(key_t &keyParent, key_t &keyChild, int &rc, bool recursive) {
   ESMF_CATCH_INFO
   this->dirty = true;
   rc = ESMF_SUCCESS;
-  std::cout << "Info2::erase this->dump2=" << this->dump(2, rc) << std::endl;  //tdk:p
   return;
 };
 
@@ -558,12 +548,6 @@ json::json_pointer Info2::formatKey(key_t& key, int& rc) {
 template <typename T>
 T Info2::get(key_t &key, int &rc, const T *def, const int *index, bool recursive, std::string *ikey) const {
   // Exceptions:  ESMCI:esmf_info_error
-  std::cout << "Info2::get this->dump=" << this->dump(2, rc) << std::endl;  //tdk:p
-  std::cout << "Info2::get key=" << key << std::endl;  //tdk:p
-  if (index) std::cout << "Info2::get *index=" << *index << std::endl;  //tdk:p
-  std::cout << "Info2::get recursive=" << recursive << std::endl;  //tdk:p
-  if (ikey) std::cout << "Info2::get *ikey=" << *ikey << std::endl;  //tdk:p
-  if (def) std::cout << "Info2::get *def=" << *def << std::endl;  //tdk:p
   rc = ESMF_FAILURE;
   T ret;
   try {
@@ -729,7 +713,6 @@ bool Info2::hasKey(const json::json_pointer &jp, int& rc, bool recursive) const 
   }
   ESMF_CATCH_PASSTHRU
   rc = ESMF_SUCCESS;
-  std::cout << "Info2::hasKey ret=" << ret << std::endl;  //tdk:p
   return ret;
 }
 
@@ -738,10 +721,6 @@ bool Info2::hasKey(const json::json_pointer &jp, int& rc, bool recursive) const 
 json Info2::inquire(key_t &key, int &rc, bool recursive, const int *idx, bool attr_compliance) const {
   // Test: testInquire
   // Notes:
-  std::cout << "Info2::inquire this->dump=" << this->dump(2, rc) << std::endl;  //tdk:p
-  std::cout << "Info2::inquire key=" << key << std::endl;  //tdk:p
-  std::cout << "Info2::inquire recursive=" << recursive << std::endl;  //tdk:p
-  if (idx) {std::cout << "Info2::inquire idx=" << *idx << std::endl;}  //tdk:p
   rc = ESMF_FAILURE;
   json j = json::object();
   try {
@@ -778,10 +757,8 @@ json Info2::inquire(key_t &key, int &rc, bool recursive, const int *idx, bool at
 
     const json &sk = *sp;
     count_map_t counts = create_json_attribute_count_map();
-    std::cout << "Info2::inquire sk.dump=" << sk.dump(1) << std::endl;  //tdk:p
     auto sk_size = sk.size();
     if (sk.is_object()) {
-      std::cout << "Info2::inquire calling update_json_count" << std::endl;  //tdk:p
       update_json_attribute_count_map(counts, sk, true);
     } else {
       // All counts are one if the JSON type is not object
@@ -822,7 +799,6 @@ json Info2::inquire(key_t &key, int &rc, bool recursive, const int *idx, bool at
   }
   ESMF_CATCH_INFO
   rc = ESMF_SUCCESS;
-  std::cout << "Info2::inquire j.dump=" << j.dump(2) << std::endl;  //tdk:p
   return j;
 }
 
@@ -848,21 +824,15 @@ void Info2::parse(key_t& input, int& rc) {
 void Info2::deserialize(char *buffer, int *offset, int &rc) {
   // Test: testSerializeDeserialize, testSerializeDeserialize2
   // Exceptions:  ESMCI:esmf_info_error
-  std::string msg = std::string(ESMC_METHOD) + " std::to_string(*offset)=" + std::to_string(*offset); //tdk:p
-  ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
   rc = ESMF_FAILURE;
   alignOffset(*offset);
   // Act like an integer to get the string length.
   int *ibuffer = reinterpret_cast<int*>(buffer);
   // Get the serialized string length from the buffer start.
   int length = ibuffer[*offset];
-  msg = std::string(ESMC_METHOD) + " std::to_string(length)=" + std::to_string(length); //tdk:p
-  ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
   // Move 4 bytes to the start of the string actual.
   (*offset) += sizeof(int);
   std::string infobuffer(&(buffer[*offset]), length);
-  msg = std::string(ESMC_METHOD) + " infobuffer=" + infobuffer; //tdk:p
-  ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
   try {
     this->parse(infobuffer, rc);
   }
@@ -1033,12 +1003,6 @@ void Info2::set(key_t &key, json &&j, bool force, int &rc, const int *index,
   // Test:
   // Notes: parent key (pkey) must exist in the map
   //tdk:question: should force also override type differences? setting to null is always allowed.
-  std::cout << "Info2::set this->dump(2, rc)=" << this->dump(2, rc) << std::endl;  //tdk:p
-  std::cout << "Info2::set key=" << key << std::endl;  //tdk:p
-  std::cout << "Info2::set j.dump()=" << j.dump() << std::endl;  //tdk:p
-  std::cout << "Info2::set force=" << force << std::endl;  //tdk:p
-  if (index) {std::cout << "Info2::set *index=" << *index << std::endl;} //tdk:p
-  if (pkey) {std::cout << "Info2::set *pkey=" << *pkey << std::endl;} //tdk:p
   rc = ESMF_FAILURE;
   try {
     json *jobject = nullptr;
@@ -1430,12 +1394,6 @@ json PackageFactory::getOrCreateJSON(key_t& key, int& rc,
 #define ESMC_METHOD "broadcastInfo()"
 void broadcastInfo(ESMCI::Info2* info, int rootPet, const ESMCI::VM &vm, int& rc) {
   // Exceptions:  ESMCI:esmf_info_error
-  std::string msg = std::string(ESMC_METHOD) + ":: entering"; //tdk:p
-  ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
-  msg = std::string(ESMC_METHOD) + ":: rootPet=" + std::to_string(rootPet); //tdk:p
-  ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
-  msg = std::string(ESMC_METHOD) + ":: info->dump()=" + info->dump(rc); //tdk:p
-  ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
   rc = ESMF_FAILURE;
   int localPet = vm.getLocalPet();
   std::size_t target_size = 0;  // Size of serialized info storage
@@ -1471,10 +1429,6 @@ void broadcastInfo(ESMCI::Info2* info, int rootPet, const ESMCI::VM &vm, int& rc
       ESMF_HANDLE_PASSTHRU(exc_esmf);
     }
   }
-  msg = std::string(ESMC_METHOD) + ":: info->dump()=" + info->dump(rc); //tdk:p
-  ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
-  msg = std::string(ESMC_METHOD) + ":: leaving"; //tdk:p
-  ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
   return;
 }
 

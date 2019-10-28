@@ -471,8 +471,6 @@ subroutine ESMF_Info2Inquire(info, key, size, attrCount, attrCountTotal, jsonTyp
           call ESMF_Info2Get(inq2, "size", local_size, rc=localrc)
           if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-          print *, "ESMF_Info2Inquire idx=", idx !tdk:p
-          print *, "ESMF_Info2Inquire local_size=", local_size !tdk:p
           if (idx > local_size) then
             isPresent = .false.
           end if
@@ -531,7 +529,7 @@ function ESMF_Info2IsPresent(info, key, attnestflag, isPointer, rc) result(is_pr
   else
     isPointer_forC = 0 !false
   end if
-  print *, "ESMF_Info2IsPresent recursive=", recursive !tdk:p
+
   call c_info_is_present(info%ptr, trim(key)//C_NULL_CHAR, local_is_present, &
     localrc, recursive, isPointer_forC)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &

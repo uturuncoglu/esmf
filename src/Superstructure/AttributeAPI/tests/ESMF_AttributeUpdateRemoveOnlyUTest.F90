@@ -27,6 +27,7 @@ module ESMF_AttributeUpdateRemoveOnlyUTestMod
 !  One solution would be to use the entire buffer that is passed from the root
 
   use ESMF
+  use ESMF_InfoSyncMod
 
   implicit none
 
@@ -288,10 +289,22 @@ module ESMF_AttributeUpdateRemoveOnlyUTestMod
     integer, intent(out) :: rc
 
     type(ESMF_VM)         :: vm
+    type(ESMF_Inquire)    :: einq
+    character(:), allocatable :: idump
 
     rc = ESMF_SUCCESS
 
     call ESMF_CplCompGet(comp, vm=vm, rc=rc)
+    if (rc/=ESMF_SUCCESS) return
+    einq = einq%Create(addBaseAddress=.true., addObjectInfo=.true., rc=rc)
+    if (rc/=ESMF_SUCCESS) return
+    call einq%Update(importState, "", rc=rc)
+    if (rc/=ESMF_SUCCESS) return
+    idump = ESMF_Info2Dump(einq%info, rc=rc)
+    if (rc/=ESMF_SUCCESS) return
+    call ESMF_LogWrite(idump, ESMF_LOGMSG_INFO, rc=rc)
+    if (rc/=ESMF_SUCCESS) return
+    call einq%Destroy(rc=rc)
     if (rc/=ESMF_SUCCESS) return
     call ESMF_StateReconcile(importState, vm=vm, attreconflag=ESMF_ATTRECONCILE_ON, rc=rc)
     if (rc/=ESMF_SUCCESS) return

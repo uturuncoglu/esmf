@@ -269,9 +269,9 @@ contains
 
     integer :: i
 
-    logical, parameter :: debug = .false.
+    logical, parameter :: debug = .true. !tdk:revert
     logical, parameter :: meminfo = .false.
-    logical, parameter :: trace = .false.
+    logical, parameter :: trace = .true. !tdk:revert
 
     localrc = ESMF_RC_NOT_IMPL
 

@@ -234,7 +234,6 @@ void ESMC_Info2SetR4(ESMCI::Info2 *info, char *key, float &value, bool &force, i
   try {
     std::string local_key(key);
     std::string local_pkey(pkey);
-    std::cout << "ESMC_Info2SetR4 local_pkey=" << local_pkey << std::endl;  //tdk:p
     std::string *local_pkeyp = nullptr;
     if (local_pkey.size() != 0) {local_pkeyp = &local_pkey;}
     info->set<float>(local_key, value, force, rc, index, local_pkeyp);
@@ -249,7 +248,6 @@ void ESMC_Info2SetR8(ESMCI::Info2 *info, char *key, double &value, bool &force, 
   try {
     std::string local_key(key);
     std::string local_pkey(pkey);
-    std::cout << "ESMC_Info2SetR8 local_pkey=" << local_pkey << std::endl;  //tdk:p
     std::string *local_pkeyp = nullptr;
     if (local_pkey.size() != 0) {local_pkeyp = &local_pkey;}
     info->set<double>(local_key, value, force, rc, index, local_pkeyp);
@@ -264,7 +262,6 @@ void ESMC_Info2SetI4(ESMCI::Info2 *info, char *key, int &value, bool &force, int
   try {
     std::string local_key(key);
     std::string local_pkey(pkey);
-    std::cout << "ESMC_Info2SetI4 local_pkey=" << local_pkey << std::endl;  //tdk:p
     std::string *local_pkeyp = nullptr;
     if (local_pkey.size() != 0) {local_pkeyp = &local_pkey;}
     info->set<int>(local_key, value, force, rc, index, local_pkeyp);
@@ -279,7 +276,6 @@ void ESMC_Info2SetI8(ESMCI::Info2 *info, char *key, long int &value, bool &force
   try {
     std::string local_key(key);
     std::string local_pkey(pkey);
-    std::cout << "ESMC_Info2SetI8 local_pkey=" << local_pkey << std::endl;  //tdk:p
     std::string *local_pkeyp = nullptr;
     if (local_pkey.size() != 0) {local_pkeyp = &local_pkey;}
     info->set<long int>(local_key, value, force, rc, index, local_pkeyp);
@@ -294,7 +290,6 @@ void ESMC_Info2SetLG(ESMCI::Info2 *info, char *key, bool &value, bool &force, in
   try {
     std::string local_key(key);
     std::string local_pkey(pkey);
-    std::cout << "ESMC_Info2SetLG local_pkey=" << local_pkey << std::endl;  //tdk:p
     std::string *local_pkeyp = nullptr;
     if (local_pkey.size() != 0) {local_pkeyp = &local_pkey;}
     info->set<bool>(local_key, value, force, rc, index, local_pkeyp);
@@ -309,7 +304,6 @@ void ESMC_Info2SetArrayR4(ESMCI::Info2 *info, char *key, float *value, int &coun
   try {
     std::string local_key(key);
     std::string local_pkey(pkey);
-    std::cout << "ESMC_Info2SetArrayR4 local_pkey=" << local_pkey << std::endl;  //tdk:p
     std::string *local_pkeyp = nullptr;
     if (local_pkey.size() != 0) {local_pkeyp = &local_pkey;}
     info->set<float>(local_key, value, count, force, rc, local_pkeyp);
@@ -324,7 +318,6 @@ void ESMC_Info2SetArrayR8(ESMCI::Info2 *info, char *key, double *value, int &cou
   try {
     std::string local_key(key);
     std::string local_pkey(pkey);
-    std::cout << "ESMC_Info2SetArrayR8 local_pkey=" << local_pkey << std::endl;  //tdk:p
     std::string *local_pkeyp = nullptr;
     if (local_pkey.size() != 0) {local_pkeyp = &local_pkey;}
     info->set<double>(local_key, value, count, force, rc, local_pkeyp);
@@ -339,7 +332,6 @@ void ESMC_Info2SetArrayI4(ESMCI::Info2 *info, char *key, int *value, int &count,
   try {
     std::string local_key(key);
     std::string local_pkey(pkey);
-    std::cout << "ESMC_Info2SetArrayI4 local_pkey=" << local_pkey << std::endl;  //tdk:p
     std::string *local_pkeyp = nullptr;
     if (local_pkey.size() != 0) {local_pkeyp = &local_pkey;}
     info->set<int>(local_key, value, count, force, rc, local_pkeyp);
@@ -354,7 +346,6 @@ void ESMC_Info2SetArrayI8(ESMCI::Info2 *info, char *key, long int *value, int &c
   try {
     std::string local_key(key);
     std::string local_pkey(pkey);
-    std::cout << "ESMC_Info2SetArrayI8 local_pkey=" << local_pkey << std::endl;  //tdk:p
     std::string *local_pkeyp = nullptr;
     if (local_pkey.size() != 0) {local_pkeyp = &local_pkey;}
     info->set<long int>(local_key, value, count, force, rc, local_pkeyp);
@@ -369,7 +360,6 @@ void ESMC_Info2SetArrayLG(ESMCI::Info2 *info, char *key, bool *value, int &count
   try {
     std::string local_key(key);
     std::string local_pkey(pkey);
-    std::cout << "ESMC_Info2SetArrayLG local_pkey=" << local_pkey << std::endl;  //tdk:p
     std::string *local_pkeyp = nullptr;
     if (local_pkey.size() != 0) {local_pkeyp = &local_pkey;}
     info->set<bool>(local_key, value, count, force, rc, local_pkeyp);

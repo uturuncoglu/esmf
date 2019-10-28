@@ -236,11 +236,6 @@ void ESMC_Info2IsPresent(ESMCI::Info2 *info, char *key, int &fortran_bool_res,
   try {
     bool res = info->hasKey(local_key, rc, isptr, recursive);
     fortran_bool_res = (res == true) ? 1:0;
-    std::cout << "ESMC_Info2IsPresent local_key=" << local_key << std::endl;  //tdk:p
-    std::cout << "ESMC_Info2IsPresent res=" << res << std::endl;  //tdk:p
-    std::cout << "ESMC_Info2IsPresent fortran_bool_res=" << fortran_bool_res << std::endl;  //tdk:p
-    std::cout << "ESMC_Info2IsPresent recursive=" << recursive << std::endl;  //tdk:p
-    std::cout << "ESMC_Info2IsPresent isptr=" << isptr << std::endl;  //tdk:p
   }
   ESMF_CATCH_ISOC
 }
