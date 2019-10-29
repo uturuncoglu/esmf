@@ -974,6 +974,10 @@ void ESMC_Base::constructInfo(ESMC_Base& base) { // root_info_tdk
     if (r!=0) *offset += 8-r;  // alignment
 
     fixedpart = sizeof(ESMC_Base);
+  if (baseid==7) { //tdk:p
+    msg = std::string(ESMC_METHOD) + ": fixedpart=" + std::to_string(fixedpart); //tdk:p
+    ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
+  } //tdk:p
     if (inquireflag == ESMF_INQUIREONLY) {
       *offset += fixedpart;
     } else {

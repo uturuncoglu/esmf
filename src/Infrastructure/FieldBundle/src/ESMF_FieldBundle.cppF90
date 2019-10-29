@@ -6600,6 +6600,11 @@ call ESMF_LogWrite("Aft ESMF_IOWrite", ESMF_LOGMSG_INFO, rc=rc)
         if (ESMF_LogFoundError(localrc, &
            ESMF_ERR_PASSTHRU, &
            ESMF_CONTEXT, rcToReturn=rc)) return
+        write(logmsg, *) ESMF_METHOD // ": buffer length= ", LEN(buffer)
+        call ESMF_LogWrite(TRIM(logmsg), ESMF_LOGMSG_INFO, rc=localrc)
+        if (ESMF_LogFoundError(localrc, &
+           ESMF_ERR_PASSTHRU, &
+           ESMF_CONTEXT, rcToReturn=rc)) return
         write(logmsg, *) ESMF_METHOD // ": offset= ", offset
         call ESMF_LogWrite(TRIM(logmsg), ESMF_LOGMSG_INFO, rc=localrc)
         if (ESMF_LogFoundError(localrc, &
