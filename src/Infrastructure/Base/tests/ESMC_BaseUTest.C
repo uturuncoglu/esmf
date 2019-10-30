@@ -35,11 +35,23 @@ using namespace std;
 //EOP
 //-----------------------------------------------------------------------------
 
+const bool TO_STDOUT = true; //tdk:revert: to false
+const bool TO_LOG = true; //tdk:revert: to false
+
 void finalizeFailure(int& rc, char failMsg[], string msg) {
   rc = ESMF_FAILURE;
   strcpy(failMsg, msg.c_str());
   return;
 };
+
+void lognprint(const std::string logmsg, bool to_stdout) {
+  if (to_stdout) {
+    std::cout << logmsg << std::endl;
+  }
+  if (TO_LOG) {
+    ESMC_LogWrite(logmsg.c_str(), ESMC_LOGMSG_INFO);
+  }
+}
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "testSerializeDeserialize()"
@@ -47,33 +59,74 @@ void testSerializeDeserialize(int& rc, char failMsg[]) {
   rc = ESMF_FAILURE;
   std::string logmsg;
 
-  ESMC_Base base;
-
   char *nullbuffer = nullptr;
-  int length = 0;
-  int offset = 0;
+  const std::vector<ESMC_AttReconcileFlag> arflags = {ESMC_ATTRECONCILE_OFF,
+                                                      ESMC_ATTRECONCILE_ON};
+//  const std::vector<ESMC_AttReconcileFlag> arflags = {ESMC_ATTRECONCILE_OFF};
+  for (const auto arflag : arflags) {
+    logmsg = std::string(ESMC_METHOD) + ": arflag=" + std::to_string(arflag);
+    lognprint(logmsg, TO_STDOUT);
 
-  rc = base.ESMC_Serialize(nullbuffer, &length, &offset, ESMC_ATTRECONCILE_OFF,
-    ESMF_INQUIREONLY);
-  if (ESMC_LogDefault.MsgFoundError(rc, ESMCI_ERR_PASSTHRU, ESMC_CONTEXT, &rc)) return;
+    ESMC_Base base_src(1);
+    ESMC_Base base_dst(-1);
 
-  int inquire_offset = offset;
+    ESMCI::Info2 *info = base_src.ESMC_BaseGetInfo();
+    try {
+      info->set<int>("key1", 44, false, rc);
+      info->set<double>("key123", 3.146789, false, rc);
+      info->set<std::string>("a-string-key", "some-data", false, rc);
+    }
+    ESMF_CATCH_INFO
 
-  logmsg = std::string(ESMC_METHOD) + ": inquire_offset=" + std::to_string(inquire_offset);
-  ESMC_LogWrite(logmsg.c_str(), ESMC_LOGMSG_INFO);
+    int length = 0;
+    int offset = 0;
 
-  length = inquire_offset;
-  char buffer[length];
-  offset = 0;
-  rc = base.ESMC_Serialize(buffer, &length, &offset, ESMC_ATTRECONCILE_OFF,
-                           ESMF_NOINQUIRE);
-  if (ESMC_LogDefault.MsgFoundError(rc, ESMCI_ERR_PASSTHRU, ESMC_CONTEXT, &rc)) return;
+    rc = base_src.ESMC_Serialize(nullbuffer, &length, &offset, arflag, ESMF_INQUIREONLY);
+    if (ESMC_LogDefault.MsgFoundError(rc, ESMCI_ERR_PASSTHRU, ESMC_CONTEXT,
+                                      &rc))
+      return;
 
-  logmsg = std::string(ESMC_METHOD) + ": offset=" + std::to_string(offset);
-  ESMC_LogWrite(logmsg.c_str(), ESMC_LOGMSG_INFO);
+    int inquire_offset = offset;
 
-  if (inquire_offset != offset) {
-    return finalizeFailure(rc, failMsg, "offsets not equal with inquire switch");
+    logmsg = std::string(ESMC_METHOD) + ": inquire_offset=" + std::to_string(inquire_offset);
+    ESMC_LogWrite(logmsg.c_str(), ESMC_LOGMSG_INFO);
+
+    // Add a shift to emulate what happens in Reconcile
+    int shift = 16;
+    length = inquire_offset + shift;
+    char buffer[length];
+    offset = shift;
+    rc = base_src.ESMC_Serialize(buffer, &length, &offset, arflag,
+      ESMF_NOINQUIRE);
+    if (ESMC_LogDefault.MsgFoundError(rc, ESMCI_ERR_PASSTHRU, ESMC_CONTEXT, &rc)) return;
+
+    logmsg = std::string(ESMC_METHOD) + ": offset=" + std::to_string(offset);
+    ESMC_LogWrite(logmsg.c_str(), ESMC_LOGMSG_INFO);
+
+    if (inquire_offset < offset) {
+      return finalizeFailure(rc, failMsg,
+                             "offset should be shorter than inquire");
+    }
+
+    offset = shift;
+    rc = base_dst.ESMC_Deserialize(buffer, &offset, arflag);
+    if (ESMC_LogDefault.MsgFoundError(rc, ESMCI_ERR_PASSTHRU, ESMC_CONTEXT, &rc)) return;
+
+    ESMCI::Info2 *infod = base_dst.ESMC_BaseGetInfo();
+    try {
+      std::string dump = infod->dump(rc);
+      if (arflag == ESMC_ATTRECONCILE_OFF) {
+        if (dump != "{}") {
+          return finalizeFailure(rc, failMsg, "if not reconciling info, then object should be empty");
+        }
+      } else {
+        const std::string desired = "{\"a-string-key\":\"some-data\",\"key1\":44,\"key123\":3.146789}";
+        if (dump != desired) {
+          return finalizeFailure(rc, failMsg, "if reconciling info, then object should have data");
+        }
+      }
+    }
+    ESMF_CATCH_INFO
   }
 
   return;
