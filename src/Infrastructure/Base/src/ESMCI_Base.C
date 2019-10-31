@@ -708,7 +708,7 @@ void ESMC_Base::constructInfo(ESMC_Base& base) { // root_info_tdk
       //tdk:todo: this throws an exception that needs to be caught
       try {
         info->deserialize(buffer, offset, localrc);
-      } catch (esmf_info_error &e) {
+      } catch (ESMCI::esmf_info_error &e) {
         ESMC_LogDefault.MsgFoundError(e.getReturnCode(), e.what(), ESMC_CONTEXT, &localrc);
         return localrc;
       }

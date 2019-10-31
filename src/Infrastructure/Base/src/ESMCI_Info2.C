@@ -830,9 +830,11 @@ void Info2::deserialize(char *buffer, int *offset, int &rc) {
   msg = std::string(ESMC_METHOD) + ": *offset (after align)=" + std::to_string(*offset); //tdk:p
   ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
   // Act like an integer to get the string length.
-  int *ibuffer = reinterpret_cast<int*>(buffer);
+//  int *ibuffer = reinterpret_cast<int*>(buffer);
   // Get the serialized string length from the buffer start.
-  int length = ibuffer[*offset];
+//  int length = ibuffer[*offset];
+  int *ip = (int *)(buffer + *offset);
+  int length = *ip;
   msg = std::string(ESMC_METHOD) + ": length=" + std::to_string(length); //tdk:p
   ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
   // Move 4 bytes to the start of the string actual.
@@ -962,8 +964,13 @@ void Info2::serialize(char *buffer, int *length, int *offset,
   msg = std::string(ESMC_METHOD) + " n=" + std::to_string(n); //tdk:p
   ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
   if (inquireflag == ESMF_NOINQUIRE) {
-    int *ibuffer = reinterpret_cast<int*>(buffer);
-    ibuffer[*offset] = n;
+    int *ip = (int *)(buffer + *offset);
+    *ip = n;
+//    *ip++ = ID;
+//    *ip++ = refCount;
+//    *ip++ = classID;
+//    int *ibuffer = reinterpret_cast<int*>(buffer);
+//    ibuffer[*offset] = n;
   }
   // Need 32 bits (4 bytes) to store the length of the string buffer for a
   // later deserialize.
