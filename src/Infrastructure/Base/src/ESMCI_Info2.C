@@ -826,10 +826,15 @@ void Info2::deserialize(char *buffer, int *offset, int &rc) {
   // Exceptions:  ESMCI:esmf_info_error
   rc = ESMF_FAILURE;
   alignOffset(*offset);
+  std::string msg; //tdk:p
+  msg = std::string(ESMC_METHOD) + ": *offset (after align)=" + std::to_string(*offset); //tdk:p
+  ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
   // Act like an integer to get the string length.
   int *ibuffer = reinterpret_cast<int*>(buffer);
   // Get the serialized string length from the buffer start.
   int length = ibuffer[*offset];
+  msg = std::string(ESMC_METHOD) + ": length=" + std::to_string(length); //tdk:p
+  ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
   // Move 4 bytes to the start of the string actual.
   (*offset) += sizeof(int);
   std::string infobuffer(&(buffer[*offset]), length);

@@ -706,7 +706,12 @@ void ESMC_Base::constructInfo(ESMC_Base& base) { // root_info_tdk
       msg = std::string(ESMC_METHOD) + ": std::to_string(*offset) before info deserialize=" + std::to_string(*offset); //tdk:p
       ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
       //tdk:todo: this throws an exception that needs to be caught
-      info->deserialize(buffer, offset, localrc); //root_info_tdk
+      try {
+        info->deserialize(buffer, offset, localrc);
+      } catch (esmf_info_error &e) {
+        ESMC_LogDefault.MsgFoundError(e.getReturnCode(), e.what(), ESMC_CONTEXT, &localrc);
+        return localrc;
+      }
       if (ESMC_LogDefault.MsgFoundError(localrc, ESMCI_ERR_PASSTHRU,
             ESMC_CONTEXT, &localrc)) return localrc; //root_info_tdk
 //      if (*offset%8 != 0)

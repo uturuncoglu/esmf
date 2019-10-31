@@ -290,7 +290,7 @@
       ! test the serialize inquire-only option
       ! WARNING: This is testing an INTERNAL method.  It is NOT
       ! part of the supported ESMF user API!
-      attreconflag = ESMF_ATTRECONCILE_OFF
+      attreconflag = ESMF_ATTRECONCILE_ON !tdk:revert: to OFF?
       buff_size = 1
       allocate (buffer(buff_size))
       offset1 = 0
