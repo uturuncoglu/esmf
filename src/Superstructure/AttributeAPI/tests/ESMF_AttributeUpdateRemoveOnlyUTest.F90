@@ -622,6 +622,7 @@ program ESMF_AttributeUpdateRemoveOnlyUTest
     ! This Attribute actually lives in the CF/Extended (nested) Attpack
     call ESMF_AttributeGetAttPack(field, convention="CF", &
                          purpose="Extended", attpack=attpack, rc=rc)
+    if (rc .ne. ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
     call ESMF_AttributeGet(field, name2, attpack=attpack, &
                                            isPresent=isPresent, rc=rc)
     write(failMsg, *) "Did not return ESMF_SUCCESS or wrong value"
