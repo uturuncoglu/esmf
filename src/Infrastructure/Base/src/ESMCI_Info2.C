@@ -966,9 +966,7 @@ void Info2::serialize(char *buffer, int *length, int *offset,
   if (inquireflag == ESMF_NOINQUIRE) {
     int *ip = (int *)(buffer + *offset);
     *ip = n;
-//    *ip++ = ID;
-//    *ip++ = refCount;
-//    *ip++ = classID;
+
 //    int *ibuffer = reinterpret_cast<int*>(buffer);
 //    ibuffer[*offset] = n;
   }

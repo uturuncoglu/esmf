@@ -26198,6 +26198,11 @@ end if
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeGetInfoByNumArray
+
+! ==============================================================================
+! ESMF_AttributeGetAttPack
+! ==============================================================================
+
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetAttPackArray()"
 subroutine ESMF_AttributeGetAttPackArray(target, convention, purpose, keywordEnforcer, attPackInstanceName, attpack, attnestflag, isPresent, rc)
@@ -26236,6 +26241,15 @@ end if
   key = "/"//TRIM(convention)//"/"//TRIM(purpose)
   is_present = ESMF_Info2IsPresent(info, key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  ! If the attpack object is provided but it does not exist, then bail out since
+  ! the attpack will never be initialized properly
+  if (.not. is_present) then
+    if (present(attpack)) then
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="convention/purpose not found and attpack object present", &
+                             ESMF_CONTEXT, rcToReturn=rc)) return
+    end if
+  end if
 
   if (present(isPresent)) then
     isPresent = is_present
@@ -26569,6 +26583,11 @@ end if
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeGetInfoByNumArrayBundle
+
+! ==============================================================================
+! ESMF_AttributeGetAttPack
+! ==============================================================================
+
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetAttPackArrayBundle()"
 subroutine ESMF_AttributeGetAttPackArrayBundle(target, convention, purpose, keywordEnforcer, attPackInstanceName, attpack, attnestflag, isPresent, rc)
@@ -26607,6 +26626,15 @@ end if
   key = "/"//TRIM(convention)//"/"//TRIM(purpose)
   is_present = ESMF_Info2IsPresent(info, key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  ! If the attpack object is provided but it does not exist, then bail out since
+  ! the attpack will never be initialized properly
+  if (.not. is_present) then
+    if (present(attpack)) then
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="convention/purpose not found and attpack object present", &
+                             ESMF_CONTEXT, rcToReturn=rc)) return
+    end if
+  end if
 
   if (present(isPresent)) then
     isPresent = is_present
@@ -26940,6 +26968,11 @@ end if
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeGetInfoByNumCplComp
+
+! ==============================================================================
+! ESMF_AttributeGetAttPack
+! ==============================================================================
+
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetAttPackCplComp()"
 subroutine ESMF_AttributeGetAttPackCplComp(target, convention, purpose, keywordEnforcer, attPackInstanceName, attpack, attnestflag, isPresent, rc)
@@ -26978,6 +27011,15 @@ end if
   key = "/"//TRIM(convention)//"/"//TRIM(purpose)
   is_present = ESMF_Info2IsPresent(info, key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  ! If the attpack object is provided but it does not exist, then bail out since
+  ! the attpack will never be initialized properly
+  if (.not. is_present) then
+    if (present(attpack)) then
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="convention/purpose not found and attpack object present", &
+                             ESMF_CONTEXT, rcToReturn=rc)) return
+    end if
+  end if
 
   if (present(isPresent)) then
     isPresent = is_present
@@ -27311,6 +27353,11 @@ end if
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeGetInfoByNumGridComp
+
+! ==============================================================================
+! ESMF_AttributeGetAttPack
+! ==============================================================================
+
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetAttPackGridComp()"
 subroutine ESMF_AttributeGetAttPackGridComp(target, convention, purpose, keywordEnforcer, attPackInstanceName, attpack, attnestflag, isPresent, rc)
@@ -27349,6 +27396,15 @@ end if
   key = "/"//TRIM(convention)//"/"//TRIM(purpose)
   is_present = ESMF_Info2IsPresent(info, key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  ! If the attpack object is provided but it does not exist, then bail out since
+  ! the attpack will never be initialized properly
+  if (.not. is_present) then
+    if (present(attpack)) then
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="convention/purpose not found and attpack object present", &
+                             ESMF_CONTEXT, rcToReturn=rc)) return
+    end if
+  end if
 
   if (present(isPresent)) then
     isPresent = is_present
@@ -27682,6 +27738,11 @@ end if
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeGetInfoByNumSciComp
+
+! ==============================================================================
+! ESMF_AttributeGetAttPack
+! ==============================================================================
+
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetAttPackSciComp()"
 subroutine ESMF_AttributeGetAttPackSciComp(target, convention, purpose, keywordEnforcer, attPackInstanceName, attpack, attnestflag, isPresent, rc)
@@ -27720,6 +27781,15 @@ end if
   key = "/"//TRIM(convention)//"/"//TRIM(purpose)
   is_present = ESMF_Info2IsPresent(info, key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  ! If the attpack object is provided but it does not exist, then bail out since
+  ! the attpack will never be initialized properly
+  if (.not. is_present) then
+    if (present(attpack)) then
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="convention/purpose not found and attpack object present", &
+                             ESMF_CONTEXT, rcToReturn=rc)) return
+    end if
+  end if
 
   if (present(isPresent)) then
     isPresent = is_present
@@ -28053,6 +28123,11 @@ end if
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeGetInfoByNumDistGrid
+
+! ==============================================================================
+! ESMF_AttributeGetAttPack
+! ==============================================================================
+
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetAttPackDistGrid()"
 subroutine ESMF_AttributeGetAttPackDistGrid(target, convention, purpose, keywordEnforcer, attPackInstanceName, attpack, attnestflag, isPresent, rc)
@@ -28091,6 +28166,15 @@ end if
   key = "/"//TRIM(convention)//"/"//TRIM(purpose)
   is_present = ESMF_Info2IsPresent(info, key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  ! If the attpack object is provided but it does not exist, then bail out since
+  ! the attpack will never be initialized properly
+  if (.not. is_present) then
+    if (present(attpack)) then
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="convention/purpose not found and attpack object present", &
+                             ESMF_CONTEXT, rcToReturn=rc)) return
+    end if
+  end if
 
   if (present(isPresent)) then
     isPresent = is_present
@@ -28424,6 +28508,11 @@ end if
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeGetInfoByNumField
+
+! ==============================================================================
+! ESMF_AttributeGetAttPack
+! ==============================================================================
+
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetAttPackField()"
 subroutine ESMF_AttributeGetAttPackField(target, convention, purpose, keywordEnforcer, attPackInstanceName, attpack, attnestflag, isPresent, rc)
@@ -28462,6 +28551,15 @@ end if
   key = "/"//TRIM(convention)//"/"//TRIM(purpose)
   is_present = ESMF_Info2IsPresent(info, key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  ! If the attpack object is provided but it does not exist, then bail out since
+  ! the attpack will never be initialized properly
+  if (.not. is_present) then
+    if (present(attpack)) then
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="convention/purpose not found and attpack object present", &
+                             ESMF_CONTEXT, rcToReturn=rc)) return
+    end if
+  end if
 
   if (present(isPresent)) then
     isPresent = is_present
@@ -28795,6 +28893,11 @@ end if
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeGetInfoByNumFieldBundle
+
+! ==============================================================================
+! ESMF_AttributeGetAttPack
+! ==============================================================================
+
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetAttPackFieldBundle()"
 subroutine ESMF_AttributeGetAttPackFieldBundle(target, convention, purpose, keywordEnforcer, attPackInstanceName, attpack, attnestflag, isPresent, rc)
@@ -28833,6 +28936,15 @@ end if
   key = "/"//TRIM(convention)//"/"//TRIM(purpose)
   is_present = ESMF_Info2IsPresent(info, key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  ! If the attpack object is provided but it does not exist, then bail out since
+  ! the attpack will never be initialized properly
+  if (.not. is_present) then
+    if (present(attpack)) then
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="convention/purpose not found and attpack object present", &
+                             ESMF_CONTEXT, rcToReturn=rc)) return
+    end if
+  end if
 
   if (present(isPresent)) then
     isPresent = is_present
@@ -29166,6 +29278,11 @@ end if
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeGetInfoByNumGrid
+
+! ==============================================================================
+! ESMF_AttributeGetAttPack
+! ==============================================================================
+
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetAttPackGrid()"
 subroutine ESMF_AttributeGetAttPackGrid(target, convention, purpose, keywordEnforcer, attPackInstanceName, attpack, attnestflag, isPresent, rc)
@@ -29204,6 +29321,15 @@ end if
   key = "/"//TRIM(convention)//"/"//TRIM(purpose)
   is_present = ESMF_Info2IsPresent(info, key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  ! If the attpack object is provided but it does not exist, then bail out since
+  ! the attpack will never be initialized properly
+  if (.not. is_present) then
+    if (present(attpack)) then
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="convention/purpose not found and attpack object present", &
+                             ESMF_CONTEXT, rcToReturn=rc)) return
+    end if
+  end if
 
   if (present(isPresent)) then
     isPresent = is_present
@@ -29537,6 +29663,11 @@ end if
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeGetInfoByNumState
+
+! ==============================================================================
+! ESMF_AttributeGetAttPack
+! ==============================================================================
+
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetAttPackState()"
 subroutine ESMF_AttributeGetAttPackState(target, convention, purpose, keywordEnforcer, attPackInstanceName, attpack, attnestflag, isPresent, rc)
@@ -29575,6 +29706,15 @@ end if
   key = "/"//TRIM(convention)//"/"//TRIM(purpose)
   is_present = ESMF_Info2IsPresent(info, key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  ! If the attpack object is provided but it does not exist, then bail out since
+  ! the attpack will never be initialized properly
+  if (.not. is_present) then
+    if (present(attpack)) then
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="convention/purpose not found and attpack object present", &
+                             ESMF_CONTEXT, rcToReturn=rc)) return
+    end if
+  end if
 
   if (present(isPresent)) then
     isPresent = is_present
@@ -29908,6 +30048,11 @@ end if
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeGetInfoByNumLocStream
+
+! ==============================================================================
+! ESMF_AttributeGetAttPack
+! ==============================================================================
+
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetAttPackLocStream()"
 subroutine ESMF_AttributeGetAttPackLocStream(target, convention, purpose, keywordEnforcer, attPackInstanceName, attpack, attnestflag, isPresent, rc)
@@ -29946,6 +30091,15 @@ end if
   key = "/"//TRIM(convention)//"/"//TRIM(purpose)
   is_present = ESMF_Info2IsPresent(info, key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  ! If the attpack object is provided but it does not exist, then bail out since
+  ! the attpack will never be initialized properly
+  if (.not. is_present) then
+    if (present(attpack)) then
+      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="convention/purpose not found and attpack object present", &
+                             ESMF_CONTEXT, rcToReturn=rc)) return
+    end if
+  end if
 
   if (present(isPresent)) then
     isPresent = is_present
