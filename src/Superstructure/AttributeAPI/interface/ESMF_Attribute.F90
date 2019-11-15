@@ -12991,7 +12991,7 @@ subroutine ESMF_AttributeGetAttPackArrayR4(target, name, attpack, value, default
   character(:), allocatable :: key
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  logical, parameter :: debug = .true. !tdk:p REVERT
+  logical, parameter :: debug = .true. !tdk:debug
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -13091,7 +13091,7 @@ subroutine ESMF_AttributeGetAttPackArrayR8(target, name, attpack, value, default
   character(:), allocatable :: key
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  logical, parameter :: debug = .true. !tdk:p REVERT
+  logical, parameter :: debug = .true. !tdk:debug
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -13191,7 +13191,7 @@ subroutine ESMF_AttributeGetAttPackArrayI4(target, name, attpack, value, default
   character(:), allocatable :: key
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  logical, parameter :: debug = .true. !tdk:p REVERT
+  logical, parameter :: debug = .true. !tdk:debug
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -13291,7 +13291,7 @@ subroutine ESMF_AttributeGetAttPackArrayI8(target, name, attpack, value, default
   character(:), allocatable :: key
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  logical, parameter :: debug = .true. !tdk:p REVERT
+  logical, parameter :: debug = .true. !tdk:debug
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -13391,7 +13391,7 @@ subroutine ESMF_AttributeGetAttPackArrayCH(target, name, attpack, value, default
   character(:), allocatable :: key
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  logical, parameter :: debug = .true. !tdk:p REVERT
+  logical, parameter :: debug = .true. !tdk:debug
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -13491,7 +13491,7 @@ subroutine ESMF_AttributeGetAttPackArrayLG(target, name, attpack, value, default
   character(:), allocatable :: key
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  logical, parameter :: debug = .true. !tdk:p REVERT
+  logical, parameter :: debug = .true. !tdk:debug
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -13591,7 +13591,7 @@ subroutine ESMF_AttributeGetAttPackArrayBundleR4(target, name, attpack, value, d
   character(:), allocatable :: key
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  logical, parameter :: debug = .true. !tdk:p REVERT
+  logical, parameter :: debug = .true. !tdk:debug
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -13691,7 +13691,7 @@ subroutine ESMF_AttributeGetAttPackArrayBundleR8(target, name, attpack, value, d
   character(:), allocatable :: key
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  logical, parameter :: debug = .true. !tdk:p REVERT
+  logical, parameter :: debug = .true. !tdk:debug
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -13791,7 +13791,7 @@ subroutine ESMF_AttributeGetAttPackArrayBundleI4(target, name, attpack, value, d
   character(:), allocatable :: key
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  logical, parameter :: debug = .true. !tdk:p REVERT
+  logical, parameter :: debug = .true. !tdk:debug
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -13891,7 +13891,7 @@ subroutine ESMF_AttributeGetAttPackArrayBundleI8(target, name, attpack, value, d
   character(:), allocatable :: key
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  logical, parameter :: debug = .true. !tdk:p REVERT
+  logical, parameter :: debug = .true. !tdk:debug
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -13991,7 +13991,7 @@ subroutine ESMF_AttributeGetAttPackArrayBundleCH(target, name, attpack, value, d
   character(:), allocatable :: key
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  logical, parameter :: debug = .true. !tdk:p REVERT
+  logical, parameter :: debug = .true. !tdk:debug
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -14091,7 +14091,7 @@ subroutine ESMF_AttributeGetAttPackArrayBundleLG(target, name, attpack, value, d
   character(:), allocatable :: key
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  logical, parameter :: debug = .true. !tdk:p REVERT
+  logical, parameter :: debug = .true. !tdk:debug
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -14191,7 +14191,7 @@ subroutine ESMF_AttributeGetAttPackCplCompR4(target, name, attpack, value, defau
   character(:), allocatable :: key
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  logical, parameter :: debug = .true. !tdk:p REVERT
+  logical, parameter :: debug = .true. !tdk:debug
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -14291,7 +14291,7 @@ subroutine ESMF_AttributeGetAttPackCplCompR8(target, name, attpack, value, defau
   character(:), allocatable :: key
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  logical, parameter :: debug = .true. !tdk:p REVERT
+  logical, parameter :: debug = .true. !tdk:debug
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -14391,7 +14391,7 @@ subroutine ESMF_AttributeGetAttPackCplCompI4(target, name, attpack, value, defau
   character(:), allocatable :: key
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  logical, parameter :: debug = .true. !tdk:p REVERT
+  logical, parameter :: debug = .true. !tdk:debug
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -14491,7 +14491,7 @@ subroutine ESMF_AttributeGetAttPackCplCompI8(target, name, attpack, value, defau
   character(:), allocatable :: key
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  logical, parameter :: debug = .true. !tdk:p REVERT
+  logical, parameter :: debug = .true. !tdk:debug
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -14591,7 +14591,7 @@ subroutine ESMF_AttributeGetAttPackCplCompCH(target, name, attpack, value, defau
   character(:), allocatable :: key
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  logical, parameter :: debug = .true. !tdk:p REVERT
+  logical, parameter :: debug = .true. !tdk:debug
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -14691,7 +14691,7 @@ subroutine ESMF_AttributeGetAttPackCplCompLG(target, name, attpack, value, defau
   character(:), allocatable :: key
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  logical, parameter :: debug = .true. !tdk:p REVERT
+  logical, parameter :: debug = .true. !tdk:debug
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -14791,7 +14791,7 @@ subroutine ESMF_AttributeGetAttPackGridCompR4(target, name, attpack, value, defa
   character(:), allocatable :: key
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  logical, parameter :: debug = .true. !tdk:p REVERT
+  logical, parameter :: debug = .true. !tdk:debug
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -14891,7 +14891,7 @@ subroutine ESMF_AttributeGetAttPackGridCompR8(target, name, attpack, value, defa
   character(:), allocatable :: key
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  logical, parameter :: debug = .true. !tdk:p REVERT
+  logical, parameter :: debug = .true. !tdk:debug
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -14991,7 +14991,7 @@ subroutine ESMF_AttributeGetAttPackGridCompI4(target, name, attpack, value, defa
   character(:), allocatable :: key
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  logical, parameter :: debug = .true. !tdk:p REVERT
+  logical, parameter :: debug = .true. !tdk:debug
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -15091,7 +15091,7 @@ subroutine ESMF_AttributeGetAttPackGridCompI8(target, name, attpack, value, defa
   character(:), allocatable :: key
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  logical, parameter :: debug = .true. !tdk:p REVERT
+  logical, parameter :: debug = .true. !tdk:debug
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -15191,7 +15191,7 @@ subroutine ESMF_AttributeGetAttPackGridCompCH(target, name, attpack, value, defa
   character(:), allocatable :: key
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  logical, parameter :: debug = .true. !tdk:p REVERT
+  logical, parameter :: debug = .true. !tdk:debug
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -15291,7 +15291,7 @@ subroutine ESMF_AttributeGetAttPackGridCompLG(target, name, attpack, value, defa
   character(:), allocatable :: key
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  logical, parameter :: debug = .true. !tdk:p REVERT
+  logical, parameter :: debug = .true. !tdk:debug
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -15391,7 +15391,7 @@ subroutine ESMF_AttributeGetAttPackSciCompR4(target, name, attpack, value, defau
   character(:), allocatable :: key
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  logical, parameter :: debug = .true. !tdk:p REVERT
+  logical, parameter :: debug = .true. !tdk:debug
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -15491,7 +15491,7 @@ subroutine ESMF_AttributeGetAttPackSciCompR8(target, name, attpack, value, defau
   character(:), allocatable :: key
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  logical, parameter :: debug = .true. !tdk:p REVERT
+  logical, parameter :: debug = .true. !tdk:debug
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -15591,7 +15591,7 @@ subroutine ESMF_AttributeGetAttPackSciCompI4(target, name, attpack, value, defau
   character(:), allocatable :: key
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  logical, parameter :: debug = .true. !tdk:p REVERT
+  logical, parameter :: debug = .true. !tdk:debug
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -15691,7 +15691,7 @@ subroutine ESMF_AttributeGetAttPackSciCompI8(target, name, attpack, value, defau
   character(:), allocatable :: key
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  logical, parameter :: debug = .true. !tdk:p REVERT
+  logical, parameter :: debug = .true. !tdk:debug
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -15791,7 +15791,7 @@ subroutine ESMF_AttributeGetAttPackSciCompCH(target, name, attpack, value, defau
   character(:), allocatable :: key
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  logical, parameter :: debug = .true. !tdk:p REVERT
+  logical, parameter :: debug = .true. !tdk:debug
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -15891,7 +15891,7 @@ subroutine ESMF_AttributeGetAttPackSciCompLG(target, name, attpack, value, defau
   character(:), allocatable :: key
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  logical, parameter :: debug = .true. !tdk:p REVERT
+  logical, parameter :: debug = .true. !tdk:debug
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -15991,7 +15991,7 @@ subroutine ESMF_AttributeGetAttPackDistGridR4(target, name, attpack, value, defa
   character(:), allocatable :: key
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  logical, parameter :: debug = .true. !tdk:p REVERT
+  logical, parameter :: debug = .true. !tdk:debug
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -16091,7 +16091,7 @@ subroutine ESMF_AttributeGetAttPackDistGridR8(target, name, attpack, value, defa
   character(:), allocatable :: key
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  logical, parameter :: debug = .true. !tdk:p REVERT
+  logical, parameter :: debug = .true. !tdk:debug
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -16191,7 +16191,7 @@ subroutine ESMF_AttributeGetAttPackDistGridI4(target, name, attpack, value, defa
   character(:), allocatable :: key
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  logical, parameter :: debug = .true. !tdk:p REVERT
+  logical, parameter :: debug = .true. !tdk:debug
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -16291,7 +16291,7 @@ subroutine ESMF_AttributeGetAttPackDistGridI8(target, name, attpack, value, defa
   character(:), allocatable :: key
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  logical, parameter :: debug = .true. !tdk:p REVERT
+  logical, parameter :: debug = .true. !tdk:debug
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -16391,7 +16391,7 @@ subroutine ESMF_AttributeGetAttPackDistGridCH(target, name, attpack, value, defa
   character(:), allocatable :: key
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  logical, parameter :: debug = .true. !tdk:p REVERT
+  logical, parameter :: debug = .true. !tdk:debug
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -16491,7 +16491,7 @@ subroutine ESMF_AttributeGetAttPackDistGridLG(target, name, attpack, value, defa
   character(:), allocatable :: key
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  logical, parameter :: debug = .true. !tdk:p REVERT
+  logical, parameter :: debug = .true. !tdk:debug
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -16591,7 +16591,7 @@ subroutine ESMF_AttributeGetAttPackFieldR4(target, name, attpack, value, default
   character(:), allocatable :: key
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  logical, parameter :: debug = .true. !tdk:p REVERT
+  logical, parameter :: debug = .true. !tdk:debug
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -16691,7 +16691,7 @@ subroutine ESMF_AttributeGetAttPackFieldR8(target, name, attpack, value, default
   character(:), allocatable :: key
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  logical, parameter :: debug = .true. !tdk:p REVERT
+  logical, parameter :: debug = .true. !tdk:debug
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -16791,7 +16791,7 @@ subroutine ESMF_AttributeGetAttPackFieldI4(target, name, attpack, value, default
   character(:), allocatable :: key
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  logical, parameter :: debug = .true. !tdk:p REVERT
+  logical, parameter :: debug = .true. !tdk:debug
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -16891,7 +16891,7 @@ subroutine ESMF_AttributeGetAttPackFieldI8(target, name, attpack, value, default
   character(:), allocatable :: key
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  logical, parameter :: debug = .true. !tdk:p REVERT
+  logical, parameter :: debug = .true. !tdk:debug
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -16991,7 +16991,7 @@ subroutine ESMF_AttributeGetAttPackFieldCH(target, name, attpack, value, default
   character(:), allocatable :: key
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  logical, parameter :: debug = .true. !tdk:p REVERT
+  logical, parameter :: debug = .true. !tdk:debug
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -17091,7 +17091,7 @@ subroutine ESMF_AttributeGetAttPackFieldLG(target, name, attpack, value, default
   character(:), allocatable :: key
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  logical, parameter :: debug = .true. !tdk:p REVERT
+  logical, parameter :: debug = .true. !tdk:debug
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -17191,7 +17191,7 @@ subroutine ESMF_AttributeGetAttPackFieldBundleR4(target, name, attpack, value, d
   character(:), allocatable :: key
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  logical, parameter :: debug = .true. !tdk:p REVERT
+  logical, parameter :: debug = .true. !tdk:debug
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -17291,7 +17291,7 @@ subroutine ESMF_AttributeGetAttPackFieldBundleR8(target, name, attpack, value, d
   character(:), allocatable :: key
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  logical, parameter :: debug = .true. !tdk:p REVERT
+  logical, parameter :: debug = .true. !tdk:debug
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -17391,7 +17391,7 @@ subroutine ESMF_AttributeGetAttPackFieldBundleI4(target, name, attpack, value, d
   character(:), allocatable :: key
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  logical, parameter :: debug = .true. !tdk:p REVERT
+  logical, parameter :: debug = .true. !tdk:debug
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -17491,7 +17491,7 @@ subroutine ESMF_AttributeGetAttPackFieldBundleI8(target, name, attpack, value, d
   character(:), allocatable :: key
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  logical, parameter :: debug = .true. !tdk:p REVERT
+  logical, parameter :: debug = .true. !tdk:debug
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -17591,7 +17591,7 @@ subroutine ESMF_AttributeGetAttPackFieldBundleCH(target, name, attpack, value, d
   character(:), allocatable :: key
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  logical, parameter :: debug = .true. !tdk:p REVERT
+  logical, parameter :: debug = .true. !tdk:debug
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -17691,7 +17691,7 @@ subroutine ESMF_AttributeGetAttPackFieldBundleLG(target, name, attpack, value, d
   character(:), allocatable :: key
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  logical, parameter :: debug = .true. !tdk:p REVERT
+  logical, parameter :: debug = .true. !tdk:debug
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -17791,7 +17791,7 @@ subroutine ESMF_AttributeGetAttPackGridR4(target, name, attpack, value, defaultv
   character(:), allocatable :: key
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  logical, parameter :: debug = .true. !tdk:p REVERT
+  logical, parameter :: debug = .true. !tdk:debug
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -17891,7 +17891,7 @@ subroutine ESMF_AttributeGetAttPackGridR8(target, name, attpack, value, defaultv
   character(:), allocatable :: key
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  logical, parameter :: debug = .true. !tdk:p REVERT
+  logical, parameter :: debug = .true. !tdk:debug
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -17991,7 +17991,7 @@ subroutine ESMF_AttributeGetAttPackGridI4(target, name, attpack, value, defaultv
   character(:), allocatable :: key
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  logical, parameter :: debug = .true. !tdk:p REVERT
+  logical, parameter :: debug = .true. !tdk:debug
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -18091,7 +18091,7 @@ subroutine ESMF_AttributeGetAttPackGridI8(target, name, attpack, value, defaultv
   character(:), allocatable :: key
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  logical, parameter :: debug = .true. !tdk:p REVERT
+  logical, parameter :: debug = .true. !tdk:debug
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -18191,7 +18191,7 @@ subroutine ESMF_AttributeGetAttPackGridCH(target, name, attpack, value, defaultv
   character(:), allocatable :: key
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  logical, parameter :: debug = .true. !tdk:p REVERT
+  logical, parameter :: debug = .true. !tdk:debug
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -18291,7 +18291,7 @@ subroutine ESMF_AttributeGetAttPackGridLG(target, name, attpack, value, defaultv
   character(:), allocatable :: key
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  logical, parameter :: debug = .true. !tdk:p REVERT
+  logical, parameter :: debug = .true. !tdk:debug
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -18391,7 +18391,7 @@ subroutine ESMF_AttributeGetAttPackStateR4(target, name, attpack, value, default
   character(:), allocatable :: key
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  logical, parameter :: debug = .true. !tdk:p REVERT
+  logical, parameter :: debug = .true. !tdk:debug
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -18491,7 +18491,7 @@ subroutine ESMF_AttributeGetAttPackStateR8(target, name, attpack, value, default
   character(:), allocatable :: key
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  logical, parameter :: debug = .true. !tdk:p REVERT
+  logical, parameter :: debug = .true. !tdk:debug
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -18591,7 +18591,7 @@ subroutine ESMF_AttributeGetAttPackStateI4(target, name, attpack, value, default
   character(:), allocatable :: key
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  logical, parameter :: debug = .true. !tdk:p REVERT
+  logical, parameter :: debug = .true. !tdk:debug
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -18691,7 +18691,7 @@ subroutine ESMF_AttributeGetAttPackStateI8(target, name, attpack, value, default
   character(:), allocatable :: key
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  logical, parameter :: debug = .true. !tdk:p REVERT
+  logical, parameter :: debug = .true. !tdk:debug
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -18791,7 +18791,7 @@ subroutine ESMF_AttributeGetAttPackStateCH(target, name, attpack, value, default
   character(:), allocatable :: key
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  logical, parameter :: debug = .true. !tdk:p REVERT
+  logical, parameter :: debug = .true. !tdk:debug
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -18891,7 +18891,7 @@ subroutine ESMF_AttributeGetAttPackStateLG(target, name, attpack, value, default
   character(:), allocatable :: key
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  logical, parameter :: debug = .true. !tdk:p REVERT
+  logical, parameter :: debug = .true. !tdk:debug
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -18991,7 +18991,7 @@ subroutine ESMF_AttributeGetAttPackLocStreamR4(target, name, attpack, value, def
   character(:), allocatable :: key
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  logical, parameter :: debug = .true. !tdk:p REVERT
+  logical, parameter :: debug = .true. !tdk:debug
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -19091,7 +19091,7 @@ subroutine ESMF_AttributeGetAttPackLocStreamR8(target, name, attpack, value, def
   character(:), allocatable :: key
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  logical, parameter :: debug = .true. !tdk:p REVERT
+  logical, parameter :: debug = .true. !tdk:debug
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -19191,7 +19191,7 @@ subroutine ESMF_AttributeGetAttPackLocStreamI4(target, name, attpack, value, def
   character(:), allocatable :: key
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  logical, parameter :: debug = .true. !tdk:p REVERT
+  logical, parameter :: debug = .true. !tdk:debug
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -19291,7 +19291,7 @@ subroutine ESMF_AttributeGetAttPackLocStreamI8(target, name, attpack, value, def
   character(:), allocatable :: key
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  logical, parameter :: debug = .true. !tdk:p REVERT
+  logical, parameter :: debug = .true. !tdk:debug
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -19391,7 +19391,7 @@ subroutine ESMF_AttributeGetAttPackLocStreamCH(target, name, attpack, value, def
   character(:), allocatable :: key
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  logical, parameter :: debug = .true. !tdk:p REVERT
+  logical, parameter :: debug = .true. !tdk:debug
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -19491,7 +19491,7 @@ subroutine ESMF_AttributeGetAttPackLocStreamLG(target, name, attpack, value, def
   character(:), allocatable :: key
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
-  logical, parameter :: debug = .true. !tdk:p REVERT
+  logical, parameter :: debug = .true. !tdk:debug
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL

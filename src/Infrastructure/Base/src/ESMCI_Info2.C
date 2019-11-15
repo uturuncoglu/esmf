@@ -580,7 +580,6 @@ T Info2::get(key_t &key, int &rc, const T *def, const int *index, bool recursive
     ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO);
     ESMC_LogWrite(this->dump(rc).c_str(), ESMC_LOGMSG_INFO);
 #endif
-  }
 
   T ret;
   try {
@@ -769,8 +768,6 @@ json Info2::inquire(key_t &key, int &rc, bool recursive, const int *idx, bool at
     ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO);
     ESMC_LogWrite(this->dump(rc).c_str(), ESMC_LOGMSG_INFO);
 #endif
-
-  }
 
   json j = json::object();
   try {
