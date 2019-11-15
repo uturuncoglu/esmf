@@ -6409,7 +6409,7 @@ call ESMF_LogWrite("Aft ESMF_IOWrite", ESMF_LOGMSG_INFO, rc=rc)
       type(ESMF_InquireFlag) :: linquireflag
       type(ESMF_Field), pointer :: l_fieldList(:)
 
-      logical, parameter :: debug = .true. !tdk:revert: to .true.
+      logical, parameter :: debug = .false.
       character(len=ESMF_MAXSTR) :: logmsg
 
       ! Initialize return code; assume routine not implemented
@@ -6567,7 +6567,7 @@ call ESMF_LogWrite("Aft ESMF_IOWrite", ESMF_LOGMSG_INFO, rc=rc)
       type(ESMF_GeomType_Flag) :: geomtype
       type(ESMF_Field), pointer :: flist(:)
 
-      logical, parameter :: debug = .true. !tdk:revert: to .true.
+      logical, parameter :: debug = .false.
       character(len=ESMF_MAXSTR) :: logmsg
 
       ! Initialize return code; assume routine not implemented

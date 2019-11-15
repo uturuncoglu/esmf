@@ -200,11 +200,10 @@ void ESMC_Info2Erase(ESMCI::Info2* info, char* keyParent,
 
 #undef ESMC_METHOD
 #define ESMC_METHOD "ESMC_Info2Inquire()"
-void ESMC_Info2Inquire(ESMCI::Info2 *info, ESMCI::Info2 *inq,
-                            char *key, int &fortran_recursive, int *idx, int &rc) {
+void ESMC_Info2Inquire(ESMCI::Info2 *info, ESMCI::Info2 *inq, char *key,
+                       int &fortran_recursive, int *idx, int &rc) {
   rc = ESMF_FAILURE;
-  bool recursive = false;
-  if (fortran_recursive == 1) {recursive = true;}
+  bool recursive = (fortran_recursive == 1) ? true:false;
   try {
     std::string localKey(key);
     json jinq = info->inquire(localKey, rc, recursive, idx, true);
@@ -310,8 +309,6 @@ void ESMC_Info2BaseSyncDo(const std::vector<long int> &base_addresses, const int
       // This object is created from a serialized string stored in the update
       // map.
       ESMCI::Info2 rhs(it.value(), rc);
-      std::string msg = std::string(ESMC_METHOD) + " it.value().dump(2)=" + it.value().dump(2); //tdk:p
-      ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
       try {
         if (localPet != rootPet) {
           info_to_update->getStorageRefWritable() = rhs.getStorageRef();
@@ -324,8 +321,6 @@ void ESMC_Info2BaseSyncDo(const std::vector<long int> &base_addresses, const int
         }
       }
       ESMF_CATCH_JSON
-      msg = std::string(ESMC_METHOD) + " tdk:log: info_to_update->dump(2, rc)=" + info_to_update->dump(2, rc); //tdk:p
-      ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
     }
   }
   ESMF_CATCH_ISOC
@@ -337,10 +332,6 @@ void ESMC_Info2BaseSync(ESMCI::Info2 *inqstate, int &rootPet, long int &vmAddres
   rc = ESMF_FAILURE;
   try {
     const json &j_inqstate = inqstate->getStorageRef();
-    std::string msg = std::string(ESMC_METHOD) + "j_inqstate.dump()=" + j_inqstate.dump(); //tdk:p
-    ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
-    msg = std::string(ESMC_METHOD) + "std::to_string(rootPet)=" + std::to_string(rootPet); //tdk:p
-    ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
     int ctr = 0;
     updateDirtyInfo(j_inqstate, &ctr, nullptr);
     std::vector<long int> base_addresses(ctr, 0);

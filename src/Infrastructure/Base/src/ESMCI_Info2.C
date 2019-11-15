@@ -128,18 +128,37 @@ count_map_t create_json_attribute_count_map(void) {
   return counts;
 }
 
+//tdk:order
+void dolog(const std::string &logmsg, const std::string &method, int line) {
+  std::string local_logmsg;
+  local_logmsg = method + std::string("@") + std::to_string(line) + ": " + logmsg;
+  ESMC_LogWrite(local_logmsg.c_str(), ESMC_LOGMSG_INFO);
+}
+
 #undef  ESMC_METHOD
 #define ESMC_METHOD "update_json_attribute_count_map()"
 void update_json_attribute_count_map(count_map_t &counts, const json &j, bool first) {
   // Test: test_update_json_attribute_count_map
+  // Throws: esmf_info_error
   // Notes:
-  assert(j.is_object());
+  const bool debug = false;
+  if (debug) {
+    std::string logmsg = "j.dump()=" + j.dump();
+    dolog(logmsg, ESMC_METHOD, __LINE__);
+  }
+  if (!(j.is_object())) {
+    esmf_info_error exc("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, "iteration target must be a JSON object");
+    throw exc;
+  };
   std::size_t attpack_count = 0;
   std::size_t attr_count = 0;
   for (json::const_iterator it=j.cbegin(); it!=j.cend(); it++) {
     if (is_attpack(it.value())) {
       for (json::const_iterator it2=it.value().cbegin(); it2!=it.value().cend(); it2++) {
-        assert(it2.value().is_object());
+        if (!(it2.value().is_object())) {
+          esmf_info_error exc("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, "iteration target must be a JSON object");
+          throw exc;
+        };
         attpack_count++;
         if (first) counts.at("attPackCount")++;
         counts.at("attPackCountTotal")++;
@@ -548,7 +567,20 @@ json::json_pointer Info2::formatKey(key_t& key, int& rc) {
 template <typename T>
 T Info2::get(key_t &key, int &rc, const T *def, const int *index, bool recursive, std::string *ikey) const {
   // Exceptions:  ESMCI:esmf_info_error
+  const bool debug = true; //tdk:debug
   rc = ESMF_FAILURE;
+  if (debug) {
+    std::string prefix = std::string(ESMC_METHOD) + ": ";
+    std::string msg;
+    msg = prefix + "key=" + key;
+    ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO);
+    msg = prefix + "recursive=" + std::to_string(recursive);
+    ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO);
+    msg = prefix + "this->dump()=...";
+    ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO);
+    ESMC_LogWrite(this->dump(rc).c_str(), ESMC_LOGMSG_INFO);
+  }
+
   T ret;
   try {
     json::json_pointer jpath = this->formatKey(key, rc);
@@ -721,7 +753,22 @@ bool Info2::hasKey(const json::json_pointer &jp, int& rc, bool recursive) const 
 json Info2::inquire(key_t &key, int &rc, bool recursive, const int *idx, bool attr_compliance) const {
   // Test: testInquire
   // Notes:
+  const bool debug = false;
   rc = ESMF_FAILURE;
+  if (debug) {
+    std::string prefix = std::string(ESMC_METHOD) + ": ";
+    std::string msg;
+    msg = prefix + "key=" + key;
+    ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO);
+    msg = prefix + "recursive=" + std::to_string(recursive);
+    ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO);
+    msg = prefix + "attr_compliance=" + std::to_string(attr_compliance);
+    ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO);
+    msg = prefix + "this->dump()=...";
+    ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO);
+    ESMC_LogWrite(this->dump(rc).c_str(), ESMC_LOGMSG_INFO);
+  }
+
   json j = json::object();
   try {
     j["isDirty"] = this->isDirty();
@@ -758,7 +805,7 @@ json Info2::inquire(key_t &key, int &rc, bool recursive, const int *idx, bool at
     const json &sk = *sp;
     count_map_t counts = create_json_attribute_count_map();
     auto sk_size = sk.size();
-    if (sk.is_object()) {
+    if (sk.is_object() && attr_compliance) {
       update_json_attribute_count_map(counts, sk, true);
     } else {
       // All counts are one if the JSON type is not object
@@ -826,18 +873,14 @@ void Info2::deserialize(char *buffer, int *offset, int &rc) {
   // Exceptions:  ESMCI:esmf_info_error
   rc = ESMF_FAILURE;
   alignOffset(*offset);
-  std::string msg; //tdk:p
-  msg = std::string(ESMC_METHOD) + ": *offset (after align)=" + std::to_string(*offset); //tdk:p
-  ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
 
   // Act like an integer to get the string length.
+
 //  int *ibuffer = static_cast<int*>(buffer);
 //  int length = ibuffer[*offset];
   int *ip = (int *)(buffer + *offset);
   int length = *ip;
 
-  msg = std::string(ESMC_METHOD) + ": length=" + std::to_string(length); //tdk:p
-  ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
   // Move 4 bytes to the start of the string actual.
   (*offset) += sizeof(int);
   std::string infobuffer(&(buffer[*offset]), length);
@@ -937,17 +980,6 @@ void Info2::serialize(char *buffer, int *length, int *offset,
   ESMC_InquireFlag inquireflag, int& rc) {
   // Test: testSerializeDeserialize, testSerializeDeserialize2
   // Exceptions:  ESMCI:esmf_info_error
-  std::string msg = std::string(ESMC_METHOD) + " entering"; //tdk:p
-  ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
-  if (inquireflag == ESMF_NOINQUIRE) { //tdk:p
-    ESMC_LogWrite("Info2::serialize() ESMF_NOINQUIRE", ESMC_LOGMSG_INFO); //tdk:p
-  } else { //tdk:p
-    ESMC_LogWrite("Info2::serialize() ESMF_INQUIREONLY", ESMC_LOGMSG_INFO); //tdk:p
-  } //tdk:p
-  msg = std::string(ESMC_METHOD) + " *length=" + std::to_string(*length); //tdk:p
-  ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
-  msg = std::string(ESMC_METHOD) + " *offset1=" + std::to_string(*offset); //tdk:p
-  ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
   rc = ESMF_FAILURE;
   std::string infobuffer;
   try {
@@ -955,19 +987,13 @@ void Info2::serialize(char *buffer, int *length, int *offset,
   }
   ESMF_CATCH_PASSTHRU
   alignOffset(*offset);
-  msg = std::string(ESMC_METHOD) + " *offset1.1=" + std::to_string(*offset); //tdk:p
-  ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
   // If this is not an inquire operation, transfer the string info dump
   // into the serialization buffer. Update the offset in the process.
-  msg = std::string(ESMC_METHOD) + " infobuffer=" + infobuffer; //tdk:p
-  ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
   int n = (int) infobuffer.length();
-  msg = std::string(ESMC_METHOD) + " n=" + std::to_string(n); //tdk:p
-  ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
   if (inquireflag == ESMF_NOINQUIRE) {
     int *ip = (int *)(buffer + *offset);
     *ip = n;
-//    int *ibuffer = static_cast<int*>(buffer);
+//    int *ibuffer = reinterpret_cast<int*>(buffer);
 //    ibuffer[*offset] = n;
   }
   // Need 32 bits (4 bytes) to store the length of the string buffer for a
@@ -979,14 +1005,8 @@ void Info2::serialize(char *buffer, int *length, int *offset,
     if (inquireflag == ESMF_NOINQUIRE) { buffer[*offset] = infobuffer[ii]; }
     (*offset)++;
   }
-  msg = std::string(ESMC_METHOD) + " *offset2=" + std::to_string(*offset); //tdk:p
-  ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
   alignOffset(*offset);
   rc = ESMF_SUCCESS;
-  msg = std::string(ESMC_METHOD) + " *offset2.1=" + std::to_string(*offset); //tdk:p
-  ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
-  msg = std::string(ESMC_METHOD) + " returning"; //tdk:p
-  ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
   return;
 }
 

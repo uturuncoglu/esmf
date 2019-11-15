@@ -393,6 +393,7 @@ module ESMF_AttributeUpdateClosedLoopTreesUTestMod
     if (rc/=ESMF_SUCCESS) return
 
     ! Modify Attributes on one Field in the FieldBundle
+    call ESMF_LogWrite("Start: Modify Attributes on one Field in the FieldBundle")
     call ESMF_AttributeGetAttPack(field1, convESMF, purpGen, attpack=attpack, rc=status)
     if (rc/=ESMF_SUCCESS) return
     call ESMF_AttributeSet(field1, name2, value2, attpack=attpack, rc=status)
@@ -409,8 +410,10 @@ module ESMF_AttributeUpdateClosedLoopTreesUTestMod
     call ESMF_AttributeRemove(field1, name=name3, convention=convESMF, &
       purpose=purpGen, rc=status)
     if (rc/=ESMF_SUCCESS) return
+    call ESMF_LogWrite("End: Modify Attributes on one Field in the FieldBundle")
 
     ! Modify Attributes on grid_from_field1
+    call ESMF_LogWrite("Start: Modify Attributes on grid_from_field1")
     call ESMF_AttributeGetAttPack(grid_from_field1, convESMF, purpGen, attpack=attpack, rc=status)
     if (rc/=ESMF_SUCCESS) return
     call ESMF_AttributeSet(grid_from_field1, 'RegDecompX', 106, &
@@ -419,8 +422,10 @@ module ESMF_AttributeUpdateClosedLoopTreesUTestMod
     call ESMF_AttributeGet(grid_from_field1, 'RegDecompX', attpack=attpack, &
         value=outInt(1), rc=status)
     if (rc/=ESMF_SUCCESS) return
+    call ESMF_LogWrite("End: Modify Attributes on grid_from_field1")
 
     ! Modify Attributes on grid_from_field12
+    call ESMF_LogWrite("Start: Modify Attributes on grid_from_field12")
     call ESMF_AttributeGetAttPack(grid_from_field12, convESMF, purpGen, attpack=attpack, rc=status)
     if (rc/=ESMF_SUCCESS) return
     call ESMF_AttributeSet(grid_from_field12, 'RegDecompX', 126, &
@@ -429,8 +434,10 @@ module ESMF_AttributeUpdateClosedLoopTreesUTestMod
     call ESMF_AttributeGet(grid_from_field1, 'RegDecompX', attpack=attpack, &
         value=outInt(2), rc=status)
     if (rc/=ESMF_SUCCESS) return
+    call ESMF_LogWrite("End: Modify Attributes on grid_from_field12")
 
     ! Modify Attributes on grid_from_fb
+    call ESMF_LogWrite("Start: Modify Attributes on grid_from_fb")
     call ESMF_AttributeGetAttPack(grid_from_fb, convESMF, purpGen, attpack=attpack, rc=status)
     if (rc/=ESMF_SUCCESS) return
     call ESMF_AttributeSet(grid_from_fb, 'RegDecompX', 306, attpack=attpack, &
@@ -439,8 +446,10 @@ module ESMF_AttributeUpdateClosedLoopTreesUTestMod
     call ESMF_AttributeGet(grid_from_field1, 'RegDecompX', attpack=attpack, &
         value=outInt(3), rc=status)
     if (rc/=ESMF_SUCCESS) return
+    call ESMF_LogWrite("End: Modify Attributes on grid_from_fb")
 
     ! Modify Attribute on the Grid that is on the Field that is not part of the Fieldbundle
+    call ESMF_LogWrite("Start: Modify Attribute on the Grid that is on the Field that is not part of the Fieldbundle")
     call ESMF_StateGet(exportState, "field2", field2, rc=rc)
     if (rc/=ESMF_SUCCESS) return
     call ESMF_FieldGet(field2, grid=grid_from_field2, rc=rc)
@@ -453,6 +462,7 @@ module ESMF_AttributeUpdateClosedLoopTreesUTestMod
     call ESMF_AttributeGet(grid_from_field1, 'RegDecompX', attpack=attpack, &
         value=outInt(4), rc=status)
     if (rc/=ESMF_SUCCESS) return
+    call ESMF_LogWrite("End: Modify Attribute on the Grid that is on the Field that is not part of the Fieldbundle")
 
 
     print *, "RUN"
@@ -489,6 +499,7 @@ module ESMF_AttributeUpdateClosedLoopTreesUTestMod
     integer                     :: myPet
 
     integer, dimension(2)       :: rootList
+    type(ESMF_Inquire) :: einq
 
     rc = ESMF_SUCCESS
 
@@ -502,9 +513,35 @@ module ESMF_AttributeUpdateClosedLoopTreesUTestMod
     call ESMF_StateGet(exportState, rc=rc)
     if (rc/=ESMF_SUCCESS) return
 
+#if 0
+    einq = einq%Create(addObjectInfo=.true., rc=rc)
+    if (rc/=ESMF_SUCCESS) return
+    call einq%Update(importState, "", rc=rc)
+    if (rc/=ESMF_SUCCESS) return
+    call ESMF_LogWrite("ESMF_AttributeUpdateClosedLoopTreesUTest.F90: importState (before update)=", rc=rc)
+    if (rc/=ESMF_SUCCESS) return
+    call ESMF_LogWrite(ESMF_Info2Dump(einq%info), rc=rc)
+    if (rc/=ESMF_SUCCESS) return
+    call einq%Destroy(rc=rc)
+    if (rc/=ESMF_SUCCESS) return
+#endif
+
     rootList = (/0,1/)
     call ESMF_AttributeUpdate(importState, vm, rootList=rootList, rc=rc)
     if (rc/=ESMF_SUCCESS) return
+
+#if 0
+    einq = einq%Create(addObjectInfo=.true., rc=rc)
+    if (rc/=ESMF_SUCCESS) return
+    call einq%Update(importState, "", rc=rc)
+    if (rc/=ESMF_SUCCESS) return
+    call ESMF_LogWrite("ESMF_AttributeUpdateClosedLoopTreesUTest.F90: importState (after update)=", rc=rc)
+    if (rc/=ESMF_SUCCESS) return
+    call ESMF_LogWrite(ESMF_Info2Dump(einq%info), rc=rc)
+    if (rc/=ESMF_SUCCESS) return
+    call einq%Destroy(rc=rc)
+    if (rc/=ESMF_SUCCESS) return
+#endif
 
     !call ESMF_AttributeCopy(importState, exportState, &
     !  attcopy=ESMF_ATTCOPY_HYBRID, rc=rc)

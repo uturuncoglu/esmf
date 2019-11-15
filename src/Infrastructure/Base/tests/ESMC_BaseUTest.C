@@ -35,8 +35,8 @@ using namespace std;
 //EOP
 //-----------------------------------------------------------------------------
 
-const bool TO_STDOUT = true; //tdk:revert: to false
-const bool TO_LOG = true; //tdk:revert: to false
+const bool TO_STDOUT = false;
+const bool TO_LOG = false;
 
 void finalizeFailure(int& rc, char failMsg[], string msg) {
   rc = ESMF_FAILURE;

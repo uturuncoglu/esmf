@@ -804,14 +804,14 @@ subroutine attpack_initialize(self, info, convention, purpose, rootKey, rc)
   localrc = ESMF_FAILURE
   if (.not. present(rootKey)) then
     if (present(convention)) then
-      local_convention = convention
+      local_convention = TRIM(convention)
     else
-      local_convention = ESMF_ATTR_DEFAULT_CONVENTION
+      local_convention = TRIM(ESMF_ATTR_DEFAULT_CONVENTION)
     end if
     if (present(purpose)) then
-      local_purpose = purpose
+      local_purpose = TRIM(purpose)
     else
-      local_purpose = ESMF_ATTR_DEFAULT_PURPOSE
+      local_purpose = TRIM(ESMF_ATTR_DEFAULT_PURPOSE)
     end if
     self%root_key = "/"//local_convention//"/"//local_purpose
   else
@@ -998,7 +998,7 @@ subroutine ESMF_AttributeAddAttPackStdInfo(info, convention, purpose, attrList, 
        ! -----------------------------------------------------------------------
        ! If the nestConvention now has no members, remove it as well
 
-       call ESMF_Info2Inquire(info, nestConvention, attrCount=nest_conv_count, rc=localrc)
+       call ESMF_Info2Inquire(info, nestConvention, size=nest_conv_count, rc=localrc)
        if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
        if (nest_conv_count == 0) then
@@ -12989,21 +12989,35 @@ subroutine ESMF_AttributeGetAttPackArrayR4(target, name, attpack, value, default
 
   integer :: localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  logical, parameter :: debug = .true. !tdk:p REVERT
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": key="//TRIM(key), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -13028,11 +13042,18 @@ subroutine ESMF_AttributeGetObjArrayR4(target, name, value, defaultvalue, conven
   character(:), allocatable :: key
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -13041,11 +13062,11 @@ subroutine ESMF_AttributeGetObjArrayR4(target, name, value, defaultvalue, conven
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
@@ -13068,21 +13089,35 @@ subroutine ESMF_AttributeGetAttPackArrayR8(target, name, attpack, value, default
 
   integer :: localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  logical, parameter :: debug = .true. !tdk:p REVERT
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": key="//TRIM(key), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -13107,11 +13142,18 @@ subroutine ESMF_AttributeGetObjArrayR8(target, name, value, defaultvalue, conven
   character(:), allocatable :: key
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -13120,11 +13162,11 @@ subroutine ESMF_AttributeGetObjArrayR8(target, name, value, defaultvalue, conven
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
@@ -13147,21 +13189,35 @@ subroutine ESMF_AttributeGetAttPackArrayI4(target, name, attpack, value, default
 
   integer :: localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  logical, parameter :: debug = .true. !tdk:p REVERT
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": key="//TRIM(key), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -13186,11 +13242,18 @@ subroutine ESMF_AttributeGetObjArrayI4(target, name, value, defaultvalue, conven
   character(:), allocatable :: key
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -13199,11 +13262,11 @@ subroutine ESMF_AttributeGetObjArrayI4(target, name, value, defaultvalue, conven
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
@@ -13226,21 +13289,35 @@ subroutine ESMF_AttributeGetAttPackArrayI8(target, name, attpack, value, default
 
   integer :: localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  logical, parameter :: debug = .true. !tdk:p REVERT
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": key="//TRIM(key), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -13265,11 +13342,18 @@ subroutine ESMF_AttributeGetObjArrayI8(target, name, value, defaultvalue, conven
   character(:), allocatable :: key
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -13278,11 +13362,11 @@ subroutine ESMF_AttributeGetObjArrayI8(target, name, value, defaultvalue, conven
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
@@ -13305,21 +13389,35 @@ subroutine ESMF_AttributeGetAttPackArrayCH(target, name, attpack, value, default
 
   integer :: localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  logical, parameter :: debug = .true. !tdk:p REVERT
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": key="//TRIM(key), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -13344,11 +13442,18 @@ subroutine ESMF_AttributeGetObjArrayCH(target, name, value, defaultvalue, conven
   character(:), allocatable :: key
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -13357,11 +13462,11 @@ subroutine ESMF_AttributeGetObjArrayCH(target, name, value, defaultvalue, conven
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
@@ -13384,21 +13489,35 @@ subroutine ESMF_AttributeGetAttPackArrayLG(target, name, attpack, value, default
 
   integer :: localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  logical, parameter :: debug = .true. !tdk:p REVERT
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": key="//TRIM(key), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -13423,11 +13542,18 @@ subroutine ESMF_AttributeGetObjArrayLG(target, name, value, defaultvalue, conven
   character(:), allocatable :: key
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -13436,11 +13562,11 @@ subroutine ESMF_AttributeGetObjArrayLG(target, name, value, defaultvalue, conven
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
@@ -13463,21 +13589,35 @@ subroutine ESMF_AttributeGetAttPackArrayBundleR4(target, name, attpack, value, d
 
   integer :: localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  logical, parameter :: debug = .true. !tdk:p REVERT
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": key="//TRIM(key), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -13502,11 +13642,18 @@ subroutine ESMF_AttributeGetObjArrayBundleR4(target, name, value, defaultvalue, 
   character(:), allocatable :: key
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -13515,11 +13662,11 @@ subroutine ESMF_AttributeGetObjArrayBundleR4(target, name, value, defaultvalue, 
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
@@ -13542,21 +13689,35 @@ subroutine ESMF_AttributeGetAttPackArrayBundleR8(target, name, attpack, value, d
 
   integer :: localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  logical, parameter :: debug = .true. !tdk:p REVERT
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": key="//TRIM(key), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -13581,11 +13742,18 @@ subroutine ESMF_AttributeGetObjArrayBundleR8(target, name, value, defaultvalue, 
   character(:), allocatable :: key
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -13594,11 +13762,11 @@ subroutine ESMF_AttributeGetObjArrayBundleR8(target, name, value, defaultvalue, 
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
@@ -13621,21 +13789,35 @@ subroutine ESMF_AttributeGetAttPackArrayBundleI4(target, name, attpack, value, d
 
   integer :: localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  logical, parameter :: debug = .true. !tdk:p REVERT
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": key="//TRIM(key), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -13660,11 +13842,18 @@ subroutine ESMF_AttributeGetObjArrayBundleI4(target, name, value, defaultvalue, 
   character(:), allocatable :: key
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -13673,11 +13862,11 @@ subroutine ESMF_AttributeGetObjArrayBundleI4(target, name, value, defaultvalue, 
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
@@ -13700,21 +13889,35 @@ subroutine ESMF_AttributeGetAttPackArrayBundleI8(target, name, attpack, value, d
 
   integer :: localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  logical, parameter :: debug = .true. !tdk:p REVERT
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": key="//TRIM(key), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -13739,11 +13942,18 @@ subroutine ESMF_AttributeGetObjArrayBundleI8(target, name, value, defaultvalue, 
   character(:), allocatable :: key
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -13752,11 +13962,11 @@ subroutine ESMF_AttributeGetObjArrayBundleI8(target, name, value, defaultvalue, 
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
@@ -13779,21 +13989,35 @@ subroutine ESMF_AttributeGetAttPackArrayBundleCH(target, name, attpack, value, d
 
   integer :: localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  logical, parameter :: debug = .true. !tdk:p REVERT
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": key="//TRIM(key), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -13818,11 +14042,18 @@ subroutine ESMF_AttributeGetObjArrayBundleCH(target, name, value, defaultvalue, 
   character(:), allocatable :: key
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -13831,11 +14062,11 @@ subroutine ESMF_AttributeGetObjArrayBundleCH(target, name, value, defaultvalue, 
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
@@ -13858,21 +14089,35 @@ subroutine ESMF_AttributeGetAttPackArrayBundleLG(target, name, attpack, value, d
 
   integer :: localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  logical, parameter :: debug = .true. !tdk:p REVERT
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": key="//TRIM(key), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -13897,11 +14142,18 @@ subroutine ESMF_AttributeGetObjArrayBundleLG(target, name, value, defaultvalue, 
   character(:), allocatable :: key
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -13910,11 +14162,11 @@ subroutine ESMF_AttributeGetObjArrayBundleLG(target, name, value, defaultvalue, 
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
@@ -13937,21 +14189,35 @@ subroutine ESMF_AttributeGetAttPackCplCompR4(target, name, attpack, value, defau
 
   integer :: localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  logical, parameter :: debug = .true. !tdk:p REVERT
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": key="//TRIM(key), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -13976,11 +14242,18 @@ subroutine ESMF_AttributeGetObjCplCompR4(target, name, value, defaultvalue, conv
   character(:), allocatable :: key
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -13989,11 +14262,11 @@ subroutine ESMF_AttributeGetObjCplCompR4(target, name, value, defaultvalue, conv
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
@@ -14016,21 +14289,35 @@ subroutine ESMF_AttributeGetAttPackCplCompR8(target, name, attpack, value, defau
 
   integer :: localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  logical, parameter :: debug = .true. !tdk:p REVERT
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": key="//TRIM(key), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -14055,11 +14342,18 @@ subroutine ESMF_AttributeGetObjCplCompR8(target, name, value, defaultvalue, conv
   character(:), allocatable :: key
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -14068,11 +14362,11 @@ subroutine ESMF_AttributeGetObjCplCompR8(target, name, value, defaultvalue, conv
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
@@ -14095,21 +14389,35 @@ subroutine ESMF_AttributeGetAttPackCplCompI4(target, name, attpack, value, defau
 
   integer :: localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  logical, parameter :: debug = .true. !tdk:p REVERT
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": key="//TRIM(key), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -14134,11 +14442,18 @@ subroutine ESMF_AttributeGetObjCplCompI4(target, name, value, defaultvalue, conv
   character(:), allocatable :: key
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -14147,11 +14462,11 @@ subroutine ESMF_AttributeGetObjCplCompI4(target, name, value, defaultvalue, conv
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
@@ -14174,21 +14489,35 @@ subroutine ESMF_AttributeGetAttPackCplCompI8(target, name, attpack, value, defau
 
   integer :: localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  logical, parameter :: debug = .true. !tdk:p REVERT
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": key="//TRIM(key), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -14213,11 +14542,18 @@ subroutine ESMF_AttributeGetObjCplCompI8(target, name, value, defaultvalue, conv
   character(:), allocatable :: key
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -14226,11 +14562,11 @@ subroutine ESMF_AttributeGetObjCplCompI8(target, name, value, defaultvalue, conv
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
@@ -14253,21 +14589,35 @@ subroutine ESMF_AttributeGetAttPackCplCompCH(target, name, attpack, value, defau
 
   integer :: localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  logical, parameter :: debug = .true. !tdk:p REVERT
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": key="//TRIM(key), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -14292,11 +14642,18 @@ subroutine ESMF_AttributeGetObjCplCompCH(target, name, value, defaultvalue, conv
   character(:), allocatable :: key
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -14305,11 +14662,11 @@ subroutine ESMF_AttributeGetObjCplCompCH(target, name, value, defaultvalue, conv
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
@@ -14332,21 +14689,35 @@ subroutine ESMF_AttributeGetAttPackCplCompLG(target, name, attpack, value, defau
 
   integer :: localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  logical, parameter :: debug = .true. !tdk:p REVERT
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": key="//TRIM(key), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -14371,11 +14742,18 @@ subroutine ESMF_AttributeGetObjCplCompLG(target, name, value, defaultvalue, conv
   character(:), allocatable :: key
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -14384,11 +14762,11 @@ subroutine ESMF_AttributeGetObjCplCompLG(target, name, value, defaultvalue, conv
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
@@ -14411,21 +14789,35 @@ subroutine ESMF_AttributeGetAttPackGridCompR4(target, name, attpack, value, defa
 
   integer :: localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  logical, parameter :: debug = .true. !tdk:p REVERT
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": key="//TRIM(key), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -14450,11 +14842,18 @@ subroutine ESMF_AttributeGetObjGridCompR4(target, name, value, defaultvalue, con
   character(:), allocatable :: key
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -14463,11 +14862,11 @@ subroutine ESMF_AttributeGetObjGridCompR4(target, name, value, defaultvalue, con
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
@@ -14490,21 +14889,35 @@ subroutine ESMF_AttributeGetAttPackGridCompR8(target, name, attpack, value, defa
 
   integer :: localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  logical, parameter :: debug = .true. !tdk:p REVERT
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": key="//TRIM(key), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -14529,11 +14942,18 @@ subroutine ESMF_AttributeGetObjGridCompR8(target, name, value, defaultvalue, con
   character(:), allocatable :: key
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -14542,11 +14962,11 @@ subroutine ESMF_AttributeGetObjGridCompR8(target, name, value, defaultvalue, con
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
@@ -14569,21 +14989,35 @@ subroutine ESMF_AttributeGetAttPackGridCompI4(target, name, attpack, value, defa
 
   integer :: localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  logical, parameter :: debug = .true. !tdk:p REVERT
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": key="//TRIM(key), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -14608,11 +15042,18 @@ subroutine ESMF_AttributeGetObjGridCompI4(target, name, value, defaultvalue, con
   character(:), allocatable :: key
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -14621,11 +15062,11 @@ subroutine ESMF_AttributeGetObjGridCompI4(target, name, value, defaultvalue, con
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
@@ -14648,21 +15089,35 @@ subroutine ESMF_AttributeGetAttPackGridCompI8(target, name, attpack, value, defa
 
   integer :: localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  logical, parameter :: debug = .true. !tdk:p REVERT
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": key="//TRIM(key), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -14687,11 +15142,18 @@ subroutine ESMF_AttributeGetObjGridCompI8(target, name, value, defaultvalue, con
   character(:), allocatable :: key
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -14700,11 +15162,11 @@ subroutine ESMF_AttributeGetObjGridCompI8(target, name, value, defaultvalue, con
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
@@ -14727,21 +15189,35 @@ subroutine ESMF_AttributeGetAttPackGridCompCH(target, name, attpack, value, defa
 
   integer :: localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  logical, parameter :: debug = .true. !tdk:p REVERT
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": key="//TRIM(key), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -14766,11 +15242,18 @@ subroutine ESMF_AttributeGetObjGridCompCH(target, name, value, defaultvalue, con
   character(:), allocatable :: key
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -14779,11 +15262,11 @@ subroutine ESMF_AttributeGetObjGridCompCH(target, name, value, defaultvalue, con
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
@@ -14806,21 +15289,35 @@ subroutine ESMF_AttributeGetAttPackGridCompLG(target, name, attpack, value, defa
 
   integer :: localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  logical, parameter :: debug = .true. !tdk:p REVERT
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": key="//TRIM(key), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -14845,11 +15342,18 @@ subroutine ESMF_AttributeGetObjGridCompLG(target, name, value, defaultvalue, con
   character(:), allocatable :: key
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -14858,11 +15362,11 @@ subroutine ESMF_AttributeGetObjGridCompLG(target, name, value, defaultvalue, con
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
@@ -14885,21 +15389,35 @@ subroutine ESMF_AttributeGetAttPackSciCompR4(target, name, attpack, value, defau
 
   integer :: localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  logical, parameter :: debug = .true. !tdk:p REVERT
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": key="//TRIM(key), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -14924,11 +15442,18 @@ subroutine ESMF_AttributeGetObjSciCompR4(target, name, value, defaultvalue, conv
   character(:), allocatable :: key
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -14937,11 +15462,11 @@ subroutine ESMF_AttributeGetObjSciCompR4(target, name, value, defaultvalue, conv
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
@@ -14964,21 +15489,35 @@ subroutine ESMF_AttributeGetAttPackSciCompR8(target, name, attpack, value, defau
 
   integer :: localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  logical, parameter :: debug = .true. !tdk:p REVERT
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": key="//TRIM(key), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -15003,11 +15542,18 @@ subroutine ESMF_AttributeGetObjSciCompR8(target, name, value, defaultvalue, conv
   character(:), allocatable :: key
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -15016,11 +15562,11 @@ subroutine ESMF_AttributeGetObjSciCompR8(target, name, value, defaultvalue, conv
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
@@ -15043,21 +15589,35 @@ subroutine ESMF_AttributeGetAttPackSciCompI4(target, name, attpack, value, defau
 
   integer :: localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  logical, parameter :: debug = .true. !tdk:p REVERT
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": key="//TRIM(key), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -15082,11 +15642,18 @@ subroutine ESMF_AttributeGetObjSciCompI4(target, name, value, defaultvalue, conv
   character(:), allocatable :: key
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -15095,11 +15662,11 @@ subroutine ESMF_AttributeGetObjSciCompI4(target, name, value, defaultvalue, conv
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
@@ -15122,21 +15689,35 @@ subroutine ESMF_AttributeGetAttPackSciCompI8(target, name, attpack, value, defau
 
   integer :: localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  logical, parameter :: debug = .true. !tdk:p REVERT
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": key="//TRIM(key), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -15161,11 +15742,18 @@ subroutine ESMF_AttributeGetObjSciCompI8(target, name, value, defaultvalue, conv
   character(:), allocatable :: key
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -15174,11 +15762,11 @@ subroutine ESMF_AttributeGetObjSciCompI8(target, name, value, defaultvalue, conv
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
@@ -15201,21 +15789,35 @@ subroutine ESMF_AttributeGetAttPackSciCompCH(target, name, attpack, value, defau
 
   integer :: localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  logical, parameter :: debug = .true. !tdk:p REVERT
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": key="//TRIM(key), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -15240,11 +15842,18 @@ subroutine ESMF_AttributeGetObjSciCompCH(target, name, value, defaultvalue, conv
   character(:), allocatable :: key
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -15253,11 +15862,11 @@ subroutine ESMF_AttributeGetObjSciCompCH(target, name, value, defaultvalue, conv
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
@@ -15280,21 +15889,35 @@ subroutine ESMF_AttributeGetAttPackSciCompLG(target, name, attpack, value, defau
 
   integer :: localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  logical, parameter :: debug = .true. !tdk:p REVERT
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": key="//TRIM(key), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -15319,11 +15942,18 @@ subroutine ESMF_AttributeGetObjSciCompLG(target, name, value, defaultvalue, conv
   character(:), allocatable :: key
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -15332,11 +15962,11 @@ subroutine ESMF_AttributeGetObjSciCompLG(target, name, value, defaultvalue, conv
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
@@ -15359,21 +15989,35 @@ subroutine ESMF_AttributeGetAttPackDistGridR4(target, name, attpack, value, defa
 
   integer :: localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  logical, parameter :: debug = .true. !tdk:p REVERT
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": key="//TRIM(key), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -15398,11 +16042,18 @@ subroutine ESMF_AttributeGetObjDistGridR4(target, name, value, defaultvalue, con
   character(:), allocatable :: key
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -15411,11 +16062,11 @@ subroutine ESMF_AttributeGetObjDistGridR4(target, name, value, defaultvalue, con
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
@@ -15438,21 +16089,35 @@ subroutine ESMF_AttributeGetAttPackDistGridR8(target, name, attpack, value, defa
 
   integer :: localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  logical, parameter :: debug = .true. !tdk:p REVERT
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": key="//TRIM(key), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -15477,11 +16142,18 @@ subroutine ESMF_AttributeGetObjDistGridR8(target, name, value, defaultvalue, con
   character(:), allocatable :: key
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -15490,11 +16162,11 @@ subroutine ESMF_AttributeGetObjDistGridR8(target, name, value, defaultvalue, con
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
@@ -15517,21 +16189,35 @@ subroutine ESMF_AttributeGetAttPackDistGridI4(target, name, attpack, value, defa
 
   integer :: localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  logical, parameter :: debug = .true. !tdk:p REVERT
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": key="//TRIM(key), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -15556,11 +16242,18 @@ subroutine ESMF_AttributeGetObjDistGridI4(target, name, value, defaultvalue, con
   character(:), allocatable :: key
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -15569,11 +16262,11 @@ subroutine ESMF_AttributeGetObjDistGridI4(target, name, value, defaultvalue, con
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
@@ -15596,21 +16289,35 @@ subroutine ESMF_AttributeGetAttPackDistGridI8(target, name, attpack, value, defa
 
   integer :: localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  logical, parameter :: debug = .true. !tdk:p REVERT
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": key="//TRIM(key), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -15635,11 +16342,18 @@ subroutine ESMF_AttributeGetObjDistGridI8(target, name, value, defaultvalue, con
   character(:), allocatable :: key
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -15648,11 +16362,11 @@ subroutine ESMF_AttributeGetObjDistGridI8(target, name, value, defaultvalue, con
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
@@ -15675,21 +16389,35 @@ subroutine ESMF_AttributeGetAttPackDistGridCH(target, name, attpack, value, defa
 
   integer :: localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  logical, parameter :: debug = .true. !tdk:p REVERT
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": key="//TRIM(key), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -15714,11 +16442,18 @@ subroutine ESMF_AttributeGetObjDistGridCH(target, name, value, defaultvalue, con
   character(:), allocatable :: key
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -15727,11 +16462,11 @@ subroutine ESMF_AttributeGetObjDistGridCH(target, name, value, defaultvalue, con
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
@@ -15754,21 +16489,35 @@ subroutine ESMF_AttributeGetAttPackDistGridLG(target, name, attpack, value, defa
 
   integer :: localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  logical, parameter :: debug = .true. !tdk:p REVERT
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": key="//TRIM(key), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -15793,11 +16542,18 @@ subroutine ESMF_AttributeGetObjDistGridLG(target, name, value, defaultvalue, con
   character(:), allocatable :: key
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -15806,11 +16562,11 @@ subroutine ESMF_AttributeGetObjDistGridLG(target, name, value, defaultvalue, con
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
@@ -15833,21 +16589,35 @@ subroutine ESMF_AttributeGetAttPackFieldR4(target, name, attpack, value, default
 
   integer :: localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  logical, parameter :: debug = .true. !tdk:p REVERT
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": key="//TRIM(key), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -15872,11 +16642,18 @@ subroutine ESMF_AttributeGetObjFieldR4(target, name, value, defaultvalue, conven
   character(:), allocatable :: key
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -15885,11 +16662,11 @@ subroutine ESMF_AttributeGetObjFieldR4(target, name, value, defaultvalue, conven
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
@@ -15912,21 +16689,35 @@ subroutine ESMF_AttributeGetAttPackFieldR8(target, name, attpack, value, default
 
   integer :: localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  logical, parameter :: debug = .true. !tdk:p REVERT
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": key="//TRIM(key), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -15951,11 +16742,18 @@ subroutine ESMF_AttributeGetObjFieldR8(target, name, value, defaultvalue, conven
   character(:), allocatable :: key
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -15964,11 +16762,11 @@ subroutine ESMF_AttributeGetObjFieldR8(target, name, value, defaultvalue, conven
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
@@ -15991,21 +16789,35 @@ subroutine ESMF_AttributeGetAttPackFieldI4(target, name, attpack, value, default
 
   integer :: localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  logical, parameter :: debug = .true. !tdk:p REVERT
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": key="//TRIM(key), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -16030,11 +16842,18 @@ subroutine ESMF_AttributeGetObjFieldI4(target, name, value, defaultvalue, conven
   character(:), allocatable :: key
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -16043,11 +16862,11 @@ subroutine ESMF_AttributeGetObjFieldI4(target, name, value, defaultvalue, conven
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
@@ -16070,21 +16889,35 @@ subroutine ESMF_AttributeGetAttPackFieldI8(target, name, attpack, value, default
 
   integer :: localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  logical, parameter :: debug = .true. !tdk:p REVERT
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": key="//TRIM(key), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -16109,11 +16942,18 @@ subroutine ESMF_AttributeGetObjFieldI8(target, name, value, defaultvalue, conven
   character(:), allocatable :: key
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -16122,11 +16962,11 @@ subroutine ESMF_AttributeGetObjFieldI8(target, name, value, defaultvalue, conven
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
@@ -16149,21 +16989,35 @@ subroutine ESMF_AttributeGetAttPackFieldCH(target, name, attpack, value, default
 
   integer :: localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  logical, parameter :: debug = .true. !tdk:p REVERT
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": key="//TRIM(key), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -16188,11 +17042,18 @@ subroutine ESMF_AttributeGetObjFieldCH(target, name, value, defaultvalue, conven
   character(:), allocatable :: key
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -16201,11 +17062,11 @@ subroutine ESMF_AttributeGetObjFieldCH(target, name, value, defaultvalue, conven
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
@@ -16228,21 +17089,35 @@ subroutine ESMF_AttributeGetAttPackFieldLG(target, name, attpack, value, default
 
   integer :: localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  logical, parameter :: debug = .true. !tdk:p REVERT
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": key="//TRIM(key), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -16267,11 +17142,18 @@ subroutine ESMF_AttributeGetObjFieldLG(target, name, value, defaultvalue, conven
   character(:), allocatable :: key
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -16280,11 +17162,11 @@ subroutine ESMF_AttributeGetObjFieldLG(target, name, value, defaultvalue, conven
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
@@ -16307,21 +17189,35 @@ subroutine ESMF_AttributeGetAttPackFieldBundleR4(target, name, attpack, value, d
 
   integer :: localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  logical, parameter :: debug = .true. !tdk:p REVERT
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": key="//TRIM(key), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -16346,11 +17242,18 @@ subroutine ESMF_AttributeGetObjFieldBundleR4(target, name, value, defaultvalue, 
   character(:), allocatable :: key
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -16359,11 +17262,11 @@ subroutine ESMF_AttributeGetObjFieldBundleR4(target, name, value, defaultvalue, 
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
@@ -16386,21 +17289,35 @@ subroutine ESMF_AttributeGetAttPackFieldBundleR8(target, name, attpack, value, d
 
   integer :: localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  logical, parameter :: debug = .true. !tdk:p REVERT
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": key="//TRIM(key), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -16425,11 +17342,18 @@ subroutine ESMF_AttributeGetObjFieldBundleR8(target, name, value, defaultvalue, 
   character(:), allocatable :: key
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -16438,11 +17362,11 @@ subroutine ESMF_AttributeGetObjFieldBundleR8(target, name, value, defaultvalue, 
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
@@ -16465,21 +17389,35 @@ subroutine ESMF_AttributeGetAttPackFieldBundleI4(target, name, attpack, value, d
 
   integer :: localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  logical, parameter :: debug = .true. !tdk:p REVERT
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": key="//TRIM(key), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -16504,11 +17442,18 @@ subroutine ESMF_AttributeGetObjFieldBundleI4(target, name, value, defaultvalue, 
   character(:), allocatable :: key
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -16517,11 +17462,11 @@ subroutine ESMF_AttributeGetObjFieldBundleI4(target, name, value, defaultvalue, 
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
@@ -16544,21 +17489,35 @@ subroutine ESMF_AttributeGetAttPackFieldBundleI8(target, name, attpack, value, d
 
   integer :: localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  logical, parameter :: debug = .true. !tdk:p REVERT
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": key="//TRIM(key), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -16583,11 +17542,18 @@ subroutine ESMF_AttributeGetObjFieldBundleI8(target, name, value, defaultvalue, 
   character(:), allocatable :: key
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -16596,11 +17562,11 @@ subroutine ESMF_AttributeGetObjFieldBundleI8(target, name, value, defaultvalue, 
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
@@ -16623,21 +17589,35 @@ subroutine ESMF_AttributeGetAttPackFieldBundleCH(target, name, attpack, value, d
 
   integer :: localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  logical, parameter :: debug = .true. !tdk:p REVERT
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": key="//TRIM(key), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -16662,11 +17642,18 @@ subroutine ESMF_AttributeGetObjFieldBundleCH(target, name, value, defaultvalue, 
   character(:), allocatable :: key
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -16675,11 +17662,11 @@ subroutine ESMF_AttributeGetObjFieldBundleCH(target, name, value, defaultvalue, 
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
@@ -16702,21 +17689,35 @@ subroutine ESMF_AttributeGetAttPackFieldBundleLG(target, name, attpack, value, d
 
   integer :: localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  logical, parameter :: debug = .true. !tdk:p REVERT
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": key="//TRIM(key), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -16741,11 +17742,18 @@ subroutine ESMF_AttributeGetObjFieldBundleLG(target, name, value, defaultvalue, 
   character(:), allocatable :: key
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -16754,11 +17762,11 @@ subroutine ESMF_AttributeGetObjFieldBundleLG(target, name, value, defaultvalue, 
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
@@ -16781,21 +17789,35 @@ subroutine ESMF_AttributeGetAttPackGridR4(target, name, attpack, value, defaultv
 
   integer :: localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  logical, parameter :: debug = .true. !tdk:p REVERT
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": key="//TRIM(key), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -16820,11 +17842,18 @@ subroutine ESMF_AttributeGetObjGridR4(target, name, value, defaultvalue, convent
   character(:), allocatable :: key
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -16833,11 +17862,11 @@ subroutine ESMF_AttributeGetObjGridR4(target, name, value, defaultvalue, convent
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
@@ -16860,21 +17889,35 @@ subroutine ESMF_AttributeGetAttPackGridR8(target, name, attpack, value, defaultv
 
   integer :: localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  logical, parameter :: debug = .true. !tdk:p REVERT
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": key="//TRIM(key), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -16899,11 +17942,18 @@ subroutine ESMF_AttributeGetObjGridR8(target, name, value, defaultvalue, convent
   character(:), allocatable :: key
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -16912,11 +17962,11 @@ subroutine ESMF_AttributeGetObjGridR8(target, name, value, defaultvalue, convent
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
@@ -16939,21 +17989,35 @@ subroutine ESMF_AttributeGetAttPackGridI4(target, name, attpack, value, defaultv
 
   integer :: localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  logical, parameter :: debug = .true. !tdk:p REVERT
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": key="//TRIM(key), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -16978,11 +18042,18 @@ subroutine ESMF_AttributeGetObjGridI4(target, name, value, defaultvalue, convent
   character(:), allocatable :: key
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -16991,11 +18062,11 @@ subroutine ESMF_AttributeGetObjGridI4(target, name, value, defaultvalue, convent
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
@@ -17018,21 +18089,35 @@ subroutine ESMF_AttributeGetAttPackGridI8(target, name, attpack, value, defaultv
 
   integer :: localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  logical, parameter :: debug = .true. !tdk:p REVERT
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": key="//TRIM(key), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -17057,11 +18142,18 @@ subroutine ESMF_AttributeGetObjGridI8(target, name, value, defaultvalue, convent
   character(:), allocatable :: key
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -17070,11 +18162,11 @@ subroutine ESMF_AttributeGetObjGridI8(target, name, value, defaultvalue, convent
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
@@ -17097,21 +18189,35 @@ subroutine ESMF_AttributeGetAttPackGridCH(target, name, attpack, value, defaultv
 
   integer :: localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  logical, parameter :: debug = .true. !tdk:p REVERT
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": key="//TRIM(key), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -17136,11 +18242,18 @@ subroutine ESMF_AttributeGetObjGridCH(target, name, value, defaultvalue, convent
   character(:), allocatable :: key
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -17149,11 +18262,11 @@ subroutine ESMF_AttributeGetObjGridCH(target, name, value, defaultvalue, convent
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
@@ -17176,21 +18289,35 @@ subroutine ESMF_AttributeGetAttPackGridLG(target, name, attpack, value, defaultv
 
   integer :: localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  logical, parameter :: debug = .true. !tdk:p REVERT
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": key="//TRIM(key), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -17215,11 +18342,18 @@ subroutine ESMF_AttributeGetObjGridLG(target, name, value, defaultvalue, convent
   character(:), allocatable :: key
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -17228,11 +18362,11 @@ subroutine ESMF_AttributeGetObjGridLG(target, name, value, defaultvalue, convent
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
@@ -17255,21 +18389,35 @@ subroutine ESMF_AttributeGetAttPackStateR4(target, name, attpack, value, default
 
   integer :: localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  logical, parameter :: debug = .true. !tdk:p REVERT
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": key="//TRIM(key), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -17294,11 +18442,18 @@ subroutine ESMF_AttributeGetObjStateR4(target, name, value, defaultvalue, conven
   character(:), allocatable :: key
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -17307,11 +18462,11 @@ subroutine ESMF_AttributeGetObjStateR4(target, name, value, defaultvalue, conven
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
@@ -17334,21 +18489,35 @@ subroutine ESMF_AttributeGetAttPackStateR8(target, name, attpack, value, default
 
   integer :: localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  logical, parameter :: debug = .true. !tdk:p REVERT
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": key="//TRIM(key), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -17373,11 +18542,18 @@ subroutine ESMF_AttributeGetObjStateR8(target, name, value, defaultvalue, conven
   character(:), allocatable :: key
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -17386,11 +18562,11 @@ subroutine ESMF_AttributeGetObjStateR8(target, name, value, defaultvalue, conven
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
@@ -17413,21 +18589,35 @@ subroutine ESMF_AttributeGetAttPackStateI4(target, name, attpack, value, default
 
   integer :: localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  logical, parameter :: debug = .true. !tdk:p REVERT
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": key="//TRIM(key), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -17452,11 +18642,18 @@ subroutine ESMF_AttributeGetObjStateI4(target, name, value, defaultvalue, conven
   character(:), allocatable :: key
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -17465,11 +18662,11 @@ subroutine ESMF_AttributeGetObjStateI4(target, name, value, defaultvalue, conven
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
@@ -17492,21 +18689,35 @@ subroutine ESMF_AttributeGetAttPackStateI8(target, name, attpack, value, default
 
   integer :: localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  logical, parameter :: debug = .true. !tdk:p REVERT
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": key="//TRIM(key), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -17531,11 +18742,18 @@ subroutine ESMF_AttributeGetObjStateI8(target, name, value, defaultvalue, conven
   character(:), allocatable :: key
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -17544,11 +18762,11 @@ subroutine ESMF_AttributeGetObjStateI8(target, name, value, defaultvalue, conven
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
@@ -17571,21 +18789,35 @@ subroutine ESMF_AttributeGetAttPackStateCH(target, name, attpack, value, default
 
   integer :: localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  logical, parameter :: debug = .true. !tdk:p REVERT
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": key="//TRIM(key), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -17610,11 +18842,18 @@ subroutine ESMF_AttributeGetObjStateCH(target, name, value, defaultvalue, conven
   character(:), allocatable :: key
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -17623,11 +18862,11 @@ subroutine ESMF_AttributeGetObjStateCH(target, name, value, defaultvalue, conven
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
@@ -17650,21 +18889,35 @@ subroutine ESMF_AttributeGetAttPackStateLG(target, name, attpack, value, default
 
   integer :: localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  logical, parameter :: debug = .true. !tdk:p REVERT
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": key="//TRIM(key), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -17689,11 +18942,18 @@ subroutine ESMF_AttributeGetObjStateLG(target, name, value, defaultvalue, conven
   character(:), allocatable :: key
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -17702,11 +18962,11 @@ subroutine ESMF_AttributeGetObjStateLG(target, name, value, defaultvalue, conven
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
@@ -17729,21 +18989,35 @@ subroutine ESMF_AttributeGetAttPackLocStreamR4(target, name, attpack, value, def
 
   integer :: localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  logical, parameter :: debug = .true. !tdk:p REVERT
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": key="//TRIM(key), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -17768,11 +19042,18 @@ subroutine ESMF_AttributeGetObjLocStreamR4(target, name, value, defaultvalue, co
   character(:), allocatable :: key
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -17781,11 +19062,11 @@ subroutine ESMF_AttributeGetObjLocStreamR4(target, name, value, defaultvalue, co
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
@@ -17808,21 +19089,35 @@ subroutine ESMF_AttributeGetAttPackLocStreamR8(target, name, attpack, value, def
 
   integer :: localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  logical, parameter :: debug = .true. !tdk:p REVERT
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": key="//TRIM(key), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -17847,11 +19142,18 @@ subroutine ESMF_AttributeGetObjLocStreamR8(target, name, value, defaultvalue, co
   character(:), allocatable :: key
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -17860,11 +19162,11 @@ subroutine ESMF_AttributeGetObjLocStreamR8(target, name, value, defaultvalue, co
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
@@ -17887,21 +19189,35 @@ subroutine ESMF_AttributeGetAttPackLocStreamI4(target, name, attpack, value, def
 
   integer :: localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  logical, parameter :: debug = .true. !tdk:p REVERT
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": key="//TRIM(key), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -17926,11 +19242,18 @@ subroutine ESMF_AttributeGetObjLocStreamI4(target, name, value, defaultvalue, co
   character(:), allocatable :: key
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -17939,11 +19262,11 @@ subroutine ESMF_AttributeGetObjLocStreamI4(target, name, value, defaultvalue, co
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
@@ -17966,21 +19289,35 @@ subroutine ESMF_AttributeGetAttPackLocStreamI8(target, name, attpack, value, def
 
   integer :: localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  logical, parameter :: debug = .true. !tdk:p REVERT
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": key="//TRIM(key), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -18005,11 +19342,18 @@ subroutine ESMF_AttributeGetObjLocStreamI8(target, name, value, defaultvalue, co
   character(:), allocatable :: key
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -18018,11 +19362,11 @@ subroutine ESMF_AttributeGetObjLocStreamI8(target, name, value, defaultvalue, co
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
@@ -18045,21 +19389,35 @@ subroutine ESMF_AttributeGetAttPackLocStreamCH(target, name, attpack, value, def
 
   integer :: localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  logical, parameter :: debug = .true. !tdk:p REVERT
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": key="//TRIM(key), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -18084,11 +19442,18 @@ subroutine ESMF_AttributeGetObjLocStreamCH(target, name, value, defaultvalue, co
   character(:), allocatable :: key
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -18097,11 +19462,11 @@ subroutine ESMF_AttributeGetObjLocStreamCH(target, name, value, defaultvalue, co
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
@@ -18124,21 +19489,35 @@ subroutine ESMF_AttributeGetAttPackLocStreamLG(target, name, attpack, value, def
 
   integer :: localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
+
+  logical, parameter :: debug = .true. !tdk:p REVERT
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": key="//TRIM(key), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+    isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(attpack%getPayload(), key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -18163,11 +19542,18 @@ subroutine ESMF_AttributeGetObjLocStreamLG(target, name, value, defaultvalue, co
   character(:), allocatable :: key
   type(ESMF_Inquire) :: einq
   type(ESMF_Info2) :: info
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -18176,11 +19562,11 @@ subroutine ESMF_AttributeGetObjLocStreamLG(target, name, value, defaultvalue, co
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) then
-    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+    isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   endif
 
-  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=attnestflag, rc=localrc)
+  call ESMF_Info2Get(info, key, value, default=defaultvalue, attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(key)
@@ -18209,22 +19595,29 @@ subroutine ESMF_AttributeGetListAttPackArrayR4(target, name, attpack, valueList,
   integer :: localrc, ii, local_itemcount
   logical :: local_isPresent
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -18266,11 +19659,18 @@ subroutine ESMF_AttributeGetListObjArrayR4(target, name, valueList, defaultvalue
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -18278,13 +19678,13 @@ subroutine ESMF_AttributeGetListObjArrayR4(target, name, valueList, defaultvalue
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -18326,22 +19726,29 @@ subroutine ESMF_AttributeGetListAttPackArrayR8(target, name, attpack, valueList,
   integer :: localrc, ii, local_itemcount
   logical :: local_isPresent
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -18383,11 +19790,18 @@ subroutine ESMF_AttributeGetListObjArrayR8(target, name, valueList, defaultvalue
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -18395,13 +19809,13 @@ subroutine ESMF_AttributeGetListObjArrayR8(target, name, valueList, defaultvalue
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -18443,22 +19857,29 @@ subroutine ESMF_AttributeGetListAttPackArrayI4(target, name, attpack, valueList,
   integer :: localrc, ii, local_itemcount
   logical :: local_isPresent
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -18500,11 +19921,18 @@ subroutine ESMF_AttributeGetListObjArrayI4(target, name, valueList, defaultvalue
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -18512,13 +19940,13 @@ subroutine ESMF_AttributeGetListObjArrayI4(target, name, valueList, defaultvalue
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -18560,22 +19988,29 @@ subroutine ESMF_AttributeGetListAttPackArrayI8(target, name, attpack, valueList,
   integer :: localrc, ii, local_itemcount
   logical :: local_isPresent
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -18617,11 +20052,18 @@ subroutine ESMF_AttributeGetListObjArrayI8(target, name, valueList, defaultvalue
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -18629,13 +20071,13 @@ subroutine ESMF_AttributeGetListObjArrayI8(target, name, valueList, defaultvalue
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -18677,22 +20119,29 @@ subroutine ESMF_AttributeGetListAttPackArrayCH(target, name, attpack, valueList,
   integer :: localrc, ii, local_itemcount
   logical :: local_isPresent
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -18734,11 +20183,18 @@ subroutine ESMF_AttributeGetListObjArrayCH(target, name, valueList, defaultvalue
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -18746,13 +20202,13 @@ subroutine ESMF_AttributeGetListObjArrayCH(target, name, valueList, defaultvalue
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -18794,22 +20250,29 @@ subroutine ESMF_AttributeGetListAttPackArrayLG(target, name, attpack, valueList,
   integer :: localrc, ii, local_itemcount
   logical :: local_isPresent
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -18851,11 +20314,18 @@ subroutine ESMF_AttributeGetListObjArrayLG(target, name, valueList, defaultvalue
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -18863,13 +20333,13 @@ subroutine ESMF_AttributeGetListObjArrayLG(target, name, valueList, defaultvalue
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -18911,22 +20381,29 @@ subroutine ESMF_AttributeGetListAttPackArrayBundleR4(target, name, attpack, valu
   integer :: localrc, ii, local_itemcount
   logical :: local_isPresent
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -18968,11 +20445,18 @@ subroutine ESMF_AttributeGetListObjArrayBundleR4(target, name, valueList, defaul
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -18980,13 +20464,13 @@ subroutine ESMF_AttributeGetListObjArrayBundleR4(target, name, valueList, defaul
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -19028,22 +20512,29 @@ subroutine ESMF_AttributeGetListAttPackArrayBundleR8(target, name, attpack, valu
   integer :: localrc, ii, local_itemcount
   logical :: local_isPresent
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -19085,11 +20576,18 @@ subroutine ESMF_AttributeGetListObjArrayBundleR8(target, name, valueList, defaul
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -19097,13 +20595,13 @@ subroutine ESMF_AttributeGetListObjArrayBundleR8(target, name, valueList, defaul
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -19145,22 +20643,29 @@ subroutine ESMF_AttributeGetListAttPackArrayBundleI4(target, name, attpack, valu
   integer :: localrc, ii, local_itemcount
   logical :: local_isPresent
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -19202,11 +20707,18 @@ subroutine ESMF_AttributeGetListObjArrayBundleI4(target, name, valueList, defaul
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -19214,13 +20726,13 @@ subroutine ESMF_AttributeGetListObjArrayBundleI4(target, name, valueList, defaul
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -19262,22 +20774,29 @@ subroutine ESMF_AttributeGetListAttPackArrayBundleI8(target, name, attpack, valu
   integer :: localrc, ii, local_itemcount
   logical :: local_isPresent
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -19319,11 +20838,18 @@ subroutine ESMF_AttributeGetListObjArrayBundleI8(target, name, valueList, defaul
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -19331,13 +20857,13 @@ subroutine ESMF_AttributeGetListObjArrayBundleI8(target, name, valueList, defaul
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -19379,22 +20905,29 @@ subroutine ESMF_AttributeGetListAttPackArrayBundleCH(target, name, attpack, valu
   integer :: localrc, ii, local_itemcount
   logical :: local_isPresent
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -19436,11 +20969,18 @@ subroutine ESMF_AttributeGetListObjArrayBundleCH(target, name, valueList, defaul
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -19448,13 +20988,13 @@ subroutine ESMF_AttributeGetListObjArrayBundleCH(target, name, valueList, defaul
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -19496,22 +21036,29 @@ subroutine ESMF_AttributeGetListAttPackArrayBundleLG(target, name, attpack, valu
   integer :: localrc, ii, local_itemcount
   logical :: local_isPresent
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -19553,11 +21100,18 @@ subroutine ESMF_AttributeGetListObjArrayBundleLG(target, name, valueList, defaul
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -19565,13 +21119,13 @@ subroutine ESMF_AttributeGetListObjArrayBundleLG(target, name, valueList, defaul
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -19613,22 +21167,29 @@ subroutine ESMF_AttributeGetListAttPackCplCompR4(target, name, attpack, valueLis
   integer :: localrc, ii, local_itemcount
   logical :: local_isPresent
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -19670,11 +21231,18 @@ subroutine ESMF_AttributeGetListObjCplCompR4(target, name, valueList, defaultval
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -19682,13 +21250,13 @@ subroutine ESMF_AttributeGetListObjCplCompR4(target, name, valueList, defaultval
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -19730,22 +21298,29 @@ subroutine ESMF_AttributeGetListAttPackCplCompR8(target, name, attpack, valueLis
   integer :: localrc, ii, local_itemcount
   logical :: local_isPresent
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -19787,11 +21362,18 @@ subroutine ESMF_AttributeGetListObjCplCompR8(target, name, valueList, defaultval
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -19799,13 +21381,13 @@ subroutine ESMF_AttributeGetListObjCplCompR8(target, name, valueList, defaultval
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -19847,22 +21429,29 @@ subroutine ESMF_AttributeGetListAttPackCplCompI4(target, name, attpack, valueLis
   integer :: localrc, ii, local_itemcount
   logical :: local_isPresent
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -19904,11 +21493,18 @@ subroutine ESMF_AttributeGetListObjCplCompI4(target, name, valueList, defaultval
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -19916,13 +21512,13 @@ subroutine ESMF_AttributeGetListObjCplCompI4(target, name, valueList, defaultval
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -19964,22 +21560,29 @@ subroutine ESMF_AttributeGetListAttPackCplCompI8(target, name, attpack, valueLis
   integer :: localrc, ii, local_itemcount
   logical :: local_isPresent
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -20021,11 +21624,18 @@ subroutine ESMF_AttributeGetListObjCplCompI8(target, name, valueList, defaultval
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -20033,13 +21643,13 @@ subroutine ESMF_AttributeGetListObjCplCompI8(target, name, valueList, defaultval
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -20081,22 +21691,29 @@ subroutine ESMF_AttributeGetListAttPackCplCompCH(target, name, attpack, valueLis
   integer :: localrc, ii, local_itemcount
   logical :: local_isPresent
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -20138,11 +21755,18 @@ subroutine ESMF_AttributeGetListObjCplCompCH(target, name, valueList, defaultval
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -20150,13 +21774,13 @@ subroutine ESMF_AttributeGetListObjCplCompCH(target, name, valueList, defaultval
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -20198,22 +21822,29 @@ subroutine ESMF_AttributeGetListAttPackCplCompLG(target, name, attpack, valueLis
   integer :: localrc, ii, local_itemcount
   logical :: local_isPresent
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -20255,11 +21886,18 @@ subroutine ESMF_AttributeGetListObjCplCompLG(target, name, valueList, defaultval
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -20267,13 +21905,13 @@ subroutine ESMF_AttributeGetListObjCplCompLG(target, name, valueList, defaultval
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -20315,22 +21953,29 @@ subroutine ESMF_AttributeGetListAttPackGridCompR4(target, name, attpack, valueLi
   integer :: localrc, ii, local_itemcount
   logical :: local_isPresent
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -20372,11 +22017,18 @@ subroutine ESMF_AttributeGetListObjGridCompR4(target, name, valueList, defaultva
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -20384,13 +22036,13 @@ subroutine ESMF_AttributeGetListObjGridCompR4(target, name, valueList, defaultva
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -20432,22 +22084,29 @@ subroutine ESMF_AttributeGetListAttPackGridCompR8(target, name, attpack, valueLi
   integer :: localrc, ii, local_itemcount
   logical :: local_isPresent
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -20489,11 +22148,18 @@ subroutine ESMF_AttributeGetListObjGridCompR8(target, name, valueList, defaultva
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -20501,13 +22167,13 @@ subroutine ESMF_AttributeGetListObjGridCompR8(target, name, valueList, defaultva
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -20549,22 +22215,29 @@ subroutine ESMF_AttributeGetListAttPackGridCompI4(target, name, attpack, valueLi
   integer :: localrc, ii, local_itemcount
   logical :: local_isPresent
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -20606,11 +22279,18 @@ subroutine ESMF_AttributeGetListObjGridCompI4(target, name, valueList, defaultva
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -20618,13 +22298,13 @@ subroutine ESMF_AttributeGetListObjGridCompI4(target, name, valueList, defaultva
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -20666,22 +22346,29 @@ subroutine ESMF_AttributeGetListAttPackGridCompI8(target, name, attpack, valueLi
   integer :: localrc, ii, local_itemcount
   logical :: local_isPresent
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -20723,11 +22410,18 @@ subroutine ESMF_AttributeGetListObjGridCompI8(target, name, valueList, defaultva
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -20735,13 +22429,13 @@ subroutine ESMF_AttributeGetListObjGridCompI8(target, name, valueList, defaultva
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -20783,22 +22477,29 @@ subroutine ESMF_AttributeGetListAttPackGridCompCH(target, name, attpack, valueLi
   integer :: localrc, ii, local_itemcount
   logical :: local_isPresent
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -20840,11 +22541,18 @@ subroutine ESMF_AttributeGetListObjGridCompCH(target, name, valueList, defaultva
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -20852,13 +22560,13 @@ subroutine ESMF_AttributeGetListObjGridCompCH(target, name, valueList, defaultva
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -20900,22 +22608,29 @@ subroutine ESMF_AttributeGetListAttPackGridCompLG(target, name, attpack, valueLi
   integer :: localrc, ii, local_itemcount
   logical :: local_isPresent
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -20957,11 +22672,18 @@ subroutine ESMF_AttributeGetListObjGridCompLG(target, name, valueList, defaultva
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -20969,13 +22691,13 @@ subroutine ESMF_AttributeGetListObjGridCompLG(target, name, valueList, defaultva
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -21017,22 +22739,29 @@ subroutine ESMF_AttributeGetListAttPackSciCompR4(target, name, attpack, valueLis
   integer :: localrc, ii, local_itemcount
   logical :: local_isPresent
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -21074,11 +22803,18 @@ subroutine ESMF_AttributeGetListObjSciCompR4(target, name, valueList, defaultval
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -21086,13 +22822,13 @@ subroutine ESMF_AttributeGetListObjSciCompR4(target, name, valueList, defaultval
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -21134,22 +22870,29 @@ subroutine ESMF_AttributeGetListAttPackSciCompR8(target, name, attpack, valueLis
   integer :: localrc, ii, local_itemcount
   logical :: local_isPresent
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -21191,11 +22934,18 @@ subroutine ESMF_AttributeGetListObjSciCompR8(target, name, valueList, defaultval
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -21203,13 +22953,13 @@ subroutine ESMF_AttributeGetListObjSciCompR8(target, name, valueList, defaultval
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -21251,22 +23001,29 @@ subroutine ESMF_AttributeGetListAttPackSciCompI4(target, name, attpack, valueLis
   integer :: localrc, ii, local_itemcount
   logical :: local_isPresent
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -21308,11 +23065,18 @@ subroutine ESMF_AttributeGetListObjSciCompI4(target, name, valueList, defaultval
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -21320,13 +23084,13 @@ subroutine ESMF_AttributeGetListObjSciCompI4(target, name, valueList, defaultval
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -21368,22 +23132,29 @@ subroutine ESMF_AttributeGetListAttPackSciCompI8(target, name, attpack, valueLis
   integer :: localrc, ii, local_itemcount
   logical :: local_isPresent
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -21425,11 +23196,18 @@ subroutine ESMF_AttributeGetListObjSciCompI8(target, name, valueList, defaultval
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -21437,13 +23215,13 @@ subroutine ESMF_AttributeGetListObjSciCompI8(target, name, valueList, defaultval
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -21485,22 +23263,29 @@ subroutine ESMF_AttributeGetListAttPackSciCompCH(target, name, attpack, valueLis
   integer :: localrc, ii, local_itemcount
   logical :: local_isPresent
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -21542,11 +23327,18 @@ subroutine ESMF_AttributeGetListObjSciCompCH(target, name, valueList, defaultval
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -21554,13 +23346,13 @@ subroutine ESMF_AttributeGetListObjSciCompCH(target, name, valueList, defaultval
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -21602,22 +23394,29 @@ subroutine ESMF_AttributeGetListAttPackSciCompLG(target, name, attpack, valueLis
   integer :: localrc, ii, local_itemcount
   logical :: local_isPresent
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -21659,11 +23458,18 @@ subroutine ESMF_AttributeGetListObjSciCompLG(target, name, valueList, defaultval
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -21671,13 +23477,13 @@ subroutine ESMF_AttributeGetListObjSciCompLG(target, name, valueList, defaultval
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -21719,22 +23525,29 @@ subroutine ESMF_AttributeGetListAttPackDistGridR4(target, name, attpack, valueLi
   integer :: localrc, ii, local_itemcount
   logical :: local_isPresent
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -21776,11 +23589,18 @@ subroutine ESMF_AttributeGetListObjDistGridR4(target, name, valueList, defaultva
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -21788,13 +23608,13 @@ subroutine ESMF_AttributeGetListObjDistGridR4(target, name, valueList, defaultva
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -21836,22 +23656,29 @@ subroutine ESMF_AttributeGetListAttPackDistGridR8(target, name, attpack, valueLi
   integer :: localrc, ii, local_itemcount
   logical :: local_isPresent
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -21893,11 +23720,18 @@ subroutine ESMF_AttributeGetListObjDistGridR8(target, name, valueList, defaultva
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -21905,13 +23739,13 @@ subroutine ESMF_AttributeGetListObjDistGridR8(target, name, valueList, defaultva
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -21953,22 +23787,29 @@ subroutine ESMF_AttributeGetListAttPackDistGridI4(target, name, attpack, valueLi
   integer :: localrc, ii, local_itemcount
   logical :: local_isPresent
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -22010,11 +23851,18 @@ subroutine ESMF_AttributeGetListObjDistGridI4(target, name, valueList, defaultva
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -22022,13 +23870,13 @@ subroutine ESMF_AttributeGetListObjDistGridI4(target, name, valueList, defaultva
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -22070,22 +23918,29 @@ subroutine ESMF_AttributeGetListAttPackDistGridI8(target, name, attpack, valueLi
   integer :: localrc, ii, local_itemcount
   logical :: local_isPresent
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -22127,11 +23982,18 @@ subroutine ESMF_AttributeGetListObjDistGridI8(target, name, valueList, defaultva
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -22139,13 +24001,13 @@ subroutine ESMF_AttributeGetListObjDistGridI8(target, name, valueList, defaultva
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -22187,22 +24049,29 @@ subroutine ESMF_AttributeGetListAttPackDistGridCH(target, name, attpack, valueLi
   integer :: localrc, ii, local_itemcount
   logical :: local_isPresent
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -22244,11 +24113,18 @@ subroutine ESMF_AttributeGetListObjDistGridCH(target, name, valueList, defaultva
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -22256,13 +24132,13 @@ subroutine ESMF_AttributeGetListObjDistGridCH(target, name, valueList, defaultva
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -22304,22 +24180,29 @@ subroutine ESMF_AttributeGetListAttPackDistGridLG(target, name, attpack, valueLi
   integer :: localrc, ii, local_itemcount
   logical :: local_isPresent
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -22361,11 +24244,18 @@ subroutine ESMF_AttributeGetListObjDistGridLG(target, name, valueList, defaultva
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -22373,13 +24263,13 @@ subroutine ESMF_AttributeGetListObjDistGridLG(target, name, valueList, defaultva
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -22421,22 +24311,29 @@ subroutine ESMF_AttributeGetListAttPackFieldR4(target, name, attpack, valueList,
   integer :: localrc, ii, local_itemcount
   logical :: local_isPresent
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -22478,11 +24375,18 @@ subroutine ESMF_AttributeGetListObjFieldR4(target, name, valueList, defaultvalue
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -22490,13 +24394,13 @@ subroutine ESMF_AttributeGetListObjFieldR4(target, name, valueList, defaultvalue
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -22538,22 +24442,29 @@ subroutine ESMF_AttributeGetListAttPackFieldR8(target, name, attpack, valueList,
   integer :: localrc, ii, local_itemcount
   logical :: local_isPresent
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -22595,11 +24506,18 @@ subroutine ESMF_AttributeGetListObjFieldR8(target, name, valueList, defaultvalue
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -22607,13 +24525,13 @@ subroutine ESMF_AttributeGetListObjFieldR8(target, name, valueList, defaultvalue
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -22655,22 +24573,29 @@ subroutine ESMF_AttributeGetListAttPackFieldI4(target, name, attpack, valueList,
   integer :: localrc, ii, local_itemcount
   logical :: local_isPresent
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -22712,11 +24637,18 @@ subroutine ESMF_AttributeGetListObjFieldI4(target, name, valueList, defaultvalue
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -22724,13 +24656,13 @@ subroutine ESMF_AttributeGetListObjFieldI4(target, name, valueList, defaultvalue
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -22772,22 +24704,29 @@ subroutine ESMF_AttributeGetListAttPackFieldI8(target, name, attpack, valueList,
   integer :: localrc, ii, local_itemcount
   logical :: local_isPresent
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -22829,11 +24768,18 @@ subroutine ESMF_AttributeGetListObjFieldI8(target, name, valueList, defaultvalue
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -22841,13 +24787,13 @@ subroutine ESMF_AttributeGetListObjFieldI8(target, name, valueList, defaultvalue
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -22889,22 +24835,29 @@ subroutine ESMF_AttributeGetListAttPackFieldCH(target, name, attpack, valueList,
   integer :: localrc, ii, local_itemcount
   logical :: local_isPresent
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -22946,11 +24899,18 @@ subroutine ESMF_AttributeGetListObjFieldCH(target, name, valueList, defaultvalue
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -22958,13 +24918,13 @@ subroutine ESMF_AttributeGetListObjFieldCH(target, name, valueList, defaultvalue
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -23006,22 +24966,29 @@ subroutine ESMF_AttributeGetListAttPackFieldLG(target, name, attpack, valueList,
   integer :: localrc, ii, local_itemcount
   logical :: local_isPresent
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -23063,11 +25030,18 @@ subroutine ESMF_AttributeGetListObjFieldLG(target, name, valueList, defaultvalue
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -23075,13 +25049,13 @@ subroutine ESMF_AttributeGetListObjFieldLG(target, name, valueList, defaultvalue
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -23123,22 +25097,29 @@ subroutine ESMF_AttributeGetListAttPackFieldBundleR4(target, name, attpack, valu
   integer :: localrc, ii, local_itemcount
   logical :: local_isPresent
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -23180,11 +25161,18 @@ subroutine ESMF_AttributeGetListObjFieldBundleR4(target, name, valueList, defaul
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -23192,13 +25180,13 @@ subroutine ESMF_AttributeGetListObjFieldBundleR4(target, name, valueList, defaul
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -23240,22 +25228,29 @@ subroutine ESMF_AttributeGetListAttPackFieldBundleR8(target, name, attpack, valu
   integer :: localrc, ii, local_itemcount
   logical :: local_isPresent
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -23297,11 +25292,18 @@ subroutine ESMF_AttributeGetListObjFieldBundleR8(target, name, valueList, defaul
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -23309,13 +25311,13 @@ subroutine ESMF_AttributeGetListObjFieldBundleR8(target, name, valueList, defaul
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -23357,22 +25359,29 @@ subroutine ESMF_AttributeGetListAttPackFieldBundleI4(target, name, attpack, valu
   integer :: localrc, ii, local_itemcount
   logical :: local_isPresent
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -23414,11 +25423,18 @@ subroutine ESMF_AttributeGetListObjFieldBundleI4(target, name, valueList, defaul
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -23426,13 +25442,13 @@ subroutine ESMF_AttributeGetListObjFieldBundleI4(target, name, valueList, defaul
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -23474,22 +25490,29 @@ subroutine ESMF_AttributeGetListAttPackFieldBundleI8(target, name, attpack, valu
   integer :: localrc, ii, local_itemcount
   logical :: local_isPresent
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -23531,11 +25554,18 @@ subroutine ESMF_AttributeGetListObjFieldBundleI8(target, name, valueList, defaul
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -23543,13 +25573,13 @@ subroutine ESMF_AttributeGetListObjFieldBundleI8(target, name, valueList, defaul
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -23591,22 +25621,29 @@ subroutine ESMF_AttributeGetListAttPackFieldBundleCH(target, name, attpack, valu
   integer :: localrc, ii, local_itemcount
   logical :: local_isPresent
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -23648,11 +25685,18 @@ subroutine ESMF_AttributeGetListObjFieldBundleCH(target, name, valueList, defaul
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -23660,13 +25704,13 @@ subroutine ESMF_AttributeGetListObjFieldBundleCH(target, name, valueList, defaul
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -23708,22 +25752,29 @@ subroutine ESMF_AttributeGetListAttPackFieldBundleLG(target, name, attpack, valu
   integer :: localrc, ii, local_itemcount
   logical :: local_isPresent
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -23765,11 +25816,18 @@ subroutine ESMF_AttributeGetListObjFieldBundleLG(target, name, valueList, defaul
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -23777,13 +25835,13 @@ subroutine ESMF_AttributeGetListObjFieldBundleLG(target, name, valueList, defaul
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -23825,22 +25883,29 @@ subroutine ESMF_AttributeGetListAttPackGridR4(target, name, attpack, valueList, 
   integer :: localrc, ii, local_itemcount
   logical :: local_isPresent
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -23882,11 +25947,18 @@ subroutine ESMF_AttributeGetListObjGridR4(target, name, valueList, defaultvalueL
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -23894,13 +25966,13 @@ subroutine ESMF_AttributeGetListObjGridR4(target, name, valueList, defaultvalueL
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -23942,22 +26014,29 @@ subroutine ESMF_AttributeGetListAttPackGridR8(target, name, attpack, valueList, 
   integer :: localrc, ii, local_itemcount
   logical :: local_isPresent
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -23999,11 +26078,18 @@ subroutine ESMF_AttributeGetListObjGridR8(target, name, valueList, defaultvalueL
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -24011,13 +26097,13 @@ subroutine ESMF_AttributeGetListObjGridR8(target, name, valueList, defaultvalueL
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -24059,22 +26145,29 @@ subroutine ESMF_AttributeGetListAttPackGridI4(target, name, attpack, valueList, 
   integer :: localrc, ii, local_itemcount
   logical :: local_isPresent
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -24116,11 +26209,18 @@ subroutine ESMF_AttributeGetListObjGridI4(target, name, valueList, defaultvalueL
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -24128,13 +26228,13 @@ subroutine ESMF_AttributeGetListObjGridI4(target, name, valueList, defaultvalueL
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -24176,22 +26276,29 @@ subroutine ESMF_AttributeGetListAttPackGridI8(target, name, attpack, valueList, 
   integer :: localrc, ii, local_itemcount
   logical :: local_isPresent
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -24233,11 +26340,18 @@ subroutine ESMF_AttributeGetListObjGridI8(target, name, valueList, defaultvalueL
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -24245,13 +26359,13 @@ subroutine ESMF_AttributeGetListObjGridI8(target, name, valueList, defaultvalueL
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -24293,22 +26407,29 @@ subroutine ESMF_AttributeGetListAttPackGridCH(target, name, attpack, valueList, 
   integer :: localrc, ii, local_itemcount
   logical :: local_isPresent
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -24350,11 +26471,18 @@ subroutine ESMF_AttributeGetListObjGridCH(target, name, valueList, defaultvalueL
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -24362,13 +26490,13 @@ subroutine ESMF_AttributeGetListObjGridCH(target, name, valueList, defaultvalueL
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -24410,22 +26538,29 @@ subroutine ESMF_AttributeGetListAttPackGridLG(target, name, attpack, valueList, 
   integer :: localrc, ii, local_itemcount
   logical :: local_isPresent
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -24467,11 +26602,18 @@ subroutine ESMF_AttributeGetListObjGridLG(target, name, valueList, defaultvalueL
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -24479,13 +26621,13 @@ subroutine ESMF_AttributeGetListObjGridLG(target, name, valueList, defaultvalueL
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -24527,22 +26669,29 @@ subroutine ESMF_AttributeGetListAttPackStateR4(target, name, attpack, valueList,
   integer :: localrc, ii, local_itemcount
   logical :: local_isPresent
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -24584,11 +26733,18 @@ subroutine ESMF_AttributeGetListObjStateR4(target, name, valueList, defaultvalue
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -24596,13 +26752,13 @@ subroutine ESMF_AttributeGetListObjStateR4(target, name, valueList, defaultvalue
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -24644,22 +26800,29 @@ subroutine ESMF_AttributeGetListAttPackStateR8(target, name, attpack, valueList,
   integer :: localrc, ii, local_itemcount
   logical :: local_isPresent
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -24701,11 +26864,18 @@ subroutine ESMF_AttributeGetListObjStateR8(target, name, valueList, defaultvalue
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -24713,13 +26883,13 @@ subroutine ESMF_AttributeGetListObjStateR8(target, name, valueList, defaultvalue
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -24761,22 +26931,29 @@ subroutine ESMF_AttributeGetListAttPackStateI4(target, name, attpack, valueList,
   integer :: localrc, ii, local_itemcount
   logical :: local_isPresent
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -24818,11 +26995,18 @@ subroutine ESMF_AttributeGetListObjStateI4(target, name, valueList, defaultvalue
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -24830,13 +27014,13 @@ subroutine ESMF_AttributeGetListObjStateI4(target, name, valueList, defaultvalue
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -24878,22 +27062,29 @@ subroutine ESMF_AttributeGetListAttPackStateI8(target, name, attpack, valueList,
   integer :: localrc, ii, local_itemcount
   logical :: local_isPresent
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -24935,11 +27126,18 @@ subroutine ESMF_AttributeGetListObjStateI8(target, name, valueList, defaultvalue
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -24947,13 +27145,13 @@ subroutine ESMF_AttributeGetListObjStateI8(target, name, valueList, defaultvalue
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -24995,22 +27193,29 @@ subroutine ESMF_AttributeGetListAttPackStateCH(target, name, attpack, valueList,
   integer :: localrc, ii, local_itemcount
   logical :: local_isPresent
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -25052,11 +27257,18 @@ subroutine ESMF_AttributeGetListObjStateCH(target, name, valueList, defaultvalue
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -25064,13 +27276,13 @@ subroutine ESMF_AttributeGetListObjStateCH(target, name, valueList, defaultvalue
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -25112,22 +27324,29 @@ subroutine ESMF_AttributeGetListAttPackStateLG(target, name, attpack, valueList,
   integer :: localrc, ii, local_itemcount
   logical :: local_isPresent
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -25169,11 +27388,18 @@ subroutine ESMF_AttributeGetListObjStateLG(target, name, valueList, defaultvalue
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -25181,13 +27407,13 @@ subroutine ESMF_AttributeGetListObjStateLG(target, name, valueList, defaultvalue
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -25229,22 +27455,29 @@ subroutine ESMF_AttributeGetListAttPackLocStreamR4(target, name, attpack, valueL
   integer :: localrc, ii, local_itemcount
   logical :: local_isPresent
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -25286,11 +27519,18 @@ subroutine ESMF_AttributeGetListObjLocStreamR4(target, name, valueList, defaultv
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -25298,13 +27538,13 @@ subroutine ESMF_AttributeGetListObjLocStreamR4(target, name, valueList, defaultv
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -25346,22 +27586,29 @@ subroutine ESMF_AttributeGetListAttPackLocStreamR8(target, name, attpack, valueL
   integer :: localrc, ii, local_itemcount
   logical :: local_isPresent
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -25403,11 +27650,18 @@ subroutine ESMF_AttributeGetListObjLocStreamR8(target, name, valueList, defaultv
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -25415,13 +27669,13 @@ subroutine ESMF_AttributeGetListObjLocStreamR8(target, name, valueList, defaultv
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -25463,22 +27717,29 @@ subroutine ESMF_AttributeGetListAttPackLocStreamI4(target, name, attpack, valueL
   integer :: localrc, ii, local_itemcount
   logical :: local_isPresent
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -25520,11 +27781,18 @@ subroutine ESMF_AttributeGetListObjLocStreamI4(target, name, valueList, defaultv
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -25532,13 +27800,13 @@ subroutine ESMF_AttributeGetListObjLocStreamI4(target, name, valueList, defaultv
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -25580,22 +27848,29 @@ subroutine ESMF_AttributeGetListAttPackLocStreamI8(target, name, attpack, valueL
   integer :: localrc, ii, local_itemcount
   logical :: local_isPresent
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -25637,11 +27912,18 @@ subroutine ESMF_AttributeGetListObjLocStreamI8(target, name, valueList, defaultv
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -25649,13 +27931,13 @@ subroutine ESMF_AttributeGetListObjLocStreamI8(target, name, valueList, defaultv
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -25697,22 +27979,29 @@ subroutine ESMF_AttributeGetListAttPackLocStreamCH(target, name, attpack, valueL
   integer :: localrc, ii, local_itemcount
   logical :: local_isPresent
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -25754,11 +28043,18 @@ subroutine ESMF_AttributeGetListObjLocStreamCH(target, name, valueList, defaultv
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -25766,13 +28062,13 @@ subroutine ESMF_AttributeGetListObjLocStreamCH(target, name, valueList, defaultv
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -25814,22 +28110,29 @@ subroutine ESMF_AttributeGetListAttPackLocStreamLG(target, name, attpack, valueL
   integer :: localrc, ii, local_itemcount
   logical :: local_isPresent
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(attpack%getPayload(), key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -25871,11 +28174,18 @@ subroutine ESMF_AttributeGetListObjLocStreamLG(target, name, valueList, defaultv
   character(:), allocatable :: key
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -25883,13 +28193,13 @@ subroutine ESMF_AttributeGetListObjLocStreamLG(target, name, valueList, defaultv
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=attnestflag, rc=localrc)
+  local_isPresent = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = local_isPresent
 
   if (local_isPresent) then
-    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=attnestflag, rc=localrc)
+    call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -26006,14 +28316,21 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   type(ESMF_AttGetCountFlag) :: l_attcountflag
   integer :: countSingle, countTotal, attPackCount, localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   call ESMF_Info2Inquire(attpack%getPayload(), key=attpack%formatKey(), attrCount=countSingle, &
-    attrCountTotal=countTotal, attPackCount=attPackCount, attnestflag=attnestflag, &
+    attrCountTotal=countTotal, attPackCount=attPackCount, attnestflag=local_attnestflag, &
     rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -26053,11 +28370,18 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: countSingle, localrc
   character(:), allocatable :: key
   logical :: is_present, is_structured
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -26072,7 +28396,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   if (present(isPresent)) isPresent = is_present
 
   if (is_present) then
-    call ESMF_Info2Inquire(attpack%getPayload(), key=key, attrCount=itemCount, attnestflag=attnestflag, &
+    call ESMF_Info2Inquire(attpack%getPayload(), key=key, attrCount=itemCount, attnestflag=local_attnestflag, &
       typekind=typekind, isStructured=is_structured, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (.not. is_structured) then
@@ -26108,11 +28432,18 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   logical :: is_present, is_structured
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -26130,7 +28461,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   if (present(isPresent)) isPresent = is_present
 
   if (is_present) then
-    call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, attnestflag=attnestflag, &
+    call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, attnestflag=local_attnestflag, &
       typekind=typekind, isStructured=is_structured, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (.not. is_structured) then
@@ -26224,6 +28555,8 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
+  logical, parameter :: debug = .true. !tdk:p REVERT
+
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
@@ -26238,14 +28571,25 @@ end if
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": convention="//TRIM(convention))
+    call ESMF_LogWrite(ESMF_METHOD//": purpose="//TRIM(purpose))
+    call ESMF_LogWrite(ESMF_METHOD//": Info Dump="//ESMF_Info2Dump(info, rc=localrc), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   key = "/"//TRIM(convention)//"/"//TRIM(purpose)
-  is_present = ESMF_Info2IsPresent(info, key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+  is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   ! If the attpack object is provided but it does not exist, then bail out since
   ! the attpack will never be initialized properly
   if (.not. is_present) then
     if (present(attpack)) then
+      if (debug) then
+        call ESMF_LogWrite(ESMF_METHOD//": convention="//TRIM(convention))
+        call ESMF_LogWrite(ESMF_METHOD//": purpose="//TRIM(purpose))
+      end if
       if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="convention/purpose not found and attpack object present", &
                              ESMF_CONTEXT, rcToReturn=rc)) return
     end if
@@ -26258,6 +28602,10 @@ end if
     if (present(attpack)) then
       call attpack%initialize(info, convention=convention, purpose=purpose, rc=localrc)
       if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+      if (debug) then
+        call ESMF_LogWrite(ESMF_METHOD//": attpack%root_key="//TRIM(attpack%root_key), rc=localrc)
+        if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+      end if
     end if
   end if
 
@@ -26391,14 +28739,21 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   type(ESMF_AttGetCountFlag) :: l_attcountflag
   integer :: countSingle, countTotal, attPackCount, localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   call ESMF_Info2Inquire(attpack%getPayload(), key=attpack%formatKey(), attrCount=countSingle, &
-    attrCountTotal=countTotal, attPackCount=attPackCount, attnestflag=attnestflag, &
+    attrCountTotal=countTotal, attPackCount=attPackCount, attnestflag=local_attnestflag, &
     rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -26438,11 +28793,18 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: countSingle, localrc
   character(:), allocatable :: key
   logical :: is_present, is_structured
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -26457,7 +28819,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   if (present(isPresent)) isPresent = is_present
 
   if (is_present) then
-    call ESMF_Info2Inquire(attpack%getPayload(), key=key, attrCount=itemCount, attnestflag=attnestflag, &
+    call ESMF_Info2Inquire(attpack%getPayload(), key=key, attrCount=itemCount, attnestflag=local_attnestflag, &
       typekind=typekind, isStructured=is_structured, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (.not. is_structured) then
@@ -26493,11 +28855,18 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   logical :: is_present, is_structured
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -26515,7 +28884,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   if (present(isPresent)) isPresent = is_present
 
   if (is_present) then
-    call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, attnestflag=attnestflag, &
+    call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, attnestflag=local_attnestflag, &
       typekind=typekind, isStructured=is_structured, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (.not. is_structured) then
@@ -26609,6 +28978,8 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
+  logical, parameter :: debug = .true. !tdk:p REVERT
+
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
@@ -26623,14 +28994,25 @@ end if
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": convention="//TRIM(convention))
+    call ESMF_LogWrite(ESMF_METHOD//": purpose="//TRIM(purpose))
+    call ESMF_LogWrite(ESMF_METHOD//": Info Dump="//ESMF_Info2Dump(info, rc=localrc), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   key = "/"//TRIM(convention)//"/"//TRIM(purpose)
-  is_present = ESMF_Info2IsPresent(info, key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+  is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   ! If the attpack object is provided but it does not exist, then bail out since
   ! the attpack will never be initialized properly
   if (.not. is_present) then
     if (present(attpack)) then
+      if (debug) then
+        call ESMF_LogWrite(ESMF_METHOD//": convention="//TRIM(convention))
+        call ESMF_LogWrite(ESMF_METHOD//": purpose="//TRIM(purpose))
+      end if
       if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="convention/purpose not found and attpack object present", &
                              ESMF_CONTEXT, rcToReturn=rc)) return
     end if
@@ -26643,6 +29025,10 @@ end if
     if (present(attpack)) then
       call attpack%initialize(info, convention=convention, purpose=purpose, rc=localrc)
       if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+      if (debug) then
+        call ESMF_LogWrite(ESMF_METHOD//": attpack%root_key="//TRIM(attpack%root_key), rc=localrc)
+        if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+      end if
     end if
   end if
 
@@ -26776,14 +29162,21 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   type(ESMF_AttGetCountFlag) :: l_attcountflag
   integer :: countSingle, countTotal, attPackCount, localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   call ESMF_Info2Inquire(attpack%getPayload(), key=attpack%formatKey(), attrCount=countSingle, &
-    attrCountTotal=countTotal, attPackCount=attPackCount, attnestflag=attnestflag, &
+    attrCountTotal=countTotal, attPackCount=attPackCount, attnestflag=local_attnestflag, &
     rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -26823,11 +29216,18 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: countSingle, localrc
   character(:), allocatable :: key
   logical :: is_present, is_structured
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -26842,7 +29242,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   if (present(isPresent)) isPresent = is_present
 
   if (is_present) then
-    call ESMF_Info2Inquire(attpack%getPayload(), key=key, attrCount=itemCount, attnestflag=attnestflag, &
+    call ESMF_Info2Inquire(attpack%getPayload(), key=key, attrCount=itemCount, attnestflag=local_attnestflag, &
       typekind=typekind, isStructured=is_structured, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (.not. is_structured) then
@@ -26878,11 +29278,18 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   logical :: is_present, is_structured
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -26900,7 +29307,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   if (present(isPresent)) isPresent = is_present
 
   if (is_present) then
-    call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, attnestflag=attnestflag, &
+    call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, attnestflag=local_attnestflag, &
       typekind=typekind, isStructured=is_structured, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (.not. is_structured) then
@@ -26994,6 +29401,8 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
+  logical, parameter :: debug = .true. !tdk:p REVERT
+
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
@@ -27008,14 +29417,25 @@ end if
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": convention="//TRIM(convention))
+    call ESMF_LogWrite(ESMF_METHOD//": purpose="//TRIM(purpose))
+    call ESMF_LogWrite(ESMF_METHOD//": Info Dump="//ESMF_Info2Dump(info, rc=localrc), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   key = "/"//TRIM(convention)//"/"//TRIM(purpose)
-  is_present = ESMF_Info2IsPresent(info, key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+  is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   ! If the attpack object is provided but it does not exist, then bail out since
   ! the attpack will never be initialized properly
   if (.not. is_present) then
     if (present(attpack)) then
+      if (debug) then
+        call ESMF_LogWrite(ESMF_METHOD//": convention="//TRIM(convention))
+        call ESMF_LogWrite(ESMF_METHOD//": purpose="//TRIM(purpose))
+      end if
       if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="convention/purpose not found and attpack object present", &
                              ESMF_CONTEXT, rcToReturn=rc)) return
     end if
@@ -27028,6 +29448,10 @@ end if
     if (present(attpack)) then
       call attpack%initialize(info, convention=convention, purpose=purpose, rc=localrc)
       if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+      if (debug) then
+        call ESMF_LogWrite(ESMF_METHOD//": attpack%root_key="//TRIM(attpack%root_key), rc=localrc)
+        if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+      end if
     end if
   end if
 
@@ -27161,14 +29585,21 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   type(ESMF_AttGetCountFlag) :: l_attcountflag
   integer :: countSingle, countTotal, attPackCount, localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   call ESMF_Info2Inquire(attpack%getPayload(), key=attpack%formatKey(), attrCount=countSingle, &
-    attrCountTotal=countTotal, attPackCount=attPackCount, attnestflag=attnestflag, &
+    attrCountTotal=countTotal, attPackCount=attPackCount, attnestflag=local_attnestflag, &
     rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -27208,11 +29639,18 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: countSingle, localrc
   character(:), allocatable :: key
   logical :: is_present, is_structured
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -27227,7 +29665,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   if (present(isPresent)) isPresent = is_present
 
   if (is_present) then
-    call ESMF_Info2Inquire(attpack%getPayload(), key=key, attrCount=itemCount, attnestflag=attnestflag, &
+    call ESMF_Info2Inquire(attpack%getPayload(), key=key, attrCount=itemCount, attnestflag=local_attnestflag, &
       typekind=typekind, isStructured=is_structured, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (.not. is_structured) then
@@ -27263,11 +29701,18 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   logical :: is_present, is_structured
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -27285,7 +29730,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   if (present(isPresent)) isPresent = is_present
 
   if (is_present) then
-    call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, attnestflag=attnestflag, &
+    call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, attnestflag=local_attnestflag, &
       typekind=typekind, isStructured=is_structured, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (.not. is_structured) then
@@ -27379,6 +29824,8 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
+  logical, parameter :: debug = .true. !tdk:p REVERT
+
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
@@ -27393,14 +29840,25 @@ end if
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": convention="//TRIM(convention))
+    call ESMF_LogWrite(ESMF_METHOD//": purpose="//TRIM(purpose))
+    call ESMF_LogWrite(ESMF_METHOD//": Info Dump="//ESMF_Info2Dump(info, rc=localrc), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   key = "/"//TRIM(convention)//"/"//TRIM(purpose)
-  is_present = ESMF_Info2IsPresent(info, key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+  is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   ! If the attpack object is provided but it does not exist, then bail out since
   ! the attpack will never be initialized properly
   if (.not. is_present) then
     if (present(attpack)) then
+      if (debug) then
+        call ESMF_LogWrite(ESMF_METHOD//": convention="//TRIM(convention))
+        call ESMF_LogWrite(ESMF_METHOD//": purpose="//TRIM(purpose))
+      end if
       if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="convention/purpose not found and attpack object present", &
                              ESMF_CONTEXT, rcToReturn=rc)) return
     end if
@@ -27413,6 +29871,10 @@ end if
     if (present(attpack)) then
       call attpack%initialize(info, convention=convention, purpose=purpose, rc=localrc)
       if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+      if (debug) then
+        call ESMF_LogWrite(ESMF_METHOD//": attpack%root_key="//TRIM(attpack%root_key), rc=localrc)
+        if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+      end if
     end if
   end if
 
@@ -27546,14 +30008,21 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   type(ESMF_AttGetCountFlag) :: l_attcountflag
   integer :: countSingle, countTotal, attPackCount, localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   call ESMF_Info2Inquire(attpack%getPayload(), key=attpack%formatKey(), attrCount=countSingle, &
-    attrCountTotal=countTotal, attPackCount=attPackCount, attnestflag=attnestflag, &
+    attrCountTotal=countTotal, attPackCount=attPackCount, attnestflag=local_attnestflag, &
     rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -27593,11 +30062,18 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: countSingle, localrc
   character(:), allocatable :: key
   logical :: is_present, is_structured
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -27612,7 +30088,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   if (present(isPresent)) isPresent = is_present
 
   if (is_present) then
-    call ESMF_Info2Inquire(attpack%getPayload(), key=key, attrCount=itemCount, attnestflag=attnestflag, &
+    call ESMF_Info2Inquire(attpack%getPayload(), key=key, attrCount=itemCount, attnestflag=local_attnestflag, &
       typekind=typekind, isStructured=is_structured, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (.not. is_structured) then
@@ -27648,11 +30124,18 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   logical :: is_present, is_structured
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -27670,7 +30153,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   if (present(isPresent)) isPresent = is_present
 
   if (is_present) then
-    call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, attnestflag=attnestflag, &
+    call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, attnestflag=local_attnestflag, &
       typekind=typekind, isStructured=is_structured, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (.not. is_structured) then
@@ -27764,6 +30247,8 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
+  logical, parameter :: debug = .true. !tdk:p REVERT
+
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
@@ -27778,14 +30263,25 @@ end if
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": convention="//TRIM(convention))
+    call ESMF_LogWrite(ESMF_METHOD//": purpose="//TRIM(purpose))
+    call ESMF_LogWrite(ESMF_METHOD//": Info Dump="//ESMF_Info2Dump(info, rc=localrc), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   key = "/"//TRIM(convention)//"/"//TRIM(purpose)
-  is_present = ESMF_Info2IsPresent(info, key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+  is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   ! If the attpack object is provided but it does not exist, then bail out since
   ! the attpack will never be initialized properly
   if (.not. is_present) then
     if (present(attpack)) then
+      if (debug) then
+        call ESMF_LogWrite(ESMF_METHOD//": convention="//TRIM(convention))
+        call ESMF_LogWrite(ESMF_METHOD//": purpose="//TRIM(purpose))
+      end if
       if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="convention/purpose not found and attpack object present", &
                              ESMF_CONTEXT, rcToReturn=rc)) return
     end if
@@ -27798,6 +30294,10 @@ end if
     if (present(attpack)) then
       call attpack%initialize(info, convention=convention, purpose=purpose, rc=localrc)
       if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+      if (debug) then
+        call ESMF_LogWrite(ESMF_METHOD//": attpack%root_key="//TRIM(attpack%root_key), rc=localrc)
+        if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+      end if
     end if
   end if
 
@@ -27931,14 +30431,21 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   type(ESMF_AttGetCountFlag) :: l_attcountflag
   integer :: countSingle, countTotal, attPackCount, localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   call ESMF_Info2Inquire(attpack%getPayload(), key=attpack%formatKey(), attrCount=countSingle, &
-    attrCountTotal=countTotal, attPackCount=attPackCount, attnestflag=attnestflag, &
+    attrCountTotal=countTotal, attPackCount=attPackCount, attnestflag=local_attnestflag, &
     rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -27978,11 +30485,18 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: countSingle, localrc
   character(:), allocatable :: key
   logical :: is_present, is_structured
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -27997,7 +30511,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   if (present(isPresent)) isPresent = is_present
 
   if (is_present) then
-    call ESMF_Info2Inquire(attpack%getPayload(), key=key, attrCount=itemCount, attnestflag=attnestflag, &
+    call ESMF_Info2Inquire(attpack%getPayload(), key=key, attrCount=itemCount, attnestflag=local_attnestflag, &
       typekind=typekind, isStructured=is_structured, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (.not. is_structured) then
@@ -28033,11 +30547,18 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   logical :: is_present, is_structured
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -28055,7 +30576,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   if (present(isPresent)) isPresent = is_present
 
   if (is_present) then
-    call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, attnestflag=attnestflag, &
+    call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, attnestflag=local_attnestflag, &
       typekind=typekind, isStructured=is_structured, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (.not. is_structured) then
@@ -28149,6 +30670,8 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
+  logical, parameter :: debug = .true. !tdk:p REVERT
+
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
@@ -28163,14 +30686,25 @@ end if
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": convention="//TRIM(convention))
+    call ESMF_LogWrite(ESMF_METHOD//": purpose="//TRIM(purpose))
+    call ESMF_LogWrite(ESMF_METHOD//": Info Dump="//ESMF_Info2Dump(info, rc=localrc), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   key = "/"//TRIM(convention)//"/"//TRIM(purpose)
-  is_present = ESMF_Info2IsPresent(info, key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+  is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   ! If the attpack object is provided but it does not exist, then bail out since
   ! the attpack will never be initialized properly
   if (.not. is_present) then
     if (present(attpack)) then
+      if (debug) then
+        call ESMF_LogWrite(ESMF_METHOD//": convention="//TRIM(convention))
+        call ESMF_LogWrite(ESMF_METHOD//": purpose="//TRIM(purpose))
+      end if
       if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="convention/purpose not found and attpack object present", &
                              ESMF_CONTEXT, rcToReturn=rc)) return
     end if
@@ -28183,6 +30717,10 @@ end if
     if (present(attpack)) then
       call attpack%initialize(info, convention=convention, purpose=purpose, rc=localrc)
       if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+      if (debug) then
+        call ESMF_LogWrite(ESMF_METHOD//": attpack%root_key="//TRIM(attpack%root_key), rc=localrc)
+        if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+      end if
     end if
   end if
 
@@ -28316,14 +30854,21 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   type(ESMF_AttGetCountFlag) :: l_attcountflag
   integer :: countSingle, countTotal, attPackCount, localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   call ESMF_Info2Inquire(attpack%getPayload(), key=attpack%formatKey(), attrCount=countSingle, &
-    attrCountTotal=countTotal, attPackCount=attPackCount, attnestflag=attnestflag, &
+    attrCountTotal=countTotal, attPackCount=attPackCount, attnestflag=local_attnestflag, &
     rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -28363,11 +30908,18 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: countSingle, localrc
   character(:), allocatable :: key
   logical :: is_present, is_structured
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -28382,7 +30934,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   if (present(isPresent)) isPresent = is_present
 
   if (is_present) then
-    call ESMF_Info2Inquire(attpack%getPayload(), key=key, attrCount=itemCount, attnestflag=attnestflag, &
+    call ESMF_Info2Inquire(attpack%getPayload(), key=key, attrCount=itemCount, attnestflag=local_attnestflag, &
       typekind=typekind, isStructured=is_structured, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (.not. is_structured) then
@@ -28418,11 +30970,18 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   logical :: is_present, is_structured
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -28440,7 +30999,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   if (present(isPresent)) isPresent = is_present
 
   if (is_present) then
-    call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, attnestflag=attnestflag, &
+    call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, attnestflag=local_attnestflag, &
       typekind=typekind, isStructured=is_structured, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (.not. is_structured) then
@@ -28534,6 +31093,8 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
+  logical, parameter :: debug = .true. !tdk:p REVERT
+
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
@@ -28548,14 +31109,25 @@ end if
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": convention="//TRIM(convention))
+    call ESMF_LogWrite(ESMF_METHOD//": purpose="//TRIM(purpose))
+    call ESMF_LogWrite(ESMF_METHOD//": Info Dump="//ESMF_Info2Dump(info, rc=localrc), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   key = "/"//TRIM(convention)//"/"//TRIM(purpose)
-  is_present = ESMF_Info2IsPresent(info, key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+  is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   ! If the attpack object is provided but it does not exist, then bail out since
   ! the attpack will never be initialized properly
   if (.not. is_present) then
     if (present(attpack)) then
+      if (debug) then
+        call ESMF_LogWrite(ESMF_METHOD//": convention="//TRIM(convention))
+        call ESMF_LogWrite(ESMF_METHOD//": purpose="//TRIM(purpose))
+      end if
       if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="convention/purpose not found and attpack object present", &
                              ESMF_CONTEXT, rcToReturn=rc)) return
     end if
@@ -28568,6 +31140,10 @@ end if
     if (present(attpack)) then
       call attpack%initialize(info, convention=convention, purpose=purpose, rc=localrc)
       if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+      if (debug) then
+        call ESMF_LogWrite(ESMF_METHOD//": attpack%root_key="//TRIM(attpack%root_key), rc=localrc)
+        if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+      end if
     end if
   end if
 
@@ -28701,14 +31277,21 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   type(ESMF_AttGetCountFlag) :: l_attcountflag
   integer :: countSingle, countTotal, attPackCount, localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   call ESMF_Info2Inquire(attpack%getPayload(), key=attpack%formatKey(), attrCount=countSingle, &
-    attrCountTotal=countTotal, attPackCount=attPackCount, attnestflag=attnestflag, &
+    attrCountTotal=countTotal, attPackCount=attPackCount, attnestflag=local_attnestflag, &
     rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -28748,11 +31331,18 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: countSingle, localrc
   character(:), allocatable :: key
   logical :: is_present, is_structured
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -28767,7 +31357,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   if (present(isPresent)) isPresent = is_present
 
   if (is_present) then
-    call ESMF_Info2Inquire(attpack%getPayload(), key=key, attrCount=itemCount, attnestflag=attnestflag, &
+    call ESMF_Info2Inquire(attpack%getPayload(), key=key, attrCount=itemCount, attnestflag=local_attnestflag, &
       typekind=typekind, isStructured=is_structured, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (.not. is_structured) then
@@ -28803,11 +31393,18 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   logical :: is_present, is_structured
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -28825,7 +31422,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   if (present(isPresent)) isPresent = is_present
 
   if (is_present) then
-    call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, attnestflag=attnestflag, &
+    call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, attnestflag=local_attnestflag, &
       typekind=typekind, isStructured=is_structured, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (.not. is_structured) then
@@ -28919,6 +31516,8 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
+  logical, parameter :: debug = .true. !tdk:p REVERT
+
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
@@ -28933,14 +31532,25 @@ end if
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": convention="//TRIM(convention))
+    call ESMF_LogWrite(ESMF_METHOD//": purpose="//TRIM(purpose))
+    call ESMF_LogWrite(ESMF_METHOD//": Info Dump="//ESMF_Info2Dump(info, rc=localrc), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   key = "/"//TRIM(convention)//"/"//TRIM(purpose)
-  is_present = ESMF_Info2IsPresent(info, key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+  is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   ! If the attpack object is provided but it does not exist, then bail out since
   ! the attpack will never be initialized properly
   if (.not. is_present) then
     if (present(attpack)) then
+      if (debug) then
+        call ESMF_LogWrite(ESMF_METHOD//": convention="//TRIM(convention))
+        call ESMF_LogWrite(ESMF_METHOD//": purpose="//TRIM(purpose))
+      end if
       if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="convention/purpose not found and attpack object present", &
                              ESMF_CONTEXT, rcToReturn=rc)) return
     end if
@@ -28953,6 +31563,10 @@ end if
     if (present(attpack)) then
       call attpack%initialize(info, convention=convention, purpose=purpose, rc=localrc)
       if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+      if (debug) then
+        call ESMF_LogWrite(ESMF_METHOD//": attpack%root_key="//TRIM(attpack%root_key), rc=localrc)
+        if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+      end if
     end if
   end if
 
@@ -29086,14 +31700,21 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   type(ESMF_AttGetCountFlag) :: l_attcountflag
   integer :: countSingle, countTotal, attPackCount, localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   call ESMF_Info2Inquire(attpack%getPayload(), key=attpack%formatKey(), attrCount=countSingle, &
-    attrCountTotal=countTotal, attPackCount=attPackCount, attnestflag=attnestflag, &
+    attrCountTotal=countTotal, attPackCount=attPackCount, attnestflag=local_attnestflag, &
     rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -29133,11 +31754,18 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: countSingle, localrc
   character(:), allocatable :: key
   logical :: is_present, is_structured
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -29152,7 +31780,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   if (present(isPresent)) isPresent = is_present
 
   if (is_present) then
-    call ESMF_Info2Inquire(attpack%getPayload(), key=key, attrCount=itemCount, attnestflag=attnestflag, &
+    call ESMF_Info2Inquire(attpack%getPayload(), key=key, attrCount=itemCount, attnestflag=local_attnestflag, &
       typekind=typekind, isStructured=is_structured, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (.not. is_structured) then
@@ -29188,11 +31816,18 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   logical :: is_present, is_structured
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -29210,7 +31845,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   if (present(isPresent)) isPresent = is_present
 
   if (is_present) then
-    call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, attnestflag=attnestflag, &
+    call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, attnestflag=local_attnestflag, &
       typekind=typekind, isStructured=is_structured, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (.not. is_structured) then
@@ -29304,6 +31939,8 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
+  logical, parameter :: debug = .true. !tdk:p REVERT
+
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
@@ -29318,14 +31955,25 @@ end if
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": convention="//TRIM(convention))
+    call ESMF_LogWrite(ESMF_METHOD//": purpose="//TRIM(purpose))
+    call ESMF_LogWrite(ESMF_METHOD//": Info Dump="//ESMF_Info2Dump(info, rc=localrc), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   key = "/"//TRIM(convention)//"/"//TRIM(purpose)
-  is_present = ESMF_Info2IsPresent(info, key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+  is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   ! If the attpack object is provided but it does not exist, then bail out since
   ! the attpack will never be initialized properly
   if (.not. is_present) then
     if (present(attpack)) then
+      if (debug) then
+        call ESMF_LogWrite(ESMF_METHOD//": convention="//TRIM(convention))
+        call ESMF_LogWrite(ESMF_METHOD//": purpose="//TRIM(purpose))
+      end if
       if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="convention/purpose not found and attpack object present", &
                              ESMF_CONTEXT, rcToReturn=rc)) return
     end if
@@ -29338,6 +31986,10 @@ end if
     if (present(attpack)) then
       call attpack%initialize(info, convention=convention, purpose=purpose, rc=localrc)
       if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+      if (debug) then
+        call ESMF_LogWrite(ESMF_METHOD//": attpack%root_key="//TRIM(attpack%root_key), rc=localrc)
+        if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+      end if
     end if
   end if
 
@@ -29471,14 +32123,21 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   type(ESMF_AttGetCountFlag) :: l_attcountflag
   integer :: countSingle, countTotal, attPackCount, localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   call ESMF_Info2Inquire(attpack%getPayload(), key=attpack%formatKey(), attrCount=countSingle, &
-    attrCountTotal=countTotal, attPackCount=attPackCount, attnestflag=attnestflag, &
+    attrCountTotal=countTotal, attPackCount=attPackCount, attnestflag=local_attnestflag, &
     rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -29518,11 +32177,18 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: countSingle, localrc
   character(:), allocatable :: key
   logical :: is_present, is_structured
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -29537,7 +32203,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   if (present(isPresent)) isPresent = is_present
 
   if (is_present) then
-    call ESMF_Info2Inquire(attpack%getPayload(), key=key, attrCount=itemCount, attnestflag=attnestflag, &
+    call ESMF_Info2Inquire(attpack%getPayload(), key=key, attrCount=itemCount, attnestflag=local_attnestflag, &
       typekind=typekind, isStructured=is_structured, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (.not. is_structured) then
@@ -29573,11 +32239,18 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   logical :: is_present, is_structured
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -29595,7 +32268,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   if (present(isPresent)) isPresent = is_present
 
   if (is_present) then
-    call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, attnestflag=attnestflag, &
+    call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, attnestflag=local_attnestflag, &
       typekind=typekind, isStructured=is_structured, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (.not. is_structured) then
@@ -29689,6 +32362,8 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
+  logical, parameter :: debug = .true. !tdk:p REVERT
+
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
@@ -29703,14 +32378,25 @@ end if
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": convention="//TRIM(convention))
+    call ESMF_LogWrite(ESMF_METHOD//": purpose="//TRIM(purpose))
+    call ESMF_LogWrite(ESMF_METHOD//": Info Dump="//ESMF_Info2Dump(info, rc=localrc), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   key = "/"//TRIM(convention)//"/"//TRIM(purpose)
-  is_present = ESMF_Info2IsPresent(info, key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+  is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   ! If the attpack object is provided but it does not exist, then bail out since
   ! the attpack will never be initialized properly
   if (.not. is_present) then
     if (present(attpack)) then
+      if (debug) then
+        call ESMF_LogWrite(ESMF_METHOD//": convention="//TRIM(convention))
+        call ESMF_LogWrite(ESMF_METHOD//": purpose="//TRIM(purpose))
+      end if
       if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="convention/purpose not found and attpack object present", &
                              ESMF_CONTEXT, rcToReturn=rc)) return
     end if
@@ -29723,6 +32409,10 @@ end if
     if (present(attpack)) then
       call attpack%initialize(info, convention=convention, purpose=purpose, rc=localrc)
       if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+      if (debug) then
+        call ESMF_LogWrite(ESMF_METHOD//": attpack%root_key="//TRIM(attpack%root_key), rc=localrc)
+        if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+      end if
     end if
   end if
 
@@ -29856,14 +32546,21 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   type(ESMF_AttGetCountFlag) :: l_attcountflag
   integer :: countSingle, countTotal, attPackCount, localrc
   character(:), allocatable :: key
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
 
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
+
   call ESMF_Info2Inquire(attpack%getPayload(), key=attpack%formatKey(), attrCount=countSingle, &
-    attrCountTotal=countTotal, attPackCount=attPackCount, attnestflag=attnestflag, &
+    attrCountTotal=countTotal, attPackCount=attPackCount, attnestflag=local_attnestflag, &
     rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -29903,11 +32600,18 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: countSingle, localrc
   character(:), allocatable :: key
   logical :: is_present, is_structured
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   key = attpack%formatKey(name=name, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -29922,7 +32626,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   if (present(isPresent)) isPresent = is_present
 
   if (is_present) then
-    call ESMF_Info2Inquire(attpack%getPayload(), key=key, attrCount=itemCount, attnestflag=attnestflag, &
+    call ESMF_Info2Inquire(attpack%getPayload(), key=key, attrCount=itemCount, attnestflag=local_attnestflag, &
       typekind=typekind, isStructured=is_structured, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (.not. is_structured) then
@@ -29958,11 +32662,18 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   logical :: is_present, is_structured
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+
+if (present(attnestflag)) then
+  local_attnestflag = attnestflag
+else
+  local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+end if
 
   call format_key(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -29980,7 +32691,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   if (present(isPresent)) isPresent = is_present
 
   if (is_present) then
-    call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, attnestflag=attnestflag, &
+    call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, attnestflag=local_attnestflag, &
       typekind=typekind, isStructured=is_structured, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (.not. is_structured) then
@@ -30074,6 +32785,8 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
+  logical, parameter :: debug = .true. !tdk:p REVERT
+
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
@@ -30088,14 +32801,25 @@ end if
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": convention="//TRIM(convention))
+    call ESMF_LogWrite(ESMF_METHOD//": purpose="//TRIM(purpose))
+    call ESMF_LogWrite(ESMF_METHOD//": Info Dump="//ESMF_Info2Dump(info, rc=localrc), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
   key = "/"//TRIM(convention)//"/"//TRIM(purpose)
-  is_present = ESMF_Info2IsPresent(info, key, attnestflag=attnestflag, isPointer=.true., rc=localrc)
+  is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   ! If the attpack object is provided but it does not exist, then bail out since
   ! the attpack will never be initialized properly
   if (.not. is_present) then
     if (present(attpack)) then
+      if (debug) then
+        call ESMF_LogWrite(ESMF_METHOD//": convention="//TRIM(convention))
+        call ESMF_LogWrite(ESMF_METHOD//": purpose="//TRIM(purpose))
+      end if
       if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="convention/purpose not found and attpack object present", &
                              ESMF_CONTEXT, rcToReturn=rc)) return
     end if
@@ -30108,6 +32832,10 @@ end if
     if (present(attpack)) then
       call attpack%initialize(info, convention=convention, purpose=purpose, rc=localrc)
       if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+      if (debug) then
+        call ESMF_LogWrite(ESMF_METHOD//": attpack%root_key="//TRIM(attpack%root_key), rc=localrc)
+        if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+      end if
     end if
   end if
 
@@ -30174,6 +32902,8 @@ subroutine ESMF_AttributeRemoveAttPackArray(target, name, attpack, convention, p
   type(ESMF_Info2) :: info
   character(:), allocatable :: keyParent, keyChild, keyParent2, keyChild2
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical, parameter :: debug = .true. !tdk:debug
+  character(len=ESMF_MAXSTR) :: logmsg
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -30192,6 +32922,13 @@ end if
   else
     ! If no attpack, use target as info source
     info = einq%GetInfo(target, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": info dump=...", rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    call ESMF_LogWrite(ESMF_Info2Dump(info, rc=localrc), rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   end if
 
@@ -30310,6 +33047,8 @@ subroutine ESMF_AttributeRemoveAttPackArrayBundle(target, name, attpack, convent
   type(ESMF_Info2) :: info
   character(:), allocatable :: keyParent, keyChild, keyParent2, keyChild2
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical, parameter :: debug = .true. !tdk:debug
+  character(len=ESMF_MAXSTR) :: logmsg
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -30328,6 +33067,13 @@ end if
   else
     ! If no attpack, use target as info source
     info = einq%GetInfo(target, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": info dump=...", rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    call ESMF_LogWrite(ESMF_Info2Dump(info, rc=localrc), rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   end if
 
@@ -30446,6 +33192,8 @@ subroutine ESMF_AttributeRemoveAttPackCplComp(target, name, attpack, convention,
   type(ESMF_Info2) :: info
   character(:), allocatable :: keyParent, keyChild, keyParent2, keyChild2
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical, parameter :: debug = .true. !tdk:debug
+  character(len=ESMF_MAXSTR) :: logmsg
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -30464,6 +33212,13 @@ end if
   else
     ! If no attpack, use target as info source
     info = einq%GetInfo(target, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": info dump=...", rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    call ESMF_LogWrite(ESMF_Info2Dump(info, rc=localrc), rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   end if
 
@@ -30582,6 +33337,8 @@ subroutine ESMF_AttributeRemoveAttPackGridComp(target, name, attpack, convention
   type(ESMF_Info2) :: info
   character(:), allocatable :: keyParent, keyChild, keyParent2, keyChild2
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical, parameter :: debug = .true. !tdk:debug
+  character(len=ESMF_MAXSTR) :: logmsg
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -30600,6 +33357,13 @@ end if
   else
     ! If no attpack, use target as info source
     info = einq%GetInfo(target, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": info dump=...", rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    call ESMF_LogWrite(ESMF_Info2Dump(info, rc=localrc), rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   end if
 
@@ -30718,6 +33482,8 @@ subroutine ESMF_AttributeRemoveAttPackSciComp(target, name, attpack, convention,
   type(ESMF_Info2) :: info
   character(:), allocatable :: keyParent, keyChild, keyParent2, keyChild2
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical, parameter :: debug = .true. !tdk:debug
+  character(len=ESMF_MAXSTR) :: logmsg
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -30736,6 +33502,13 @@ end if
   else
     ! If no attpack, use target as info source
     info = einq%GetInfo(target, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": info dump=...", rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    call ESMF_LogWrite(ESMF_Info2Dump(info, rc=localrc), rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   end if
 
@@ -30854,6 +33627,8 @@ subroutine ESMF_AttributeRemoveAttPackDistGrid(target, name, attpack, convention
   type(ESMF_Info2) :: info
   character(:), allocatable :: keyParent, keyChild, keyParent2, keyChild2
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical, parameter :: debug = .true. !tdk:debug
+  character(len=ESMF_MAXSTR) :: logmsg
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -30872,6 +33647,13 @@ end if
   else
     ! If no attpack, use target as info source
     info = einq%GetInfo(target, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": info dump=...", rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    call ESMF_LogWrite(ESMF_Info2Dump(info, rc=localrc), rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   end if
 
@@ -30990,6 +33772,8 @@ subroutine ESMF_AttributeRemoveAttPackField(target, name, attpack, convention, p
   type(ESMF_Info2) :: info
   character(:), allocatable :: keyParent, keyChild, keyParent2, keyChild2
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical, parameter :: debug = .true. !tdk:debug
+  character(len=ESMF_MAXSTR) :: logmsg
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -31008,6 +33792,13 @@ end if
   else
     ! If no attpack, use target as info source
     info = einq%GetInfo(target, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": info dump=...", rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    call ESMF_LogWrite(ESMF_Info2Dump(info, rc=localrc), rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   end if
 
@@ -31126,6 +33917,8 @@ subroutine ESMF_AttributeRemoveAttPackFieldBundle(target, name, attpack, convent
   type(ESMF_Info2) :: info
   character(:), allocatable :: keyParent, keyChild, keyParent2, keyChild2
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical, parameter :: debug = .true. !tdk:debug
+  character(len=ESMF_MAXSTR) :: logmsg
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -31144,6 +33937,13 @@ end if
   else
     ! If no attpack, use target as info source
     info = einq%GetInfo(target, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": info dump=...", rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    call ESMF_LogWrite(ESMF_Info2Dump(info, rc=localrc), rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   end if
 
@@ -31262,6 +34062,8 @@ subroutine ESMF_AttributeRemoveAttPackGrid(target, name, attpack, convention, pu
   type(ESMF_Info2) :: info
   character(:), allocatable :: keyParent, keyChild, keyParent2, keyChild2
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical, parameter :: debug = .true. !tdk:debug
+  character(len=ESMF_MAXSTR) :: logmsg
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -31280,6 +34082,13 @@ end if
   else
     ! If no attpack, use target as info source
     info = einq%GetInfo(target, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": info dump=...", rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    call ESMF_LogWrite(ESMF_Info2Dump(info, rc=localrc), rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   end if
 
@@ -31398,6 +34207,8 @@ subroutine ESMF_AttributeRemoveAttPackState(target, name, attpack, convention, p
   type(ESMF_Info2) :: info
   character(:), allocatable :: keyParent, keyChild, keyParent2, keyChild2
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical, parameter :: debug = .true. !tdk:debug
+  character(len=ESMF_MAXSTR) :: logmsg
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -31416,6 +34227,13 @@ end if
   else
     ! If no attpack, use target as info source
     info = einq%GetInfo(target, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": info dump=...", rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    call ESMF_LogWrite(ESMF_Info2Dump(info, rc=localrc), rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   end if
 
@@ -31534,6 +34352,8 @@ subroutine ESMF_AttributeRemoveAttPackLocStream(target, name, attpack, conventio
   type(ESMF_Info2) :: info
   character(:), allocatable :: keyParent, keyChild, keyParent2, keyChild2
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical, parameter :: debug = .true. !tdk:debug
+  character(len=ESMF_MAXSTR) :: logmsg
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -31552,6 +34372,13 @@ end if
   else
     ! If no attpack, use target as info source
     info = einq%GetInfo(target, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+
+  if (debug) then
+    call ESMF_LogWrite(ESMF_METHOD//": info dump=...", rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    call ESMF_LogWrite(ESMF_Info2Dump(info, rc=localrc), rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   end if
 

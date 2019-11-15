@@ -639,8 +639,6 @@ void ESMC_Base::constructInfo(ESMC_Base& base) { // root_info_tdk
     ESMCI::VMId *vmIDp;
     char *cp;
     int localrc;
-    int baseid = this->ESMC_BaseGetID(); //tdk:p
-    std::string msg; //tdk:p
 
     // Initialize local return code; assume routine not implemented
     localrc = ESMC_RC_NOT_IMPL;
@@ -683,10 +681,6 @@ void ESMC_Base::constructInfo(ESMC_Base& base) { // root_info_tdk
     localrc = vmID_remote->create();
     if (ESMC_LogDefault.MsgFoundError(localrc, ESMCI_ERR_PASSTHRU,
         ESMC_CONTEXT, &localrc)) return localrc;
-    msg = std::string(ESMC_METHOD) + ": std::to_string(baseid)=" + std::to_string(baseid); //tdk:p
-    ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
-    msg = std::string(ESMC_METHOD) + ": std::to_string(*offset) before vmID->deserialize=" + std::to_string(*offset); //tdk:p
-    ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
     localrc = vmID_remote->deserialize (buffer, offset, false);
     if (ESMC_LogDefault.MsgFoundError(localrc, ESMCI_ERR_PASSTHRU,
         ESMC_CONTEXT, &localrc)) return localrc;
@@ -699,12 +693,6 @@ void ESMC_Base::constructInfo(ESMC_Base& base) { // root_info_tdk
 
     // Deserialize the Attribute hierarchy
     if (attreconflag == ESMC_ATTRECONCILE_ON) {
-      msg = std::string(ESMC_METHOD) + ": std::to_string(baseid)=" + std::to_string(baseid); //tdk:p
-      ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
-      msg = std::string(ESMC_METHOD) + ": std::string(baseid)=" + std::to_string(baseid); //tdk:p
-      ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
-      msg = std::string(ESMC_METHOD) + ": std::to_string(*offset) before info deserialize=" + std::to_string(*offset); //tdk:p
-      ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
       //tdk:todo: this throws an exception that needs to be caught
       try {
         info->deserialize(buffer, offset, localrc);
@@ -962,16 +950,6 @@ void ESMC_Base::constructInfo(ESMC_Base& base) { // root_info_tdk
     ESMCI::VMId *vmIDp;
     char *cp;
 
-    int baseid = this->ESMC_BaseGetID(); //tdk:p
-    std::string msg; //tdk:p
-    if (baseid==7) { //tdk:p
-      msg =
-        std::string(ESMC_METHOD) + ": entering"; //tdk:p
-      ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
-      msg = std::string(ESMC_METHOD) + ": std::to_string(*offset)=" + std::to_string(*offset); //tdk:p
-      ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
-    } //tdk:p
-
     // Initialize local return code; assume routine not implemented
     localrc = ESMC_RC_NOT_IMPL;
 
@@ -979,10 +957,6 @@ void ESMC_Base::constructInfo(ESMC_Base& base) { // root_info_tdk
     if (r!=0) *offset += 8-r;  // alignment
 
     fixedpart = sizeof(ESMC_Base);
-  if (baseid==7) { //tdk:p
-    msg = std::string(ESMC_METHOD) + ": fixedpart=" + std::to_string(fixedpart); //tdk:p
-    ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
-  } //tdk:p
     if (inquireflag == ESMF_INQUIREONLY) {
       *offset += fixedpart;
     } else {
@@ -1029,40 +1003,22 @@ void ESMC_Base::constructInfo(ESMC_Base& base) { // root_info_tdk
     if (*offset%8 != 0)
       *offset += 8 - *offset%8;
 // std::cout << ESMC_METHOD << ": serializing vmID at offset: " << *offset << std::endl;
-    if (baseid==7) { //tdk:p
-      msg = std::string(ESMC_METHOD) + ": std::to_string(*offset) before vmID->serialize=" + std::to_string(*offset); //tdk:p
-      ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
-    } //tdk:p
     localrc = vmID->serialize (buffer, length, offset, inquireflag);
     if (ESMC_LogDefault.MsgFoundError(localrc, ESMCI_ERR_PASSTHRU,
         ESMC_CONTEXT, &localrc)) return localrc;
 
     // Serialize the Attribute hierarchy
     if (attreconflag == ESMC_ATTRECONCILE_ON) {
-      if (baseid==7) { //tdk:p
-      msg = std::string(ESMC_METHOD) + ": std::to_string(baseid)=" + std::to_string(baseid); //tdk:p
-      ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
-      msg = std::string(ESMC_METHOD) + ": std::to_string(*length) before info=" + std::to_string(*length); //tdk:p
-      ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
-      msg = std::string(ESMC_METHOD) + ": std::to_string(*offset) before info=" + std::to_string(*offset); //tdk:p
-      ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO);} //tdk:p
       //tdk:todo: this throws an exception that needs to be caught
       info->serialize(buffer, length, offset, inquireflag, localrc); //root_info_tdk
       if (ESMC_LogDefault.MsgFoundError(localrc, ESMCI_ERR_PASSTHRU,
         ESMC_CONTEXT, &localrc)) return localrc; //root_info_tdk
-      if (baseid==7) {msg = std::string(ESMC_METHOD) + ": std::to_string(*length) after info=" + std::to_string(*length); //tdk:p
-      ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
-      msg = std::string(ESMC_METHOD) + ": std::to_string(*offset) after info=" + std::to_string(*offset); //tdk:p
-      ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO);} //tdk:p
 //      if (*offset%8 != 0)
 //        *offset += 8 - *offset%8;
 //      localrc = root->ESMC_Serialize(buffer,length,offset, inquireflag);
 //      if (ESMC_LogDefault.MsgFoundError(localrc, ESMCI_ERR_PASSTHRU,
 //            ESMC_CONTEXT, &localrc)) return localrc;
     }
-
-  msg = std::string(ESMC_METHOD) + ": returning"; //tdk:p
-  ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO); //tdk:p
 
   return ESMF_SUCCESS;
 

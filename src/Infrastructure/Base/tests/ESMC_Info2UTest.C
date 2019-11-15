@@ -471,6 +471,17 @@ void test_update_json_attribute_count_map(int& rc, char failMsg[]) {
   if (counts.at("attrCount") != 0) return finalizeFailure(rc, failMsg, "attrCount incorrect");
   if (counts.at("attPackCount") != 3) return finalizeFailure(rc, failMsg, "attPackCount incorrect");
 
+  // Test with a nested ESMF AttPack
+
+  json j2 = "{\"ESMF\":{\"Extended\":{\"ESMF\":{\"General\":{\"LongName\":\"Edge pressure tendency\",\"ShortName\":\"field\",\"StandardName\":\"default_standard_name\",\"Units\":\"Pa s-1\"}}}}}"_json;
+  auto counts2 = create_json_attribute_count_map();
+  update_json_attribute_count_map(counts2, j2, true);
+
+  if (counts2.at("attPackCountTotal") != 2) return finalizeFailure(rc, failMsg, "attPackCountTotal incorrect");
+  if (counts2.at("attrCountTotal") != 4) return finalizeFailure(rc, failMsg, "attrCountTotal incorrect");
+  if (counts2.at("attrCount") != 0) return finalizeFailure(rc, failMsg, "attrCount incorrect");
+  if (counts2.at("attPackCount") != 1) return finalizeFailure(rc, failMsg, "attPackCount incorrect");
+
   rc = ESMF_SUCCESS;
 }
 
@@ -776,7 +787,6 @@ void testSerializeDeserialize(int& rc, char failMsg[]) {
 #define ESMC_METHOD "testSerializeDeserialize2()"
 void testSerializeDeserialize2(int& rc, char failMsg[]) {
   rc = ESMF_FAILURE;
-  std::cout << "tdk: test start" << std::endl;  //tdk:p
   try {
     Info2 info("{\"foo\":16}", rc);
     Info2 info2("{\"foo2\":\"a string\"}", rc);
@@ -788,8 +798,6 @@ void testSerializeDeserialize2(int& rc, char failMsg[]) {
     for (auto element : infops) {
       try {
         element->serialize(null_buffer, &inquire_length, &offset, ESMF_INQUIREONLY, rc);
-        std::cout << ESMC_METHOD << " std::to_string(inquire_length)=" << std::to_string(inquire_length) << std::endl;  //tdk:p
-        std::cout << ESMC_METHOD << " std::to_string(offset)=" << std::to_string(offset) << std::endl;  //tdk:p
       }
       ESMF_CATCH_PASSTHRU
     }
@@ -799,8 +807,6 @@ void testSerializeDeserialize2(int& rc, char failMsg[]) {
     for (auto element : infops) {
       try {
         element->serialize(buffer, &inquire_length, &offset, ESMF_NOINQUIRE, rc);
-        std::cout << ESMC_METHOD << " std::to_string(inquire_length)2=" << std::to_string(inquire_length) << std::endl;  //tdk:p
-        std::cout << ESMC_METHOD << " std::to_string(offset)2=" << std::to_string(offset) << std::endl;  //tdk:p
       }
       ESMF_CATCH_PASSTHRU
     }
@@ -820,15 +826,12 @@ void testSerializeDeserialize2(int& rc, char failMsg[]) {
     for (std::size_t ii = 0; ii < infops.size(); ++ii) {
       Info2 *actual = info2ps[ii];
       Info2 *desired = infops[ii];
-      std::cout << ESMC_METHOD << " actual->dump(rc)=" << actual->dump(rc) << std::endl;  //tdk:p
-      std::cout << ESMC_METHOD << " desired->dump(rc)=" << desired->dump(rc) << std::endl;  //tdk:p
       if (actual->getStorageRef() != desired->getStorageRef()) {
         return finalizeFailure(rc, failMsg, "Deserialized incorrect");
       }
     }
   }
   ESMF_CATCH_PASSTHRU
-  std::cout << "tdk: test end" << std::endl;  //tdk:p
 };
 
 #undef  ESMC_METHOD
@@ -1098,7 +1101,6 @@ void test_find_by_index(int& rc, char failMsg[]) {
     }
   }
 
-  std::cout << ESMC_METHOD << " starting attpack test" << std::endl;  //tdk:p
   json jattrs;
   jattrs["NUOPC"]["General"]["0"] = 0;
   jattrs["NUOPC"]["General"]["1"] = 1;
@@ -1112,7 +1114,6 @@ void test_find_by_index(int& rc, char failMsg[]) {
   if (it.value() != 2) {return finalizeFailure(rc, failMsg, "wrong index found for 2 with attr");}
 
   it = find_by_index(jattrs, 4, true, true);
-  std::cout << ESMC_METHOD << " it.value()=" << it.value() << std::endl;  //tdk:p
   if (it.key() != "4") {return finalizeFailure(rc, failMsg, "wrong key found for 4 with attr");}
   if (it.value() != 4) {return finalizeFailure(rc, failMsg, "wrong index found for 4 with attr");}
 

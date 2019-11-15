@@ -23,7 +23,7 @@ program ESMF_AttributeUtilUTest
 
 !==============================================================================
 !BOP
-! !PROGRAM: ESMF_ArraySMMFromFileUTest - Tests ArraySMMFromFile()
+! !PROGRAM: ESMF_AttributeUtilUTest
 !
 ! !DESCRIPTION:
 !

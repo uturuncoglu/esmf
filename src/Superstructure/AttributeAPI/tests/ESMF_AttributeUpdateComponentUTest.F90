@@ -523,7 +523,6 @@ program ESMF_AttributeUpdateUTest
     !!!!!!!!!!!!!!!!!!!!! Attribute Update on Component !!!!!!!!!!!!!!!!
 
     !EX_UTest_Multi_Proc_Only
-    call ESMF_LogWrite("tdk:log: test start", ESMF_LOGMSG_INFO) !tdk:p
     call ESMF_AttributeGetAttPack(gridcomp1, convention="Comp", purpose="Top", &
             attpack=attpack, rc=rc)
     call ESMF_AttributeGet(gridcomp1, "name1", value=outVal, attpack=attpack, rc=rc)
@@ -531,7 +530,6 @@ program ESMF_AttributeUpdateUTest
     write(name, *) "PET ", localPet, ": Getting an updated Attribute value from a Component test: value = ", trim(outVal)
     call ESMF_Test((rc==ESMF_SUCCESS).and.(outVal=="value1"), &
                     name, failMsg, result, ESMF_SRCLINE)
-    call ESMF_LogWrite("tdk:log: test end", ESMF_LOGMSG_INFO) !tdk:p
 
     !EX_UTest_Multi_Proc_Only
     call ESMF_AttributeGet(gridcomp1, "name2", value=outVal, attpack=attpack, rc=rc)

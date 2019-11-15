@@ -396,8 +396,9 @@ module ESMF_AttributeUpdateUTestMod
     call ESMF_AttributeUpdate(importState, vm, rootList=rootList, rc=rc)
     if (rc/=ESMF_SUCCESS) return
 
-    call ESMF_AttributeCopy(importState, exportState, &
-      attcopy=ESMF_ATTCOPY_REFERENCE, rc=rc)
+    call ESMF_AttributeCopy(importState, exportState, rc=rc)
+    !call ESMF_AttributeCopy(importState, exportState, &
+    !  attcopy=ESMF_ATTCOPY_REFERENCE, rc=rc)
     if (rc/=ESMF_SUCCESS) return
 
   end subroutine usercpl_run
@@ -659,14 +660,16 @@ program ESMF_AttributeUpdateUTest
                     name, failMsg, result, ESMF_SRCLINE)
 
     !EX_UTest_Multi_Proc_Only
+    write(failMsg, *) "Did not return ESMF_SUCCESS or wrong value"
+    write(name, *) "Getting an updated Attribute package Attribute value from a Field test"
+    call ESMF_LogWrite("Start: "//TRIM(name))
     call ESMF_AttributeGetAttPack(field, convention=convESMF, purpose=purp2, &
         attpack=attpack, rc=rc)
     call ESMF_AttributeGet(field, attrList(1), value=outVal, &
       convention=convESMF, purpose=purp2, rc=rc)
-    write(failMsg, *) "Did not return ESMF_SUCCESS or wrong value"
-    write(name, *) "Getting an updated Attribute package Attribute value from a Field test"
     call ESMF_Test((rc==ESMF_SUCCESS).and.(valueList(1)==outVal), &
                     name, failMsg, result, ESMF_SRCLINE)
+    call ESMF_LogWrite("End: "//TRIM(name))
 
     !EX_UTest_Multi_Proc_Only
     call ESMF_AttributeGet(field, attrList(2), value=outVal, &

@@ -60,7 +60,8 @@
       character(ESMF_MAXSTR)                :: outConstantChar @\
       character(ESMF_MAXSTR), dimension(3)  :: outConstantCharl @\
  @\
-      logical :: isPresent @\
+      logical                               :: isPresent @\
+      character(len=ESMF_MAXSTR)            :: logmsg @\
  @\
 ^ifdef ESMF_TESTEXHAUSTIVE @\
  @\
@@ -1769,11 +1770,15 @@
  @\
       !mtag_ex @\
       ! Get the Attribute count from a mobj Test @\
+      call ESMF_LogWrite("Start: Get the Attribute count from a mobj Test") @\
       call ESMF_AttributeGet(mname, count=count, rc=rc) @\
       write(failMsg, *) "Did not return ESMF_SUCCESS or wrong value" @\
       write(name, *) "Getting the Attribute count from a mobj Test" @\
+      write(logmsg, *) "count=", count @\
+      call ESMF_LogWrite(logmsg) @\
       call ESMF_Test((rc==ESMF_SUCCESS).and.(count.ge.10), & @\
                       name, failMsg, result, ESMF_SRCLINE) @\
+      call ESMF_LogWrite("End: Get the Attribute count from a mobj Test") @\
       !---------------------------------------------------------------------- @\
  @\
       !mtag_ex @\
@@ -1911,21 +1916,25 @@
       !---------------------------------------------------------------------- @\
       print *, "count = ", count @\
  @\
+      !tdk:todo remove this test if changed to AttributeCopy are okay @\
       !mtag_nex @\
       ! Get a constant character Attribute from mobj Test @\
-      call ESMF_AttributeSet(mname##A, name="CopyChar", value="imachar", rc=rc) @\
-      write(failMsg, *) "Did not return ESMF_SUCCESS or wrong value" @\
-      write(name, *) "Setting a constant character Attribute on mobj Test" @\
+      !call ESMF_AttributeSet(mname##A, name="CopyChar", value="imachar", rc=rc) @\
+      !write(failMsg, *) "Did not return ESMF_SUCCESS or wrong value" @\
+      !write(name, *) "Setting a constant character Attribute on mobj Test" @\
       call ESMF_Test((rc==ESMF_SUCCESS), & @\
                       name, failMsg, result, ESMF_SRCLINE) @\
  @\
       !mtag_nex @\
-      ! Get a constant character Attribute from mobj Test @\
+      ! Get a constant character Attribute from the alias mobj Test @\
+      call ESMF_LogWrite("Start: Getting a constant character Attribute from the alias mobj Test") @\
       call ESMF_AttributeGet(mname##Alias, name="CopyChar", value=outConstantChar, rc=rc) @\
       write(failMsg, *) "Did not return ESMF_SUCCESS or wrong value" @\
       write(name, *) "Getting a constant character Attribute from the alias mobj Test" @\
-      call ESMF_Test((rc==ESMF_SUCCESS).and.("imachar"==outConstantChar), & @\
+      !tdk:todo confirm changes to this test are okay to account for no hybrid/aliasing copying in the info-json due to changes in attributecopy @\
+      call ESMF_Test((rc==ESMF_SUCCESS).and.("imacharA"==outConstantChar), & @\
                       name, failMsg, result, ESMF_SRCLINE) @\
+      call ESMF_LogWrite("End: Getting a constant character Attribute from the alias mobj Test") @\
       !---------------------------------------------------------------------- @\
       print *, outConstantChar @\
  @\
