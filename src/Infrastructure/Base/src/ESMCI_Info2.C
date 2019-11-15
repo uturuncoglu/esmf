@@ -141,11 +141,12 @@ void update_json_attribute_count_map(count_map_t &counts, const json &j, bool fi
   // Test: test_update_json_attribute_count_map
   // Throws: esmf_info_error
   // Notes:
-  const bool debug = false;
-  if (debug) {
+
+#if 0
     std::string logmsg = "j.dump()=" + j.dump();
     dolog(logmsg, ESMC_METHOD, __LINE__);
-  }
+#endif
+
   if (!(j.is_object())) {
     esmf_info_error exc("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, "iteration target must be a JSON object");
     throw exc;
@@ -567,9 +568,8 @@ json::json_pointer Info2::formatKey(key_t& key, int& rc) {
 template <typename T>
 T Info2::get(key_t &key, int &rc, const T *def, const int *index, bool recursive, std::string *ikey) const {
   // Exceptions:  ESMCI:esmf_info_error
-  const bool debug = true; //tdk:debug
   rc = ESMF_FAILURE;
-  if (debug) {
+#if 0
     std::string prefix = std::string(ESMC_METHOD) + ": ";
     std::string msg;
     msg = prefix + "key=" + key;
@@ -579,6 +579,7 @@ T Info2::get(key_t &key, int &rc, const T *def, const int *index, bool recursive
     msg = prefix + "this->dump()=...";
     ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO);
     ESMC_LogWrite(this->dump(rc).c_str(), ESMC_LOGMSG_INFO);
+#endif
   }
 
   T ret;
@@ -753,9 +754,9 @@ bool Info2::hasKey(const json::json_pointer &jp, int& rc, bool recursive) const 
 json Info2::inquire(key_t &key, int &rc, bool recursive, const int *idx, bool attr_compliance) const {
   // Test: testInquire
   // Notes:
-  const bool debug = false;
   rc = ESMF_FAILURE;
-  if (debug) {
+
+#if 0
     std::string prefix = std::string(ESMC_METHOD) + ": ";
     std::string msg;
     msg = prefix + "key=" + key;
@@ -767,6 +768,8 @@ json Info2::inquire(key_t &key, int &rc, bool recursive, const int *idx, bool at
     msg = prefix + "this->dump()=...";
     ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO);
     ESMC_LogWrite(this->dump(rc).c_str(), ESMC_LOGMSG_INFO);
+#endif
+
   }
 
   json j = json::object();
