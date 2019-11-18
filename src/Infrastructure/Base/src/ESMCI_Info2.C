@@ -22,10 +22,6 @@
 //
 //-----------------------------------------------------------------------------
 
-//tdk:REMOVE: only required for tdk prints
-#include <netcdf.h>
-#include <pio.h>
-
 #include "ESMC.h"
 #include "ESMCI_Macros.h"
 #include "ESMCI_Info2.h"
@@ -53,13 +49,19 @@ namespace ESMCI {
 // Helper Functions -----------------------------------------------------------
 //-----------------------------------------------------------------------------
 
-void break_here() {} //tdk:rm
+void break_here() {} //tdk:rm last
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "alignOffset()"
 void alignOffset(int &offset) {
   int nbytes = offset % 8;
   if (nbytes!=0) offset += (8 - nbytes);
+}
+
+void dolog(const std::string &logmsg, const std::string &method, int line) {
+  std::string local_logmsg;
+  local_logmsg = method + std::string("@") + std::to_string(line) + ": " + logmsg;
+  ESMC_LogWrite(local_logmsg.c_str(), ESMC_LOGMSG_INFO);
 }
 
 #undef  ESMC_METHOD
@@ -87,7 +89,22 @@ std::size_t get_attpack_count(const json &j) {
   return ret;
 }
 
-//tdk:rm
+#undef  ESMC_METHOD
+#define ESMC_METHOD "json_array_type()"
+json::value_t json_array_type(const json::array_t &jarray) noexcept {
+  // Test:
+  // Notes: returns null type if zero-length
+  //tdk:todo: should check each value type to make sure they are equivalent. ensures full type safety.
+  json::value_t ret;
+  if (jarray.size() == 0) {
+    ret = json::value_t::null;
+  } else {
+    ret = jarray.at(0).type();
+  }
+  return ret;
+}
+
+//tdk:rm last
 #undef  ESMC_METHOD
 #define ESMC_METHOD "update_json_count()"
 void update_json_count(std::size_t &count, std::size_t &count_total, const json &j, bool recursive) {
@@ -126,13 +143,6 @@ count_map_t create_json_attribute_count_map(void) {
   counts["attrCount"] = 0;
   counts["attrCountTotal"] = 0;
   return counts;
-}
-
-//tdk:order
-void dolog(const std::string &logmsg, const std::string &method, int line) {
-  std::string local_logmsg;
-  local_logmsg = method + std::string("@") + std::to_string(line) + ": " + logmsg;
-  ESMC_LogWrite(local_logmsg.c_str(), ESMC_LOGMSG_INFO);
 }
 
 #undef  ESMC_METHOD
@@ -450,7 +460,7 @@ Info2::Info2(json&& storage){
 #define ESMC_METHOD "Info2(string&)"
 Info2::Info2(key_t& input, int& rc) {
   // Exceptions: ESMCI::esmf_info_error
-  // tdk:FEAT: use the parse method on the object!
+  // tdk:todo: use the parse method on the object!
 
   rc = ESMF_FAILURE;
   try {
@@ -475,6 +485,32 @@ std::string Info2::dump(int& rc) const {
   }
   return ret;
 };
+
+#undef  ESMC_METHOD
+#define ESMC_METHOD "Info2::deserialize()"
+void Info2::deserialize(char *buffer, int *offset, int &rc) {
+  // Test: testSerializeDeserialize, testSerializeDeserialize2
+  // Exceptions:  ESMCI:esmf_info_error
+  rc = ESMF_FAILURE;
+  alignOffset(*offset);
+
+  // Act like an integer to get the string length.
+  int *ip = (int *)(buffer + *offset);
+  int length = *ip;
+
+  // Move 4 bytes to the start of the string actual.
+  (*offset) += sizeof(int);
+  std::string infobuffer(&(buffer[*offset]), length);
+  try {
+    this->parse(infobuffer, rc);
+  }
+  catch (esmf_info_error &e) {
+    ESMF_HANDLE_PASSTHRU(e);
+  }
+  (*offset) += length;
+  alignOffset(*offset);
+  return;
+}
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Info2::dump(int indent, int &rc)"
@@ -809,7 +845,7 @@ json Info2::inquire(key_t &key, int &rc, bool recursive, const int *idx, bool at
       update_json_attribute_count_map(counts, sk, true);
     } else {
       // All counts are one if the JSON type is not object
-      //tdk:todo: this needs to be removed i think. elements should not all be one - an integer json has not attpacks for example
+      //tdk:todo: this needs to be removed i think. elements should not all be one - an integer json has no attpacks for example
       for (std::pair<std::string, int> element : counts)
       {
         element.second = 1;
@@ -862,36 +898,6 @@ void Info2::parse(key_t& input, int& rc) {
   }
   ESMF_CATCH_JSON
   rc = ESMF_SUCCESS;
-  return;
-}
-
-//tdk: ORDER
-#undef  ESMC_METHOD
-#define ESMC_METHOD "Info2::deserialize()"
-void Info2::deserialize(char *buffer, int *offset, int &rc) {
-  // Test: testSerializeDeserialize, testSerializeDeserialize2
-  // Exceptions:  ESMCI:esmf_info_error
-  rc = ESMF_FAILURE;
-  alignOffset(*offset);
-
-  // Act like an integer to get the string length.
-
-//  int *ibuffer = static_cast<int*>(buffer);
-//  int length = ibuffer[*offset];
-  int *ip = (int *)(buffer + *offset);
-  int length = *ip;
-
-  // Move 4 bytes to the start of the string actual.
-  (*offset) += sizeof(int);
-  std::string infobuffer(&(buffer[*offset]), length);
-  try {
-    this->parse(infobuffer, rc);
-  }
-  catch (esmf_info_error &e) {
-    ESMF_HANDLE_PASSTHRU(e);
-  }
-  (*offset) += length;
-  alignOffset(*offset);
   return;
 }
 
@@ -1008,22 +1014,6 @@ void Info2::serialize(char *buffer, int *length, int *offset,
   alignOffset(*offset);
   rc = ESMF_SUCCESS;
   return;
-}
-
-#undef  ESMC_METHOD
-#define ESMC_METHOD "json_array_type()"
-json::value_t json_array_type(const json::array_t &jarray) noexcept {
-  // Test:
-  // Notes: returns null type if zero-length
-  //tdk:todo: should check each value type to make sure they are equivalent. ensures full type safety.
-  //tdk:order as helper function
-  json::value_t ret;
-  if (jarray.size() == 0) {
-    ret = json::value_t::null;
-  } else {
-    ret = jarray.at(0).type();
-  }
-  return ret;
 }
 
 #undef  ESMC_METHOD
