@@ -1,7 +1,7 @@
 ! $Id$
 !
 ! Earth System Modeling Framework
-! Copyright 2002-2018, University Corporation for Atmospheric Research,
+! Copyright 2002-2019, University Corporation for Atmospheric Research,
 ! Massachusetts Institute of Technology, Geophysical Fluid Dynamics
 ! Laboratory, University of Michigan, National Centers for Environmental
 ! Prediction, Los Alamos National Laboratory, Argonne National Laboratory,
@@ -10,7 +10,7 @@
 !
 !==============================================================================
 
-#define FILENAME "src/Infrastructure/Attribute/test/ESMF_ArrayAttributesUTest.F90"
+#define FILENAME "src/Infrastructure/Attribute/test/ESMF_ArrayInfoUTest.F90"
 
 #include "ESMF_Macros.inc"
 #include "ESMF.h"
@@ -19,11 +19,11 @@
 !==============================================================================
 !==============================================================================
 
-program ESMF_ArrayAttributesUTest
+program ESMF_ArrayInfoUTest
 
   !============================================================================
   !BOP
-  ! !PROGRAM: ESMF_AttributesUTest - Test general Attributes usage
+  ! !PROGRAM: ESMF_ArrayInfoUTest - Test general Info usage
   !
   ! !DESCRIPTION:
   !
@@ -31,7 +31,7 @@ program ESMF_ArrayAttributesUTest
   ! !USES:
   use ESMF_TestMod     ! test methods
   use ESMF
-  use ESMF_AttributesMod
+  use ESMF_Info2Mod
 
   implicit none
 
@@ -51,7 +51,7 @@ program ESMF_ArrayAttributesUTest
   integer               :: result = 0
 
   integer(ESMF_KIND_I4) :: desired = 999, actual
-  type(ESMF_Attributes) :: attrs, attrs2
+  type(ESMF_Info2) :: attrs, attrs2
   type(ESMF_Array)      :: array
   type(ESMF_DistGrid)   :: distgrid
   real(ESMF_KIND_R8)    :: farray2D(10,10)
@@ -86,19 +86,19 @@ program ESMF_ArrayAttributesUTest
     if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
     ! Get the attribute object created with the array
-    call ESMF_ArrayGet(array, attrs=attrs, rc=rc)
+    call ESMF_ArrayGet(array, info=attrs, rc=rc)
     if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
     ! Get a different reference to the same attributes object
-    call ESMF_ArrayGet(array, attrs=attrs2, rc=rc)
+    call ESMF_ArrayGet(array, info=attrs2, rc=rc)
     if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
     ! Set a key/value on the attributes object
-    call ESMF_AttributesSet(attrs, key, desired, rc=rc)
+    call ESMF_Info2Set(attrs, key, desired, rc=rc)
     if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
     ! Get the attribute value from the second reference
-    call ESMF_AttributesGet(attrs2, key, actual, rc=rc)
+    call ESMF_Info2Get(attrs2, key, actual, rc=rc)
     if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
     ! Destroy objects
@@ -121,4 +121,4 @@ program ESMF_ArrayAttributesUTest
   call ESMF_TestEnd(ESMF_SRCLINE) ! calls ESMF_Finalize() internally
   !----------------------------------------------------------------------------
 
-end program ESMF_ArrayAttributesUTest
+end program ESMF_ArrayInfoUTest

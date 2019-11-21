@@ -33,8 +33,6 @@ LOCDIR = src/Superstructure/AttributeAPI/tests
 
 .NOTPARALLEL:
 
-#tdk:uncomm: enable appropriate attribute tests
-#TESTS_BUILD = $(ESMF_TESTDIR)/ESMF_AttributeUpdateMultiReconcileUTest
 TESTS_BUILD = \
           $(ESMF_TESTDIR)/ESMF_AttPackABundleUTest \
           $(ESMF_TESTDIR)/ESMF_AttPackArrayUTest \
@@ -65,7 +63,8 @@ TESTS_BUILD = \
           $(ESMF_TESTDIR)/ESMF_AttributeUpdateMultiReconcileUTest \
           $(ESMF_TESTDIR)/ESMF_AttributeUpdateRemoveOnlyUTest \
           $(ESMF_TESTDIR)/ESMF_AttributeUpdateReconcileUTest \
-          $(ESMF_TESTDIR)/ESMF_AttributeUtilUTest
+          $(ESMF_TESTDIR)/ESMF_AttributeUtilUTest \
+          $(ESMF_TESTDIR)/ESMF_ArrayInfoUTest
 
 TESTS_RUN = \
           RUN_ESMF_AttPackABundleUTest \
@@ -97,7 +96,8 @@ TESTS_RUN = \
           RUN_ESMF_AttributeUpdateMultiReconcileUTest \
           RUN_ESMF_AttributeUpdateReconcileUTest \
           RUN_ESMF_AttributeUpdateRemoveOnlyUTest \
-          RUN_ESMF_AttributeUtilUTest
+          RUN_ESMF_AttributeUtilUTest \
+          RUN_ESMF_ArrayInfoUTest
 
 TESTS_RUN_UNI = \
           RUN_ESMF_AttPackArrayUTestUNI \
@@ -122,7 +122,8 @@ TESTS_RUN_UNI = \
           RUN_ESMF_AttributeLocStreamUTestUNI \
           RUN_ESMF_AttributeSciCompUTestUNI \
           RUN_ESMF_AttributeStateUTestUNI \
-          RUN_ESMF_AttributeUtilUTestUNI
+          RUN_ESMF_AttributeUtilUTestUNI \
+          RUN_ESMF_ArrayInfoUTestUNI
 
 include ${ESMF_DIR}/makefile
 
@@ -136,6 +137,12 @@ CLOBBERDIRS =
 #
 #  Attribute class
 #
+
+RUN_ESMF_ArrayInfoUTest:
+	$(MAKE) TNAME=ArrayInfo NP=4 ftest
+
+RUN_ESMF_ArrayInfoUTestUNI:
+	$(MAKE) TNAME=ArrayInfo NP=1 ftest
 
 # --- AttPackArray
 
