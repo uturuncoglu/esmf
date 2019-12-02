@@ -606,8 +606,7 @@ T Info2::get(key_t &key, int &rc, const T *def, const int *index, bool recursive
   // Exceptions:  ESMCI:esmf_info_error
   rc = ESMF_FAILURE;
 
-//tdk:debug
-#if 1
+#if 0
     std::string prefix = std::string(ESMC_METHOD) + ": ";
     std::string msg;
     msg = prefix + "key=" + key;
@@ -795,8 +794,7 @@ json Info2::inquire(key_t &key, int &rc, bool recursive, const int *idx, bool at
   // Notes:
   rc = ESMF_FAILURE;
 
-//tdk:debug
-#if 1
+#if 0
     std::string prefix = std::string(ESMC_METHOD) + ": ";
     std::string msg;
     msg = prefix + "key=" + key;

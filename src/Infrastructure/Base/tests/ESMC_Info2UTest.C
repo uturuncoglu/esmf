@@ -838,6 +838,10 @@ void testSerializeDeserialize2(int& rc, char failMsg[]) {
 #define ESMC_METHOD "testInquire()"
 void testInquire(int& rc, char failMsg[]) {
   rc = ESMF_FAILURE;
+
+  const bool def_recursive = false;
+  const int *def_idx = nullptr;
+
   json j;
   j["ESMF"]["General"]["n"] = 100;
   j["ESMF"]["General"]["x"] = 1000;
@@ -846,7 +850,7 @@ void testInquire(int& rc, char failMsg[]) {
   ESMCI::Info2 info(std::move(j));
   json inq;
   try {
-    inq = info.inquire("", rc);
+    inq = info.inquire("", rc, def_recursive, def_idx, true);
   }
   ESMF_CATCH_PASSTHRU
   if(inq.at("attPackCount")!=2) {
@@ -862,7 +866,7 @@ void testInquire(int& rc, char failMsg[]) {
   }
 
   try {
-    inq = info.inquire("", rc, true);
+    inq = info.inquire("", rc, true, def_idx, true);
   }
   ESMF_CATCH_PASSTHRU
   if(inq.at("attrCountTotal")!=4) {

@@ -1721,7 +1721,6 @@
       call ESMF_Test((rc==ESMF_SUCCESS), name, failMsg, result, ESMF_SRCLINE) @\
       !---------------------------------------------------------------------- @\
  @\
-      print *, "tdk: test start" !tdk:p @\
       outLogl = .false. @\
       !mtag_ex @\
       ! Too Short Get an ESMF_R8 list Attribute from mobj Test @\
@@ -1730,7 +1729,6 @@
       write(failMsg, *) "Did not return ESMF_RC_ATTR_ITEMSOFF" @\
       write(name, *) "Getting an logical list Attribute from mobj Test with short valueList" @\
       call ESMF_Test((rc==ESMF_RC_ATTR_ITEMSOFF), name, failMsg, result, ESMF_SRCLINE) @\
-      print *, "tdk: test end" !tdk:p @\
       !---------------------------------------------------------------------- @\
  @\
       itemCount = 3 @\
