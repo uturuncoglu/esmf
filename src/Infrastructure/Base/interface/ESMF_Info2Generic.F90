@@ -700,10 +700,11 @@ subroutine ESMF_Info2GetArrayLGAllocated(info, key, values, itemcount, attnestfl
   end if
 
   ! Get the array size from the info store
+  print *, "calling esmf_info2inquire" !tdk:p
   call ESMF_Info2Inquire(info, key=key, size=itemcount, attnestflag=attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  
+  print *, "itemcount, size(values)", itemcount, SIZE(values) !tdk:p
   if (itemcount /= SIZE(values)) then
     if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="values allocation size does not match size in Info storage", ESMF_CONTEXT, rcToReturn=rc)) return
   end if

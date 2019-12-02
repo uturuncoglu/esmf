@@ -19616,15 +19616,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         if (present(itemcount)) itemcount = 0
         valueList(ii) = defaultvalueList(ii)
@@ -19683,16 +19686,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (size(defaultvalueList) /= size(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalueList) /= size(valueList)", &
-         ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         valueList(ii) = defaultvalueList(ii)
       enddo
@@ -19747,15 +19752,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         if (present(itemcount)) itemcount = 0
         valueList(ii) = defaultvalueList(ii)
@@ -19814,16 +19822,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (size(defaultvalueList) /= size(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalueList) /= size(valueList)", &
-         ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         valueList(ii) = defaultvalueList(ii)
       enddo
@@ -19878,15 +19888,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         if (present(itemcount)) itemcount = 0
         valueList(ii) = defaultvalueList(ii)
@@ -19945,16 +19958,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (size(defaultvalueList) /= size(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalueList) /= size(valueList)", &
-         ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         valueList(ii) = defaultvalueList(ii)
       enddo
@@ -20009,15 +20024,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         if (present(itemcount)) itemcount = 0
         valueList(ii) = defaultvalueList(ii)
@@ -20076,16 +20094,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (size(defaultvalueList) /= size(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalueList) /= size(valueList)", &
-         ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         valueList(ii) = defaultvalueList(ii)
       enddo
@@ -20140,15 +20160,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         if (present(itemcount)) itemcount = 0
         valueList(ii) = defaultvalueList(ii)
@@ -20207,16 +20230,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (size(defaultvalueList) /= size(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalueList) /= size(valueList)", &
-         ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         valueList(ii) = defaultvalueList(ii)
       enddo
@@ -20271,15 +20296,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         if (present(itemcount)) itemcount = 0
         valueList(ii) = defaultvalueList(ii)
@@ -20338,16 +20366,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (size(defaultvalueList) /= size(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalueList) /= size(valueList)", &
-         ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         valueList(ii) = defaultvalueList(ii)
       enddo
@@ -20402,15 +20432,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         if (present(itemcount)) itemcount = 0
         valueList(ii) = defaultvalueList(ii)
@@ -20469,16 +20502,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (size(defaultvalueList) /= size(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalueList) /= size(valueList)", &
-         ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         valueList(ii) = defaultvalueList(ii)
       enddo
@@ -20533,15 +20568,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         if (present(itemcount)) itemcount = 0
         valueList(ii) = defaultvalueList(ii)
@@ -20600,16 +20638,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (size(defaultvalueList) /= size(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalueList) /= size(valueList)", &
-         ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         valueList(ii) = defaultvalueList(ii)
       enddo
@@ -20664,15 +20704,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         if (present(itemcount)) itemcount = 0
         valueList(ii) = defaultvalueList(ii)
@@ -20731,16 +20774,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (size(defaultvalueList) /= size(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalueList) /= size(valueList)", &
-         ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         valueList(ii) = defaultvalueList(ii)
       enddo
@@ -20795,15 +20840,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         if (present(itemcount)) itemcount = 0
         valueList(ii) = defaultvalueList(ii)
@@ -20862,16 +20910,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (size(defaultvalueList) /= size(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalueList) /= size(valueList)", &
-         ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         valueList(ii) = defaultvalueList(ii)
       enddo
@@ -20926,15 +20976,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         if (present(itemcount)) itemcount = 0
         valueList(ii) = defaultvalueList(ii)
@@ -20993,16 +21046,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (size(defaultvalueList) /= size(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalueList) /= size(valueList)", &
-         ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         valueList(ii) = defaultvalueList(ii)
       enddo
@@ -21057,15 +21112,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         if (present(itemcount)) itemcount = 0
         valueList(ii) = defaultvalueList(ii)
@@ -21124,16 +21182,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (size(defaultvalueList) /= size(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalueList) /= size(valueList)", &
-         ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         valueList(ii) = defaultvalueList(ii)
       enddo
@@ -21188,15 +21248,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         if (present(itemcount)) itemcount = 0
         valueList(ii) = defaultvalueList(ii)
@@ -21255,16 +21318,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (size(defaultvalueList) /= size(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalueList) /= size(valueList)", &
-         ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         valueList(ii) = defaultvalueList(ii)
       enddo
@@ -21319,15 +21384,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         if (present(itemcount)) itemcount = 0
         valueList(ii) = defaultvalueList(ii)
@@ -21386,16 +21454,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (size(defaultvalueList) /= size(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalueList) /= size(valueList)", &
-         ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         valueList(ii) = defaultvalueList(ii)
       enddo
@@ -21450,15 +21520,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         if (present(itemcount)) itemcount = 0
         valueList(ii) = defaultvalueList(ii)
@@ -21517,16 +21590,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (size(defaultvalueList) /= size(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalueList) /= size(valueList)", &
-         ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         valueList(ii) = defaultvalueList(ii)
       enddo
@@ -21581,15 +21656,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         if (present(itemcount)) itemcount = 0
         valueList(ii) = defaultvalueList(ii)
@@ -21648,16 +21726,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (size(defaultvalueList) /= size(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalueList) /= size(valueList)", &
-         ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         valueList(ii) = defaultvalueList(ii)
       enddo
@@ -21712,15 +21792,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         if (present(itemcount)) itemcount = 0
         valueList(ii) = defaultvalueList(ii)
@@ -21779,16 +21862,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (size(defaultvalueList) /= size(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalueList) /= size(valueList)", &
-         ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         valueList(ii) = defaultvalueList(ii)
       enddo
@@ -21843,15 +21928,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         if (present(itemcount)) itemcount = 0
         valueList(ii) = defaultvalueList(ii)
@@ -21910,16 +21998,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (size(defaultvalueList) /= size(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalueList) /= size(valueList)", &
-         ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         valueList(ii) = defaultvalueList(ii)
       enddo
@@ -21974,15 +22064,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         if (present(itemcount)) itemcount = 0
         valueList(ii) = defaultvalueList(ii)
@@ -22041,16 +22134,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (size(defaultvalueList) /= size(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalueList) /= size(valueList)", &
-         ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         valueList(ii) = defaultvalueList(ii)
       enddo
@@ -22105,15 +22200,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         if (present(itemcount)) itemcount = 0
         valueList(ii) = defaultvalueList(ii)
@@ -22172,16 +22270,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (size(defaultvalueList) /= size(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalueList) /= size(valueList)", &
-         ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         valueList(ii) = defaultvalueList(ii)
       enddo
@@ -22236,15 +22336,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         if (present(itemcount)) itemcount = 0
         valueList(ii) = defaultvalueList(ii)
@@ -22303,16 +22406,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (size(defaultvalueList) /= size(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalueList) /= size(valueList)", &
-         ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         valueList(ii) = defaultvalueList(ii)
       enddo
@@ -22367,15 +22472,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         if (present(itemcount)) itemcount = 0
         valueList(ii) = defaultvalueList(ii)
@@ -22434,16 +22542,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (size(defaultvalueList) /= size(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalueList) /= size(valueList)", &
-         ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         valueList(ii) = defaultvalueList(ii)
       enddo
@@ -22498,15 +22608,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         if (present(itemcount)) itemcount = 0
         valueList(ii) = defaultvalueList(ii)
@@ -22565,16 +22678,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (size(defaultvalueList) /= size(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalueList) /= size(valueList)", &
-         ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         valueList(ii) = defaultvalueList(ii)
       enddo
@@ -22629,15 +22744,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         if (present(itemcount)) itemcount = 0
         valueList(ii) = defaultvalueList(ii)
@@ -22696,16 +22814,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (size(defaultvalueList) /= size(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalueList) /= size(valueList)", &
-         ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         valueList(ii) = defaultvalueList(ii)
       enddo
@@ -22760,15 +22880,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         if (present(itemcount)) itemcount = 0
         valueList(ii) = defaultvalueList(ii)
@@ -22827,16 +22950,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (size(defaultvalueList) /= size(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalueList) /= size(valueList)", &
-         ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         valueList(ii) = defaultvalueList(ii)
       enddo
@@ -22891,15 +23016,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         if (present(itemcount)) itemcount = 0
         valueList(ii) = defaultvalueList(ii)
@@ -22958,16 +23086,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (size(defaultvalueList) /= size(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalueList) /= size(valueList)", &
-         ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         valueList(ii) = defaultvalueList(ii)
       enddo
@@ -23022,15 +23152,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         if (present(itemcount)) itemcount = 0
         valueList(ii) = defaultvalueList(ii)
@@ -23089,16 +23222,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (size(defaultvalueList) /= size(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalueList) /= size(valueList)", &
-         ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         valueList(ii) = defaultvalueList(ii)
       enddo
@@ -23153,15 +23288,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         if (present(itemcount)) itemcount = 0
         valueList(ii) = defaultvalueList(ii)
@@ -23220,16 +23358,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (size(defaultvalueList) /= size(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalueList) /= size(valueList)", &
-         ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         valueList(ii) = defaultvalueList(ii)
       enddo
@@ -23284,15 +23424,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         if (present(itemcount)) itemcount = 0
         valueList(ii) = defaultvalueList(ii)
@@ -23351,16 +23494,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (size(defaultvalueList) /= size(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalueList) /= size(valueList)", &
-         ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         valueList(ii) = defaultvalueList(ii)
       enddo
@@ -23415,15 +23560,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         if (present(itemcount)) itemcount = 0
         valueList(ii) = defaultvalueList(ii)
@@ -23482,16 +23630,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (size(defaultvalueList) /= size(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalueList) /= size(valueList)", &
-         ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         valueList(ii) = defaultvalueList(ii)
       enddo
@@ -23546,15 +23696,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         if (present(itemcount)) itemcount = 0
         valueList(ii) = defaultvalueList(ii)
@@ -23613,16 +23766,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (size(defaultvalueList) /= size(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalueList) /= size(valueList)", &
-         ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         valueList(ii) = defaultvalueList(ii)
       enddo
@@ -23677,15 +23832,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         if (present(itemcount)) itemcount = 0
         valueList(ii) = defaultvalueList(ii)
@@ -23744,16 +23902,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (size(defaultvalueList) /= size(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalueList) /= size(valueList)", &
-         ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         valueList(ii) = defaultvalueList(ii)
       enddo
@@ -23808,15 +23968,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         if (present(itemcount)) itemcount = 0
         valueList(ii) = defaultvalueList(ii)
@@ -23875,16 +24038,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (size(defaultvalueList) /= size(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalueList) /= size(valueList)", &
-         ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         valueList(ii) = defaultvalueList(ii)
       enddo
@@ -23939,15 +24104,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         if (present(itemcount)) itemcount = 0
         valueList(ii) = defaultvalueList(ii)
@@ -24006,16 +24174,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (size(defaultvalueList) /= size(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalueList) /= size(valueList)", &
-         ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         valueList(ii) = defaultvalueList(ii)
       enddo
@@ -24070,15 +24240,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         if (present(itemcount)) itemcount = 0
         valueList(ii) = defaultvalueList(ii)
@@ -24137,16 +24310,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (size(defaultvalueList) /= size(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalueList) /= size(valueList)", &
-         ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         valueList(ii) = defaultvalueList(ii)
       enddo
@@ -24201,15 +24376,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         if (present(itemcount)) itemcount = 0
         valueList(ii) = defaultvalueList(ii)
@@ -24268,16 +24446,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (size(defaultvalueList) /= size(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalueList) /= size(valueList)", &
-         ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         valueList(ii) = defaultvalueList(ii)
       enddo
@@ -24332,15 +24512,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         if (present(itemcount)) itemcount = 0
         valueList(ii) = defaultvalueList(ii)
@@ -24399,16 +24582,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (size(defaultvalueList) /= size(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalueList) /= size(valueList)", &
-         ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         valueList(ii) = defaultvalueList(ii)
       enddo
@@ -24463,15 +24648,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         if (present(itemcount)) itemcount = 0
         valueList(ii) = defaultvalueList(ii)
@@ -24530,16 +24718,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (size(defaultvalueList) /= size(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalueList) /= size(valueList)", &
-         ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         valueList(ii) = defaultvalueList(ii)
       enddo
@@ -24594,15 +24784,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         if (present(itemcount)) itemcount = 0
         valueList(ii) = defaultvalueList(ii)
@@ -24661,16 +24854,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (size(defaultvalueList) /= size(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalueList) /= size(valueList)", &
-         ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         valueList(ii) = defaultvalueList(ii)
       enddo
@@ -24725,15 +24920,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         if (present(itemcount)) itemcount = 0
         valueList(ii) = defaultvalueList(ii)
@@ -24792,16 +24990,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (size(defaultvalueList) /= size(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalueList) /= size(valueList)", &
-         ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         valueList(ii) = defaultvalueList(ii)
       enddo
@@ -24856,15 +25056,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         if (present(itemcount)) itemcount = 0
         valueList(ii) = defaultvalueList(ii)
@@ -24923,16 +25126,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (size(defaultvalueList) /= size(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalueList) /= size(valueList)", &
-         ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         valueList(ii) = defaultvalueList(ii)
       enddo
@@ -24987,15 +25192,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         if (present(itemcount)) itemcount = 0
         valueList(ii) = defaultvalueList(ii)
@@ -25054,16 +25262,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (size(defaultvalueList) /= size(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalueList) /= size(valueList)", &
-         ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         valueList(ii) = defaultvalueList(ii)
       enddo
@@ -25118,15 +25328,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         if (present(itemcount)) itemcount = 0
         valueList(ii) = defaultvalueList(ii)
@@ -25185,16 +25398,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (size(defaultvalueList) /= size(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalueList) /= size(valueList)", &
-         ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         valueList(ii) = defaultvalueList(ii)
       enddo
@@ -25249,15 +25464,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         if (present(itemcount)) itemcount = 0
         valueList(ii) = defaultvalueList(ii)
@@ -25316,16 +25534,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (size(defaultvalueList) /= size(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalueList) /= size(valueList)", &
-         ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         valueList(ii) = defaultvalueList(ii)
       enddo
@@ -25380,15 +25600,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         if (present(itemcount)) itemcount = 0
         valueList(ii) = defaultvalueList(ii)
@@ -25447,16 +25670,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (size(defaultvalueList) /= size(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalueList) /= size(valueList)", &
-         ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         valueList(ii) = defaultvalueList(ii)
       enddo
@@ -25511,15 +25736,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         if (present(itemcount)) itemcount = 0
         valueList(ii) = defaultvalueList(ii)
@@ -25578,16 +25806,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (size(defaultvalueList) /= size(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalueList) /= size(valueList)", &
-         ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         valueList(ii) = defaultvalueList(ii)
       enddo
@@ -25642,15 +25872,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         if (present(itemcount)) itemcount = 0
         valueList(ii) = defaultvalueList(ii)
@@ -25709,16 +25942,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (size(defaultvalueList) /= size(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalueList) /= size(valueList)", &
-         ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         valueList(ii) = defaultvalueList(ii)
       enddo
@@ -25773,15 +26008,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         if (present(itemcount)) itemcount = 0
         valueList(ii) = defaultvalueList(ii)
@@ -25840,16 +26078,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (size(defaultvalueList) /= size(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalueList) /= size(valueList)", &
-         ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         valueList(ii) = defaultvalueList(ii)
       enddo
@@ -25904,15 +26144,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         if (present(itemcount)) itemcount = 0
         valueList(ii) = defaultvalueList(ii)
@@ -25971,16 +26214,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (size(defaultvalueList) /= size(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalueList) /= size(valueList)", &
-         ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         valueList(ii) = defaultvalueList(ii)
       enddo
@@ -26035,15 +26280,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         if (present(itemcount)) itemcount = 0
         valueList(ii) = defaultvalueList(ii)
@@ -26102,16 +26350,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (size(defaultvalueList) /= size(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalueList) /= size(valueList)", &
-         ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         valueList(ii) = defaultvalueList(ii)
       enddo
@@ -26166,15 +26416,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         if (present(itemcount)) itemcount = 0
         valueList(ii) = defaultvalueList(ii)
@@ -26233,16 +26486,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (size(defaultvalueList) /= size(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalueList) /= size(valueList)", &
-         ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         valueList(ii) = defaultvalueList(ii)
       enddo
@@ -26297,15 +26552,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         if (present(itemcount)) itemcount = 0
         valueList(ii) = defaultvalueList(ii)
@@ -26364,16 +26622,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (size(defaultvalueList) /= size(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalueList) /= size(valueList)", &
-         ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         valueList(ii) = defaultvalueList(ii)
       enddo
@@ -26428,15 +26688,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         if (present(itemcount)) itemcount = 0
         valueList(ii) = defaultvalueList(ii)
@@ -26495,16 +26758,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (size(defaultvalueList) /= size(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalueList) /= size(valueList)", &
-         ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         valueList(ii) = defaultvalueList(ii)
       enddo
@@ -26559,15 +26824,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         if (present(itemcount)) itemcount = 0
         valueList(ii) = defaultvalueList(ii)
@@ -26626,16 +26894,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (size(defaultvalueList) /= size(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalueList) /= size(valueList)", &
-         ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         valueList(ii) = defaultvalueList(ii)
       enddo
@@ -26690,15 +26960,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         if (present(itemcount)) itemcount = 0
         valueList(ii) = defaultvalueList(ii)
@@ -26757,16 +27030,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (size(defaultvalueList) /= size(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalueList) /= size(valueList)", &
-         ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         valueList(ii) = defaultvalueList(ii)
       enddo
@@ -26821,15 +27096,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         if (present(itemcount)) itemcount = 0
         valueList(ii) = defaultvalueList(ii)
@@ -26888,16 +27166,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (size(defaultvalueList) /= size(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalueList) /= size(valueList)", &
-         ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         valueList(ii) = defaultvalueList(ii)
       enddo
@@ -26952,15 +27232,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         if (present(itemcount)) itemcount = 0
         valueList(ii) = defaultvalueList(ii)
@@ -27019,16 +27302,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (size(defaultvalueList) /= size(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalueList) /= size(valueList)", &
-         ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         valueList(ii) = defaultvalueList(ii)
       enddo
@@ -27083,15 +27368,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         if (present(itemcount)) itemcount = 0
         valueList(ii) = defaultvalueList(ii)
@@ -27150,16 +27438,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (size(defaultvalueList) /= size(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalueList) /= size(valueList)", &
-         ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         valueList(ii) = defaultvalueList(ii)
       enddo
@@ -27214,15 +27504,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         if (present(itemcount)) itemcount = 0
         valueList(ii) = defaultvalueList(ii)
@@ -27281,16 +27574,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (size(defaultvalueList) /= size(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalueList) /= size(valueList)", &
-         ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         valueList(ii) = defaultvalueList(ii)
       enddo
@@ -27345,15 +27640,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         if (present(itemcount)) itemcount = 0
         valueList(ii) = defaultvalueList(ii)
@@ -27412,16 +27710,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (size(defaultvalueList) /= size(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalueList) /= size(valueList)", &
-         ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         valueList(ii) = defaultvalueList(ii)
       enddo
@@ -27476,15 +27776,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         if (present(itemcount)) itemcount = 0
         valueList(ii) = defaultvalueList(ii)
@@ -27543,16 +27846,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (size(defaultvalueList) /= size(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalueList) /= size(valueList)", &
-         ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         valueList(ii) = defaultvalueList(ii)
       enddo
@@ -27607,15 +27912,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         if (present(itemcount)) itemcount = 0
         valueList(ii) = defaultvalueList(ii)
@@ -27674,16 +27982,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (size(defaultvalueList) /= size(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalueList) /= size(valueList)", &
-         ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         valueList(ii) = defaultvalueList(ii)
       enddo
@@ -27738,15 +28048,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         if (present(itemcount)) itemcount = 0
         valueList(ii) = defaultvalueList(ii)
@@ -27805,16 +28118,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (size(defaultvalueList) /= size(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalueList) /= size(valueList)", &
-         ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         valueList(ii) = defaultvalueList(ii)
       enddo
@@ -27869,15 +28184,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         if (present(itemcount)) itemcount = 0
         valueList(ii) = defaultvalueList(ii)
@@ -27936,16 +28254,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (size(defaultvalueList) /= size(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalueList) /= size(valueList)", &
-         ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         valueList(ii) = defaultvalueList(ii)
       enddo
@@ -28000,15 +28320,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         if (present(itemcount)) itemcount = 0
         valueList(ii) = defaultvalueList(ii)
@@ -28067,16 +28390,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (size(defaultvalueList) /= size(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalueList) /= size(valueList)", &
-         ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         valueList(ii) = defaultvalueList(ii)
       enddo
@@ -28131,15 +28456,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (SIZE(defaultvalueList) /= SIZE(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         if (present(itemcount)) itemcount = 0
         valueList(ii) = defaultvalueList(ii)
@@ -28198,16 +28526,18 @@ end if
 
   if (present(isPresent)) isPresent = local_isPresent
 
+  if (present(defaultvalueList)) then
+    if (SIZE(defaultvalueList) /= SIZE(valueList)) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="SIZE(defaultvalueList) /= SIZE(valueList)", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+
   if (local_isPresent) then
     call ESMF_Info2GetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
     if (present(defaultvalueList)) then
-      if (size(defaultvalueList) /= size(valueList)) then
-        if (ESMF_LogFoundError(ESMF_RC_ARG_BAD, msg="size(defaultvalueList) /= size(valueList)", &
-         ESMF_CONTEXT, rcToReturn=rc)) return
-      endif
       do ii=1,size(defaultvalueList)
         valueList(ii) = defaultvalueList(ii)
       enddo
