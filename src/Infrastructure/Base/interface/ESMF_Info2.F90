@@ -354,7 +354,7 @@ end subroutine ESMF_Info2Remove
 #define ESMF_METHOD "ESMF_Info2Inquire()"
 subroutine ESMF_Info2Inquire(info, key, size, attrCount, attrCountTotal, jsonType, &
   isArray, isDirty, attPackCount, attPackCountTotal, attnestflag, idx, typekind, &
-  ikey, isPresent, isStructured, rc)
+  ikey, isPresent, isStructured, attrCompliance, rc)
 
   type(ESMF_Info2), intent(in) :: info
   character(len=*), intent(in), optional :: key
@@ -372,18 +372,20 @@ subroutine ESMF_Info2Inquire(info, key, size, attrCount, attrCountTotal, jsonTyp
   character(len=*), intent(out), optional :: ikey
   logical, intent(out), optional :: isPresent
   logical, intent(out), optional :: isStructured
+  logical, intent(in), optional :: attrCompliance
   integer, intent(inout), optional :: rc
 
   integer :: localrc, esmc_typekind, local_size
   type(ESMF_Info2) :: inq, inq2
   character(:), allocatable :: local_key
-  integer :: recursive
+  integer :: recursive, local_attrCompliance
   integer(C_INT), target :: local_idx
   type(C_PTR) :: local_idx_ptr
 
   if (present(rc)) rc = ESMF_FAILURE
   localrc = ESMF_FAILURE
   recursive = 0 !false
+  local_attrCompliance = 0 !false
 
   if (present(key)) then
     local_key = trim(key)
@@ -398,6 +400,9 @@ subroutine ESMF_Info2Inquire(info, key, size, attrCount, attrCountTotal, jsonTyp
     local_idx_ptr = C_LOC(local_idx)
   else
     local_idx_ptr = C_NULL_PTR
+  end if
+  if (present(attrCompliance)) then
+    if (attrCompliance) local_attrCompliance = 1 !true
   end if
 
   if (present(isPresent)) then
@@ -414,7 +419,7 @@ subroutine ESMF_Info2Inquire(info, key, size, attrCount, attrCountTotal, jsonTyp
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   call c_info_inquire(info%ptr, inq%ptr, local_key//C_NULL_CHAR, recursive, &
-   local_idx_ptr, localrc)
+   local_idx_ptr, local_attrCompliance, localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(size)) then
@@ -465,7 +470,7 @@ subroutine ESMF_Info2Inquire(info, key, size, attrCount, attrCountTotal, jsonTyp
           if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
           call c_info_inquire(info%ptr, inq2%ptr, local_key//C_NULL_CHAR, recursive, &
-            C_NULL_PTR, localrc)
+            C_NULL_PTR, local_attrCompliance, localrc)
           if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
           call ESMF_Info2Get(inq2, "size", local_size, rc=localrc)

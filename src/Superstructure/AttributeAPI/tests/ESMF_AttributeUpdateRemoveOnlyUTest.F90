@@ -296,16 +296,6 @@ module ESMF_AttributeUpdateRemoveOnlyUTestMod
 
     call ESMF_CplCompGet(comp, vm=vm, rc=rc)
     if (rc/=ESMF_SUCCESS) return
-    einq = einq%Create(addBaseAddress=.true., addObjectInfo=.true., rc=rc)
-    if (rc/=ESMF_SUCCESS) return
-    call einq%Update(importState, "", rc=rc)
-    if (rc/=ESMF_SUCCESS) return
-    idump = ESMF_Info2Dump(einq%info, rc=rc)
-    if (rc/=ESMF_SUCCESS) return
-    call ESMF_LogWrite(idump, ESMF_LOGMSG_INFO, rc=rc)
-    if (rc/=ESMF_SUCCESS) return
-    call einq%Destroy(rc=rc)
-    if (rc/=ESMF_SUCCESS) return
     call ESMF_StateReconcile(importState, vm=vm, attreconflag=ESMF_ATTRECONCILE_ON, rc=rc)
     if (rc/=ESMF_SUCCESS) return
     call ESMF_StateReconcile(exportState, vm=vm, attreconflag=ESMF_ATTRECONCILE_ON, rc=rc)

@@ -32,39 +32,39 @@ AUTOGEN = ESMF_AttPackABundleUTest.F90 \
 LOCDIR = src/Superstructure/AttributeAPI/tests
 
 .NOTPARALLEL:
-
-TESTS_BUILD = \
-          $(ESMF_TESTDIR)/ESMF_AttPackABundleUTest \
-          $(ESMF_TESTDIR)/ESMF_AttPackArrayUTest \
-          $(ESMF_TESTDIR)/ESMF_AttPackCplCompUTest \
-          $(ESMF_TESTDIR)/ESMF_AttPackDistGridUTest \
-          $(ESMF_TESTDIR)/ESMF_AttPackFBundleUTest \
-          $(ESMF_TESTDIR)/ESMF_AttPackFieldUTest \
-          $(ESMF_TESTDIR)/ESMF_AttPackGridCompUTest \
-          $(ESMF_TESTDIR)/ESMF_AttPackGridUTest \
-          $(ESMF_TESTDIR)/ESMF_AttPackLocStreamUTest \
-          $(ESMF_TESTDIR)/ESMF_AttPackSciCompUTest \
-          $(ESMF_TESTDIR)/ESMF_AttPackStateUTest \
-          $(ESMF_TESTDIR)/ESMF_AttributeArrayUTest \
-          $(ESMF_TESTDIR)/ESMF_AttributeABundleUTest \
-          $(ESMF_TESTDIR)/ESMF_AttributeCplCompUTest \
-          $(ESMF_TESTDIR)/ESMF_AttributeDistGridUTest \
-          $(ESMF_TESTDIR)/ESMF_AttributeFBundleUTest \
-          $(ESMF_TESTDIR)/ESMF_AttributeFieldUTest \
-          $(ESMF_TESTDIR)/ESMF_AttributeGridCompUTest \
-          $(ESMF_TESTDIR)/ESMF_AttributeGridUTest \
-          $(ESMF_TESTDIR)/ESMF_AttributeLocStreamUTest \
-          $(ESMF_TESTDIR)/ESMF_AttributeSciCompUTest \
-          $(ESMF_TESTDIR)/ESMF_AttributeStateUTest \
-          $(ESMF_TESTDIR)/ESMF_AttributeUpdateUTest \
-          $(ESMF_TESTDIR)/ESMF_AttributeUpdateClosedLoopTreesUTest \
-          $(ESMF_TESTDIR)/ESMF_AttributeUpdateComponentUTest \
-          $(ESMF_TESTDIR)/ESMF_AttributeUpdateContainerStressUTest \
-          $(ESMF_TESTDIR)/ESMF_AttributeUpdateMultiReconcileUTest \
-          $(ESMF_TESTDIR)/ESMF_AttributeUpdateRemoveOnlyUTest \
-          $(ESMF_TESTDIR)/ESMF_AttributeUpdateReconcileUTest \
-          $(ESMF_TESTDIR)/ESMF_AttributeUtilUTest \
-          $(ESMF_TESTDIR)/ESMF_ArrayInfoUTest
+TESTS_BUILD = $(ESMF_TESTDIR)/ESMF_AttributeUpdateMultiReconcileUTest
+#TESTS_BUILD = \
+#          $(ESMF_TESTDIR)/ESMF_AttPackABundleUTest \
+#          $(ESMF_TESTDIR)/ESMF_AttPackArrayUTest \
+#          $(ESMF_TESTDIR)/ESMF_AttPackCplCompUTest \
+#          $(ESMF_TESTDIR)/ESMF_AttPackDistGridUTest \
+#          $(ESMF_TESTDIR)/ESMF_AttPackFBundleUTest \
+#          $(ESMF_TESTDIR)/ESMF_AttPackFieldUTest \
+#          $(ESMF_TESTDIR)/ESMF_AttPackGridCompUTest \
+#          $(ESMF_TESTDIR)/ESMF_AttPackGridUTest \
+#          $(ESMF_TESTDIR)/ESMF_AttPackLocStreamUTest \
+#          $(ESMF_TESTDIR)/ESMF_AttPackSciCompUTest \
+#          $(ESMF_TESTDIR)/ESMF_AttPackStateUTest \
+#          $(ESMF_TESTDIR)/ESMF_AttributeArrayUTest \
+#          $(ESMF_TESTDIR)/ESMF_AttributeABundleUTest \
+#          $(ESMF_TESTDIR)/ESMF_AttributeCplCompUTest \
+#          $(ESMF_TESTDIR)/ESMF_AttributeDistGridUTest \
+#          $(ESMF_TESTDIR)/ESMF_AttributeFBundleUTest \
+#          $(ESMF_TESTDIR)/ESMF_AttributeFieldUTest \
+#          $(ESMF_TESTDIR)/ESMF_AttributeGridCompUTest \
+#          $(ESMF_TESTDIR)/ESMF_AttributeGridUTest \
+#          $(ESMF_TESTDIR)/ESMF_AttributeLocStreamUTest \
+#          $(ESMF_TESTDIR)/ESMF_AttributeSciCompUTest \
+#          $(ESMF_TESTDIR)/ESMF_AttributeStateUTest \
+#          $(ESMF_TESTDIR)/ESMF_AttributeUpdateUTest \
+#          $(ESMF_TESTDIR)/ESMF_AttributeUpdateClosedLoopTreesUTest \
+#          $(ESMF_TESTDIR)/ESMF_AttributeUpdateComponentUTest \
+#          $(ESMF_TESTDIR)/ESMF_AttributeUpdateContainerStressUTest \
+#          $(ESMF_TESTDIR)/ESMF_AttributeUpdateMultiReconcileUTest \
+#          $(ESMF_TESTDIR)/ESMF_AttributeUpdateRemoveOnlyUTest \
+#          $(ESMF_TESTDIR)/ESMF_AttributeUpdateReconcileUTest \
+#          $(ESMF_TESTDIR)/ESMF_AttributeUtilUTest \
+#          $(ESMF_TESTDIR)/ESMF_ArrayInfoUTest
 
 TESTS_RUN = \
           RUN_ESMF_AttPackABundleUTest \

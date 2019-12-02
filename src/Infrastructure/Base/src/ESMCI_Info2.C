@@ -605,7 +605,9 @@ template <typename T>
 T Info2::get(key_t &key, int &rc, const T *def, const int *index, bool recursive, std::string *ikey) const {
   // Exceptions:  ESMCI:esmf_info_error
   rc = ESMF_FAILURE;
-#if 0
+
+//tdk:debug
+#if 1
     std::string prefix = std::string(ESMC_METHOD) + ": ";
     std::string msg;
     msg = prefix + "key=" + key;
@@ -667,6 +669,8 @@ T Info2::get(key_t &key, int &rc, const T *def, const int *index, bool recursive
       if (def) {
         ret = *def;
       } else {
+        std::string emsg = std::string(__FILE__) + ":" + std::to_string(__LINE__) + " " + ESMC_METHOD + ": Key not found (JSON trace will follow): " + key;
+        ESMC_LogWrite(emsg.c_str(), ESMC_LOGMSG_ERROR);
         ESMF_THROW_JSON(e, "ESMF_RC_ATTR_NOTSET", ESMF_RC_ATTR_NOTSET, rc)
       }
     }
@@ -791,7 +795,8 @@ json Info2::inquire(key_t &key, int &rc, bool recursive, const int *idx, bool at
   // Notes:
   rc = ESMF_FAILURE;
 
-#if 0
+//tdk:debug
+#if 1
     std::string prefix = std::string(ESMC_METHOD) + ": ";
     std::string msg;
     msg = prefix + "key=" + key;

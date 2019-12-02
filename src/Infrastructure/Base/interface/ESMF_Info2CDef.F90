@@ -104,7 +104,7 @@ interface
 
   !=============================================================================
 
-  subroutine c_info_inquire(info, inq, key, recursive, idx, rc) bind(C, name="ESMC_Info2Inquire")
+  subroutine c_info_inquire(info, inq, key, recursive, idx, attr_compliance, rc) bind(C, name="ESMC_Info2Inquire")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: info
@@ -112,6 +112,7 @@ interface
     character(C_CHAR), intent(in) :: key(*)
     integer, intent(in) :: recursive
     type(C_PTR), value :: idx
+    integer, intent(in) :: attr_compliance
     integer(C_INT), intent(inout) :: rc
   end subroutine c_info_inquire
 

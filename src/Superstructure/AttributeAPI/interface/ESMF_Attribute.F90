@@ -28276,7 +28276,8 @@ end if
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   call ESMF_Info2Inquire(info, key=key, attrCount=countSingle, attrCountTotal=countTotal, &
-    attPackCount=attPackCount, attnestflag=local_attnestflag, rc=localrc)
+    attPackCount=attPackCount, attnestflag=local_attnestflag, attrCompliance=.true., &
+    rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(attcountflag)) then
@@ -28331,7 +28332,7 @@ end if
 
   call ESMF_Info2Inquire(attpack%getPayload(), key=attpack%formatKey(), attrCount=countSingle, &
     attrCountTotal=countTotal, attPackCount=attPackCount, attnestflag=local_attnestflag, &
-    rc=localrc)
+    attrCompliance=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(attcountflag)) then
@@ -28397,7 +28398,7 @@ end if
 
   if (is_present) then
     call ESMF_Info2Inquire(attpack%getPayload(), key=key, attrCount=itemCount, attnestflag=local_attnestflag, &
-      typekind=typekind, isStructured=is_structured, rc=localrc)
+      typekind=typekind, isStructured=is_structured, attrCompliance=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (.not. is_structured) then
       if (present(itemCount)) then
@@ -28462,7 +28463,7 @@ end if
 
   if (is_present) then
     call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, attnestflag=local_attnestflag, &
-      typekind=typekind, isStructured=is_structured, rc=localrc)
+      typekind=typekind, isStructured=is_structured, attrCompliance=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (.not. is_structured) then
       if (present(itemCount)) then
@@ -28519,7 +28520,7 @@ end if
 
   call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, typekind=typekind, &
     idx=attributeIndex, ikey=name, isPresent=isPresent, attnestflag=local_attnestflag, &
-    isStructured=is_structured, rc=localrc)
+    isStructured=is_structured, attrCompliance=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   if (.not. is_structured) then
     if (present(itemCount)) then
@@ -28699,7 +28700,8 @@ end if
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   call ESMF_Info2Inquire(info, key=key, attrCount=countSingle, attrCountTotal=countTotal, &
-    attPackCount=attPackCount, attnestflag=local_attnestflag, rc=localrc)
+    attPackCount=attPackCount, attnestflag=local_attnestflag, attrCompliance=.true., &
+    rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(attcountflag)) then
@@ -28754,7 +28756,7 @@ end if
 
   call ESMF_Info2Inquire(attpack%getPayload(), key=attpack%formatKey(), attrCount=countSingle, &
     attrCountTotal=countTotal, attPackCount=attPackCount, attnestflag=local_attnestflag, &
-    rc=localrc)
+    attrCompliance=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(attcountflag)) then
@@ -28820,7 +28822,7 @@ end if
 
   if (is_present) then
     call ESMF_Info2Inquire(attpack%getPayload(), key=key, attrCount=itemCount, attnestflag=local_attnestflag, &
-      typekind=typekind, isStructured=is_structured, rc=localrc)
+      typekind=typekind, isStructured=is_structured, attrCompliance=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (.not. is_structured) then
       if (present(itemCount)) then
@@ -28885,7 +28887,7 @@ end if
 
   if (is_present) then
     call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, attnestflag=local_attnestflag, &
-      typekind=typekind, isStructured=is_structured, rc=localrc)
+      typekind=typekind, isStructured=is_structured, attrCompliance=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (.not. is_structured) then
       if (present(itemCount)) then
@@ -28942,7 +28944,7 @@ end if
 
   call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, typekind=typekind, &
     idx=attributeIndex, ikey=name, isPresent=isPresent, attnestflag=local_attnestflag, &
-    isStructured=is_structured, rc=localrc)
+    isStructured=is_structured, attrCompliance=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   if (.not. is_structured) then
     if (present(itemCount)) then
@@ -29122,7 +29124,8 @@ end if
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   call ESMF_Info2Inquire(info, key=key, attrCount=countSingle, attrCountTotal=countTotal, &
-    attPackCount=attPackCount, attnestflag=local_attnestflag, rc=localrc)
+    attPackCount=attPackCount, attnestflag=local_attnestflag, attrCompliance=.true., &
+    rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(attcountflag)) then
@@ -29177,7 +29180,7 @@ end if
 
   call ESMF_Info2Inquire(attpack%getPayload(), key=attpack%formatKey(), attrCount=countSingle, &
     attrCountTotal=countTotal, attPackCount=attPackCount, attnestflag=local_attnestflag, &
-    rc=localrc)
+    attrCompliance=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(attcountflag)) then
@@ -29243,7 +29246,7 @@ end if
 
   if (is_present) then
     call ESMF_Info2Inquire(attpack%getPayload(), key=key, attrCount=itemCount, attnestflag=local_attnestflag, &
-      typekind=typekind, isStructured=is_structured, rc=localrc)
+      typekind=typekind, isStructured=is_structured, attrCompliance=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (.not. is_structured) then
       if (present(itemCount)) then
@@ -29308,7 +29311,7 @@ end if
 
   if (is_present) then
     call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, attnestflag=local_attnestflag, &
-      typekind=typekind, isStructured=is_structured, rc=localrc)
+      typekind=typekind, isStructured=is_structured, attrCompliance=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (.not. is_structured) then
       if (present(itemCount)) then
@@ -29365,7 +29368,7 @@ end if
 
   call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, typekind=typekind, &
     idx=attributeIndex, ikey=name, isPresent=isPresent, attnestflag=local_attnestflag, &
-    isStructured=is_structured, rc=localrc)
+    isStructured=is_structured, attrCompliance=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   if (.not. is_structured) then
     if (present(itemCount)) then
@@ -29545,7 +29548,8 @@ end if
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   call ESMF_Info2Inquire(info, key=key, attrCount=countSingle, attrCountTotal=countTotal, &
-    attPackCount=attPackCount, attnestflag=local_attnestflag, rc=localrc)
+    attPackCount=attPackCount, attnestflag=local_attnestflag, attrCompliance=.true., &
+    rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(attcountflag)) then
@@ -29600,7 +29604,7 @@ end if
 
   call ESMF_Info2Inquire(attpack%getPayload(), key=attpack%formatKey(), attrCount=countSingle, &
     attrCountTotal=countTotal, attPackCount=attPackCount, attnestflag=local_attnestflag, &
-    rc=localrc)
+    attrCompliance=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(attcountflag)) then
@@ -29666,7 +29670,7 @@ end if
 
   if (is_present) then
     call ESMF_Info2Inquire(attpack%getPayload(), key=key, attrCount=itemCount, attnestflag=local_attnestflag, &
-      typekind=typekind, isStructured=is_structured, rc=localrc)
+      typekind=typekind, isStructured=is_structured, attrCompliance=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (.not. is_structured) then
       if (present(itemCount)) then
@@ -29731,7 +29735,7 @@ end if
 
   if (is_present) then
     call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, attnestflag=local_attnestflag, &
-      typekind=typekind, isStructured=is_structured, rc=localrc)
+      typekind=typekind, isStructured=is_structured, attrCompliance=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (.not. is_structured) then
       if (present(itemCount)) then
@@ -29788,7 +29792,7 @@ end if
 
   call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, typekind=typekind, &
     idx=attributeIndex, ikey=name, isPresent=isPresent, attnestflag=local_attnestflag, &
-    isStructured=is_structured, rc=localrc)
+    isStructured=is_structured, attrCompliance=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   if (.not. is_structured) then
     if (present(itemCount)) then
@@ -29968,7 +29972,8 @@ end if
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   call ESMF_Info2Inquire(info, key=key, attrCount=countSingle, attrCountTotal=countTotal, &
-    attPackCount=attPackCount, attnestflag=local_attnestflag, rc=localrc)
+    attPackCount=attPackCount, attnestflag=local_attnestflag, attrCompliance=.true., &
+    rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(attcountflag)) then
@@ -30023,7 +30028,7 @@ end if
 
   call ESMF_Info2Inquire(attpack%getPayload(), key=attpack%formatKey(), attrCount=countSingle, &
     attrCountTotal=countTotal, attPackCount=attPackCount, attnestflag=local_attnestflag, &
-    rc=localrc)
+    attrCompliance=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(attcountflag)) then
@@ -30089,7 +30094,7 @@ end if
 
   if (is_present) then
     call ESMF_Info2Inquire(attpack%getPayload(), key=key, attrCount=itemCount, attnestflag=local_attnestflag, &
-      typekind=typekind, isStructured=is_structured, rc=localrc)
+      typekind=typekind, isStructured=is_structured, attrCompliance=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (.not. is_structured) then
       if (present(itemCount)) then
@@ -30154,7 +30159,7 @@ end if
 
   if (is_present) then
     call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, attnestflag=local_attnestflag, &
-      typekind=typekind, isStructured=is_structured, rc=localrc)
+      typekind=typekind, isStructured=is_structured, attrCompliance=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (.not. is_structured) then
       if (present(itemCount)) then
@@ -30211,7 +30216,7 @@ end if
 
   call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, typekind=typekind, &
     idx=attributeIndex, ikey=name, isPresent=isPresent, attnestflag=local_attnestflag, &
-    isStructured=is_structured, rc=localrc)
+    isStructured=is_structured, attrCompliance=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   if (.not. is_structured) then
     if (present(itemCount)) then
@@ -30391,7 +30396,8 @@ end if
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   call ESMF_Info2Inquire(info, key=key, attrCount=countSingle, attrCountTotal=countTotal, &
-    attPackCount=attPackCount, attnestflag=local_attnestflag, rc=localrc)
+    attPackCount=attPackCount, attnestflag=local_attnestflag, attrCompliance=.true., &
+    rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(attcountflag)) then
@@ -30446,7 +30452,7 @@ end if
 
   call ESMF_Info2Inquire(attpack%getPayload(), key=attpack%formatKey(), attrCount=countSingle, &
     attrCountTotal=countTotal, attPackCount=attPackCount, attnestflag=local_attnestflag, &
-    rc=localrc)
+    attrCompliance=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(attcountflag)) then
@@ -30512,7 +30518,7 @@ end if
 
   if (is_present) then
     call ESMF_Info2Inquire(attpack%getPayload(), key=key, attrCount=itemCount, attnestflag=local_attnestflag, &
-      typekind=typekind, isStructured=is_structured, rc=localrc)
+      typekind=typekind, isStructured=is_structured, attrCompliance=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (.not. is_structured) then
       if (present(itemCount)) then
@@ -30577,7 +30583,7 @@ end if
 
   if (is_present) then
     call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, attnestflag=local_attnestflag, &
-      typekind=typekind, isStructured=is_structured, rc=localrc)
+      typekind=typekind, isStructured=is_structured, attrCompliance=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (.not. is_structured) then
       if (present(itemCount)) then
@@ -30634,7 +30640,7 @@ end if
 
   call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, typekind=typekind, &
     idx=attributeIndex, ikey=name, isPresent=isPresent, attnestflag=local_attnestflag, &
-    isStructured=is_structured, rc=localrc)
+    isStructured=is_structured, attrCompliance=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   if (.not. is_structured) then
     if (present(itemCount)) then
@@ -30814,7 +30820,8 @@ end if
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   call ESMF_Info2Inquire(info, key=key, attrCount=countSingle, attrCountTotal=countTotal, &
-    attPackCount=attPackCount, attnestflag=local_attnestflag, rc=localrc)
+    attPackCount=attPackCount, attnestflag=local_attnestflag, attrCompliance=.true., &
+    rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(attcountflag)) then
@@ -30869,7 +30876,7 @@ end if
 
   call ESMF_Info2Inquire(attpack%getPayload(), key=attpack%formatKey(), attrCount=countSingle, &
     attrCountTotal=countTotal, attPackCount=attPackCount, attnestflag=local_attnestflag, &
-    rc=localrc)
+    attrCompliance=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(attcountflag)) then
@@ -30935,7 +30942,7 @@ end if
 
   if (is_present) then
     call ESMF_Info2Inquire(attpack%getPayload(), key=key, attrCount=itemCount, attnestflag=local_attnestflag, &
-      typekind=typekind, isStructured=is_structured, rc=localrc)
+      typekind=typekind, isStructured=is_structured, attrCompliance=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (.not. is_structured) then
       if (present(itemCount)) then
@@ -31000,7 +31007,7 @@ end if
 
   if (is_present) then
     call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, attnestflag=local_attnestflag, &
-      typekind=typekind, isStructured=is_structured, rc=localrc)
+      typekind=typekind, isStructured=is_structured, attrCompliance=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (.not. is_structured) then
       if (present(itemCount)) then
@@ -31057,7 +31064,7 @@ end if
 
   call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, typekind=typekind, &
     idx=attributeIndex, ikey=name, isPresent=isPresent, attnestflag=local_attnestflag, &
-    isStructured=is_structured, rc=localrc)
+    isStructured=is_structured, attrCompliance=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   if (.not. is_structured) then
     if (present(itemCount)) then
@@ -31237,7 +31244,8 @@ end if
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   call ESMF_Info2Inquire(info, key=key, attrCount=countSingle, attrCountTotal=countTotal, &
-    attPackCount=attPackCount, attnestflag=local_attnestflag, rc=localrc)
+    attPackCount=attPackCount, attnestflag=local_attnestflag, attrCompliance=.true., &
+    rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(attcountflag)) then
@@ -31292,7 +31300,7 @@ end if
 
   call ESMF_Info2Inquire(attpack%getPayload(), key=attpack%formatKey(), attrCount=countSingle, &
     attrCountTotal=countTotal, attPackCount=attPackCount, attnestflag=local_attnestflag, &
-    rc=localrc)
+    attrCompliance=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(attcountflag)) then
@@ -31358,7 +31366,7 @@ end if
 
   if (is_present) then
     call ESMF_Info2Inquire(attpack%getPayload(), key=key, attrCount=itemCount, attnestflag=local_attnestflag, &
-      typekind=typekind, isStructured=is_structured, rc=localrc)
+      typekind=typekind, isStructured=is_structured, attrCompliance=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (.not. is_structured) then
       if (present(itemCount)) then
@@ -31423,7 +31431,7 @@ end if
 
   if (is_present) then
     call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, attnestflag=local_attnestflag, &
-      typekind=typekind, isStructured=is_structured, rc=localrc)
+      typekind=typekind, isStructured=is_structured, attrCompliance=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (.not. is_structured) then
       if (present(itemCount)) then
@@ -31480,7 +31488,7 @@ end if
 
   call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, typekind=typekind, &
     idx=attributeIndex, ikey=name, isPresent=isPresent, attnestflag=local_attnestflag, &
-    isStructured=is_structured, rc=localrc)
+    isStructured=is_structured, attrCompliance=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   if (.not. is_structured) then
     if (present(itemCount)) then
@@ -31660,7 +31668,8 @@ end if
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   call ESMF_Info2Inquire(info, key=key, attrCount=countSingle, attrCountTotal=countTotal, &
-    attPackCount=attPackCount, attnestflag=local_attnestflag, rc=localrc)
+    attPackCount=attPackCount, attnestflag=local_attnestflag, attrCompliance=.true., &
+    rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(attcountflag)) then
@@ -31715,7 +31724,7 @@ end if
 
   call ESMF_Info2Inquire(attpack%getPayload(), key=attpack%formatKey(), attrCount=countSingle, &
     attrCountTotal=countTotal, attPackCount=attPackCount, attnestflag=local_attnestflag, &
-    rc=localrc)
+    attrCompliance=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(attcountflag)) then
@@ -31781,7 +31790,7 @@ end if
 
   if (is_present) then
     call ESMF_Info2Inquire(attpack%getPayload(), key=key, attrCount=itemCount, attnestflag=local_attnestflag, &
-      typekind=typekind, isStructured=is_structured, rc=localrc)
+      typekind=typekind, isStructured=is_structured, attrCompliance=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (.not. is_structured) then
       if (present(itemCount)) then
@@ -31846,7 +31855,7 @@ end if
 
   if (is_present) then
     call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, attnestflag=local_attnestflag, &
-      typekind=typekind, isStructured=is_structured, rc=localrc)
+      typekind=typekind, isStructured=is_structured, attrCompliance=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (.not. is_structured) then
       if (present(itemCount)) then
@@ -31903,7 +31912,7 @@ end if
 
   call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, typekind=typekind, &
     idx=attributeIndex, ikey=name, isPresent=isPresent, attnestflag=local_attnestflag, &
-    isStructured=is_structured, rc=localrc)
+    isStructured=is_structured, attrCompliance=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   if (.not. is_structured) then
     if (present(itemCount)) then
@@ -32083,7 +32092,8 @@ end if
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   call ESMF_Info2Inquire(info, key=key, attrCount=countSingle, attrCountTotal=countTotal, &
-    attPackCount=attPackCount, attnestflag=local_attnestflag, rc=localrc)
+    attPackCount=attPackCount, attnestflag=local_attnestflag, attrCompliance=.true., &
+    rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(attcountflag)) then
@@ -32138,7 +32148,7 @@ end if
 
   call ESMF_Info2Inquire(attpack%getPayload(), key=attpack%formatKey(), attrCount=countSingle, &
     attrCountTotal=countTotal, attPackCount=attPackCount, attnestflag=local_attnestflag, &
-    rc=localrc)
+    attrCompliance=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(attcountflag)) then
@@ -32204,7 +32214,7 @@ end if
 
   if (is_present) then
     call ESMF_Info2Inquire(attpack%getPayload(), key=key, attrCount=itemCount, attnestflag=local_attnestflag, &
-      typekind=typekind, isStructured=is_structured, rc=localrc)
+      typekind=typekind, isStructured=is_structured, attrCompliance=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (.not. is_structured) then
       if (present(itemCount)) then
@@ -32269,7 +32279,7 @@ end if
 
   if (is_present) then
     call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, attnestflag=local_attnestflag, &
-      typekind=typekind, isStructured=is_structured, rc=localrc)
+      typekind=typekind, isStructured=is_structured, attrCompliance=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (.not. is_structured) then
       if (present(itemCount)) then
@@ -32326,7 +32336,7 @@ end if
 
   call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, typekind=typekind, &
     idx=attributeIndex, ikey=name, isPresent=isPresent, attnestflag=local_attnestflag, &
-    isStructured=is_structured, rc=localrc)
+    isStructured=is_structured, attrCompliance=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   if (.not. is_structured) then
     if (present(itemCount)) then
@@ -32506,7 +32516,8 @@ end if
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   call ESMF_Info2Inquire(info, key=key, attrCount=countSingle, attrCountTotal=countTotal, &
-    attPackCount=attPackCount, attnestflag=local_attnestflag, rc=localrc)
+    attPackCount=attPackCount, attnestflag=local_attnestflag, attrCompliance=.true., &
+    rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(attcountflag)) then
@@ -32561,7 +32572,7 @@ end if
 
   call ESMF_Info2Inquire(attpack%getPayload(), key=attpack%formatKey(), attrCount=countSingle, &
     attrCountTotal=countTotal, attPackCount=attPackCount, attnestflag=local_attnestflag, &
-    rc=localrc)
+    attrCompliance=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(attcountflag)) then
@@ -32627,7 +32638,7 @@ end if
 
   if (is_present) then
     call ESMF_Info2Inquire(attpack%getPayload(), key=key, attrCount=itemCount, attnestflag=local_attnestflag, &
-      typekind=typekind, isStructured=is_structured, rc=localrc)
+      typekind=typekind, isStructured=is_structured, attrCompliance=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (.not. is_structured) then
       if (present(itemCount)) then
@@ -32692,7 +32703,7 @@ end if
 
   if (is_present) then
     call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, attnestflag=local_attnestflag, &
-      typekind=typekind, isStructured=is_structured, rc=localrc)
+      typekind=typekind, isStructured=is_structured, attrCompliance=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (.not. is_structured) then
       if (present(itemCount)) then
@@ -32749,7 +32760,7 @@ end if
 
   call ESMF_Info2Inquire(info, key=key, attrCount=itemCount, typekind=typekind, &
     idx=attributeIndex, ikey=name, isPresent=isPresent, attnestflag=local_attnestflag, &
-    isStructured=is_structured, rc=localrc)
+    isStructured=is_structured, attrCompliance=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   if (.not. is_structured) then
     if (present(itemCount)) then

@@ -201,12 +201,14 @@ void ESMC_Info2Erase(ESMCI::Info2* info, char* keyParent,
 #undef ESMC_METHOD
 #define ESMC_METHOD "ESMC_Info2Inquire()"
 void ESMC_Info2Inquire(ESMCI::Info2 *info, ESMCI::Info2 *inq, char *key,
-                       int &fortran_recursive, int *idx, int &rc) {
+                       int &fortran_recursive, int *idx, int &fortran_attr_compliance,
+                       int &rc) {
   rc = ESMF_FAILURE;
   bool recursive = (fortran_recursive == 1) ? true:false;
+  bool attr_compliance = (fortran_attr_compliance == 1) ? true:false;
   try {
     std::string localKey(key);
-    json jinq = info->inquire(localKey, rc, recursive, idx, true);
+    json jinq = info->inquire(localKey, rc, recursive, idx, attr_compliance);
     json &inqref = inq->getStorageRefWritable();
     inqref = std::move(jinq);
   }
@@ -291,7 +293,7 @@ void ESMC_Info2BaseSyncDo(const std::vector<long int> &base_addresses, const int
             j[std::to_string(ii)] = info->getStorageRef().dump();
             // This data will be broadcast and we can consider the object
             // clean.
-            info->setDirty(false);
+//            info->setDirty(false); //tdk:todo: do we really want to remove dirtiness support?
           }
           ESMF_CATCH_JSON
         }
@@ -317,7 +319,7 @@ void ESMC_Info2BaseSyncDo(const std::vector<long int> &base_addresses, const int
 //          info_to_update->update(rhs, rc);
           // Since this is part of the sync operation, we do not consider this
           // data dirty after the update.
-          info_to_update->setDirty(false);
+//          info_to_update->setDirty(false); //tdk:todo: do we really want to remove dirtiness support?
         }
       }
       ESMF_CATCH_JSON

@@ -379,6 +379,8 @@ module ESMF_AttributeUpdateUTestMod
     integer                     :: myPet
 
     integer, dimension(2)       :: rootList
+    type(ESMF_Inquire) :: einq
+    character(:), allocatable :: idump
 
     rc = ESMF_SUCCESS
 
@@ -396,10 +398,40 @@ module ESMF_AttributeUpdateUTestMod
     call ESMF_AttributeUpdate(importState, vm, rootList=rootList, rc=rc)
     if (rc/=ESMF_SUCCESS) return
 
+#if 0
+    einq = einq%Create(addBaseAddress=.true., addObjectInfo=.true., rc=rc)
+    if (rc/=ESMF_SUCCESS) return
+    call einq%Update(exportState, "", rc=rc)
+    if (rc/=ESMF_SUCCESS) return
+    idump = ESMF_Info2Dump(einq%info, rc=rc)
+    if (rc/=ESMF_SUCCESS) return
+    call ESMF_LogWrite("usercpl_run: exportState dump before copy=...", ESMF_LOGMSG_INFO, rc=rc)
+    if (rc/=ESMF_SUCCESS) return
+    call ESMF_LogWrite(idump, ESMF_LOGMSG_INFO, rc=rc)
+    if (rc/=ESMF_SUCCESS) return
+    call einq%Destroy(rc=rc)
+    if (rc/=ESMF_SUCCESS) return
+#endif
+
     call ESMF_AttributeCopy(importState, exportState, rc=rc)
     !call ESMF_AttributeCopy(importState, exportState, &
     !  attcopy=ESMF_ATTCOPY_REFERENCE, rc=rc)
     if (rc/=ESMF_SUCCESS) return
+
+#if 0
+    einq = einq%Create(addBaseAddress=.true., addObjectInfo=.true., rc=rc)
+    if (rc/=ESMF_SUCCESS) return
+    call einq%Update(exportState, "", rc=rc)
+    if (rc/=ESMF_SUCCESS) return
+    idump = ESMF_Info2Dump(einq%info, rc=rc)
+    if (rc/=ESMF_SUCCESS) return
+    call ESMF_LogWrite("usercpl_run: exportState dump after copy=...", ESMF_LOGMSG_INFO, rc=rc)
+    if (rc/=ESMF_SUCCESS) return
+    call ESMF_LogWrite(idump, ESMF_LOGMSG_INFO, rc=rc)
+    if (rc/=ESMF_SUCCESS) return
+    call einq%Destroy(rc=rc)
+    if (rc/=ESMF_SUCCESS) return
+#endif
 
   end subroutine usercpl_run
 
@@ -613,6 +645,7 @@ program ESMF_AttributeUpdateUTest
     call ESMF_CplCompSetServices(cplcomp, userRoutine=usercpl_register, rc=rc)
     if (rc .ne. ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
+    call ESMF_LogWrite("Starting initialize block...")
     call ESMF_GridCompInitialize(gridcomp1, exportState=c1exp, rc=rc)
     if (rc .ne. ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
     call ESMF_GridCompInitialize(gridcomp2, importState=c2imp, rc=rc)
@@ -621,15 +654,19 @@ program ESMF_AttributeUpdateUTest
       exportState=c2imp, rc=rc)
     if (rc .ne. ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
+    call ESMF_LogWrite("Calling GridCompRun for gridcomp1...")
     call ESMF_GridCompRun(gridcomp1, exportState=c1exp, rc=rc)
     if (rc .ne. ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+    call ESMF_LogWrite("Calling CplComprun...")
     call ESMF_CplCompRun(cplcomp, importState=c1exp, &
       exportState=c2imp, rc=rc)
     if (rc .ne. ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+    call ESMF_LogWrite("Calling GridCompRun for gridcomp2...")
     call ESMF_GridCompRun(gridcomp2, importState=c2imp, rc=rc)
     if (rc .ne. ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
     ! Now we can start doing some testing
+    call ESMF_LogWrite("Starting test block...")
     convESMF = 'ESMF'
     purpGen = 'General'
     name2 = 'StandardName'
