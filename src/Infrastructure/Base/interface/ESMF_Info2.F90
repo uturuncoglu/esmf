@@ -765,6 +765,7 @@ subroutine ESMF_Info2GetArrayCHAllocated(info, key, values, itemcount, attnestfl
   integer, intent(inout), optional :: rc
 
   integer :: localrc, ii
+  character(len=ESMF_MAXSTR) :: logmsg
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
@@ -775,6 +776,10 @@ subroutine ESMF_Info2GetArrayCHAllocated(info, key, values, itemcount, attnestfl
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (itemcount /= SIZE(values)) then
+    write(logmsg, *) "itemcount=", itemcount
+    call ESMF_LogWrite(logmsg, ESMF_LOGMSG_ERROR)
+    write(logmsg, *) "SIZE(values)=", SIZE(values)
+    call ESMF_LogWrite(logmsg, ESMF_LOGMSG_ERROR)
     if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="values allocation size does not match size in Info storage", ESMF_CONTEXT, rcToReturn=rc)) return
   end if
 

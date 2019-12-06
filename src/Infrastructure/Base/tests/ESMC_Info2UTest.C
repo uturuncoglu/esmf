@@ -620,6 +620,19 @@ ESMF_CATCH_PASSTHRU
     return finalizeFailure(rc, failMsg, "Did not modify internal storage");
   }
 
+  // Test using a parent key when setting =====================================
+  Info2 pkey_test;
+  json& pkey_test_storage = pkey_test.getStorageRefWritable();
+  pkey_test_storage["parent"]["storage"] = json::object();
+  std::string pkey = "/parent/storage";
+  try {
+    pkey_test.set("foo", 22, false, rc, nullptr, &pkey);
+  }
+  ESMF_CATCH_PASSTHRU
+  if (pkey_test.get<int>("/parent/storage/foo", rc) != 22) {
+    return finalizeFailure(rc, failMsg, "Parent key set failure");
+  }
+
   return;
 };
 

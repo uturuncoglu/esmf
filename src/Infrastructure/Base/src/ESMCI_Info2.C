@@ -399,9 +399,7 @@ bool isIn(key_t& target, const json& j) {
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "json_type_to_esmf_typekind()"
-ESMC_TypeKind_Flag json_type_to_esmf_typekind(const json &j) noexcept {
-  json jj;
-  jj["foo"] = ESMC_TYPEKIND_I1;
+ESMC_TypeKind_Flag json_type_to_esmf_typekind(const json &j, const bool allow_array) noexcept {
   ESMC_TypeKind_Flag esmf_type;
   if (j.type() == json::value_t::null) {
     esmf_type = ESMF_NOKIND;
@@ -416,7 +414,11 @@ ESMC_TypeKind_Flag json_type_to_esmf_typekind(const json &j) noexcept {
   } else if (j.type() == json::value_t::object) {
     esmf_type = ESMF_NOKIND;
   } else if (j.type() == json::value_t::array) {
-    esmf_type = ESMF_NOKIND;
+    if (allow_array && j.size() > 0) {
+      esmf_type = json_type_to_esmf_typekind(j.at(0), allow_array);
+    } else {
+      esmf_type = ESMF_NOKIND;
+    }
   } else if (j.type() == json::value_t::string) {
     esmf_type = ESMC_TYPEKIND_CHARACTER;
   } else {
@@ -863,7 +865,7 @@ json Info2::inquire(key_t &key, int &rc, bool recursive, const int *idx, bool at
 
     // Type inquire -----------------------------------------------------------
 
-    j["ESMC_TypeKind_Flag"] = json_type_to_esmf_typekind(sk);
+    j["ESMC_TypeKind_Flag"] = json_type_to_esmf_typekind(sk, true);
     std::string json_typename;
     bool is_array = false;
     if (sk.is_array()) {
@@ -885,6 +887,13 @@ json Info2::inquire(key_t &key, int &rc, bool recursive, const int *idx, bool at
   }
   ESMF_CATCH_INFO
   rc = ESMF_SUCCESS;
+
+#if 0
+  msg = prefix + "j.dump()=...";
+  ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO);
+  ESMC_LogWrite(j.dump().c_str(), ESMC_LOGMSG_INFO);
+#endif
+
   return j;
 }
 
@@ -1026,6 +1035,33 @@ void Info2::set(key_t &key, json &&j, bool force, int &rc, const int *index,
   // Test:
   // Notes: parent key (pkey) must exist in the map
   //tdk:question: should force also override type differences? setting to null is always allowed.
+
+#if 0
+  std::string prefix = std::string(ESMC_METHOD) + ": ";
+  std::string msg;
+  msg = prefix + "key=" + key;
+  ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO);
+  msg = prefix + "j.dump()=" + j.dump();
+  ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO);
+  msg = prefix + "force=" + std::to_string(force);
+  ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO);
+  if (index) {
+    msg = prefix + "*index=" + std::to_string(*index);
+  } else {
+    msg = prefix + "index=nullptr";
+  }
+  ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO);
+  if (pkey) {
+    msg = prefix + "*pkey=" + *pkey;
+  } else {
+    msg = prefix + "pkey=nullptr";
+  }
+  ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO);
+  msg = prefix + "this->dump()=...";
+  ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO);
+  ESMC_LogWrite(this->dump(rc).c_str(), ESMC_LOGMSG_INFO);
+#endif
+
   rc = ESMF_FAILURE;
   try {
     json *jobject = nullptr;
@@ -1110,6 +1146,14 @@ void Info2::set(key_t &key, json &&j, bool force, int &rc, const int *index,
   ESMF_CATCH_INFO
   this->dirty = true;
   rc = ESMF_SUCCESS;
+
+#if 0
+  std::string msg2;
+  std::string prefix2 = std::string(ESMC_METHOD) + ": ";
+  msg2 = prefix2 + "this->dump() <exiting>=...";
+  ESMC_LogWrite(msg2.c_str(), ESMC_LOGMSG_INFO);
+  ESMC_LogWrite(this->dump(rc).c_str(), ESMC_LOGMSG_INFO);
+#endif
 }
 
 #undef  ESMC_METHOD

@@ -1550,7 +1550,7 @@ void PIO_Handler::attPackPut (
                                         ESMC_CONTEXT, rc))
         return;
     }
-    ESMC_TypeKind_Flag att_type = ESMCI::json_type_to_esmf_typekind(it.value());
+    ESMC_TypeKind_Flag att_type = ESMCI::json_type_to_esmf_typekind(it.value(), false);
     switch (att_type) {
       case ESMC_TYPEKIND_CHARACTER: {
         const std::string value = it.value();

@@ -110,9 +110,9 @@ interface
     type(C_PTR), value :: info
     type(C_PTR), value :: inq
     character(C_CHAR), intent(in) :: key(*)
-    integer, intent(in) :: recursive
+    integer(C_INT), intent(in) :: recursive
     type(C_PTR), value :: idx
-    integer, intent(in) :: attr_compliance
+    integer(C_INT), intent(in) :: attr_compliance
     integer(C_INT), intent(inout) :: rc
   end subroutine c_info_inquire
 

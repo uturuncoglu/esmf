@@ -1486,7 +1486,6 @@ module NUOPC_Comp
     integer                               :: localrc
     
     if (present(rc)) rc = ESMF_SUCCESS
-
     call ESMF_AttributeSet(comp, name=name, value=value, &
       convention="NUOPC", purpose="Instance", attnestflag=ESMF_ATTNEST_ON, &
       rc=localrc)
@@ -1522,7 +1521,6 @@ module NUOPC_Comp
     integer                               :: localrc
     
     if (present(rc)) rc = ESMF_SUCCESS
-
     call ESMF_AttributeSet(comp, name=name, value=value, &
       convention="NUOPC", purpose="Instance", attnestflag=ESMF_ATTNEST_ON, &
       rc=localrc)
@@ -2833,7 +2831,7 @@ module NUOPC_Comp
     character(len=40)         :: attributeName
     character(len=NUOPC_PhaseMapStringLength), pointer :: phases(:)
     logical                   :: isSet
-    
+
     if (present(rc)) rc = ESMF_SUCCESS
     
     ! query the Component for info
@@ -2888,9 +2886,9 @@ module NUOPC_Comp
     if (ESMF_LogFoundAllocError(statusToCheck=stat, &
       msg="Allocation of temporary data structure.", &
       line=__LINE__, file=trim(name)//":"//FILENAME, rcToReturn=rc)) return  ! bail out
-    if (itemCount > 0) then
+    if (isSet .and. (itemCount > 0)) then
       call ESMF_AttributeGet(comp, name=trim(attributeName), &
-        valueList=phases, convention="NUOPC", purpose="Instance", &
+        valueList=phases(1:itemcount), convention="NUOPC", purpose="Instance", &
         attnestflag=ESMF_ATTNEST_ON, rc=localrc)
       if (ESMF_LogFoundError(rcToCheck=localrc, msg=ESMF_LOGERR_PASSTHRU, &
         line=__LINE__, file=trim(name)//":"//FILENAME, rcToReturn=rc)) return  ! bail out
@@ -3029,9 +3027,9 @@ module NUOPC_Comp
     if (ESMF_LogFoundAllocError(statusToCheck=stat, &
       msg="Allocation of temporary data structure.", &
       line=__LINE__, file=trim(name)//":"//FILENAME, rcToReturn=rc)) return  ! bail out
-    if (itemCount > 0) then
+    if (isSet .and. (itemCount > 0)) then
       call ESMF_AttributeGet(comp, name=trim(attributeName), &
-        valueList=phases, convention="NUOPC", purpose="Instance", &
+        valueList=phases(1:itemcount), convention="NUOPC", purpose="Instance", &
         attnestflag=ESMF_ATTNEST_ON, rc=localrc)
       if (ESMF_LogFoundError(rcToCheck=localrc, msg=ESMF_LOGERR_PASSTHRU, &
         line=__LINE__, file=trim(name)//":"//FILENAME, rcToReturn=rc)) return  ! bail out
@@ -3172,9 +3170,9 @@ module NUOPC_Comp
       msg="Allocation of temporary data structure.", &
       line=__LINE__, file=trim(name)//":"//FILENAME, &
       rcToReturn=rc)) return  ! bail out
-    if (itemCount > 0) then
+    if (isSet .and. (itemCount > 0)) then
       call ESMF_AttributeGet(comp, name=trim(attributeName), &
-        valueList=phases, convention="NUOPC", purpose="Instance", &
+        valueList=phases(1:itemcount), convention="NUOPC", purpose="Instance", &
         attnestflag=ESMF_ATTNEST_ON, rc=localrc)
       if (ESMF_LogFoundError(rcToCheck=localrc, msg=ESMF_LOGERR_PASSTHRU, &
         line=__LINE__, file=trim(name)//":"//FILENAME, rcToReturn=rc)) return  ! bail out

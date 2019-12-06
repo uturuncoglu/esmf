@@ -44,7 +44,7 @@ program ESMF_Info2UTest
   character(ESMF_MAXSTR) :: failMsg
   character(ESMF_MAXSTR) :: name
 
-  character(ESMF_MAXSTR) :: key, key_i8, key_r4, key_r8
+  character(ESMF_MAXSTR) :: key, key_i8, key_r4, key_r8, actual_char
   character(len=55) :: key_char, value_char, desired_char, def_desired_char, &
                        def_key_char, jsonType
   character(len=33) :: def_value_char
@@ -72,7 +72,7 @@ program ESMF_Info2UTest
                            attrs_types, attrs_obj_dst, attrs_obj_src, &
                            attrs_obj_new, attrs_parse, attrs_update_lhs, &
                            attrs_update_rhs, attrs_inq, attrs_eq_lhs, &
-                           attrs_eq_rhs, irecurse
+                           attrs_eq_rhs, irecurse, ipkey
 
   logical :: is_present, failed, is_set, is_present_copy_test, actual_logical, &
              desired_logical, isArray, isDirty
@@ -759,6 +759,29 @@ program ESMF_Info2UTest
   call ESMF_Test(ir4==5, name, failMsg, result, ESMF_SRCLINE)
 
   call ESMF_Info2Destroy(irecurse, rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+  !----------------------------------------------------------------------------
+
+  !----------------------------------------------------------------------------
+  !NEX_UTest
+  write(name, *) "ESMF_Info2Set with Parent Key"
+  write(failMsg, *) "Did not set with parent key"
+  rc = ESMF_FAILURE
+  failed = .false.
+
+  to_parse = '{"parent": {"storage": {"foo": null}}}'
+  ipkey = ESMF_Info2Create(to_parse, rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  call ESMF_Info2Set(ipkey, "foo", "foo-value", rc=rc, pkey="/parent/storage")
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  call ESMF_Info2Get(ipkey, "/parent/storage/foo", actual_char, rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  call ESMF_Test(trim(actual_char)=="foo-value", name, failMsg, result, ESMF_SRCLINE)
+
+  call ESMF_Info2Destroy(ipkey, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
   !----------------------------------------------------------------------------
 
