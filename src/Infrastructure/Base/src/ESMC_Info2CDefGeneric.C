@@ -1,12 +1,15 @@
+
 // $Id$
 //
 // Earth System Modeling Framework
-//\ Copyright 2002-2018, University Corporation for Atmospheric Research,
+// Copyright 2002-2019, University Corporation for Atmospheric Research,
 // Massachusetts Institute of Technology, Geophysical Fluid Dynamics
 // Laboratory, University of Michigan, National Centers for Environmental
 // Prediction, Los Alamos National Laboratory, Argonne National Laboratory,
 // NASA Goddard Space Flight Center.
 // Licensed under the University of Illinois-NCSA License.
+//
+//=============================================================================
 
 #define ESMC_FILENAME "./src/Infrastructure/Base/src/ESMC_Info2CDefGeneric.C"
 
