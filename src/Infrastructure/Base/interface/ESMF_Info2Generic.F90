@@ -53,6 +53,7 @@ subroutine ESMF_Info2GetR4(info, key, value, default, idx, attnestflag, rc)
     local_idx_ptr, &
     recursive)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_Info2GetR4
 
@@ -107,6 +108,7 @@ subroutine ESMF_Info2GetR8(info, key, value, default, idx, attnestflag, rc)
     local_idx_ptr, &
     recursive)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_Info2GetR8
 
@@ -161,6 +163,7 @@ subroutine ESMF_Info2GetI4(info, key, value, default, idx, attnestflag, rc)
     local_idx_ptr, &
     recursive)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_Info2GetI4
 
@@ -215,6 +218,7 @@ subroutine ESMF_Info2GetI8(info, key, value, default, idx, attnestflag, rc)
     local_idx_ptr, &
     recursive)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_Info2GetI8
 
@@ -264,13 +268,16 @@ subroutine ESMF_Info2GetLG(info, key, value, default, idx, attnestflag, rc)
   call c_info_get_LG(&
     info%ptr, &
     trim(key)//C_NULL_CHAR, &
-local_value, &
+    local_value, &
     localrc, &
     local_default_ptr, &
     local_idx_ptr, &
     recursive)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
-value = local_value  if (present(rc)) rc = ESMF_SUCCESS
+
+  value = local_value
+
+  if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_Info2GetLG
 
 !------------------------------------------------------------------------------
@@ -289,6 +296,7 @@ subroutine ESMF_Info2GetArrayR4(info, key, values, itemcount, attnestflag, rc)
 
   integer :: localrc
   integer(C_INT) :: recursive
+
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
   recursive = 0 !false
@@ -311,6 +319,7 @@ subroutine ESMF_Info2GetArrayR4(info, key, values, itemcount, attnestflag, rc)
     localrc, &
     recursive)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_Info2GetArrayR4
 
@@ -326,6 +335,7 @@ subroutine ESMF_Info2GetArrayR4Allocated(info, key, values, itemcount, attnestfl
 
   integer :: localrc
   integer(C_INT) :: recursive
+
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
   recursive = 0 !false
@@ -351,6 +361,7 @@ subroutine ESMF_Info2GetArrayR4Allocated(info, key, values, itemcount, attnestfl
     localrc, &
     recursive)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_Info2GetArrayR4Allocated
 
@@ -366,6 +377,7 @@ subroutine ESMF_Info2GetArrayR8(info, key, values, itemcount, attnestflag, rc)
 
   integer :: localrc
   integer(C_INT) :: recursive
+
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
   recursive = 0 !false
@@ -388,6 +400,7 @@ subroutine ESMF_Info2GetArrayR8(info, key, values, itemcount, attnestflag, rc)
     localrc, &
     recursive)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_Info2GetArrayR8
 
@@ -403,6 +416,7 @@ subroutine ESMF_Info2GetArrayR8Allocated(info, key, values, itemcount, attnestfl
 
   integer :: localrc
   integer(C_INT) :: recursive
+
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
   recursive = 0 !false
@@ -428,6 +442,7 @@ subroutine ESMF_Info2GetArrayR8Allocated(info, key, values, itemcount, attnestfl
     localrc, &
     recursive)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_Info2GetArrayR8Allocated
 
@@ -443,6 +458,7 @@ subroutine ESMF_Info2GetArrayI4(info, key, values, itemcount, attnestflag, rc)
 
   integer :: localrc
   integer(C_INT) :: recursive
+
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
   recursive = 0 !false
@@ -465,6 +481,7 @@ subroutine ESMF_Info2GetArrayI4(info, key, values, itemcount, attnestflag, rc)
     localrc, &
     recursive)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_Info2GetArrayI4
 
@@ -480,6 +497,7 @@ subroutine ESMF_Info2GetArrayI4Allocated(info, key, values, itemcount, attnestfl
 
   integer :: localrc
   integer(C_INT) :: recursive
+
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
   recursive = 0 !false
@@ -505,6 +523,7 @@ subroutine ESMF_Info2GetArrayI4Allocated(info, key, values, itemcount, attnestfl
     localrc, &
     recursive)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_Info2GetArrayI4Allocated
 
@@ -520,6 +539,7 @@ subroutine ESMF_Info2GetArrayI8(info, key, values, itemcount, attnestflag, rc)
 
   integer :: localrc
   integer(C_INT) :: recursive
+
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
   recursive = 0 !false
@@ -542,6 +562,7 @@ subroutine ESMF_Info2GetArrayI8(info, key, values, itemcount, attnestflag, rc)
     localrc, &
     recursive)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_Info2GetArrayI8
 
@@ -557,6 +578,7 @@ subroutine ESMF_Info2GetArrayI8Allocated(info, key, values, itemcount, attnestfl
 
   integer :: localrc
   integer(C_INT) :: recursive
+
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
   recursive = 0 !false
@@ -582,6 +604,7 @@ subroutine ESMF_Info2GetArrayI8Allocated(info, key, values, itemcount, attnestfl
     localrc, &
     recursive)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_Info2GetArrayI8Allocated
 
@@ -599,6 +622,7 @@ subroutine ESMF_Info2GetArrayLG(info, key, values, itemcount, attnestflag, rc)
   integer(C_INT) :: recursive
   integer :: ii
   logical(C_BOOL), dimension(:), allocatable :: local_values
+
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
   recursive = 0 !false
@@ -622,10 +646,12 @@ subroutine ESMF_Info2GetArrayLG(info, key, values, itemcount, attnestflag, rc)
     localrc, &
     recursive)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
   do ii=1,SIZE(values)
     values(ii) = local_values(ii)
   enddo
   deallocate(local_values)
+
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_Info2GetArrayLG
 
@@ -643,6 +669,7 @@ subroutine ESMF_Info2GetArrayLGAllocated(info, key, values, itemcount, attnestfl
   integer(C_INT) :: recursive
   integer :: ii
   logical(C_BOOL), dimension(:), allocatable :: local_values
+
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
   recursive = 0 !false
@@ -669,10 +696,12 @@ subroutine ESMF_Info2GetArrayLGAllocated(info, key, values, itemcount, attnestfl
     localrc, &
     recursive)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
   do ii=1,SIZE(values)
     values(ii) = local_values(ii)
   enddo
   deallocate(local_values)
+
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_Info2GetArrayLGAllocated
 
@@ -692,7 +721,8 @@ subroutine ESMF_Info2SetR4(info, key, value, force, idx, pkey, rc)
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  logical(C_BOOL) :: local_force  integer(C_INT), target :: local_idx
+  logical(C_BOOL) :: local_force
+  integer(C_INT), target :: local_idx
   type(C_PTR) :: local_idx_ptr
   character(:), allocatable :: local_pkey
 
@@ -741,7 +771,8 @@ subroutine ESMF_Info2SetR8(info, key, value, force, idx, pkey, rc)
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  logical(C_BOOL) :: local_force  integer(C_INT), target :: local_idx
+  logical(C_BOOL) :: local_force
+  integer(C_INT), target :: local_idx
   type(C_PTR) :: local_idx_ptr
   character(:), allocatable :: local_pkey
 
@@ -790,7 +821,8 @@ subroutine ESMF_Info2SetI4(info, key, value, force, idx, pkey, rc)
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  logical(C_BOOL) :: local_force  integer(C_INT), target :: local_idx
+  logical(C_BOOL) :: local_force
+  integer(C_INT), target :: local_idx
   type(C_PTR) :: local_idx_ptr
   character(:), allocatable :: local_pkey
 
@@ -839,7 +871,8 @@ subroutine ESMF_Info2SetI8(info, key, value, force, idx, pkey, rc)
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  logical(C_BOOL) :: local_force  integer(C_INT), target :: local_idx
+  logical(C_BOOL) :: local_force
+  integer(C_INT), target :: local_idx
   type(C_PTR) :: local_idx_ptr
   character(:), allocatable :: local_pkey
 
@@ -888,7 +921,8 @@ subroutine ESMF_Info2SetCH(info, key, value, force, idx, pkey, rc)
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  logical(C_BOOL) :: local_force  integer(C_INT), target :: local_idx
+  logical(C_BOOL) :: local_force
+  integer(C_INT), target :: local_idx
   type(C_PTR) :: local_idx_ptr
   character(:), allocatable :: local_pkey
 
@@ -937,7 +971,8 @@ subroutine ESMF_Info2SetLG(info, key, value, force, idx, pkey, rc)
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  logical(C_BOOL) :: local_force, local_value  integer(C_INT), target :: local_idx
+  logical(C_BOOL) :: local_force, local_value
+  integer(C_INT), target :: local_idx
   type(C_PTR) :: local_idx_ptr
   character(:), allocatable :: local_pkey
 
@@ -1009,13 +1044,13 @@ subroutine ESMF_Info2SetArrayR4(info, key, values, force, pkey, rc)
   call c_info_set_array_R4(&
     info%ptr, &
     trim(key)//C_NULL_CHAR, &
-values, &
+    values, &
     SIZE(values), &
     local_force, &
     localrc, &
     local_pkey)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
-  
+
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_Info2SetArrayR4
 
@@ -1049,13 +1084,13 @@ subroutine ESMF_Info2SetArrayR8(info, key, values, force, pkey, rc)
   call c_info_set_array_R8(&
     info%ptr, &
     trim(key)//C_NULL_CHAR, &
-values, &
+    values, &
     SIZE(values), &
     local_force, &
     localrc, &
     local_pkey)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
-  
+
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_Info2SetArrayR8
 
@@ -1089,13 +1124,13 @@ subroutine ESMF_Info2SetArrayI4(info, key, values, force, pkey, rc)
   call c_info_set_array_I4(&
     info%ptr, &
     trim(key)//C_NULL_CHAR, &
-values, &
+    values, &
     SIZE(values), &
     local_force, &
     localrc, &
     local_pkey)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
-  
+
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_Info2SetArrayI4
 
@@ -1129,13 +1164,13 @@ subroutine ESMF_Info2SetArrayI8(info, key, values, force, pkey, rc)
   call c_info_set_array_I8(&
     info%ptr, &
     trim(key)//C_NULL_CHAR, &
-values, &
+    values, &
     SIZE(values), &
     local_force, &
     localrc, &
     local_pkey)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
-  
+
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_Info2SetArrayI8
 
@@ -1184,7 +1219,6 @@ subroutine ESMF_Info2SetArrayLG(info, key, values, force, pkey, rc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   deallocate(local_values)
-  
+
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_Info2SetArrayLG
-
