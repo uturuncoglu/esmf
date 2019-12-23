@@ -1512,6 +1512,7 @@ module NUOPC_Comp
     integer                               :: localrc
     
     if (present(rc)) rc = ESMF_SUCCESS
+
     call ESMF_AttributeSet(comp, name=name, value=value, &
       convention="NUOPC", purpose="Instance", attnestflag=ESMF_ATTNEST_ON, &
       rc=localrc)
@@ -1547,6 +1548,7 @@ module NUOPC_Comp
     integer                               :: localrc
     
     if (present(rc)) rc = ESMF_SUCCESS
+
     call ESMF_AttributeSet(comp, name=name, value=value, &
       convention="NUOPC", purpose="Instance", attnestflag=ESMF_ATTNEST_ON, &
       rc=localrc)
