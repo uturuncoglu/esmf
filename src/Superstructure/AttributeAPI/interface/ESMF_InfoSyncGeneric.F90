@@ -190,3 +190,160 @@ subroutine ESMF_InfoSyncState(target, rootPet, vm, rc)
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_InfoSyncState
 
+!------------------------------------------------------------------------------
+! GetHandle -------------------------------------------------------------------
+!------------------------------------------------------------------------------
+
+#undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_Info2GetHandleArray()"
+function ESMF_Info2GetHandleArray(target, rc) result(info)
+  type(ESMF_Array), intent(in) :: target
+  integer, intent(inout), optional :: rc
+  type(ESMF_Info2) :: info
+
+  integer :: localrc
+  type(ESMF_Inquire) :: einq
+
+  info = einq%GetInfo(target, rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+end function ESMF_Info2GetHandleArray
+
+#undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_Info2GetHandleArrayBundle()"
+function ESMF_Info2GetHandleArrayBundle(target, rc) result(info)
+  type(ESMF_ArrayBundle), intent(in) :: target
+  integer, intent(inout), optional :: rc
+  type(ESMF_Info2) :: info
+
+  integer :: localrc
+  type(ESMF_Inquire) :: einq
+
+  info = einq%GetInfo(target, rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+end function ESMF_Info2GetHandleArrayBundle
+
+#undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_Info2GetHandleCplComp()"
+function ESMF_Info2GetHandleCplComp(target, rc) result(info)
+  type(ESMF_CplComp), intent(in) :: target
+  integer, intent(inout), optional :: rc
+  type(ESMF_Info2) :: info
+
+  integer :: localrc
+  type(ESMF_Inquire) :: einq
+
+  info = einq%GetInfo(target, rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+end function ESMF_Info2GetHandleCplComp
+
+#undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_Info2GetHandleGridComp()"
+function ESMF_Info2GetHandleGridComp(target, rc) result(info)
+  type(ESMF_GridComp), intent(in) :: target
+  integer, intent(inout), optional :: rc
+  type(ESMF_Info2) :: info
+
+  integer :: localrc
+  type(ESMF_Inquire) :: einq
+
+  info = einq%GetInfo(target, rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+end function ESMF_Info2GetHandleGridComp
+
+#undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_Info2GetHandleSciComp()"
+function ESMF_Info2GetHandleSciComp(target, rc) result(info)
+  type(ESMF_SciComp), intent(in) :: target
+  integer, intent(inout), optional :: rc
+  type(ESMF_Info2) :: info
+
+  integer :: localrc
+  type(ESMF_Inquire) :: einq
+
+  info = einq%GetInfo(target, rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+end function ESMF_Info2GetHandleSciComp
+
+#undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_Info2GetHandleDistGrid()"
+function ESMF_Info2GetHandleDistGrid(target, rc) result(info)
+  type(ESMF_DistGrid), intent(in) :: target
+  integer, intent(inout), optional :: rc
+  type(ESMF_Info2) :: info
+
+  integer :: localrc
+  type(ESMF_Inquire) :: einq
+
+  info = einq%GetInfo(target, rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+end function ESMF_Info2GetHandleDistGrid
+
+#undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_Info2GetHandleField()"
+function ESMF_Info2GetHandleField(target, rc) result(info)
+  type(ESMF_Field), intent(in) :: target
+  integer, intent(inout), optional :: rc
+  type(ESMF_Info2) :: info
+
+  integer :: localrc
+  type(ESMF_Inquire) :: einq
+
+  info = einq%GetInfo(target, rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+end function ESMF_Info2GetHandleField
+
+#undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_Info2GetHandleFieldBundle()"
+function ESMF_Info2GetHandleFieldBundle(target, rc) result(info)
+  type(ESMF_FieldBundle), intent(in) :: target
+  integer, intent(inout), optional :: rc
+  type(ESMF_Info2) :: info
+
+  integer :: localrc
+  type(ESMF_Inquire) :: einq
+
+  info = einq%GetInfo(target, rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+end function ESMF_Info2GetHandleFieldBundle
+
+#undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_Info2GetHandleGrid()"
+function ESMF_Info2GetHandleGrid(target, rc) result(info)
+  type(ESMF_Grid), intent(in) :: target
+  integer, intent(inout), optional :: rc
+  type(ESMF_Info2) :: info
+
+  integer :: localrc
+  type(ESMF_Inquire) :: einq
+
+  info = einq%GetInfo(target, rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+end function ESMF_Info2GetHandleGrid
+
+#undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_Info2GetHandleState()"
+function ESMF_Info2GetHandleState(target, rc) result(info)
+  type(ESMF_State), intent(in) :: target
+  integer, intent(inout), optional :: rc
+  type(ESMF_Info2) :: info
+
+  integer :: localrc
+  type(ESMF_Inquire) :: einq
+
+  info = einq%GetInfo(target, rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+end function ESMF_Info2GetHandleState
+
+#undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_Info2GetHandleLocStream()"
+function ESMF_Info2GetHandleLocStream(target, rc) result(info)
+  type(ESMF_LocStream), intent(in) :: target
+  integer, intent(inout), optional :: rc
+  type(ESMF_Info2) :: info
+
+  integer :: localrc
+  type(ESMF_Inquire) :: einq
+
+  info = einq%GetInfo(target, rc=localrc)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+end function ESMF_Info2GetHandleLocStream

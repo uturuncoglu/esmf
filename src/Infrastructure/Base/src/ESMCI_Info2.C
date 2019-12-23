@@ -638,13 +638,14 @@ T Info2::get(key_t &key, int &rc, const T *def, const int *index, bool recursive
                               e.what(), rc)
           }
         } else if (jp->is_object()) {
-          if (*index >= (int)jp->size()) {
+          if (*index >= (int) jp->size()) {
             std::string msg = "'index' greater than object count";
             ESMF_CHECKERR_STD("ESMC_RC_ARG_OUTOFRANGE", ESMC_RC_ARG_OUTOFRANGE,
                               msg, rc)
           }
           int ctr = 0;
-          for (json::const_iterator it=jp->cbegin(); it!=jp->cend(); it++) {
+          for (json::const_iterator it = jp->cbegin();
+               it != jp->cend(); it++) {
             if (ctr == *index) {
               ret = it.value();
               if (ikey) {
@@ -655,8 +656,16 @@ T Info2::get(key_t &key, int &rc, const T *def, const int *index, bool recursive
               ctr++;
             }
           }
+        } else if (jp->is_string()) {
+          if (*index >= (int) jp->size()) {
+            std::string msg = "'index' greater than string length";
+            ESMF_CHECKERR_STD("ESMC_RC_ARG_OUTOFRANGE", ESMC_RC_ARG_OUTOFRANGE,
+                              msg, rc)
+          }
+          ret = jp[*index];
         } else {
-          std::string msg = "'index' only supported for JSON arrays or objects";
+          std::string msg = "'index' only supported for JSON strings, arrays, or objects. JSON type is: ";
+          msg = msg + jp->type_name();
           ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, msg, rc);
         }
       } else {
@@ -743,6 +752,20 @@ json const * Info2::getPointer(key_t& key, int& rc, bool recursive) const {
 #define ESMC_METHOD "Info2::hasKey()"
 bool Info2::hasKey(key_t& key, int& rc, bool isptr, bool recursive) const {
   // Exceptions:  ESMCI::esmf_info_error
+
+#if 0
+  std::string prefix = std::string(ESMC_METHOD) + ": ";
+  std::string msg;
+  msg = prefix + "key=" + key;
+  ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO);
+  msg = prefix + "isptr=" + std::to_string(isptr);
+  ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO);
+  msg = prefix + "recursive=" + std::to_string(recursive);
+  ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO);
+  msg = prefix + "this->dump()=...";
+  ESMC_LogWrite((this->dump(rc)).c_str(), ESMC_LOGMSG_INFO);
+#endif
+
   rc = ESMF_FAILURE;
   bool ret;
   if (isptr || recursive) {
@@ -761,6 +784,14 @@ bool Info2::hasKey(key_t& key, int& rc, bool isptr, bool recursive) const {
     ret = !(this->getStorageRef().find(key) == storage.end());
   }
   rc = ESMF_SUCCESS;
+
+#if 0
+  std::string prefix2 = std::string(ESMC_METHOD) + ": ";
+  std::string msg2;
+  msg2 = prefix2 + "ret=" + std::to_string(ret);
+  ESMC_LogWrite(msg2.c_str(), ESMC_LOGMSG_INFO);
+#endif
+
   return ret;
 }
 
@@ -815,7 +846,6 @@ json Info2::inquire(key_t &key, int &rc, bool recursive, const int *idx, bool at
     j["isDirty"] = this->isDirty();
     j["key"] = json::value_t::null;
     const json *sp = &(this->getStorageRef());
-    json it_idx;  // Use when finding by index
     try {
       json::json_pointer jp = this->formatKey(key, rc);
       update_json_pointer(this->getStorageRef(), &sp, jp, recursive);
@@ -833,8 +863,7 @@ json Info2::inquire(key_t &key, int &rc, bool recursive, const int *idx, bool at
       } else if (sp->is_object()) {
         json::iterator it = find_by_index(const_cast<json&>(*sp), (std::size_t)(*idx), recursive, attr_compliance);
         j["key"] = it.key();
-        it_idx = std::move(it.value());
-        sp = &it_idx;
+        sp = &(it.value());
       } else {
         std::string msg = "'idx' only supported for JSON arrays or objects";
         ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, msg, rc);

@@ -322,7 +322,7 @@ module NUOPC_Comp
     integer                                         :: k, itemCount
     character(len=80), allocatable                  :: valueSL(:)
     integer, allocatable                            :: valueIL(:)
-    
+
     if (present(rc)) rc = ESMF_SUCCESS
 
     ! query the Component for info
@@ -391,7 +391,7 @@ module NUOPC_Comp
         stringList(i)=trim(adjustl(tempString))
       endif
     enddo
-    
+
     freeFormat = NUOPC_FreeFormatCreate(stringList=stringList, rc=localrc)
     if (ESMF_LogFoundError(rcToCheck=localrc, msg=ESMF_LOGERR_PASSTHRU, &
       line=__LINE__, file=trim(name)//":"//FILENAME, rcToReturn=rc)) return  ! bail out
@@ -959,6 +959,7 @@ module NUOPC_Comp
     integer                                         :: i, lineCount, tokenCount
     character(len=NUOPC_FreeFormatLen), allocatable :: tokenList(:)
     logical                                         :: addFlagOpt
+    logical                                         :: isPresent
 
     if (present(rc)) rc = ESMF_SUCCESS
 
@@ -1008,6 +1009,18 @@ module NUOPC_Comp
           if (ESMF_LogFoundError(rcToCheck=localrc, msg=ESMF_LOGERR_PASSTHRU, &
             line=__LINE__, file=trim(name)//":"//FILENAME, rcToReturn=rc)) &
             return  ! bail out
+        else
+          call ESMF_AttributeGet(comp, trim(tokenList(1)), convention="NUOPC", &
+            purpose="Instance", isPresent=isPresent, rc=localrc)
+          if (ESMF_LogFoundError(rcToCheck=localrc, msg=ESMF_LOGERR_PASSTHRU, &
+            line=__LINE__, file=trim(name)//":"//FILENAME, rcToReturn=rc)) &
+            return  ! bail out
+          if (.not. isPresent) then
+            if (ESMF_LogFoundError(rcToCheck=ESMF_RC_ATTR_ITEMSOFF, &
+              msg="Attribute must be added before it is set. name="//trim(tokenList(1)), &
+              line=__LINE__, file=trim(name)//":"//FILENAME, rcToReturn=rc)) &
+              return  ! bail out
+          endif
         endif
         call NUOPC_CompAttributeSet(comp, name=trim(tokenList(1)), &
           value=trim(tokenList(3)), rc=localrc)
@@ -1091,6 +1104,7 @@ module NUOPC_Comp
     integer                                         :: i, lineCount, tokenCount
     character(len=NUOPC_FreeFormatLen), allocatable :: tokenList(:)
     logical                                         :: addFlagOpt
+    logical                                         :: isPresent
 
     if (present(rc)) rc = ESMF_SUCCESS
 
@@ -1140,6 +1154,18 @@ module NUOPC_Comp
           if (ESMF_LogFoundError(rcToCheck=localrc, msg=ESMF_LOGERR_PASSTHRU, &
             line=__LINE__, file=trim(name)//":"//FILENAME, rcToReturn=rc)) &
             return  ! bail out
+        else
+          call ESMF_AttributeGet(comp, trim(tokenList(1)), convention="NUOPC", &
+            purpose="Instance", isPresent=isPresent, rc=localrc)
+          if (ESMF_LogFoundError(rcToCheck=localrc, msg=ESMF_LOGERR_PASSTHRU, &
+            line=__LINE__, file=trim(name)//":"//FILENAME, rcToReturn=rc)) &
+            return  ! bail out
+          if (.not. isPresent) then
+            if (ESMF_LogFoundError(rcToCheck=ESMF_RC_ATTR_ITEMSOFF, &
+              msg="Attribute must be added before it is set. name="//trim(tokenList(1)), &
+              line=__LINE__, file=trim(name)//":"//FILENAME, rcToReturn=rc)) &
+              return  ! bail out
+          endif
         endif
         call NUOPC_CompAttributeSet(comp, name=trim(tokenList(1)), &
           value=trim(tokenList(3)), rc=localrc)

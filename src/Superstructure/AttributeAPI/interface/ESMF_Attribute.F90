@@ -1351,11 +1351,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -1363,8 +1371,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackArrayR4
@@ -1388,6 +1404,7 @@ subroutine ESMF_AttributeSetObjArrayR4(target, name, value, convention, purpose,
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -1407,14 +1424,30 @@ subroutine ESMF_AttributeSetObjArrayR4(target, name, value, convention, purpose,
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -1436,11 +1469,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -1448,8 +1489,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackArrayR4List
@@ -1473,6 +1522,7 @@ subroutine ESMF_AttributeSetObjArrayR4List(target, name, valueList, convention, 
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -1492,14 +1542,30 @@ subroutine ESMF_AttributeSetObjArrayR4List(target, name, valueList, convention, 
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -1521,11 +1587,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -1533,8 +1607,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackArrayR8
@@ -1558,6 +1640,7 @@ subroutine ESMF_AttributeSetObjArrayR8(target, name, value, convention, purpose,
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -1577,14 +1660,30 @@ subroutine ESMF_AttributeSetObjArrayR8(target, name, value, convention, purpose,
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -1606,11 +1705,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -1618,8 +1725,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackArrayR8List
@@ -1643,6 +1758,7 @@ subroutine ESMF_AttributeSetObjArrayR8List(target, name, valueList, convention, 
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -1662,14 +1778,30 @@ subroutine ESMF_AttributeSetObjArrayR8List(target, name, valueList, convention, 
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -1691,11 +1823,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -1703,8 +1843,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackArrayI4
@@ -1728,6 +1876,7 @@ subroutine ESMF_AttributeSetObjArrayI4(target, name, value, convention, purpose,
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -1747,14 +1896,30 @@ subroutine ESMF_AttributeSetObjArrayI4(target, name, value, convention, purpose,
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -1776,11 +1941,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -1788,8 +1961,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackArrayI4List
@@ -1813,6 +1994,7 @@ subroutine ESMF_AttributeSetObjArrayI4List(target, name, valueList, convention, 
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -1832,14 +2014,30 @@ subroutine ESMF_AttributeSetObjArrayI4List(target, name, valueList, convention, 
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -1861,11 +2059,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -1873,8 +2079,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackArrayI8
@@ -1898,6 +2112,7 @@ subroutine ESMF_AttributeSetObjArrayI8(target, name, value, convention, purpose,
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -1917,14 +2132,30 @@ subroutine ESMF_AttributeSetObjArrayI8(target, name, value, convention, purpose,
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -1946,11 +2177,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -1958,8 +2197,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackArrayI8List
@@ -1983,6 +2230,7 @@ subroutine ESMF_AttributeSetObjArrayI8List(target, name, valueList, convention, 
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -2002,14 +2250,30 @@ subroutine ESMF_AttributeSetObjArrayI8List(target, name, valueList, convention, 
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -2031,11 +2295,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -2043,8 +2315,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackArrayCH
@@ -2068,6 +2348,7 @@ subroutine ESMF_AttributeSetObjArrayCH(target, name, value, convention, purpose,
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -2087,14 +2368,30 @@ subroutine ESMF_AttributeSetObjArrayCH(target, name, value, convention, purpose,
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -2116,11 +2413,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -2128,8 +2433,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackArrayCHList
@@ -2153,6 +2466,7 @@ subroutine ESMF_AttributeSetObjArrayCHList(target, name, valueList, convention, 
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -2172,14 +2486,30 @@ subroutine ESMF_AttributeSetObjArrayCHList(target, name, valueList, convention, 
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -2201,11 +2531,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -2213,8 +2551,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackArrayLG
@@ -2238,6 +2584,7 @@ subroutine ESMF_AttributeSetObjArrayLG(target, name, value, convention, purpose,
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -2257,14 +2604,30 @@ subroutine ESMF_AttributeSetObjArrayLG(target, name, value, convention, purpose,
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -2286,11 +2649,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -2298,8 +2669,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackArrayLGList
@@ -2323,6 +2702,7 @@ subroutine ESMF_AttributeSetObjArrayLGList(target, name, valueList, convention, 
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -2342,14 +2722,30 @@ subroutine ESMF_AttributeSetObjArrayLGList(target, name, valueList, convention, 
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -2371,11 +2767,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -2383,8 +2787,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackArrayBundleR4
@@ -2408,6 +2820,7 @@ subroutine ESMF_AttributeSetObjArrayBundleR4(target, name, value, convention, pu
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -2427,14 +2840,30 @@ subroutine ESMF_AttributeSetObjArrayBundleR4(target, name, value, convention, pu
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -2456,11 +2885,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -2468,8 +2905,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackArrayBundleR4List
@@ -2493,6 +2938,7 @@ subroutine ESMF_AttributeSetObjArrayBundleR4List(target, name, valueList, conven
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -2512,14 +2958,30 @@ subroutine ESMF_AttributeSetObjArrayBundleR4List(target, name, valueList, conven
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -2541,11 +3003,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -2553,8 +3023,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackArrayBundleR8
@@ -2578,6 +3056,7 @@ subroutine ESMF_AttributeSetObjArrayBundleR8(target, name, value, convention, pu
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -2597,14 +3076,30 @@ subroutine ESMF_AttributeSetObjArrayBundleR8(target, name, value, convention, pu
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -2626,11 +3121,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -2638,8 +3141,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackArrayBundleR8List
@@ -2663,6 +3174,7 @@ subroutine ESMF_AttributeSetObjArrayBundleR8List(target, name, valueList, conven
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -2682,14 +3194,30 @@ subroutine ESMF_AttributeSetObjArrayBundleR8List(target, name, valueList, conven
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -2711,11 +3239,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -2723,8 +3259,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackArrayBundleI4
@@ -2748,6 +3292,7 @@ subroutine ESMF_AttributeSetObjArrayBundleI4(target, name, value, convention, pu
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -2767,14 +3312,30 @@ subroutine ESMF_AttributeSetObjArrayBundleI4(target, name, value, convention, pu
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -2796,11 +3357,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -2808,8 +3377,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackArrayBundleI4List
@@ -2833,6 +3410,7 @@ subroutine ESMF_AttributeSetObjArrayBundleI4List(target, name, valueList, conven
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -2852,14 +3430,30 @@ subroutine ESMF_AttributeSetObjArrayBundleI4List(target, name, valueList, conven
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -2881,11 +3475,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -2893,8 +3495,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackArrayBundleI8
@@ -2918,6 +3528,7 @@ subroutine ESMF_AttributeSetObjArrayBundleI8(target, name, value, convention, pu
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -2937,14 +3548,30 @@ subroutine ESMF_AttributeSetObjArrayBundleI8(target, name, value, convention, pu
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -2966,11 +3593,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -2978,8 +3613,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackArrayBundleI8List
@@ -3003,6 +3646,7 @@ subroutine ESMF_AttributeSetObjArrayBundleI8List(target, name, valueList, conven
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -3022,14 +3666,30 @@ subroutine ESMF_AttributeSetObjArrayBundleI8List(target, name, valueList, conven
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -3051,11 +3711,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -3063,8 +3731,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackArrayBundleCH
@@ -3088,6 +3764,7 @@ subroutine ESMF_AttributeSetObjArrayBundleCH(target, name, value, convention, pu
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -3107,14 +3784,30 @@ subroutine ESMF_AttributeSetObjArrayBundleCH(target, name, value, convention, pu
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -3136,11 +3829,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -3148,8 +3849,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackArrayBundleCHList
@@ -3173,6 +3882,7 @@ subroutine ESMF_AttributeSetObjArrayBundleCHList(target, name, valueList, conven
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -3192,14 +3902,30 @@ subroutine ESMF_AttributeSetObjArrayBundleCHList(target, name, valueList, conven
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -3221,11 +3947,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -3233,8 +3967,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackArrayBundleLG
@@ -3258,6 +4000,7 @@ subroutine ESMF_AttributeSetObjArrayBundleLG(target, name, value, convention, pu
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -3277,14 +4020,30 @@ subroutine ESMF_AttributeSetObjArrayBundleLG(target, name, value, convention, pu
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -3306,11 +4065,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -3318,8 +4085,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackArrayBundleLGList
@@ -3343,6 +4118,7 @@ subroutine ESMF_AttributeSetObjArrayBundleLGList(target, name, valueList, conven
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -3362,14 +4138,30 @@ subroutine ESMF_AttributeSetObjArrayBundleLGList(target, name, valueList, conven
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -3391,11 +4183,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -3403,8 +4203,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackCplCompR4
@@ -3428,6 +4236,7 @@ subroutine ESMF_AttributeSetObjCplCompR4(target, name, value, convention, purpos
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -3447,14 +4256,30 @@ subroutine ESMF_AttributeSetObjCplCompR4(target, name, value, convention, purpos
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -3476,11 +4301,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -3488,8 +4321,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackCplCompR4List
@@ -3513,6 +4354,7 @@ subroutine ESMF_AttributeSetObjCplCompR4List(target, name, valueList, convention
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -3532,14 +4374,30 @@ subroutine ESMF_AttributeSetObjCplCompR4List(target, name, valueList, convention
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -3561,11 +4419,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -3573,8 +4439,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackCplCompR8
@@ -3598,6 +4472,7 @@ subroutine ESMF_AttributeSetObjCplCompR8(target, name, value, convention, purpos
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -3617,14 +4492,30 @@ subroutine ESMF_AttributeSetObjCplCompR8(target, name, value, convention, purpos
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -3646,11 +4537,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -3658,8 +4557,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackCplCompR8List
@@ -3683,6 +4590,7 @@ subroutine ESMF_AttributeSetObjCplCompR8List(target, name, valueList, convention
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -3702,14 +4610,30 @@ subroutine ESMF_AttributeSetObjCplCompR8List(target, name, valueList, convention
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -3731,11 +4655,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -3743,8 +4675,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackCplCompI4
@@ -3768,6 +4708,7 @@ subroutine ESMF_AttributeSetObjCplCompI4(target, name, value, convention, purpos
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -3787,14 +4728,30 @@ subroutine ESMF_AttributeSetObjCplCompI4(target, name, value, convention, purpos
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -3816,11 +4773,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -3828,8 +4793,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackCplCompI4List
@@ -3853,6 +4826,7 @@ subroutine ESMF_AttributeSetObjCplCompI4List(target, name, valueList, convention
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -3872,14 +4846,30 @@ subroutine ESMF_AttributeSetObjCplCompI4List(target, name, valueList, convention
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -3901,11 +4891,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -3913,8 +4911,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackCplCompI8
@@ -3938,6 +4944,7 @@ subroutine ESMF_AttributeSetObjCplCompI8(target, name, value, convention, purpos
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -3957,14 +4964,30 @@ subroutine ESMF_AttributeSetObjCplCompI8(target, name, value, convention, purpos
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -3986,11 +5009,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -3998,8 +5029,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackCplCompI8List
@@ -4023,6 +5062,7 @@ subroutine ESMF_AttributeSetObjCplCompI8List(target, name, valueList, convention
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -4042,14 +5082,30 @@ subroutine ESMF_AttributeSetObjCplCompI8List(target, name, valueList, convention
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -4071,11 +5127,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -4083,8 +5147,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackCplCompCH
@@ -4108,6 +5180,7 @@ subroutine ESMF_AttributeSetObjCplCompCH(target, name, value, convention, purpos
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -4127,14 +5200,30 @@ subroutine ESMF_AttributeSetObjCplCompCH(target, name, value, convention, purpos
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -4156,11 +5245,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -4168,8 +5265,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackCplCompCHList
@@ -4193,6 +5298,7 @@ subroutine ESMF_AttributeSetObjCplCompCHList(target, name, valueList, convention
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -4212,14 +5318,30 @@ subroutine ESMF_AttributeSetObjCplCompCHList(target, name, valueList, convention
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -4241,11 +5363,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -4253,8 +5383,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackCplCompLG
@@ -4278,6 +5416,7 @@ subroutine ESMF_AttributeSetObjCplCompLG(target, name, value, convention, purpos
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -4297,14 +5436,30 @@ subroutine ESMF_AttributeSetObjCplCompLG(target, name, value, convention, purpos
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -4326,11 +5481,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -4338,8 +5501,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackCplCompLGList
@@ -4363,6 +5534,7 @@ subroutine ESMF_AttributeSetObjCplCompLGList(target, name, valueList, convention
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -4382,14 +5554,30 @@ subroutine ESMF_AttributeSetObjCplCompLGList(target, name, valueList, convention
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -4411,11 +5599,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -4423,8 +5619,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackGridCompR4
@@ -4448,6 +5652,7 @@ subroutine ESMF_AttributeSetObjGridCompR4(target, name, value, convention, purpo
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -4467,14 +5672,30 @@ subroutine ESMF_AttributeSetObjGridCompR4(target, name, value, convention, purpo
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -4496,11 +5717,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -4508,8 +5737,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackGridCompR4List
@@ -4533,6 +5770,7 @@ subroutine ESMF_AttributeSetObjGridCompR4List(target, name, valueList, conventio
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -4552,14 +5790,30 @@ subroutine ESMF_AttributeSetObjGridCompR4List(target, name, valueList, conventio
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -4581,11 +5835,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -4593,8 +5855,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackGridCompR8
@@ -4618,6 +5888,7 @@ subroutine ESMF_AttributeSetObjGridCompR8(target, name, value, convention, purpo
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -4637,14 +5908,30 @@ subroutine ESMF_AttributeSetObjGridCompR8(target, name, value, convention, purpo
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -4666,11 +5953,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -4678,8 +5973,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackGridCompR8List
@@ -4703,6 +6006,7 @@ subroutine ESMF_AttributeSetObjGridCompR8List(target, name, valueList, conventio
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -4722,14 +6026,30 @@ subroutine ESMF_AttributeSetObjGridCompR8List(target, name, valueList, conventio
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -4751,11 +6071,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -4763,8 +6091,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackGridCompI4
@@ -4788,6 +6124,7 @@ subroutine ESMF_AttributeSetObjGridCompI4(target, name, value, convention, purpo
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -4807,14 +6144,30 @@ subroutine ESMF_AttributeSetObjGridCompI4(target, name, value, convention, purpo
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -4836,11 +6189,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -4848,8 +6209,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackGridCompI4List
@@ -4873,6 +6242,7 @@ subroutine ESMF_AttributeSetObjGridCompI4List(target, name, valueList, conventio
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -4892,14 +6262,30 @@ subroutine ESMF_AttributeSetObjGridCompI4List(target, name, valueList, conventio
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -4921,11 +6307,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -4933,8 +6327,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackGridCompI8
@@ -4958,6 +6360,7 @@ subroutine ESMF_AttributeSetObjGridCompI8(target, name, value, convention, purpo
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -4977,14 +6380,30 @@ subroutine ESMF_AttributeSetObjGridCompI8(target, name, value, convention, purpo
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -5006,11 +6425,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -5018,8 +6445,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackGridCompI8List
@@ -5043,6 +6478,7 @@ subroutine ESMF_AttributeSetObjGridCompI8List(target, name, valueList, conventio
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -5062,14 +6498,30 @@ subroutine ESMF_AttributeSetObjGridCompI8List(target, name, valueList, conventio
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -5091,11 +6543,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -5103,8 +6563,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackGridCompCH
@@ -5128,6 +6596,7 @@ subroutine ESMF_AttributeSetObjGridCompCH(target, name, value, convention, purpo
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -5147,14 +6616,30 @@ subroutine ESMF_AttributeSetObjGridCompCH(target, name, value, convention, purpo
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -5176,11 +6661,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -5188,8 +6681,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackGridCompCHList
@@ -5213,6 +6714,7 @@ subroutine ESMF_AttributeSetObjGridCompCHList(target, name, valueList, conventio
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -5232,14 +6734,30 @@ subroutine ESMF_AttributeSetObjGridCompCHList(target, name, valueList, conventio
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -5261,11 +6779,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -5273,8 +6799,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackGridCompLG
@@ -5298,6 +6832,7 @@ subroutine ESMF_AttributeSetObjGridCompLG(target, name, value, convention, purpo
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -5317,14 +6852,30 @@ subroutine ESMF_AttributeSetObjGridCompLG(target, name, value, convention, purpo
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -5346,11 +6897,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -5358,8 +6917,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackGridCompLGList
@@ -5383,6 +6950,7 @@ subroutine ESMF_AttributeSetObjGridCompLGList(target, name, valueList, conventio
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -5402,14 +6970,30 @@ subroutine ESMF_AttributeSetObjGridCompLGList(target, name, valueList, conventio
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -5431,11 +7015,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -5443,8 +7035,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackSciCompR4
@@ -5468,6 +7068,7 @@ subroutine ESMF_AttributeSetObjSciCompR4(target, name, value, convention, purpos
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -5487,14 +7088,30 @@ subroutine ESMF_AttributeSetObjSciCompR4(target, name, value, convention, purpos
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -5516,11 +7133,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -5528,8 +7153,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackSciCompR4List
@@ -5553,6 +7186,7 @@ subroutine ESMF_AttributeSetObjSciCompR4List(target, name, valueList, convention
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -5572,14 +7206,30 @@ subroutine ESMF_AttributeSetObjSciCompR4List(target, name, valueList, convention
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -5601,11 +7251,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -5613,8 +7271,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackSciCompR8
@@ -5638,6 +7304,7 @@ subroutine ESMF_AttributeSetObjSciCompR8(target, name, value, convention, purpos
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -5657,14 +7324,30 @@ subroutine ESMF_AttributeSetObjSciCompR8(target, name, value, convention, purpos
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -5686,11 +7369,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -5698,8 +7389,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackSciCompR8List
@@ -5723,6 +7422,7 @@ subroutine ESMF_AttributeSetObjSciCompR8List(target, name, valueList, convention
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -5742,14 +7442,30 @@ subroutine ESMF_AttributeSetObjSciCompR8List(target, name, valueList, convention
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -5771,11 +7487,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -5783,8 +7507,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackSciCompI4
@@ -5808,6 +7540,7 @@ subroutine ESMF_AttributeSetObjSciCompI4(target, name, value, convention, purpos
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -5827,14 +7560,30 @@ subroutine ESMF_AttributeSetObjSciCompI4(target, name, value, convention, purpos
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -5856,11 +7605,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -5868,8 +7625,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackSciCompI4List
@@ -5893,6 +7658,7 @@ subroutine ESMF_AttributeSetObjSciCompI4List(target, name, valueList, convention
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -5912,14 +7678,30 @@ subroutine ESMF_AttributeSetObjSciCompI4List(target, name, valueList, convention
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -5941,11 +7723,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -5953,8 +7743,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackSciCompI8
@@ -5978,6 +7776,7 @@ subroutine ESMF_AttributeSetObjSciCompI8(target, name, value, convention, purpos
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -5997,14 +7796,30 @@ subroutine ESMF_AttributeSetObjSciCompI8(target, name, value, convention, purpos
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -6026,11 +7841,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -6038,8 +7861,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackSciCompI8List
@@ -6063,6 +7894,7 @@ subroutine ESMF_AttributeSetObjSciCompI8List(target, name, valueList, convention
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -6082,14 +7914,30 @@ subroutine ESMF_AttributeSetObjSciCompI8List(target, name, valueList, convention
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -6111,11 +7959,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -6123,8 +7979,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackSciCompCH
@@ -6148,6 +8012,7 @@ subroutine ESMF_AttributeSetObjSciCompCH(target, name, value, convention, purpos
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -6167,14 +8032,30 @@ subroutine ESMF_AttributeSetObjSciCompCH(target, name, value, convention, purpos
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -6196,11 +8077,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -6208,8 +8097,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackSciCompCHList
@@ -6233,6 +8130,7 @@ subroutine ESMF_AttributeSetObjSciCompCHList(target, name, valueList, convention
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -6252,14 +8150,30 @@ subroutine ESMF_AttributeSetObjSciCompCHList(target, name, valueList, convention
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -6281,11 +8195,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -6293,8 +8215,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackSciCompLG
@@ -6318,6 +8248,7 @@ subroutine ESMF_AttributeSetObjSciCompLG(target, name, value, convention, purpos
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -6337,14 +8268,30 @@ subroutine ESMF_AttributeSetObjSciCompLG(target, name, value, convention, purpos
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -6366,11 +8313,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -6378,8 +8333,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackSciCompLGList
@@ -6403,6 +8366,7 @@ subroutine ESMF_AttributeSetObjSciCompLGList(target, name, valueList, convention
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -6422,14 +8386,30 @@ subroutine ESMF_AttributeSetObjSciCompLGList(target, name, valueList, convention
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -6451,11 +8431,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -6463,8 +8451,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackDistGridR4
@@ -6488,6 +8484,7 @@ subroutine ESMF_AttributeSetObjDistGridR4(target, name, value, convention, purpo
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -6507,14 +8504,30 @@ subroutine ESMF_AttributeSetObjDistGridR4(target, name, value, convention, purpo
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -6536,11 +8549,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -6548,8 +8569,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackDistGridR4List
@@ -6573,6 +8602,7 @@ subroutine ESMF_AttributeSetObjDistGridR4List(target, name, valueList, conventio
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -6592,14 +8622,30 @@ subroutine ESMF_AttributeSetObjDistGridR4List(target, name, valueList, conventio
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -6621,11 +8667,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -6633,8 +8687,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackDistGridR8
@@ -6658,6 +8720,7 @@ subroutine ESMF_AttributeSetObjDistGridR8(target, name, value, convention, purpo
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -6677,14 +8740,30 @@ subroutine ESMF_AttributeSetObjDistGridR8(target, name, value, convention, purpo
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -6706,11 +8785,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -6718,8 +8805,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackDistGridR8List
@@ -6743,6 +8838,7 @@ subroutine ESMF_AttributeSetObjDistGridR8List(target, name, valueList, conventio
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -6762,14 +8858,30 @@ subroutine ESMF_AttributeSetObjDistGridR8List(target, name, valueList, conventio
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -6791,11 +8903,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -6803,8 +8923,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackDistGridI4
@@ -6828,6 +8956,7 @@ subroutine ESMF_AttributeSetObjDistGridI4(target, name, value, convention, purpo
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -6847,14 +8976,30 @@ subroutine ESMF_AttributeSetObjDistGridI4(target, name, value, convention, purpo
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -6876,11 +9021,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -6888,8 +9041,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackDistGridI4List
@@ -6913,6 +9074,7 @@ subroutine ESMF_AttributeSetObjDistGridI4List(target, name, valueList, conventio
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -6932,14 +9094,30 @@ subroutine ESMF_AttributeSetObjDistGridI4List(target, name, valueList, conventio
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -6961,11 +9139,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -6973,8 +9159,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackDistGridI8
@@ -6998,6 +9192,7 @@ subroutine ESMF_AttributeSetObjDistGridI8(target, name, value, convention, purpo
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -7017,14 +9212,30 @@ subroutine ESMF_AttributeSetObjDistGridI8(target, name, value, convention, purpo
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -7046,11 +9257,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -7058,8 +9277,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackDistGridI8List
@@ -7083,6 +9310,7 @@ subroutine ESMF_AttributeSetObjDistGridI8List(target, name, valueList, conventio
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -7102,14 +9330,30 @@ subroutine ESMF_AttributeSetObjDistGridI8List(target, name, valueList, conventio
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -7131,11 +9375,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -7143,8 +9395,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackDistGridCH
@@ -7168,6 +9428,7 @@ subroutine ESMF_AttributeSetObjDistGridCH(target, name, value, convention, purpo
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -7187,14 +9448,30 @@ subroutine ESMF_AttributeSetObjDistGridCH(target, name, value, convention, purpo
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -7216,11 +9493,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -7228,8 +9513,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackDistGridCHList
@@ -7253,6 +9546,7 @@ subroutine ESMF_AttributeSetObjDistGridCHList(target, name, valueList, conventio
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -7272,14 +9566,30 @@ subroutine ESMF_AttributeSetObjDistGridCHList(target, name, valueList, conventio
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -7301,11 +9611,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -7313,8 +9631,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackDistGridLG
@@ -7338,6 +9664,7 @@ subroutine ESMF_AttributeSetObjDistGridLG(target, name, value, convention, purpo
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -7357,14 +9684,30 @@ subroutine ESMF_AttributeSetObjDistGridLG(target, name, value, convention, purpo
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -7386,11 +9729,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -7398,8 +9749,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackDistGridLGList
@@ -7423,6 +9782,7 @@ subroutine ESMF_AttributeSetObjDistGridLGList(target, name, valueList, conventio
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -7442,14 +9802,30 @@ subroutine ESMF_AttributeSetObjDistGridLGList(target, name, valueList, conventio
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -7471,11 +9847,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -7483,8 +9867,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackFieldR4
@@ -7508,6 +9900,7 @@ subroutine ESMF_AttributeSetObjFieldR4(target, name, value, convention, purpose,
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -7527,14 +9920,30 @@ subroutine ESMF_AttributeSetObjFieldR4(target, name, value, convention, purpose,
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -7556,11 +9965,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -7568,8 +9985,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackFieldR4List
@@ -7593,6 +10018,7 @@ subroutine ESMF_AttributeSetObjFieldR4List(target, name, valueList, convention, 
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -7612,14 +10038,30 @@ subroutine ESMF_AttributeSetObjFieldR4List(target, name, valueList, convention, 
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -7641,11 +10083,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -7653,8 +10103,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackFieldR8
@@ -7678,6 +10136,7 @@ subroutine ESMF_AttributeSetObjFieldR8(target, name, value, convention, purpose,
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -7697,14 +10156,30 @@ subroutine ESMF_AttributeSetObjFieldR8(target, name, value, convention, purpose,
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -7726,11 +10201,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -7738,8 +10221,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackFieldR8List
@@ -7763,6 +10254,7 @@ subroutine ESMF_AttributeSetObjFieldR8List(target, name, valueList, convention, 
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -7782,14 +10274,30 @@ subroutine ESMF_AttributeSetObjFieldR8List(target, name, valueList, convention, 
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -7811,11 +10319,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -7823,8 +10339,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackFieldI4
@@ -7848,6 +10372,7 @@ subroutine ESMF_AttributeSetObjFieldI4(target, name, value, convention, purpose,
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -7867,14 +10392,30 @@ subroutine ESMF_AttributeSetObjFieldI4(target, name, value, convention, purpose,
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -7896,11 +10437,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -7908,8 +10457,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackFieldI4List
@@ -7933,6 +10490,7 @@ subroutine ESMF_AttributeSetObjFieldI4List(target, name, valueList, convention, 
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -7952,14 +10510,30 @@ subroutine ESMF_AttributeSetObjFieldI4List(target, name, valueList, convention, 
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -7981,11 +10555,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -7993,8 +10575,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackFieldI8
@@ -8018,6 +10608,7 @@ subroutine ESMF_AttributeSetObjFieldI8(target, name, value, convention, purpose,
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -8037,14 +10628,30 @@ subroutine ESMF_AttributeSetObjFieldI8(target, name, value, convention, purpose,
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -8066,11 +10673,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -8078,8 +10693,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackFieldI8List
@@ -8103,6 +10726,7 @@ subroutine ESMF_AttributeSetObjFieldI8List(target, name, valueList, convention, 
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -8122,14 +10746,30 @@ subroutine ESMF_AttributeSetObjFieldI8List(target, name, valueList, convention, 
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -8151,11 +10791,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -8163,8 +10811,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackFieldCH
@@ -8188,6 +10844,7 @@ subroutine ESMF_AttributeSetObjFieldCH(target, name, value, convention, purpose,
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -8207,14 +10864,30 @@ subroutine ESMF_AttributeSetObjFieldCH(target, name, value, convention, purpose,
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -8236,11 +10909,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -8248,8 +10929,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackFieldCHList
@@ -8273,6 +10962,7 @@ subroutine ESMF_AttributeSetObjFieldCHList(target, name, valueList, convention, 
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -8292,14 +10982,30 @@ subroutine ESMF_AttributeSetObjFieldCHList(target, name, valueList, convention, 
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -8321,11 +11027,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -8333,8 +11047,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackFieldLG
@@ -8358,6 +11080,7 @@ subroutine ESMF_AttributeSetObjFieldLG(target, name, value, convention, purpose,
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -8377,14 +11100,30 @@ subroutine ESMF_AttributeSetObjFieldLG(target, name, value, convention, purpose,
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -8406,11 +11145,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -8418,8 +11165,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackFieldLGList
@@ -8443,6 +11198,7 @@ subroutine ESMF_AttributeSetObjFieldLGList(target, name, valueList, convention, 
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -8462,14 +11218,30 @@ subroutine ESMF_AttributeSetObjFieldLGList(target, name, valueList, convention, 
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -8491,11 +11263,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -8503,8 +11283,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackFieldBundleR4
@@ -8528,6 +11316,7 @@ subroutine ESMF_AttributeSetObjFieldBundleR4(target, name, value, convention, pu
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -8547,14 +11336,30 @@ subroutine ESMF_AttributeSetObjFieldBundleR4(target, name, value, convention, pu
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -8576,11 +11381,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -8588,8 +11401,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackFieldBundleR4List
@@ -8613,6 +11434,7 @@ subroutine ESMF_AttributeSetObjFieldBundleR4List(target, name, valueList, conven
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -8632,14 +11454,30 @@ subroutine ESMF_AttributeSetObjFieldBundleR4List(target, name, valueList, conven
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -8661,11 +11499,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -8673,8 +11519,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackFieldBundleR8
@@ -8698,6 +11552,7 @@ subroutine ESMF_AttributeSetObjFieldBundleR8(target, name, value, convention, pu
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -8717,14 +11572,30 @@ subroutine ESMF_AttributeSetObjFieldBundleR8(target, name, value, convention, pu
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -8746,11 +11617,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -8758,8 +11637,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackFieldBundleR8List
@@ -8783,6 +11670,7 @@ subroutine ESMF_AttributeSetObjFieldBundleR8List(target, name, valueList, conven
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -8802,14 +11690,30 @@ subroutine ESMF_AttributeSetObjFieldBundleR8List(target, name, valueList, conven
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -8831,11 +11735,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -8843,8 +11755,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackFieldBundleI4
@@ -8868,6 +11788,7 @@ subroutine ESMF_AttributeSetObjFieldBundleI4(target, name, value, convention, pu
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -8887,14 +11808,30 @@ subroutine ESMF_AttributeSetObjFieldBundleI4(target, name, value, convention, pu
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -8916,11 +11853,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -8928,8 +11873,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackFieldBundleI4List
@@ -8953,6 +11906,7 @@ subroutine ESMF_AttributeSetObjFieldBundleI4List(target, name, valueList, conven
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -8972,14 +11926,30 @@ subroutine ESMF_AttributeSetObjFieldBundleI4List(target, name, valueList, conven
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -9001,11 +11971,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -9013,8 +11991,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackFieldBundleI8
@@ -9038,6 +12024,7 @@ subroutine ESMF_AttributeSetObjFieldBundleI8(target, name, value, convention, pu
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -9057,14 +12044,30 @@ subroutine ESMF_AttributeSetObjFieldBundleI8(target, name, value, convention, pu
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -9086,11 +12089,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -9098,8 +12109,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackFieldBundleI8List
@@ -9123,6 +12142,7 @@ subroutine ESMF_AttributeSetObjFieldBundleI8List(target, name, valueList, conven
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -9142,14 +12162,30 @@ subroutine ESMF_AttributeSetObjFieldBundleI8List(target, name, valueList, conven
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -9171,11 +12207,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -9183,8 +12227,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackFieldBundleCH
@@ -9208,6 +12260,7 @@ subroutine ESMF_AttributeSetObjFieldBundleCH(target, name, value, convention, pu
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -9227,14 +12280,30 @@ subroutine ESMF_AttributeSetObjFieldBundleCH(target, name, value, convention, pu
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -9256,11 +12325,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -9268,8 +12345,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackFieldBundleCHList
@@ -9293,6 +12378,7 @@ subroutine ESMF_AttributeSetObjFieldBundleCHList(target, name, valueList, conven
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -9312,14 +12398,30 @@ subroutine ESMF_AttributeSetObjFieldBundleCHList(target, name, valueList, conven
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -9341,11 +12443,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -9353,8 +12463,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackFieldBundleLG
@@ -9378,6 +12496,7 @@ subroutine ESMF_AttributeSetObjFieldBundleLG(target, name, value, convention, pu
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -9397,14 +12516,30 @@ subroutine ESMF_AttributeSetObjFieldBundleLG(target, name, value, convention, pu
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -9426,11 +12561,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -9438,8 +12581,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackFieldBundleLGList
@@ -9463,6 +12614,7 @@ subroutine ESMF_AttributeSetObjFieldBundleLGList(target, name, valueList, conven
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -9482,14 +12634,30 @@ subroutine ESMF_AttributeSetObjFieldBundleLGList(target, name, valueList, conven
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -9511,11 +12679,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -9523,8 +12699,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackGridR4
@@ -9548,6 +12732,7 @@ subroutine ESMF_AttributeSetObjGridR4(target, name, value, convention, purpose, 
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -9567,14 +12752,30 @@ subroutine ESMF_AttributeSetObjGridR4(target, name, value, convention, purpose, 
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -9596,11 +12797,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -9608,8 +12817,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackGridR4List
@@ -9633,6 +12850,7 @@ subroutine ESMF_AttributeSetObjGridR4List(target, name, valueList, convention, p
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -9652,14 +12870,30 @@ subroutine ESMF_AttributeSetObjGridR4List(target, name, valueList, convention, p
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -9681,11 +12915,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -9693,8 +12935,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackGridR8
@@ -9718,6 +12968,7 @@ subroutine ESMF_AttributeSetObjGridR8(target, name, value, convention, purpose, 
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -9737,14 +12988,30 @@ subroutine ESMF_AttributeSetObjGridR8(target, name, value, convention, purpose, 
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -9766,11 +13033,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -9778,8 +13053,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackGridR8List
@@ -9803,6 +13086,7 @@ subroutine ESMF_AttributeSetObjGridR8List(target, name, valueList, convention, p
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -9822,14 +13106,30 @@ subroutine ESMF_AttributeSetObjGridR8List(target, name, valueList, convention, p
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -9851,11 +13151,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -9863,8 +13171,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackGridI4
@@ -9888,6 +13204,7 @@ subroutine ESMF_AttributeSetObjGridI4(target, name, value, convention, purpose, 
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -9907,14 +13224,30 @@ subroutine ESMF_AttributeSetObjGridI4(target, name, value, convention, purpose, 
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -9936,11 +13269,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -9948,8 +13289,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackGridI4List
@@ -9973,6 +13322,7 @@ subroutine ESMF_AttributeSetObjGridI4List(target, name, valueList, convention, p
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -9992,14 +13342,30 @@ subroutine ESMF_AttributeSetObjGridI4List(target, name, valueList, convention, p
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -10021,11 +13387,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -10033,8 +13407,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackGridI8
@@ -10058,6 +13440,7 @@ subroutine ESMF_AttributeSetObjGridI8(target, name, value, convention, purpose, 
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -10077,14 +13460,30 @@ subroutine ESMF_AttributeSetObjGridI8(target, name, value, convention, purpose, 
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -10106,11 +13505,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -10118,8 +13525,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackGridI8List
@@ -10143,6 +13558,7 @@ subroutine ESMF_AttributeSetObjGridI8List(target, name, valueList, convention, p
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -10162,14 +13578,30 @@ subroutine ESMF_AttributeSetObjGridI8List(target, name, valueList, convention, p
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -10191,11 +13623,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -10203,8 +13643,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackGridCH
@@ -10228,6 +13676,7 @@ subroutine ESMF_AttributeSetObjGridCH(target, name, value, convention, purpose, 
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -10247,14 +13696,30 @@ subroutine ESMF_AttributeSetObjGridCH(target, name, value, convention, purpose, 
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -10276,11 +13741,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -10288,8 +13761,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackGridCHList
@@ -10313,6 +13794,7 @@ subroutine ESMF_AttributeSetObjGridCHList(target, name, valueList, convention, p
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -10332,14 +13814,30 @@ subroutine ESMF_AttributeSetObjGridCHList(target, name, valueList, convention, p
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -10361,11 +13859,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -10373,8 +13879,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackGridLG
@@ -10398,6 +13912,7 @@ subroutine ESMF_AttributeSetObjGridLG(target, name, value, convention, purpose, 
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -10417,14 +13932,30 @@ subroutine ESMF_AttributeSetObjGridLG(target, name, value, convention, purpose, 
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -10446,11 +13977,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -10458,8 +13997,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackGridLGList
@@ -10483,6 +14030,7 @@ subroutine ESMF_AttributeSetObjGridLGList(target, name, valueList, convention, p
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -10502,14 +14050,30 @@ subroutine ESMF_AttributeSetObjGridLGList(target, name, valueList, convention, p
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -10531,11 +14095,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -10543,8 +14115,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackStateR4
@@ -10568,6 +14148,7 @@ subroutine ESMF_AttributeSetObjStateR4(target, name, value, convention, purpose,
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -10587,14 +14168,30 @@ subroutine ESMF_AttributeSetObjStateR4(target, name, value, convention, purpose,
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -10616,11 +14213,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -10628,8 +14233,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackStateR4List
@@ -10653,6 +14266,7 @@ subroutine ESMF_AttributeSetObjStateR4List(target, name, valueList, convention, 
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -10672,14 +14286,30 @@ subroutine ESMF_AttributeSetObjStateR4List(target, name, valueList, convention, 
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -10701,11 +14331,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -10713,8 +14351,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackStateR8
@@ -10738,6 +14384,7 @@ subroutine ESMF_AttributeSetObjStateR8(target, name, value, convention, purpose,
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -10757,14 +14404,30 @@ subroutine ESMF_AttributeSetObjStateR8(target, name, value, convention, purpose,
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -10786,11 +14449,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -10798,8 +14469,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackStateR8List
@@ -10823,6 +14502,7 @@ subroutine ESMF_AttributeSetObjStateR8List(target, name, valueList, convention, 
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -10842,14 +14522,30 @@ subroutine ESMF_AttributeSetObjStateR8List(target, name, valueList, convention, 
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -10871,11 +14567,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -10883,8 +14587,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackStateI4
@@ -10908,6 +14620,7 @@ subroutine ESMF_AttributeSetObjStateI4(target, name, value, convention, purpose,
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -10927,14 +14640,30 @@ subroutine ESMF_AttributeSetObjStateI4(target, name, value, convention, purpose,
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -10956,11 +14685,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -10968,8 +14705,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackStateI4List
@@ -10993,6 +14738,7 @@ subroutine ESMF_AttributeSetObjStateI4List(target, name, valueList, convention, 
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -11012,14 +14758,30 @@ subroutine ESMF_AttributeSetObjStateI4List(target, name, valueList, convention, 
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -11041,11 +14803,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -11053,8 +14823,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackStateI8
@@ -11078,6 +14856,7 @@ subroutine ESMF_AttributeSetObjStateI8(target, name, value, convention, purpose,
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -11097,14 +14876,30 @@ subroutine ESMF_AttributeSetObjStateI8(target, name, value, convention, purpose,
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -11126,11 +14921,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -11138,8 +14941,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackStateI8List
@@ -11163,6 +14974,7 @@ subroutine ESMF_AttributeSetObjStateI8List(target, name, valueList, convention, 
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -11182,14 +14994,30 @@ subroutine ESMF_AttributeSetObjStateI8List(target, name, valueList, convention, 
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -11211,11 +15039,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -11223,8 +15059,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackStateCH
@@ -11248,6 +15092,7 @@ subroutine ESMF_AttributeSetObjStateCH(target, name, value, convention, purpose,
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -11267,14 +15112,30 @@ subroutine ESMF_AttributeSetObjStateCH(target, name, value, convention, purpose,
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -11296,11 +15157,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -11308,8 +15177,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackStateCHList
@@ -11333,6 +15210,7 @@ subroutine ESMF_AttributeSetObjStateCHList(target, name, valueList, convention, 
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -11352,14 +15230,30 @@ subroutine ESMF_AttributeSetObjStateCHList(target, name, valueList, convention, 
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -11381,11 +15275,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -11393,8 +15295,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackStateLG
@@ -11418,6 +15328,7 @@ subroutine ESMF_AttributeSetObjStateLG(target, name, value, convention, purpose,
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -11437,14 +15348,30 @@ subroutine ESMF_AttributeSetObjStateLG(target, name, value, convention, purpose,
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -11466,11 +15393,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -11478,8 +15413,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackStateLGList
@@ -11503,6 +15446,7 @@ subroutine ESMF_AttributeSetObjStateLGList(target, name, valueList, convention, 
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -11522,14 +15466,30 @@ subroutine ESMF_AttributeSetObjStateLGList(target, name, valueList, convention, 
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -11551,11 +15511,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -11563,8 +15531,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackLocStreamR4
@@ -11588,6 +15564,7 @@ subroutine ESMF_AttributeSetObjLocStreamR4(target, name, value, convention, purp
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -11607,14 +15584,30 @@ subroutine ESMF_AttributeSetObjLocStreamR4(target, name, value, convention, purp
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -11636,11 +15629,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -11648,8 +15649,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackLocStreamR4List
@@ -11673,6 +15682,7 @@ subroutine ESMF_AttributeSetObjLocStreamR4List(target, name, valueList, conventi
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -11692,14 +15702,30 @@ subroutine ESMF_AttributeSetObjLocStreamR4List(target, name, valueList, conventi
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -11721,11 +15747,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -11733,8 +15767,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackLocStreamR8
@@ -11758,6 +15800,7 @@ subroutine ESMF_AttributeSetObjLocStreamR8(target, name, value, convention, purp
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -11777,14 +15820,30 @@ subroutine ESMF_AttributeSetObjLocStreamR8(target, name, value, convention, purp
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -11806,11 +15865,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -11818,8 +15885,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackLocStreamR8List
@@ -11843,6 +15918,7 @@ subroutine ESMF_AttributeSetObjLocStreamR8List(target, name, valueList, conventi
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -11862,14 +15938,30 @@ subroutine ESMF_AttributeSetObjLocStreamR8List(target, name, valueList, conventi
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -11891,11 +15983,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -11903,8 +16003,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackLocStreamI4
@@ -11928,6 +16036,7 @@ subroutine ESMF_AttributeSetObjLocStreamI4(target, name, value, convention, purp
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -11947,14 +16056,30 @@ subroutine ESMF_AttributeSetObjLocStreamI4(target, name, value, convention, purp
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -11976,11 +16101,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -11988,8 +16121,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackLocStreamI4List
@@ -12013,6 +16154,7 @@ subroutine ESMF_AttributeSetObjLocStreamI4List(target, name, valueList, conventi
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -12032,14 +16174,30 @@ subroutine ESMF_AttributeSetObjLocStreamI4List(target, name, valueList, conventi
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -12061,11 +16219,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -12073,8 +16239,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackLocStreamI8
@@ -12098,6 +16272,7 @@ subroutine ESMF_AttributeSetObjLocStreamI8(target, name, value, convention, purp
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -12117,14 +16292,30 @@ subroutine ESMF_AttributeSetObjLocStreamI8(target, name, value, convention, purp
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -12146,11 +16337,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -12158,8 +16357,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackLocStreamI8List
@@ -12183,6 +16390,7 @@ subroutine ESMF_AttributeSetObjLocStreamI8List(target, name, valueList, conventi
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -12202,14 +16410,30 @@ subroutine ESMF_AttributeSetObjLocStreamI8List(target, name, valueList, conventi
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -12231,11 +16455,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -12243,8 +16475,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackLocStreamCH
@@ -12268,6 +16508,7 @@ subroutine ESMF_AttributeSetObjLocStreamCH(target, name, value, convention, purp
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -12287,14 +16528,30 @@ subroutine ESMF_AttributeSetObjLocStreamCH(target, name, value, convention, purp
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -12316,11 +16573,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -12328,8 +16593,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackLocStreamCHList
@@ -12353,6 +16626,7 @@ subroutine ESMF_AttributeSetObjLocStreamCHList(target, name, valueList, conventi
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -12372,14 +16646,30 @@ subroutine ESMF_AttributeSetObjLocStreamCHList(target, name, valueList, conventi
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -12401,11 +16691,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -12413,8 +16711,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackLocStreamLG
@@ -12438,6 +16744,7 @@ subroutine ESMF_AttributeSetObjLocStreamLG(target, name, value, convention, purp
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -12457,14 +16764,30 @@ subroutine ESMF_AttributeSetObjLocStreamLG(target, name, value, convention, purp
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, value, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, value, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -12486,11 +16809,19 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   integer :: localrc
   character(:), allocatable :: pkey
   type(ESMF_Info2) :: info
+  logical :: is_present
+  type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
   ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+
+  if (present(attnestflag)) then
+    local_attnestflag = attnestflag
+  else
+    local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
+  end if
 
   pkey = attpack%formatKey(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -12498,8 +16829,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = attpack%getPayload(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!  is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  is_present = .true.
+
+  if (is_present) then
+    call ESMF_Info2Set(info, TRIM(name), valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=TRIM(pkey), rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  else
+    if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+  endif
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeSetAttPackLocStreamLGList
@@ -12523,6 +16862,7 @@ subroutine ESMF_AttributeSetObjLocStreamLGList(target, name, valueList, conventi
   type(ESMF_Info2) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
+  logical :: is_present
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -12542,14 +16882,30 @@ subroutine ESMF_AttributeSetObjLocStreamLGList(target, name, valueList, conventi
     call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, name, valueList, force=ESMF_ATTR_DEFAULT_FORCE, pkey=pkey, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   else
     call format_key(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
-    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+!    is_present = ESMF_Info2IsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
+!    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    is_present = .true.
+
+    if (is_present) then
+      call ESMF_Info2Set(info, key, valueList, force=ESMF_ATTR_DEFAULT_FORCE, rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    else
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
@@ -28371,7 +32727,8 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
     if (ESMF_LogFoundError(ESMF_RC_ATTR_NOTSET, msg="Missing query argument. Nothing to do", ESMF_CONTEXT, rcToReturn=rc)) return
   end if
 
-  is_present = ESMF_Info2IsPresent(attpack%getPayload(), key, rc=localrc)
+  is_present = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, &
+    rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = is_present
@@ -28436,7 +32793,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  is_present = ESMF_Info2IsPresent(info, key, isPointer=.true., rc=localrc)
+  is_present = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = is_present
@@ -28756,7 +33113,8 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
     if (ESMF_LogFoundError(ESMF_RC_ATTR_NOTSET, msg="Missing query argument. Nothing to do", ESMF_CONTEXT, rcToReturn=rc)) return
   end if
 
-  is_present = ESMF_Info2IsPresent(attpack%getPayload(), key, rc=localrc)
+  is_present = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, &
+    rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = is_present
@@ -28821,7 +33179,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  is_present = ESMF_Info2IsPresent(info, key, isPointer=.true., rc=localrc)
+  is_present = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = is_present
@@ -29141,7 +33499,8 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
     if (ESMF_LogFoundError(ESMF_RC_ATTR_NOTSET, msg="Missing query argument. Nothing to do", ESMF_CONTEXT, rcToReturn=rc)) return
   end if
 
-  is_present = ESMF_Info2IsPresent(attpack%getPayload(), key, rc=localrc)
+  is_present = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, &
+    rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = is_present
@@ -29206,7 +33565,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  is_present = ESMF_Info2IsPresent(info, key, isPointer=.true., rc=localrc)
+  is_present = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = is_present
@@ -29526,7 +33885,8 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
     if (ESMF_LogFoundError(ESMF_RC_ATTR_NOTSET, msg="Missing query argument. Nothing to do", ESMF_CONTEXT, rcToReturn=rc)) return
   end if
 
-  is_present = ESMF_Info2IsPresent(attpack%getPayload(), key, rc=localrc)
+  is_present = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, &
+    rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = is_present
@@ -29591,7 +33951,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  is_present = ESMF_Info2IsPresent(info, key, isPointer=.true., rc=localrc)
+  is_present = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = is_present
@@ -29911,7 +34271,8 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
     if (ESMF_LogFoundError(ESMF_RC_ATTR_NOTSET, msg="Missing query argument. Nothing to do", ESMF_CONTEXT, rcToReturn=rc)) return
   end if
 
-  is_present = ESMF_Info2IsPresent(attpack%getPayload(), key, rc=localrc)
+  is_present = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, &
+    rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = is_present
@@ -29976,7 +34337,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  is_present = ESMF_Info2IsPresent(info, key, isPointer=.true., rc=localrc)
+  is_present = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = is_present
@@ -30296,7 +34657,8 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
     if (ESMF_LogFoundError(ESMF_RC_ATTR_NOTSET, msg="Missing query argument. Nothing to do", ESMF_CONTEXT, rcToReturn=rc)) return
   end if
 
-  is_present = ESMF_Info2IsPresent(attpack%getPayload(), key, rc=localrc)
+  is_present = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, &
+    rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = is_present
@@ -30361,7 +34723,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  is_present = ESMF_Info2IsPresent(info, key, isPointer=.true., rc=localrc)
+  is_present = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = is_present
@@ -30681,7 +35043,8 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
     if (ESMF_LogFoundError(ESMF_RC_ATTR_NOTSET, msg="Missing query argument. Nothing to do", ESMF_CONTEXT, rcToReturn=rc)) return
   end if
 
-  is_present = ESMF_Info2IsPresent(attpack%getPayload(), key, rc=localrc)
+  is_present = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, &
+    rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = is_present
@@ -30746,7 +35109,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  is_present = ESMF_Info2IsPresent(info, key, isPointer=.true., rc=localrc)
+  is_present = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = is_present
@@ -31066,7 +35429,8 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
     if (ESMF_LogFoundError(ESMF_RC_ATTR_NOTSET, msg="Missing query argument. Nothing to do", ESMF_CONTEXT, rcToReturn=rc)) return
   end if
 
-  is_present = ESMF_Info2IsPresent(attpack%getPayload(), key, rc=localrc)
+  is_present = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, &
+    rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = is_present
@@ -31131,7 +35495,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  is_present = ESMF_Info2IsPresent(info, key, isPointer=.true., rc=localrc)
+  is_present = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = is_present
@@ -31451,7 +35815,8 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
     if (ESMF_LogFoundError(ESMF_RC_ATTR_NOTSET, msg="Missing query argument. Nothing to do", ESMF_CONTEXT, rcToReturn=rc)) return
   end if
 
-  is_present = ESMF_Info2IsPresent(attpack%getPayload(), key, rc=localrc)
+  is_present = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, &
+    rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = is_present
@@ -31516,7 +35881,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  is_present = ESMF_Info2IsPresent(info, key, isPointer=.true., rc=localrc)
+  is_present = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = is_present
@@ -31836,7 +36201,8 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
     if (ESMF_LogFoundError(ESMF_RC_ATTR_NOTSET, msg="Missing query argument. Nothing to do", ESMF_CONTEXT, rcToReturn=rc)) return
   end if
 
-  is_present = ESMF_Info2IsPresent(attpack%getPayload(), key, rc=localrc)
+  is_present = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, &
+    rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = is_present
@@ -31901,7 +36267,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  is_present = ESMF_Info2IsPresent(info, key, isPointer=.true., rc=localrc)
+  is_present = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = is_present
@@ -32221,7 +36587,8 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
     if (ESMF_LogFoundError(ESMF_RC_ATTR_NOTSET, msg="Missing query argument. Nothing to do", ESMF_CONTEXT, rcToReturn=rc)) return
   end if
 
-  is_present = ESMF_Info2IsPresent(attpack%getPayload(), key, rc=localrc)
+  is_present = ESMF_Info2IsPresent(attpack%getPayload(), key, attnestflag=local_attnestflag, &
+    rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = is_present
@@ -32286,7 +36653,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   info = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  is_present = ESMF_Info2IsPresent(info, key, isPointer=.true., rc=localrc)
+  is_present = ESMF_Info2IsPresent(info, key, isPointer=.true., attnestflag=local_attnestflag, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(isPresent)) isPresent = is_present
