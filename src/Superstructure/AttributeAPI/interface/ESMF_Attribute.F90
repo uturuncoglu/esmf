@@ -38,7 +38,6 @@ use ESMF_FieldBundleMod
 use ESMF_GridMod
 use ESMF_StateMod
 use ESMF_LocStreamMod
-use ESMF_InfoMod
 
 implicit none
 
@@ -730,12 +729,6 @@ interface ESMF_AttributeCopy
   module procedure ESMF_AttributeCopyGridToGrid
   module procedure ESMF_AttributeCopyStateToState
   module procedure ESMF_AttributeCopyLocStreamToLocStream
-  module procedure ESMF_AttributeCopyInfoToInfo
-  module procedure ESMF_AttributeCopyInfoToCplComp
-  module procedure ESMF_AttributeCopyInfoToGridComp
-  module procedure ESMF_AttributeCopyInfoToSciComp
-  module procedure ESMF_AttributeCopyInfoToState
-  module procedure ESMF_AttributeCopyInfoToField
 end interface
 
 interface ESMF_AttributeUpdate
@@ -38310,179 +38303,6 @@ subroutine ESMF_AttributeCopyLocStreamToLocStream(src, dst, keywordEnforcer, rc)
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeCopyLocStreamToLocStream
-
-#undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeCopyInfoToInfo"
-subroutine ESMF_AttributeCopyInfoToInfo(src, dst, keywordEnforcer, rc)
-  ! 39.11.6 - attcopy removed
-  type(ESMF_Info), intent(in) :: src
-  type(ESMF_Info), intent(inout) :: dst
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  integer, intent(inout), optional :: rc
-
-  integer :: localrc
-  type(ESMF_Inquire) :: einq
-  type(ESMF_Info2) :: isrc, idst
-
-  localrc = ESMF_FAILURE
-  if (present(rc)) rc = ESMF_RC_NOT_IMPL
-
-  ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_InfoGetInit, src, localrc)
-  ESMF_INIT_CHECK_DEEP(ESMF_InfoGetInit, dst, localrc)
-  isrc = ESMF_Info2BaseGet(src%base)
-  idst = ESMF_Info2BaseGet(dst%base)
-
-  call c_info_copyforattribute(isrc%ptr, idst%ptr, localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
-
-  if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeCopyInfoToInfo
-
-#undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeCopyInfoToCplComp"
-subroutine ESMF_AttributeCopyInfoToCplComp(src, dst, keywordEnforcer, rc)
-  ! 39.11.6 - attcopy removed
-  type(ESMF_Info), intent(in) :: src
-  type(ESMF_CplComp), intent(inout) :: dst
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  integer, intent(inout), optional :: rc
-
-  integer :: localrc
-  type(ESMF_Inquire) :: einq
-  type(ESMF_Info2) :: isrc, idst
-
-  localrc = ESMF_FAILURE
-  if (present(rc)) rc = ESMF_RC_NOT_IMPL
-
-  ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_InfoGetInit, src, localrc)
-  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, dst, localrc)
-  isrc = ESMF_Info2BaseGet(src%base)
-  idst = einq%GetInfo(dst, rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
-
-  call c_info_copyforattribute(isrc%ptr, idst%ptr, localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
-
-  if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeCopyInfoToCplComp
-
-#undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeCopyInfoToGridComp"
-subroutine ESMF_AttributeCopyInfoToGridComp(src, dst, keywordEnforcer, rc)
-  ! 39.11.6 - attcopy removed
-  type(ESMF_Info), intent(in) :: src
-  type(ESMF_GridComp), intent(inout) :: dst
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  integer, intent(inout), optional :: rc
-
-  integer :: localrc
-  type(ESMF_Inquire) :: einq
-  type(ESMF_Info2) :: isrc, idst
-
-  localrc = ESMF_FAILURE
-  if (present(rc)) rc = ESMF_RC_NOT_IMPL
-
-  ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_InfoGetInit, src, localrc)
-  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, dst, localrc)
-  isrc = ESMF_Info2BaseGet(src%base)
-  idst = einq%GetInfo(dst, rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
-
-  call c_info_copyforattribute(isrc%ptr, idst%ptr, localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
-
-  if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeCopyInfoToGridComp
-
-#undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeCopyInfoToSciComp"
-subroutine ESMF_AttributeCopyInfoToSciComp(src, dst, keywordEnforcer, rc)
-  ! 39.11.6 - attcopy removed
-  type(ESMF_Info), intent(in) :: src
-  type(ESMF_SciComp), intent(inout) :: dst
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  integer, intent(inout), optional :: rc
-
-  integer :: localrc
-  type(ESMF_Inquire) :: einq
-  type(ESMF_Info2) :: isrc, idst
-
-  localrc = ESMF_FAILURE
-  if (present(rc)) rc = ESMF_RC_NOT_IMPL
-
-  ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_InfoGetInit, src, localrc)
-  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, dst, localrc)
-  isrc = ESMF_Info2BaseGet(src%base)
-  idst = einq%GetInfo(dst, rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
-
-  call c_info_copyforattribute(isrc%ptr, idst%ptr, localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
-
-  if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeCopyInfoToSciComp
-
-#undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeCopyInfoToState"
-subroutine ESMF_AttributeCopyInfoToState(src, dst, keywordEnforcer, rc)
-  ! 39.11.6 - attcopy removed
-  type(ESMF_Info), intent(in) :: src
-  type(ESMF_State), intent(inout) :: dst
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  integer, intent(inout), optional :: rc
-
-  integer :: localrc
-  type(ESMF_Inquire) :: einq
-  type(ESMF_Info2) :: isrc, idst
-
-  localrc = ESMF_FAILURE
-  if (present(rc)) rc = ESMF_RC_NOT_IMPL
-
-  ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_InfoGetInit, src, localrc)
-  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, dst, localrc)
-  isrc = ESMF_Info2BaseGet(src%base)
-  idst = einq%GetInfo(dst, rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
-
-  call c_info_copyforattribute(isrc%ptr, idst%ptr, localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
-
-  if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeCopyInfoToState
-
-#undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_AttributeCopyInfoToField"
-subroutine ESMF_AttributeCopyInfoToField(src, dst, keywordEnforcer, rc)
-  ! 39.11.6 - attcopy removed
-  type(ESMF_Info), intent(in) :: src
-  type(ESMF_Field), intent(inout) :: dst
-  type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  integer, intent(inout), optional :: rc
-
-  integer :: localrc
-  type(ESMF_Inquire) :: einq
-  type(ESMF_Info2) :: isrc, idst
-
-  localrc = ESMF_FAILURE
-  if (present(rc)) rc = ESMF_RC_NOT_IMPL
-
-  ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_InfoGetInit, src, localrc)
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, dst, localrc)
-  isrc = ESMF_Info2BaseGet(src%base)
-  idst = einq%GetInfo(dst, rc=localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
-
-  call c_info_copyforattribute(isrc%ptr, idst%ptr, localrc)
-  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
-
-  if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeCopyInfoToField
 !==============================================================================
 ! ESMF_AttributeRead ==========================================================
 !==============================================================================

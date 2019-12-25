@@ -103,8 +103,6 @@ module ESMF
     use ESMF_CplCompMod
     use ESMF_SciCompMod
     
-    use ESMF_InfoMod
-    
     use ESMF_AttachMethodsMod
     
     use ESMF_ContainerMod

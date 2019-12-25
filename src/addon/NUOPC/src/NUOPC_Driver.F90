@@ -3589,7 +3589,7 @@ module NUOPC_Driver
     end interface
     optional                                   :: compSetVMRoutine
     integer,             intent(in),  optional :: petList(:)
-    type(ESMF_Info),     intent(in),  optional :: info
+    type(ESMF_Info2),    intent(in),  optional :: info
     type(ESMF_GridComp), intent(out), optional :: comp
     integer,             intent(out), optional :: rc 
 !
@@ -3626,6 +3626,7 @@ module NUOPC_Driver
     character(ESMF_MAXSTR)          :: petListBuffer(100)
     character(ESMF_MAXSTR)          :: msgString, lString
     integer                         :: verbosity
+    type(ESMF_Info2)                :: infoh
 
     if (present(rc)) rc = ESMF_SUCCESS
 
@@ -3705,7 +3706,11 @@ module NUOPC_Driver
     
     ! optionally copy Attributes from info object to the newly created component
     if (present(info)) then
-      call ESMF_AttributeCopy(info, cmEntry%wrap%component, rc=localrc)
+      infoh = ESMF_Info2GetHandle(cmEntry%wrap%component, rc=localrc)
+      if (ESMF_LogFoundError(rcToCheck=localrc, msg=ESMF_LOGERR_PASSTHRU, &
+        line=__LINE__, file=trim(name)//":"//FILENAME, rcToReturn=rc)) &
+        return  ! bail out
+      call ESMF_Info2Set(infoh, "", info, rc=localrc)
       if (ESMF_LogFoundError(rcToCheck=localrc, msg=ESMF_LOGERR_PASSTHRU, &
         line=__LINE__, file=trim(name)//":"//FILENAME, rcToReturn=rc)) &
         return  ! bail out
@@ -3937,7 +3942,7 @@ module NUOPC_Driver
     end interface
     optional                                   :: compSetVMRoutine
     integer, target,     intent(in),  optional :: petList(:)
-    type(ESMF_Info),     intent(in),  optional :: info
+    type(ESMF_Info2),    intent(in),  optional :: info
     type(ESMF_CplComp),  intent(out), optional :: comp
     integer,             intent(out), optional :: rc 
 !
@@ -3979,6 +3984,7 @@ module NUOPC_Driver
     type(ESMF_VM)                   :: vm
     logical                         :: isPresent
     integer                         :: verbosity
+    type(ESMF_Info2)                :: infoh
 
     if (present(rc)) rc = ESMF_SUCCESS
 
@@ -4168,7 +4174,11 @@ module NUOPC_Driver
 
     ! optionally copy Attributes from info object to the newly created component
     if (present(info)) then
-      call ESMF_AttributeCopy(info, cmEntry%wrap%connector, rc=localrc)
+      infoh = ESMF_Info2GetHandle(cmEntry%wrap%connector, rc=localrc)
+      if (ESMF_LogFoundError(rcToCheck=localrc, msg=ESMF_LOGERR_PASSTHRU, &
+        line=__LINE__, file=trim(name)//":"//FILENAME, rcToReturn=rc)) &
+        return  ! bail out
+      call ESMF_Info2Set(infoh, "", info, rc=localrc)
       if (ESMF_LogFoundError(rcToCheck=localrc, msg=ESMF_LOGERR_PASSTHRU, &
         line=__LINE__, file=trim(name)//":"//FILENAME, rcToReturn=rc)) &
         return  ! bail out
