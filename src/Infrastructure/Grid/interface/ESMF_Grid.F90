@@ -53,7 +53,7 @@
       use ESMF_IOUtilMod
       use ESMF_UtilCubedSphereMod
       use ESMF_IOFileTypeCheckMod
-      use ESMF_Info2Mod, only : ESMF_Info2, ESMF_Info2PointerGet, ESMF_Info2Update
+      use ESMF_InfoMod, only : ESMF_Info, ESMF_InfoPointerGet, ESMF_InfoUpdate
 
 #ifdef ESMF_NETCDF
       use netcdf
@@ -2825,7 +2825,7 @@ type(ESMF_KeywordEnforcer), optional:: keywordEnforcer ! must use keywords below
        integer, allocatable     :: minIndex(:), maxIndex(:), indexArray(:,:)
        character(len=160)       :: msgString
        type(ESMF_DistGridMatch_Flag) :: dgMatch
-       type(ESMF_Info2) :: lhs, rhs
+       type(ESMF_Info) :: lhs, rhs
 
 
        ! Initialize return code; assume failure until success is certain
@@ -3341,9 +3341,9 @@ type(ESMF_KeywordEnforcer), optional:: keywordEnforcer ! must use keywords below
        ! Copy Attributes
        if (present(copyAttributes)) then
          if (copyAttributes) then
-             lhs = ESMF_Info2PointerGet(newGrid%this)
-             rhs = ESMF_Info2PointerGet(grid%this)
-             call ESMF_Info2Update(lhs, rhs, rc=localrc)
+             lhs = ESMF_InfoPointerGet(newGrid%this)
+             rhs = ESMF_InfoPointerGet(grid%this)
+             call ESMF_InfoUpdate(lhs, rhs, rc=localrc)
              if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, &
                 ESMF_CONTEXT, rcToReturn=rc)) return
          endif

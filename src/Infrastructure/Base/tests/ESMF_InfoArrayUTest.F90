@@ -11,17 +11,17 @@
 !
 !==============================================================================
 
-#define FILENAME "src/Infrastructure/Base/test/ESMF_Info2ArrayUTest.F90"
+#define FILENAME "src/Infrastructure/Base/test/ESMF_InfoArrayUTest.F90"
 
 #include "ESMF_Macros.inc"
 #include "ESMF.h"
 
 !==============================================================================
 
-program ESMF_Info2ArrayUTest
+program ESMF_InfoArrayUTest
   use ESMF_TestMod
   use ESMF
-  use ESMF_Info2Mod
+  use ESMF_InfoMod
   implicit none
 
   !----------------------------------------------------------------------------
@@ -32,7 +32,7 @@ program ESMF_Info2ArrayUTest
   ! cumulative result: count failures; no failures equals "all pass"
   integer :: result = 0
   real(ESMF_KIND_R4), parameter :: tol = 1e-16  ! Tolerance for real tests
-  type(ESMF_Info2) :: info
+  type(ESMF_Info) :: info
   logical :: failed
   character(len=22), dimension(5) :: desired_char
   character(len=22), dimension(:), allocatable :: actual_char
@@ -65,21 +65,21 @@ program ESMF_Info2ArrayUTest
   !----------------------------------------------------------------------------
 
   ! Create info object used by the array set/get tests
-  info = ESMF_Info2Create(rc=rc)
+  info = ESMF_InfoCreate(rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
   !----------------------------------------------------------------------------
   !NEX_UTest
-  write(name, *) "ESMF_Info2 Array Setting/Getting R4"
+  write(name, *) "ESMF_Info Array Setting/Getting R4"
   write(failMsg, *) "Comparison to array get failed for R4"
   failed = .false.
 
   arr_R4(1:3) = (/ 1.0/3.0, 1.0/6.0, 1.0/12.0 /)
 
-  call ESMF_Info2Set(info, "the-key-R4", arr_R4, rc=rc)
+  call ESMF_InfoSet(info, "the-key-R4", arr_R4, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-  call ESMF_Info2Get(info, "the-key-R4", arr_R4_get, &
+  call ESMF_InfoGet(info, "the-key-R4", arr_R4_get, &
     arr_R4_get_count, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
@@ -97,16 +97,16 @@ program ESMF_Info2ArrayUTest
 
   !----------------------------------------------------------------------------
   !NEX_UTest
-  write(name, *) "ESMF_Info2 Array Setting/Getting R8"
+  write(name, *) "ESMF_Info Array Setting/Getting R8"
   write(failMsg, *) "Comparison to array get failed for R8"
   failed = .false.
 
   arr_R8(1:3) = (/ 1.0/3.0, 1.0/6.0, 1.0/12.0 /)
 
-  call ESMF_Info2Set(info, "the-key-R8", arr_R8, rc=rc)
+  call ESMF_InfoSet(info, "the-key-R8", arr_R8, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-  call ESMF_Info2Get(info, "the-key-R8", arr_R8_get, &
+  call ESMF_InfoGet(info, "the-key-R8", arr_R8_get, &
     arr_R8_get_count, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
@@ -124,16 +124,16 @@ program ESMF_Info2ArrayUTest
 
   !----------------------------------------------------------------------------
   !NEX_UTest
-  write(name, *) "ESMF_Info2 Array Setting/Getting I4"
+  write(name, *) "ESMF_Info Array Setting/Getting I4"
   write(failMsg, *) "Comparison to array get failed for I4"
   failed = .false.
 
   arr_I4(1:3) = (/ 123, 456, 789 /)
 
-  call ESMF_Info2Set(info, "the-key-I4", arr_I4, rc=rc)
+  call ESMF_InfoSet(info, "the-key-I4", arr_I4, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-  call ESMF_Info2Get(info, "the-key-I4", arr_I4_get, &
+  call ESMF_InfoGet(info, "the-key-I4", arr_I4_get, &
     arr_I4_get_count, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
@@ -151,16 +151,16 @@ program ESMF_Info2ArrayUTest
 
   !----------------------------------------------------------------------------
   !NEX_UTest
-  write(name, *) "ESMF_Info2 Array Setting/Getting I8"
+  write(name, *) "ESMF_Info Array Setting/Getting I8"
   write(failMsg, *) "Comparison to array get failed for I8"
   failed = .false.
 
   arr_I8(1:3) = (/ 123, 456, 789 /)
 
-  call ESMF_Info2Set(info, "the-key-I8", arr_I8, rc=rc)
+  call ESMF_InfoSet(info, "the-key-I8", arr_I8, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-  call ESMF_Info2Get(info, "the-key-I8", arr_I8_get, &
+  call ESMF_InfoGet(info, "the-key-I8", arr_I8_get, &
     arr_I8_get_count, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
@@ -178,12 +178,12 @@ program ESMF_Info2ArrayUTest
 
   !----------------------------------------------------------------------------
   !NEX_UTest
-  write(name, *) "ESMF_Info2 Array Setting/Getting Index R4"
+  write(name, *) "ESMF_Info Array Setting/Getting Index R4"
   write(failMsg, *) "Comparison to array index get failed for R4"
   failed = .false.
 
   do i=1, 3
-    call ESMF_Info2Get(info, "the-key-R4", value_R4_get, idx=i, rc=rc)
+    call ESMF_InfoGet(info, "the-key-R4", value_R4_get, idx=i, rc=rc)
     if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
     if (ABS(arr_R4(i) - value_R4_get) > tol) then
@@ -197,12 +197,12 @@ program ESMF_Info2ArrayUTest
 
   !----------------------------------------------------------------------------
   !NEX_UTest
-  write(name, *) "ESMF_Info2 Array Setting/Getting Index R8"
+  write(name, *) "ESMF_Info Array Setting/Getting Index R8"
   write(failMsg, *) "Comparison to array index get failed for R8"
   failed = .false.
 
   do i=1, 3
-    call ESMF_Info2Get(info, "the-key-R8", value_R8_get, idx=i, rc=rc)
+    call ESMF_InfoGet(info, "the-key-R8", value_R8_get, idx=i, rc=rc)
     if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
     if (ABS(arr_R8(i) - value_R8_get) > tol) then
@@ -216,12 +216,12 @@ program ESMF_Info2ArrayUTest
 
   !----------------------------------------------------------------------------
   !NEX_UTest
-  write(name, *) "ESMF_Info2 Array Setting/Getting Index I4"
+  write(name, *) "ESMF_Info Array Setting/Getting Index I4"
   write(failMsg, *) "Comparison to array index get failed for I4"
   failed = .false.
 
   do i=1, 3
-    call ESMF_Info2Get(info, "the-key-I4", value_I4_get, idx=i, rc=rc)
+    call ESMF_InfoGet(info, "the-key-I4", value_I4_get, idx=i, rc=rc)
     if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
     if (arr_I4(i) /= value_I4_get) then
@@ -235,12 +235,12 @@ program ESMF_Info2ArrayUTest
 
   !----------------------------------------------------------------------------
   !NEX_UTest
-  write(name, *) "ESMF_Info2 Array Setting/Getting Index I8"
+  write(name, *) "ESMF_Info Array Setting/Getting Index I8"
   write(failMsg, *) "Comparison to array index get failed for I8"
   failed = .false.
 
   do i=1, 3
-    call ESMF_Info2Get(info, "the-key-I8", value_I8_get, idx=i, rc=rc)
+    call ESMF_InfoGet(info, "the-key-I8", value_I8_get, idx=i, rc=rc)
     if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
     if (arr_I8(i) /= value_I8_get) then
@@ -254,7 +254,7 @@ program ESMF_Info2ArrayUTest
 
   !----------------------------------------------------------------------------
   !NEX_UTest
-  write(name, *) "ESMF_Info2 Array Setting/Getting Logical"
+  write(name, *) "ESMF_Info Array Setting/Getting Logical"
   write(failMsg, *) "Info logical array operation failed"
   failed = .false.
 
@@ -264,13 +264,13 @@ program ESMF_Info2ArrayUTest
   desired_logical(4) = .true.
   desired_logical(5) = .true.
 
-  call ESMF_Info2Set(info, "logicalkey", desired_logical, rc=rc)
+  call ESMF_InfoSet(info, "logicalkey", desired_logical, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-  !call ESMF_Info2Print(info, rc=rc)
+  !call ESMF_InfoPrint(info, rc=rc)
   !if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-  call ESMF_Info2Get(info, "logicalkey", actual_logical, logical_count, rc=rc)
+  call ESMF_InfoGet(info, "logicalkey", actual_logical, logical_count, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
   do i=1,logical_count
     if (desired_logical(i) .neqv. actual_logical(i)) then
@@ -285,7 +285,7 @@ program ESMF_Info2ArrayUTest
 
   !----------------------------------------------------------------------------
   !NEX_UTest
-  write(name, *) "ESMF_Info2 Array Setting/Getting Character"
+  write(name, *) "ESMF_Info Array Setting/Getting Character"
   write(failMsg, *) "Info character array operation failed"
   failed = .false.
 
@@ -295,13 +295,13 @@ program ESMF_Info2ArrayUTest
   desired_char(4) = "sweet land"
   desired_char(5) = "of the liberty"
 
-  call ESMF_Info2Set(info, "charkey", desired_char, rc=rc)
+  call ESMF_InfoSet(info, "charkey", desired_char, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-  !call ESMF_Info2Print(info, rc=rc)
+  !call ESMF_InfoPrint(info, rc=rc)
   !if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-  call ESMF_Info2Get(info, "charkey", actual_char, charcount, rc=rc)
+  call ESMF_InfoGet(info, "charkey", actual_char, charcount, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
   do i=1,charcount
@@ -318,43 +318,43 @@ program ESMF_Info2ArrayUTest
 
   !----------------------------------------------------------------------------
   !NEX_UTest
-  write(name, *) "ESMF_Info2 Array Bad Set-By-Index"
+  write(name, *) "ESMF_Info Array Bad Set-By-Index"
   write(failMsg, *) "Info set by index error not handled"
   failed = .false.
 
-  call ESMF_Info2Set(info, "logicalkey", .false., idx=55, rc=rc)
+  call ESMF_InfoSet(info, "logicalkey", .false., idx=55, rc=rc)
   call ESMF_Test((rc/=ESMF_SUCCESS), name, failMsg, result, ESMF_SRCLINE)
   !----------------------------------------------------------------------------
 
   !----------------------------------------------------------------------------
   !NEX_UTest
-  write(name, *) "ESMF_Info2 Array Bad Set-By-Index Type"
+  write(name, *) "ESMF_Info Array Bad Set-By-Index Type"
   write(failMsg, *) "Info set by index error not handled"
   failed = .false.
 
-  call ESMF_Info2Set(info, "logicalkey", 55, idx=1, rc=rc)
+  call ESMF_InfoSet(info, "logicalkey", 55, idx=1, rc=rc)
   call ESMF_Test((rc==ESMC_RC_OBJ_BAD), name, failMsg, result, ESMF_SRCLINE)
   !----------------------------------------------------------------------------
 
   !----------------------------------------------------------------------------
   !NEX_UTest
-  write(name, *) "ESMF_Info2 Array Bad Key Overload Type"
+  write(name, *) "ESMF_Info Array Bad Key Overload Type"
   write(failMsg, *) "Info set error not handled"
   failed = .false.
 
-  call ESMF_Info2Set(info, "charkey", 55, rc=rc)
+  call ESMF_InfoSet(info, "charkey", 55, rc=rc)
   !if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
   call ESMF_Test((rc==ESMC_RC_ARG_BAD), name, failMsg, result, ESMF_SRCLINE)
 
-  !call ESMF_Info2Print(info, rc=rc)
+  !call ESMF_InfoPrint(info, rc=rc)
   !----------------------------------------------------------------------------
 
   ! Destroy the info object used by the array set/get tests
-  call ESMF_Info2Destroy(info, rc=rc)
+  call ESMF_InfoDestroy(info, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
   !----------------------------------------------------------------------------
   call ESMF_TestEnd(ESMF_SRCLINE) ! calls ESMF_Finalize() internally
   !----------------------------------------------------------------------------
 
-end program ESMF_Info2ArrayUTest
+end program ESMF_InfoArrayUTest

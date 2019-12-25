@@ -1,6 +1,6 @@
 interface
 
-  function c_info_base_get(base_address) bind(C, name="ESMC_BaseGetInfo2")
+  function c_info_base_get(base_address) bind(C, name="ESMC_BaseGetInfo")
     use iso_c_binding
     implicit none
     integer(C_LONG), intent(in) :: base_address
@@ -9,7 +9,7 @@ interface
 
   !=============================================================================
 
-  function c_info_copy(info, rc) bind(C, name="ESMC_Info2Copy")
+  function c_info_copy(info, rc) bind(C, name="ESMC_InfoCopy")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: info
@@ -19,14 +19,14 @@ interface
 
   !=============================================================================
 
-  function c_info_create(rc) bind(C, name="ESMC_Info2Create")
+  function c_info_create(rc) bind(C, name="ESMC_InfoCreate")
     use iso_c_binding
     implicit none
     integer(C_INT), intent(inout) :: rc
     type(C_PTR) :: c_info_create
   end function c_info_create
 
-  function c_info_create_by_key(srcInfo, key, rc) bind(C, name="ESMC_Info2CreateByKey")
+  function c_info_create_by_key(srcInfo, key, rc) bind(C, name="ESMC_InfoCreateByKey")
     use iso_c_binding
     implicit none
     type(C_PTR), value, intent(in) :: srcInfo
@@ -35,7 +35,7 @@ interface
     type(C_PTR) :: c_info_create_by_key
   end function c_info_create_by_key
 
-  function c_info_create_by_parse(payload, rc) bind(C, name="ESMC_Info2CreateByParse")
+  function c_info_create_by_parse(payload, rc) bind(C, name="ESMC_InfoCreateByParse")
     use iso_c_binding
     implicit none
     character(C_CHAR), intent(in) :: payload(*)
@@ -45,7 +45,7 @@ interface
 
   !=============================================================================
 
-  subroutine c_info_broadcast(info, rootPet, rc) bind(C, name="ESMC_Info2Broadcast")
+  subroutine c_info_broadcast(info, rootPet, rc) bind(C, name="ESMC_InfoBroadcast")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: info
@@ -55,7 +55,7 @@ interface
 
   !=============================================================================
   
-  subroutine c_info_copyforattribute(isrc, idst, rc) bind(C, name="ESMC_Info2CopyForAttribute")
+  subroutine c_info_copyforattribute(isrc, idst, rc) bind(C, name="ESMC_InfoCopyForAttribute")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: isrc
@@ -65,7 +65,7 @@ interface
   
   !=============================================================================
 
-  subroutine c_info_destroy(info, rc) bind(C, name="ESMC_Info2Destroy")
+  subroutine c_info_destroy(info, rc) bind(C, name="ESMC_InfoDestroy")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: info
@@ -74,7 +74,7 @@ interface
 
   !=============================================================================
 
-  subroutine c_info_dump(info, output, rc) bind(C, name="ESMC_Info2Dump")
+  subroutine c_info_dump(info, output, rc) bind(C, name="ESMC_InfoDump")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: info
@@ -82,7 +82,7 @@ interface
     integer(C_INT), intent(inout) :: rc
   end subroutine c_info_dump
 
-  subroutine c_info_dump_len(info, dump_length, rc) bind(C, name="ESMC_Info2DumpLength")
+  subroutine c_info_dump_len(info, dump_length, rc) bind(C, name="ESMC_InfoDumpLength")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: info
@@ -92,7 +92,7 @@ interface
 
   !=============================================================================
 
-  subroutine c_info_erase(info, keyParent, keyChild, recursive, rc) bind(C, name="ESMC_Info2Erase")
+  subroutine c_info_erase(info, keyParent, keyChild, recursive, rc) bind(C, name="ESMC_InfoErase")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: info
@@ -104,7 +104,7 @@ interface
 
   !=============================================================================
 
-  subroutine c_info_inquire(info, inq, key, recursive, idx, attr_compliance, rc) bind(C, name="ESMC_Info2Inquire")
+  subroutine c_info_inquire(info, inq, key, recursive, idx, attr_compliance, rc) bind(C, name="ESMC_InfoInquire")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: info
@@ -118,7 +118,7 @@ interface
 
   !=============================================================================
 
-  subroutine c_info_is_equal(lhs, rhs, is_equal, localrc) bind (C, name="ESMC_Info2IsEqual")
+  subroutine c_info_is_equal(lhs, rhs, is_equal, localrc) bind (C, name="ESMC_InfoIsEqual")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: lhs
@@ -129,7 +129,7 @@ interface
 
   !=============================================================================
 
-  subroutine c_info_is_present(info, key, res, rc, recursive, isptr) bind(C, name="ESMC_Info2IsPresent")
+  subroutine c_info_is_present(info, key, res, rc, recursive, isptr) bind(C, name="ESMC_InfoIsPresent")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: info
@@ -142,7 +142,7 @@ interface
 
   !=============================================================================
 
-  subroutine c_info_is_set(info, key, is_set_c, rc) bind(C, name="ESMC_Info2IsSet")
+  subroutine c_info_is_set(info, key, is_set_c, rc) bind(C, name="ESMC_InfoIsSet")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: info
@@ -153,7 +153,7 @@ interface
 
   !=============================================================================
 
-  subroutine c_info_print(info, indent, rc) bind(C, name="ESMC_Info2Print")
+  subroutine c_info_print(info, indent, rc) bind(C, name="ESMC_InfoPrint")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: info
@@ -163,7 +163,7 @@ interface
 
   !=============================================================================
 
-  subroutine c_info_update(lhs, rhs, rc) bind(C, name="ESMC_Info2Update")
+  subroutine c_info_update(lhs, rhs, rc) bind(C, name="ESMC_InfoUpdate")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: lhs
@@ -173,7 +173,7 @@ interface
 
   !=============================================================================
 
-  subroutine c_info_base_sync(inqstate, rootPet, vmAddress, rc) bind(C, name="ESMC_Info2BaseSync")
+  subroutine c_info_base_sync(inqstate, rootPet, vmAddress, rc) bind(C, name="ESMC_InfoBaseSync")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: inqstate
@@ -184,7 +184,7 @@ interface
 
   !=============================================================================
 
-  subroutine c_info_read_json(info, filename, rc) bind(C, name="ESMC_Info2ReadJSON")
+  subroutine c_info_read_json(info, filename, rc) bind(C, name="ESMC_InfoReadJSON")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: info
@@ -192,7 +192,7 @@ interface
     integer(C_INT), intent(inout) :: rc
   end subroutine c_info_read_json
 
-  subroutine c_info_write_json(info, filename, rc) bind(C, name="ESMC_Info2WriteJSON")
+  subroutine c_info_write_json(info, filename, rc) bind(C, name="ESMC_InfoWriteJSON")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: info
@@ -214,7 +214,7 @@ interface
 
   !=============================================================================
 
-  subroutine c_info_get_CH(info, key, value, vlen, rc, default, idx, recursive) bind(C, name="ESMC_Info2GetCH")
+  subroutine c_info_get_CH(info, key, value, vlen, rc, default, idx, recursive) bind(C, name="ESMC_InfoGetCH")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: info
@@ -228,7 +228,7 @@ interface
 
   !=============================================================================
 
-  subroutine c_info_set_INFO(info, key, value, force, rc) bind(C, name="ESMC_Info2SetINFO")
+  subroutine c_info_set_INFO(info, key, value, force, rc) bind(C, name="ESMC_InfoSetINFO")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: info
@@ -238,7 +238,7 @@ interface
     integer(C_INT), intent(inout) :: rc
   end subroutine c_info_set_INFO
 
-  subroutine c_info_set_NULL(info, key, force, rc) bind(C, name="ESMC_Info2SetNULL")
+  subroutine c_info_set_NULL(info, key, force, rc) bind(C, name="ESMC_InfoSetNULL")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: info
@@ -247,7 +247,7 @@ interface
     integer(C_INT), intent(inout) :: rc
   end subroutine c_info_set_NULL
 
-  subroutine c_info_set_array_CH(info, key, itemcount, force, rc, pkey) bind(C, name="ESMC_Info2SetArrayCH")
+  subroutine c_info_set_array_CH(info, key, itemcount, force, rc, pkey) bind(C, name="ESMC_InfoSetArrayCH")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: info

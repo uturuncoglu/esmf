@@ -105,7 +105,7 @@ static const char *const version = "$Id$";
 #undef ESMC_METHOD
 #define ESMC_METHOD "ESMC_Base::constructInfo()"
 void ESMC_Base::constructInfo(ESMC_Base& base) { // root_info_tdk
-  base.info = new ESMCI::Info2();
+  base.info = new ESMCI::Info();
   base.infoalias = false;
 }
 
@@ -1240,7 +1240,7 @@ void ESMC_Base::constructInfo(ESMC_Base& base) { // root_info_tdk
 //
 // !DESCRIPTION:
 //   initialization with known class name, object name, initial number
-//   of Info2 to make space for.
+//   of Info to make space for.
 //
 //EOPI
   int rc;

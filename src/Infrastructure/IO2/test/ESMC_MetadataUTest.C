@@ -20,7 +20,7 @@
 #include "ESMC_Test.h"
 #include "ESMCI_Array.h"
 #include "ESMCI_ArrayBundle.h"
-#include "ESMCI_Info2.h"
+#include "ESMCI_Info.h"
 #include "ESMCI_LogErr.h"
 #include "ESMCI_Macros.h"
 #include "ESMCI_Metadata.h"

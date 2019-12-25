@@ -16,7 +16,7 @@ interface
 ! c_info_get ===================================================================
 !===============================================================================
 
-  subroutine c_info_get_R4(info, key, value, rc, default, idx, recursive) bind(C, name="ESMC_Info2GetR4")
+  subroutine c_info_get_R4(info, key, value, rc, default, idx, recursive) bind(C, name="ESMC_InfoGetR4")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: info
@@ -27,7 +27,7 @@ interface
     integer(C_INT), intent(in) :: recursive
   end subroutine c_info_get_R4
 
-  subroutine c_info_get_R8(info, key, value, rc, default, idx, recursive) bind(C, name="ESMC_Info2GetR8")
+  subroutine c_info_get_R8(info, key, value, rc, default, idx, recursive) bind(C, name="ESMC_InfoGetR8")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: info
@@ -38,7 +38,7 @@ interface
     integer(C_INT), intent(in) :: recursive
   end subroutine c_info_get_R8
 
-  subroutine c_info_get_I4(info, key, value, rc, default, idx, recursive) bind(C, name="ESMC_Info2GetI4")
+  subroutine c_info_get_I4(info, key, value, rc, default, idx, recursive) bind(C, name="ESMC_InfoGetI4")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: info
@@ -49,7 +49,7 @@ interface
     integer(C_INT), intent(in) :: recursive
   end subroutine c_info_get_I4
 
-  subroutine c_info_get_I8(info, key, value, rc, default, idx, recursive) bind(C, name="ESMC_Info2GetI8")
+  subroutine c_info_get_I8(info, key, value, rc, default, idx, recursive) bind(C, name="ESMC_InfoGetI8")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: info
@@ -60,7 +60,7 @@ interface
     integer(C_INT), intent(in) :: recursive
   end subroutine c_info_get_I8
 
-  subroutine c_info_get_LG(info, key, value, rc, default, idx, recursive) bind(C, name="ESMC_Info2GetLG")
+  subroutine c_info_get_LG(info, key, value, rc, default, idx, recursive) bind(C, name="ESMC_InfoGetLG")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: info
@@ -71,7 +71,7 @@ interface
     integer(C_INT), intent(in) :: recursive
   end subroutine c_info_get_LG
 
-  subroutine c_info_get_array_R4(info, key, value, itemcount, rc, recursive) bind(C, name="ESMC_Info2GetArrayR4")
+  subroutine c_info_get_array_R4(info, key, value, itemcount, rc, recursive) bind(C, name="ESMC_InfoGetArrayR4")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: info
@@ -82,7 +82,7 @@ interface
     integer(C_INT), intent(in) :: recursive
   end subroutine c_info_get_array_R4
 
-  subroutine c_info_get_array_R8(info, key, value, itemcount, rc, recursive) bind(C, name="ESMC_Info2GetArrayR8")
+  subroutine c_info_get_array_R8(info, key, value, itemcount, rc, recursive) bind(C, name="ESMC_InfoGetArrayR8")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: info
@@ -93,7 +93,7 @@ interface
     integer(C_INT), intent(in) :: recursive
   end subroutine c_info_get_array_R8
 
-  subroutine c_info_get_array_I4(info, key, value, itemcount, rc, recursive) bind(C, name="ESMC_Info2GetArrayI4")
+  subroutine c_info_get_array_I4(info, key, value, itemcount, rc, recursive) bind(C, name="ESMC_InfoGetArrayI4")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: info
@@ -104,7 +104,7 @@ interface
     integer(C_INT), intent(in) :: recursive
   end subroutine c_info_get_array_I4
 
-  subroutine c_info_get_array_I8(info, key, value, itemcount, rc, recursive) bind(C, name="ESMC_Info2GetArrayI8")
+  subroutine c_info_get_array_I8(info, key, value, itemcount, rc, recursive) bind(C, name="ESMC_InfoGetArrayI8")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: info
@@ -115,7 +115,7 @@ interface
     integer(C_INT), intent(in) :: recursive
   end subroutine c_info_get_array_I8
 
-  subroutine c_info_get_array_LG(info, key, value, itemcount, rc, recursive) bind(C, name="ESMC_Info2GetArrayLG")
+  subroutine c_info_get_array_LG(info, key, value, itemcount, rc, recursive) bind(C, name="ESMC_InfoGetArrayLG")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: info
@@ -130,7 +130,7 @@ interface
 ! c_info_set ===================================================================
 !===============================================================================
 
-  subroutine c_info_set_R4(info, key, value, force, rc, idx, pkey) bind(C, name="ESMC_Info2SetR4")
+  subroutine c_info_set_R4(info, key, value, force, rc, idx, pkey) bind(C, name="ESMC_InfoSetR4")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: info
@@ -142,7 +142,7 @@ interface
     character(kind=C_CHAR), intent(in) :: pkey(*)
   end subroutine c_info_set_R4
 
-  subroutine c_info_set_R8(info, key, value, force, rc, idx, pkey) bind(C, name="ESMC_Info2SetR8")
+  subroutine c_info_set_R8(info, key, value, force, rc, idx, pkey) bind(C, name="ESMC_InfoSetR8")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: info
@@ -154,7 +154,7 @@ interface
     character(kind=C_CHAR), intent(in) :: pkey(*)
   end subroutine c_info_set_R8
 
-  subroutine c_info_set_I4(info, key, value, force, rc, idx, pkey) bind(C, name="ESMC_Info2SetI4")
+  subroutine c_info_set_I4(info, key, value, force, rc, idx, pkey) bind(C, name="ESMC_InfoSetI4")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: info
@@ -166,7 +166,7 @@ interface
     character(kind=C_CHAR), intent(in) :: pkey(*)
   end subroutine c_info_set_I4
 
-  subroutine c_info_set_I8(info, key, value, force, rc, idx, pkey) bind(C, name="ESMC_Info2SetI8")
+  subroutine c_info_set_I8(info, key, value, force, rc, idx, pkey) bind(C, name="ESMC_InfoSetI8")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: info
@@ -178,7 +178,7 @@ interface
     character(kind=C_CHAR), intent(in) :: pkey(*)
   end subroutine c_info_set_I8
 
-  subroutine c_info_set_CH(info, key, value, force, rc, idx, pkey) bind(C, name="ESMC_Info2SetCH")
+  subroutine c_info_set_CH(info, key, value, force, rc, idx, pkey) bind(C, name="ESMC_InfoSetCH")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: info
@@ -190,7 +190,7 @@ interface
     character(kind=C_CHAR), intent(in) :: pkey(*)
   end subroutine c_info_set_CH
 
-  subroutine c_info_set_LG(info, key, value, force, rc, idx, pkey) bind(C, name="ESMC_Info2SetLG")
+  subroutine c_info_set_LG(info, key, value, force, rc, idx, pkey) bind(C, name="ESMC_InfoSetLG")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: info
@@ -202,7 +202,7 @@ interface
     character(kind=C_CHAR), intent(in) :: pkey(*)
   end subroutine c_info_set_LG
 
-  subroutine c_info_set_array_R4(info, key, value, itemcount, force, rc, pkey) bind(C, name="ESMC_Info2SetArrayR4")
+  subroutine c_info_set_array_R4(info, key, value, itemcount, force, rc, pkey) bind(C, name="ESMC_InfoSetArrayR4")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: info
@@ -214,7 +214,7 @@ interface
     character(kind=C_CHAR), intent(in) :: pkey(*)
   end subroutine c_info_set_array_R4
 
-  subroutine c_info_set_array_R8(info, key, value, itemcount, force, rc, pkey) bind(C, name="ESMC_Info2SetArrayR8")
+  subroutine c_info_set_array_R8(info, key, value, itemcount, force, rc, pkey) bind(C, name="ESMC_InfoSetArrayR8")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: info
@@ -226,7 +226,7 @@ interface
     character(kind=C_CHAR), intent(in) :: pkey(*)
   end subroutine c_info_set_array_R8
 
-  subroutine c_info_set_array_I4(info, key, value, itemcount, force, rc, pkey) bind(C, name="ESMC_Info2SetArrayI4")
+  subroutine c_info_set_array_I4(info, key, value, itemcount, force, rc, pkey) bind(C, name="ESMC_InfoSetArrayI4")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: info
@@ -238,7 +238,7 @@ interface
     character(kind=C_CHAR), intent(in) :: pkey(*)
   end subroutine c_info_set_array_I4
 
-  subroutine c_info_set_array_I8(info, key, value, itemcount, force, rc, pkey) bind(C, name="ESMC_Info2SetArrayI8")
+  subroutine c_info_set_array_I8(info, key, value, itemcount, force, rc, pkey) bind(C, name="ESMC_InfoSetArrayI8")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: info
@@ -250,7 +250,7 @@ interface
     character(kind=C_CHAR), intent(in) :: pkey(*)
   end subroutine c_info_set_array_I8
 
-  subroutine c_info_set_array_LG(info, key, value, itemcount, force, rc, pkey) bind(C, name="ESMC_Info2SetArrayLG")
+  subroutine c_info_set_array_LG(info, key, value, itemcount, force, rc, pkey) bind(C, name="ESMC_InfoSetArrayLG")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: info

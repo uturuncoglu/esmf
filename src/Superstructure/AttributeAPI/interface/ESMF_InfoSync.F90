@@ -10,7 +10,7 @@
 !
 !==============================================================================
 
-#define FILENAME "src/Superstructure/AttributeAPI/interface/ESMF_Info2Sync.F90"
+#define FILENAME "src/Superstructure/AttributeAPI/interface/ESMF_InfoSync.F90"
 !tdk:todo: public types
 
 #include "ESMF_Macros.inc"
@@ -34,7 +34,7 @@ use ESMF_CplCompMod
 use ESMF_SciCompMod
 use ESMF_ArrayMod
 use ESMF_ArrayBundleMod
-use ESMF_Info2Mod
+use ESMF_InfoMod
 use ESMF_UtilTypesMod
 use ESMF_GeomBaseMod
 use ESMF_MeshMod
@@ -46,7 +46,7 @@ use ESMF_RHandleMod
 implicit none
 
 type ESMF_Inquire
-  type(ESMF_Info2), pointer :: info
+  type(ESMF_Info), pointer :: info
   logical :: addBaseAddress = .false.  ! If true, add the object's base address
   logical :: addObjectInfo = .false.  ! If true, add ESMF_Info map for each object
   logical :: createInfo = .true.  ! If true, also recurse objects with members (i.e. ArrayBundle)
@@ -90,7 +90,7 @@ function Create(addBaseAddress, addObjectInfo, createInfo, rc) result(newinq)
   integer, intent(inout), optional :: rc
   type(ESMF_Inquire) :: newinq
   integer :: localrc=ESMF_FAILURE
-  type(ESMF_Info2), target, save :: info
+  type(ESMF_Info), target, save :: info
 
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
 
@@ -99,7 +99,7 @@ function Create(addBaseAddress, addObjectInfo, createInfo, rc) result(newinq)
   if (present(createInfo)) newinq%createInfo = createInfo
   nullify(newinq%info)
   if (newinq%createInfo) then
-    info = ESMF_Info2Create(rc=localrc)
+    info = ESMF_InfoCreate(rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     newinq%info => info
   endif
@@ -118,7 +118,7 @@ subroutine Destroy(self, rc)
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   if (self%is_initialized) then
     if (self%createInfo) then
-      call ESMF_Info2Destroy(self%info, rc=localrc)
+      call ESMF_InfoDestroy(self%info, rc=localrc)
       if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   endif
@@ -150,13 +150,13 @@ function GetCurrentInfo(self, rc) result(info)
   class(ESMF_Inquire), intent(in) :: self
   integer, intent(inout), optional :: rc
   type(ESMF_Base) :: base
-  type(ESMF_Info2) :: info
+  type(ESMF_Info) :: info
   integer :: localrc=ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   info%ptr = C_NULL_PTR
   base = self%GetCurrentBase(rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
-  info = ESMF_Info2BaseGet(base)
+  info = ESMF_InfoBaseGet(base)
   if (present(rc)) rc = ESMF_SUCCESS
 end function GetCurrentInfo
 
@@ -167,7 +167,7 @@ subroutine Print(self, rc)
   integer, intent(inout), optional :: rc
   integer :: localrc=ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
-  call ESMF_Info2Print(self%info, rc=localrc)
+  call ESMF_InfoPrint(self%info, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   if (present(rc)) rc = ESMF_FAILURE
 end subroutine Print
@@ -258,7 +258,7 @@ subroutine updateGeneric(self, root_key, name, etype, base, base_is_valid, uname
   character(:), allocatable :: local_root_key
   integer :: localrc=ESMF_FAILURE
   logical :: l_base_is_valid
-  type(ESMF_Info2) :: object_info
+  type(ESMF_Info) :: object_info
 
   if (.not. self%is_initialized) then
     if (ESMF_LogFoundError(ESMF_RC_OBJ_NOT_CREATED, msg="ESMF_Inquire is not initialized", &
@@ -290,35 +290,35 @@ subroutine updateGeneric(self, root_key, name, etype, base, base_is_valid, uname
     allocate(character(len(trim(root_key))+len(l_uname)+1)::local_root_key)
     local_root_key = trim(root_key)//"/"//l_uname
 
-    call ESMF_Info2Set(self%info, local_root_key//"/esmf_type", etype, force=.false., rc=localrc)
+    call ESMF_InfoSet(self%info, local_root_key//"/esmf_type", etype, force=.false., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2Set(self%info, local_root_key//"/base_is_valid", l_base_is_valid, force=.false., rc=localrc)
+    call ESMF_InfoSet(self%info, local_root_key//"/base_is_valid", l_base_is_valid, force=.false., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-    call ESMF_Info2SetNULL(self%info, local_root_key//"/members", force=.false., rc=localrc)
+    call ESMF_InfoSetNULL(self%info, local_root_key//"/members", force=.false., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
     if (self%addBaseAddress) then
-      call ESMF_Info2Set(self%info, local_root_key//"/base_address", base%this%ptr, force=.false., rc=localrc)
+      call ESMF_InfoSet(self%info, local_root_key//"/base_address", base%this%ptr, force=.false., rc=localrc)
       if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     end if
 
     if (l_base_is_valid) then
-      call ESMF_Info2Set(self%info, local_root_key//"/base_id", id_base, force=.false., rc=localrc)
+      call ESMF_InfoSet(self%info, local_root_key//"/base_id", id_base, force=.false., rc=localrc)
       if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     else
-      call ESMF_Info2SetNULL(self%info, local_root_key//"/base_id", force=.false., rc=localrc)
+      call ESMF_InfoSetNULL(self%info, local_root_key//"/base_id", force=.false., rc=localrc)
       if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     end if
 
     if (self%addObjectInfo) then
       if (l_base_is_valid) then
-        object_info = ESMF_Info2BaseGet(base)
-        call ESMF_Info2Set(self%info, local_root_key//"/info", object_info, force=.false., rc=localrc)
+        object_info = ESMF_InfoBaseGet(base)
+        call ESMF_InfoSet(self%info, local_root_key//"/info", object_info, force=.false., rc=localrc)
         if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
       else
-        call ESMF_Info2SetNULL(self%info, local_root_key//"/info", force=.false., rc=localrc)
+        call ESMF_InfoSetNULL(self%info, local_root_key//"/info", force=.false., rc=localrc)
         if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
       end if
     end if
@@ -821,7 +821,7 @@ function getInfoArray(target, rc) result(info)
   use iso_c_binding, only : C_NULL_PTR
   type(ESMF_Array), intent(in) :: target
   integer, intent(inout), optional :: rc
-  type(ESMF_Info2) :: info
+  type(ESMF_Info) :: info
   type(ESMF_Inquire) :: einq
   integer :: localrc=ESMF_FAILURE
 
@@ -844,7 +844,7 @@ function getInfoArrayBundle(target, rc) result(info)
   use iso_c_binding, only : C_NULL_PTR
   type(ESMF_ArrayBundle), intent(in) :: target
   integer, intent(inout), optional :: rc
-  type(ESMF_Info2) :: info
+  type(ESMF_Info) :: info
   type(ESMF_Inquire) :: einq
   integer :: localrc=ESMF_FAILURE
 
@@ -867,7 +867,7 @@ function getInfoCplComp(target, rc) result(info)
   use iso_c_binding, only : C_NULL_PTR
   type(ESMF_CplComp), intent(in) :: target
   integer, intent(inout), optional :: rc
-  type(ESMF_Info2) :: info
+  type(ESMF_Info) :: info
   type(ESMF_Inquire) :: einq
   integer :: localrc=ESMF_FAILURE
 
@@ -890,7 +890,7 @@ function getInfoGridComp(target, rc) result(info)
   use iso_c_binding, only : C_NULL_PTR
   type(ESMF_GridComp), intent(in) :: target
   integer, intent(inout), optional :: rc
-  type(ESMF_Info2) :: info
+  type(ESMF_Info) :: info
   type(ESMF_Inquire) :: einq
   integer :: localrc=ESMF_FAILURE
 
@@ -913,7 +913,7 @@ function getInfoSciComp(target, rc) result(info)
   use iso_c_binding, only : C_NULL_PTR
   type(ESMF_SciComp), intent(in) :: target
   integer, intent(inout), optional :: rc
-  type(ESMF_Info2) :: info
+  type(ESMF_Info) :: info
   type(ESMF_Inquire) :: einq
   integer :: localrc=ESMF_FAILURE
 
@@ -936,7 +936,7 @@ function getInfoDistGrid(target, rc) result(info)
   use iso_c_binding, only : C_NULL_PTR
   type(ESMF_DistGrid), intent(in) :: target
   integer, intent(inout), optional :: rc
-  type(ESMF_Info2) :: info
+  type(ESMF_Info) :: info
   type(ESMF_Inquire) :: einq
   integer :: localrc=ESMF_FAILURE
 
@@ -959,7 +959,7 @@ function getInfoField(target, rc) result(info)
   use iso_c_binding, only : C_NULL_PTR
   type(ESMF_Field), intent(in) :: target
   integer, intent(inout), optional :: rc
-  type(ESMF_Info2) :: info
+  type(ESMF_Info) :: info
   type(ESMF_Inquire) :: einq
   integer :: localrc=ESMF_FAILURE
 
@@ -982,7 +982,7 @@ function getInfoFieldBundle(target, rc) result(info)
   use iso_c_binding, only : C_NULL_PTR
   type(ESMF_FieldBundle), intent(in) :: target
   integer, intent(inout), optional :: rc
-  type(ESMF_Info2) :: info
+  type(ESMF_Info) :: info
   type(ESMF_Inquire) :: einq
   integer :: localrc=ESMF_FAILURE
 
@@ -1005,7 +1005,7 @@ function getInfoGrid(target, rc) result(info)
   use iso_c_binding, only : C_NULL_PTR
   type(ESMF_Grid), intent(in) :: target
   integer, intent(inout), optional :: rc
-  type(ESMF_Info2) :: info
+  type(ESMF_Info) :: info
   type(ESMF_Inquire) :: einq
   integer :: localrc=ESMF_FAILURE
 
@@ -1028,7 +1028,7 @@ function getInfoState(target, rc) result(info)
   use iso_c_binding, only : C_NULL_PTR
   type(ESMF_State), intent(in) :: target
   integer, intent(inout), optional :: rc
-  type(ESMF_Info2) :: info
+  type(ESMF_Info) :: info
   type(ESMF_Inquire) :: einq
   integer :: localrc=ESMF_FAILURE
 
@@ -1051,7 +1051,7 @@ function getInfoLocStream(target, rc) result(info)
   use iso_c_binding, only : C_NULL_PTR
   type(ESMF_LocStream), intent(in) :: target
   integer, intent(inout), optional :: rc
-  type(ESMF_Info2) :: info
+  type(ESMF_Info) :: info
   type(ESMF_Inquire) :: einq
   integer :: localrc=ESMF_FAILURE
 

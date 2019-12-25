@@ -990,9 +990,9 @@ int IO::addArray(
 // !ARGUMENTS:
   Array *arr_p,                             // (in) - The array to add
   const std::string &variableName,          // (in) - Name to use for array
-  ESMCI::Info2 *dimAttPack,                    // (in) - Attribute for dimension names
-  ESMCI::Info2 *varAttPack,                    // (in) - Attribute for variable attributes
-  ESMCI::Info2 *gblAttPack) {                  // (in) - Attribute for global attributes
+  ESMCI::Info *dimAttPack,                    // (in) - Attribute for dimension names
+  ESMCI::Info *varAttPack,                    // (in) - Attribute for variable attributes
+  ESMCI::Info *gblAttPack) {                  // (in) - Attribute for global attributes
 // !DESCRIPTION:
 //      Add an array to the list of objects to read or write. The
 //      {\tt variableName} argument will be used as the field name for
@@ -1052,7 +1052,7 @@ int IO::addArray(
 // !IROUTINE:  IO::dimlabel_get
 //
 // !INTERFACE:
-void IO::dimlabel_get (ESMCI::Info2 *dimAttPack, // in - AttPack with potential dimLabel attributes
+void IO::dimlabel_get (ESMCI::Info *dimAttPack, // in - AttPack with potential dimLabel attributes
     std::string labeltype,                    // in - attribute to look for (e.g., gridded or ungridded)
     std::vector<std::string> &dimLabels,      // out - labels found
     int *rc) {

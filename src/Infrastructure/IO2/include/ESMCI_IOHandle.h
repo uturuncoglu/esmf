@@ -20,7 +20,7 @@
 #include <pio.h>
 
 #include "ESMCI_Array.h"
-#include "ESMCI_Info2.h"
+#include "ESMCI_Info.h"
 #include "ESMCI_DistGrid.h"
 #include "ESMCI_Metadata.h"
 #include "ESMCI_Util.h"

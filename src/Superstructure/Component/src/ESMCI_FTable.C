@@ -40,7 +40,7 @@
 #include "ESMCI_CompTunnel.h"
 #include "ESMCI_LogErr.h"
 #include "ESMCI_TraceRegion.h"
-#include "ESMCI_Info2.h"
+#include "ESMCI_Info.h"
 
 using std::string;
 
@@ -1853,7 +1853,7 @@ std::cout << "calling out of case FT_VOIDP1INTP" << "\n";
           localrc = comp->getBase(&base);
           if (ESMC_LogDefault.MsgFoundError(localrc, ESMCI_ERR_PASSTHRU,
             ESMC_CONTEXT, &rc)) return rc; // bail out
-          ESMCI::Info2 *info = base->ESMC_BaseGetInfo();
+          ESMCI::Info *info = base->ESMC_BaseGetInfo();
           std::string key_cr = "ESMF_RUNTIME_COMPLIANCEICREGISTER";
           bool presentFlag = info->hasKey(key_cr, localrc, false);
           if (ESMC_LogDefault.MsgFoundError(localrc, ESMCI_ERR_PASSTHRU,

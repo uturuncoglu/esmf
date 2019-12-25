@@ -11,7 +11,7 @@
 //
 //=============================================================================
 
-#define ESMC_FILENAME "./src/Infrastructure/Base/src/ESMC_Info2CDefGeneric.C"
+#define ESMC_FILENAME "./src/Infrastructure/Base/src/ESMC_InfoCDefGeneric.C"
 
 // Info C-Fortran method implementation (body) file
 
@@ -28,7 +28,7 @@
 #include "ESMC.h"
 #include "ESMCI_Base.h"
 #include "ESMCI_Macros.h"
-#include "ESMCI_Info2.h"
+#include "ESMCI_Info.h"
 #include "ESMCI_LogErr.h"
 #include "ESMCI_Util.h"
 #include "ESMCI_VM.h"
@@ -52,8 +52,8 @@ extern "C" {
 //-----------------------------------------------------------------------------
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_Info2GetR4()"
-void ESMC_Info2GetR4(ESMCI::Info2 *info, char *key, float &value, int &rc, float *def, int *index, int &fortran_bool_recursive) {
+#define ESMC_METHOD "ESMC_InfoGetR4()"
+void ESMC_InfoGetR4(ESMCI::Info *info, char *key, float &value, int &rc, float *def, int *index, int &fortran_bool_recursive) {
   rc = ESMF_FAILURE;
   try {
     std::string local_key(key);
@@ -64,8 +64,8 @@ void ESMC_Info2GetR4(ESMCI::Info2 *info, char *key, float &value, int &rc, float
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_Info2GetR8()"
-void ESMC_Info2GetR8(ESMCI::Info2 *info, char *key, double &value, int &rc, double *def, int *index, int &fortran_bool_recursive) {
+#define ESMC_METHOD "ESMC_InfoGetR8()"
+void ESMC_InfoGetR8(ESMCI::Info *info, char *key, double &value, int &rc, double *def, int *index, int &fortran_bool_recursive) {
   rc = ESMF_FAILURE;
   try {
     std::string local_key(key);
@@ -76,8 +76,8 @@ void ESMC_Info2GetR8(ESMCI::Info2 *info, char *key, double &value, int &rc, doub
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_Info2GetI4()"
-void ESMC_Info2GetI4(ESMCI::Info2 *info, char *key, int &value, int &rc, int *def, int *index, int &fortran_bool_recursive) {
+#define ESMC_METHOD "ESMC_InfoGetI4()"
+void ESMC_InfoGetI4(ESMCI::Info *info, char *key, int &value, int &rc, int *def, int *index, int &fortran_bool_recursive) {
   rc = ESMF_FAILURE;
   try {
     std::string local_key(key);
@@ -88,8 +88,8 @@ void ESMC_Info2GetI4(ESMCI::Info2 *info, char *key, int &value, int &rc, int *de
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_Info2GetI8()"
-void ESMC_Info2GetI8(ESMCI::Info2 *info, char *key, long int &value, int &rc, long int *def, int *index, int &fortran_bool_recursive) {
+#define ESMC_METHOD "ESMC_InfoGetI8()"
+void ESMC_InfoGetI8(ESMCI::Info *info, char *key, long int &value, int &rc, long int *def, int *index, int &fortran_bool_recursive) {
   rc = ESMF_FAILURE;
   try {
     std::string local_key(key);
@@ -100,8 +100,8 @@ void ESMC_Info2GetI8(ESMCI::Info2 *info, char *key, long int &value, int &rc, lo
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_Info2GetLG()"
-void ESMC_Info2GetLG(ESMCI::Info2 *info, char *key, bool &value, int &rc, bool *def, int *index, int &fortran_bool_recursive) {
+#define ESMC_METHOD "ESMC_InfoGetLG()"
+void ESMC_InfoGetLG(ESMCI::Info *info, char *key, bool &value, int &rc, bool *def, int *index, int &fortran_bool_recursive) {
   rc = ESMF_FAILURE;
   try {
     std::string local_key(key);
@@ -112,8 +112,8 @@ void ESMC_Info2GetLG(ESMCI::Info2 *info, char *key, bool &value, int &rc, bool *
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_Info2GetArrayR4()"
-void ESMC_Info2GetArrayR4(ESMCI::Info2 *info, char *key, float *value, int &count, int &rc, int &fortran_bool_recursive) {
+#define ESMC_METHOD "ESMC_InfoGetArrayR4()"
+void ESMC_InfoGetArrayR4(ESMCI::Info *info, char *key, float *value, int &count, int &rc, int &fortran_bool_recursive) {
   rc = ESMF_FAILURE;
   try {
     std::string local_key(key);
@@ -135,8 +135,8 @@ void ESMC_Info2GetArrayR4(ESMCI::Info2 *info, char *key, float *value, int &coun
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_Info2GetArrayR8()"
-void ESMC_Info2GetArrayR8(ESMCI::Info2 *info, char *key, double *value, int &count, int &rc, int &fortran_bool_recursive) {
+#define ESMC_METHOD "ESMC_InfoGetArrayR8()"
+void ESMC_InfoGetArrayR8(ESMCI::Info *info, char *key, double *value, int &count, int &rc, int &fortran_bool_recursive) {
   rc = ESMF_FAILURE;
   try {
     std::string local_key(key);
@@ -158,8 +158,8 @@ void ESMC_Info2GetArrayR8(ESMCI::Info2 *info, char *key, double *value, int &cou
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_Info2GetArrayI4()"
-void ESMC_Info2GetArrayI4(ESMCI::Info2 *info, char *key, int *value, int &count, int &rc, int &fortran_bool_recursive) {
+#define ESMC_METHOD "ESMC_InfoGetArrayI4()"
+void ESMC_InfoGetArrayI4(ESMCI::Info *info, char *key, int *value, int &count, int &rc, int &fortran_bool_recursive) {
   rc = ESMF_FAILURE;
   try {
     std::string local_key(key);
@@ -181,8 +181,8 @@ void ESMC_Info2GetArrayI4(ESMCI::Info2 *info, char *key, int *value, int &count,
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_Info2GetArrayI8()"
-void ESMC_Info2GetArrayI8(ESMCI::Info2 *info, char *key, long int *value, int &count, int &rc, int &fortran_bool_recursive) {
+#define ESMC_METHOD "ESMC_InfoGetArrayI8()"
+void ESMC_InfoGetArrayI8(ESMCI::Info *info, char *key, long int *value, int &count, int &rc, int &fortran_bool_recursive) {
   rc = ESMF_FAILURE;
   try {
     std::string local_key(key);
@@ -204,8 +204,8 @@ void ESMC_Info2GetArrayI8(ESMCI::Info2 *info, char *key, long int *value, int &c
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_Info2GetArrayLG()"
-void ESMC_Info2GetArrayLG(ESMCI::Info2 *info, char *key, bool *value, int &count, int &rc, int &fortran_bool_recursive) {
+#define ESMC_METHOD "ESMC_InfoGetArrayLG()"
+void ESMC_InfoGetArrayLG(ESMCI::Info *info, char *key, bool *value, int &count, int &rc, int &fortran_bool_recursive) {
   rc = ESMF_FAILURE;
   try {
     std::string local_key(key);
@@ -231,8 +231,8 @@ void ESMC_Info2GetArrayLG(ESMCI::Info2 *info, char *key, bool *value, int &count
 //-----------------------------------------------------------------------------
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_Info2SetR4()"
-void ESMC_Info2SetR4(ESMCI::Info2 *info, char *key, float &value, bool &force, int &rc, int *index, char *pkey) {
+#define ESMC_METHOD "ESMC_InfoSetR4()"
+void ESMC_InfoSetR4(ESMCI::Info *info, char *key, float &value, bool &force, int &rc, int *index, char *pkey) {
   rc = ESMF_FAILURE;
   try {
     std::string local_key(key);
@@ -245,8 +245,8 @@ void ESMC_Info2SetR4(ESMCI::Info2 *info, char *key, float &value, bool &force, i
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_Info2SetR8()"
-void ESMC_Info2SetR8(ESMCI::Info2 *info, char *key, double &value, bool &force, int &rc, int *index, char *pkey) {
+#define ESMC_METHOD "ESMC_InfoSetR8()"
+void ESMC_InfoSetR8(ESMCI::Info *info, char *key, double &value, bool &force, int &rc, int *index, char *pkey) {
   rc = ESMF_FAILURE;
   try {
     std::string local_key(key);
@@ -259,8 +259,8 @@ void ESMC_Info2SetR8(ESMCI::Info2 *info, char *key, double &value, bool &force, 
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_Info2SetI4()"
-void ESMC_Info2SetI4(ESMCI::Info2 *info, char *key, int &value, bool &force, int &rc, int *index, char *pkey) {
+#define ESMC_METHOD "ESMC_InfoSetI4()"
+void ESMC_InfoSetI4(ESMCI::Info *info, char *key, int &value, bool &force, int &rc, int *index, char *pkey) {
   rc = ESMF_FAILURE;
   try {
     std::string local_key(key);
@@ -273,8 +273,8 @@ void ESMC_Info2SetI4(ESMCI::Info2 *info, char *key, int &value, bool &force, int
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_Info2SetI8()"
-void ESMC_Info2SetI8(ESMCI::Info2 *info, char *key, long int &value, bool &force, int &rc, int *index, char *pkey) {
+#define ESMC_METHOD "ESMC_InfoSetI8()"
+void ESMC_InfoSetI8(ESMCI::Info *info, char *key, long int &value, bool &force, int &rc, int *index, char *pkey) {
   rc = ESMF_FAILURE;
   try {
     std::string local_key(key);
@@ -287,8 +287,8 @@ void ESMC_Info2SetI8(ESMCI::Info2 *info, char *key, long int &value, bool &force
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_Info2SetLG()"
-void ESMC_Info2SetLG(ESMCI::Info2 *info, char *key, bool &value, bool &force, int &rc, int *index, char *pkey) {
+#define ESMC_METHOD "ESMC_InfoSetLG()"
+void ESMC_InfoSetLG(ESMCI::Info *info, char *key, bool &value, bool &force, int &rc, int *index, char *pkey) {
   rc = ESMF_FAILURE;
   try {
     std::string local_key(key);
@@ -301,8 +301,8 @@ void ESMC_Info2SetLG(ESMCI::Info2 *info, char *key, bool &value, bool &force, in
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_Info2SetArrayR4()"
-void ESMC_Info2SetArrayR4(ESMCI::Info2 *info, char *key, float *value, int &count, bool &force, int &rc, char *pkey) {
+#define ESMC_METHOD "ESMC_InfoSetArrayR4()"
+void ESMC_InfoSetArrayR4(ESMCI::Info *info, char *key, float *value, int &count, bool &force, int &rc, char *pkey) {
   rc = ESMF_FAILURE;
   try {
     std::string local_key(key);
@@ -315,8 +315,8 @@ void ESMC_Info2SetArrayR4(ESMCI::Info2 *info, char *key, float *value, int &coun
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_Info2SetArrayR8()"
-void ESMC_Info2SetArrayR8(ESMCI::Info2 *info, char *key, double *value, int &count, bool &force, int &rc, char *pkey) {
+#define ESMC_METHOD "ESMC_InfoSetArrayR8()"
+void ESMC_InfoSetArrayR8(ESMCI::Info *info, char *key, double *value, int &count, bool &force, int &rc, char *pkey) {
   rc = ESMF_FAILURE;
   try {
     std::string local_key(key);
@@ -329,8 +329,8 @@ void ESMC_Info2SetArrayR8(ESMCI::Info2 *info, char *key, double *value, int &cou
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_Info2SetArrayI4()"
-void ESMC_Info2SetArrayI4(ESMCI::Info2 *info, char *key, int *value, int &count, bool &force, int &rc, char *pkey) {
+#define ESMC_METHOD "ESMC_InfoSetArrayI4()"
+void ESMC_InfoSetArrayI4(ESMCI::Info *info, char *key, int *value, int &count, bool &force, int &rc, char *pkey) {
   rc = ESMF_FAILURE;
   try {
     std::string local_key(key);
@@ -343,8 +343,8 @@ void ESMC_Info2SetArrayI4(ESMCI::Info2 *info, char *key, int *value, int &count,
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_Info2SetArrayI8()"
-void ESMC_Info2SetArrayI8(ESMCI::Info2 *info, char *key, long int *value, int &count, bool &force, int &rc, char *pkey) {
+#define ESMC_METHOD "ESMC_InfoSetArrayI8()"
+void ESMC_InfoSetArrayI8(ESMCI::Info *info, char *key, long int *value, int &count, bool &force, int &rc, char *pkey) {
   rc = ESMF_FAILURE;
   try {
     std::string local_key(key);
@@ -357,8 +357,8 @@ void ESMC_Info2SetArrayI8(ESMCI::Info2 *info, char *key, long int *value, int &c
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_Info2SetArrayLG()"
-void ESMC_Info2SetArrayLG(ESMCI::Info2 *info, char *key, bool *value, int &count, bool &force, int &rc, char *pkey) {
+#define ESMC_METHOD "ESMC_InfoSetArrayLG()"
+void ESMC_InfoSetArrayLG(ESMCI::Info *info, char *key, bool *value, int &count, bool &force, int &rc, char *pkey) {
   rc = ESMF_FAILURE;
   try {
     std::string local_key(key);

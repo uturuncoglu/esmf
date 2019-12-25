@@ -62,7 +62,7 @@ module ESMF_StateReconcile2Mod
   use ESMF_FieldBundleMod
   use ESMF_RHandleMod
 
-  use ESMF_Info2Mod, only : ESMF_Info2, ESMF_Info2BaseGet, ESMF_Info2Update
+  use ESMF_InfoMod, only : ESMF_Info, ESMF_InfoBaseGet, ESMF_InfoUpdate
 
   implicit none
   private
@@ -1311,7 +1311,7 @@ contains
     integer :: mypet, npets
     integer :: offset
     type(ESMF_InquireFlag) :: inqflag
-    type(ESMF_Info2) :: lhs, rhs
+    type(ESMF_Info) :: lhs, rhs
 
     logical, parameter :: debug = .false.
 
@@ -1420,9 +1420,9 @@ contains
             ESMF_ERR_PASSTHRU, &
             ESMF_CONTEXT, rcToReturn=rc)) return
 
-        lhs = ESMF_Info2BaseGet(base_temp)
-        rhs = ESMF_Info2BaseGet(base)
-        call ESMF_Info2Update(lhs, rhs, rc=localrc)
+        lhs = ESMF_InfoBaseGet(base_temp)
+        rhs = ESMF_InfoBaseGet(base)
+        call ESMF_InfoUpdate(lhs, rhs, rc=localrc)
         if (ESMF_LogFoundError(localrc, &
             ESMF_ERR_PASSTHRU, &
             ESMF_CONTEXT, rcToReturn=rc)) return

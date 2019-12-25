@@ -28,7 +28,7 @@
 #include "ESMCI_IOHandle.h"
 
 #include "ESMC.h"
-#include "ESMCI_Info2.h"
+#include "ESMCI_Info.h"
 #include "ESMCI_Macros.h"
 #include "ESMCI_Metadata.h"
 #include "ESMCI_LocalArray.h"

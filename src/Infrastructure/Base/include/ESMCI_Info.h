@@ -99,7 +99,7 @@ ESMC_TypeKind_Flag json_type_to_esmf_typekind(const json &j, const bool allow_ar
 
 //-----------------------------------------------------------------------------
 
-class Info2 {
+class Info {
 
 private:
   bool dirty = false;
@@ -110,17 +110,17 @@ protected:
   virtual void init(void) {this->storage = json::object();}
 
 public:
-  Info2(void) {this->init();}
+  Info(void) {this->init();}
 //  Info(void) = default;  // Default constructor
-  virtual ~Info2(void) = default;  // Default destructor
-  Info2(Info2&&) = delete; // Move constructor
-  Info2(const Info2&) = delete; // Copy constructor
-  Info2&operator=(const Info2&) = delete; // Copy assignment
-  Info2&operator=(Info2&&) = delete; // Move assignment
+  virtual ~Info(void) = default;  // Default destructor
+  Info(Info&&) = delete; // Move constructor
+  Info(const Info&) = delete; // Copy constructor
+  Info&operator=(const Info&) = delete; // Copy assignment
+  Info&operator=(Info&&) = delete; // Move assignment
 
-  Info2(const json& storage); // Copy constructor from JSON
-  Info2(json&& storage); // Move constructor from JSON
-  Info2(key_t& input, int& rc); // Parse JSON string constructor
+  Info(const json& storage); // Copy constructor from JSON
+  Info(json&& storage); // Move constructor from JSON
+  Info(key_t& input, int& rc); // Parse JSON string constructor
 
   std::string dump(int& rc) const;
   std::string dump(int indent, int& rc) const;
@@ -133,7 +133,7 @@ public:
   template <typename T>
   T get(key_t &key, int &rc, const T *def = nullptr, const int *index = nullptr, bool recursive = false, std::string *ikey = nullptr) const;
 
-  void get(ESMCI::Info2 &info, key_t &key, int &rc) const;
+  void get(ESMCI::Info &info, key_t &key, int &rc) const;
   //---------------------------------------------------------------------------
 
   std::size_t getCountPack(void) const {return get_attpack_count(this->getStorageRef());}
@@ -170,7 +170,7 @@ public:
 
   void set(key_t &key, json &&j, bool force, int &rc, const int *index = nullptr,
     const key_t * const pkey = nullptr);
-  void set(key_t &key, const ESMCI::Info2 &info, bool force, int &rc,
+  void set(key_t &key, const ESMCI::Info &info, bool force, int &rc,
     const key_t * const pkey = nullptr);
   void set(key_t &key, bool force, int &rc, const int *index = nullptr,
     const key_t * const pkey = nullptr);  // set null
@@ -181,14 +181,14 @@ public:
   void set(key_t &key, T *values, int count, bool force, int &rc,
     const key_t * const pkey = nullptr);
 
-  void update(const Info2 &info, int &rc);
+  void update(const Info &info, int &rc);
 
   int ESMC_Print(bool tofile, const char *filename, bool append) const;
 };
 
 //-----------------------------------------------------------------------------
 
-void broadcastInfo(ESMCI::Info2* info, int rootPet, const ESMCI::VM &vm, int &rc);
+void broadcastInfo(ESMCI::Info* info, int rootPet, const ESMCI::VM &vm, int &rc);
 
 //-----------------------------------------------------------------------------
 

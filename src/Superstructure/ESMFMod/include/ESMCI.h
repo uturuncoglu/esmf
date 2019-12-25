@@ -39,7 +39,7 @@
 
 // info (attribute)
 //#include "ESMCI_Attribute.h"
-#include "ESMCI_Info2.h"
+#include "ESMCI_Info.h"
 
 // local array, datamap
 #include "ESMCI_ArraySpec.h"

@@ -70,7 +70,7 @@ void testSerializeDeserialize(int& rc, char failMsg[]) {
     ESMC_Base base_src(1);
     ESMC_Base base_dst(-1);
 
-    ESMCI::Info2 *info = base_src.ESMC_BaseGetInfo();
+    ESMCI::Info *info = base_src.ESMC_BaseGetInfo();
     try {
       info->set<int>("key1", 44, false, rc);
       info->set<double>("key123", 3.146789, false, rc);
@@ -112,7 +112,7 @@ void testSerializeDeserialize(int& rc, char failMsg[]) {
     rc = base_dst.ESMC_Deserialize(buffer, &offset, arflag);
     if (ESMC_LogDefault.MsgFoundError(rc, ESMCI_ERR_PASSTHRU, ESMC_CONTEXT, &rc)) return;
 
-    ESMCI::Info2 *infod = base_dst.ESMC_BaseGetInfo();
+    ESMCI::Info *infod = base_dst.ESMC_BaseGetInfo();
     try {
       std::string dump = infod->dump(rc);
       if (arflag == ESMC_ATTRECONCILE_OFF) {

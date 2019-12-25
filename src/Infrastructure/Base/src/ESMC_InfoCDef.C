@@ -8,7 +8,7 @@
 // NASA Goddard Space Flight Center.
 // Licensed under the University of Illinois-NCSA License.
 
-#define ESMC_FILENAME "./src/Infrastructure/Attribute/src/ESMC_Info2CDef.C"
+#define ESMC_FILENAME "./src/Infrastructure/Attribute/src/ESMC_InfoCDef.C"
 
 // Info C-Fortran method implementation (body) file
 
@@ -25,7 +25,7 @@
 #include "ESMC.h"
 #include "ESMCI_Base.h"
 #include "ESMCI_Macros.h"
-#include "ESMCI_Info2.h"
+#include "ESMCI_Info.h"
 #include "ESMCI_LogErr.h"
 #include "ESMCI_Util.h"
 #include "ESMCI_VM.h"
@@ -48,10 +48,10 @@ extern "C" {
 // Helper Functions
 //-----------------------------------------------------------------------------
 
-ESMCI::Info2 *baseAddressToInfo2(const long int &baseAddress) {
+ESMCI::Info *baseAddressToInfo(const long int &baseAddress) {
   void *v = (void *) baseAddress;
   ESMC_Base *base = reinterpret_cast<ESMC_Base *>(v);
-  ESMCI::Info2 *info = base->ESMC_BaseGetInfo();
+  ESMCI::Info *info = base->ESMC_BaseGetInfo();
   return info;
 }
 
@@ -81,22 +81,22 @@ void updateDirtyInfo(const json &inqstate, int *ctr, std::vector<long int> *base
 //-----------------------------------------------------------------------------
 
 #undef ESMC_METHOD
-#define ESMC_METHOD "ESMC_BaseGetInfo2()"
-ESMCI::Info2* ESMC_BaseGetInfo2(long int &baseAddress) {
+#define ESMC_METHOD "ESMC_BaseGetInfo()"
+ESMCI::Info* ESMC_BaseGetInfo(long int &baseAddress) {
   ESMC_Base *base = reinterpret_cast<ESMC_Base*>((void*)baseAddress);
   return base->ESMC_BaseGetInfo();
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_Info2Copy()"
-ESMCI::Info2* ESMC_Info2Copy(ESMCI::Info2 *info, int &rc) {
+#define ESMC_METHOD "ESMC_InfoCopy()"
+ESMCI::Info* ESMC_InfoCopy(ESMCI::Info *info, int &rc) {
   rc = ESMF_SUCCESS;
-  return new ESMCI::Info2(info->getStorageRef());
+  return new ESMCI::Info(info->getStorageRef());
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_Info2CopyForAttribute()"
-void ESMC_Info2CopyForAttribute(const ESMCI::Info2* src, ESMCI::Info2* dst, int& rc) {
+#define ESMC_METHOD "ESMC_InfoCopyForAttribute()"
+void ESMC_InfoCopyForAttribute(const ESMCI::Info* src, ESMCI::Info* dst, int& rc) {
   rc = ESMF_FAILURE;
   try {
     dst->getStorageRefWritable() = src->getStorageRef();
@@ -106,50 +106,50 @@ void ESMC_Info2CopyForAttribute(const ESMCI::Info2* src, ESMCI::Info2* dst, int&
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_Info2Create()"
-ESMCI::Info2* ESMC_Info2Create(int& rc) {
+#define ESMC_METHOD "ESMC_InfoCreate()"
+ESMCI::Info* ESMC_InfoCreate(int& rc) {
   rc = ESMF_SUCCESS;
-  return new ESMCI::Info2();
+  return new ESMCI::Info();
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_Info2CreateByKey()"
-ESMCI::Info2* ESMC_Info2CreateByKey(ESMCI::Info2 *srcInfo,
+#define ESMC_METHOD "ESMC_InfoCreateByKey()"
+ESMCI::Info* ESMC_InfoCreateByKey(ESMCI::Info *srcInfo,
   char* key, int& rc) {
   rc = ESMF_FAILURE;
-  ESMCI::Info2 *info;
+  ESMCI::Info *info;
   try {
     std::string local_key(key);
     json new_storage = srcInfo->get<json>(local_key, rc);
-    info = new ESMCI::Info2(std::move(new_storage));
+    info = new ESMCI::Info(std::move(new_storage));
   }
   ESMF_CATCH_ISOC
   return info;
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_Info2CreateByParse()"
-ESMCI::Info2* ESMC_Info2CreateByParse(char *payload, int& rc) {
+#define ESMC_METHOD "ESMC_InfoCreateByParse()"
+ESMCI::Info* ESMC_InfoCreateByParse(char *payload, int& rc) {
   rc = ESMF_FAILURE;
-  ESMCI::Info2 *info;
+  ESMCI::Info *info;
   try {
     std::string local_payload(payload);
-    info = new ESMCI::Info2(payload, rc);
+    info = new ESMCI::Info(payload, rc);
   }
   ESMF_CATCH_ISOC
   return info;
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_Info2Destroy()"
-void ESMC_Info2Destroy(ESMCI::Info2* info, int& rc) {
+#define ESMC_METHOD "ESMC_InfoDestroy()"
+void ESMC_InfoDestroy(ESMCI::Info* info, int& rc) {
   delete info;
   rc = ESMF_SUCCESS;
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_Info2Dump()"
-void ESMC_Info2Dump(ESMCI::Info2 *info, char *output, int &rc) {
+#define ESMC_METHOD "ESMC_InfoDump()"
+void ESMC_InfoDump(ESMCI::Info *info, char *output, int &rc) {
   // Test:
   // Notes:
   rc = ESMF_FAILURE;
@@ -164,8 +164,8 @@ void ESMC_Info2Dump(ESMCI::Info2 *info, char *output, int &rc) {
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_Info2DumpLength()"
-void ESMC_Info2DumpLength(ESMCI::Info2 *info, int &dump_length, int &rc) {
+#define ESMC_METHOD "ESMC_InfoDumpLength()"
+void ESMC_InfoDumpLength(ESMCI::Info *info, int &dump_length, int &rc) {
   // Test:
   // Notes:
   rc = ESMF_FAILURE;
@@ -177,8 +177,8 @@ void ESMC_Info2DumpLength(ESMCI::Info2 *info, int &dump_length, int &rc) {
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_Info2Erase()"
-void ESMC_Info2Erase(ESMCI::Info2* info, char* keyParent,
+#define ESMC_METHOD "ESMC_InfoErase()"
+void ESMC_InfoErase(ESMCI::Info* info, char* keyParent,
                           char* keyChild, bool &recursive, int& rc) {
   rc = ESMF_FAILURE;
   std::string localkeyParent(keyParent);
@@ -199,8 +199,8 @@ void ESMC_Info2Erase(ESMCI::Info2* info, char* keyParent,
 }
 
 #undef ESMC_METHOD
-#define ESMC_METHOD "ESMC_Info2Inquire()"
-void ESMC_Info2Inquire(ESMCI::Info2 *info, ESMCI::Info2 *inq, char *key,
+#define ESMC_METHOD "ESMC_InfoInquire()"
+void ESMC_InfoInquire(ESMCI::Info *info, ESMCI::Info *inq, char *key,
                        int &fortran_recursive, int *idx, int &fortran_attr_compliance,
                        int &rc) {
   rc = ESMF_FAILURE;
@@ -216,8 +216,8 @@ void ESMC_Info2Inquire(ESMCI::Info2 *info, ESMCI::Info2 *inq, char *key,
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_Info2IsEqual()"
-void ESMC_Info2IsEqual(ESMCI::Info2 *lhs, ESMCI::Info2 *rhs,
+#define ESMC_METHOD "ESMC_InfoIsEqual()"
+void ESMC_InfoIsEqual(ESMCI::Info *lhs, ESMCI::Info *rhs,
   bool &res, int &rc) {
   rc = ESMF_FAILURE;
   try {
@@ -228,8 +228,8 @@ void ESMC_Info2IsEqual(ESMCI::Info2 *lhs, ESMCI::Info2 *rhs,
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_Info2IsPresent()"
-void ESMC_Info2IsPresent(ESMCI::Info2 *info, char *key, int &fortran_bool_res,
+#define ESMC_METHOD "ESMC_InfoIsPresent()"
+void ESMC_InfoIsPresent(ESMCI::Info *info, char *key, int &fortran_bool_res,
         int &rc, int &fortran_bool_recursive, int &fortran_bool_isptr) {
   std::string local_key(key);
   bool recursive = (fortran_bool_recursive == 1) ? true:false;
@@ -242,8 +242,8 @@ void ESMC_Info2IsPresent(ESMCI::Info2 *info, char *key, int &fortran_bool_res,
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_Info2IsSet()"
-void ESMC_Info2IsSet(ESMCI::Info2 *info, char *key, int &isSet, int &rc) {
+#define ESMC_METHOD "ESMC_InfoIsSet()"
+void ESMC_InfoIsSet(ESMCI::Info *info, char *key, int &isSet, int &rc) {
   std::string local_key(key);
   try {
     isSet = info->isSetNull(local_key, rc);
@@ -252,8 +252,8 @@ void ESMC_Info2IsSet(ESMCI::Info2 *info, char *key, int &isSet, int &rc) {
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_Info2Print()"
-void ESMC_Info2Print(ESMCI::Info2 *info, int &indent, int &rc) {
+#define ESMC_METHOD "ESMC_InfoPrint()"
+void ESMC_InfoPrint(ESMCI::Info *info, int &indent, int &rc) {
   rc = ESMF_FAILURE;
   try {
     std::cout << info->dump(indent, rc) << std::endl;
@@ -262,8 +262,8 @@ void ESMC_Info2Print(ESMCI::Info2 *info, int &indent, int &rc) {
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_Info2Update()"
-void ESMC_Info2Update(ESMCI::Info2 *lhs, ESMCI::Info2 *rhs, int &rc) {
+#define ESMC_METHOD "ESMC_InfoUpdate()"
+void ESMC_InfoUpdate(ESMCI::Info *lhs, ESMCI::Info *rhs, int &rc) {
   rc = ESMF_FAILURE;
   try {
     lhs->update(*rhs, rc);
@@ -272,8 +272,8 @@ void ESMC_Info2Update(ESMCI::Info2 *lhs, ESMCI::Info2 *rhs, int &rc) {
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_Info2BaseSyncDo"
-void ESMC_Info2BaseSyncDo(const std::vector<long int> &base_addresses, const int &rootPet, const long int &vmAddress, int &rc) {
+#define ESMC_METHOD "ESMC_InfoBaseSyncDo"
+void ESMC_InfoBaseSyncDo(const std::vector<long int> &base_addresses, const int &rootPet, const long int &vmAddress, int &rc) {
   rc = ESMF_FAILURE;
   try {
     void *v = (void *)vmAddress;
@@ -286,7 +286,7 @@ void ESMC_Info2BaseSyncDo(const std::vector<long int> &base_addresses, const int
       // stick its serialized string representation inside a JSON map. For
       // broadcasting.
       for (std::size_t ii = 0; ii < base_addresses.size(); ++ii) {
-        ESMCI::Info2 *info = baseAddressToInfo2(base_addresses[ii]);
+        ESMCI::Info *info = baseAddressToInfo(base_addresses[ii]);
         bool is_dirty = info->isDirty();
         if (is_dirty) {
           try {
@@ -300,17 +300,17 @@ void ESMC_Info2BaseSyncDo(const std::vector<long int> &base_addresses, const int
       }
     }
     // Broadcast the update map.
-    ESMCI::Info2 binfo(std::move(j));
+    ESMCI::Info binfo(std::move(j));
     broadcastInfo(&binfo, rootPet, *vm, rc);
     // Update for each string key/index in the update map.
     const json &storage = binfo.getStorageRef();
     int ikey;
     for (json::const_iterator it=storage.cbegin(); it!=storage.cend(); it++) {
       ikey = std::stoi(it.key());  // Convert the string index to an integer
-      ESMCI::Info2 *info_to_update = baseAddressToInfo2(base_addresses[ikey]);
+      ESMCI::Info *info_to_update = baseAddressToInfo(base_addresses[ikey]);
       // This object is created from a serialized string stored in the update
       // map.
-      ESMCI::Info2 rhs(it.value(), rc);
+      ESMCI::Info rhs(it.value(), rc);
       try {
         if (localPet != rootPet) {
           info_to_update->getStorageRefWritable() = rhs.getStorageRef();
@@ -329,8 +329,8 @@ void ESMC_Info2BaseSyncDo(const std::vector<long int> &base_addresses, const int
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_Info2BaseSync()"
-void ESMC_Info2BaseSync(ESMCI::Info2 *inqstate, int &rootPet, long int &vmAddress, int &rc) {
+#define ESMC_METHOD "ESMC_InfoBaseSync()"
+void ESMC_InfoBaseSync(ESMCI::Info *inqstate, int &rootPet, long int &vmAddress, int &rc) {
   rc = ESMF_FAILURE;
   try {
     const json &j_inqstate = inqstate->getStorageRef();
@@ -338,14 +338,14 @@ void ESMC_Info2BaseSync(ESMCI::Info2 *inqstate, int &rootPet, long int &vmAddres
     updateDirtyInfo(j_inqstate, &ctr, nullptr);
     std::vector<long int> base_addresses(ctr, 0);
     updateDirtyInfo(j_inqstate, nullptr, &base_addresses);
-    ESMC_Info2BaseSyncDo(base_addresses, rootPet, vmAddress, rc);
+    ESMC_InfoBaseSyncDo(base_addresses, rootPet, vmAddress, rc);
   }
   ESMF_CATCH_ISOC
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_Info2Broadcast()"
-void ESMC_Info2Broadcast(ESMCI::Info2 *info, int &rootPet, int &rc) {
+#define ESMC_METHOD "ESMC_InfoBroadcast()"
+void ESMC_InfoBroadcast(ESMCI::Info *info, int &rootPet, int &rc) {
   //tdk:todo: consider adding vm as an optional argument
   rc = ESMF_FAILURE;
   ESMCI::VM *vm = ESMCI::VM::getCurrent(&rc);
@@ -358,8 +358,8 @@ void ESMC_Info2Broadcast(ESMCI::Info2 *info, int &rootPet, int &rc) {
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_Info2ReadJSON()"
-void ESMC_Info2ReadJSON(ESMCI::Info2 *info, char *filename, int &rc) {
+#define ESMC_METHOD "ESMC_InfoReadJSON()"
+void ESMC_InfoReadJSON(ESMCI::Info *info, char *filename, int &rc) {
   rc = ESMF_FAILURE;
   std::string filename2(filename);
   try {
@@ -383,8 +383,8 @@ void ESMC_Info2ReadJSON(ESMCI::Info2 *info, char *filename, int &rc) {
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_Info2WriteJSON()"
-void ESMC_Info2WriteJSON(ESMCI::Info2 *info, char *filename, int &rc) {
+#define ESMC_METHOD "ESMC_InfoWriteJSON()"
+void ESMC_InfoWriteJSON(ESMCI::Info *info, char *filename, int &rc) {
   rc = ESMF_FAILURE;
   std::string filename2(filename);
   try {
@@ -405,7 +405,7 @@ void ESMC_Info2WriteJSON(ESMCI::Info2 *info, char *filename, int &rc) {
 
 //#undef ESMC_METHOD
 //#define ESMC_METHOD "ESMC_InfoGetAttPack()"
-//void ESMC_InfoGetAttPack(ESMCI::Info2 *info, ESMCI::AttPack *attpack,
+//void ESMC_InfoGetAttPack(ESMCI::Info *info, ESMCI::AttPack *attpack,
 //  char *convention, char *purpose, int &rc) {
 //  rc = ESMF_FAILURE;
 //  try {
@@ -420,8 +420,8 @@ void ESMC_Info2WriteJSON(ESMCI::Info2 *info, char *filename, int &rc) {
 //-----------------------------------------------------------------------------
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_Info2GetCH()"
-void ESMC_Info2GetCH(ESMCI::Info2* info, char *key, char *value,
+#define ESMC_METHOD "ESMC_InfoGetCH()"
+void ESMC_InfoGetCH(ESMCI::Info* info, char *key, char *value,
   int &vlen, int &rc, char *def, int *index, int &fortran_bool_recursive) {
   // String pointer used to define the default value if present
   std::string *def_str_ptr;
@@ -457,8 +457,8 @@ void ESMC_Info2GetCH(ESMCI::Info2* info, char *key, char *value,
 //-----------------------------------------------------------------------------
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_Info2SetCH()"
-void ESMC_Info2SetCH(ESMCI::Info2 *info, char *key, char *value,
+#define ESMC_METHOD "ESMC_InfoSetCH()"
+void ESMC_InfoSetCH(ESMCI::Info *info, char *key, char *value,
                               bool &force, int &rc, int *index, char *pkey) {
   rc = ESMF_FAILURE;
   std::string local_key(key);
@@ -473,8 +473,8 @@ void ESMC_Info2SetCH(ESMCI::Info2 *info, char *key, char *value,
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_Info2SetArrayCH()"
-void ESMC_Info2SetArrayCH(ESMCI::Info2 *info, char *key, int &count,
+#define ESMC_METHOD "ESMC_InfoSetArrayCH()"
+void ESMC_InfoSetArrayCH(ESMCI::Info *info, char *key, int &count,
                           bool &force, int &rc, char *pkey) {
   // Notes:
   //  * Only allocates storage. Does not actually insert anything!
@@ -490,9 +490,9 @@ void ESMC_Info2SetArrayCH(ESMCI::Info2 *info, char *key, int &count,
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_Info2SetINFO()"
-void ESMC_Info2SetINFO(ESMCI::Info2 *info, char *key,
-  ESMCI::Info2 *value, bool &force, int &rc) {
+#define ESMC_METHOD "ESMC_InfoSetINFO()"
+void ESMC_InfoSetINFO(ESMCI::Info *info, char *key,
+  ESMCI::Info *value, bool &force, int &rc) {
   rc = ESMF_FAILURE;
   std::string local_key(key);
   try {
@@ -502,8 +502,8 @@ void ESMC_Info2SetINFO(ESMCI::Info2 *info, char *key,
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "ESMC_Info2SetNULL()"
-void ESMC_Info2SetNULL(ESMCI::Info2 *info, char *key, bool &force,
+#define ESMC_METHOD "ESMC_InfoSetNULL()"
+void ESMC_InfoSetNULL(ESMCI::Info *info, char *key, bool &force,
   int &rc) {
   rc = ESMF_FAILURE;
   std::string local_key(key);

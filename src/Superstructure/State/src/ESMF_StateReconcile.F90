@@ -54,7 +54,7 @@
       use ESMF_StateContainerMod
       use ESMF_StateItemMod
       use ESMF_InitMacrosMod
-      use ESMF_Info2Mod, only : ESMF_Info2, ESMF_Info2BaseGet, ESMF_Info2Update
+      use ESMF_InfoMod, only : ESMF_Info, ESMF_InfoBaseGet, ESMF_InfoUpdate
       implicit none
 
 !------------------------------------------------------------------------------
@@ -810,7 +810,7 @@
     integer :: offset, myOrigCount
     logical :: i_send, i_recv
     integer :: memstat
-    type(ESMF_Info2) :: lhs, rhs
+    type(ESMF_Info) :: lhs, rhs
 
     ! check input variables
     ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit,state,rc)
@@ -963,9 +963,9 @@ petloop:  &
               ESMF_ERR_PASSTHRU, &
               ESMF_CONTEXT, rcToReturn=rc)) return
 
-            lhs = ESMF_Info2BaseGet(base)
-            rhs = ESMF_Info2BaseGet(state%statep%base)
-            call ESMF_Info2Update(lhs, rhs, rc=localrc)
+            lhs = ESMF_InfoBaseGet(base)
+            rhs = ESMF_InfoBaseGet(state%statep%base)
+            call ESMF_InfoUpdate(lhs, rhs, rc=localrc)
             if (ESMF_LogFoundError(localrc, &
                 ESMF_ERR_PASSTHRU, &
                 ESMF_CONTEXT, rcToReturn=rc)) return

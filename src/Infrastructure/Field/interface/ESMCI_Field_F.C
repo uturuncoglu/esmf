@@ -29,7 +29,7 @@ using namespace std;
 #include "ESMCI_IO.h"
 #include "ESMCI_Macros.h"
 #include "ESMCI_LogErr.h"
-#include "ESMCI_Info2.h"
+#include "ESMCI_Info.h"
 
 
 //-----------------------------------------------------------------------------
@@ -93,8 +93,8 @@ extern "C" {
     }
 
     // If present, use Attributes at the Grid level for dimension names
-    ESMCI::Info2 *dimAttPack = NULL;
-    ESMCI::Info2 i_dimAttPack;
+    ESMCI::Info *dimAttPack = NULL;
+    ESMCI::Info i_dimAttPack;
     if (has_convpurp) {
       try {
         grid_p->ESMC_BaseGetInfo()->get(i_dimAttPack, key, localrc);
@@ -105,8 +105,8 @@ extern "C" {
 
     // If present, use Attributes at the Field level for variable attributes
     ESMC_Base *base_p = *base;
-    ESMCI::Info2 *varAttPack = NULL;
-    ESMCI::Info2 i_varAttPack;
+    ESMCI::Info *varAttPack = NULL;
+    ESMCI::Info i_varAttPack;
     if (has_convpurp) {
       try {
         base_p->ESMC_BaseGetInfo()->get(i_varAttPack, key, localrc);
@@ -116,8 +116,8 @@ extern "C" {
     }
 
     // If present, use Attributes at the FieldBundle level for global attributes
-    ESMCI::Info2 *gblAttPack = NULL;
-    ESMCI::Info2 i_gblAttPack;
+    ESMCI::Info *gblAttPack = NULL;
+    ESMCI::Info i_gblAttPack;
     if (gblbase) {
       ESMC_Base *gblbase_p = *gblbase;
       if (has_convpurp) {

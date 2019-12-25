@@ -403,7 +403,7 @@ module ESMF_AttributeUpdateUTestMod
     if (rc/=ESMF_SUCCESS) return
     call einq%Update(exportState, "", rc=rc)
     if (rc/=ESMF_SUCCESS) return
-    idump = ESMF_Info2Dump(einq%info, rc=rc)
+    idump = ESMF_InfoDump(einq%info, rc=rc)
     if (rc/=ESMF_SUCCESS) return
     call ESMF_LogWrite("usercpl_run: exportState dump before copy=...", ESMF_LOGMSG_INFO, rc=rc)
     if (rc/=ESMF_SUCCESS) return
@@ -423,7 +423,7 @@ module ESMF_AttributeUpdateUTestMod
     if (rc/=ESMF_SUCCESS) return
     call einq%Update(exportState, "", rc=rc)
     if (rc/=ESMF_SUCCESS) return
-    idump = ESMF_Info2Dump(einq%info, rc=rc)
+    idump = ESMF_InfoDump(einq%info, rc=rc)
     if (rc/=ESMF_SUCCESS) return
     call ESMF_LogWrite("usercpl_run: exportState dump after copy=...", ESMF_LOGMSG_INFO, rc=rc)
     if (rc/=ESMF_SUCCESS) return

@@ -43,7 +43,7 @@
 #ifdef ESMF_NETCDF
       use netcdf
 #endif
-      use ESMF_Info2Mod, only : ESMF_Info2, ESMF_Info2Set, ESMF_Info2PointerGet
+      use ESMF_InfoMod, only : ESMF_Info, ESMF_InfoSet, ESMF_InfoPointerGet
 
       implicit none
 
@@ -173,7 +173,7 @@ subroutine ESMF_OutputWeightFile (weightFile, factorList, factorIndexList, rc)
     integer(ESMF_KIND_I4), dimension(1) :: sendData, recvData
     integer(ESMF_KIND_I4), dimension(2) :: bcstData
     integer(ESMF_KIND_I4), allocatable, dimension(:,:,:) :: deBlockList
-    type(ESMF_Info2) :: idg
+    type(ESMF_Info) :: idg
     type(ESMF_Pointer) :: ptr
     
     ! ==============================================================================
@@ -302,10 +302,10 @@ subroutine ESMF_OutputWeightFile (weightFile, factorList, factorIndexList, rc)
     call ESMF_DistGridGetThis(distgridFL, ptr, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, &
     ESMF_CONTEXT, rcToReturn=rc)) return
-    idg = ESMF_Info2PointerGet(ptr)
+    idg = ESMF_InfoPointerGet(ptr)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, &
       ESMF_CONTEXT, rcToReturn=rc)) return
-    call ESMF_Info2Set(idg, "/netcdf/metadata/"//name, (/ value /), rc=localrc)
+    call ESMF_InfoSet(idg, "/netcdf/metadata/"//name, (/ value /), rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, &
       ESMF_CONTEXT, rcToReturn=rc)) return
 

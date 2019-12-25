@@ -36,7 +36,7 @@
 #include "ESMCI_Array.h"
 #include "ESMC_Util.h"
 #include "ESMCI_IO_Handler.h"
-#include "ESMCI_Info2.h"
+#include "ESMCI_Info.h"
 
 #include <cstdio>
 #include <vector>
@@ -55,16 +55,16 @@ namespace ESMCI {
 
   typedef union {
     Array *arr;
-    ESMCI::Info2 *attr;
+    ESMCI::Info *attr;
   } IO_ObjectType;
 
   struct IO_ObjectContainer {
     enum IOListObjectType type;
     IO_ObjectType object;           // e.g., Array, Attribute
     std::string name;
-    ESMCI::Info2 *dimAttPack;
-    ESMCI::Info2 *varAttPack;
-    ESMCI::Info2 *gblAttPack;
+    ESMCI::Info *dimAttPack;
+    ESMCI::Info *varAttPack;
+    ESMCI::Info *gblAttPack;
     ESMC_I8 number;
 
     IO_ObjectContainer () {
@@ -77,9 +77,9 @@ namespace ESMCI {
       number = 0;
     }
     IO_ObjectContainer (Array *arr_p, const std::string &arrName,
-                        ESMCI::Info2 *dimAttPack,
-                        ESMCI::Info2 *varAttPack,
-                        ESMCI::Info2 *gblAttPack) {
+                        ESMCI::Info *dimAttPack,
+                        ESMCI::Info *varAttPack,
+                        ESMCI::Info *gblAttPack) {
       type = IO_ARRAY;
       object.arr = arr_p;
       if (arrName.length() > 0)
@@ -102,7 +102,7 @@ namespace ESMCI {
     Array *getArray(void) {
       return object.arr;
     }
-    ESMCI::Info2 *getAttribute(void) {
+    ESMCI::Info *getAttribute(void) {
       return object.attr;
     }
     const char *getName(void) {
@@ -195,9 +195,9 @@ namespace ESMCI {
     int addArray(Array *arr_p);
     int addArray(Array *arr_p,
                  const std::string &variableName,
-                 ESMCI::Info2 *dimAttPack,
-                 ESMCI::Info2 *varAttPack,
-                 ESMCI::Info2 *gblAttPack);
+                 ESMCI::Info *dimAttPack,
+                 ESMCI::Info *varAttPack,
+                 ESMCI::Info *gblAttPack);
 // TBI
 #if 0
     void addAttributes(ESMC_Base *obj_p,
@@ -208,7 +208,7 @@ namespace ESMCI {
     void addGrid(ESMC_Base *grid_p, char *gridName,
                  int *rc=NULL);
 #endif // TBI
-    void dimlabel_get (ESMCI::Info2 *dimAttPack,
+    void dimlabel_get (ESMCI::Info *dimAttPack,
         std::string labeltype,
         std::vector<std::string> &dimLabels,
         int *rc);

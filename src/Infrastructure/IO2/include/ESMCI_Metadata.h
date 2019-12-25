@@ -24,7 +24,7 @@
 
 #include "ESMCI_Array.h"
 #include "ESMCI_ArrayBundle.h"
-#include "ESMCI_Info2.h"
+#include "ESMCI_Info.h"
 #include "ESMCI_DistGrid.h"
 #include "ESMCI_Util.h"
 
@@ -84,9 +84,9 @@ dimsize_t sizeFromShape(const vector<dimsize_t>& shp);
 
 //-----------------------------------------------------------------------------
 
-class Metadata : public Info2 {
+class Metadata : public Info {
 
-using Info2::Info2; // Required to inherit constructors
+using Info::Info; // Required to inherit constructors
 
 private:
   virtual void init(void);

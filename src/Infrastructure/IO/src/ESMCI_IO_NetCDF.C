@@ -860,7 +860,7 @@ void IO_NetCDF::destruct(void) {
       float attValFloat;
       double attValDouble;
 
-      ESMCI::Info2 *info = thisArray->ESMC_BaseGetInfo();
+      ESMCI::Info *info = thisArray->ESMC_BaseGetInfo();
       std::string sattname(attname);
       assert(rc);
 
@@ -1078,7 +1078,7 @@ void IO_NetCDF::destruct(void) {
       return localrc;
     }
 
-    ESMCI::Info2 *info = thisArray->ESMC_BaseGetInfo();
+    ESMCI::Info *info = thisArray->ESMC_BaseGetInfo();
     const json &j = info->getStorageRef();
     ncerror = nc_redef (netCdfFile);  // ensure we are in Define Mode
     if (ncerror != NC_NOERR) {

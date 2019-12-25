@@ -31,7 +31,7 @@ program ESMF_ArrayInfoUTest
   ! !USES:
   use ESMF_TestMod     ! test methods
   use ESMF
-  use ESMF_Info2Mod
+  use ESMF_InfoMod
 
   implicit none
 
@@ -51,7 +51,7 @@ program ESMF_ArrayInfoUTest
   integer               :: result = 0
 
   integer(ESMF_KIND_I4) :: desired = 999, actual
-  type(ESMF_Info2) :: attrs, attrs2
+  type(ESMF_Info) :: attrs, attrs2
   type(ESMF_Array)      :: array
   type(ESMF_DistGrid)   :: distgrid
   real(ESMF_KIND_R8)    :: farray2D(10,10)
@@ -94,11 +94,11 @@ program ESMF_ArrayInfoUTest
     if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
     ! Set a key/value on the attributes object
-    call ESMF_Info2Set(attrs, key, desired, rc=rc)
+    call ESMF_InfoSet(attrs, key, desired, rc=rc)
     if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
     ! Get the attribute value from the second reference
-    call ESMF_Info2Get(attrs2, key, actual, rc=rc)
+    call ESMF_InfoGet(attrs2, key, actual, rc=rc)
     if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
     ! Destroy objects

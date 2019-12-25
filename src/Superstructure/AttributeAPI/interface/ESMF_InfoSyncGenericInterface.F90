@@ -7,16 +7,16 @@ interface ESMF_InfoSync
   module procedure ESMF_InfoSyncState
 end interface
 
-interface ESMF_Info2GetHandle
-  module procedure ESMF_Info2GetHandleArray
-  module procedure ESMF_Info2GetHandleArrayBundle
-  module procedure ESMF_Info2GetHandleCplComp
-  module procedure ESMF_Info2GetHandleGridComp
-  module procedure ESMF_Info2GetHandleSciComp
-  module procedure ESMF_Info2GetHandleDistGrid
-  module procedure ESMF_Info2GetHandleField
-  module procedure ESMF_Info2GetHandleFieldBundle
-  module procedure ESMF_Info2GetHandleGrid
-  module procedure ESMF_Info2GetHandleState
-  module procedure ESMF_Info2GetHandleLocStream
+interface ESMF_InfoGetHandle
+  module procedure ESMF_InfoGetHandleArray
+  module procedure ESMF_InfoGetHandleArrayBundle
+  module procedure ESMF_InfoGetHandleCplComp
+  module procedure ESMF_InfoGetHandleGridComp
+  module procedure ESMF_InfoGetHandleSciComp
+  module procedure ESMF_InfoGetHandleDistGrid
+  module procedure ESMF_InfoGetHandleField
+  module procedure ESMF_InfoGetHandleFieldBundle
+  module procedure ESMF_InfoGetHandleGrid
+  module procedure ESMF_InfoGetHandleState
+  module procedure ESMF_InfoGetHandleLocStream
 end interface

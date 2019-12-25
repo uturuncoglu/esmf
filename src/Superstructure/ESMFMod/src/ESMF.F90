@@ -122,7 +122,7 @@ module ESMF
       ESMF_MapperUtilMod
 #endif
 
-    use ESMF_Info2Mod
+    use ESMF_InfoMod
     use ESMF_InfoSyncMod
 
 end module ESMF

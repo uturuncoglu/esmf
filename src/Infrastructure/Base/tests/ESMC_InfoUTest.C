@@ -17,7 +17,7 @@
 
 #include "ESMC.h"
 #include "ESMC_Test.h"
-#include "ESMCI_Info2.h"
+#include "ESMCI_Info.h"
 #include "ESMCI_Macros.h"
 #include "ESMCI_LogErr.h"
 #include "ESMCI_Util.h"
@@ -54,7 +54,7 @@ void testbroadcastInfo(int& rc, char failMsg[]) {
   int localPet = vm->getLocalPet();
   int petCount = vm->getPetCount();
 
-  Info2 info;
+  Info info;
 
   int rootPet;
   // Use a non-zero root pet for parallel testing
@@ -89,13 +89,13 @@ void testbroadcastInfo(int& rc, char failMsg[]) {
 #undef  ESMC_METHOD
 #define ESMC_METHOD "testConstructor()"
 void testConstructor(int& rc, char failMsg[]) {
-  Info2 info;
+  Info info;
 
   // Test constructing from a JSON object instance creates a copy.
   json root;
   int desired = 5;
   root["foo"] = desired;
-  Info2 a(root);
+  Info a(root);
   root["foo"] = 10;
 
   try {
@@ -123,7 +123,7 @@ void testConstructor(int& rc, char failMsg[]) {
 
   long int *srcPtr = src.at("foo").get_ptr<json::number_integer_t *>();
 
-  Info2 dst(move(src));
+  Info dst(move(src));
 
   if (!src.is_null()){
     return finalizeFailure(rc, failMsg, "JSON object not moved");
@@ -146,7 +146,7 @@ void testConstructor(int& rc, char failMsg[]) {
 void testGet(int& rc, char failMsg[]) {
   rc = ESMF_FAILURE;
 
-  Info2 info;
+  Info info;
 
   try {
     info.set("target", 50, false, rc);
@@ -181,7 +181,7 @@ void testGet(int& rc, char failMsg[]) {
 
   // Test get with a default value ============================================
 
-  Info2 info2;
+  Info info2;
   rc = ESMF_FAILURE;
   int def = 3000;
   try {
@@ -199,7 +199,7 @@ void testGetObjectIndex(int& rc, char failMsg[]) {
   rc = ESMF_FAILURE;
 
   json j = {{"foo1", 1}, {"foo2", 2}, {"foo3", 3}};
-  Info2 info(j);
+  Info info(j);
 
   int actual;
   std::string actual_key;
@@ -242,7 +242,7 @@ void testGetObjectIndex(int& rc, char failMsg[]) {
 #define ESMC_METHOD "testSetGetIndex()"
 void testSetGetIndex(int& rc, char failMsg[]) {
   rc = ESMF_FAILURE;
-  Info2 info;
+  Info info;
   int n = 25;
   double values[n];
   for (int ii = 0; ii < n; ++ii) {
@@ -308,7 +308,7 @@ void testSetGetIndex(int& rc, char failMsg[]) {
 void testHasKey(int& rc, char failMsg[]) {
   rc = ESMF_FAILURE;
 
-  Info2 info;
+  Info info;
 
   try {
     info.set("/neverEver", 13, false, rc);
@@ -339,7 +339,7 @@ void testHasKey(int& rc, char failMsg[]) {
 void testErase(int& rc, char failMsg[]) {
   rc = ESMF_FAILURE;
 
-  Info2 info;
+  Info info;
 
   string key = "/something/nested";
   try {
@@ -398,7 +398,7 @@ void testErase(int& rc, char failMsg[]) {
 #define ESMC_METHOD "testFormatKey()"
 void testFormatKey(int& rc, char failMsg[]) {
   rc = ESMF_FAILURE;
-  Info2 info;
+  Info info;
   bool has_key;
   try {
     has_key = info.hasKey("/foo/~", rc, true);
@@ -416,8 +416,8 @@ void testFormatKey(int& rc, char failMsg[]) {
 void testGetInfoObject(int& rc, char failMsg[]) {
   rc = ESMF_FAILURE;
   json j = {{"foo1", 1}, {"foo2", {{"nest1", 55}}}, {"foo3", 3}};
-  Info2 info(j);
-  Info2 actual;
+  Info info(j);
+  Info actual;
   try {
     info.get(actual, "foo2", rc);
   }
@@ -490,7 +490,7 @@ void test_update_json_attribute_count_map(int& rc, char failMsg[]) {
 void testSetGet(int& rc, char failMsg[]) {
   rc = ESMF_FAILURE;
 
-  Info2 info;
+  Info info;
 
   // Test setting a single value ==============================================
 
@@ -581,7 +581,7 @@ ESMF_CATCH_PASSTHRU
   json ja;
   json j_vec(c_vector);
   ja["foo"] = j_vec;
-  Info2 infovec(ja);
+  Info infovec(ja);
 
   try {
     auto actual4 = infovec.get<int>("/foo/2", rc);
@@ -596,7 +596,7 @@ ESMF_CATCH_PASSTHRU
   int c_int_arr[4] = {1, 2, 3, 4};
   int count = 4;
 
-  Info2 info2;
+  Info info2;
 
   try {
     info2.set("the-key", c_int_arr, count, false, rc);
@@ -613,7 +613,7 @@ ESMF_CATCH_PASSTHRU
 
   // Test modifying internal storage ==========================================
 
-  Info2 mstore;
+  Info mstore;
   json& jstore = mstore.getStorageRefWritable();
   jstore["i am an int"] = 111;
   if (mstore.get<int>("i am an int", rc) != 111) {
@@ -621,7 +621,7 @@ ESMF_CATCH_PASSTHRU
   }
 
   // Test using a parent key when setting =====================================
-  Info2 pkey_test;
+  Info pkey_test;
   json& pkey_test_storage = pkey_test.getStorageRefWritable();
   pkey_test_storage["parent"]["storage"] = json::object();
   std::string pkey = "/parent/storage";
@@ -655,7 +655,7 @@ void testSetGetErrorHandling(int& rc, char failMsg[]) {
   // Test trying to get a value that is not in the map or is the wrong type
   // will error.
 
-  Info2 info;
+  Info info;
 
   bool failed = true;
   string key = "/theKey";
@@ -723,7 +723,7 @@ void testSetGetErrorHandling(int& rc, char failMsg[]) {
 #define ESMC_METHOD "testDumpLength()"
 void testDumpLength(int& rc, char failMsg[]) {
   rc = ESMF_FAILURE;
-  Info2 info;
+  Info info;
   std::string infobuff;
   try {
     infobuff = info.dump(rc);
@@ -750,7 +750,7 @@ void testDumpLength(int& rc, char failMsg[]) {
 #define ESMC_METHOD "testSerializeDeserialize()"
 void testSerializeDeserialize(int& rc, char failMsg[]) {
   rc = ESMF_FAILURE;
-  Info2 info;
+  Info info;
   try {
     info.set("foo", 16, false, rc);
   }
@@ -779,7 +779,7 @@ void testSerializeDeserialize(int& rc, char failMsg[]) {
     ESMF_HANDLE_PASSTHRU(e);
   }
 
-  Info2 deinfo;
+  Info deinfo;
   int deoffset = 0;
   try {
     deinfo.deserialize(buffer, &deoffset, rc);
@@ -801,10 +801,10 @@ void testSerializeDeserialize(int& rc, char failMsg[]) {
 void testSerializeDeserialize2(int& rc, char failMsg[]) {
   rc = ESMF_FAILURE;
   try {
-    Info2 info("{\"foo\":16}", rc);
-    Info2 info2("{\"foo2\":\"a string\"}", rc);
-    Info2 info3("{\"foo3\":3.144}", rc);
-    vector<Info2*> infops = {&info, &info2, &info3};
+    Info info("{\"foo\":16}", rc);
+    Info info2("{\"foo2\":\"a string\"}", rc);
+    Info info3("{\"foo3\":3.144}", rc);
+    vector<Info*> infops = {&info, &info2, &info3};
     int inquire_length = 0;
     int offset = 0;
     char *null_buffer = nullptr;
@@ -824,10 +824,10 @@ void testSerializeDeserialize2(int& rc, char failMsg[]) {
       ESMF_CATCH_PASSTHRU
     }
 
-    Info2 infod;
-    Info2 info2d;
-    Info2 info3d;
-    vector<Info2*> info2ps = {&infod, &info2d, &info3d};
+    Info infod;
+    Info info2d;
+    Info info3d;
+    vector<Info*> info2ps = {&infod, &info2d, &info3d};
     offset = 0;
     for (auto element : info2ps) {
       try {
@@ -837,8 +837,8 @@ void testSerializeDeserialize2(int& rc, char failMsg[]) {
     }
 
     for (std::size_t ii = 0; ii < infops.size(); ++ii) {
-      Info2 *actual = info2ps[ii];
-      Info2 *desired = infops[ii];
+      Info *actual = info2ps[ii];
+      Info *desired = infops[ii];
       if (actual->getStorageRef() != desired->getStorageRef()) {
         return finalizeFailure(rc, failMsg, "Deserialized incorrect");
       }
@@ -860,7 +860,7 @@ void testInquire(int& rc, char failMsg[]) {
   j["ESMF"]["General"]["x"] = 1000;
   j["NUOPC"]["General"]["a"] = 111;
   j["NUOPC"]["General"]["b"] = 1111;
-  ESMCI::Info2 info(std::move(j));
+  ESMCI::Info info(std::move(j));
   json inq;
   try {
     inq = info.inquire("", rc, def_recursive, def_idx, true);
@@ -909,7 +909,7 @@ void testInquire(int& rc, char failMsg[]) {
   // Test the size of a character value
   json j2;
   j2["character"] = "name";
-  ESMCI::Info2 info2(j2);
+  ESMCI::Info info2(j2);
   json inq2;
   try {
     inq2 = info2.inquire("character", rc);
@@ -926,10 +926,10 @@ void testUpdate(int& rc, char failMsg[]) {
   rc = ESMF_FAILURE;
 
   json update_target =  R"( {"color": "red", "price": 17.99} )"_json;
-  Info2 update_target_info(update_target);
+  Info update_target_info(update_target);
 
   json used_to_update = R"( {"color": "blue", "speed": 100} )"_json;
-  Info2 used_to_update_info(used_to_update);
+  Info used_to_update_info(used_to_update);
 
   const json& lhs = update_target_info.getStorageRef();
   const json& rhs = used_to_update_info.getStorageRef();

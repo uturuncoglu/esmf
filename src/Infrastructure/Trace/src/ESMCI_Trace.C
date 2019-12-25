@@ -1403,7 +1403,7 @@ namespace ESMCI {
         vector<string> RPM;
         vector<string> FPM;
 
-        ESMCI::Info2 *info = base->ESMC_BaseGetInfo(); //root_info_tdk (block)
+        ESMCI::Info *info = base->ESMC_BaseGetInfo(); //root_info_tdk (block)
         if (info) {
           const std::string nest = "/NUOPC/Instance";
           bool has_nest = info->hasKey(nest, localrc, true);

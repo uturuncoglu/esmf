@@ -38,7 +38,7 @@
 #include "ESMCI_Container.h"
 #include "ESMCI_LogErr.h"
 #include "ESMCI_ArrayBundle.h"
-#include "ESMCI_Info2.h"
+#include "ESMCI_Info.h"
 #include "json.hpp"
 
 // Define PIO NetCDF and Parallel NetCDF flags
@@ -778,8 +778,8 @@ void PIO_Handler::arrayWrite(
   const char * const name,                // (in) Optional array name
   const std::vector<std::string> &dimLabels, // (in) Optional dimension labels
   int *timeslice,                         // (in) Optional timeslice
-  const ESMCI::Info2 *varAttPack,            // (in) Optional per-variable Attribute Package
-  const ESMCI::Info2 *gblAttPack,            // (in) Optional global Attribute Package
+  const ESMCI::Info *varAttPack,            // (in) Optional per-variable Attribute Package
+  const ESMCI::Info *gblAttPack,            // (in) Optional global Attribute Package
   int *rc                                 // (out) - Error return code
 //
   ) {
@@ -1528,7 +1528,7 @@ void PIO_Handler::attPackPut (
 // !ARGUMENTS:
 //
   pio_var_desc_t vardesc,                 // (in) - variable to write attributes into, NULL for global
-  const ESMCI::Info2 *attPack,               // (in) - AttPack containing name/value(s) pairs
+  const ESMCI::Info *attPack,               // (in) - AttPack containing name/value(s) pairs
   int *rc                                 // (out) - Error return code
   ) {
 //

@@ -8,7 +8,7 @@
 // NASA Goddard Space Flight Center.
 // Licensed under the University of Illinois-NCSA License.
 
-#define ESMC_FILENAME "./src/Infrastructure/Attribute/src/ESMCI_Info2.C"
+#define ESMC_FILENAME "./src/Infrastructure/Attribute/src/ESMCI_Info.C"
 
 // Attribute method implementation (body) file
 
@@ -24,7 +24,7 @@
 
 #include "ESMC.h"
 #include "ESMCI_Macros.h"
-#include "ESMCI_Info2.h"
+#include "ESMCI_Info.h"
 #include "ESMCI_LogErr.h"
 #include "ESMCI_Util.h"
 #include "ESMCI_VM.h"
@@ -329,7 +329,7 @@ void update_json_pointer(json &j, json **jdp, int index, bool recursive,
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "handleHasKey"
-bool handleHasKey(const Info2* info, key_t& key, bool force, int& rc) {
+bool handleHasKey(const Info* info, key_t& key, bool force, int& rc) {
   // Exceptions:  ESMCI::esmf_info_error
   //tdk:todo: consider using a json_pointer instead of a string key
   bool has_key;
@@ -443,24 +443,24 @@ void check_init_from_json(const json j, int &rc) {
 //-----------------------------------------------------------------------------
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "Info2(json&)"
-Info2::Info2(const json& storage){
+#define ESMC_METHOD "Info(json&)"
+Info::Info(const json& storage){
   int rc;
   check_init_from_json(storage, rc);
   this->storage = storage;
 };
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "Info2(json&&)"
-Info2::Info2(json&& storage){
+#define ESMC_METHOD "Info(json&&)"
+Info::Info(json&& storage){
   int rc;
   check_init_from_json(storage, rc);
   this->storage = move(storage);
 };
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "Info2(string&)"
-Info2::Info2(key_t& input, int& rc) {
+#define ESMC_METHOD "Info(string&)"
+Info::Info(key_t& input, int& rc) {
   // Exceptions: ESMCI::esmf_info_error
   // tdk:todo: use the parse method on the object!
 
@@ -475,8 +475,8 @@ Info2::Info2(key_t& input, int& rc) {
 };
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "Info2::dump(int &rc)"
-std::string Info2::dump(int& rc) const {
+#define ESMC_METHOD "Info::dump(int &rc)"
+std::string Info::dump(int& rc) const {
   // Exceptions: ESMCI::esmf_info_error
 
   std::string ret;
@@ -489,8 +489,8 @@ std::string Info2::dump(int& rc) const {
 };
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "Info2::deserialize()"
-void Info2::deserialize(char *buffer, int *offset, int &rc) {
+#define ESMC_METHOD "Info::deserialize()"
+void Info::deserialize(char *buffer, int *offset, int &rc) {
   // Test: testSerializeDeserialize, testSerializeDeserialize2
   // Exceptions:  ESMCI:esmf_info_error
   rc = ESMF_FAILURE;
@@ -515,8 +515,8 @@ void Info2::deserialize(char *buffer, int *offset, int &rc) {
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "Info2::dump(int indent, int &rc)"
-std::string Info2::dump(int indent, int& rc) const {
+#define ESMC_METHOD "Info::dump(int indent, int &rc)"
+std::string Info::dump(int indent, int& rc) const {
   // Exceptions: ESMCI::esmf_info_error
 
   rc = ESMF_FAILURE;
@@ -539,8 +539,8 @@ std::string Info2::dump(int indent, int& rc) const {
 };
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "Info2::erase()"
-void Info2::erase(key_t &keyParent, key_t &keyChild, int &rc, bool recursive) {
+#define ESMC_METHOD "Info::erase()"
+void Info::erase(key_t &keyParent, key_t &keyChild, int &rc, bool recursive) {
   // Exceptions: ESMCI::esmf_info_error
   rc = ESMF_FAILURE;
   try {
@@ -574,8 +574,8 @@ void Info2::erase(key_t &keyParent, key_t &keyChild, int &rc, bool recursive) {
 };
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "Info2::formatKey()"
-json::json_pointer Info2::formatKey(key_t& key, int& rc) {
+#define ESMC_METHOD "Info::formatKey()"
+json::json_pointer Info::formatKey(key_t& key, int& rc) {
   // Exceptions:  ESMCI:esmf_info_error
   rc = ESMF_FAILURE;
   std::string localKey;
@@ -602,9 +602,9 @@ json::json_pointer Info2::formatKey(key_t& key, int& rc) {
 };
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "Info2::get()"
+#define ESMC_METHOD "Info::get()"
 template <typename T>
-T Info2::get(key_t &key, int &rc, const T *def, const int *index, bool recursive, std::string *ikey) const {
+T Info::get(key_t &key, int &rc, const T *def, const int *index, bool recursive, std::string *ikey) const {
   // Exceptions:  ESMCI:esmf_info_error
   rc = ESMF_FAILURE;
 
@@ -688,17 +688,17 @@ T Info2::get(key_t &key, int &rc, const T *def, const int *index, bool recursive
   ESMF_CATCH_INFO
   return ret;
 }
-template float Info2::get(key_t&, int&, const float*, const int*, bool, std::string*) const;
-template double Info2::get(key_t&, int&, const double*, const int*, bool, std::string*) const;
-template int Info2::get(key_t&, int&, const int*, const int*, bool, std::string*) const;
-template long int Info2::get(key_t&, int&, const long int*, const int*, bool, std::string*) const;
-template bool Info2::get(key_t&, int&, const bool*, const int*, bool, std::string*) const;
-template std::string Info2::get(key_t&, int&, const std::string*, const int*, bool, std::string*) const;
-template json Info2::get(key_t&, int&, const json*, const int*, bool, std::string*) const;
+template float Info::get(key_t&, int&, const float*, const int*, bool, std::string*) const;
+template double Info::get(key_t&, int&, const double*, const int*, bool, std::string*) const;
+template int Info::get(key_t&, int&, const int*, const int*, bool, std::string*) const;
+template long int Info::get(key_t&, int&, const long int*, const int*, bool, std::string*) const;
+template bool Info::get(key_t&, int&, const bool*, const int*, bool, std::string*) const;
+template std::string Info::get(key_t&, int&, const std::string*, const int*, bool, std::string*) const;
+template json Info::get(key_t&, int&, const json*, const int*, bool, std::string*) const;
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "Info2::get() Info2"
-void Info2::get(ESMCI::Info2 &info, key_t &key, int &rc) const {
+#define ESMC_METHOD "Info::get() Info"
+void Info::get(ESMCI::Info &info, key_t &key, int &rc) const {
   // Test: testGetInfoObject
   // Notes:
   rc = ESMF_FAILURE;
@@ -712,9 +712,9 @@ void Info2::get(ESMCI::Info2 &info, key_t &key, int &rc) const {
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "Info2::getvec() vector<T>"
+#define ESMC_METHOD "Info::getvec() vector<T>"
 template <typename T>
-std::vector<T> Info2::getvec(key_t& key, int& rc, bool recursive) const {
+std::vector<T> Info::getvec(key_t& key, int& rc, bool recursive) const {
   std::vector<T> ret;
   try {
     json const *j;
@@ -727,11 +727,11 @@ std::vector<T> Info2::getvec(key_t& key, int& rc, bool recursive) const {
   ESMF_CATCH_INFO
   return ret;
 };
-template std::vector<std::string> Info2::getvec(key_t&, int&, bool) const;
+template std::vector<std::string> Info::getvec(key_t&, int&, bool) const;
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "Info2::getPointer()"
-json const * Info2::getPointer(key_t& key, int& rc, bool recursive) const {
+#define ESMC_METHOD "Info::getPointer()"
+json const * Info::getPointer(key_t& key, int& rc, bool recursive) const {
   // Exceptions:  ESMCI:esmf_info_error
 
   rc = ESMF_FAILURE;
@@ -749,8 +749,8 @@ json const * Info2::getPointer(key_t& key, int& rc, bool recursive) const {
 };
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "Info2::hasKey()"
-bool Info2::hasKey(key_t& key, int& rc, bool isptr, bool recursive) const {
+#define ESMC_METHOD "Info::hasKey()"
+bool Info::hasKey(key_t& key, int& rc, bool isptr, bool recursive) const {
   // Exceptions:  ESMCI::esmf_info_error
 
 #if 0
@@ -796,8 +796,8 @@ bool Info2::hasKey(key_t& key, int& rc, bool isptr, bool recursive) const {
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "Info2::hasKey()"
-bool Info2::hasKey(const json::json_pointer &jp, int& rc, bool recursive) const {
+#define ESMC_METHOD "Info::hasKey()"
+bool Info::hasKey(const json::json_pointer &jp, int& rc, bool recursive) const {
   // Exceptions:  ESMCI::esmf_info_error
   rc = ESMF_FAILURE;
   bool ret;
@@ -821,8 +821,8 @@ bool Info2::hasKey(const json::json_pointer &jp, int& rc, bool recursive) const 
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "Info2::inquire()"
-json Info2::inquire(key_t &key, int &rc, bool recursive, const int *idx, bool attr_compliance) const {
+#define ESMC_METHOD "Info::inquire()"
+json Info::inquire(key_t &key, int &rc, bool recursive, const int *idx, bool attr_compliance) const {
   // Test: testInquire
   // Notes:
   rc = ESMF_FAILURE;
@@ -927,8 +927,8 @@ json Info2::inquire(key_t &key, int &rc, bool recursive, const int *idx, bool at
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "Info2::parse()"
-void Info2::parse(key_t& input, int& rc) {
+#define ESMC_METHOD "Info::parse()"
+void Info::parse(key_t& input, int& rc) {
   // Exceptions:  ESMCI:esmf_info_error
 
   rc = ESMF_FAILURE;
@@ -943,8 +943,8 @@ void Info2::parse(key_t& input, int& rc) {
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "Info2::get_isoc()"
-void Info2::get_isoc(ESMCI::ESMC_ISOCType ictype, void *ret, char* key,
+#define ESMC_METHOD "Info::get_isoc()"
+void Info::get_isoc(ESMCI::ESMC_ISOCType ictype, void *ret, char* key,
   int& rc, void* def) const {
   rc = ESMF_FAILURE;
   std::string localKey(key);
@@ -1004,8 +1004,8 @@ void Info2::get_isoc(ESMCI::ESMC_ISOCType ictype, void *ret, char* key,
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "Info2::isSetNull()"
-bool Info2::isSetNull(key_t &key, int &rc) const {
+#define ESMC_METHOD "Info::isSetNull()"
+bool Info::isSetNull(key_t &key, int &rc) const {
   rc = ESMF_FAILURE;
   bool ret;
   try {
@@ -1022,8 +1022,8 @@ bool Info2::isSetNull(key_t &key, int &rc) const {
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "Info2::serialize()"
-void Info2::serialize(char *buffer, int *length, int *offset,
+#define ESMC_METHOD "Info::serialize()"
+void Info::serialize(char *buffer, int *length, int *offset,
   ESMC_InquireFlag inquireflag, int& rc) {
   // Test: testSerializeDeserialize, testSerializeDeserialize2
   // Exceptions:  ESMCI:esmf_info_error
@@ -1058,8 +1058,8 @@ void Info2::serialize(char *buffer, int *length, int *offset,
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "Info2::set(<json>)"
-void Info2::set(key_t &key, json &&j, bool force, int &rc, const int *index,
+#define ESMC_METHOD "Info::set(<json>)"
+void Info::set(key_t &key, json &&j, bool force, int &rc, const int *index,
   const key_t * const pkey) {
   // Test:
   // Notes: parent key (pkey) must exist in the map
@@ -1186,8 +1186,8 @@ void Info2::set(key_t &key, json &&j, bool force, int &rc, const int *index,
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "Info2::set(<Info2>)"
-void Info2::set(key_t &key, const ESMCI::Info2 &info, bool force,
+#define ESMC_METHOD "Info::set(<Info>)"
+void Info::set(key_t &key, const ESMCI::Info &info, bool force,
   int &rc, const key_t * const pkey) {
   //tdk:test: in c++
   rc = ESMF_FAILURE;
@@ -1201,8 +1201,8 @@ void Info2::set(key_t &key, const ESMCI::Info2 &info, bool force,
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "Info2::set(<null>)"
-void Info2::set(key_t &key, bool force, int &rc, const int *index,
+#define ESMC_METHOD "Info::set(<null>)"
+void Info::set(key_t &key, bool force, int &rc, const int *index,
                 const key_t * const pkey) {
   rc = ESMF_FAILURE;
   try {
@@ -1214,9 +1214,9 @@ void Info2::set(key_t &key, bool force, int &rc, const int *index,
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "Info2::set(<scalar>)"
+#define ESMC_METHOD "Info::set(<scalar>)"
 template <typename T>
-void Info2::set(key_t &key, T value, bool force, int &rc, const int *index,
+void Info::set(key_t &key, T value, bool force, int &rc, const int *index,
                 const key_t * const pkey) {
   // Exceptions:  ESMCI:esmf_info_error
   rc = ESMF_FAILURE;
@@ -1228,17 +1228,17 @@ void Info2::set(key_t &key, T value, bool force, int &rc, const int *index,
   this->dirty = true;
   rc = ESMF_SUCCESS;
 };
-template void Info2::set<float>(key_t&, float, bool, int&, const int*, const key_t * const);
-template void Info2::set<double>(key_t&, double, bool, int&, const int*, const key_t * const);
-template void Info2::set<int>(key_t&, int, bool, int&, const int*, const key_t * const);
-template void Info2::set<long int>(key_t&, long int, bool, int&, const int*, const key_t * const);
-template void Info2::set<std::string>(key_t&, std::string, bool, int&, const int*, const key_t * const);
-template void Info2::set<bool>(key_t&, bool, bool, int&, const int*, const key_t * const);
+template void Info::set<float>(key_t&, float, bool, int&, const int*, const key_t * const);
+template void Info::set<double>(key_t&, double, bool, int&, const int*, const key_t * const);
+template void Info::set<int>(key_t&, int, bool, int&, const int*, const key_t * const);
+template void Info::set<long int>(key_t&, long int, bool, int&, const int*, const key_t * const);
+template void Info::set<std::string>(key_t&, std::string, bool, int&, const int*, const key_t * const);
+template void Info::set<bool>(key_t&, bool, bool, int&, const int*, const key_t * const);
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "Info2::set(<array>)"
+#define ESMC_METHOD "Info::set(<array>)"
 template <typename T>
-void Info2::set(key_t &key, T *values, int count, bool force, int &rc,
+void Info::set(key_t &key, T *values, int count, bool force, int &rc,
                 const key_t * const pkey) {
   // Exceptions:  ESMCI:esmf_info_error
   assert(count >= 0);
@@ -1263,16 +1263,16 @@ void Info2::set(key_t &key, T *values, int count, bool force, int &rc,
   ESMF_CATCH_INFO
   rc = ESMF_SUCCESS;
 };
-template void Info2::set<float>(key_t&, float*, int, bool, int&, const key_t * const);
-template void Info2::set<double>(key_t&, double*, int, bool, int&, const key_t * const);
-template void Info2::set<int>(key_t&, int*, int, bool, int&, const key_t * const);
-template void Info2::set<long int>(key_t&, long int*, int, bool, int&, const key_t * const);
-template void Info2::set<bool>(key_t&, bool*, int, bool, int&, const key_t * const);
-template void Info2::set<std::vector<std::string>>(key_t&, std::vector<std::string>*, int, bool, int&, const key_t * const);
+template void Info::set<float>(key_t&, float*, int, bool, int&, const key_t * const);
+template void Info::set<double>(key_t&, double*, int, bool, int&, const key_t * const);
+template void Info::set<int>(key_t&, int*, int, bool, int&, const key_t * const);
+template void Info::set<long int>(key_t&, long int*, int, bool, int&, const key_t * const);
+template void Info::set<bool>(key_t&, bool*, int, bool, int&, const key_t * const);
+template void Info::set<std::vector<std::string>>(key_t&, std::vector<std::string>*, int, bool, int&, const key_t * const);
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "Info2::update()"
-void Info2::update(const Info2 &info, int &rc) {
+#define ESMC_METHOD "Info::update()"
+void Info::update(const Info &info, int &rc) {
   rc = ESMF_FAILURE;
   const json& r_j = info.getStorageRef();
   try {
@@ -1289,7 +1289,7 @@ void Info2::update(const Info2 &info, int &rc) {
 // !IROUTINE:  Info::ESMC_Print - Print the {\tt Info} contents
 //
 // !INTERFACE:
-  int Info2::ESMC_Print(
+  int Info::ESMC_Print(
 //
 // !RETURN VALUE:
 //    {\tt ESMF\_SUCCESS} or error code on failure.
@@ -1488,7 +1488,7 @@ json PackageFactory::getOrCreateJSON(key_t& key, int& rc,
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "broadcastInfo()"
-void broadcastInfo(ESMCI::Info2* info, int rootPet, const ESMCI::VM &vm, int& rc) {
+void broadcastInfo(ESMCI::Info* info, int rootPet, const ESMCI::VM &vm, int& rc) {
   // Exceptions:  ESMCI:esmf_info_error
   rc = ESMF_FAILURE;
   int localPet = vm.getLocalPet();
