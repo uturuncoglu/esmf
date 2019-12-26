@@ -3621,7 +3621,6 @@ module NUOPC_Base
     logical                         :: l_realizeOnlyNotComplete
     logical                         :: isComplete, isConnected, isSharedField
     type(ESMF_FieldStatus_Flag)     :: fieldStatus
-    character(len=ESMF_MAXSTR) :: logmsg !tdk:p
     if (present(rc)) rc = ESMF_SUCCESS
     
     l_realizeOnlyConnected = .true.   ! defaut
@@ -3769,9 +3768,6 @@ module NUOPC_Base
           msg="Allocation of internal ungriddedLBound array failed.", &
           line=__LINE__, file=FILENAME, rcToReturn=rc)) &
           return  ! bail out
-        write(logmsg, *) ulbCount !tdk:p
-        call ESMF_LogWrite("nuopc base attget: ulbCount="//trim(logmsg)) !tdk:p
-        call ESMF_LogWrite("nuopc base attget: info dump="//trim(ESMF_InfoDump(ESMF_InfoGetHandle(fieldAdv)))) !tdk:p
         call ESMF_AttributeGet(fieldAdv, &
           name="UngriddedLBound", valueList=l_ungriddedLBound, &
           convention="NUOPC", purpose="Instance", &
