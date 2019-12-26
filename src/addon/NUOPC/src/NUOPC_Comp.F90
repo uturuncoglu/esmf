@@ -1161,6 +1161,7 @@ module NUOPC_Comp
             line=__LINE__, file=trim(name)//":"//FILENAME, rcToReturn=rc)) &
             return  ! bail out
           if (.not. isPresent) then
+            call ESMF_LogWrite(ESMF_InfoDump(ESMF_InfoGetHandle(comp))) !tdk:p
             if (ESMF_LogFoundError(rcToCheck=ESMF_RC_ATTR_ITEMSOFF, &
               msg="Attribute must be added before it is set. name="//trim(tokenList(1)), &
               line=__LINE__, file=trim(name)//":"//FILENAME, rcToReturn=rc)) &

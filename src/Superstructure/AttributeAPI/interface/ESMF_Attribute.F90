@@ -32760,7 +32760,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   integer :: countSingle, localrc
   character(:), allocatable :: key
-  logical :: is_present, is_structured
+  logical :: is_present, is_structured, is_null
   type(ESMF_Info) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
@@ -32793,11 +32793,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   if (is_present) then
     call ESMF_InfoInquire(info, key=key, size=itemCount, attnestflag=local_attnestflag, &
-      typekind=typekind, isStructured=is_structured, attrCompliance=.true., rc=localrc)
+      typekind=typekind, isStructured=is_structured, isNull=is_null, attrCompliance=.true., &
+      rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (.not. is_structured) then
       if (present(itemCount)) then
-        itemCount = 1
+        if (is_null) then
+          itemCount = 0
+        else
+          itemCount = 1
+        endif
       end if
     end if
   else
@@ -33146,7 +33151,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   integer :: countSingle, localrc
   character(:), allocatable :: key
-  logical :: is_present, is_structured
+  logical :: is_present, is_structured, is_null
   type(ESMF_Info) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
@@ -33179,11 +33184,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   if (is_present) then
     call ESMF_InfoInquire(info, key=key, size=itemCount, attnestflag=local_attnestflag, &
-      typekind=typekind, isStructured=is_structured, attrCompliance=.true., rc=localrc)
+      typekind=typekind, isStructured=is_structured, isNull=is_null, attrCompliance=.true., &
+      rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (.not. is_structured) then
       if (present(itemCount)) then
-        itemCount = 1
+        if (is_null) then
+          itemCount = 0
+        else
+          itemCount = 1
+        endif
       end if
     end if
   else
@@ -33532,7 +33542,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   integer :: countSingle, localrc
   character(:), allocatable :: key
-  logical :: is_present, is_structured
+  logical :: is_present, is_structured, is_null
   type(ESMF_Info) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
@@ -33565,11 +33575,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   if (is_present) then
     call ESMF_InfoInquire(info, key=key, size=itemCount, attnestflag=local_attnestflag, &
-      typekind=typekind, isStructured=is_structured, attrCompliance=.true., rc=localrc)
+      typekind=typekind, isStructured=is_structured, isNull=is_null, attrCompliance=.true., &
+      rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (.not. is_structured) then
       if (present(itemCount)) then
-        itemCount = 1
+        if (is_null) then
+          itemCount = 0
+        else
+          itemCount = 1
+        endif
       end if
     end if
   else
@@ -33918,7 +33933,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   integer :: countSingle, localrc
   character(:), allocatable :: key
-  logical :: is_present, is_structured
+  logical :: is_present, is_structured, is_null
   type(ESMF_Info) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
@@ -33951,11 +33966,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   if (is_present) then
     call ESMF_InfoInquire(info, key=key, size=itemCount, attnestflag=local_attnestflag, &
-      typekind=typekind, isStructured=is_structured, attrCompliance=.true., rc=localrc)
+      typekind=typekind, isStructured=is_structured, isNull=is_null, attrCompliance=.true., &
+      rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (.not. is_structured) then
       if (present(itemCount)) then
-        itemCount = 1
+        if (is_null) then
+          itemCount = 0
+        else
+          itemCount = 1
+        endif
       end if
     end if
   else
@@ -34304,7 +34324,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   integer :: countSingle, localrc
   character(:), allocatable :: key
-  logical :: is_present, is_structured
+  logical :: is_present, is_structured, is_null
   type(ESMF_Info) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
@@ -34337,11 +34357,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   if (is_present) then
     call ESMF_InfoInquire(info, key=key, size=itemCount, attnestflag=local_attnestflag, &
-      typekind=typekind, isStructured=is_structured, attrCompliance=.true., rc=localrc)
+      typekind=typekind, isStructured=is_structured, isNull=is_null, attrCompliance=.true., &
+      rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (.not. is_structured) then
       if (present(itemCount)) then
-        itemCount = 1
+        if (is_null) then
+          itemCount = 0
+        else
+          itemCount = 1
+        endif
       end if
     end if
   else
@@ -34690,7 +34715,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   integer :: countSingle, localrc
   character(:), allocatable :: key
-  logical :: is_present, is_structured
+  logical :: is_present, is_structured, is_null
   type(ESMF_Info) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
@@ -34723,11 +34748,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   if (is_present) then
     call ESMF_InfoInquire(info, key=key, size=itemCount, attnestflag=local_attnestflag, &
-      typekind=typekind, isStructured=is_structured, attrCompliance=.true., rc=localrc)
+      typekind=typekind, isStructured=is_structured, isNull=is_null, attrCompliance=.true., &
+      rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (.not. is_structured) then
       if (present(itemCount)) then
-        itemCount = 1
+        if (is_null) then
+          itemCount = 0
+        else
+          itemCount = 1
+        endif
       end if
     end if
   else
@@ -35076,7 +35106,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   integer :: countSingle, localrc
   character(:), allocatable :: key
-  logical :: is_present, is_structured
+  logical :: is_present, is_structured, is_null
   type(ESMF_Info) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
@@ -35109,11 +35139,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   if (is_present) then
     call ESMF_InfoInquire(info, key=key, size=itemCount, attnestflag=local_attnestflag, &
-      typekind=typekind, isStructured=is_structured, attrCompliance=.true., rc=localrc)
+      typekind=typekind, isStructured=is_structured, isNull=is_null, attrCompliance=.true., &
+      rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (.not. is_structured) then
       if (present(itemCount)) then
-        itemCount = 1
+        if (is_null) then
+          itemCount = 0
+        else
+          itemCount = 1
+        endif
       end if
     end if
   else
@@ -35462,7 +35497,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   integer :: countSingle, localrc
   character(:), allocatable :: key
-  logical :: is_present, is_structured
+  logical :: is_present, is_structured, is_null
   type(ESMF_Info) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
@@ -35495,11 +35530,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   if (is_present) then
     call ESMF_InfoInquire(info, key=key, size=itemCount, attnestflag=local_attnestflag, &
-      typekind=typekind, isStructured=is_structured, attrCompliance=.true., rc=localrc)
+      typekind=typekind, isStructured=is_structured, isNull=is_null, attrCompliance=.true., &
+      rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (.not. is_structured) then
       if (present(itemCount)) then
-        itemCount = 1
+        if (is_null) then
+          itemCount = 0
+        else
+          itemCount = 1
+        endif
       end if
     end if
   else
@@ -35848,7 +35888,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   integer :: countSingle, localrc
   character(:), allocatable :: key
-  logical :: is_present, is_structured
+  logical :: is_present, is_structured, is_null
   type(ESMF_Info) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
@@ -35881,11 +35921,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   if (is_present) then
     call ESMF_InfoInquire(info, key=key, size=itemCount, attnestflag=local_attnestflag, &
-      typekind=typekind, isStructured=is_structured, attrCompliance=.true., rc=localrc)
+      typekind=typekind, isStructured=is_structured, isNull=is_null, attrCompliance=.true., &
+      rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (.not. is_structured) then
       if (present(itemCount)) then
-        itemCount = 1
+        if (is_null) then
+          itemCount = 0
+        else
+          itemCount = 1
+        endif
       end if
     end if
   else
@@ -36234,7 +36279,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   integer :: countSingle, localrc
   character(:), allocatable :: key
-  logical :: is_present, is_structured
+  logical :: is_present, is_structured, is_null
   type(ESMF_Info) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
@@ -36267,11 +36312,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   if (is_present) then
     call ESMF_InfoInquire(info, key=key, size=itemCount, attnestflag=local_attnestflag, &
-      typekind=typekind, isStructured=is_structured, attrCompliance=.true., rc=localrc)
+      typekind=typekind, isStructured=is_structured, isNull=is_null, attrCompliance=.true., &
+      rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (.not. is_structured) then
       if (present(itemCount)) then
-        itemCount = 1
+        if (is_null) then
+          itemCount = 0
+        else
+          itemCount = 1
+        endif
       end if
     end if
   else
@@ -36620,7 +36670,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   integer :: countSingle, localrc
   character(:), allocatable :: key
-  logical :: is_present, is_structured
+  logical :: is_present, is_structured, is_null
   type(ESMF_Info) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
@@ -36653,11 +36703,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   if (is_present) then
     call ESMF_InfoInquire(info, key=key, size=itemCount, attnestflag=local_attnestflag, &
-      typekind=typekind, isStructured=is_structured, attrCompliance=.true., rc=localrc)
+      typekind=typekind, isStructured=is_structured, isNull=is_null, attrCompliance=.true., &
+      rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (.not. is_structured) then
       if (present(itemCount)) then
-        itemCount = 1
+        if (is_null) then
+          itemCount = 0
+        else
+          itemCount = 1
+        endif
       end if
     end if
   else

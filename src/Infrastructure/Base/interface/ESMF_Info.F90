@@ -354,7 +354,7 @@ end subroutine ESMF_InfoRemove
 #define ESMF_METHOD "ESMF_InfoInquire()"
 subroutine ESMF_InfoInquire(info, key, size, attrCount, attrCountTotal, jsonType, &
   isArray, isDirty, attPackCount, attPackCountTotal, attnestflag, idx, typekind, &
-  ikey, isPresent, isStructured, attrCompliance, rc)
+  ikey, isPresent, isStructured, isNull, attrCompliance, rc)
 
   type(ESMF_Info), intent(in) :: info
   character(len=*), intent(in), optional :: key
@@ -372,6 +372,7 @@ subroutine ESMF_InfoInquire(info, key, size, attrCount, attrCountTotal, jsonType
   character(len=*), intent(out), optional :: ikey
   logical, intent(out), optional :: isPresent
   logical, intent(out), optional :: isStructured
+  logical, intent(out), optional :: isNull
   logical, intent(in), optional :: attrCompliance
   integer, intent(inout), optional :: rc
 
@@ -487,6 +488,10 @@ subroutine ESMF_InfoInquire(info, key, size, attrCount, attrCountTotal, jsonType
   end if
   if (present(isStructured)) then
     call ESMF_InfoGet(inq, "isStructured", isStructured, rc=localrc)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
+  if (present(isNull)) then
+    call ESMF_InfoGet(inq, "isNull", isNull, rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   end if
 

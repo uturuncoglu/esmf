@@ -913,6 +913,7 @@ json Info::inquire(key_t &key, int &rc, bool recursive, const int *idx, bool att
     j["jsonType"] = json_typename;
     j["isArray"] = is_array;
     j["isStructured"] = sk.is_structured();
+    j["isNull"] = sk.is_null();
   }
   ESMF_CATCH_INFO
   rc = ESMF_SUCCESS;
