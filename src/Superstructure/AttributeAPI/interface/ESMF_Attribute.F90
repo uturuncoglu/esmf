@@ -32699,7 +32699,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   integer :: countSingle, localrc
   character(:), allocatable :: key
-  logical :: is_present, is_structured
+  logical :: is_present, is_structured, is_null
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
@@ -32728,11 +32728,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   if (is_present) then
     call ESMF_InfoInquire(attpack%getPayload(), key=key, size=itemCount, attnestflag=local_attnestflag, &
-      typekind=typekind, isStructured=is_structured, attrCompliance=.true., rc=localrc)
+      typekind=typekind, isStructured=is_structured, isNull=is_null, attrCompliance=.true., &
+      rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (.not. is_structured) then
       if (present(itemCount)) then
-        itemCount = 1
+        if (is_null) then
+          itemCount = 0
+        else
+          itemCount = 1
+        endif
       end if
     end if
   else
@@ -32834,7 +32839,7 @@ subroutine ESMF_AttributeGetInfoByNumArray(target, attributeIndex, name, convent
   type(ESMF_Info) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
-  logical :: is_structured
+  logical :: is_structured, is_null
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -32854,12 +32859,16 @@ subroutine ESMF_AttributeGetInfoByNumArray(target, attributeIndex, name, convent
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   call ESMF_InfoInquire(info, key=key, size=itemCount, typekind=typekind, &
-    idx=attributeIndex, ikey=name, isPresent=isPresent, attnestflag=local_attnestflag, &
+    idx=attributeIndex, ikey=name, isPresent=isPresent, isNull=is_null, attnestflag=local_attnestflag, &
     isStructured=is_structured, attrCompliance=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   if (.not. is_structured) then
     if (present(itemCount)) then
-      itemCount = 1
+      if (is_null) then
+        itemCount = 0
+      else
+        itemCount = 1
+      endif
     end if
   end if
 
@@ -33090,7 +33099,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   integer :: countSingle, localrc
   character(:), allocatable :: key
-  logical :: is_present, is_structured
+  logical :: is_present, is_structured, is_null
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
@@ -33119,11 +33128,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   if (is_present) then
     call ESMF_InfoInquire(attpack%getPayload(), key=key, size=itemCount, attnestflag=local_attnestflag, &
-      typekind=typekind, isStructured=is_structured, attrCompliance=.true., rc=localrc)
+      typekind=typekind, isStructured=is_structured, isNull=is_null, attrCompliance=.true., &
+      rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (.not. is_structured) then
       if (present(itemCount)) then
-        itemCount = 1
+        if (is_null) then
+          itemCount = 0
+        else
+          itemCount = 1
+        endif
       end if
     end if
   else
@@ -33225,7 +33239,7 @@ subroutine ESMF_AttributeGetInfoByNumArrayBundle(target, attributeIndex, name, c
   type(ESMF_Info) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
-  logical :: is_structured
+  logical :: is_structured, is_null
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -33245,12 +33259,16 @@ subroutine ESMF_AttributeGetInfoByNumArrayBundle(target, attributeIndex, name, c
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   call ESMF_InfoInquire(info, key=key, size=itemCount, typekind=typekind, &
-    idx=attributeIndex, ikey=name, isPresent=isPresent, attnestflag=local_attnestflag, &
+    idx=attributeIndex, ikey=name, isPresent=isPresent, isNull=is_null, attnestflag=local_attnestflag, &
     isStructured=is_structured, attrCompliance=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   if (.not. is_structured) then
     if (present(itemCount)) then
-      itemCount = 1
+      if (is_null) then
+        itemCount = 0
+      else
+        itemCount = 1
+      endif
     end if
   end if
 
@@ -33481,7 +33499,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   integer :: countSingle, localrc
   character(:), allocatable :: key
-  logical :: is_present, is_structured
+  logical :: is_present, is_structured, is_null
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
@@ -33510,11 +33528,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   if (is_present) then
     call ESMF_InfoInquire(attpack%getPayload(), key=key, size=itemCount, attnestflag=local_attnestflag, &
-      typekind=typekind, isStructured=is_structured, attrCompliance=.true., rc=localrc)
+      typekind=typekind, isStructured=is_structured, isNull=is_null, attrCompliance=.true., &
+      rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (.not. is_structured) then
       if (present(itemCount)) then
-        itemCount = 1
+        if (is_null) then
+          itemCount = 0
+        else
+          itemCount = 1
+        endif
       end if
     end if
   else
@@ -33616,7 +33639,7 @@ subroutine ESMF_AttributeGetInfoByNumCplComp(target, attributeIndex, name, conve
   type(ESMF_Info) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
-  logical :: is_structured
+  logical :: is_structured, is_null
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -33636,12 +33659,16 @@ subroutine ESMF_AttributeGetInfoByNumCplComp(target, attributeIndex, name, conve
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   call ESMF_InfoInquire(info, key=key, size=itemCount, typekind=typekind, &
-    idx=attributeIndex, ikey=name, isPresent=isPresent, attnestflag=local_attnestflag, &
+    idx=attributeIndex, ikey=name, isPresent=isPresent, isNull=is_null, attnestflag=local_attnestflag, &
     isStructured=is_structured, attrCompliance=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   if (.not. is_structured) then
     if (present(itemCount)) then
-      itemCount = 1
+      if (is_null) then
+        itemCount = 0
+      else
+        itemCount = 1
+      endif
     end if
   end if
 
@@ -33872,7 +33899,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   integer :: countSingle, localrc
   character(:), allocatable :: key
-  logical :: is_present, is_structured
+  logical :: is_present, is_structured, is_null
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
@@ -33901,11 +33928,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   if (is_present) then
     call ESMF_InfoInquire(attpack%getPayload(), key=key, size=itemCount, attnestflag=local_attnestflag, &
-      typekind=typekind, isStructured=is_structured, attrCompliance=.true., rc=localrc)
+      typekind=typekind, isStructured=is_structured, isNull=is_null, attrCompliance=.true., &
+      rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (.not. is_structured) then
       if (present(itemCount)) then
-        itemCount = 1
+        if (is_null) then
+          itemCount = 0
+        else
+          itemCount = 1
+        endif
       end if
     end if
   else
@@ -34007,7 +34039,7 @@ subroutine ESMF_AttributeGetInfoByNumGridComp(target, attributeIndex, name, conv
   type(ESMF_Info) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
-  logical :: is_structured
+  logical :: is_structured, is_null
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -34027,12 +34059,16 @@ subroutine ESMF_AttributeGetInfoByNumGridComp(target, attributeIndex, name, conv
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   call ESMF_InfoInquire(info, key=key, size=itemCount, typekind=typekind, &
-    idx=attributeIndex, ikey=name, isPresent=isPresent, attnestflag=local_attnestflag, &
+    idx=attributeIndex, ikey=name, isPresent=isPresent, isNull=is_null, attnestflag=local_attnestflag, &
     isStructured=is_structured, attrCompliance=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   if (.not. is_structured) then
     if (present(itemCount)) then
-      itemCount = 1
+      if (is_null) then
+        itemCount = 0
+      else
+        itemCount = 1
+      endif
     end if
   end if
 
@@ -34263,7 +34299,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   integer :: countSingle, localrc
   character(:), allocatable :: key
-  logical :: is_present, is_structured
+  logical :: is_present, is_structured, is_null
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
@@ -34292,11 +34328,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   if (is_present) then
     call ESMF_InfoInquire(attpack%getPayload(), key=key, size=itemCount, attnestflag=local_attnestflag, &
-      typekind=typekind, isStructured=is_structured, attrCompliance=.true., rc=localrc)
+      typekind=typekind, isStructured=is_structured, isNull=is_null, attrCompliance=.true., &
+      rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (.not. is_structured) then
       if (present(itemCount)) then
-        itemCount = 1
+        if (is_null) then
+          itemCount = 0
+        else
+          itemCount = 1
+        endif
       end if
     end if
   else
@@ -34398,7 +34439,7 @@ subroutine ESMF_AttributeGetInfoByNumSciComp(target, attributeIndex, name, conve
   type(ESMF_Info) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
-  logical :: is_structured
+  logical :: is_structured, is_null
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -34418,12 +34459,16 @@ subroutine ESMF_AttributeGetInfoByNumSciComp(target, attributeIndex, name, conve
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   call ESMF_InfoInquire(info, key=key, size=itemCount, typekind=typekind, &
-    idx=attributeIndex, ikey=name, isPresent=isPresent, attnestflag=local_attnestflag, &
+    idx=attributeIndex, ikey=name, isPresent=isPresent, isNull=is_null, attnestflag=local_attnestflag, &
     isStructured=is_structured, attrCompliance=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   if (.not. is_structured) then
     if (present(itemCount)) then
-      itemCount = 1
+      if (is_null) then
+        itemCount = 0
+      else
+        itemCount = 1
+      endif
     end if
   end if
 
@@ -34654,7 +34699,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   integer :: countSingle, localrc
   character(:), allocatable :: key
-  logical :: is_present, is_structured
+  logical :: is_present, is_structured, is_null
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
@@ -34683,11 +34728,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   if (is_present) then
     call ESMF_InfoInquire(attpack%getPayload(), key=key, size=itemCount, attnestflag=local_attnestflag, &
-      typekind=typekind, isStructured=is_structured, attrCompliance=.true., rc=localrc)
+      typekind=typekind, isStructured=is_structured, isNull=is_null, attrCompliance=.true., &
+      rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (.not. is_structured) then
       if (present(itemCount)) then
-        itemCount = 1
+        if (is_null) then
+          itemCount = 0
+        else
+          itemCount = 1
+        endif
       end if
     end if
   else
@@ -34789,7 +34839,7 @@ subroutine ESMF_AttributeGetInfoByNumDistGrid(target, attributeIndex, name, conv
   type(ESMF_Info) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
-  logical :: is_structured
+  logical :: is_structured, is_null
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -34809,12 +34859,16 @@ subroutine ESMF_AttributeGetInfoByNumDistGrid(target, attributeIndex, name, conv
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   call ESMF_InfoInquire(info, key=key, size=itemCount, typekind=typekind, &
-    idx=attributeIndex, ikey=name, isPresent=isPresent, attnestflag=local_attnestflag, &
+    idx=attributeIndex, ikey=name, isPresent=isPresent, isNull=is_null, attnestflag=local_attnestflag, &
     isStructured=is_structured, attrCompliance=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   if (.not. is_structured) then
     if (present(itemCount)) then
-      itemCount = 1
+      if (is_null) then
+        itemCount = 0
+      else
+        itemCount = 1
+      endif
     end if
   end if
 
@@ -35045,7 +35099,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   integer :: countSingle, localrc
   character(:), allocatable :: key
-  logical :: is_present, is_structured
+  logical :: is_present, is_structured, is_null
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
@@ -35074,11 +35128,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   if (is_present) then
     call ESMF_InfoInquire(attpack%getPayload(), key=key, size=itemCount, attnestflag=local_attnestflag, &
-      typekind=typekind, isStructured=is_structured, attrCompliance=.true., rc=localrc)
+      typekind=typekind, isStructured=is_structured, isNull=is_null, attrCompliance=.true., &
+      rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (.not. is_structured) then
       if (present(itemCount)) then
-        itemCount = 1
+        if (is_null) then
+          itemCount = 0
+        else
+          itemCount = 1
+        endif
       end if
     end if
   else
@@ -35180,7 +35239,7 @@ subroutine ESMF_AttributeGetInfoByNumField(target, attributeIndex, name, convent
   type(ESMF_Info) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
-  logical :: is_structured
+  logical :: is_structured, is_null
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -35200,12 +35259,16 @@ subroutine ESMF_AttributeGetInfoByNumField(target, attributeIndex, name, convent
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   call ESMF_InfoInquire(info, key=key, size=itemCount, typekind=typekind, &
-    idx=attributeIndex, ikey=name, isPresent=isPresent, attnestflag=local_attnestflag, &
+    idx=attributeIndex, ikey=name, isPresent=isPresent, isNull=is_null, attnestflag=local_attnestflag, &
     isStructured=is_structured, attrCompliance=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   if (.not. is_structured) then
     if (present(itemCount)) then
-      itemCount = 1
+      if (is_null) then
+        itemCount = 0
+      else
+        itemCount = 1
+      endif
     end if
   end if
 
@@ -35436,7 +35499,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   integer :: countSingle, localrc
   character(:), allocatable :: key
-  logical :: is_present, is_structured
+  logical :: is_present, is_structured, is_null
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
@@ -35465,11 +35528,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   if (is_present) then
     call ESMF_InfoInquire(attpack%getPayload(), key=key, size=itemCount, attnestflag=local_attnestflag, &
-      typekind=typekind, isStructured=is_structured, attrCompliance=.true., rc=localrc)
+      typekind=typekind, isStructured=is_structured, isNull=is_null, attrCompliance=.true., &
+      rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (.not. is_structured) then
       if (present(itemCount)) then
-        itemCount = 1
+        if (is_null) then
+          itemCount = 0
+        else
+          itemCount = 1
+        endif
       end if
     end if
   else
@@ -35571,7 +35639,7 @@ subroutine ESMF_AttributeGetInfoByNumFieldBundle(target, attributeIndex, name, c
   type(ESMF_Info) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
-  logical :: is_structured
+  logical :: is_structured, is_null
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -35591,12 +35659,16 @@ subroutine ESMF_AttributeGetInfoByNumFieldBundle(target, attributeIndex, name, c
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   call ESMF_InfoInquire(info, key=key, size=itemCount, typekind=typekind, &
-    idx=attributeIndex, ikey=name, isPresent=isPresent, attnestflag=local_attnestflag, &
+    idx=attributeIndex, ikey=name, isPresent=isPresent, isNull=is_null, attnestflag=local_attnestflag, &
     isStructured=is_structured, attrCompliance=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   if (.not. is_structured) then
     if (present(itemCount)) then
-      itemCount = 1
+      if (is_null) then
+        itemCount = 0
+      else
+        itemCount = 1
+      endif
     end if
   end if
 
@@ -35827,7 +35899,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   integer :: countSingle, localrc
   character(:), allocatable :: key
-  logical :: is_present, is_structured
+  logical :: is_present, is_structured, is_null
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
@@ -35856,11 +35928,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   if (is_present) then
     call ESMF_InfoInquire(attpack%getPayload(), key=key, size=itemCount, attnestflag=local_attnestflag, &
-      typekind=typekind, isStructured=is_structured, attrCompliance=.true., rc=localrc)
+      typekind=typekind, isStructured=is_structured, isNull=is_null, attrCompliance=.true., &
+      rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (.not. is_structured) then
       if (present(itemCount)) then
-        itemCount = 1
+        if (is_null) then
+          itemCount = 0
+        else
+          itemCount = 1
+        endif
       end if
     end if
   else
@@ -35962,7 +36039,7 @@ subroutine ESMF_AttributeGetInfoByNumGrid(target, attributeIndex, name, conventi
   type(ESMF_Info) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
-  logical :: is_structured
+  logical :: is_structured, is_null
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -35982,12 +36059,16 @@ subroutine ESMF_AttributeGetInfoByNumGrid(target, attributeIndex, name, conventi
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   call ESMF_InfoInquire(info, key=key, size=itemCount, typekind=typekind, &
-    idx=attributeIndex, ikey=name, isPresent=isPresent, attnestflag=local_attnestflag, &
+    idx=attributeIndex, ikey=name, isPresent=isPresent, isNull=is_null, attnestflag=local_attnestflag, &
     isStructured=is_structured, attrCompliance=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   if (.not. is_structured) then
     if (present(itemCount)) then
-      itemCount = 1
+      if (is_null) then
+        itemCount = 0
+      else
+        itemCount = 1
+      endif
     end if
   end if
 
@@ -36218,7 +36299,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   integer :: countSingle, localrc
   character(:), allocatable :: key
-  logical :: is_present, is_structured
+  logical :: is_present, is_structured, is_null
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
@@ -36247,11 +36328,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   if (is_present) then
     call ESMF_InfoInquire(attpack%getPayload(), key=key, size=itemCount, attnestflag=local_attnestflag, &
-      typekind=typekind, isStructured=is_structured, attrCompliance=.true., rc=localrc)
+      typekind=typekind, isStructured=is_structured, isNull=is_null, attrCompliance=.true., &
+      rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (.not. is_structured) then
       if (present(itemCount)) then
-        itemCount = 1
+        if (is_null) then
+          itemCount = 0
+        else
+          itemCount = 1
+        endif
       end if
     end if
   else
@@ -36353,7 +36439,7 @@ subroutine ESMF_AttributeGetInfoByNumState(target, attributeIndex, name, convent
   type(ESMF_Info) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
-  logical :: is_structured
+  logical :: is_structured, is_null
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -36373,12 +36459,16 @@ subroutine ESMF_AttributeGetInfoByNumState(target, attributeIndex, name, convent
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   call ESMF_InfoInquire(info, key=key, size=itemCount, typekind=typekind, &
-    idx=attributeIndex, ikey=name, isPresent=isPresent, attnestflag=local_attnestflag, &
+    idx=attributeIndex, ikey=name, isPresent=isPresent, isNull=is_null, attnestflag=local_attnestflag, &
     isStructured=is_structured, attrCompliance=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   if (.not. is_structured) then
     if (present(itemCount)) then
-      itemCount = 1
+      if (is_null) then
+        itemCount = 0
+      else
+        itemCount = 1
+      endif
     end if
   end if
 
@@ -36609,7 +36699,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   integer :: countSingle, localrc
   character(:), allocatable :: key
-  logical :: is_present, is_structured
+  logical :: is_present, is_structured, is_null
   type(ESMF_AttNest_Flag) :: local_attnestflag
 
   localrc = ESMF_FAILURE
@@ -36638,11 +36728,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
   if (is_present) then
     call ESMF_InfoInquire(attpack%getPayload(), key=key, size=itemCount, attnestflag=local_attnestflag, &
-      typekind=typekind, isStructured=is_structured, attrCompliance=.true., rc=localrc)
+      typekind=typekind, isStructured=is_structured, isNull=is_null, attrCompliance=.true., &
+      rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (.not. is_structured) then
       if (present(itemCount)) then
-        itemCount = 1
+        if (is_null) then
+          itemCount = 0
+        else
+          itemCount = 1
+        endif
       end if
     end if
   else
@@ -36744,7 +36839,7 @@ subroutine ESMF_AttributeGetInfoByNumLocStream(target, attributeIndex, name, con
   type(ESMF_Info) :: info
   type(ESMF_Inquire) :: einq
   type(ESMF_AttNest_Flag) :: local_attnestflag
-  logical :: is_structured
+  logical :: is_structured, is_null
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
@@ -36764,12 +36859,16 @@ subroutine ESMF_AttributeGetInfoByNumLocStream(target, attributeIndex, name, con
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   call ESMF_InfoInquire(info, key=key, size=itemCount, typekind=typekind, &
-    idx=attributeIndex, ikey=name, isPresent=isPresent, attnestflag=local_attnestflag, &
+    idx=attributeIndex, ikey=name, isPresent=isPresent, isNull=is_null, attnestflag=local_attnestflag, &
     isStructured=is_structured, attrCompliance=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   if (.not. is_structured) then
     if (present(itemCount)) then
-      itemCount = 1
+      if (is_null) then
+        itemCount = 0
+      else
+        itemCount = 1
+      endif
     end if
   end if
 
