@@ -93,8 +93,11 @@ namespace ESMCI {
     ~IO_ObjectContainer() {
       name = "";
       object.arr = (Array *)NULL;
+      if (dimAttPack) {delete dimAttPack;}
       dimAttPack = NULL;
+      if (varAttPack) {delete varAttPack;}
       varAttPack = NULL;
+      if (gblAttPack) {delete gblAttPack;}
       gblAttPack = NULL;
       number = 0;
       type = IO_NULL;

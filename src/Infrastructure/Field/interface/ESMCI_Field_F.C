@@ -93,37 +93,40 @@ extern "C" {
     }
 
     // If present, use Attributes at the Grid level for dimension names
-    ESMCI::Info *dimAttPack = NULL;
-    ESMCI::Info i_dimAttPack;
+    ESMCI::Info *dimAttPack = nullptr;
     if (has_convpurp) {
       try {
-        grid_p->ESMC_BaseGetInfo()->get(i_dimAttPack, key, localrc);
-        dimAttPack = &i_dimAttPack;
+        if (grid_p->ESMC_BaseGetInfo()->hasKey(key, localrc, true, false)) {
+          dimAttPack = new ESMCI::Info();
+          grid_p->ESMC_BaseGetInfo()->get(*dimAttPack, key, localrc);
+        }
       }
       ESMF_CATCH_ISOCP
     }
 
     // If present, use Attributes at the Field level for variable attributes
     ESMC_Base *base_p = *base;
-    ESMCI::Info *varAttPack = NULL;
-    ESMCI::Info i_varAttPack;
+    ESMCI::Info *varAttPack = nullptr;
     if (has_convpurp) {
       try {
-        base_p->ESMC_BaseGetInfo()->get(i_varAttPack, key, localrc);
-        varAttPack = &i_varAttPack;
+        if (base_p->ESMC_BaseGetInfo()->hasKey(key, localrc, true, false)) {
+          varAttPack = new ESMCI::Info();
+          base_p->ESMC_BaseGetInfo()->get(*varAttPack, key, localrc);
+        }
       }
       ESMF_CATCH_ISOCP
     }
 
     // If present, use Attributes at the FieldBundle level for global attributes
-    ESMCI::Info *gblAttPack = NULL;
-    ESMCI::Info i_gblAttPack;
+    ESMCI::Info *gblAttPack = nullptr;
     if (gblbase) {
       ESMC_Base *gblbase_p = *gblbase;
       if (has_convpurp) {
         try {
-          gblbase_p->ESMC_BaseGetInfo()->get(i_gblAttPack, key, localrc);
-          gblAttPack = &i_gblAttPack;
+          if (gblbase_p->ESMC_BaseGetInfo()->hasKey(key, localrc, true, false)) {
+            gblAttPack = new ESMCI::Info();
+            gblbase_p->ESMC_BaseGetInfo()->get(*gblAttPack, key, localrc);
+          }
         }
         ESMF_CATCH_ISOCP
       }

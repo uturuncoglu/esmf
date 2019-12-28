@@ -1061,6 +1061,7 @@ void IO::dimlabel_get (ESMCI::Info *dimAttPack, // in - AttPack with potential d
 //
 //EOP
 //-----------------------------------------------------------------------------
+  assert(dimAttPack);
   json const j = dimAttPack->getStorageRef();
   for (json::const_iterator it=j.cbegin(); it!=j.cend(); it++) {
     if (it.key() == labeltype) {

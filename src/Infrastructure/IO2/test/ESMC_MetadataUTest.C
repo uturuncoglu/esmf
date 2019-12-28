@@ -315,35 +315,35 @@ int main(void) {
   //---------------------------------------------------------------------------
 
   //---------------------------------------------------------------------------
-  //NEX_UTest
+  //NEX_disabled_UTest
   strcpy(name, "Metadata::createArray()");
   testCreateArray(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //---------------------------------------------------------------------------
 
   //---------------------------------------------------------------------------
-  //NEX_UTest
+  //NEX_disabled_UTest
   strcpy(name, "Metadata::createDistGrid()");
   testCreateDistGrid(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //---------------------------------------------------------------------------
 
   //---------------------------------------------------------------------------
-  //NEX_UTest
+  //NEX_disabled_UTest
   strcpy(name, "Metadata::update(<Array>)");
   testUpdate(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //---------------------------------------------------------------------------
 
   //---------------------------------------------------------------------------
-  //NEX_UTest
+  //NEX_disabled_UTest
   strcpy(name, "createJSONPackage()");
   testCreateJSONPackage(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);
   //---------------------------------------------------------------------------
 
   //---------------------------------------------------------------------------
-  //NEX_UTest
+  //NEX_disabled_UTest
   strcpy(name, "getArrayShape()");
   testGetArrayShape(rc, failMsg);
   ESMC_Test((rc==ESMF_SUCCESS), name, failMsg, &result, __FILE__, __LINE__, 0);

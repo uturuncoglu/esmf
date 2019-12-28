@@ -701,14 +701,34 @@ template json Info::get(key_t&, int&, const json*, const int*, bool, std::string
 void Info::get(ESMCI::Info &info, key_t &key, int &rc) const {
   // Test: testGetInfoObject
   // Notes:
+
+#if 0
+  std::string msg = std::string(ESMC_METHOD) + ": key=" + key;
+  ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO);
+  msg = std::string(ESMC_METHOD) + ": this dump=" + this->dump(0, rc);
+  ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO);
+#endif
+
   rc = ESMF_FAILURE;
   json j;
   try {
     j = this->get<json>(key, rc);
+
+#if 0
+    std::string msg2 = std::string(ESMC_METHOD) + ": j dump=" + j.dump();
+    ESMC_LogWrite(msg2.c_str(), ESMC_LOGMSG_INFO);
+#endif
+    
     check_init_from_json(j, rc);
   }
   ESMF_CATCH_INFO
   info.getStorageRefWritable() = std::move(j);
+
+#if 0
+  std::string msg3 = std::string(ESMC_METHOD) + ": info dump=" + info.dump(0, rc);
+  ESMC_LogWrite(msg3.c_str(), ESMC_LOGMSG_INFO);
+#endif
+
 }
 
 #undef  ESMC_METHOD

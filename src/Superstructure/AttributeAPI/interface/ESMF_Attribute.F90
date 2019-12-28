@@ -1350,7 +1350,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -1402,7 +1402,7 @@ subroutine ESMF_AttributeSetObjArrayR4(target, name, value, convention, purpose,
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -1468,7 +1468,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -1520,7 +1520,7 @@ subroutine ESMF_AttributeSetObjArrayR4List(target, name, valueList, convention, 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -1586,7 +1586,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -1638,7 +1638,7 @@ subroutine ESMF_AttributeSetObjArrayR8(target, name, value, convention, purpose,
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -1704,7 +1704,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -1756,7 +1756,7 @@ subroutine ESMF_AttributeSetObjArrayR8List(target, name, valueList, convention, 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -1822,7 +1822,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -1874,7 +1874,7 @@ subroutine ESMF_AttributeSetObjArrayI4(target, name, value, convention, purpose,
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -1940,7 +1940,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -1992,7 +1992,7 @@ subroutine ESMF_AttributeSetObjArrayI4List(target, name, valueList, convention, 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -2058,7 +2058,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -2110,7 +2110,7 @@ subroutine ESMF_AttributeSetObjArrayI8(target, name, value, convention, purpose,
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -2176,7 +2176,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -2228,7 +2228,7 @@ subroutine ESMF_AttributeSetObjArrayI8List(target, name, valueList, convention, 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -2294,7 +2294,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -2346,7 +2346,7 @@ subroutine ESMF_AttributeSetObjArrayCH(target, name, value, convention, purpose,
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -2412,7 +2412,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -2464,7 +2464,7 @@ subroutine ESMF_AttributeSetObjArrayCHList(target, name, valueList, convention, 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -2530,7 +2530,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -2582,7 +2582,7 @@ subroutine ESMF_AttributeSetObjArrayLG(target, name, value, convention, purpose,
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -2648,7 +2648,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -2700,7 +2700,7 @@ subroutine ESMF_AttributeSetObjArrayLGList(target, name, valueList, convention, 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -2766,7 +2766,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -2818,7 +2818,7 @@ subroutine ESMF_AttributeSetObjArrayBundleR4(target, name, value, convention, pu
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -2884,7 +2884,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -2936,7 +2936,7 @@ subroutine ESMF_AttributeSetObjArrayBundleR4List(target, name, valueList, conven
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -3002,7 +3002,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -3054,7 +3054,7 @@ subroutine ESMF_AttributeSetObjArrayBundleR8(target, name, value, convention, pu
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -3120,7 +3120,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -3172,7 +3172,7 @@ subroutine ESMF_AttributeSetObjArrayBundleR8List(target, name, valueList, conven
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -3238,7 +3238,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -3290,7 +3290,7 @@ subroutine ESMF_AttributeSetObjArrayBundleI4(target, name, value, convention, pu
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -3356,7 +3356,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -3408,7 +3408,7 @@ subroutine ESMF_AttributeSetObjArrayBundleI4List(target, name, valueList, conven
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -3474,7 +3474,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -3526,7 +3526,7 @@ subroutine ESMF_AttributeSetObjArrayBundleI8(target, name, value, convention, pu
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -3592,7 +3592,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -3644,7 +3644,7 @@ subroutine ESMF_AttributeSetObjArrayBundleI8List(target, name, valueList, conven
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -3710,7 +3710,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -3762,7 +3762,7 @@ subroutine ESMF_AttributeSetObjArrayBundleCH(target, name, value, convention, pu
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -3828,7 +3828,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -3880,7 +3880,7 @@ subroutine ESMF_AttributeSetObjArrayBundleCHList(target, name, valueList, conven
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -3946,7 +3946,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -3998,7 +3998,7 @@ subroutine ESMF_AttributeSetObjArrayBundleLG(target, name, value, convention, pu
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -4064,7 +4064,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -4116,7 +4116,7 @@ subroutine ESMF_AttributeSetObjArrayBundleLGList(target, name, valueList, conven
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -4182,7 +4182,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -4234,7 +4234,7 @@ subroutine ESMF_AttributeSetObjCplCompR4(target, name, value, convention, purpos
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -4300,7 +4300,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -4352,7 +4352,7 @@ subroutine ESMF_AttributeSetObjCplCompR4List(target, name, valueList, convention
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -4418,7 +4418,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -4470,7 +4470,7 @@ subroutine ESMF_AttributeSetObjCplCompR8(target, name, value, convention, purpos
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -4536,7 +4536,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -4588,7 +4588,7 @@ subroutine ESMF_AttributeSetObjCplCompR8List(target, name, valueList, convention
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -4654,7 +4654,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -4706,7 +4706,7 @@ subroutine ESMF_AttributeSetObjCplCompI4(target, name, value, convention, purpos
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -4772,7 +4772,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -4824,7 +4824,7 @@ subroutine ESMF_AttributeSetObjCplCompI4List(target, name, valueList, convention
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -4890,7 +4890,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -4942,7 +4942,7 @@ subroutine ESMF_AttributeSetObjCplCompI8(target, name, value, convention, purpos
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -5008,7 +5008,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -5060,7 +5060,7 @@ subroutine ESMF_AttributeSetObjCplCompI8List(target, name, valueList, convention
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -5126,7 +5126,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -5178,7 +5178,7 @@ subroutine ESMF_AttributeSetObjCplCompCH(target, name, value, convention, purpos
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -5244,7 +5244,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -5296,7 +5296,7 @@ subroutine ESMF_AttributeSetObjCplCompCHList(target, name, valueList, convention
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -5362,7 +5362,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -5414,7 +5414,7 @@ subroutine ESMF_AttributeSetObjCplCompLG(target, name, value, convention, purpos
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -5480,7 +5480,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -5532,7 +5532,7 @@ subroutine ESMF_AttributeSetObjCplCompLGList(target, name, valueList, convention
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -5598,7 +5598,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -5650,7 +5650,7 @@ subroutine ESMF_AttributeSetObjGridCompR4(target, name, value, convention, purpo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -5716,7 +5716,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -5768,7 +5768,7 @@ subroutine ESMF_AttributeSetObjGridCompR4List(target, name, valueList, conventio
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -5834,7 +5834,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -5886,7 +5886,7 @@ subroutine ESMF_AttributeSetObjGridCompR8(target, name, value, convention, purpo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -5952,7 +5952,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -6004,7 +6004,7 @@ subroutine ESMF_AttributeSetObjGridCompR8List(target, name, valueList, conventio
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -6070,7 +6070,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -6122,7 +6122,7 @@ subroutine ESMF_AttributeSetObjGridCompI4(target, name, value, convention, purpo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -6188,7 +6188,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -6240,7 +6240,7 @@ subroutine ESMF_AttributeSetObjGridCompI4List(target, name, valueList, conventio
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -6306,7 +6306,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -6358,7 +6358,7 @@ subroutine ESMF_AttributeSetObjGridCompI8(target, name, value, convention, purpo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -6424,7 +6424,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -6476,7 +6476,7 @@ subroutine ESMF_AttributeSetObjGridCompI8List(target, name, valueList, conventio
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -6542,7 +6542,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -6594,7 +6594,7 @@ subroutine ESMF_AttributeSetObjGridCompCH(target, name, value, convention, purpo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -6660,7 +6660,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -6712,7 +6712,7 @@ subroutine ESMF_AttributeSetObjGridCompCHList(target, name, valueList, conventio
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -6778,7 +6778,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -6830,7 +6830,7 @@ subroutine ESMF_AttributeSetObjGridCompLG(target, name, value, convention, purpo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -6896,7 +6896,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -6948,7 +6948,7 @@ subroutine ESMF_AttributeSetObjGridCompLGList(target, name, valueList, conventio
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -7014,7 +7014,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -7066,7 +7066,7 @@ subroutine ESMF_AttributeSetObjSciCompR4(target, name, value, convention, purpos
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -7132,7 +7132,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -7184,7 +7184,7 @@ subroutine ESMF_AttributeSetObjSciCompR4List(target, name, valueList, convention
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -7250,7 +7250,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -7302,7 +7302,7 @@ subroutine ESMF_AttributeSetObjSciCompR8(target, name, value, convention, purpos
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -7368,7 +7368,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -7420,7 +7420,7 @@ subroutine ESMF_AttributeSetObjSciCompR8List(target, name, valueList, convention
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -7486,7 +7486,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -7538,7 +7538,7 @@ subroutine ESMF_AttributeSetObjSciCompI4(target, name, value, convention, purpos
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -7604,7 +7604,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -7656,7 +7656,7 @@ subroutine ESMF_AttributeSetObjSciCompI4List(target, name, valueList, convention
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -7722,7 +7722,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -7774,7 +7774,7 @@ subroutine ESMF_AttributeSetObjSciCompI8(target, name, value, convention, purpos
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -7840,7 +7840,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -7892,7 +7892,7 @@ subroutine ESMF_AttributeSetObjSciCompI8List(target, name, valueList, convention
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -7958,7 +7958,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -8010,7 +8010,7 @@ subroutine ESMF_AttributeSetObjSciCompCH(target, name, value, convention, purpos
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -8076,7 +8076,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -8128,7 +8128,7 @@ subroutine ESMF_AttributeSetObjSciCompCHList(target, name, valueList, convention
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -8194,7 +8194,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -8246,7 +8246,7 @@ subroutine ESMF_AttributeSetObjSciCompLG(target, name, value, convention, purpos
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -8312,7 +8312,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -8364,7 +8364,7 @@ subroutine ESMF_AttributeSetObjSciCompLGList(target, name, valueList, convention
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -8430,7 +8430,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -8482,7 +8482,7 @@ subroutine ESMF_AttributeSetObjDistGridR4(target, name, value, convention, purpo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -8548,7 +8548,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -8600,7 +8600,7 @@ subroutine ESMF_AttributeSetObjDistGridR4List(target, name, valueList, conventio
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -8666,7 +8666,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -8718,7 +8718,7 @@ subroutine ESMF_AttributeSetObjDistGridR8(target, name, value, convention, purpo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -8784,7 +8784,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -8836,7 +8836,7 @@ subroutine ESMF_AttributeSetObjDistGridR8List(target, name, valueList, conventio
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -8902,7 +8902,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -8954,7 +8954,7 @@ subroutine ESMF_AttributeSetObjDistGridI4(target, name, value, convention, purpo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -9020,7 +9020,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -9072,7 +9072,7 @@ subroutine ESMF_AttributeSetObjDistGridI4List(target, name, valueList, conventio
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -9138,7 +9138,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -9190,7 +9190,7 @@ subroutine ESMF_AttributeSetObjDistGridI8(target, name, value, convention, purpo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -9256,7 +9256,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -9308,7 +9308,7 @@ subroutine ESMF_AttributeSetObjDistGridI8List(target, name, valueList, conventio
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -9374,7 +9374,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -9426,7 +9426,7 @@ subroutine ESMF_AttributeSetObjDistGridCH(target, name, value, convention, purpo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -9492,7 +9492,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -9544,7 +9544,7 @@ subroutine ESMF_AttributeSetObjDistGridCHList(target, name, valueList, conventio
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -9610,7 +9610,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -9662,7 +9662,7 @@ subroutine ESMF_AttributeSetObjDistGridLG(target, name, value, convention, purpo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -9728,7 +9728,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -9780,7 +9780,7 @@ subroutine ESMF_AttributeSetObjDistGridLGList(target, name, valueList, conventio
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -9846,7 +9846,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -9898,7 +9898,7 @@ subroutine ESMF_AttributeSetObjFieldR4(target, name, value, convention, purpose,
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -9964,7 +9964,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -10016,7 +10016,7 @@ subroutine ESMF_AttributeSetObjFieldR4List(target, name, valueList, convention, 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -10082,7 +10082,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -10134,7 +10134,7 @@ subroutine ESMF_AttributeSetObjFieldR8(target, name, value, convention, purpose,
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -10200,7 +10200,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -10252,7 +10252,7 @@ subroutine ESMF_AttributeSetObjFieldR8List(target, name, valueList, convention, 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -10318,7 +10318,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -10370,7 +10370,7 @@ subroutine ESMF_AttributeSetObjFieldI4(target, name, value, convention, purpose,
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -10436,7 +10436,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -10488,7 +10488,7 @@ subroutine ESMF_AttributeSetObjFieldI4List(target, name, valueList, convention, 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -10554,7 +10554,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -10606,7 +10606,7 @@ subroutine ESMF_AttributeSetObjFieldI8(target, name, value, convention, purpose,
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -10672,7 +10672,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -10724,7 +10724,7 @@ subroutine ESMF_AttributeSetObjFieldI8List(target, name, valueList, convention, 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -10790,7 +10790,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -10842,7 +10842,7 @@ subroutine ESMF_AttributeSetObjFieldCH(target, name, value, convention, purpose,
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -10908,7 +10908,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -10960,7 +10960,7 @@ subroutine ESMF_AttributeSetObjFieldCHList(target, name, valueList, convention, 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -11026,7 +11026,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -11078,7 +11078,7 @@ subroutine ESMF_AttributeSetObjFieldLG(target, name, value, convention, purpose,
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -11144,7 +11144,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -11196,7 +11196,7 @@ subroutine ESMF_AttributeSetObjFieldLGList(target, name, valueList, convention, 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -11262,7 +11262,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -11314,7 +11314,7 @@ subroutine ESMF_AttributeSetObjFieldBundleR4(target, name, value, convention, pu
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -11380,7 +11380,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -11432,7 +11432,7 @@ subroutine ESMF_AttributeSetObjFieldBundleR4List(target, name, valueList, conven
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -11498,7 +11498,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -11550,7 +11550,7 @@ subroutine ESMF_AttributeSetObjFieldBundleR8(target, name, value, convention, pu
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -11616,7 +11616,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -11668,7 +11668,7 @@ subroutine ESMF_AttributeSetObjFieldBundleR8List(target, name, valueList, conven
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -11734,7 +11734,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -11786,7 +11786,7 @@ subroutine ESMF_AttributeSetObjFieldBundleI4(target, name, value, convention, pu
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -11852,7 +11852,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -11904,7 +11904,7 @@ subroutine ESMF_AttributeSetObjFieldBundleI4List(target, name, valueList, conven
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -11970,7 +11970,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -12022,7 +12022,7 @@ subroutine ESMF_AttributeSetObjFieldBundleI8(target, name, value, convention, pu
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -12088,7 +12088,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -12140,7 +12140,7 @@ subroutine ESMF_AttributeSetObjFieldBundleI8List(target, name, valueList, conven
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -12206,7 +12206,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -12258,7 +12258,7 @@ subroutine ESMF_AttributeSetObjFieldBundleCH(target, name, value, convention, pu
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -12324,7 +12324,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -12376,7 +12376,7 @@ subroutine ESMF_AttributeSetObjFieldBundleCHList(target, name, valueList, conven
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -12442,7 +12442,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -12494,7 +12494,7 @@ subroutine ESMF_AttributeSetObjFieldBundleLG(target, name, value, convention, pu
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -12560,7 +12560,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -12612,7 +12612,7 @@ subroutine ESMF_AttributeSetObjFieldBundleLGList(target, name, valueList, conven
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -12678,7 +12678,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -12730,7 +12730,7 @@ subroutine ESMF_AttributeSetObjGridR4(target, name, value, convention, purpose, 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -12796,7 +12796,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -12848,7 +12848,7 @@ subroutine ESMF_AttributeSetObjGridR4List(target, name, valueList, convention, p
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -12914,7 +12914,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -12966,7 +12966,7 @@ subroutine ESMF_AttributeSetObjGridR8(target, name, value, convention, purpose, 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -13032,7 +13032,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -13084,7 +13084,7 @@ subroutine ESMF_AttributeSetObjGridR8List(target, name, valueList, convention, p
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -13150,7 +13150,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -13202,7 +13202,7 @@ subroutine ESMF_AttributeSetObjGridI4(target, name, value, convention, purpose, 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -13268,7 +13268,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -13320,7 +13320,7 @@ subroutine ESMF_AttributeSetObjGridI4List(target, name, valueList, convention, p
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -13386,7 +13386,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -13438,7 +13438,7 @@ subroutine ESMF_AttributeSetObjGridI8(target, name, value, convention, purpose, 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -13504,7 +13504,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -13556,7 +13556,7 @@ subroutine ESMF_AttributeSetObjGridI8List(target, name, valueList, convention, p
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -13622,7 +13622,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -13674,7 +13674,7 @@ subroutine ESMF_AttributeSetObjGridCH(target, name, value, convention, purpose, 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -13740,7 +13740,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -13792,7 +13792,7 @@ subroutine ESMF_AttributeSetObjGridCHList(target, name, valueList, convention, p
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -13858,7 +13858,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -13910,7 +13910,7 @@ subroutine ESMF_AttributeSetObjGridLG(target, name, value, convention, purpose, 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -13976,7 +13976,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -14028,7 +14028,7 @@ subroutine ESMF_AttributeSetObjGridLGList(target, name, valueList, convention, p
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -14094,7 +14094,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -14146,7 +14146,7 @@ subroutine ESMF_AttributeSetObjStateR4(target, name, value, convention, purpose,
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -14212,7 +14212,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -14264,7 +14264,7 @@ subroutine ESMF_AttributeSetObjStateR4List(target, name, valueList, convention, 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -14330,7 +14330,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -14382,7 +14382,7 @@ subroutine ESMF_AttributeSetObjStateR8(target, name, value, convention, purpose,
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -14448,7 +14448,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -14500,7 +14500,7 @@ subroutine ESMF_AttributeSetObjStateR8List(target, name, valueList, convention, 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -14566,7 +14566,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -14618,7 +14618,7 @@ subroutine ESMF_AttributeSetObjStateI4(target, name, value, convention, purpose,
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -14684,7 +14684,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -14736,7 +14736,7 @@ subroutine ESMF_AttributeSetObjStateI4List(target, name, valueList, convention, 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -14802,7 +14802,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -14854,7 +14854,7 @@ subroutine ESMF_AttributeSetObjStateI8(target, name, value, convention, purpose,
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -14920,7 +14920,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -14972,7 +14972,7 @@ subroutine ESMF_AttributeSetObjStateI8List(target, name, valueList, convention, 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -15038,7 +15038,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -15090,7 +15090,7 @@ subroutine ESMF_AttributeSetObjStateCH(target, name, value, convention, purpose,
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -15156,7 +15156,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -15208,7 +15208,7 @@ subroutine ESMF_AttributeSetObjStateCHList(target, name, valueList, convention, 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -15274,7 +15274,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -15326,7 +15326,7 @@ subroutine ESMF_AttributeSetObjStateLG(target, name, value, convention, purpose,
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -15392,7 +15392,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -15444,7 +15444,7 @@ subroutine ESMF_AttributeSetObjStateLGList(target, name, valueList, convention, 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -15510,7 +15510,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -15562,7 +15562,7 @@ subroutine ESMF_AttributeSetObjLocStreamR4(target, name, value, convention, purp
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -15628,7 +15628,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -15680,7 +15680,7 @@ subroutine ESMF_AttributeSetObjLocStreamR4List(target, name, valueList, conventi
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -15746,7 +15746,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -15798,7 +15798,7 @@ subroutine ESMF_AttributeSetObjLocStreamR8(target, name, value, convention, purp
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -15864,7 +15864,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -15916,7 +15916,7 @@ subroutine ESMF_AttributeSetObjLocStreamR8List(target, name, valueList, conventi
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -15982,7 +15982,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -16034,7 +16034,7 @@ subroutine ESMF_AttributeSetObjLocStreamI4(target, name, value, convention, purp
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -16100,7 +16100,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -16152,7 +16152,7 @@ subroutine ESMF_AttributeSetObjLocStreamI4List(target, name, valueList, conventi
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -16218,7 +16218,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -16270,7 +16270,7 @@ subroutine ESMF_AttributeSetObjLocStreamI8(target, name, value, convention, purp
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -16336,7 +16336,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -16388,7 +16388,7 @@ subroutine ESMF_AttributeSetObjLocStreamI8List(target, name, valueList, conventi
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -16454,7 +16454,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -16506,7 +16506,7 @@ subroutine ESMF_AttributeSetObjLocStreamCH(target, name, value, convention, purp
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -16572,7 +16572,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -16624,7 +16624,7 @@ subroutine ESMF_AttributeSetObjLocStreamCHList(target, name, valueList, conventi
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -16690,7 +16690,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -16742,7 +16742,7 @@ subroutine ESMF_AttributeSetObjLocStreamLG(target, name, value, convention, purp
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -16808,7 +16808,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -16860,7 +16860,7 @@ subroutine ESMF_AttributeSetObjLocStreamLGList(target, name, valueList, conventi
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -16929,7 +16929,7 @@ subroutine ESMF_AttributeGetAttPackArrayR4(target, name, attpack, value, default
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -16980,7 +16980,7 @@ subroutine ESMF_AttributeGetObjArrayR4(target, name, value, defaultvalue, conven
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -17028,7 +17028,7 @@ subroutine ESMF_AttributeGetAttPackArrayR8(target, name, attpack, value, default
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -17079,7 +17079,7 @@ subroutine ESMF_AttributeGetObjArrayR8(target, name, value, defaultvalue, conven
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -17127,7 +17127,7 @@ subroutine ESMF_AttributeGetAttPackArrayI4(target, name, attpack, value, default
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -17178,7 +17178,7 @@ subroutine ESMF_AttributeGetObjArrayI4(target, name, value, defaultvalue, conven
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -17226,7 +17226,7 @@ subroutine ESMF_AttributeGetAttPackArrayI8(target, name, attpack, value, default
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -17277,7 +17277,7 @@ subroutine ESMF_AttributeGetObjArrayI8(target, name, value, defaultvalue, conven
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -17325,7 +17325,7 @@ subroutine ESMF_AttributeGetAttPackArrayCH(target, name, attpack, value, default
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -17376,7 +17376,7 @@ subroutine ESMF_AttributeGetObjArrayCH(target, name, value, defaultvalue, conven
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -17424,7 +17424,7 @@ subroutine ESMF_AttributeGetAttPackArrayLG(target, name, attpack, value, default
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -17475,7 +17475,7 @@ subroutine ESMF_AttributeGetObjArrayLG(target, name, value, defaultvalue, conven
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -17523,7 +17523,7 @@ subroutine ESMF_AttributeGetAttPackArrayBundleR4(target, name, attpack, value, d
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -17574,7 +17574,7 @@ subroutine ESMF_AttributeGetObjArrayBundleR4(target, name, value, defaultvalue, 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -17622,7 +17622,7 @@ subroutine ESMF_AttributeGetAttPackArrayBundleR8(target, name, attpack, value, d
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -17673,7 +17673,7 @@ subroutine ESMF_AttributeGetObjArrayBundleR8(target, name, value, defaultvalue, 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -17721,7 +17721,7 @@ subroutine ESMF_AttributeGetAttPackArrayBundleI4(target, name, attpack, value, d
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -17772,7 +17772,7 @@ subroutine ESMF_AttributeGetObjArrayBundleI4(target, name, value, defaultvalue, 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -17820,7 +17820,7 @@ subroutine ESMF_AttributeGetAttPackArrayBundleI8(target, name, attpack, value, d
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -17871,7 +17871,7 @@ subroutine ESMF_AttributeGetObjArrayBundleI8(target, name, value, defaultvalue, 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -17919,7 +17919,7 @@ subroutine ESMF_AttributeGetAttPackArrayBundleCH(target, name, attpack, value, d
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -17970,7 +17970,7 @@ subroutine ESMF_AttributeGetObjArrayBundleCH(target, name, value, defaultvalue, 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -18018,7 +18018,7 @@ subroutine ESMF_AttributeGetAttPackArrayBundleLG(target, name, attpack, value, d
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -18069,7 +18069,7 @@ subroutine ESMF_AttributeGetObjArrayBundleLG(target, name, value, defaultvalue, 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -18117,7 +18117,7 @@ subroutine ESMF_AttributeGetAttPackCplCompR4(target, name, attpack, value, defau
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -18168,7 +18168,7 @@ subroutine ESMF_AttributeGetObjCplCompR4(target, name, value, defaultvalue, conv
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -18216,7 +18216,7 @@ subroutine ESMF_AttributeGetAttPackCplCompR8(target, name, attpack, value, defau
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -18267,7 +18267,7 @@ subroutine ESMF_AttributeGetObjCplCompR8(target, name, value, defaultvalue, conv
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -18315,7 +18315,7 @@ subroutine ESMF_AttributeGetAttPackCplCompI4(target, name, attpack, value, defau
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -18366,7 +18366,7 @@ subroutine ESMF_AttributeGetObjCplCompI4(target, name, value, defaultvalue, conv
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -18414,7 +18414,7 @@ subroutine ESMF_AttributeGetAttPackCplCompI8(target, name, attpack, value, defau
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -18465,7 +18465,7 @@ subroutine ESMF_AttributeGetObjCplCompI8(target, name, value, defaultvalue, conv
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -18513,7 +18513,7 @@ subroutine ESMF_AttributeGetAttPackCplCompCH(target, name, attpack, value, defau
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -18564,7 +18564,7 @@ subroutine ESMF_AttributeGetObjCplCompCH(target, name, value, defaultvalue, conv
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -18612,7 +18612,7 @@ subroutine ESMF_AttributeGetAttPackCplCompLG(target, name, attpack, value, defau
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -18663,7 +18663,7 @@ subroutine ESMF_AttributeGetObjCplCompLG(target, name, value, defaultvalue, conv
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -18711,7 +18711,7 @@ subroutine ESMF_AttributeGetAttPackGridCompR4(target, name, attpack, value, defa
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -18762,7 +18762,7 @@ subroutine ESMF_AttributeGetObjGridCompR4(target, name, value, defaultvalue, con
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -18810,7 +18810,7 @@ subroutine ESMF_AttributeGetAttPackGridCompR8(target, name, attpack, value, defa
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -18861,7 +18861,7 @@ subroutine ESMF_AttributeGetObjGridCompR8(target, name, value, defaultvalue, con
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -18909,7 +18909,7 @@ subroutine ESMF_AttributeGetAttPackGridCompI4(target, name, attpack, value, defa
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -18960,7 +18960,7 @@ subroutine ESMF_AttributeGetObjGridCompI4(target, name, value, defaultvalue, con
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -19008,7 +19008,7 @@ subroutine ESMF_AttributeGetAttPackGridCompI8(target, name, attpack, value, defa
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -19059,7 +19059,7 @@ subroutine ESMF_AttributeGetObjGridCompI8(target, name, value, defaultvalue, con
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -19107,7 +19107,7 @@ subroutine ESMF_AttributeGetAttPackGridCompCH(target, name, attpack, value, defa
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -19158,7 +19158,7 @@ subroutine ESMF_AttributeGetObjGridCompCH(target, name, value, defaultvalue, con
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -19206,7 +19206,7 @@ subroutine ESMF_AttributeGetAttPackGridCompLG(target, name, attpack, value, defa
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -19257,7 +19257,7 @@ subroutine ESMF_AttributeGetObjGridCompLG(target, name, value, defaultvalue, con
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -19305,7 +19305,7 @@ subroutine ESMF_AttributeGetAttPackSciCompR4(target, name, attpack, value, defau
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -19356,7 +19356,7 @@ subroutine ESMF_AttributeGetObjSciCompR4(target, name, value, defaultvalue, conv
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -19404,7 +19404,7 @@ subroutine ESMF_AttributeGetAttPackSciCompR8(target, name, attpack, value, defau
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -19455,7 +19455,7 @@ subroutine ESMF_AttributeGetObjSciCompR8(target, name, value, defaultvalue, conv
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -19503,7 +19503,7 @@ subroutine ESMF_AttributeGetAttPackSciCompI4(target, name, attpack, value, defau
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -19554,7 +19554,7 @@ subroutine ESMF_AttributeGetObjSciCompI4(target, name, value, defaultvalue, conv
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -19602,7 +19602,7 @@ subroutine ESMF_AttributeGetAttPackSciCompI8(target, name, attpack, value, defau
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -19653,7 +19653,7 @@ subroutine ESMF_AttributeGetObjSciCompI8(target, name, value, defaultvalue, conv
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -19701,7 +19701,7 @@ subroutine ESMF_AttributeGetAttPackSciCompCH(target, name, attpack, value, defau
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -19752,7 +19752,7 @@ subroutine ESMF_AttributeGetObjSciCompCH(target, name, value, defaultvalue, conv
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -19800,7 +19800,7 @@ subroutine ESMF_AttributeGetAttPackSciCompLG(target, name, attpack, value, defau
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -19851,7 +19851,7 @@ subroutine ESMF_AttributeGetObjSciCompLG(target, name, value, defaultvalue, conv
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -19899,7 +19899,7 @@ subroutine ESMF_AttributeGetAttPackDistGridR4(target, name, attpack, value, defa
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -19950,7 +19950,7 @@ subroutine ESMF_AttributeGetObjDistGridR4(target, name, value, defaultvalue, con
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -19998,7 +19998,7 @@ subroutine ESMF_AttributeGetAttPackDistGridR8(target, name, attpack, value, defa
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -20049,7 +20049,7 @@ subroutine ESMF_AttributeGetObjDistGridR8(target, name, value, defaultvalue, con
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -20097,7 +20097,7 @@ subroutine ESMF_AttributeGetAttPackDistGridI4(target, name, attpack, value, defa
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -20148,7 +20148,7 @@ subroutine ESMF_AttributeGetObjDistGridI4(target, name, value, defaultvalue, con
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -20196,7 +20196,7 @@ subroutine ESMF_AttributeGetAttPackDistGridI8(target, name, attpack, value, defa
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -20247,7 +20247,7 @@ subroutine ESMF_AttributeGetObjDistGridI8(target, name, value, defaultvalue, con
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -20295,7 +20295,7 @@ subroutine ESMF_AttributeGetAttPackDistGridCH(target, name, attpack, value, defa
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -20346,7 +20346,7 @@ subroutine ESMF_AttributeGetObjDistGridCH(target, name, value, defaultvalue, con
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -20394,7 +20394,7 @@ subroutine ESMF_AttributeGetAttPackDistGridLG(target, name, attpack, value, defa
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -20445,7 +20445,7 @@ subroutine ESMF_AttributeGetObjDistGridLG(target, name, value, defaultvalue, con
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -20493,7 +20493,7 @@ subroutine ESMF_AttributeGetAttPackFieldR4(target, name, attpack, value, default
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -20544,7 +20544,7 @@ subroutine ESMF_AttributeGetObjFieldR4(target, name, value, defaultvalue, conven
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -20592,7 +20592,7 @@ subroutine ESMF_AttributeGetAttPackFieldR8(target, name, attpack, value, default
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -20643,7 +20643,7 @@ subroutine ESMF_AttributeGetObjFieldR8(target, name, value, defaultvalue, conven
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -20691,7 +20691,7 @@ subroutine ESMF_AttributeGetAttPackFieldI4(target, name, attpack, value, default
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -20742,7 +20742,7 @@ subroutine ESMF_AttributeGetObjFieldI4(target, name, value, defaultvalue, conven
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -20790,7 +20790,7 @@ subroutine ESMF_AttributeGetAttPackFieldI8(target, name, attpack, value, default
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -20841,7 +20841,7 @@ subroutine ESMF_AttributeGetObjFieldI8(target, name, value, defaultvalue, conven
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -20889,7 +20889,7 @@ subroutine ESMF_AttributeGetAttPackFieldCH(target, name, attpack, value, default
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -20940,7 +20940,7 @@ subroutine ESMF_AttributeGetObjFieldCH(target, name, value, defaultvalue, conven
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -20988,7 +20988,7 @@ subroutine ESMF_AttributeGetAttPackFieldLG(target, name, attpack, value, default
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -21039,7 +21039,7 @@ subroutine ESMF_AttributeGetObjFieldLG(target, name, value, defaultvalue, conven
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -21087,7 +21087,7 @@ subroutine ESMF_AttributeGetAttPackFieldBundleR4(target, name, attpack, value, d
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -21138,7 +21138,7 @@ subroutine ESMF_AttributeGetObjFieldBundleR4(target, name, value, defaultvalue, 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -21186,7 +21186,7 @@ subroutine ESMF_AttributeGetAttPackFieldBundleR8(target, name, attpack, value, d
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -21237,7 +21237,7 @@ subroutine ESMF_AttributeGetObjFieldBundleR8(target, name, value, defaultvalue, 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -21285,7 +21285,7 @@ subroutine ESMF_AttributeGetAttPackFieldBundleI4(target, name, attpack, value, d
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -21336,7 +21336,7 @@ subroutine ESMF_AttributeGetObjFieldBundleI4(target, name, value, defaultvalue, 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -21384,7 +21384,7 @@ subroutine ESMF_AttributeGetAttPackFieldBundleI8(target, name, attpack, value, d
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -21435,7 +21435,7 @@ subroutine ESMF_AttributeGetObjFieldBundleI8(target, name, value, defaultvalue, 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -21483,7 +21483,7 @@ subroutine ESMF_AttributeGetAttPackFieldBundleCH(target, name, attpack, value, d
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -21534,7 +21534,7 @@ subroutine ESMF_AttributeGetObjFieldBundleCH(target, name, value, defaultvalue, 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -21582,7 +21582,7 @@ subroutine ESMF_AttributeGetAttPackFieldBundleLG(target, name, attpack, value, d
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -21633,7 +21633,7 @@ subroutine ESMF_AttributeGetObjFieldBundleLG(target, name, value, defaultvalue, 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -21681,7 +21681,7 @@ subroutine ESMF_AttributeGetAttPackGridR4(target, name, attpack, value, defaultv
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -21732,7 +21732,7 @@ subroutine ESMF_AttributeGetObjGridR4(target, name, value, defaultvalue, convent
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -21780,7 +21780,7 @@ subroutine ESMF_AttributeGetAttPackGridR8(target, name, attpack, value, defaultv
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -21831,7 +21831,7 @@ subroutine ESMF_AttributeGetObjGridR8(target, name, value, defaultvalue, convent
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -21879,7 +21879,7 @@ subroutine ESMF_AttributeGetAttPackGridI4(target, name, attpack, value, defaultv
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -21930,7 +21930,7 @@ subroutine ESMF_AttributeGetObjGridI4(target, name, value, defaultvalue, convent
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -21978,7 +21978,7 @@ subroutine ESMF_AttributeGetAttPackGridI8(target, name, attpack, value, defaultv
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -22029,7 +22029,7 @@ subroutine ESMF_AttributeGetObjGridI8(target, name, value, defaultvalue, convent
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -22077,7 +22077,7 @@ subroutine ESMF_AttributeGetAttPackGridCH(target, name, attpack, value, defaultv
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -22128,7 +22128,7 @@ subroutine ESMF_AttributeGetObjGridCH(target, name, value, defaultvalue, convent
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -22176,7 +22176,7 @@ subroutine ESMF_AttributeGetAttPackGridLG(target, name, attpack, value, defaultv
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -22227,7 +22227,7 @@ subroutine ESMF_AttributeGetObjGridLG(target, name, value, defaultvalue, convent
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -22275,7 +22275,7 @@ subroutine ESMF_AttributeGetAttPackStateR4(target, name, attpack, value, default
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -22326,7 +22326,7 @@ subroutine ESMF_AttributeGetObjStateR4(target, name, value, defaultvalue, conven
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -22374,7 +22374,7 @@ subroutine ESMF_AttributeGetAttPackStateR8(target, name, attpack, value, default
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -22425,7 +22425,7 @@ subroutine ESMF_AttributeGetObjStateR8(target, name, value, defaultvalue, conven
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -22473,7 +22473,7 @@ subroutine ESMF_AttributeGetAttPackStateI4(target, name, attpack, value, default
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -22524,7 +22524,7 @@ subroutine ESMF_AttributeGetObjStateI4(target, name, value, defaultvalue, conven
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -22572,7 +22572,7 @@ subroutine ESMF_AttributeGetAttPackStateI8(target, name, attpack, value, default
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -22623,7 +22623,7 @@ subroutine ESMF_AttributeGetObjStateI8(target, name, value, defaultvalue, conven
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -22671,7 +22671,7 @@ subroutine ESMF_AttributeGetAttPackStateCH(target, name, attpack, value, default
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -22722,7 +22722,7 @@ subroutine ESMF_AttributeGetObjStateCH(target, name, value, defaultvalue, conven
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -22770,7 +22770,7 @@ subroutine ESMF_AttributeGetAttPackStateLG(target, name, attpack, value, default
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -22821,7 +22821,7 @@ subroutine ESMF_AttributeGetObjStateLG(target, name, value, defaultvalue, conven
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -22869,7 +22869,7 @@ subroutine ESMF_AttributeGetAttPackLocStreamR4(target, name, attpack, value, def
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -22920,7 +22920,7 @@ subroutine ESMF_AttributeGetObjLocStreamR4(target, name, value, defaultvalue, co
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -22968,7 +22968,7 @@ subroutine ESMF_AttributeGetAttPackLocStreamR8(target, name, attpack, value, def
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -23019,7 +23019,7 @@ subroutine ESMF_AttributeGetObjLocStreamR8(target, name, value, defaultvalue, co
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -23067,7 +23067,7 @@ subroutine ESMF_AttributeGetAttPackLocStreamI4(target, name, attpack, value, def
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -23118,7 +23118,7 @@ subroutine ESMF_AttributeGetObjLocStreamI4(target, name, value, defaultvalue, co
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -23166,7 +23166,7 @@ subroutine ESMF_AttributeGetAttPackLocStreamI8(target, name, attpack, value, def
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -23217,7 +23217,7 @@ subroutine ESMF_AttributeGetObjLocStreamI8(target, name, value, defaultvalue, co
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -23265,7 +23265,7 @@ subroutine ESMF_AttributeGetAttPackLocStreamCH(target, name, attpack, value, def
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -23316,7 +23316,7 @@ subroutine ESMF_AttributeGetObjLocStreamCH(target, name, value, defaultvalue, co
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -23364,7 +23364,7 @@ subroutine ESMF_AttributeGetAttPackLocStreamLG(target, name, attpack, value, def
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -23415,7 +23415,7 @@ subroutine ESMF_AttributeGetObjLocStreamLG(target, name, value, defaultvalue, co
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -23467,7 +23467,7 @@ subroutine ESMF_AttributeGetAttPackArrayR4List(target, name, attpack, valueList,
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -23535,7 +23535,7 @@ subroutine ESMF_AttributeGetObjArrayR4List(target, name, valueList, defaultvalue
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -23605,7 +23605,7 @@ subroutine ESMF_AttributeGetAttPackArrayR8List(target, name, attpack, valueList,
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -23673,7 +23673,7 @@ subroutine ESMF_AttributeGetObjArrayR8List(target, name, valueList, defaultvalue
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -23743,7 +23743,7 @@ subroutine ESMF_AttributeGetAttPackArrayI4List(target, name, attpack, valueList,
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -23811,7 +23811,7 @@ subroutine ESMF_AttributeGetObjArrayI4List(target, name, valueList, defaultvalue
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -23881,7 +23881,7 @@ subroutine ESMF_AttributeGetAttPackArrayI8List(target, name, attpack, valueList,
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -23949,7 +23949,7 @@ subroutine ESMF_AttributeGetObjArrayI8List(target, name, valueList, defaultvalue
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -24019,7 +24019,7 @@ subroutine ESMF_AttributeGetAttPackArrayCHList(target, name, attpack, valueList,
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -24087,7 +24087,7 @@ subroutine ESMF_AttributeGetObjArrayCHList(target, name, valueList, defaultvalue
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -24157,7 +24157,7 @@ subroutine ESMF_AttributeGetAttPackArrayLGList(target, name, attpack, valueList,
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -24225,7 +24225,7 @@ subroutine ESMF_AttributeGetObjArrayLGList(target, name, valueList, defaultvalue
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -24295,7 +24295,7 @@ subroutine ESMF_AttributeGetAttPackArrayBundleR4List(target, name, attpack, valu
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -24363,7 +24363,7 @@ subroutine ESMF_AttributeGetObjArrayBundleR4List(target, name, valueList, defaul
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -24433,7 +24433,7 @@ subroutine ESMF_AttributeGetAttPackArrayBundleR8List(target, name, attpack, valu
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -24501,7 +24501,7 @@ subroutine ESMF_AttributeGetObjArrayBundleR8List(target, name, valueList, defaul
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -24571,7 +24571,7 @@ subroutine ESMF_AttributeGetAttPackArrayBundleI4List(target, name, attpack, valu
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -24639,7 +24639,7 @@ subroutine ESMF_AttributeGetObjArrayBundleI4List(target, name, valueList, defaul
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -24709,7 +24709,7 @@ subroutine ESMF_AttributeGetAttPackArrayBundleI8List(target, name, attpack, valu
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -24777,7 +24777,7 @@ subroutine ESMF_AttributeGetObjArrayBundleI8List(target, name, valueList, defaul
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -24847,7 +24847,7 @@ subroutine ESMF_AttributeGetAttPackArrayBundleCHList(target, name, attpack, valu
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -24915,7 +24915,7 @@ subroutine ESMF_AttributeGetObjArrayBundleCHList(target, name, valueList, defaul
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -24985,7 +24985,7 @@ subroutine ESMF_AttributeGetAttPackArrayBundleLGList(target, name, attpack, valu
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -25053,7 +25053,7 @@ subroutine ESMF_AttributeGetObjArrayBundleLGList(target, name, valueList, defaul
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -25123,7 +25123,7 @@ subroutine ESMF_AttributeGetAttPackCplCompR4List(target, name, attpack, valueLis
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -25191,7 +25191,7 @@ subroutine ESMF_AttributeGetObjCplCompR4List(target, name, valueList, defaultval
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -25261,7 +25261,7 @@ subroutine ESMF_AttributeGetAttPackCplCompR8List(target, name, attpack, valueLis
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -25329,7 +25329,7 @@ subroutine ESMF_AttributeGetObjCplCompR8List(target, name, valueList, defaultval
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -25399,7 +25399,7 @@ subroutine ESMF_AttributeGetAttPackCplCompI4List(target, name, attpack, valueLis
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -25467,7 +25467,7 @@ subroutine ESMF_AttributeGetObjCplCompI4List(target, name, valueList, defaultval
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -25537,7 +25537,7 @@ subroutine ESMF_AttributeGetAttPackCplCompI8List(target, name, attpack, valueLis
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -25605,7 +25605,7 @@ subroutine ESMF_AttributeGetObjCplCompI8List(target, name, valueList, defaultval
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -25675,7 +25675,7 @@ subroutine ESMF_AttributeGetAttPackCplCompCHList(target, name, attpack, valueLis
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -25743,7 +25743,7 @@ subroutine ESMF_AttributeGetObjCplCompCHList(target, name, valueList, defaultval
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -25813,7 +25813,7 @@ subroutine ESMF_AttributeGetAttPackCplCompLGList(target, name, attpack, valueLis
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -25881,7 +25881,7 @@ subroutine ESMF_AttributeGetObjCplCompLGList(target, name, valueList, defaultval
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -25951,7 +25951,7 @@ subroutine ESMF_AttributeGetAttPackGridCompR4List(target, name, attpack, valueLi
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -26019,7 +26019,7 @@ subroutine ESMF_AttributeGetObjGridCompR4List(target, name, valueList, defaultva
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -26089,7 +26089,7 @@ subroutine ESMF_AttributeGetAttPackGridCompR8List(target, name, attpack, valueLi
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -26157,7 +26157,7 @@ subroutine ESMF_AttributeGetObjGridCompR8List(target, name, valueList, defaultva
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -26227,7 +26227,7 @@ subroutine ESMF_AttributeGetAttPackGridCompI4List(target, name, attpack, valueLi
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -26295,7 +26295,7 @@ subroutine ESMF_AttributeGetObjGridCompI4List(target, name, valueList, defaultva
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -26365,7 +26365,7 @@ subroutine ESMF_AttributeGetAttPackGridCompI8List(target, name, attpack, valueLi
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -26433,7 +26433,7 @@ subroutine ESMF_AttributeGetObjGridCompI8List(target, name, valueList, defaultva
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -26503,7 +26503,7 @@ subroutine ESMF_AttributeGetAttPackGridCompCHList(target, name, attpack, valueLi
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -26571,7 +26571,7 @@ subroutine ESMF_AttributeGetObjGridCompCHList(target, name, valueList, defaultva
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -26641,7 +26641,7 @@ subroutine ESMF_AttributeGetAttPackGridCompLGList(target, name, attpack, valueLi
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -26709,7 +26709,7 @@ subroutine ESMF_AttributeGetObjGridCompLGList(target, name, valueList, defaultva
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -26779,7 +26779,7 @@ subroutine ESMF_AttributeGetAttPackSciCompR4List(target, name, attpack, valueLis
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -26847,7 +26847,7 @@ subroutine ESMF_AttributeGetObjSciCompR4List(target, name, valueList, defaultval
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -26917,7 +26917,7 @@ subroutine ESMF_AttributeGetAttPackSciCompR8List(target, name, attpack, valueLis
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -26985,7 +26985,7 @@ subroutine ESMF_AttributeGetObjSciCompR8List(target, name, valueList, defaultval
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -27055,7 +27055,7 @@ subroutine ESMF_AttributeGetAttPackSciCompI4List(target, name, attpack, valueLis
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -27123,7 +27123,7 @@ subroutine ESMF_AttributeGetObjSciCompI4List(target, name, valueList, defaultval
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -27193,7 +27193,7 @@ subroutine ESMF_AttributeGetAttPackSciCompI8List(target, name, attpack, valueLis
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -27261,7 +27261,7 @@ subroutine ESMF_AttributeGetObjSciCompI8List(target, name, valueList, defaultval
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -27331,7 +27331,7 @@ subroutine ESMF_AttributeGetAttPackSciCompCHList(target, name, attpack, valueLis
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -27399,7 +27399,7 @@ subroutine ESMF_AttributeGetObjSciCompCHList(target, name, valueList, defaultval
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -27469,7 +27469,7 @@ subroutine ESMF_AttributeGetAttPackSciCompLGList(target, name, attpack, valueLis
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -27537,7 +27537,7 @@ subroutine ESMF_AttributeGetObjSciCompLGList(target, name, valueList, defaultval
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -27607,7 +27607,7 @@ subroutine ESMF_AttributeGetAttPackDistGridR4List(target, name, attpack, valueLi
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -27675,7 +27675,7 @@ subroutine ESMF_AttributeGetObjDistGridR4List(target, name, valueList, defaultva
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -27745,7 +27745,7 @@ subroutine ESMF_AttributeGetAttPackDistGridR8List(target, name, attpack, valueLi
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -27813,7 +27813,7 @@ subroutine ESMF_AttributeGetObjDistGridR8List(target, name, valueList, defaultva
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -27883,7 +27883,7 @@ subroutine ESMF_AttributeGetAttPackDistGridI4List(target, name, attpack, valueLi
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -27951,7 +27951,7 @@ subroutine ESMF_AttributeGetObjDistGridI4List(target, name, valueList, defaultva
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -28021,7 +28021,7 @@ subroutine ESMF_AttributeGetAttPackDistGridI8List(target, name, attpack, valueLi
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -28089,7 +28089,7 @@ subroutine ESMF_AttributeGetObjDistGridI8List(target, name, valueList, defaultva
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -28159,7 +28159,7 @@ subroutine ESMF_AttributeGetAttPackDistGridCHList(target, name, attpack, valueLi
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -28227,7 +28227,7 @@ subroutine ESMF_AttributeGetObjDistGridCHList(target, name, valueList, defaultva
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -28297,7 +28297,7 @@ subroutine ESMF_AttributeGetAttPackDistGridLGList(target, name, attpack, valueLi
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -28365,7 +28365,7 @@ subroutine ESMF_AttributeGetObjDistGridLGList(target, name, valueList, defaultva
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -28435,7 +28435,7 @@ subroutine ESMF_AttributeGetAttPackFieldR4List(target, name, attpack, valueList,
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -28503,7 +28503,7 @@ subroutine ESMF_AttributeGetObjFieldR4List(target, name, valueList, defaultvalue
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -28573,7 +28573,7 @@ subroutine ESMF_AttributeGetAttPackFieldR8List(target, name, attpack, valueList,
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -28641,7 +28641,7 @@ subroutine ESMF_AttributeGetObjFieldR8List(target, name, valueList, defaultvalue
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -28711,7 +28711,7 @@ subroutine ESMF_AttributeGetAttPackFieldI4List(target, name, attpack, valueList,
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -28779,7 +28779,7 @@ subroutine ESMF_AttributeGetObjFieldI4List(target, name, valueList, defaultvalue
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -28849,7 +28849,7 @@ subroutine ESMF_AttributeGetAttPackFieldI8List(target, name, attpack, valueList,
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -28917,7 +28917,7 @@ subroutine ESMF_AttributeGetObjFieldI8List(target, name, valueList, defaultvalue
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -28987,7 +28987,7 @@ subroutine ESMF_AttributeGetAttPackFieldCHList(target, name, attpack, valueList,
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -29055,7 +29055,7 @@ subroutine ESMF_AttributeGetObjFieldCHList(target, name, valueList, defaultvalue
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -29125,7 +29125,7 @@ subroutine ESMF_AttributeGetAttPackFieldLGList(target, name, attpack, valueList,
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -29193,7 +29193,7 @@ subroutine ESMF_AttributeGetObjFieldLGList(target, name, valueList, defaultvalue
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -29263,7 +29263,7 @@ subroutine ESMF_AttributeGetAttPackFieldBundleR4List(target, name, attpack, valu
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -29331,7 +29331,7 @@ subroutine ESMF_AttributeGetObjFieldBundleR4List(target, name, valueList, defaul
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -29401,7 +29401,7 @@ subroutine ESMF_AttributeGetAttPackFieldBundleR8List(target, name, attpack, valu
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -29469,7 +29469,7 @@ subroutine ESMF_AttributeGetObjFieldBundleR8List(target, name, valueList, defaul
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -29539,7 +29539,7 @@ subroutine ESMF_AttributeGetAttPackFieldBundleI4List(target, name, attpack, valu
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -29607,7 +29607,7 @@ subroutine ESMF_AttributeGetObjFieldBundleI4List(target, name, valueList, defaul
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -29677,7 +29677,7 @@ subroutine ESMF_AttributeGetAttPackFieldBundleI8List(target, name, attpack, valu
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -29745,7 +29745,7 @@ subroutine ESMF_AttributeGetObjFieldBundleI8List(target, name, valueList, defaul
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -29815,7 +29815,7 @@ subroutine ESMF_AttributeGetAttPackFieldBundleCHList(target, name, attpack, valu
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -29883,7 +29883,7 @@ subroutine ESMF_AttributeGetObjFieldBundleCHList(target, name, valueList, defaul
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -29953,7 +29953,7 @@ subroutine ESMF_AttributeGetAttPackFieldBundleLGList(target, name, attpack, valu
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -30021,7 +30021,7 @@ subroutine ESMF_AttributeGetObjFieldBundleLGList(target, name, valueList, defaul
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -30091,7 +30091,7 @@ subroutine ESMF_AttributeGetAttPackGridR4List(target, name, attpack, valueList, 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -30159,7 +30159,7 @@ subroutine ESMF_AttributeGetObjGridR4List(target, name, valueList, defaultvalueL
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -30229,7 +30229,7 @@ subroutine ESMF_AttributeGetAttPackGridR8List(target, name, attpack, valueList, 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -30297,7 +30297,7 @@ subroutine ESMF_AttributeGetObjGridR8List(target, name, valueList, defaultvalueL
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -30367,7 +30367,7 @@ subroutine ESMF_AttributeGetAttPackGridI4List(target, name, attpack, valueList, 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -30435,7 +30435,7 @@ subroutine ESMF_AttributeGetObjGridI4List(target, name, valueList, defaultvalueL
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -30505,7 +30505,7 @@ subroutine ESMF_AttributeGetAttPackGridI8List(target, name, attpack, valueList, 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -30573,7 +30573,7 @@ subroutine ESMF_AttributeGetObjGridI8List(target, name, valueList, defaultvalueL
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -30643,7 +30643,7 @@ subroutine ESMF_AttributeGetAttPackGridCHList(target, name, attpack, valueList, 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -30711,7 +30711,7 @@ subroutine ESMF_AttributeGetObjGridCHList(target, name, valueList, defaultvalueL
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -30781,7 +30781,7 @@ subroutine ESMF_AttributeGetAttPackGridLGList(target, name, attpack, valueList, 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -30849,7 +30849,7 @@ subroutine ESMF_AttributeGetObjGridLGList(target, name, valueList, defaultvalueL
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -30919,7 +30919,7 @@ subroutine ESMF_AttributeGetAttPackStateR4List(target, name, attpack, valueList,
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -30987,7 +30987,7 @@ subroutine ESMF_AttributeGetObjStateR4List(target, name, valueList, defaultvalue
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -31057,7 +31057,7 @@ subroutine ESMF_AttributeGetAttPackStateR8List(target, name, attpack, valueList,
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -31125,7 +31125,7 @@ subroutine ESMF_AttributeGetObjStateR8List(target, name, valueList, defaultvalue
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -31195,7 +31195,7 @@ subroutine ESMF_AttributeGetAttPackStateI4List(target, name, attpack, valueList,
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -31263,7 +31263,7 @@ subroutine ESMF_AttributeGetObjStateI4List(target, name, valueList, defaultvalue
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -31333,7 +31333,7 @@ subroutine ESMF_AttributeGetAttPackStateI8List(target, name, attpack, valueList,
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -31401,7 +31401,7 @@ subroutine ESMF_AttributeGetObjStateI8List(target, name, valueList, defaultvalue
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -31471,7 +31471,7 @@ subroutine ESMF_AttributeGetAttPackStateCHList(target, name, attpack, valueList,
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -31539,7 +31539,7 @@ subroutine ESMF_AttributeGetObjStateCHList(target, name, valueList, defaultvalue
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -31609,7 +31609,7 @@ subroutine ESMF_AttributeGetAttPackStateLGList(target, name, attpack, valueList,
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -31677,7 +31677,7 @@ subroutine ESMF_AttributeGetObjStateLGList(target, name, valueList, defaultvalue
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -31747,7 +31747,7 @@ subroutine ESMF_AttributeGetAttPackLocStreamR4List(target, name, attpack, valueL
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -31815,7 +31815,7 @@ subroutine ESMF_AttributeGetObjLocStreamR4List(target, name, valueList, defaultv
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -31885,7 +31885,7 @@ subroutine ESMF_AttributeGetAttPackLocStreamR8List(target, name, attpack, valueL
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -31953,7 +31953,7 @@ subroutine ESMF_AttributeGetObjLocStreamR8List(target, name, valueList, defaultv
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -32023,7 +32023,7 @@ subroutine ESMF_AttributeGetAttPackLocStreamI4List(target, name, attpack, valueL
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -32091,7 +32091,7 @@ subroutine ESMF_AttributeGetObjLocStreamI4List(target, name, valueList, defaultv
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -32161,7 +32161,7 @@ subroutine ESMF_AttributeGetAttPackLocStreamI8List(target, name, attpack, valueL
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -32229,7 +32229,7 @@ subroutine ESMF_AttributeGetObjLocStreamI8List(target, name, valueList, defaultv
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -32299,7 +32299,7 @@ subroutine ESMF_AttributeGetAttPackLocStreamCHList(target, name, attpack, valueL
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -32367,7 +32367,7 @@ subroutine ESMF_AttributeGetObjLocStreamCHList(target, name, valueList, defaultv
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -32437,7 +32437,7 @@ subroutine ESMF_AttributeGetAttPackLocStreamLGList(target, name, attpack, valueL
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -32505,7 +32505,7 @@ subroutine ESMF_AttributeGetObjLocStreamLGList(target, name, valueList, defaultv
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -32579,7 +32579,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -32651,7 +32651,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -32705,7 +32705,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -32773,7 +32773,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -32844,7 +32844,7 @@ subroutine ESMF_AttributeGetInfoByNumArray(target, attributeIndex, name, convent
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -32905,7 +32905,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -32979,7 +32979,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -33051,7 +33051,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -33105,7 +33105,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -33173,7 +33173,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -33244,7 +33244,7 @@ subroutine ESMF_AttributeGetInfoByNumArrayBundle(target, attributeIndex, name, c
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -33305,7 +33305,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -33379,7 +33379,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -33451,7 +33451,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -33505,7 +33505,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -33573,7 +33573,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -33644,7 +33644,7 @@ subroutine ESMF_AttributeGetInfoByNumCplComp(target, attributeIndex, name, conve
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -33705,7 +33705,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -33779,7 +33779,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -33851,7 +33851,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -33905,7 +33905,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -33973,7 +33973,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -34044,7 +34044,7 @@ subroutine ESMF_AttributeGetInfoByNumGridComp(target, attributeIndex, name, conv
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -34105,7 +34105,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -34179,7 +34179,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -34251,7 +34251,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -34305,7 +34305,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -34373,7 +34373,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -34444,7 +34444,7 @@ subroutine ESMF_AttributeGetInfoByNumSciComp(target, attributeIndex, name, conve
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -34505,7 +34505,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -34579,7 +34579,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -34651,7 +34651,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -34705,7 +34705,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -34773,7 +34773,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -34844,7 +34844,7 @@ subroutine ESMF_AttributeGetInfoByNumDistGrid(target, attributeIndex, name, conv
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -34905,7 +34905,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -34979,7 +34979,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -35051,7 +35051,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -35105,7 +35105,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -35173,7 +35173,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -35244,7 +35244,7 @@ subroutine ESMF_AttributeGetInfoByNumField(target, attributeIndex, name, convent
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -35305,7 +35305,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -35379,7 +35379,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -35451,7 +35451,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -35505,7 +35505,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -35573,7 +35573,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -35644,7 +35644,7 @@ subroutine ESMF_AttributeGetInfoByNumFieldBundle(target, attributeIndex, name, c
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -35705,7 +35705,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -35779,7 +35779,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -35851,7 +35851,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -35905,7 +35905,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -35973,7 +35973,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -36044,7 +36044,7 @@ subroutine ESMF_AttributeGetInfoByNumGrid(target, attributeIndex, name, conventi
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -36105,7 +36105,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -36179,7 +36179,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -36251,7 +36251,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -36305,7 +36305,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -36373,7 +36373,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -36444,7 +36444,7 @@ subroutine ESMF_AttributeGetInfoByNumState(target, attributeIndex, name, convent
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -36505,7 +36505,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -36579,7 +36579,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -36651,7 +36651,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -36705,7 +36705,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -36773,7 +36773,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -36844,7 +36844,7 @@ subroutine ESMF_AttributeGetInfoByNumLocStream(target, attributeIndex, name, con
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -36905,7 +36905,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -36981,7 +36981,7 @@ subroutine ESMF_AttributeRemoveAttPackArray(target, name, attpack, convention, p
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -37087,7 +37087,7 @@ subroutine ESMF_AttributeRemoveAttPackArrayBundle(target, name, attpack, convent
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -37193,7 +37193,7 @@ subroutine ESMF_AttributeRemoveAttPackCplComp(target, name, attpack, convention,
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -37299,7 +37299,7 @@ subroutine ESMF_AttributeRemoveAttPackGridComp(target, name, attpack, convention
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -37405,7 +37405,7 @@ subroutine ESMF_AttributeRemoveAttPackSciComp(target, name, attpack, convention,
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -37511,7 +37511,7 @@ subroutine ESMF_AttributeRemoveAttPackDistGrid(target, name, attpack, convention
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -37617,7 +37617,7 @@ subroutine ESMF_AttributeRemoveAttPackField(target, name, attpack, convention, p
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -37723,7 +37723,7 @@ subroutine ESMF_AttributeRemoveAttPackFieldBundle(target, name, attpack, convent
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -37829,7 +37829,7 @@ subroutine ESMF_AttributeRemoveAttPackGrid(target, name, attpack, convention, pu
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -37935,7 +37935,7 @@ subroutine ESMF_AttributeRemoveAttPackState(target, name, attpack, convention, p
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -38041,7 +38041,7 @@ subroutine ESMF_AttributeRemoveAttPackLocStream(target, name, attpack, conventio
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, rc)
 
   if (present(attnestflag)) then
     local_attnestflag = attnestflag
@@ -38477,7 +38477,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, rc)
 
   isrc = ESMF_InfoReadJSON(filename, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -38509,7 +38509,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, rc)
 
   isrc = ESMF_InfoReadJSON(filename, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -38541,7 +38541,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, rc)
 
   isrc = ESMF_InfoReadJSON(filename, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -38573,7 +38573,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, rc)
 
   isrc = ESMF_InfoReadJSON(filename, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -38605,7 +38605,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, rc)
 
   isrc = ESMF_InfoReadJSON(filename, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -38637,7 +38637,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, rc)
 
   isrc = ESMF_InfoReadJSON(filename, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -38669,7 +38669,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, rc)
 
   isrc = ESMF_InfoReadJSON(filename, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -38701,7 +38701,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, rc)
 
   isrc = ESMF_InfoReadJSON(filename, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -38733,7 +38733,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, rc)
 
   isrc = ESMF_InfoReadJSON(filename, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -38765,7 +38765,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, rc)
 
   isrc = ESMF_InfoReadJSON(filename, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -38797,7 +38797,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, rc)
 
   isrc = ESMF_InfoReadJSON(filename, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -38832,7 +38832,7 @@ subroutine ESMF_AttributeUpdateCplComp(target, vm, rootList, reconcile, rc)
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, rc)
 
   call ESMF_InfoSync(target, rootList(1), vm, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -38854,7 +38854,7 @@ subroutine ESMF_AttributeUpdateGridComp(target, vm, rootList, reconcile, rc)
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, rc)
 
   call ESMF_InfoSync(target, rootList(1), vm, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -38876,7 +38876,7 @@ subroutine ESMF_AttributeUpdateSciComp(target, vm, rootList, reconcile, rc)
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, rc)
 
   call ESMF_InfoSync(target, rootList(1), vm, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -38898,7 +38898,7 @@ subroutine ESMF_AttributeUpdateField(target, vm, rootList, reconcile, rc)
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, rc)
 
   call ESMF_InfoSync(target, rootList(1), vm, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -38920,7 +38920,7 @@ subroutine ESMF_AttributeUpdateFieldBundle(target, vm, rootList, reconcile, rc)
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, rc)
 
   call ESMF_InfoSync(target, rootList(1), vm, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -38942,7 +38942,7 @@ subroutine ESMF_AttributeUpdateState(target, vm, rootList, reconcile, rc)
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, rc)
 
   call ESMF_InfoSync(target, rootList(1), vm, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -38974,7 +38974,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayGetInit, target, rc)
 
   isrc = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -39021,7 +39021,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_ArrayBundleGetInit, target, rc)
 
   isrc = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -39068,7 +39068,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_CplCompGetInit, target, rc)
 
   isrc = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -39115,7 +39115,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridCompGetInit, target, rc)
 
   isrc = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -39162,7 +39162,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_SciCompGetInit, target, rc)
 
   isrc = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -39209,7 +39209,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_DistGridGetInit, target, rc)
 
   isrc = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -39256,7 +39256,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldGetInit, target, rc)
 
   isrc = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -39303,7 +39303,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_FieldBundleGetInit, target, rc)
 
   isrc = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -39350,7 +39350,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_GridGetInit, target, rc)
 
   isrc = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -39397,7 +39397,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_StateGetInit, target, rc)
 
   isrc = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -39444,7 +39444,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   ! Check object initialization
-  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, localrc)
+  ESMF_INIT_CHECK_DEEP(ESMF_LocStreamGetInit, target, rc)
 
   isrc = einq%GetInfo(target, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return

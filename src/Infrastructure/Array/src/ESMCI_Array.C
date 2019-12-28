@@ -3928,28 +3928,30 @@ int Array::write(
   bool has_convpurp = (convention.length() > 0) && (purpose.length() > 0);
 
   // If present, use Attributes at the DistGrid level for dimension names
-  ESMCI::Info *dimAttPack = NULL;
-  ESMCI::Info i_dimAttPack;
+  ESMCI::Info *dimAttPack = nullptr;
   if (has_convpurp) {
     try {
-      info_dg->get(i_dimAttPack, key, localrc);
-      dimAttPack = &i_dimAttPack;
+      if (info_dg->hasKey(key, localrc, true, false)) {
+        dimAttPack = new ESMCI::Info();
+        info_dg->get(*dimAttPack, key, localrc);
+      }
     }
     ESMF_CATCH_INFO
   }
 
   // If present, use Attributes at the Array level for variable attributes
-  ESMCI::Info *varAttPack = NULL;
-  ESMCI::Info i_varAttPack;
+  ESMCI::Info *varAttPack = nullptr;
   if (has_convpurp) {
-  try {
-    info_this->get(i_varAttPack, key, localrc);
-    varAttPack = &i_varAttPack;
-  }
-  ESMF_CATCH_INFO
+    try {
+      if (info_this->hasKey(key, localrc, true, false)) {
+        varAttPack = new ESMCI::Info();
+        info_this->get(*varAttPack, key, localrc);
+      }
+    }
+    ESMF_CATCH_INFO
   }
 
-  ESMCI::Info *gblAttPack = NULL;
+  ESMCI::Info *gblAttPack = nullptr;
 
   IO *newIO = IO::create(&rc);
   if (ESMC_LogDefault.MsgFoundError(rc, ESMCI_ERR_PASSTHRU, ESMC_CONTEXT, &rc)){

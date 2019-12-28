@@ -1541,19 +1541,32 @@ void PIO_Handler::attPackPut (
   int localrc;
   int piorc;
 
-  const json &j = attPack->getStorageRef().at("ESMF").at("General");
+  const json &j = attPack->getStorageRef();
   for (json::const_iterator it=j.cbegin(); it!=j.cend(); it++) {
+    if (it.key().rfind("ESMF:", 0) == 0) {
+      continue;
+    }
+    json jcurr;
     if (it.value().is_array()) {
-      if (ESMC_LogDefault.MsgFoundError(ESMF_RC_ATTR_WRONGTYPE,
-                                        "JSON arrays not supported for key: " +
-                                        it.key(),
-                                        ESMC_CONTEXT, rc))
+      jcurr = it.value();
+    } else {
+      json arr = json::array();
+      arr.push_back(it.value());
+      jcurr = arr;
+    }
+    if (!(jcurr.is_array())) {
+      if (ESMC_LogDefault.MsgFoundError(ESMF_RC_ATTR_WRONGTYPE, "Only JSON arrays supported. Key is: " + it.key(), ESMC_CONTEXT, rc))
         return;
     }
-    ESMC_TypeKind_Flag att_type = ESMCI::json_type_to_esmf_typekind(it.value(), false);
+    int size = (int)(jcurr.size());
+    ESMC_TypeKind_Flag att_type = ESMCI::json_type_to_esmf_typekind(jcurr, true);
     switch (att_type) {
       case ESMC_TYPEKIND_CHARACTER: {
-        const std::string value = it.value();
+        if (size > 1) {
+          if (ESMC_LogDefault.MsgFoundError(ESMF_RC_ATTR_WRONGTYPE, "JSON arrays with size > 1 not supported for strings. Key is: " + it.key(), ESMC_CONTEXT, rc))
+            return;
+        }
+        const std::string value = jcurr[0];
         piorc = pio_cpp_put_att_string (pioFileDesc, vardesc,
                                         it.key().c_str(), value.c_str());
         if (!CHECKPIOERROR(piorc, "Attempting to set string Attribute: " + it.key(),
@@ -1561,17 +1574,17 @@ void PIO_Handler::attPackPut (
         break;
       }
       case ESMC_TYPEKIND_I8: {
-        const int value = it.value();
+        const std::vector<int> value = jcurr.get<std::vector<int>>();
         piorc = pio_cpp_put_att_ints (pioFileDesc, vardesc,
-                                      it.key().c_str(), &value, 1);
+                                      it.key().c_str(), value.data(), size);
         if (!CHECKPIOERROR(piorc, "Attempting to set I8 Attribute: " + it.key(),
                            ESMF_RC_FILE_WRITE, (*rc))) return;
         break;
       }
       case ESMC_TYPEKIND_R8: {
-        const double value = it.value();
+        const std::vector<double> value = jcurr.get<std::vector<double>>();
         piorc = pio_cpp_put_att_doubles (pioFileDesc, vardesc,
-                                         it.key().c_str(), &value, 1);
+                                         it.key().c_str(), value.data(), size);
         if (!CHECKPIOERROR(piorc, "Attempting to set R8 Attribute: " + it.key(),
                            ESMF_RC_FILE_WRITE, (*rc))) return;
         break;
