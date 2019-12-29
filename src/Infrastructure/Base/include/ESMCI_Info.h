@@ -27,20 +27,52 @@
 using json = nlohmann::json;  // Convenience rename for JSON namespace.
 
 // Standard ESMF check error macros
-#define ESMF_CHECKERR_STD(name_rc, actual_rc, msg, update_rc) {if (actual_rc != ESMF_SUCCESS) {ESMCI::esmf_info_error local_macro_error(name_rc, actual_rc, msg); if (ESMC_LogDefault.MsgFoundError(actual_rc, local_macro_error.what(), ESMC_CONTEXT, &update_rc)) throw(local_macro_error);}}
+#define ESMF_CHECKERR_STD(name_rc, actual_rc, msg, update_rc) {\
+  if (actual_rc != ESMF_SUCCESS) {\
+    ESMCI::esmf_info_error local_macro_error(name_rc, actual_rc, msg); \
+    if (ESMC_LogDefault.MsgFoundError(actual_rc, local_macro_error.what(), ESMC_CONTEXT, &update_rc)) \
+      throw(local_macro_error);}}
 
-#define ESMF_THROW_JSON(json_exc, name_rc, actual_rc, update_rc) {ESMC_LogDefault.MsgFoundError(actual_rc, json_exc.what(), ESMC_CONTEXT, &update_rc); throw(ESMCI::esmf_info_error(name_rc, actual_rc, json_exc.what()));}
+#define ESMF_THROW_JSON(json_exc, name_rc, actual_rc, update_rc) {\
+  ESMC_LogDefault.MsgFoundError(actual_rc, json_exc.what(), ESMC_CONTEXT, &update_rc); \
+  throw(ESMCI::esmf_info_error(name_rc, actual_rc, json_exc.what()));}
 
-#define ESMF_HANDLE_PASSTHRU(exc_esmf) {ESMC_LogDefault.MsgFoundError(exc_esmf.getReturnCode(), exc_esmf.what(), ESMC_CONTEXT, nullptr); throw(exc_esmf);}
+#define ESMF_HANDLE_PASSTHRU(exc_esmf) {\
+  ESMC_LogDefault.MsgFoundError(exc_esmf.getReturnCode(), exc_esmf.what(), ESMC_CONTEXT, nullptr); \
+  throw(exc_esmf);}
 
-#define ESMF_CATCH_PASSTHRU catch (ESMCI::esmf_info_error &exc_esmf) {ESMF_HANDLE_PASSTHRU(exc_esmf)}
+#define ESMF_CATCH_PASSTHRU \
+  catch (ESMCI::esmf_info_error &exc_esmf) {ESMF_HANDLE_PASSTHRU(exc_esmf)}
 
-#define ESMF_CATCH_ISOC catch (ESMCI::esmf_info_error &exc_esmf) {ESMC_LogDefault.MsgFoundError(exc_esmf.getReturnCode(), exc_esmf.what(), ESMC_CONTEXT, nullptr); rc = exc_esmf.getReturnCode();} catch(...) {std::string msg;if (rc == ESMF_SUCCESS) {msg = "Unhandled throw and return code is ESMF_SUCCESS(?). Changing return code to ESMF_FAILURE";rc = ESMF_FAILURE;} else {msg = "Unhandled throw";}ESMC_LogDefault.MsgFoundError(rc, msg, ESMC_CONTEXT, nullptr);}
+#define ESMF_CATCH_ISOC \
+  catch (ESMCI::esmf_info_error &exc_esmf) {\
+    ESMC_LogDefault.MsgFoundError(exc_esmf.getReturnCode(), exc_esmf.what(), ESMC_CONTEXT, nullptr); \
+    rc = exc_esmf.getReturnCode();} \
+  catch(...) {\
+    std::string msg;\
+  if (rc == ESMF_SUCCESS) {\
+    msg = "Unhandled throw and return code is ESMF_SUCCESS(?). Changing return code to ESMF_FAILURE";\
+    rc = ESMF_FAILURE;} \
+  else {\
+    msg = "Unhandled throw";}\
+  ESMC_LogDefault.MsgFoundError(rc, msg, ESMC_CONTEXT, nullptr);}
 #define ESMF_CATCH_ISOCP catch (ESMCI::esmf_info_error &exc_esmf){ESMC_LogDefault.MsgFoundError(exc_esmf.getReturnCode(), exc_esmf.what(), ESMC_CONTEXT, rc);}catch(...) {std::string msg;if (localrc == ESMF_SUCCESS) {msg = "Unhandled throw and return code is ESMF_SUCCESS(?). Changing return code to ESMF_FAILURE";localrc = ESMF_FAILURE;} else {msg = "Unhandled throw";}ESMC_LogDefault.MsgFoundError(localrc, msg, ESMC_CONTEXT, rc);}
 
-#define ESMF_CATCH_INFO catch (json::out_of_range &exc_json) {ESMF_THROW_JSON(exc_json, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);} catch (json::type_error &exc_json) {ESMF_THROW_JSON(exc_json, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);} catch (ESMCI::esmf_info_error &exc_esmf) {ESMF_HANDLE_PASSTHRU(exc_esmf);} catch (...) {ESMF_CHECKERR_STD("", ESMF_FAILURE, "Unhandled throw", rc);}
+#define ESMF_CATCH_INFO \
+  catch (json::out_of_range &exc_json) {\
+    ESMF_THROW_JSON(exc_json, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);} \
+  catch (json::type_error &exc_json) {\
+    ESMF_THROW_JSON(exc_json, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);} \
+  catch (ESMCI::esmf_info_error &exc_esmf) {\
+    ESMF_HANDLE_PASSTHRU(exc_esmf);} \
+  catch (...) {\
+    ESMF_CHECKERR_STD("", ESMF_FAILURE, "Unhandled throw", rc);}
 
-#define ESMF_CATCH_JSON catch (json::out_of_range &e) {ESMF_THROW_JSON(e, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);} catch (json::type_error &e) {ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);}
+#define ESMF_CATCH_JSON \
+  catch (json::out_of_range &e) {\
+    ESMF_THROW_JSON(e, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);} \
+  catch (json::type_error &e) {\
+    ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);}
 
 //-----------------------------------------------------------------------------
 //BOP
