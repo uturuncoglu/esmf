@@ -685,6 +685,29 @@ type(ESMF_KeywordEnforcer), optional:: keywordEnforcer ! must use keywords below
         deallocate(addedList)
 
       endif  ! partial add
+
+    else
+      ! No garbage, all fieldList should be linked
+      !
+      ! Obviously the attribute linking of the geombase object is a bit tricky,
+      ! right now, we do not restrict the geombase to be matched among the fields in the
+      ! fieldBundle. But for attribute hierarchy, we actually assume that all fields in
+      ! the fieldBundle should be built on the same geombase object.
+      !
+      ! 3/7/13
+      ! New behavior for geombase:
+      ! 1. FieldBundleSet() can always change the geombase object in a FieldBundle
+      ! 2. Add/AddReplace/Replace can  change the geombase object in a FieldBundle if it is not set
+      ! 3. Add/AddReplace/Replace can NOT change  geombase object in a FieldBundle after its set
+      !
+      ! Attribute link
+      if(size(fieldList) .ge. 1 .and. (fieldbundle%this%status /= ESMF_FBSTATUS_GRIDSET) ) then
+        ! setgeom links grid geombase automatically
+        call ESMF_FieldBundleSetGeom(fieldbundle, fieldList(1), rc=localrc)
+        if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, &
+          ESMF_CONTEXT, rcToReturn=rc))  return
+      endif ! non-empty fieldlist
+
     endif ! garbageSize /= 0
 
     ! always deallocate garbageList because it is always associated returning from Container
@@ -847,7 +870,13 @@ type(ESMF_KeywordEnforcer), optional:: keywordEnforcer ! must use keywords below
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, &
       ESMF_CONTEXT, rcToReturn=rc)) return
 
-    deallocate(garbageList)
+    ! Attribute link
+    if(size(fieldList) .ge. 1 .and. (fieldbundle%this%status /= ESMF_FBSTATUS_GRIDSET) ) then
+      ! setgeom links grid geombase automatically
+      call ESMF_FieldBundleSetGeom(fieldbundle, fieldList(1), rc=localrc)
+      if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, &
+        ESMF_CONTEXT, rcToReturn=rc))  return
+    endif ! non-empty fieldlist
 
     ! Return successfully
     if (present(rc)) rc = ESMF_SUCCESS
@@ -1636,6 +1665,8 @@ type(ESMF_KeywordEnforcer), optional:: keywordEnforcer ! must use keywords below
 ! \item[6.1.0] Added argument {\tt itemorderflag}.
 !              The new argument gives the user control over the order in which
 !              the items are returned.
+! \item[8.0.0] Added argument {\tt isPacked}.
+!              The new argument allows the user to query if this is a packed FieldBundle.
 ! \end{description}
 ! \end{itemize}
 !
