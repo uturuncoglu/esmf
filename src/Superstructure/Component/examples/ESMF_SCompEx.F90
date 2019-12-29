@@ -112,10 +112,6 @@ program ESMF_SCompEx
       ! Create Gridded Component for Ocean
       ocncomp = ESMF_GridCompCreate(name="Ocean", rc=rc)
 
-      ! Link the attributes for the parent and child components
-      call ESMF_AttributeLink(cplcomp, atmcomp, rc=rc)
-      call ESMF_AttributeLink(cplcomp, ocncomp, rc=rc)
-
 !EOC
       if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
@@ -246,11 +242,6 @@ program ESMF_SCompEx
     if (rc /= ESMF_SUCCESS) call ESMF_Finalize(rc=rc, endflag=ESMF_END_ABORT)
 
 !BOC
-    call ESMF_AttributeLink(atmcomp, dc_scicomp, rc=rc)
-!EOC
-    if (rc /= ESMF_SUCCESS) call ESMF_Finalize(rc=rc, endflag=ESMF_END_ABORT)
-
-!BOC
     call ESMF_AttributeAdd(dc_scicomp,  &
                            convention=convCIM, purpose=purpComp, &
                            attpack=attpack, rc=rc)
@@ -294,11 +285,6 @@ program ESMF_SCompEx
     if (rc /= ESMF_SUCCESS) call ESMF_Finalize(rc=rc, endflag=ESMF_END_ABORT)
 
 !BOC
-    call ESMF_AttributeLink(dc_scicomp, adv_scicomp, rc=rc)
-!EOC
-    if (rc /= ESMF_SUCCESS) call ESMF_Finalize(rc=rc, endflag=ESMF_END_ABORT)
-
-!BOC
     call ESMF_AttributeAdd(adv_scicomp,  &
                            convention=convCIM, purpose=purpComp, &
                            attpack=attpack, rc=rc)
@@ -333,11 +319,6 @@ program ESMF_SCompEx
     ! Atmosphere Radiation Science Component
     !
     rad_scicomp = ESMF_SciCompCreate(name="AtmosRadiation", rc=rc)
-!EOC
-    if (rc /= ESMF_SUCCESS) call ESMF_Finalize(rc=rc, endflag=ESMF_END_ABORT)
-
-!BOC
-    call ESMF_AttributeLink(atmcomp, rad_scicomp, rc=rc)
 !EOC
     if (rc /= ESMF_SUCCESS) call ESMF_Finalize(rc=rc, endflag=ESMF_END_ABORT)
 
@@ -386,8 +367,9 @@ program ESMF_SCompEx
 !EOE
 
 !BOC
-        call ESMF_AttributeWrite(cplcomp, convCIM, purpComp, &
-          attwriteflag=ESMF_ATTWRITE_XML,rc=rc)
+!tdk:rm no need for this write, correct?
+!        call ESMF_AttributeWrite(cplcomp, convCIM, purpComp, &
+!          attwriteflag=ESMF_ATTWRITE_XML,rc=rc)
 !EOC
         if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
