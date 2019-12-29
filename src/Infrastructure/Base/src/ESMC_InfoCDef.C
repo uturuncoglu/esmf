@@ -100,9 +100,9 @@ void ESMC_InfoCopyForAttribute(const ESMCI::Info* src, ESMCI::Info* dst, int &es
   esmf_rc = ESMF_FAILURE;
   try {
     dst->getStorageRefWritable() = src->getStorageRef();
+    esmf_rc = ESMF_SUCCESS;
   }
   ESMF_CATCH_ISOC
-  esmf_rc = ESMF_SUCCESS;
 }
 
 #undef  ESMC_METHOD
@@ -121,9 +121,9 @@ ESMCI::Info* ESMC_InfoCreateByKey(ESMCI::Info *srcInfo, char* key, int &esmf_rc)
     std::string local_key(key);
     json new_storage = srcInfo->get<json>(local_key);
     info = new ESMCI::Info(std::move(new_storage));
+    esmf_rc = ESMF_SUCCESS;
   }
   ESMF_CATCH_ISOC
-  esmf_rc = ESMF_SUCCESS;
   return info;
 }
 
@@ -135,9 +135,9 @@ ESMCI::Info* ESMC_InfoCreateByParse(char *payload, int &esmf_rc) {
   try {
     std::string local_payload(payload);
     info = new ESMCI::Info(payload, esmf_rc);
+    esmf_rc = ESMF_SUCCESS;
   }
   ESMF_CATCH_ISOC
-  esmf_rc = ESMF_SUCCESS;
   return info;
 }
 
@@ -159,9 +159,9 @@ void ESMC_InfoDump(ESMCI::Info *info, char *output, int &esmf_rc) {
     for (std::size_t ii = 0; ii < c_output.size(); ++ii) {
       output[ii] = c_output[ii];
     }
+    esmf_rc = ESMF_SUCCESS;
   }
   ESMF_CATCH_ISOC
-  esmf_rc = ESMF_SUCCESS;
 }
 
 #undef  ESMC_METHOD
@@ -172,9 +172,9 @@ void ESMC_InfoDumpLength(ESMCI::Info *info, int &dump_length, int &esmf_rc) {
   esmf_rc = ESMF_FAILURE;
   try {
     dump_length = info->dump().size();
+    esmf_rc = ESMF_SUCCESS;
   }
   ESMF_CATCH_ISOC
-  esmf_rc = ESMF_SUCCESS;
 }
 
 #undef  ESMC_METHOD
@@ -182,22 +182,21 @@ void ESMC_InfoDumpLength(ESMCI::Info *info, int &dump_length, int &esmf_rc) {
 void ESMC_InfoErase(ESMCI::Info* info, char* keyParent,
                           char* keyChild, bool &recursive, int &esmf_rc) {
   esmf_rc = ESMF_FAILURE;
-  std::string localkeyParent(keyParent);
-  std::string localkeyChild(keyChild);
-
   // This seems strange. This is the best method to delete from the Fortran
   // interface to avoid passing "" as the parent key when you want to delete
   // from the root. Otherwise a parent and child key are always required which
   // seems redundant.
   try {
+    std::string localkeyParent(keyParent);
+    std::string localkeyChild(keyChild);
     if (localkeyChild == "") {
       info->erase(localkeyChild, localkeyParent, recursive);
     } else {
       info->erase(localkeyParent, localkeyChild, recursive);
     }
+    esmf_rc = ESMF_SUCCESS;
   }
   ESMF_CATCH_ISOC
-  esmf_rc = ESMF_SUCCESS;
 }
 
 #undef ESMC_METHOD
@@ -213,9 +212,9 @@ void ESMC_InfoInquire(ESMCI::Info *info, ESMCI::Info *inq, char *key,
     json jinq = info->inquire(localKey, recursive, idx, attr_compliance);
     json &inqref = inq->getStorageRefWritable();
     inqref = std::move(jinq);
+    esmf_rc = ESMF_SUCCESS;
   }
   ESMF_CATCH_ISOC
-  esmf_rc = ESMF_SUCCESS;
 }
 
 #undef  ESMC_METHOD
@@ -225,24 +224,24 @@ void ESMC_InfoIsEqual(ESMCI::Info *lhs, ESMCI::Info *rhs,
   esmf_rc = ESMF_FAILURE;
   try {
     res = lhs->getStorageRef() == rhs->getStorageRef();
+    esmf_rc = ESMF_SUCCESS;
   }
   ESMF_CATCH_ISOC
-  esmf_rc = ESMF_SUCCESS;
 }
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_InfoIsPresent()"
 void ESMC_InfoIsPresent(ESMCI::Info *info, char *key, int &fortran_bool_res,
         int &esmf_rc, int &fortran_bool_recursive, int &fortran_bool_isptr) {
-  std::string local_key(key);
   bool recursive = (fortran_bool_recursive == 1) ? true:false;
   bool isptr = (fortran_bool_isptr == 1) ? true:false;
   try {
+    std::string local_key(key);
     bool res = info->hasKey(local_key, isptr, recursive);
     fortran_bool_res = (res == true) ? 1:0;
+    esmf_rc = ESMF_SUCCESS;
   }
   ESMF_CATCH_ISOC
-  esmf_rc = ESMF_SUCCESS;
 }
 
 #undef  ESMC_METHOD
@@ -251,9 +250,9 @@ void ESMC_InfoIsSet(ESMCI::Info *info, char *key, int &isSet, int &esmf_rc) {
   std::string local_key(key);
   try {
     isSet = info->isSetNull(local_key);
+    esmf_rc = ESMF_SUCCESS;
   }
   ESMF_CATCH_ISOC
-  esmf_rc = ESMF_SUCCESS;
 }
 
 #undef  ESMC_METHOD
@@ -262,9 +261,9 @@ void ESMC_InfoPrint(ESMCI::Info *info, int &indent, int &esmf_rc) {
   esmf_rc = ESMF_FAILURE;
   try {
     std::cout << info->dump(indent) << std::endl;
+    esmf_rc = ESMF_SUCCESS;
   }
   ESMF_CATCH_ISOC
-  esmf_rc = ESMF_SUCCESS;
 }
 
 #undef  ESMC_METHOD
@@ -273,9 +272,9 @@ void ESMC_InfoUpdate(ESMCI::Info *lhs, ESMCI::Info *rhs, int &esmf_rc) {
   esmf_rc = ESMF_FAILURE;
   try {
     lhs->update(*rhs);
+    esmf_rc = ESMF_SUCCESS;
   }
   ESMF_CATCH_ISOC
-  esmf_rc = ESMF_SUCCESS;
 }
 
 #undef  ESMC_METHOD
@@ -331,9 +330,9 @@ void ESMC_InfoBaseSyncDo(const std::vector<long int> &base_addresses, const int 
       }
       ESMF_CATCH_JSON
     }
+    esmf_rc = ESMF_SUCCESS;
   }
   ESMF_CATCH_ISOC
-  esmf_rc = ESMF_SUCCESS;
 }
 
 #undef  ESMC_METHOD
@@ -349,7 +348,6 @@ void ESMC_InfoBaseSync(ESMCI::Info *inqstate, int &rootPet, long int &vmAddress,
     ESMC_InfoBaseSyncDo(base_addresses, rootPet, vmAddress, esmf_rc);
   }
   ESMF_CATCH_ISOC
-  esmf_rc = ESMF_SUCCESS;
 }
 
 #undef  ESMC_METHOD
@@ -357,22 +355,21 @@ void ESMC_InfoBaseSync(ESMCI::Info *inqstate, int &rootPet, long int &vmAddress,
 void ESMC_InfoBroadcast(ESMCI::Info *info, int &rootPet, int &esmf_rc) {
   //tdk:todo: consider adding vm as an optional argument
   esmf_rc = ESMF_FAILURE;
-  ESMCI::VM *vm = ESMCI::VM::getCurrent(&esmf_rc);
-  ESMF_CHECKERR_STD("", esmf_rc, "Did not get current VM");
-
   try {
+    ESMCI::VM *vm = ESMCI::VM::getCurrent(&esmf_rc);
+    ESMF_CHECKERR_STD("", esmf_rc, "Did not get current VM");
     broadcastInfo(info, rootPet, *vm);
+    esmf_rc = ESMF_SUCCESS;
   }
   ESMF_CATCH_ISOC
-  esmf_rc = ESMF_SUCCESS;
 }
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_InfoReadJSON()"
 void ESMC_InfoReadJSON(ESMCI::Info *info, char *filename, int &esmf_rc) {
   esmf_rc = ESMF_FAILURE;
-  std::string filename2(filename);
   try {
+    std::string filename2(filename);
     std::ifstream i(filename2, std::ifstream::in);
     if (!i.good()){
       std::string errmsg = "File location not working: " + filename2;
@@ -390,15 +387,14 @@ void ESMC_InfoReadJSON(ESMCI::Info *info, char *filename, int &esmf_rc) {
     esmf_rc = ESMF_SUCCESS;
   }
   ESMF_CATCH_ISOC
-  esmf_rc = ESMF_SUCCESS;
 }
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_InfoWriteJSON()"
 void ESMC_InfoWriteJSON(ESMCI::Info *info, char *filename, int &esmf_rc) {
   esmf_rc = ESMF_FAILURE;
-  std::string filename2(filename);
   try {
+    std::string filename2(filename);
     std::ofstream file;
     file.open(filename2);
     if (!file.is_open()) {
@@ -410,7 +406,6 @@ void ESMC_InfoWriteJSON(ESMCI::Info *info, char *filename, int &esmf_rc) {
     esmf_rc = ESMF_SUCCESS;
   }
   ESMF_CATCH_ISOC
-  esmf_rc = ESMF_SUCCESS;
 }
 
 //-----------------------------------------------------------------------------
@@ -426,30 +421,31 @@ void ESMC_InfoGetCH(ESMCI::Info* info, char *key, char *value,
   std::string def_str;
   // Convert from Fortran integer to bool
   bool recursive = (fortran_bool_recursive == 1) ? true:false;
-  if (def) {
-    // Set the default pointer to the string object created from the char
-    // array from Fortran
-    def_str = std::string(def);
-    def_str_ptr = &def_str;
-  } else {
-    def_str_ptr = nullptr;
-  }
-  std::string as_str;
-  std::string local_key(key);
   try {
+    if (def) {
+      // Set the default pointer to the string object created from the char
+      // array from Fortran
+      def_str = std::string(def);
+      def_str_ptr = &def_str;
+    } else {
+      def_str_ptr = nullptr;
+    }
+    std::string as_str;
+    std::string local_key(key);
     as_str = info->get<std::string>(local_key, def_str_ptr, index, recursive);
+
+    // Transfer the string characters into the Fortran character array using
+    // spaces to fill the Fortran array if we are past the max string length.
+    for (int ii = 0; ii < vlen; ++ii) {
+      if (ii < (int) as_str.size()) {
+        value[ii] = as_str[ii];
+      } else {
+        value[ii] = ' ';
+      }
+    }
+    esmf_rc = ESMF_SUCCESS;
   }
   ESMF_CATCH_ISOC
-  // Transfer the string characters into the Fortran character array using
-  // spaces to fill the Fortran array if we are past the max string length.
-  for (int ii = 0; ii < vlen; ++ii) {
-    if (ii < (int)as_str.size()) {
-      value[ii] = as_str[ii];
-    } else {
-      value[ii] = ' ';
-    }
-  }
-  esmf_rc = ESMF_SUCCESS;
 }
 
 //-----------------------------------------------------------------------------
@@ -459,16 +455,16 @@ void ESMC_InfoGetCH(ESMCI::Info* info, char *key, char *value,
 void ESMC_InfoSetCH(ESMCI::Info *info, char *key, char *value,
                               bool &force, int &esmf_rc, int *index, char *pkey) {
   esmf_rc = ESMF_FAILURE;
-  std::string local_key(key);
-  std::string local_value(value);
-  std::string local_pkey(pkey);
-  std::string *local_pkeyp = nullptr;
-  if (local_pkey.size() != 0) {local_pkeyp = &local_pkey;}
   try {
+    std::string local_key(key);
+    std::string local_value(value);
+    std::string local_pkey(pkey);
+    std::string *local_pkeyp = nullptr;
+    if (local_pkey.size() != 0) {local_pkeyp = &local_pkey;}
     info->set<std::string>(local_key, local_value, force, index, local_pkeyp);
+    esmf_rc = ESMF_SUCCESS;
   }
   ESMF_CATCH_ISOC
-  esmf_rc = ESMF_SUCCESS;
 }
 
 #undef  ESMC_METHOD
@@ -478,15 +474,15 @@ void ESMC_InfoSetArrayCH(ESMCI::Info *info, char *key, int &count,
   // Notes:
   //  * Only allocates storage. Does not actually insert anything!
   esmf_rc = ESMF_FAILURE;
-  std::string local_key(key);
-  std::string local_pkey(pkey);
-  std::string *local_pkeyp = nullptr;
-  if (local_pkey.size() != 0) {local_pkeyp = &local_pkey;}
   try {
+    std::string local_key(key);
+    std::string local_pkey(pkey);
+    std::string *local_pkeyp = nullptr;
+    if (local_pkey.size() != 0) {local_pkeyp = &local_pkey;}
     info->set<std::vector<std::string>>(local_key, nullptr, count, force, local_pkeyp);
+    esmf_rc = ESMF_SUCCESS;
   }
   ESMF_CATCH_ISOC
-  esmf_rc = ESMF_SUCCESS;
 }
 
 #undef  ESMC_METHOD
@@ -494,23 +490,23 @@ void ESMC_InfoSetArrayCH(ESMCI::Info *info, char *key, int &count,
 void ESMC_InfoSetINFO(ESMCI::Info *info, char *key,
   ESMCI::Info *value, bool &force, int &esmf_rc) {
   esmf_rc = ESMF_FAILURE;
-  std::string local_key(key);
   try {
+    std::string local_key(key);
     info->set(local_key, *value, force);
+    esmf_rc = ESMF_SUCCESS;
   }
   ESMF_CATCH_ISOC
-  esmf_rc = ESMF_SUCCESS;
 }
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_InfoSetNULL()"
 void ESMC_InfoSetNULL(ESMCI::Info *info, char *key, bool &force, int &esmf_rc) {
   esmf_rc = ESMF_FAILURE;
-  std::string local_key(key);
   try {
+    std::string local_key(key);
     info->set(local_key, force);
+    esmf_rc = ESMF_SUCCESS;
   }
   ESMF_CATCH_ISOC
-  esmf_rc = ESMF_SUCCESS;
 }
 }  // extern "C"

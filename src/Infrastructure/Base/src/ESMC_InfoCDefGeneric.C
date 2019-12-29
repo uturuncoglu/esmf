@@ -59,9 +59,9 @@ void ESMC_InfoGetR4(ESMCI::Info *info, char *key, float &value, int &esmf_rc, fl
     std::string local_key(key);
     bool recursive = (fortran_bool_recursive == 1) ? true:false;
     value = info->get<float>(local_key, def, index, recursive);
+    esmf_rc = ESMF_SUCCESS;
   }
   ESMF_CATCH_ISOC
-  esmf_rc = ESMF_SUCCESS;
 }
 
 #undef  ESMC_METHOD
@@ -72,9 +72,9 @@ void ESMC_InfoGetR8(ESMCI::Info *info, char *key, double &value, int &esmf_rc, d
     std::string local_key(key);
     bool recursive = (fortran_bool_recursive == 1) ? true:false;
     value = info->get<double>(local_key, def, index, recursive);
+    esmf_rc = ESMF_SUCCESS;
   }
   ESMF_CATCH_ISOC
-  esmf_rc = ESMF_SUCCESS;
 }
 
 #undef  ESMC_METHOD
@@ -85,9 +85,9 @@ void ESMC_InfoGetI4(ESMCI::Info *info, char *key, int &value, int &esmf_rc, int 
     std::string local_key(key);
     bool recursive = (fortran_bool_recursive == 1) ? true:false;
     value = info->get<int>(local_key, def, index, recursive);
+    esmf_rc = ESMF_SUCCESS;
   }
   ESMF_CATCH_ISOC
-  esmf_rc = ESMF_SUCCESS;
 }
 
 #undef  ESMC_METHOD
@@ -98,9 +98,9 @@ void ESMC_InfoGetI8(ESMCI::Info *info, char *key, long int &value, int &esmf_rc,
     std::string local_key(key);
     bool recursive = (fortran_bool_recursive == 1) ? true:false;
     value = info->get<long int>(local_key, def, index, recursive);
+    esmf_rc = ESMF_SUCCESS;
   }
   ESMF_CATCH_ISOC
-  esmf_rc = ESMF_SUCCESS;
 }
 
 #undef  ESMC_METHOD
@@ -111,9 +111,9 @@ void ESMC_InfoGetLG(ESMCI::Info *info, char *key, bool &value, int &esmf_rc, boo
     std::string local_key(key);
     bool recursive = (fortran_bool_recursive == 1) ? true:false;
     value = info->get<bool>(local_key, def, index, recursive);
+    esmf_rc = ESMF_SUCCESS;
   }
   ESMF_CATCH_ISOC
-  esmf_rc = ESMF_SUCCESS;
 }
 
 #undef  ESMC_METHOD
@@ -135,9 +135,9 @@ void ESMC_InfoGetArrayR4(ESMCI::Info *info, char *key, float *value, int &count,
         ESMF_CHECKERR_STD("ESMF_RC_ARG_OUTOFRANGE", ESMF_RC_ARG_OUTOFRANGE, std::string(exc.what()));
       }
     }
+    esmf_rc = ESMF_SUCCESS;
   }
   ESMF_CATCH_ISOC
-  esmf_rc = ESMF_SUCCESS;
 }
 
 #undef  ESMC_METHOD
@@ -159,9 +159,9 @@ void ESMC_InfoGetArrayR8(ESMCI::Info *info, char *key, double *value, int &count
         ESMF_CHECKERR_STD("ESMF_RC_ARG_OUTOFRANGE", ESMF_RC_ARG_OUTOFRANGE, std::string(exc.what()));
       }
     }
+    esmf_rc = ESMF_SUCCESS;
   }
   ESMF_CATCH_ISOC
-  esmf_rc = ESMF_SUCCESS;
 }
 
 #undef  ESMC_METHOD
@@ -183,9 +183,9 @@ void ESMC_InfoGetArrayI4(ESMCI::Info *info, char *key, int *value, int &count, i
         ESMF_CHECKERR_STD("ESMF_RC_ARG_OUTOFRANGE", ESMF_RC_ARG_OUTOFRANGE, std::string(exc.what()));
       }
     }
+    esmf_rc = ESMF_SUCCESS;
   }
   ESMF_CATCH_ISOC
-  esmf_rc = ESMF_SUCCESS;
 }
 
 #undef  ESMC_METHOD
@@ -207,9 +207,9 @@ void ESMC_InfoGetArrayI8(ESMCI::Info *info, char *key, long int *value, int &cou
         ESMF_CHECKERR_STD("ESMF_RC_ARG_OUTOFRANGE", ESMF_RC_ARG_OUTOFRANGE, std::string(exc.what()));
       }
     }
+    esmf_rc = ESMF_SUCCESS;
   }
   ESMF_CATCH_ISOC
-  esmf_rc = ESMF_SUCCESS;
 }
 
 #undef  ESMC_METHOD
@@ -231,9 +231,9 @@ void ESMC_InfoGetArrayLG(ESMCI::Info *info, char *key, bool *value, int &count, 
         ESMF_CHECKERR_STD("ESMF_RC_ARG_OUTOFRANGE", ESMF_RC_ARG_OUTOFRANGE, std::string(exc.what()));
       }
     }
+    esmf_rc = ESMF_SUCCESS;
   }
   ESMF_CATCH_ISOC
-  esmf_rc = ESMF_SUCCESS;
 }
 
 //-----------------------------------------------------------------------------
@@ -250,9 +250,9 @@ void ESMC_InfoSetR4(ESMCI::Info *info, char *key, float &value, bool &force, int
     std::string *local_pkeyp = nullptr;
     if (local_pkey.size() != 0) {local_pkeyp = &local_pkey;}
     info->set<float>(local_key, value, force, index, local_pkeyp);
+    esmf_rc = ESMF_SUCCESS;
   }
   ESMF_CATCH_ISOC
-  esmf_rc = ESMF_SUCCESS;
 }
 
 #undef  ESMC_METHOD
@@ -265,9 +265,9 @@ void ESMC_InfoSetR8(ESMCI::Info *info, char *key, double &value, bool &force, in
     std::string *local_pkeyp = nullptr;
     if (local_pkey.size() != 0) {local_pkeyp = &local_pkey;}
     info->set<double>(local_key, value, force, index, local_pkeyp);
+    esmf_rc = ESMF_SUCCESS;
   }
   ESMF_CATCH_ISOC
-  esmf_rc = ESMF_SUCCESS;
 }
 
 #undef  ESMC_METHOD
@@ -280,9 +280,9 @@ void ESMC_InfoSetI4(ESMCI::Info *info, char *key, int &value, bool &force, int &
     std::string *local_pkeyp = nullptr;
     if (local_pkey.size() != 0) {local_pkeyp = &local_pkey;}
     info->set<int>(local_key, value, force, index, local_pkeyp);
+    esmf_rc = ESMF_SUCCESS;
   }
   ESMF_CATCH_ISOC
-  esmf_rc = ESMF_SUCCESS;
 }
 
 #undef  ESMC_METHOD
@@ -295,9 +295,9 @@ void ESMC_InfoSetI8(ESMCI::Info *info, char *key, long int &value, bool &force, 
     std::string *local_pkeyp = nullptr;
     if (local_pkey.size() != 0) {local_pkeyp = &local_pkey;}
     info->set<long int>(local_key, value, force, index, local_pkeyp);
+    esmf_rc = ESMF_SUCCESS;
   }
   ESMF_CATCH_ISOC
-  esmf_rc = ESMF_SUCCESS;
 }
 
 #undef  ESMC_METHOD
@@ -310,9 +310,9 @@ void ESMC_InfoSetLG(ESMCI::Info *info, char *key, bool &value, bool &force, int 
     std::string *local_pkeyp = nullptr;
     if (local_pkey.size() != 0) {local_pkeyp = &local_pkey;}
     info->set<bool>(local_key, value, force, index, local_pkeyp);
+    esmf_rc = ESMF_SUCCESS;
   }
   ESMF_CATCH_ISOC
-  esmf_rc = ESMF_SUCCESS;
 }
 
 #undef  ESMC_METHOD
@@ -325,9 +325,9 @@ void ESMC_InfoSetArrayR4(ESMCI::Info *info, char *key, float *value, int &count,
     std::string *local_pkeyp = nullptr;
     if (local_pkey.size() != 0) {local_pkeyp = &local_pkey;}
     info->set<float>(local_key, value, count, force, local_pkeyp);
+    esmf_rc = ESMF_SUCCESS;
   }
   ESMF_CATCH_ISOC
-  esmf_rc = ESMF_SUCCESS;
 }
 
 #undef  ESMC_METHOD
@@ -340,9 +340,9 @@ void ESMC_InfoSetArrayR8(ESMCI::Info *info, char *key, double *value, int &count
     std::string *local_pkeyp = nullptr;
     if (local_pkey.size() != 0) {local_pkeyp = &local_pkey;}
     info->set<double>(local_key, value, count, force, local_pkeyp);
+    esmf_rc = ESMF_SUCCESS;
   }
   ESMF_CATCH_ISOC
-  esmf_rc = ESMF_SUCCESS;
 }
 
 #undef  ESMC_METHOD
@@ -355,9 +355,9 @@ void ESMC_InfoSetArrayI4(ESMCI::Info *info, char *key, int *value, int &count, b
     std::string *local_pkeyp = nullptr;
     if (local_pkey.size() != 0) {local_pkeyp = &local_pkey;}
     info->set<int>(local_key, value, count, force, local_pkeyp);
+    esmf_rc = ESMF_SUCCESS;
   }
   ESMF_CATCH_ISOC
-  esmf_rc = ESMF_SUCCESS;
 }
 
 #undef  ESMC_METHOD
@@ -370,9 +370,9 @@ void ESMC_InfoSetArrayI8(ESMCI::Info *info, char *key, long int *value, int &cou
     std::string *local_pkeyp = nullptr;
     if (local_pkey.size() != 0) {local_pkeyp = &local_pkey;}
     info->set<long int>(local_key, value, count, force, local_pkeyp);
+    esmf_rc = ESMF_SUCCESS;
   }
   ESMF_CATCH_ISOC
-  esmf_rc = ESMF_SUCCESS;
 }
 
 #undef  ESMC_METHOD
@@ -385,9 +385,9 @@ void ESMC_InfoSetArrayLG(ESMCI::Info *info, char *key, bool *value, int &count, 
     std::string *local_pkeyp = nullptr;
     if (local_pkey.size() != 0) {local_pkeyp = &local_pkey;}
     info->set<bool>(local_key, value, count, force, local_pkeyp);
+    esmf_rc = ESMF_SUCCESS;
   }
   ESMF_CATCH_ISOC
-  esmf_rc = ESMF_SUCCESS;
 }
 
 }  // extern "C"
