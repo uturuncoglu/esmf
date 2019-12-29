@@ -773,8 +773,7 @@ json const * Info::getPointer(key_t& key, int& rc, bool recursive) const {
 bool Info::hasKey(key_t& key, int& rc, bool isptr, bool recursive) const {
   // Exceptions:  ESMCI::esmf_info_error
 
-  //tdk:debug
-#if 1
+#if 0
   std::string prefix = std::string(ESMC_METHOD) + ": ";
   std::string msg;
   msg = prefix + "key=" + key;

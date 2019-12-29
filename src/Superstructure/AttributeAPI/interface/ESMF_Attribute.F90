@@ -32927,22 +32927,25 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (present(isPresent)) then
+    isPresent = is_present
+  end if
+
   ! If the attpack object is provided but it does not exist, then bail out since
   ! the attpack will never be initialized properly
   if (.not. is_present) then
     if (present(attpack)) then
-      if (debug) then
-        call ESMF_LogWrite(ESMF_METHOD//": convention="//TRIM(convention))
-        call ESMF_LogWrite(ESMF_METHOD//": purpose="//TRIM(purpose))
+      if (.not. present(isPresent)) then
+        if (debug) then
+          call ESMF_LogWrite(ESMF_METHOD//": convention="//TRIM(convention))
+          call ESMF_LogWrite(ESMF_METHOD//": purpose="//TRIM(purpose))
+        end if
+        if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="convention/purpose not found and attpack object present", &
+          ESMF_CONTEXT, rcToReturn=rc)) return
       end if
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="convention/purpose not found and attpack object present", &
-                             ESMF_CONTEXT, rcToReturn=rc)) return
     end if
   end if
 
-  if (present(isPresent)) then
-    isPresent = is_present
-  end if
   if (is_present) then
     if (present(attpack)) then
       call attpack%initialize(info, convention=convention, purpose=purpose, rc=localrc)
@@ -33327,22 +33330,25 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (present(isPresent)) then
+    isPresent = is_present
+  end if
+
   ! If the attpack object is provided but it does not exist, then bail out since
   ! the attpack will never be initialized properly
   if (.not. is_present) then
     if (present(attpack)) then
-      if (debug) then
-        call ESMF_LogWrite(ESMF_METHOD//": convention="//TRIM(convention))
-        call ESMF_LogWrite(ESMF_METHOD//": purpose="//TRIM(purpose))
+      if (.not. present(isPresent)) then
+        if (debug) then
+          call ESMF_LogWrite(ESMF_METHOD//": convention="//TRIM(convention))
+          call ESMF_LogWrite(ESMF_METHOD//": purpose="//TRIM(purpose))
+        end if
+        if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="convention/purpose not found and attpack object present", &
+          ESMF_CONTEXT, rcToReturn=rc)) return
       end if
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="convention/purpose not found and attpack object present", &
-                             ESMF_CONTEXT, rcToReturn=rc)) return
     end if
   end if
 
-  if (present(isPresent)) then
-    isPresent = is_present
-  end if
   if (is_present) then
     if (present(attpack)) then
       call attpack%initialize(info, convention=convention, purpose=purpose, rc=localrc)
@@ -33727,22 +33733,25 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (present(isPresent)) then
+    isPresent = is_present
+  end if
+
   ! If the attpack object is provided but it does not exist, then bail out since
   ! the attpack will never be initialized properly
   if (.not. is_present) then
     if (present(attpack)) then
-      if (debug) then
-        call ESMF_LogWrite(ESMF_METHOD//": convention="//TRIM(convention))
-        call ESMF_LogWrite(ESMF_METHOD//": purpose="//TRIM(purpose))
+      if (.not. present(isPresent)) then
+        if (debug) then
+          call ESMF_LogWrite(ESMF_METHOD//": convention="//TRIM(convention))
+          call ESMF_LogWrite(ESMF_METHOD//": purpose="//TRIM(purpose))
+        end if
+        if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="convention/purpose not found and attpack object present", &
+          ESMF_CONTEXT, rcToReturn=rc)) return
       end if
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="convention/purpose not found and attpack object present", &
-                             ESMF_CONTEXT, rcToReturn=rc)) return
     end if
   end if
 
-  if (present(isPresent)) then
-    isPresent = is_present
-  end if
   if (is_present) then
     if (present(attpack)) then
       call attpack%initialize(info, convention=convention, purpose=purpose, rc=localrc)
@@ -34127,22 +34136,25 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (present(isPresent)) then
+    isPresent = is_present
+  end if
+
   ! If the attpack object is provided but it does not exist, then bail out since
   ! the attpack will never be initialized properly
   if (.not. is_present) then
     if (present(attpack)) then
-      if (debug) then
-        call ESMF_LogWrite(ESMF_METHOD//": convention="//TRIM(convention))
-        call ESMF_LogWrite(ESMF_METHOD//": purpose="//TRIM(purpose))
+      if (.not. present(isPresent)) then
+        if (debug) then
+          call ESMF_LogWrite(ESMF_METHOD//": convention="//TRIM(convention))
+          call ESMF_LogWrite(ESMF_METHOD//": purpose="//TRIM(purpose))
+        end if
+        if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="convention/purpose not found and attpack object present", &
+          ESMF_CONTEXT, rcToReturn=rc)) return
       end if
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="convention/purpose not found and attpack object present", &
-                             ESMF_CONTEXT, rcToReturn=rc)) return
     end if
   end if
 
-  if (present(isPresent)) then
-    isPresent = is_present
-  end if
   if (is_present) then
     if (present(attpack)) then
       call attpack%initialize(info, convention=convention, purpose=purpose, rc=localrc)
@@ -34527,22 +34539,25 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (present(isPresent)) then
+    isPresent = is_present
+  end if
+
   ! If the attpack object is provided but it does not exist, then bail out since
   ! the attpack will never be initialized properly
   if (.not. is_present) then
     if (present(attpack)) then
-      if (debug) then
-        call ESMF_LogWrite(ESMF_METHOD//": convention="//TRIM(convention))
-        call ESMF_LogWrite(ESMF_METHOD//": purpose="//TRIM(purpose))
+      if (.not. present(isPresent)) then
+        if (debug) then
+          call ESMF_LogWrite(ESMF_METHOD//": convention="//TRIM(convention))
+          call ESMF_LogWrite(ESMF_METHOD//": purpose="//TRIM(purpose))
+        end if
+        if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="convention/purpose not found and attpack object present", &
+          ESMF_CONTEXT, rcToReturn=rc)) return
       end if
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="convention/purpose not found and attpack object present", &
-                             ESMF_CONTEXT, rcToReturn=rc)) return
     end if
   end if
 
-  if (present(isPresent)) then
-    isPresent = is_present
-  end if
   if (is_present) then
     if (present(attpack)) then
       call attpack%initialize(info, convention=convention, purpose=purpose, rc=localrc)
@@ -34927,22 +34942,25 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (present(isPresent)) then
+    isPresent = is_present
+  end if
+
   ! If the attpack object is provided but it does not exist, then bail out since
   ! the attpack will never be initialized properly
   if (.not. is_present) then
     if (present(attpack)) then
-      if (debug) then
-        call ESMF_LogWrite(ESMF_METHOD//": convention="//TRIM(convention))
-        call ESMF_LogWrite(ESMF_METHOD//": purpose="//TRIM(purpose))
+      if (.not. present(isPresent)) then
+        if (debug) then
+          call ESMF_LogWrite(ESMF_METHOD//": convention="//TRIM(convention))
+          call ESMF_LogWrite(ESMF_METHOD//": purpose="//TRIM(purpose))
+        end if
+        if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="convention/purpose not found and attpack object present", &
+          ESMF_CONTEXT, rcToReturn=rc)) return
       end if
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="convention/purpose not found and attpack object present", &
-                             ESMF_CONTEXT, rcToReturn=rc)) return
     end if
   end if
 
-  if (present(isPresent)) then
-    isPresent = is_present
-  end if
   if (is_present) then
     if (present(attpack)) then
       call attpack%initialize(info, convention=convention, purpose=purpose, rc=localrc)
@@ -35327,22 +35345,25 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (present(isPresent)) then
+    isPresent = is_present
+  end if
+
   ! If the attpack object is provided but it does not exist, then bail out since
   ! the attpack will never be initialized properly
   if (.not. is_present) then
     if (present(attpack)) then
-      if (debug) then
-        call ESMF_LogWrite(ESMF_METHOD//": convention="//TRIM(convention))
-        call ESMF_LogWrite(ESMF_METHOD//": purpose="//TRIM(purpose))
+      if (.not. present(isPresent)) then
+        if (debug) then
+          call ESMF_LogWrite(ESMF_METHOD//": convention="//TRIM(convention))
+          call ESMF_LogWrite(ESMF_METHOD//": purpose="//TRIM(purpose))
+        end if
+        if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="convention/purpose not found and attpack object present", &
+          ESMF_CONTEXT, rcToReturn=rc)) return
       end if
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="convention/purpose not found and attpack object present", &
-                             ESMF_CONTEXT, rcToReturn=rc)) return
     end if
   end if
 
-  if (present(isPresent)) then
-    isPresent = is_present
-  end if
   if (is_present) then
     if (present(attpack)) then
       call attpack%initialize(info, convention=convention, purpose=purpose, rc=localrc)
@@ -35727,22 +35748,25 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (present(isPresent)) then
+    isPresent = is_present
+  end if
+
   ! If the attpack object is provided but it does not exist, then bail out since
   ! the attpack will never be initialized properly
   if (.not. is_present) then
     if (present(attpack)) then
-      if (debug) then
-        call ESMF_LogWrite(ESMF_METHOD//": convention="//TRIM(convention))
-        call ESMF_LogWrite(ESMF_METHOD//": purpose="//TRIM(purpose))
+      if (.not. present(isPresent)) then
+        if (debug) then
+          call ESMF_LogWrite(ESMF_METHOD//": convention="//TRIM(convention))
+          call ESMF_LogWrite(ESMF_METHOD//": purpose="//TRIM(purpose))
+        end if
+        if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="convention/purpose not found and attpack object present", &
+          ESMF_CONTEXT, rcToReturn=rc)) return
       end if
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="convention/purpose not found and attpack object present", &
-                             ESMF_CONTEXT, rcToReturn=rc)) return
     end if
   end if
 
-  if (present(isPresent)) then
-    isPresent = is_present
-  end if
   if (is_present) then
     if (present(attpack)) then
       call attpack%initialize(info, convention=convention, purpose=purpose, rc=localrc)
@@ -36127,22 +36151,25 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (present(isPresent)) then
+    isPresent = is_present
+  end if
+
   ! If the attpack object is provided but it does not exist, then bail out since
   ! the attpack will never be initialized properly
   if (.not. is_present) then
     if (present(attpack)) then
-      if (debug) then
-        call ESMF_LogWrite(ESMF_METHOD//": convention="//TRIM(convention))
-        call ESMF_LogWrite(ESMF_METHOD//": purpose="//TRIM(purpose))
+      if (.not. present(isPresent)) then
+        if (debug) then
+          call ESMF_LogWrite(ESMF_METHOD//": convention="//TRIM(convention))
+          call ESMF_LogWrite(ESMF_METHOD//": purpose="//TRIM(purpose))
+        end if
+        if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="convention/purpose not found and attpack object present", &
+          ESMF_CONTEXT, rcToReturn=rc)) return
       end if
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="convention/purpose not found and attpack object present", &
-                             ESMF_CONTEXT, rcToReturn=rc)) return
     end if
   end if
 
-  if (present(isPresent)) then
-    isPresent = is_present
-  end if
   if (is_present) then
     if (present(attpack)) then
       call attpack%initialize(info, convention=convention, purpose=purpose, rc=localrc)
@@ -36527,22 +36554,25 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (present(isPresent)) then
+    isPresent = is_present
+  end if
+
   ! If the attpack object is provided but it does not exist, then bail out since
   ! the attpack will never be initialized properly
   if (.not. is_present) then
     if (present(attpack)) then
-      if (debug) then
-        call ESMF_LogWrite(ESMF_METHOD//": convention="//TRIM(convention))
-        call ESMF_LogWrite(ESMF_METHOD//": purpose="//TRIM(purpose))
+      if (.not. present(isPresent)) then
+        if (debug) then
+          call ESMF_LogWrite(ESMF_METHOD//": convention="//TRIM(convention))
+          call ESMF_LogWrite(ESMF_METHOD//": purpose="//TRIM(purpose))
+        end if
+        if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="convention/purpose not found and attpack object present", &
+          ESMF_CONTEXT, rcToReturn=rc)) return
       end if
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="convention/purpose not found and attpack object present", &
-                             ESMF_CONTEXT, rcToReturn=rc)) return
     end if
   end if
 
-  if (present(isPresent)) then
-    isPresent = is_present
-  end if
   if (is_present) then
     if (present(attpack)) then
       call attpack%initialize(info, convention=convention, purpose=purpose, rc=localrc)
@@ -36927,22 +36957,25 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (present(isPresent)) then
+    isPresent = is_present
+  end if
+
   ! If the attpack object is provided but it does not exist, then bail out since
   ! the attpack will never be initialized properly
   if (.not. is_present) then
     if (present(attpack)) then
-      if (debug) then
-        call ESMF_LogWrite(ESMF_METHOD//": convention="//TRIM(convention))
-        call ESMF_LogWrite(ESMF_METHOD//": purpose="//TRIM(purpose))
+      if (.not. present(isPresent)) then
+        if (debug) then
+          call ESMF_LogWrite(ESMF_METHOD//": convention="//TRIM(convention))
+          call ESMF_LogWrite(ESMF_METHOD//": purpose="//TRIM(purpose))
+        end if
+        if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="convention/purpose not found and attpack object present", &
+          ESMF_CONTEXT, rcToReturn=rc)) return
       end if
-      if (ESMF_LogFoundError(ESMF_RC_NOT_FOUND, msg="convention/purpose not found and attpack object present", &
-                             ESMF_CONTEXT, rcToReturn=rc)) return
     end if
   end if
 
-  if (present(isPresent)) then
-    isPresent = is_present
-  end if
   if (is_present) then
     if (present(attpack)) then
       call attpack%initialize(info, convention=convention, purpose=purpose, rc=localrc)
