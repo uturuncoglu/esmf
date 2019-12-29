@@ -27,52 +27,52 @@
 using json = nlohmann::json;  // Convenience rename for JSON namespace.
 
 // Standard ESMF check error macros
-#define ESMF_CHECKERR_STD(name_rc, actual_rc, msg, update_rc) {\
+//tdk:todo: rename these macros to ESMF_INFO_*
+#define ESMF_CHECKERR_STD(name_rc, actual_rc, msg) {\
   if (actual_rc != ESMF_SUCCESS) {\
     ESMCI::esmf_info_error local_macro_error(name_rc, actual_rc, msg); \
-    if (ESMC_LogDefault.MsgFoundError(actual_rc, local_macro_error.what(), ESMC_CONTEXT, &update_rc)) \
+    if (ESMC_LogDefault.MsgFoundError(actual_rc, local_macro_error.what(), ESMC_CONTEXT, nullptr)) \
       throw(local_macro_error);}}
 
-#define ESMF_THROW_JSON(json_exc, name_rc, actual_rc, update_rc) {\
-  ESMC_LogDefault.MsgFoundError(actual_rc, json_exc.what(), ESMC_CONTEXT, &update_rc); \
+#define ESMF_THROW_JSON(json_exc, name_rc, actual_rc) {\
+  ESMC_LogDefault.MsgFoundError(actual_rc, json_exc.what(), ESMC_CONTEXT, nullptr); \
   throw(ESMCI::esmf_info_error(name_rc, actual_rc, json_exc.what()));}
 
-#define ESMF_HANDLE_PASSTHRU(exc_esmf) {\
-  ESMC_LogDefault.MsgFoundError(exc_esmf.getReturnCode(), exc_esmf.what(), ESMC_CONTEXT, nullptr); \
-  throw(exc_esmf);}
+#define ESMF_HANDLE_PASSTHRU(exc_info) {\
+  ESMC_LogDefault.MsgFoundError(exc_info.getReturnCode(), exc_info.what(), ESMC_CONTEXT, nullptr); \
+  throw(exc_info);}
 
 #define ESMF_CATCH_PASSTHRU \
-  catch (ESMCI::esmf_info_error &exc_esmf) {ESMF_HANDLE_PASSTHRU(exc_esmf)}
+  catch (ESMCI::esmf_info_error &exc_info) {ESMF_HANDLE_PASSTHRU(exc_info)}
 
 #define ESMF_CATCH_ISOC \
-  catch (ESMCI::esmf_info_error &exc_esmf) {\
-    ESMC_LogDefault.MsgFoundError(exc_esmf.getReturnCode(), exc_esmf.what(), ESMC_CONTEXT, nullptr); \
-    rc = exc_esmf.getReturnCode();} \
+  catch (ESMCI::esmf_info_error &exc_info) {\
+    ESMC_LogDefault.MsgFoundError(exc_info.getReturnCode(), exc_info.what(), ESMC_CONTEXT, nullptr); \
+    esmf_rc = exc_info.getReturnCode();} \
   catch(...) {\
     std::string msg;\
-  if (rc == ESMF_SUCCESS) {\
-    msg = "Unhandled throw and return code is ESMF_SUCCESS(?). Changing return code to ESMF_FAILURE";\
-    rc = ESMF_FAILURE;} \
+  if (esmf_rc == ESMF_SUCCESS) {\
+    msg = "Unhandled throw and return code is ESMF_SUCCESS. Changing return code to ESMF_FAILURE";\
+    esmf_rc = ESMF_FAILURE;} \
   else {\
     msg = "Unhandled throw";}\
-  ESMC_LogDefault.MsgFoundError(rc, msg, ESMC_CONTEXT, nullptr);}
-#define ESMF_CATCH_ISOCP catch (ESMCI::esmf_info_error &exc_esmf){ESMC_LogDefault.MsgFoundError(exc_esmf.getReturnCode(), exc_esmf.what(), ESMC_CONTEXT, rc);}catch(...) {std::string msg;if (localrc == ESMF_SUCCESS) {msg = "Unhandled throw and return code is ESMF_SUCCESS(?). Changing return code to ESMF_FAILURE";localrc = ESMF_FAILURE;} else {msg = "Unhandled throw";}ESMC_LogDefault.MsgFoundError(localrc, msg, ESMC_CONTEXT, rc);}
+  ESMC_LogDefault.MsgFoundError(esmf_rc, msg, ESMC_CONTEXT, nullptr);}
 
 #define ESMF_CATCH_INFO \
   catch (json::out_of_range &exc_json) {\
-    ESMF_THROW_JSON(exc_json, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);} \
+    ESMF_THROW_JSON(exc_json, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND);} \
   catch (json::type_error &exc_json) {\
-    ESMF_THROW_JSON(exc_json, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);} \
-  catch (ESMCI::esmf_info_error &exc_esmf) {\
-    ESMF_HANDLE_PASSTHRU(exc_esmf);} \
+    ESMF_THROW_JSON(exc_json, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD);} \
+  catch (ESMCI::esmf_info_error &exc_info) {\
+    ESMF_HANDLE_PASSTHRU(exc_info);} \
   catch (...) {\
-    ESMF_CHECKERR_STD("", ESMF_FAILURE, "Unhandled throw", rc);}
+    ESMF_CHECKERR_STD("", ESMF_FAILURE, "Unhandled throw");}
 
 #define ESMF_CATCH_JSON \
   catch (json::out_of_range &e) {\
-    ESMF_THROW_JSON(e, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, rc);} \
+    ESMF_THROW_JSON(e, "ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND);} \
   catch (json::type_error &e) {\
-    ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);}
+    ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD);}
 
 //-----------------------------------------------------------------------------
 //BOP
@@ -102,17 +102,17 @@ enum ESMC_ISOCType {C_INT, C_LONG, C_FLOAT, C_DOUBLE, C_CHAR};
 class esmf_info_error : public std::exception
 {
 public:
-  esmf_info_error(key_t &code_name, int rc, key_t &msg);
+  esmf_info_error(key_t &code_name, int esmf_rc, key_t &msg);
 
   key_t getCodeName() {return this->code_name;}
 
-  int getReturnCode() {return this->rc;}
+  int getReturnCode() {return this->esmf_rc;}
 
   const char* what() const noexcept {return this->msg.c_str();}
 
 private:
   std::string msg;
-  int rc;
+  int esmf_rc;
   key_t code_name;
 };
 
@@ -152,113 +152,76 @@ public:
 
   Info(const json& storage); // Copy constructor from JSON
   Info(json&& storage); // Move constructor from JSON
-  Info(key_t& input, int& rc); // Parse JSON string constructor
+  Info(key_t& input, int &esmf_rc); // Parse JSON string constructor
 
-  std::string dump(int& rc) const;
-  std::string dump(int indent, int& rc) const;
+  std::string dump(void) const;
+  std::string dump(int indent) const;
 
-  void erase(key_t& key, key_t& keyChild, int& rc, bool recursive = false);
+  void erase(key_t& key, key_t& keyChild, bool recursive = false);
 
-  static json::json_pointer formatKey(key_t &key, int &rc);
+  static json::json_pointer formatKey(key_t &key);
 
   //---------------------------------------------------------------------------
   template <typename T>
-  T get(key_t &key, int &rc, const T *def = nullptr, const int *index = nullptr, bool recursive = false, std::string *ikey = nullptr) const;
+  T get(key_t &key, const T *def = nullptr, const int *index = nullptr, bool recursive = false, std::string *ikey = nullptr) const;
 
-  void get(ESMCI::Info &info, key_t &key, int &rc) const;
+  void get(ESMCI::Info &info, key_t &key) const;
   //---------------------------------------------------------------------------
 
   std::size_t getCountPack(void) const {return get_attpack_count(this->getStorageRef());}
 
   template <typename T>
-  std::vector<T> getvec(key_t &key, int &rc, bool recursive = false) const;
-
-  //tdk:remove this interface
-  void get_isoc(ESMCI::ESMC_ISOCType ictype, void *ret, char* key, int& rc,
-    void* def = nullptr) const;
+  std::vector<T> getvec(key_t &key, bool recursive = false) const;
 
   virtual const json& getStorageRef(void) const { return this->storage; }
   virtual json& getStorageRefWritable(void) { return this->storage; }
 
-  json const * getPointer(key_t &key, int &rc, bool recursive = false) const;
+  json const * getPointer(key_t &key, bool recursive = false) const;
 
-  bool hasKey(key_t &key, int &rc, bool isptr = false, bool recursive = false) const;
-  bool hasKey(const json::json_pointer &jp, int& rc, bool recursive = false) const;
+  bool hasKey(key_t &key, bool isptr = false, bool recursive = false) const;
+  bool hasKey(const json::json_pointer &jp, bool recursive = false) const;
 
-  json inquire(key_t& key, int& rc, bool recursive = false, const int *idx = nullptr,
+  json inquire(key_t& key, bool recursive = false, const int *idx = nullptr,
     bool attr_compliance = false) const;
 
   bool isDirty() const {return this->dirty;}
   void setDirty(bool flag) {this->dirty = flag;}
 
-  bool isSetNull(key_t &key, int &rc) const;
+  bool isSetNull(key_t &key) const;
 
-  void parse(key_t &input, int &rc);
+  void parse(key_t &input);
 
-  void deserialize(char *buffer, int *offset, int& rc);
+  void deserialize(char *buffer, int *offset);
 
   void serialize(char *buffer, int *length, int *offset,
-    ESMC_InquireFlag inquireflag, int &rc);
+    ESMC_InquireFlag inquireflag);
 
-  void set(key_t &key, json &&j, bool force, int &rc, const int *index = nullptr,
+  void set(key_t &key, json &&j, bool force, const int *index = nullptr,
     const key_t * const pkey = nullptr);
-  void set(key_t &key, const ESMCI::Info &info, bool force, int &rc,
+  void set(key_t &key, const ESMCI::Info &info, bool force,
     const key_t * const pkey = nullptr);
-  void set(key_t &key, bool force, int &rc, const int *index = nullptr,
+  void set(key_t &key, bool force, const int *index = nullptr,
     const key_t * const pkey = nullptr);  // set null
   template <typename T>
-  void set(key_t &key, T value, bool force, int &rc, const int *index = nullptr,
+  void set(key_t &key, T value, bool force, const int *index = nullptr,
     const key_t * const pkey = nullptr);
   template <typename T>
-  void set(key_t &key, T *values, int count, bool force, int &rc,
+  void set(key_t &key, T *values, int count, bool force,
     const key_t * const pkey = nullptr);
 
-  void update(const Info &info, int &rc);
+  void update(const Info &info);
 
   int ESMC_Print(bool tofile, const char *filename, bool append) const;
 };
 
 //-----------------------------------------------------------------------------
 
-void broadcastInfo(ESMCI::Info* info, int rootPet, const ESMCI::VM &vm, int &rc);
-
-//-----------------------------------------------------------------------------
-
-class InfoView {
-private:
-  json *storage = nullptr;
-public:
-  InfoView(void) = delete; // Default constructor
-  ~InfoView(void) = default;  // Default destructor
-  InfoView(InfoView&&) = delete; // Move constructor
-  InfoView(const InfoView&) = delete; // Copy constructor
-  InfoView&operator=(const InfoView&) = delete; // Copy assignment
-  InfoView&operator=(InfoView&&) = delete; // Move assignment
-
-  InfoView(json &j) {this->storage = &j;}
-
-  void update_storage_ptr(json &j) {this->storage = &j;}
-  void update_storage_ptr(const json::json_pointer *key, const int *idx, bool recursive);
-
-  template<typename T>
-  T copy(void);
-
-  template<typename T>
-  void copy(T target, const int &count);
-
-  void update_ptr(bool **ptr);
-  void update_ptr(long int **ptr);
-  void update_ptr(double **ptr);
-  void update_ptr(std::string **ptr);
-  void update_ptr(json::array_t **ptr);
-
-  json &get_ivref(void) {return *this->storage;}
-};
+void broadcastInfo(ESMCI::Info* info, int rootPet, const ESMCI::VM &vm);
 
 //-----------------------------------------------------------------------------
 
 class PackageFactory
-// tdk: FEATURE: add rule of five
+// tdk:todo: add rule of five
 {
 private:
   json cache = json::object();
@@ -268,7 +231,7 @@ public:
   PackageFactory(void) = default;  // Default constructor
   ~PackageFactory(void) = default; // Default destructor
 
-  json getOrCreateJSON(key_t& key, int& rc, key_t& uri = "");
+  json getOrCreateJSON(key_t& key, key_t& uri = "");
 };
 
 } // namespace

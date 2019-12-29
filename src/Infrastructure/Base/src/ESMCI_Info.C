@@ -329,29 +329,29 @@ void update_json_pointer(json &j, json **jdp, int index, bool recursive,
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "handleHasKey"
-bool handleHasKey(const Info* info, key_t& key, bool force, int& rc) {
+bool handleHasKey(const Info* info, key_t& key, bool force) {
   // Exceptions:  ESMCI::esmf_info_error
   //tdk:todo: consider using a json_pointer instead of a string key
   bool has_key;
   try {
-    has_key = info->hasKey(key, rc, true);
+    has_key = info->hasKey(key, true);
   }
   catch (ESMCI::esmf_info_error &exc_esmf) {
     ESMF_HANDLE_PASSTHRU(exc_esmf);
   }
   if (has_key && !force) {
     std::string msg = "Key \'" + key + "\' already in map and force=false.";
-    ESMF_CHECKERR_STD("ESMC_RC_CANNOT_SET", ESMC_RC_CANNOT_SET, msg, rc);
+    ESMF_CHECKERR_STD("ESMC_RC_CANNOT_SET", ESMC_RC_CANNOT_SET, msg);
   }
   return has_key;
 }
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "handleJSONTypeCheck()"
-void handleJSONTypeCheck(key_t &key, const json &src, const json &dst, int &rc) {
+void handleJSONTypeCheck(key_t &key, const json &src, const json &dst) {
   if (!src.is_null() && src.type() != dst.type()) {
     std::string errmsg = "Types not equivalent. The key is: " + key;
-    ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, errmsg, rc);
+    ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, errmsg);
   }
 }
 
@@ -429,12 +429,12 @@ ESMC_TypeKind_Flag json_type_to_esmf_typekind(const json &j, const bool allow_ar
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "check_init_from_json()"
-void check_init_from_json(const json j, int &rc) {
+void check_init_from_json(const json j) {
   // Test:
   // Notes:
   if (!j.is_object()) {
     std::string msg = "Can only create Info from JSON value_t::object_t types";
-    ESMF_CHECKERR_STD("ESMC_RC_OBJ_NOT_CREATED", ESMC_RC_OBJ_NOT_CREATED, msg, rc);
+    ESMF_CHECKERR_STD("ESMC_RC_OBJ_NOT_CREATED", ESMC_RC_OBJ_NOT_CREATED, msg);
   }
 }
 
@@ -445,43 +445,40 @@ void check_init_from_json(const json j, int &rc) {
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Info(json&)"
 Info::Info(const json& storage){
-  int rc;
-  check_init_from_json(storage, rc);
+  check_init_from_json(storage);
   this->storage = storage;
 };
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Info(json&&)"
 Info::Info(json&& storage){
-  int rc;
-  check_init_from_json(storage, rc);
+  check_init_from_json(storage);
   this->storage = move(storage);
 };
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Info(string&)"
-Info::Info(key_t& input, int& rc) {
+Info::Info(key_t& input, int &esmf_rc) {
   // Exceptions: ESMCI::esmf_info_error
   // tdk:todo: use the parse method on the object!
-
-  rc = ESMF_FAILURE;
+  esmf_rc = ESMF_FAILURE;
   try {
     this->storage = json::parse(input);
   }
   catch (json::parse_error& e) {
-    ESMF_THROW_JSON(e, "ESMC_RC_OBJ_NOT_CREATED", ESMC_RC_OBJ_NOT_CREATED, rc);
+    ESMF_THROW_JSON(e, "ESMC_RC_OBJ_NOT_CREATED", ESMC_RC_OBJ_NOT_CREATED);
   }
-  rc = ESMF_SUCCESS;
+  esmf_rc = ESMF_SUCCESS;
 };
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "Info::dump(int &rc)"
-std::string Info::dump(int& rc) const {
+#define ESMC_METHOD "Info::dump()"
+std::string Info::dump(void) const {
   // Exceptions: ESMCI::esmf_info_error
 
   std::string ret;
   try {
-    ret = this->dump(0, rc);
+    ret = this->dump(0);
   } catch (ESMCI::esmf_info_error &e) {
     ESMF_HANDLE_PASSTHRU(e);
   }
@@ -490,10 +487,9 @@ std::string Info::dump(int& rc) const {
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Info::deserialize()"
-void Info::deserialize(char *buffer, int *offset, int &rc) {
+void Info::deserialize(char *buffer, int *offset) {
   // Test: testSerializeDeserialize, testSerializeDeserialize2
   // Exceptions:  ESMCI:esmf_info_error
-  rc = ESMF_FAILURE;
   alignOffset(*offset);
 
   // Act like an integer to get the string length.
@@ -504,7 +500,7 @@ void Info::deserialize(char *buffer, int *offset, int &rc) {
   (*offset) += sizeof(int);
   std::string infobuffer(&(buffer[*offset]), length);
   try {
-    this->parse(infobuffer, rc);
+    this->parse(infobuffer);
   }
   catch (esmf_info_error &e) {
     ESMF_HANDLE_PASSTHRU(e);
@@ -515,13 +511,12 @@ void Info::deserialize(char *buffer, int *offset, int &rc) {
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "Info::dump(int indent, int &rc)"
-std::string Info::dump(int indent, int& rc) const {
+#define ESMC_METHOD "Info::dump(int indent)"
+std::string Info::dump(int indent) const {
   // Exceptions: ESMCI::esmf_info_error
 
-  rc = ESMF_FAILURE;
   if (indent < 0) {
-    ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, "indent must be >= 0", rc);
+    ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, "indent must be >= 0");
   }
   std::string ret;
   const json &j = this->getStorageRef();
@@ -532,19 +527,17 @@ std::string Info::dump(int indent, int& rc) const {
       ret = j.dump(indent);
     }
   } catch (json::type_error &e) {
-    ESMF_THROW_JSON(e, "ESMC_RC_ARG_INCOMP", ESMC_RC_ARG_INCOMP, rc);
+    ESMF_THROW_JSON(e, "ESMC_RC_ARG_INCOMP", ESMC_RC_ARG_INCOMP);
   }
-  rc = ESMF_SUCCESS;
   return ret;
 };
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Info::erase()"
-void Info::erase(key_t &keyParent, key_t &keyChild, int &rc, bool recursive) {
+void Info::erase(key_t &keyParent, key_t &keyChild, bool recursive) {
   // Exceptions: ESMCI::esmf_info_error
-  rc = ESMF_FAILURE;
   try {
-    json::json_pointer key = this->formatKey(keyParent, rc);
+    json::json_pointer key = this->formatKey(keyParent);
     try {
       json &j = this->getStorageRefWritable();
       json *jp = nullptr;
@@ -553,7 +546,7 @@ void Info::erase(key_t &keyParent, key_t &keyChild, int &rc, bool recursive) {
       assert(jp);
       if (recursive) {
         try {
-          key = this->formatKey(keyChild, rc);
+          key = this->formatKey(keyChild);
           json *dummy = nullptr;
           update_json_pointer(*jp, &dummy, key, recursive, &container);
           assert(dummy);
@@ -569,15 +562,13 @@ void Info::erase(key_t &keyParent, key_t &keyChild, int &rc, bool recursive) {
   }
   ESMF_CATCH_INFO
   this->dirty = true;
-  rc = ESMF_SUCCESS;
   return;
 };
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Info::formatKey()"
-json::json_pointer Info::formatKey(key_t& key, int& rc) {
+json::json_pointer Info::formatKey(key_t& key) {
   // Exceptions:  ESMCI:esmf_info_error
-  rc = ESMF_FAILURE;
   std::string localKey;
 
   if (key != "" && key[0] != '/') {
@@ -588,25 +579,23 @@ json::json_pointer Info::formatKey(key_t& key, int& rc) {
 
   if (localKey.find("///") != std::string::npos){
     std::string msg = "Triple forward slashes not allowed in key names";
-    ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, msg, rc);
+    ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, msg);
   }
 
   try {
     json::json_pointer jp(localKey);
-    rc = ESMF_SUCCESS;
     return jp;
   }
   catch (json::parse_error &e) {
-    ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
+    ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD);
   }
 };
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Info::get()"
 template <typename T>
-T Info::get(key_t &key, int &rc, const T *def, const int *index, bool recursive, std::string *ikey) const {
+T Info::get(key_t &key, const T *def, const int *index, bool recursive, std::string *ikey) const {
   // Exceptions:  ESMCI:esmf_info_error
-  rc = ESMF_FAILURE;
 
 #if 0
     std::string prefix = std::string(ESMC_METHOD) + ": ";
@@ -617,12 +606,12 @@ T Info::get(key_t &key, int &rc, const T *def, const int *index, bool recursive,
     ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO);
     msg = prefix + "this->dump()=...";
     ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO);
-    ESMC_LogWrite(this->dump(rc).c_str(), ESMC_LOGMSG_INFO);
+    ESMC_LogWrite(this->dump().c_str(), ESMC_LOGMSG_INFO);
 #endif
 
   T ret;
   try {
-    json::json_pointer jpath = this->formatKey(key, rc);
+    json::json_pointer jpath = this->formatKey(key);
     try {
       json const *jp = nullptr;
       update_json_pointer(this->getStorageRef(), &jp, jpath, recursive);
@@ -634,14 +623,12 @@ T Info::get(key_t &key, int &rc, const T *def, const int *index, bool recursive,
             ret = jarr->at(*index);
           }
           catch (std::out_of_range &e) {
-            ESMF_CHECKERR_STD("ESMC_RC_ARG_OUTOFRANGE", ESMC_RC_ARG_OUTOFRANGE,
-                              e.what(), rc)
+            ESMF_CHECKERR_STD("ESMC_RC_ARG_OUTOFRANGE", ESMC_RC_ARG_OUTOFRANGE, e.what())
           }
         } else if (jp->is_object()) {
           if (*index >= (int) jp->size()) {
             std::string msg = "'index' greater than object count";
-            ESMF_CHECKERR_STD("ESMC_RC_ARG_OUTOFRANGE", ESMC_RC_ARG_OUTOFRANGE,
-                              msg, rc)
+            ESMF_CHECKERR_STD("ESMC_RC_ARG_OUTOFRANGE", ESMC_RC_ARG_OUTOFRANGE, msg)
           }
           int ctr = 0;
           for (json::const_iterator it = jp->cbegin();
@@ -659,14 +646,13 @@ T Info::get(key_t &key, int &rc, const T *def, const int *index, bool recursive,
         } else if (jp->is_string()) {
           if (*index >= (int) jp->size()) {
             std::string msg = "'index' greater than string length";
-            ESMF_CHECKERR_STD("ESMC_RC_ARG_OUTOFRANGE", ESMC_RC_ARG_OUTOFRANGE,
-                              msg, rc)
+            ESMF_CHECKERR_STD("ESMC_RC_ARG_OUTOFRANGE", ESMC_RC_ARG_OUTOFRANGE, msg)
           }
           ret = jp[*index];
         } else {
           std::string msg = "'index' only supported for JSON strings, arrays, or objects. JSON type is: ";
           msg = msg + jp->type_name();
-          ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, msg, rc);
+          ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, msg);
         }
       } else {
         if (jp->is_null() && def) {
@@ -681,51 +667,50 @@ T Info::get(key_t &key, int &rc, const T *def, const int *index, bool recursive,
       } else {
         std::string emsg = std::string(__FILE__) + ":" + std::to_string(__LINE__) + " " + ESMC_METHOD + ": Key not found (JSON trace will follow): " + key;
         ESMC_LogWrite(emsg.c_str(), ESMC_LOGMSG_ERROR);
-        ESMF_THROW_JSON(e, "ESMF_RC_ATTR_NOTSET", ESMF_RC_ATTR_NOTSET, rc)
+        ESMF_THROW_JSON(e, "ESMF_RC_ATTR_NOTSET", ESMF_RC_ATTR_NOTSET)
       }
     }
   }
   ESMF_CATCH_INFO
   return ret;
 }
-template float Info::get(key_t&, int&, const float*, const int*, bool, std::string*) const;
-template double Info::get(key_t&, int&, const double*, const int*, bool, std::string*) const;
-template int Info::get(key_t&, int&, const int*, const int*, bool, std::string*) const;
-template long int Info::get(key_t&, int&, const long int*, const int*, bool, std::string*) const;
-template bool Info::get(key_t&, int&, const bool*, const int*, bool, std::string*) const;
-template std::string Info::get(key_t&, int&, const std::string*, const int*, bool, std::string*) const;
-template json Info::get(key_t&, int&, const json*, const int*, bool, std::string*) const;
+template float Info::get(key_t&, const float*, const int*, bool, std::string*) const;
+template double Info::get(key_t&, const double*, const int*, bool, std::string*) const;
+template int Info::get(key_t&, const int*, const int*, bool, std::string*) const;
+template long int Info::get(key_t&, const long int*, const int*, bool, std::string*) const;
+template bool Info::get(key_t&, const bool*, const int*, bool, std::string*) const;
+template std::string Info::get(key_t&, const std::string*, const int*, bool, std::string*) const;
+template json Info::get(key_t&, const json*, const int*, bool, std::string*) const;
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Info::get() Info"
-void Info::get(ESMCI::Info &info, key_t &key, int &rc) const {
+void Info::get(ESMCI::Info &info, key_t &key) const {
   // Test: testGetInfoObject
   // Notes:
 
 #if 0
   std::string msg = std::string(ESMC_METHOD) + ": key=" + key;
   ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO);
-  msg = std::string(ESMC_METHOD) + ": this dump=" + this->dump(0, rc);
+  msg = std::string(ESMC_METHOD) + ": this dump=" + this->dump(0);
   ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO);
 #endif
 
-  rc = ESMF_FAILURE;
   json j;
   try {
-    j = this->get<json>(key, rc);
+    j = this->get<json>(key);
 
 #if 0
     std::string msg2 = std::string(ESMC_METHOD) + ": j dump=" + j.dump();
     ESMC_LogWrite(msg2.c_str(), ESMC_LOGMSG_INFO);
 #endif
     
-    check_init_from_json(j, rc);
+    check_init_from_json(j);
   }
   ESMF_CATCH_INFO
   info.getStorageRefWritable() = std::move(j);
 
 #if 0
-  std::string msg3 = std::string(ESMC_METHOD) + ": info dump=" + info.dump(0, rc);
+  std::string msg3 = std::string(ESMC_METHOD) + ": info dump=" + info.dump(0);
   ESMC_LogWrite(msg3.c_str(), ESMC_LOGMSG_INFO);
 #endif
 
@@ -734,12 +719,12 @@ void Info::get(ESMCI::Info &info, key_t &key, int &rc) const {
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Info::getvec() vector<T>"
 template <typename T>
-std::vector<T> Info::getvec(key_t& key, int& rc, bool recursive) const {
+std::vector<T> Info::getvec(key_t& key, bool recursive) const {
   std::vector<T> ret;
   try {
     json const *j;
     try {
-      j = this->getPointer(key, rc, recursive);
+      j = this->getPointer(key, recursive);
     }
     ESMF_CATCH_PASSTHRU
     ret = j->get<std::vector<T>>();
@@ -747,17 +732,16 @@ std::vector<T> Info::getvec(key_t& key, int& rc, bool recursive) const {
   ESMF_CATCH_INFO
   return ret;
 };
-template std::vector<std::string> Info::getvec(key_t&, int&, bool) const;
+template std::vector<std::string> Info::getvec(key_t&, bool) const;
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Info::getPointer()"
-json const * Info::getPointer(key_t& key, int& rc, bool recursive) const {
+json const * Info::getPointer(key_t& key, bool recursive) const {
   // Exceptions:  ESMCI:esmf_info_error
 
-  rc = ESMF_FAILURE;
   json const *ret = nullptr;
   try {
-    json::json_pointer jpath = this->formatKey(key, rc);
+    json::json_pointer jpath = this->formatKey(key);
     try {
       update_json_pointer(this->getStorageRef(), &ret, jpath, recursive);
       assert(ret);
@@ -770,7 +754,7 @@ json const * Info::getPointer(key_t& key, int& rc, bool recursive) const {
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Info::hasKey()"
-bool Info::hasKey(key_t& key, int& rc, bool isptr, bool recursive) const {
+bool Info::hasKey(key_t& key, bool isptr, bool recursive) const {
   // Exceptions:  ESMCI::esmf_info_error
 
 #if 0
@@ -783,18 +767,17 @@ bool Info::hasKey(key_t& key, int& rc, bool isptr, bool recursive) const {
   msg = prefix + "recursive=" + std::to_string(recursive);
   ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO);
   msg = prefix + "this->dump()=...";
-  ESMC_LogWrite((this->dump(rc)).c_str(), ESMC_LOGMSG_INFO);
+  ESMC_LogWrite((this->dump()).c_str(), ESMC_LOGMSG_INFO);
 #endif
 
-  rc = ESMF_FAILURE;
   bool ret;
   if (isptr || recursive) {
     // Use JSON pointer syntax. This is slower than just attempting to find
     // the key. JSON pointers do not work with find. See: https://github.com/nlohmann/json/issues/1182#issuecomment-409708389
     // for an explanation.
     try {
-      json::json_pointer jp = this->formatKey(key, rc);
-      ret = this->hasKey(jp, rc, recursive); // Call overload for JSON Pointer
+      json::json_pointer jp = this->formatKey(key);
+      ret = this->hasKey(jp, recursive); // Call overload for JSON Pointer
     }
     ESMF_CATCH_INFO
 
@@ -803,7 +786,6 @@ bool Info::hasKey(key_t& key, int& rc, bool isptr, bool recursive) const {
     // with JSON pointers.
     ret = !(this->getStorageRef().find(key) == storage.end());
   }
-  rc = ESMF_SUCCESS;
 
 #if 0
   std::string prefix2 = std::string(ESMC_METHOD) + ": ";
@@ -817,9 +799,8 @@ bool Info::hasKey(key_t& key, int& rc, bool isptr, bool recursive) const {
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Info::hasKey()"
-bool Info::hasKey(const json::json_pointer &jp, int& rc, bool recursive) const {
+bool Info::hasKey(const json::json_pointer &jp, bool recursive) const {
   // Exceptions:  ESMCI::esmf_info_error
-  rc = ESMF_FAILURE;
   bool ret;
   const json &storage = this->getStorageRef();
   // Use JSON pointer syntax. This is slower than just attempting to find
@@ -836,16 +817,14 @@ bool Info::hasKey(const json::json_pointer &jp, int& rc, bool recursive) const {
     }
   }
   ESMF_CATCH_PASSTHRU
-  rc = ESMF_SUCCESS;
   return ret;
 }
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Info::inquire()"
-json Info::inquire(key_t &key, int &rc, bool recursive, const int *idx, bool attr_compliance) const {
+json Info::inquire(key_t &key, bool recursive, const int *idx, bool attr_compliance) const {
   // Test: testInquire
   // Notes:
-  rc = ESMF_FAILURE;
 
 #if 0
     std::string prefix = std::string(ESMC_METHOD) + ": ";
@@ -858,7 +837,7 @@ json Info::inquire(key_t &key, int &rc, bool recursive, const int *idx, bool att
     ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO);
     msg = prefix + "this->dump()=...";
     ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO);
-    ESMC_LogWrite(this->dump(rc).c_str(), ESMC_LOGMSG_INFO);
+    ESMC_LogWrite(this->dump().c_str(), ESMC_LOGMSG_INFO);
 #endif
 
   json j = json::object();
@@ -867,7 +846,7 @@ json Info::inquire(key_t &key, int &rc, bool recursive, const int *idx, bool att
     j["key"] = json::value_t::null;
     const json *sp = &(this->getStorageRef());
     try {
-      json::json_pointer jp = this->formatKey(key, rc);
+      json::json_pointer jp = this->formatKey(key);
       update_json_pointer(this->getStorageRef(), &sp, jp, recursive);
     }
     ESMF_CATCH_PASSTHRU
@@ -877,8 +856,7 @@ json Info::inquire(key_t &key, int &rc, bool recursive, const int *idx, bool att
           sp = &(sp->at(*idx));
         }
         catch (std::out_of_range &e) {
-          ESMF_CHECKERR_STD("ESMC_RC_ARG_OUTOFRANGE", ESMC_RC_ARG_OUTOFRANGE,
-                            e.what(), rc)
+          ESMF_CHECKERR_STD("ESMC_RC_ARG_OUTOFRANGE", ESMC_RC_ARG_OUTOFRANGE, e.what())
         }
       } else if (sp->is_object()) {
         json::iterator it = find_by_index(const_cast<json&>(*sp), (std::size_t)(*idx), recursive, attr_compliance);
@@ -886,7 +864,7 @@ json Info::inquire(key_t &key, int &rc, bool recursive, const int *idx, bool att
         sp = &(it.value());
       } else {
         std::string msg = "'idx' only supported for JSON arrays or objects";
-        ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, msg, rc);
+        ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, msg);
       }
     }
 
@@ -936,7 +914,6 @@ json Info::inquire(key_t &key, int &rc, bool recursive, const int *idx, bool att
     j["isNull"] = sk.is_null();
   }
   ESMF_CATCH_INFO
-  rc = ESMF_SUCCESS;
 
 #if 0
   msg = prefix + "j.dump()=...";
@@ -949,88 +926,24 @@ json Info::inquire(key_t &key, int &rc, bool recursive, const int *idx, bool att
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Info::parse()"
-void Info::parse(key_t& input, int& rc) {
+void Info::parse(key_t& input) {
   // Exceptions:  ESMCI:esmf_info_error
 
-  rc = ESMF_FAILURE;
   try {
     this->getStorageRefWritable() = json::parse(input);
   } catch (json::parse_error &exc_json) {
-    ESMF_THROW_JSON(exc_json, "ESMC_RC_ARG_WRONG", ESMC_RC_ARG_WRONG, rc)
+    ESMF_THROW_JSON(exc_json, "ESMC_RC_ARG_WRONG", ESMC_RC_ARG_WRONG)
   }
   ESMF_CATCH_JSON
-  rc = ESMF_SUCCESS;
   return;
 }
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "Info::get_isoc()"
-void Info::get_isoc(ESMCI::ESMC_ISOCType ictype, void *ret, char* key,
-  int& rc, void* def) const {
-  rc = ESMF_FAILURE;
-  std::string localKey(key);
-  try {
-    if (ictype == ESMCI::C_INT) {
-      *(reinterpret_cast<int *>(ret)) = this->get<int>(localKey, rc,
-        reinterpret_cast<int *>(def));
-    } else if (ictype == ESMCI::C_LONG) {
-      *(reinterpret_cast<long int *>(ret)) = this->get<long int>(localKey, rc,
-        reinterpret_cast<long int *>(def));
-    } else if (ictype == ESMCI::C_FLOAT) {
-      *(reinterpret_cast<float *>(ret)) = this->get<float>(localKey, rc,
-        reinterpret_cast<float *>(def));
-    } else if (ictype == ESMCI::C_DOUBLE) {
-      *(reinterpret_cast<double *>(ret)) = this->get<double>(localKey, rc,
-        reinterpret_cast<double *>(def));
-    } else if (ictype == ESMCI::C_CHAR) {
-      // Reinterpret casts from void to character types
-      char *local_ret = reinterpret_cast<char *>(ret);
-      char *local_def = reinterpret_cast<char *>(def);
-      // String pointer used to define the default value if present
-      std::string *local_def_str_ptr;
-      // String object that holds the default if present
-      std::string local_def_str;
-      if (local_def) {
-        // Set the default pointer to the string object created from the char
-        // array from Fortran
-        local_def_str = std::string(local_def);
-        local_def_str_ptr = &local_def_str;
-      } else {
-        local_def_str_ptr = nullptr;
-      }
-      std::string as_str;
-      try {
-        as_str = this->get<std::string>(localKey, rc, local_def_str_ptr);
-      }
-      catch (ESMCI::esmf_info_error &exc_esmf) {
-        ESMF_HANDLE_PASSTHRU(exc_esmf);
-      }
-      // Transfer the string characters into the Fortran character array using
-      // spaces to fill the Fortran array if we are past the max string length.
-      for (std::size_t ii = 0; ii < ESMF_MAXSTR; ++ii) {
-        if (ii < as_str.size()) {
-          local_ret[ii] = as_str[ii];
-        } else {
-          local_ret[ii] = ' ';
-        }
-      }
-    } else {
-      std::string msg = "ESMC_ISOCType not supported: " + std::to_string(ictype);
-      ESMF_CHECKERR_STD("ESMC_RC_NOT_IMPL", ESMC_RC_NOT_IMPL, msg, rc);
-    }
-  }
-  catch (ESMCI::esmf_info_error &exc_esmf) {
-    ESMF_HANDLE_PASSTHRU(exc_esmf);
-  }
-}
-
-#undef  ESMC_METHOD
 #define ESMC_METHOD "Info::isSetNull()"
-bool Info::isSetNull(key_t &key, int &rc) const {
-  rc = ESMF_FAILURE;
+bool Info::isSetNull(key_t &key) const {
   bool ret;
   try {
-    json::json_pointer jp = this->formatKey(key, rc);
+    json::json_pointer jp = this->formatKey(key);
     try {
       ret = !(this->getStorageRef().at(jp).is_null());
     }
@@ -1044,14 +957,12 @@ bool Info::isSetNull(key_t &key, int &rc) const {
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Info::serialize()"
-void Info::serialize(char *buffer, int *length, int *offset,
-  ESMC_InquireFlag inquireflag, int& rc) {
+void Info::serialize(char *buffer, int *length, int *offset, ESMC_InquireFlag inquireflag) {
   // Test: testSerializeDeserialize, testSerializeDeserialize2
   // Exceptions:  ESMCI:esmf_info_error
-  rc = ESMF_FAILURE;
   std::string infobuffer;
   try {
-    infobuffer = this->dump(rc);
+    infobuffer = this->dump();
   }
   ESMF_CATCH_PASSTHRU
   alignOffset(*offset);
@@ -1074,14 +985,12 @@ void Info::serialize(char *buffer, int *length, int *offset,
     (*offset)++;
   }
   alignOffset(*offset);
-  rc = ESMF_SUCCESS;
   return;
 }
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Info::set(<json>)"
-void Info::set(key_t &key, json &&j, bool force, int &rc, const int *index,
-  const key_t * const pkey) {
+void Info::set(key_t &key, json &&j, bool force, const int *index, const key_t * const pkey) {
   // Test:
   // Notes: parent key (pkey) must exist in the map
   //tdk:question: should force also override type differences? setting to null is always allowed.
@@ -1109,18 +1018,17 @@ void Info::set(key_t &key, json &&j, bool force, int &rc, const int *index,
   ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO);
   msg = prefix + "this->dump()=...";
   ESMC_LogWrite(msg.c_str(), ESMC_LOGMSG_INFO);
-  ESMC_LogWrite(this->dump(rc).c_str(), ESMC_LOGMSG_INFO);
+  ESMC_LogWrite(this->dump().c_str(), ESMC_LOGMSG_INFO);
 #endif
 
-  rc = ESMF_FAILURE;
   try {
     json *jobject = nullptr;
     if (pkey) {
       // Set the target JSON container to the parent key location. The parent key
       // location must be an object to proceed.
       try {
-        const json::json_pointer jpkey = this->formatKey(*pkey, rc);
-        bool has_pkey = this->hasKey(jpkey, rc, true);
+        const json::json_pointer jpkey = this->formatKey(*pkey);
+        bool has_pkey = this->hasKey(jpkey, true);
         if (!has_pkey) {
           this->getStorageRefWritable()[jpkey] = json::object();
         }
@@ -1132,7 +1040,7 @@ void Info::set(key_t &key, json &&j, bool force, int &rc, const int *index,
       ESMF_CATCH_PASSTHRU
       if (!jobject->is_object()) {
         const std::string msg = "A parent key must have an object value inside a JSON map";
-        ESMF_CHECKERR_STD("ESMC_RC_OBJ_BAD", ESMC_RC_OBJ_BAD, msg, rc);
+        ESMF_CHECKERR_STD("ESMC_RC_OBJ_BAD", ESMC_RC_OBJ_BAD, msg);
       }
     } else {
       jobject = &(this->getStorageRefWritable());
@@ -1144,13 +1052,13 @@ void Info::set(key_t &key, json &&j, bool force, int &rc, const int *index,
     // provided, then the key must exist to set it.
     if (!index) {
       try {
-        has_key = handleHasKey(this, key, force, rc);
+        has_key = handleHasKey(this, key, force);
       }
       ESMF_CATCH_PASSTHRU
     }
 
     try {
-      const json::json_pointer jpkey = this->formatKey(key, rc);
+      const json::json_pointer jpkey = this->formatKey(key);
       if (index) {
         // Find the target array when setting by index.
         json *jarrayp = nullptr;
@@ -1161,14 +1069,14 @@ void Info::set(key_t &key, json &&j, bool force, int &rc, const int *index,
         ESMF_CATCH_JSON
         if (!jarrayp->is_array()) {
           const std::string msg = "When setting with an index, the target must be array";
-          ESMF_CHECKERR_STD("ESMC_RC_OBJ_BAD", ESMC_RC_OBJ_BAD, msg, rc);
+          ESMF_CHECKERR_STD("ESMC_RC_OBJ_BAD", ESMC_RC_OBJ_BAD, msg);
         }
         json::array_t &jarray = jarrayp->get_ref<json::array_t&>();
         if (jarray.size() > 0) {
           json::value_t jarray_type = json_array_type(jarray);
           if (!j.is_null() && jarray_type != json::value_t::null && jarray_type != j.type()) {
             const std::string msg = "Target JSON array for index has a different type. ESMF JSON arrays used in Info are type safe";
-            ESMF_CHECKERR_STD("ESMC_RC_OBJ_BAD", ESMC_RC_OBJ_BAD, msg, rc);
+            ESMF_CHECKERR_STD("ESMC_RC_OBJ_BAD", ESMC_RC_OBJ_BAD, msg);
           }
         }
         try {
@@ -1176,12 +1084,12 @@ void Info::set(key_t &key, json &&j, bool force, int &rc, const int *index,
         }
         catch (std::out_of_range &exc) {
           ESMF_CHECKERR_STD("ESMC_RC_ARG_OUTOFRANGE", ESMC_RC_ARG_OUTOFRANGE,
-                            std::string(exc.what()), rc);
+                            std::string(exc.what()));
         }
       } else {
         if (!j.is_null() && has_key) {
           try {
-            handleJSONTypeCheck(key, jobject->at(jpkey), j, rc);
+            handleJSONTypeCheck(key, jobject->at(jpkey), j);
           }
           ESMF_CATCH_PASSTHRU
         }
@@ -1195,75 +1103,63 @@ void Info::set(key_t &key, json &&j, bool force, int &rc, const int *index,
   }
   ESMF_CATCH_INFO
   this->dirty = true;
-  rc = ESMF_SUCCESS;
 
 #if 0
   std::string msg2;
   std::string prefix2 = std::string(ESMC_METHOD) + ": ";
   msg2 = prefix2 + "this->dump() <exiting>=...";
   ESMC_LogWrite(msg2.c_str(), ESMC_LOGMSG_INFO);
-  ESMC_LogWrite(this->dump(rc).c_str(), ESMC_LOGMSG_INFO);
+  ESMC_LogWrite(this->dump().c_str(), ESMC_LOGMSG_INFO);
 #endif
 }
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Info::set(<Info>)"
-void Info::set(key_t &key, const ESMCI::Info &info, bool force,
-  int &rc, const key_t * const pkey) {
+void Info::set(key_t &key, const ESMCI::Info &info, bool force, const key_t * const pkey) {
   //tdk:test: in c++
-  rc = ESMF_FAILURE;
   int *dummy_index = nullptr;
   try {
     json j = info.getStorageRef();
-    this->set(key, std::move(j), force, rc, dummy_index, pkey);
+    this->set(key, std::move(j), force, dummy_index, pkey);
   }
   ESMF_CATCH_INFO
-  rc = ESMF_SUCCESS;
 }
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Info::set(<null>)"
-void Info::set(key_t &key, bool force, int &rc, const int *index,
-                const key_t * const pkey) {
-  rc = ESMF_FAILURE;
+void Info::set(key_t &key, bool force, const int *index, const key_t * const pkey) {
   try {
     json j = json::value_t::null;
-    this->set(key, std::move(j), force, rc, index, pkey);
+    this->set(key, std::move(j), force, index, pkey);
   }
   ESMF_CATCH_INFO
-  rc = ESMF_SUCCESS;
 }
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Info::set(<scalar>)"
 template <typename T>
-void Info::set(key_t &key, T value, bool force, int &rc, const int *index,
-                const key_t * const pkey) {
+void Info::set(key_t &key, T value, bool force, const int *index, const key_t * const pkey) {
   // Exceptions:  ESMCI:esmf_info_error
-  rc = ESMF_FAILURE;
   try {
     json j = value;
-    this->set(key, std::move(j), force, rc, index, pkey);
+    this->set(key, std::move(j), force, index, pkey);
   }
   ESMF_CATCH_INFO
   this->dirty = true;
-  rc = ESMF_SUCCESS;
 };
-template void Info::set<float>(key_t&, float, bool, int&, const int*, const key_t * const);
-template void Info::set<double>(key_t&, double, bool, int&, const int*, const key_t * const);
-template void Info::set<int>(key_t&, int, bool, int&, const int*, const key_t * const);
-template void Info::set<long int>(key_t&, long int, bool, int&, const int*, const key_t * const);
-template void Info::set<std::string>(key_t&, std::string, bool, int&, const int*, const key_t * const);
-template void Info::set<bool>(key_t&, bool, bool, int&, const int*, const key_t * const);
+template void Info::set<float>(key_t&, float, bool, const int*, const key_t * const);
+template void Info::set<double>(key_t&, double, bool, const int*, const key_t * const);
+template void Info::set<int>(key_t&, int, bool, const int*, const key_t * const);
+template void Info::set<long int>(key_t&, long int, bool, const int*, const key_t * const);
+template void Info::set<std::string>(key_t&, std::string, bool, const int*, const key_t * const);
+template void Info::set<bool>(key_t&, bool, bool, const int*, const key_t * const);
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Info::set(<array>)"
 template <typename T>
-void Info::set(key_t &key, T *values, int count, bool force, int &rc,
-                const key_t * const pkey) {
+void Info::set(key_t &key, T *values, int count, bool force, const key_t * const pkey) {
   // Exceptions:  ESMCI:esmf_info_error
   assert(count >= 0);
-  rc = ESMF_FAILURE;
   try {
     json::array_t jarray = json::array();
     if (values) {
@@ -1279,29 +1175,26 @@ void Info::set(key_t &key, T *values, int count, bool force, int &rc,
     }
     json j = std::move(jarray);
     int *dummy_index = nullptr;
-    this->set(key, std::move(j), force, rc, dummy_index, pkey);
+    this->set(key, std::move(j), force, dummy_index, pkey);
   }
   ESMF_CATCH_INFO
-  rc = ESMF_SUCCESS;
 };
-template void Info::set<float>(key_t&, float*, int, bool, int&, const key_t * const);
-template void Info::set<double>(key_t&, double*, int, bool, int&, const key_t * const);
-template void Info::set<int>(key_t&, int*, int, bool, int&, const key_t * const);
-template void Info::set<long int>(key_t&, long int*, int, bool, int&, const key_t * const);
-template void Info::set<bool>(key_t&, bool*, int, bool, int&, const key_t * const);
-template void Info::set<std::vector<std::string>>(key_t&, std::vector<std::string>*, int, bool, int&, const key_t * const);
+template void Info::set<float>(key_t&, float*, int, bool, const key_t * const);
+template void Info::set<double>(key_t&, double*, int, bool, const key_t * const);
+template void Info::set<int>(key_t&, int*, int, bool, const key_t * const);
+template void Info::set<long int>(key_t&, long int*, int, bool, const key_t * const);
+template void Info::set<bool>(key_t&, bool*, int, bool, const key_t * const);
+template void Info::set<std::vector<std::string>>(key_t&, std::vector<std::string>*, int, bool, const key_t * const);
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Info::update()"
-void Info::update(const Info &info, int &rc) {
-  rc = ESMF_FAILURE;
+void Info::update(const Info &info) {
   const json& r_j = info.getStorageRef();
   try {
     this->getStorageRefWritable().update(r_j);
   }
   ESMF_CATCH_JSON;
   this->dirty = true;
-  rc = ESMF_SUCCESS;
 };
 
 #undef  ESMC_METHOD
@@ -1327,7 +1220,7 @@ void Info::update(const Info &info, int &rc) {
     int strsize=4*ESMF_MAXSTR;
     char msgbuf[strsize];
     std::ofstream fp;
-    int rc = ESMF_SUCCESS;
+    int esmf_rc = ESMF_SUCCESS;
 
     if (tofile) {
       sprintf(msgbuf, "%s\n", filename);
@@ -1339,147 +1232,50 @@ void Info::update(const Info &info, int &rc) {
         fp.open(msgbuf, std::ofstream::out | std::ofstream::trunc);
     }
 
-    if (tofile)
-      fp << this->dump(2, rc);
-    else
-      printf("%s", this->dump(2, rc).c_str());
+    try {
+      if (tofile)
+        fp << this->dump(2);
+      else
+        printf("%s", this->dump(2).c_str());
+    } catch (ESMCI::esmf_info_error &exc_info) {
+      esmf_rc = exc_info.getReturnCode();
+      ESMC_LogDefault.MsgFoundError(esmf_rc, exc_info.what(), ESMC_CONTEXT, nullptr);
+      return esmf_rc;
+    }
 
     if (tofile)
       fp.close();
     else
       fflush (stdout);
 
-    return rc;
+    return esmf_rc;
 
   }  // end ESMC_Print
 
 //-----------------------------------------------------------------------------
 
 #undef  ESMC_METHOD
-#define ESMC_METHOD "InfoView::copy(<scalar>)"
-template<typename T>
-T InfoView::copy(void) {
-  return this->get_ivref();
-}
-template bool InfoView::copy<bool>();
-template int InfoView::copy<int>();
-template long int InfoView::copy<long int>();
-template float InfoView::copy<float>();
-template double InfoView::copy<double>();
-template std::string InfoView::copy<std::string>();
-template json InfoView::copy<json>();
-
-#undef  ESMC_METHOD
-#define ESMC_METHOD "InfoView::copy(<list>)"
-template<typename T>
-void InfoView::copy(T target, const int &count) {
-  // Throws: esmf_info_error
-  json::array_t *jarr = nullptr;
-  this->update_ptr(&jarr);
-  if (count==(int)jarr->size()) {
-    std::string msg = "JSON array size not equal to count";
-    throw(esmf_info_error("ESMC_RC_ARG_OUTOFRANGE", ESMC_RC_ARG_OUTOFRANGE, msg));
-  }
-  for (int ii = 0; ii < count; ++ii) {
-    target[ii] = jarr->at(ii);
-  }
-}
-template void InfoView::copy<bool*>(bool*, const int &count);
-template void InfoView::copy<int*>(int*, const int &count);
-template void InfoView::copy<long int*>(long int*, const int &count);
-template void InfoView::copy<float*>(float*, const int &count);
-template void InfoView::copy<double*>(double*, const int &count);
-template void InfoView::copy<std::vector<std::string>>(std::vector<std::string>, const int &count);
-
-#undef  ESMC_METHOD
-#define ESMC_METHOD "InfoView::update_ptr()"
-void InfoView::update_ptr(bool **ptr) {
-  // Test: test_infoview_update_ptr
-  if (!this->storage->is_boolean()) {
-    std::string msg = "JSON boolean type expected";
-    throw(esmf_info_error("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, msg));
-  }
-  *ptr = &(*this->storage->get_ptr<json::boolean_t*>());
-}
-void InfoView::update_ptr(long int **ptr) {
-  if (!this->storage->is_number_integer()) {
-    std::string msg = "JSON integer type expected";
-    throw(esmf_info_error("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, msg));
-  }
-  *ptr = &(*this->storage->get_ptr<json::number_integer_t*>());
-}
-void InfoView::update_ptr(double **ptr) {
-  if (!this->storage->is_number_float()) {
-    std::string msg = "JSON float type expected";
-    throw(esmf_info_error("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, msg));
-  }
-  *ptr = &(*this->storage->get_ptr<json::number_float_t*>());
-}
-void InfoView::update_ptr(std::string **ptr) {
-  if (!this->storage->is_string()) {
-    std::string msg = "JSON string type expected";
-    throw(esmf_info_error("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, msg));
-  }
-  *ptr = &(*this->storage->get_ptr<json::string_t*>());
-}
-void InfoView::update_ptr(json::array_t **ptr) {
-  if (!this->storage->is_array()) {
-    std::string msg = "JSON array type expected";
-    throw(esmf_info_error("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, msg));
-  }
-  *ptr = &(*this->storage->get_ptr<json::array_t*>());
-}
-
-#undef  ESMC_METHOD
-#define ESMC_METHOD "InfoView::update_storage_ptr()"
-void InfoView::update_storage_ptr(const json::json_pointer *key, const int *idx, bool recursive) {
-  // Throws: json::out_of_range when key not found
-  //         std::out_of_range when index not found
-  //         esmf_info_error if "idx" and target is not an array
-  json *lj = nullptr;
-  if (key) {
-    update_json_pointer(*this->storage, &lj, *key, recursive);
-  }
-  if (idx) {
-    if (!lj) {
-      lj = this->storage;
-    }
-    if (!lj->is_array()) {
-      throw(esmf_info_error("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD,
-        "Attempted to index into non-array type"));
-    }
-    lj = &(lj->get_ptr<json::array_t*>()->at(*idx));
-  }
-  this->storage = &(*lj);
-}
-
-//-----------------------------------------------------------------------------
-
-#undef  ESMC_METHOD
 #define ESMC_METHOD "esmf_info_error::esmf_info_error()"
-esmf_info_error::esmf_info_error (key_t &code_name, int rc, key_t &msg) {
-  assert(rc != ESMF_SUCCESS);
+esmf_info_error::esmf_info_error (key_t &code_name, int esmf_rc, key_t &msg) {
+  assert(esmf_rc != ESMF_SUCCESS);
   std::string the_msg;
   if (code_name != "") {
-    the_msg = "Error/Return Code " + std::to_string(rc) + " (" + \
+    the_msg = "Error/Return Code " + std::to_string(esmf_rc) + " (" + \
                      code_name + ") - " + msg;
   } else {
-    the_msg = "Error/Return Code " + std::to_string(rc) + " - " + msg;
+    the_msg = "Error/Return Code " + std::to_string(esmf_rc) + " - " + msg;
   }
   this->msg = the_msg;
-  this->rc = rc;
+  this->esmf_rc = esmf_rc;
 }
 
 //-----------------------------------------------------------------------------
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "PackageFactory::getOrCreateJSON()"
-json PackageFactory::getOrCreateJSON(key_t& key, int& rc,
-                                     key_t& uri) {
-  rc = ESMF_FAILURE;
+json PackageFactory::getOrCreateJSON(key_t& key, key_t& uri) {
   try {
     json ret = this->cache.at(key);
-    rc = ESMF_SUCCESS;
     return ret;
   } catch (json::out_of_range& e) {
     std::string localuri;
@@ -1491,17 +1287,17 @@ json PackageFactory::getOrCreateJSON(key_t& key, int& rc,
     std::ifstream i(localuri, std::ifstream::in);
     if (!i.good()){
       std::string errmsg = "File location is bad for key '" + key + "': " + localuri;
-      ESMF_CHECKERR_STD("ESMC_RC_FILE_READ", ESMC_RC_FILE_READ, errmsg, rc);
+      ESMF_CHECKERR_STD("ESMC_RC_FILE_READ", ESMC_RC_FILE_READ, errmsg);
     }
     json j;
     try {
       i >> j;
     } catch (json::parse_error& e) {
-      ESMF_THROW_JSON(e, "ESMC_RC_FILE_READ", ESMC_RC_FILE_READ, rc);
+      ESMF_THROW_JSON(e, "ESMC_RC_FILE_READ", ESMC_RC_FILE_READ);
     }
     i.close();
     this->cache[key] = move(j);
-    return this->getOrCreateJSON(key, rc);
+    return this->getOrCreateJSON(key);
   }
 }
 
@@ -1509,16 +1305,15 @@ json PackageFactory::getOrCreateJSON(key_t& key, int& rc,
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "broadcastInfo()"
-void broadcastInfo(ESMCI::Info* info, int rootPet, const ESMCI::VM &vm, int& rc) {
+void broadcastInfo(ESMCI::Info* info, int rootPet, const ESMCI::VM &vm) {
   // Exceptions:  ESMCI:esmf_info_error
-  rc = ESMF_FAILURE;
   int localPet = vm.getLocalPet();
   std::size_t target_size = 0;  // Size of serialized info storage
   std::string target;  // Serialize storage buffer
   if (localPet == rootPet) {
     // If this is the root, serialize the info storage to std::string
     try {
-      target = info->dump(rc);
+      target = info->dump();
     }
     catch (ESMCI::esmf_info_error &exc_esmf) {
       ESMF_HANDLE_PASSTHRU(exc_esmf);
@@ -1527,20 +1322,20 @@ void broadcastInfo(ESMCI::Info* info, int rootPet, const ESMCI::VM &vm, int& rc)
   }
   // Broadcast size of the string buffer holding the serialized info.
   // Used for allocating destination string buffers on receiving PETs.
-  rc = const_cast<ESMCI::VM&>(vm).broadcast(&target_size, sizeof(target_size), rootPet);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+  int esmf_rc = const_cast<ESMCI::VM&>(vm).broadcast(&target_size, sizeof(target_size), rootPet);
+  ESMF_CHECKERR_STD("", esmf_rc, ESMCI_ERR_PASSTHRU);
   std::string target_received(target_size, '\0');  // Allocate receive buffer
   if (localPet == rootPet) {
     // If this is root, just move the data to the receive buffer with no copy.
     target_received = move(target);
   }
   // Broadcast the string buffer
-  rc = const_cast<ESMCI::VM&>(vm).broadcast(&target_received[0], target_size, rootPet);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+  esmf_rc = const_cast<ESMCI::VM&>(vm).broadcast(&target_received[0], target_size, rootPet);
+  ESMF_CHECKERR_STD("", esmf_rc, ESMCI_ERR_PASSTHRU);
   if (localPet != rootPet) {
     // If not root, then parse the incoming string buffer into attribute storage.
     try {
-      info->parse(target_received, rc);
+      info->parse(target_received);
     }
     catch (ESMCI::esmf_info_error &exc_esmf) {
       ESMF_HANDLE_PASSTHRU(exc_esmf);
