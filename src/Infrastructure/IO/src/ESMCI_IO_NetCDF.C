@@ -877,7 +877,12 @@ void IO_NetCDF::destruct(void) {
          }
          attValString = string(att_str, attlen);
          delete[] att_str;
-         info->set(sattname, attValString, true, *rc);
+         try {
+           info->set(sattname, attValString, true);
+         } catch (ESMCI::esmf_info_error &exc_info) {
+           ESMC_LogDefault.MsgFoundError(exc_info.getReturnCode(), exc_info.what(), ESMC_CONTEXT, rc);
+           return thisArray;
+         }
          //printf("(ncChar)\n");
          //printf("     nc att value[%d]: %s\n", j, attValString.c_str());
 
@@ -894,7 +899,12 @@ void IO_NetCDF::destruct(void) {
          }
          attValInt = att_int[0];
          delete[] att_int;
-         info->set(sattname, attValInt, true, *rc);
+         try {
+           info->set(sattname, attValInt, true);
+         } catch (ESMCI::esmf_info_error &exc_info) {
+           ESMC_LogDefault.MsgFoundError(exc_info.getReturnCode(), exc_info.what(), ESMC_CONTEXT, rc);
+           return thisArray;
+         }
          //printf("(ncInt)\n");
          //printf("     nc att value[%d]: %d\n", j, attValInt);
         break;
@@ -910,7 +920,12 @@ void IO_NetCDF::destruct(void) {
          }
          attValFloat = att_float[0];
          delete[] att_float;
-         info->set(sattname, attValFloat, true, *rc);
+         try {
+           info->set(sattname, attValFloat, true);
+         } catch (ESMCI::esmf_info_error &exc_info) {
+           ESMC_LogDefault.MsgFoundError(exc_info.getReturnCode(), exc_info.what(), ESMC_CONTEXT, rc);
+           return thisArray;
+         }
          //printf("(ncFloat)\n");
          //printf("     nc att value[%d]: %f\n", j, attValFloat);
         break;
@@ -926,7 +941,12 @@ void IO_NetCDF::destruct(void) {
          }
          attValDouble = att_double[0];
          delete[] att_double;
-         info->set(sattname, attValDouble, true, *rc);
+         try {
+           info->set(sattname, attValDouble, true);
+         } catch (ESMCI::esmf_info_error &exc_info) {
+           ESMC_LogDefault.MsgFoundError(exc_info.getReturnCode(), exc_info.what(), ESMC_CONTEXT, rc);
+           return thisArray;
+         }
          //printf("(ncDouble)\n");
          //printf("     nc att value[%d]: %g\n", j, attValDouble);
         break;

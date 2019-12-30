@@ -51,7 +51,7 @@ void testCreateArray(int& rc, char failMsg[]) {
   bool failed = true;
 
   json root = createTestJSONMetadata(rc);
-  ESMF_CHECKERR_STD("", rc, "Did not create JSON Metadata", rc);
+  ESMF_CHECKERR_STD("", rc, "Did not create JSON Metadata");
 
   Metadata meta(move(root));
 
@@ -62,7 +62,7 @@ void testCreateArray(int& rc, char failMsg[]) {
   json jsonParms = createTestDistDims();
   jsonParms[ESMFARG::VARIABLENAME] = "foo";
   ESMCI::Array* arr = meta.createArray(*distgrid, jsonParms, rc);
-  ESMF_CHECKERR_STD("", rc, "Array creation failed", rc);
+  ESMF_CHECKERR_STD("", rc, "Array creation failed");
 
   // Test Array rank
   const json& smeta = meta.getStorageRef();
@@ -78,7 +78,7 @@ void testCreateArray(int& rc, char failMsg[]) {
   }
 
   rc = ESMCI::Array::destroy(&arr);
-  ESMF_CHECKERR_STD("", rc, "Problem when destroying array", rc);
+  ESMF_CHECKERR_STD("", rc, "Problem when destroying array");
 
   // Test no variable name provided ===========================================
 
@@ -100,7 +100,7 @@ void testCreateArray(int& rc, char failMsg[]) {
   }
 
   rc = ESMCI::DistGrid::destroy(&distgrid);
-  ESMF_CHECKERR_STD("", rc, "Problem when destroying distgrid", rc);
+  ESMF_CHECKERR_STD("", rc, "Problem when destroying distgrid");
 
   return;
 };
@@ -128,7 +128,7 @@ void testCreateDistGrid(int& rc, char failMsg[]) {
   }
 
   rc = ESMCI::DistGrid::destroy(&dist_grid2);
-  ESMF_CHECKERR_STD("", rc, "Did not destroy dist grid", rc);
+  ESMF_CHECKERR_STD("", rc, "Did not destroy dist grid");
 
   // Test with an empty parameters definition =================================
 
@@ -154,7 +154,7 @@ void testCreateJSONPackage(int& rc, char failMsg[]) {
 
   string pkgKey = "ESMF:Metadata:Group";
   json jattrs = createJSONPackage(pkgKey, rc);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
 
   // Test an unsupported key ==================================================
 
@@ -190,13 +190,13 @@ void testGetArrayShape(int& rc, char failMsg[]) {
                     {"variableName", "foo"}};
 
   ESMCI::Array* arr = meta.createArray(*distgrid, jsonParms, rc);
-  ESMF_CHECKERR_STD("", rc, "Array creation failed", rc);
+  ESMF_CHECKERR_STD("", rc, "Array creation failed");
 
   auto shp = getArrayShape(*arr, ESMC_INDEX_GLOBAL, rc);
-  ESMF_CHECKERR_STD("", rc, "Array get shape failed", rc);
+  ESMF_CHECKERR_STD("", rc, "Array get shape failed");
 
   auto actual = meta.getVariableShape("foo", rc);
-  ESMF_CHECKERR_STD("", rc, "Did not get variable shape", rc);
+  ESMF_CHECKERR_STD("", rc, "Did not get variable shape");
 
 //  for (auto e : shp) {cout << e << endl;}
 //  for (auto e : actual) {cout << e << endl;}
@@ -208,9 +208,9 @@ void testGetArrayShape(int& rc, char failMsg[]) {
   }
 
   rc = ESMCI::Array::destroy(&arr);
-  ESMF_CHECKERR_STD("", rc, "Problem when destroying array", rc);
+  ESMF_CHECKERR_STD("", rc, "Problem when destroying array");
   rc = ESMCI::DistGrid::destroy(&distgrid);
-  ESMF_CHECKERR_STD("", rc, "Problem when destroying distgrid", rc);
+  ESMF_CHECKERR_STD("", rc, "Problem when destroying distgrid");
 
   rc = ESMF_SUCCESS;
   return;
@@ -230,7 +230,7 @@ void testUpdate(int& rc, char failMsg[]) {
                     {"variableName", "foo"}};
 
   ESMCI::Array* arr = meta.createArray(*distgrid, jsonParms, rc);
-  ESMF_CHECKERR_STD("", rc, "Array creation failed", rc);
+  ESMF_CHECKERR_STD("", rc, "Array creation failed");
 
   // Essentially an identity operation. The array is being added to the metadata
   // that created it. Nothing should change in the metadata object.
@@ -238,7 +238,7 @@ void testUpdate(int& rc, char failMsg[]) {
   vector<string> dimnames = mref[K_VARS]["foo"][K_DIMS];
   json desired = mref;  // Copy original for comparison.
   meta.update(*arr, &dimnames, rc);
-  ESMF_CHECKERR_STD("", rc, "Update with array failed", rc);
+  ESMF_CHECKERR_STD("", rc, "Update with array failed");
 
   if (desired != meta.getStorageRef()) {
     return finalizeFailure(rc, failMsg, "Metadata should be equal");
@@ -247,16 +247,16 @@ void testUpdate(int& rc, char failMsg[]) {
   // Test creating dimensions when the array is added =========================
 
   meta.update(*arr, nullptr, rc);
-  ESMF_CHECKERR_STD("", rc, "Update with array failed", rc);
+  ESMF_CHECKERR_STD("", rc, "Update with array failed");
 
   if (desired == meta.getStorageRef()) {
     return finalizeFailure(rc, failMsg, "Metadata should not be equal");
   }
 
   rc = ESMCI::Array::destroy(&arr);
-  ESMF_CHECKERR_STD("", rc, "Problem when destroying array", rc);
+  ESMF_CHECKERR_STD("", rc, "Problem when destroying array");
   rc = ESMCI::DistGrid::destroy(&distgrid);
-  ESMF_CHECKERR_STD("", rc, "Problem when destroying distgrid", rc);
+  ESMF_CHECKERR_STD("", rc, "Problem when destroying distgrid");
 
   rc = ESMF_SUCCESS;
   return;
@@ -275,7 +275,7 @@ void testCreateArrayBundle(int& rc, char failMsg[]) {
   Metadata meta(move(root));
 
   DistGrid* distgrid = createTestDistGrid(meta, rc);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
 
   json arrParms;
   arrParms[ESMFARG::DISTDIMS] = distDims;
@@ -284,16 +284,16 @@ void testCreateArrayBundle(int& rc, char failMsg[]) {
   vector<ESMCI::Array*> arrayList;
   ESMCI::ArrayBundle* arrb = meta.createArrayBundle(*distgrid, arrayList, arrParms,
     rc);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
 
   rc = ESMCI::ArrayBundle::destroy(&arrb);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
   for (ESMCI::Array* arr : arrayList) {
     rc = ESMCI::Array::destroy(&arr);
-    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
   }
   rc = ESMCI::DistGrid::destroy(&distgrid);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
 
   rc = ESMF_SUCCESS;
   return;

@@ -80,7 +80,7 @@ json createJSONPackage(const string& pkgKey, int& rc) {
     j[K_ATTRS] = json::object();
   } else {
     string msg = "Package name not found: \'" + pkgKey + "\'";
-    ESMF_CHECKERR_STD("ESMC_RC_NOT_FOUND", ESMF_RC_NOT_FOUND, msg, rc);
+    ESMF_CHECKERR_STD("ESMC_RC_NOT_FOUND", ESMF_RC_NOT_FOUND, msg);
   }
 
   rc = ESMF_SUCCESS;
@@ -99,7 +99,7 @@ vector<vector<dimsize_t>> getArrayBounds(const Array& arr,
   rc = ESMF_FAILURE;
 
   ESMCI::VM *vm = ESMCI::VM::getCurrent(&rc);
-  ESMF_CHECKERR_STD("", rc, "Did not get current VM", rc);
+  ESMF_CHECKERR_STD("", rc, "Did not get current VM");
 
   int localPet = vm->getLocalPet();
   int petCount = vm->getPetCount();
@@ -179,7 +179,7 @@ vector<dimsize_t> getArrayShape(const Array& arr,
   rc = ESMF_FAILURE;
 
   vector<vector<dimsize_t>> bnds = getArrayBounds(arr, idxFlag, rc);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
 
   vector<dimsize_t> ret(bnds.size(), 0);
   for (dimsize_t ii = 0; ii < ret.size(); ++ii) {
@@ -189,7 +189,7 @@ vector<dimsize_t> getArrayShape(const Array& arr,
 //  tdklog("getArrayShape ret", ret);
 
 //  ESMCI::VM *vm = ESMCI::VM::getCurrent(&rc);
-//  ESMF_CHECKERR_STD("", rc, "Did not get current VM", rc);
+//  ESMF_CHECKERR_STD("", rc, "Did not get current VM");
 //
 //  int localPet = vm->getLocalPet();
 //  int petCount = vm->getPetCount();
@@ -265,7 +265,7 @@ ESMC_TypeKind_Flag getESMFTypeKind(const nc_type xtype, int& rc) {
     ret = ESMC_TYPEKIND_I4;
   } else {
     string msg = "The type '" + to_string(xtype) + "' is not supported";
-    ESMF_CHECKERR_STD("ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, msg, rc);
+    ESMF_CHECKERR_STD("ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, msg);
   }
   return ret;
 }
@@ -276,7 +276,7 @@ void handleUnsupported(const json& j, const vector<string>& tokens, int& rc) {
   for (auto token : tokens) {
     if (j.find(token) != j.end()) {
       string msg = "Parameter not supported through JSON: " + token;
-      ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, msg, rc);
+      ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, msg);
     } else {
       rc = ESMF_SUCCESS;
     }
@@ -334,16 +334,16 @@ void Metadata::update(const ESMCI::Array& arr, const vector<string>* dimnames,
   int rank = arr.getRank();
 
   json& var_meta = this->getOrCreateVariable(name, rc);
-  ESMF_CHECKERR_STD("", rc, "Did not get variable metadata", rc);
+  ESMF_CHECKERR_STD("", rc, "Did not get variable metadata");
 
   auto arrshp = getArrayShape(arr, ESMC_INDEX_GLOBAL, rc);
-  ESMF_CHECKERR_STD("", rc, "Did not get array shape", rc);
+  ESMF_CHECKERR_STD("", rc, "Did not get array shape");
   tdklog("Metadata::update arrshp", arrshp);
 
 
   if (dimnames) {
     json dimsizes = this->getDimensionSizes(rc);
-    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
 
 //    vector<string> ldimnames(dimnames->size(), "");
 //    std::reverse_copy(dimnames->begin(), dimnames->end(), ldimnames.begin());
@@ -358,13 +358,13 @@ void Metadata::update(const ESMCI::Array& arr, const vector<string>* dimnames,
           tdklog("Metadata::update dimsizes=" + dimsizes.dump());
           auto msg = "Provided dimension names have sizes in current storage that "
                      "conflict with the array size.";
-          ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, msg, rc);
+          ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, msg);
         }
       } else {
         // Create the dimension as it does not yet exist.
         //tdk:TODO: need a create dimension for json
         this->storage[K_DIMS][ldimnames[ii]] = createJSONPackage("ESMF:Metadata:Dimension", rc);
-        ESMF_CHECKERR_STD("", rc, "Did not create dimension package", rc);
+        ESMF_CHECKERR_STD("", rc, "Did not create dimension package");
 
         this->storage[K_DIMS][ldimnames[ii]][K_NAME] = ldimnames[ii];
         this->storage[K_DIMS][ldimnames[ii]][K_SIZE] = arrshp[ii];
@@ -389,7 +389,7 @@ void Metadata::update(const ESMCI::Array& arr, const vector<string>* dimnames,
 
       json& dimsmeta = this->storage[K_DIMS];
       dimsmeta[newdimname] = createJSONPackage("ESMF:Metadata:Dimension", rc);
-      ESMF_CHECKERR_STD("", rc, "Did not create dimension package", rc);
+      ESMF_CHECKERR_STD("", rc, "Did not create dimension package");
 
       json& currdim = dimsmeta[newdimname];
       currdim[K_NAME] = newdimname;
@@ -443,7 +443,7 @@ Array* Metadata::createArray(DistGrid& distgrid, const json& jsonParms,
     vector<string> dim_names;
     dim_names.reserve(orig_dim_names.size());
     json dimsizes = this->getDimensionSizes(rc);
-    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
     for (const auto& dn : orig_dim_names) {
       if (dimsizes.at(dn) != 0) {
         dim_names.push_back(dn);
@@ -458,7 +458,7 @@ Array* Metadata::createArray(DistGrid& distgrid, const json& jsonParms,
     int rank = dim_names.size();
     // Convert the metadata data type to an ESMF TypeKind.
     ESMC_TypeKind_Flag tk = getESMFTypeKind(var_meta[K_NCTYPE], rc);
-    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
 
     ArraySpec arrayspec;
     arrayspec.set(rank, tk);
@@ -472,7 +472,7 @@ Array* Metadata::createArray(DistGrid& distgrid, const json& jsonParms,
       auto it = std::find(dim_names.cbegin(), dim_names.cend(), dist_dim_name);
       if (it == dim_names.cend()) {
         auto msg = "Distributed dimension not found: " + dist_dim_name;
-        ESMF_CHECKERR_STD("ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, msg, rc);
+        ESMF_CHECKERR_STD("ESMC_RC_NOT_FOUND", ESMC_RC_NOT_FOUND, msg);
       } else {
         auto index = std::distance(dim_names.cbegin(), it);
         v_distgridToArrayMap[ii] = index + 1;  // Use Fortran indexing
@@ -539,10 +539,10 @@ Array* Metadata::createArray(DistGrid& distgrid, const json& jsonParms,
       &undistUBoundArg,
       &rc,
       vm);
-    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
 
     rc = arr->setName(variableName);
-    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
 
     return arr;
   }
@@ -553,10 +553,10 @@ Array* Metadata::createArray(DistGrid& distgrid, const json& jsonParms,
     ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
   }
   catch (ESMCI::esmf_info_error &e) {
-    ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU, rc);
+    ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU);
   }
   catch (...) {
-    ESMF_CHECKERR_STD("", ESMF_FAILURE, "Unhandled throw", rc);
+    ESMF_CHECKERR_STD("", ESMF_FAILURE, "Unhandled throw");
   }
 }
 
@@ -590,11 +590,11 @@ ArrayBundle* Metadata::createArrayBundle(DistGrid& distgrid, vector<Array*>& arr
     for (auto ii = 0; ii < varnames.size(); ii++) {
       local_arrParms[ESMFARG::VARIABLENAME] = varnames[ii];
       arrayList[ii] = this->createArray(distgrid, local_arrParms, rc);
-      ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+      ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
     }
     ArrayBundle* arrb = ArrayBundle::create(arrayList.data(), nvars, false, false,
       &rc);
-    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
     return arrb;
   }
   catch (json::out_of_range &e) {
@@ -604,10 +604,10 @@ ArrayBundle* Metadata::createArrayBundle(DistGrid& distgrid, vector<Array*>& arr
     ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
   }
   catch (ESMCI::esmf_info_error &e) {
-    ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU, rc);
+    ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU);
   }
   catch (...) {
-    ESMF_CHECKERR_STD("", ESMF_FAILURE, "Unhandled throw", rc);
+    ESMF_CHECKERR_STD("", ESMF_FAILURE, "Unhandled throw");
   }
 }
 
@@ -683,7 +683,7 @@ DistGrid* Metadata::createDistGrid(const json& jsonParms, int& rc) const {
       vm,
       &rc,
       indexTK);
-    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
 
     return ret;
   }
@@ -694,10 +694,10 @@ DistGrid* Metadata::createDistGrid(const json& jsonParms, int& rc) const {
     ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
   }
   catch (ESMCI::esmf_info_error &e) {
-    ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU, rc);
+    ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU);
   }
   catch (...) {
-    ESMF_CHECKERR_STD("", ESMF_FAILURE, "Unhandled throw", rc);
+    ESMF_CHECKERR_STD("", ESMF_FAILURE, "Unhandled throw");
   }
 }
 
@@ -736,14 +736,14 @@ json& Metadata::getOrCreateDimension(const string& name, int& rc) {
   try {
     json& ret = this->getOrCreateNamedPackage("ESMF:Metadata:Dimension", K_DIMS,
       name, rc);
-    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
     return ret;
   }
   catch (esmf_info_error& e) {
-    ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU, rc);
+    ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU);
   }
   catch (...) {
-    ESMF_CHECKERR_STD("", ESMF_FAILURE, ESMCI_ERR_PASSTHRU, rc);
+    ESMF_CHECKERR_STD("", ESMF_FAILURE, ESMCI_ERR_PASSTHRU);
   }
 }
 
@@ -758,7 +758,7 @@ json& Metadata::getOrCreateNamedPackage(const string& pkgKey, const string& meta
     auto it = jpkg.find(name);
     if (it == jpkg.end()) {
       jpkg[name] = createJSONPackage(pkgKey, rc);
-      ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+      ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
       jpkg[name][ESMCI::MKEY::K_NAME] = name;
     }
     json& ret = jpkg[name];
@@ -773,10 +773,10 @@ json& Metadata::getOrCreateNamedPackage(const string& pkgKey, const string& meta
     ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
   }
   catch (ESMCI::esmf_info_error &e) {
-    ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU, rc);
+    ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU);
   }
   catch (...) {
-    ESMF_CHECKERR_STD("", ESMF_FAILURE, "Unhandled throw", rc);
+    ESMF_CHECKERR_STD("", ESMF_FAILURE, "Unhandled throw");
   }
 }
 
@@ -786,14 +786,14 @@ json& Metadata::getOrCreateVariable(const string& name, int& rc) {
   try {
     json& ret = this->getOrCreateNamedPackage("ESMF:Metadata:Variable", K_VARS,
       name, rc);
-    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
     return ret;
   }
   catch (esmf_info_error& e) {
-    ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU, rc);
+    ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU);
   }
   catch (...) {
-    ESMF_CHECKERR_STD("", ESMF_FAILURE, ESMCI_ERR_PASSTHRU, rc);
+    ESMF_CHECKERR_STD("", ESMF_FAILURE, ESMCI_ERR_PASSTHRU);
   }
 }
 
@@ -808,7 +808,7 @@ vector<dimsize_t> Metadata::getVariableShape(const string& name, int& rc) const 
     vector<dimsize_t> ret(dims->size(), 0);
     for (dimsize_t ii=0; ii<ret.size(); ii++) {
       ret[ii] = this->getDimensionSize(dims[0][ii], rc);
-      ESMF_CHECKERR_STD("", rc, "Did not get dimension size", rc);
+      ESMF_CHECKERR_STD("", rc, "Did not get dimension size");
     }
     rc = ESMF_SUCCESS;
     return ret;

@@ -685,28 +685,17 @@ void ESMC_Base::constructInfo(ESMC_Base& base) { // root_info_tdk
     if (ESMC_LogDefault.MsgFoundError(localrc, ESMCI_ERR_PASSTHRU,
         ESMC_CONTEXT, &localrc)) return localrc;
 
-    // setup the root Attribute, passing the address of this
-//    root = new ESMCI::Attribute(ESMF_TRUE);
-//    root->setBase(this);
-//    rootalias = false;
+    // setup the root Info object
     constructInfo(*this); //root_info_tdk
 
     // Deserialize the Attribute hierarchy
     if (attreconflag == ESMC_ATTRECONCILE_ON) {
-      //tdk:todo: this throws an exception that needs to be caught
       try {
-        info->deserialize(buffer, offset, localrc);
+        info->deserialize(buffer, offset);
       } catch (ESMCI::esmf_info_error &e) {
         ESMC_LogDefault.MsgFoundError(e.getReturnCode(), e.what(), ESMC_CONTEXT, &localrc);
         return localrc;
       }
-      if (ESMC_LogDefault.MsgFoundError(localrc, ESMCI_ERR_PASSTHRU,
-            ESMC_CONTEXT, &localrc)) return localrc; //root_info_tdk
-//      if (*offset%8 != 0)
-//        *offset += 8 - *offset%8;
-//      localrc = root->ESMC_Deserialize(buffer,offset);
-//      if (ESMC_LogDefault.MsgFoundError(localrc, ESMCI_ERR_PASSTHRU,
-//            ESMC_CONTEXT, &localrc)) return localrc;
     }
         
   return ESMF_SUCCESS;
@@ -1009,15 +998,12 @@ void ESMC_Base::constructInfo(ESMC_Base& base) { // root_info_tdk
 
     // Serialize the Attribute hierarchy
     if (attreconflag == ESMC_ATTRECONCILE_ON) {
-      //tdk:todo: this throws an exception that needs to be caught
-      info->serialize(buffer, length, offset, inquireflag, localrc); //root_info_tdk
-      if (ESMC_LogDefault.MsgFoundError(localrc, ESMCI_ERR_PASSTHRU,
-        ESMC_CONTEXT, &localrc)) return localrc; //root_info_tdk
-//      if (*offset%8 != 0)
-//        *offset += 8 - *offset%8;
-//      localrc = root->ESMC_Serialize(buffer,length,offset, inquireflag);
-//      if (ESMC_LogDefault.MsgFoundError(localrc, ESMCI_ERR_PASSTHRU,
-//            ESMC_CONTEXT, &localrc)) return localrc;
+      try {
+        info->serialize(buffer, length, offset, inquireflag);
+      } catch (ESMCI::esmf_info_error &e) {
+        ESMC_LogDefault.MsgFoundError(e.getReturnCode(), ESMCI_ERR_PASSTHRU, ESMC_CONTEXT, &localrc);
+        return localrc;
+      }
     }
 
   return ESMF_SUCCESS;

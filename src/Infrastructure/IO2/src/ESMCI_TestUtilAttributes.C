@@ -49,7 +49,7 @@ namespace ESMCI {
 DistGrid* createTestDistGrid(const Metadata& meta, int& rc) {
   json jsonParms = createTestDistDims();
   DistGrid* dist_grid = meta.createDistGrid(jsonParms, rc);
-  ESMF_CHECKERR_STD("", rc, "DistGrid creation failed", rc);
+  ESMF_CHECKERR_STD("", rc, "DistGrid creation failed");
   return dist_grid;
 }
 
@@ -61,7 +61,7 @@ json createTestJSONMetadata(int& rc) {
   //tdk:TEST: add bounds for spatial/time
 
   json root = createJSONPackage("ESMF:Metadata:Group", rc);
-  ESMF_CHECKERR_STD("", rc, "Package creation failed", rc);
+  ESMF_CHECKERR_STD("", rc, "Package creation failed");
 
   root[K_ATTRS]["Convention"] = "~CF-1.x";
 
@@ -74,7 +74,7 @@ json createTestJSONMetadata(int& rc) {
   auto ctr = 0;
   for (auto name : dimnames) {
     root[K_DIMS][name] = createJSONPackage("ESMF:Metadata:Dimension", rc);
-    ESMF_CHECKERR_STD("", rc, "Package creation failed", rc);
+    ESMF_CHECKERR_STD("", rc, "Package creation failed");
 
     root[K_DIMS][name][K_NAME] = name;
     root[K_DIMS][name][K_SIZE] = sizes[ctr];
@@ -90,7 +90,7 @@ json createTestJSONMetadata(int& rc) {
                               "simple_3D"};
   for (auto name : varnames) {
     root[K_VARS][name] = createJSONPackage("ESMF:Metadata:Variable", rc);
-    ESMF_CHECKERR_STD("", rc, "Package creation failed", rc);
+    ESMF_CHECKERR_STD("", rc, "Package creation failed");
 
     root[K_VARS][name][K_NAME] = name;
     root[K_VARS][name][K_NCTYPE] = NC_DOUBLE;

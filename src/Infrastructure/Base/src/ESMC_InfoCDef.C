@@ -134,7 +134,7 @@ ESMCI::Info* ESMC_InfoCreateByParse(char *payload, int &esmf_rc) {
   ESMCI::Info *info;
   try {
     std::string local_payload(payload);
-    info = new ESMCI::Info(payload, esmf_rc);
+    info = new ESMCI::Info(local_payload);
     esmf_rc = ESMF_SUCCESS;
   }
   ESMF_CATCH_ISOC
@@ -316,7 +316,11 @@ void ESMC_InfoBaseSyncDo(const std::vector<long int> &base_addresses, const int 
       ESMCI::Info *info_to_update = baseAddressToInfo(base_addresses[ikey]);
       // This object is created from a serialized string stored in the update
       // map.
-      ESMCI::Info rhs(it.value());
+      ESMCI::Info rhs;
+      try {
+        rhs.parse(it.value());
+      }
+      ESMF_CATCH_INFO
       try {
         if (localPet != rootPet) {
           info_to_update->getStorageRefWritable() = rhs.getStorageRef();

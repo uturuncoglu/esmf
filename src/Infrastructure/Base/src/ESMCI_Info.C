@@ -444,31 +444,32 @@ void check_init_from_json(const json j) {
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Info(json&)"
-Info::Info(const json& storage){
-  check_init_from_json(storage);
-  this->storage = storage;
+Info::Info(const json& storage) {
+  try {
+    check_init_from_json(storage);
+    this->storage = storage;
+  }
+  ESMF_CATCH_INFO
 };
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Info(json&&)"
-Info::Info(json&& storage){
-  check_init_from_json(storage);
-  this->storage = move(storage);
+Info::Info(json&& storage) {
+  try {
+    check_init_from_json(storage);
+    this->storage = std::move(storage);
+  }
+  ESMF_CATCH_INFO
 };
 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "Info(string&)"
-Info::Info(key_t& input, int &esmf_rc) {
+Info::Info(key_t& input) {
   // Exceptions: ESMCI::esmf_info_error
-  // tdk:todo: use the parse method on the object!
-  esmf_rc = ESMF_FAILURE;
   try {
     this->storage = json::parse(input);
   }
-  catch (json::parse_error& e) {
-    ESMF_THROW_JSON(e, "ESMC_RC_OBJ_NOT_CREATED", ESMC_RC_OBJ_NOT_CREATED);
-  }
-  esmf_rc = ESMF_SUCCESS;
+  ESMF_CATCH_INFO
 };
 
 #undef  ESMC_METHOD
@@ -931,10 +932,9 @@ void Info::parse(key_t& input) {
 
   try {
     this->getStorageRefWritable() = json::parse(input);
-  } catch (json::parse_error &exc_json) {
-    ESMF_THROW_JSON(exc_json, "ESMC_RC_ARG_WRONG", ESMC_RC_ARG_WRONG)
+    check_init_from_json(this->getStorageRef());
   }
-  ESMF_CATCH_JSON
+  ESMF_CATCH_INFO
   return;
 }
 

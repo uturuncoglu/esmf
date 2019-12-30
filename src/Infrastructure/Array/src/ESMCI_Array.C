@@ -3931,24 +3931,28 @@ int Array::write(
   ESMCI::Info *dimAttPack = nullptr;
   if (has_convpurp) {
     try {
-      if (info_dg->hasKey(key, localrc, true, false)) {
+      if (info_dg->hasKey(key, true, false)) {
         dimAttPack = new ESMCI::Info();
-        info_dg->get(*dimAttPack, key, localrc);
+        info_dg->get(*dimAttPack, key);
       }
+    } catch (ESMCI::esmf_info_error &exc_info) {
+      ESMC_LogDefault.MsgFoundError(exc_info.getReturnCode(), exc_info.what(), ESMC_CONTEXT, &rc);
+      return rc;
     }
-    ESMF_CATCH_INFO
   }
 
   // If present, use Attributes at the Array level for variable attributes
   ESMCI::Info *varAttPack = nullptr;
   if (has_convpurp) {
     try {
-      if (info_this->hasKey(key, localrc, true, false)) {
+      if (info_this->hasKey(key, true, false)) {
         varAttPack = new ESMCI::Info();
-        info_this->get(*varAttPack, key, localrc);
+        info_this->get(*varAttPack, key);
       }
+    } catch (ESMCI::esmf_info_error &exc_info) {
+      ESMC_LogDefault.MsgFoundError(exc_info.getReturnCode(), exc_info.what(), ESMC_CONTEXT, &rc);
+      return rc;
     }
-    ESMF_CATCH_INFO
   }
 
   ESMCI::Info *gblAttPack = nullptr;

@@ -148,7 +148,7 @@ void tdklog(const string& msg, PIO_Offset* l, std::size_t size) {
 //    return ret;
 //  }
 //  catch (ESMCI::esmf_info_error) { throw; }
-//  catch (...) { ESMF_CHECKERR_STD("", ESMF_FAILURE, "Unhandled throw", rc); }
+//  catch (...) { ESMF_CHECKERR_STD("", ESMF_FAILURE, "Unhandled throw"); }
 //}
 
 #undef ESMC_METHOD
@@ -235,10 +235,10 @@ vector<PIO_Offset> createPIOCompmap(const Array& arr, int& rc) {
     assert(local_decount == 1);
 
     auto globalBounds = getArrayBounds(arr, ESMC_INDEX_GLOBAL, rc);
-    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
 
     auto localBounds = getArrayBounds(arr, ESMC_INDEX_DELOCAL, rc);
-    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
 
     vector<PIO_Offset> compmap = createPIOCompmap(globalBounds, localBounds);
 
@@ -246,7 +246,7 @@ vector<PIO_Offset> createPIOCompmap(const Array& arr, int& rc) {
     return compmap;
   }
   catch (ESMCI::esmf_info_error) { throw; }
-  catch (...) { ESMF_CHECKERR_STD("", ESMF_FAILURE, "Unhandled throw", rc); }
+  catch (...) { ESMF_CHECKERR_STD("", ESMF_FAILURE, "Unhandled throw"); }
 }
 
 #undef ESMC_METHOD
@@ -265,7 +265,7 @@ void handlePIOReturnCode(const int& pio_rc, const string& pio_msg, int& rc) {
   //tdk:TODO: add line number to PIO error handling
   if (pio_rc != 0) {
     string msg = "PIO Error Code: " + to_string(pio_rc) + " - " + pio_msg;
-    ESMF_CHECKERR_STD("ESMC_RC_NETCDF_ERROR", ESMC_RC_NETCDF_ERROR, msg, rc);
+    ESMF_CHECKERR_STD("ESMC_RC_NETCDF_ERROR", ESMC_RC_NETCDF_ERROR, msg);
   }
 }
 
@@ -308,7 +308,7 @@ void readPIOAttributes(json& var_meta, int natts, int ncid, int varid, int &rc) 
         }
         default: {
           auto msg = "Attribute NC_TYPE not supported: " + to_string(xtype);
-          ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, msg, rc);
+          ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, msg);
         }
       }
     }
@@ -321,10 +321,10 @@ void readPIOAttributes(json& var_meta, int natts, int ncid, int varid, int &rc) 
     ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
   }
   catch (ESMCI::esmf_info_error &e) {
-    ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU, rc);
+    ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU);
   }
   catch (...) {
-    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
   }
 }
 
@@ -365,10 +365,10 @@ void writePIOAttributes(const json& attrs, int ncid, int varid, int& rc) {
     ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
   }
   catch (ESMCI::esmf_info_error &e) {
-    ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU, rc);
+    ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU);
   }
   catch (...) {
-    ESMF_CHECKERR_STD("", ESMF_FAILURE, "Unhandled throw", rc);
+    ESMF_CHECKERR_STD("", ESMF_FAILURE, "Unhandled throw");
   }
 }
 
@@ -417,10 +417,10 @@ void IOHandle::close(int& rc) {
     ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
   }
   catch (ESMCI::esmf_info_error &e) {
-    ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU, rc);
+    ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU);
   }
   catch (...) {
-    ESMF_CHECKERR_STD("", ESMF_FAILURE, "Unhandled throw", rc);
+    ESMF_CHECKERR_STD("", ESMF_FAILURE, "Unhandled throw");
   }
 }
 
@@ -490,13 +490,13 @@ void IOHandle::dodef(int& rc) {
 
         const json& attrs = it_var.value().at(K_ATTRS);
         writePIOAttributes(attrs, ncid, varid, rc);
-        ESMF_CHECKERR_STD("", rc, "Did not write attributes with PIO", rc);
+        ESMF_CHECKERR_STD("", rc, "Did not write attributes with PIO");
       }
     }
 
     const json& attrs_global = smeta.at(K_ATTRS);
     writePIOAttributes(attrs_global, ncid, NC_GLOBAL, rc);
-    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
 
     rc = ESMF_SUCCESS;
   }
@@ -507,10 +507,10 @@ void IOHandle::dodef(int& rc) {
     ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
   }
   catch (ESMCI::esmf_info_error &e) {
-    ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU, rc);
+    ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU);
   }
   catch (...) {
-    ESMF_CHECKERR_STD("", ESMF_FAILURE, "Unhandled throw", rc);
+    ESMF_CHECKERR_STD("", ESMF_FAILURE, "Unhandled throw");
   }
 }
 
@@ -531,10 +531,10 @@ void IOHandle::enddef(int& rc) {
     ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
   }
   catch (ESMCI::esmf_info_error &e) {
-    ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU, rc);
+    ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU);
   }
   catch (...) {
-    ESMF_CHECKERR_STD("", ESMF_FAILURE, "Unhandled throw", rc);
+    ESMF_CHECKERR_STD("", ESMF_FAILURE, "Unhandled throw");
   }
 }
 
@@ -576,10 +576,10 @@ void IOHandle::finalize(int& rc) {
     ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
   }
   catch (ESMCI::esmf_info_error &e) {
-    ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU, rc);
+    ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU);
   }
   catch (...) {
-    ESMF_CHECKERR_STD("", ESMF_FAILURE, "Unhandled throw", rc);
+    ESMF_CHECKERR_STD("", ESMF_FAILURE, "Unhandled throw");
   }
 }
 
@@ -594,7 +594,7 @@ int IOHandle::init(int& rc) {
     const int io_proc_start = 0;
 
     ESMCI::VM *vm = ESMCI::VM::getCurrent(&rc);
-    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
 
     MPI_Comm comm = vm->getMpi_c();
 
@@ -622,10 +622,10 @@ int IOHandle::init(int& rc) {
     ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
   }
   catch (ESMCI::esmf_info_error &e) {
-    ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU, rc);
+    ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU);
   }
   catch (...) {
-    ESMF_CHECKERR_STD("", ESMF_FAILURE, "Unhandled throw", rc);
+    ESMF_CHECKERR_STD("", ESMF_FAILURE, "Unhandled throw");
   }
 }
 
@@ -639,7 +639,7 @@ void IOHandle::initPIODecomp(const Array& arr, int& rc) {
 
     // Get variable metadata
     const json &varmeta = this->meta.getOrCreateVariable(name, rc);
-    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
 
     // Get PIO type
     const int &pio_type = varmeta.at(
@@ -650,7 +650,7 @@ void IOHandle::initPIODecomp(const Array& arr, int& rc) {
     const vector <dimsize_t> gdimlen_v = getArrayShape(arr,
                                                        ESMC_INDEX_GLOBAL,
                                                        rc);
-    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
     //tdk:TODO: will need to deal with unlimited dimensions and their location in the length array
     const int *gdimlen = gdimlen_v.data();
 //  tdklog("gdimlen_v", gdimlen_v);
@@ -661,7 +661,7 @@ void IOHandle::initPIODecomp(const Array& arr, int& rc) {
     // to its index location in the output netCDF file.
     //tdk:FEATURE: read in PIO decomposition from file
     vector <PIO_Offset> compmap = createPIOCompmap(arr, rc);
-    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
 
     PIO_Offset maplen = compmap.size();
     int ioid;
@@ -682,10 +682,10 @@ void IOHandle::initPIODecomp(const Array& arr, int& rc) {
     ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
   }
   catch (ESMCI::esmf_info_error &e) {
-    ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU, rc);
+    ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU);
   }
   catch (...) {
-    ESMF_CHECKERR_STD("", ESMF_FAILURE, "Unhandled throw", rc);
+    ESMF_CHECKERR_STD("", ESMF_FAILURE, "Unhandled throw");
   }
 }
 
@@ -705,7 +705,7 @@ void IOHandle::open(int& rc) {
     auto it_iosysid = this->PIOArgs.find(PIOARG::IOSYSID);
     if (it_iosysid == this->PIOArgs.end()) {
       iosysid = this->init(rc);
-      ESMF_CHECKERR_STD("", rc, "Did not init", rc);
+      ESMF_CHECKERR_STD("", rc, "Did not init");
     } else {
       iosysid = it_iosysid.value();
     }
@@ -716,7 +716,7 @@ void IOHandle::open(int& rc) {
     int ncid;
 
     ESMCI::VM *vm = ESMCI::VM::getCurrent(&rc);
-    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
     int localPet = vm->getLocalPet();
     // Check if file exists on the file system. This does not check if the
     // location is valid.
@@ -736,7 +736,7 @@ void IOHandle::open(int& rc) {
             should_create = true;
           } else {
             auto msg = "File exists and 'clobber=false': " + filename;
-            ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, msg, rc);
+            ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, msg);
           }
         } else {
           should_create = true;
@@ -745,7 +745,7 @@ void IOHandle::open(int& rc) {
         if (exists[0] == 0) {
           auto msg = "File does not exist in read mode. Nothing to do!: "
             + filename;
-          ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, msg, rc);
+          ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, msg);
         }
       }
       if (should_create) {
@@ -771,7 +771,7 @@ void IOHandle::read(const Array& arr, int& rc) {
     this->readOrWrite(ESMC_RWMODE_READ, arr, rc);
   }
   catch (...) {
-    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
   }
 }
 
@@ -786,7 +786,7 @@ void IOHandle::readMetadata(int& rc) {
     ioh_local.PIOArgs[PIOARG::MODE] = PIODEF::MODE_READ;
     ioh_local.PIOArgs[PIOARG::FILENAME] = this->PIOArgs[PIOARG::FILENAME];
     ioh_local.open(rc);
-    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
     int ncid = ioh_local.PIOArgs.at(PIOARG::NCID);
     smeta[K_URI] = this->PIOArgs.at(PIOARG::FILENAME);
     int ndims, nvars, ngatts, unlimdimid;
@@ -803,7 +803,7 @@ void IOHandle::readMetadata(int& rc) {
       handlePIOReturnCode(pio_rc, "Failed to inq_dim", rc);
       const string sdimname(name);
       json& dim_meta = meta.getOrCreateDimension(sdimname, rc);
-      ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+      ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
       if (dimid == unlimdimid) {
         dim_meta[K_UNLIM] = true;
       }
@@ -821,14 +821,14 @@ void IOHandle::readMetadata(int& rc) {
       handlePIOReturnCode(pio_rc, "Failed to inq_dim", rc);
       const string svarname(name);
       json& var_meta = meta.getOrCreateVariable(svarname, rc);
-      ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+      ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
       var_meta[K_NCTYPE] = xtype;
       //tdk:TODO: reserve the dimension name size before push_back
       for (auto ii=0; ii<ndims; ++ii) {
         var_meta[K_DIMS].push_back(dimid2name[dimids[ii]]);
       }
       readPIOAttributes(var_meta, natts, ncid, varid, rc);
-      ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+      ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
     }
 
     // Global attributes ======================================================
@@ -837,7 +837,7 @@ void IOHandle::readMetadata(int& rc) {
     handlePIOReturnCode(pio_rc, "Did not get global attribute count", rc);
     if (natts > 0) {
       readPIOAttributes(smeta, natts, ncid, NC_GLOBAL, rc);
-      ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+      ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
     }
 
     // Assign the newly created metadata to the handle ========================
@@ -847,10 +847,10 @@ void IOHandle::readMetadata(int& rc) {
     // Clean-Up ===============================================================
 
     ioh_local.finalize(rc);
-    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
   }
   catch (...) {
-    ESMF_CHECKERR_STD("ESMF_FAILURE", ESMF_FAILURE, ESMCI_ERR_PASSTHRU, rc);
+    ESMF_CHECKERR_STD("ESMF_FAILURE", ESMF_FAILURE, ESMCI_ERR_PASSTHRU);
   }
 }
 
@@ -881,7 +881,7 @@ void IOHandle::readOrWrite(ESMC_RWMode rwmode, const Array& arr, int& rc) {
     bool should_finalize = false;
     if (!isIn(PIOARG::IOSYSID, this->PIOArgs)) {
       this->init(rc);
-      ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+      ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
 
       should_finalize = true;
     }
@@ -898,7 +898,7 @@ void IOHandle::readOrWrite(ESMC_RWMode rwmode, const Array& arr, int& rc) {
 
     if (!isIn(name, this->PIOArgs[PIOARG::IOIDS])) {
       this->initPIODecomp(arr, rc);
-      ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+      ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
     }
     //tdk:TODO: attempt to use references here
     int ioid = this->PIOArgs[PIOARG::IOIDS].at(name);
@@ -922,7 +922,7 @@ void IOHandle::readOrWrite(ESMC_RWMode rwmode, const Array& arr, int& rc) {
           }
           default: {
             auto msg = "ESMC_RWMODE_* not supported: " + to_string(rwmode);
-            ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, msg, rc);
+            ESMF_CHECKERR_STD("ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, msg);
           }
         }
         this->PIOArgs[PIOARG::MODE] = piomode;
@@ -930,7 +930,7 @@ void IOHandle::readOrWrite(ESMC_RWMode rwmode, const Array& arr, int& rc) {
         this->to_remove_on_close.push_back(PIOARG::MODE);
       }
       this->open(rc);
-      ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+      ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
 
       should_close = true;
     }
@@ -944,9 +944,9 @@ void IOHandle::readOrWrite(ESMC_RWMode rwmode, const Array& arr, int& rc) {
         // In write mode, do the file definition. The variable identifier is
         // supplied to PIOArgs during the definition phase.
         this->dodef(rc);
-        ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+        ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
         this->enddef(rc);
-        ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+        ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
       } else {
         // In read mode, retrieve the variable identifier from the netCDf file
         int lvarid;
@@ -1000,12 +1000,12 @@ void IOHandle::readOrWrite(ESMC_RWMode rwmode, const Array& arr, int& rc) {
 
     if (should_close) {
       this->close(rc);
-      ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+      ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
       tdklog("called this->close");
     }
     if (should_finalize) {
       this->finalize(rc);
-      ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+      ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
       tdklog("called this->finalize");
     }
 
@@ -1018,10 +1018,10 @@ void IOHandle::readOrWrite(ESMC_RWMode rwmode, const Array& arr, int& rc) {
     ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
   }
   catch (ESMCI::esmf_info_error& e) {
-    ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU, rc);
+    ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU);
   }
   catch (...) {
-    ESMF_CHECKERR_STD("", ESMF_FAILURE, "Unhandled throw", rc);
+    ESMF_CHECKERR_STD("", ESMF_FAILURE, "Unhandled throw");
   }
 }
 
@@ -1039,7 +1039,7 @@ void IOHandle::write(const Array& arr, int& rc) {
     this->readOrWrite(ESMC_RWMODE_WRITE, arr, rc);
   }
   catch (...) {
-    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
   }
 }
 

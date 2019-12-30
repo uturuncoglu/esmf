@@ -81,7 +81,7 @@ void testGetOrCreateJSON(int& rc, char failMsg[]) {
   f.close();
 
   json pkg = pf.getOrCreateJSON("test_pkg", rc, fn);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
 
   // Remove the test file
   int crc = std::remove(fn.c_str());
@@ -94,7 +94,7 @@ void testGetOrCreateJSON(int& rc, char failMsg[]) {
   }
 
   json pkg2 = pf.getOrCreateJSON("test_pkg", rc);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
 
   if (pkg2["foo"] != "bar") {
     return finalizeFailure(rc, failMsg, "Package not created correctly");

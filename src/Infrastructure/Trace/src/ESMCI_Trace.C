@@ -1406,8 +1406,12 @@ namespace ESMCI {
         ESMCI::Info *info = base->ESMC_BaseGetInfo(); //root_info_tdk (block)
         if (info) {
           const std::string nest = "/NUOPC/Instance";
-          bool has_nest = info->hasKey(nest, localrc, true);
-          if (ESMC_LogDefault.MsgFoundError(localrc, ESMCI_ERR_PASSTHRU, ESMC_CONTEXT, rc)) return;
+          bool has_nest;
+          try {
+            has_nest = info->hasKey(nest, true);
+          } catch (ESMCI::esmf_info_error &exc_info) {
+            if (ESMC_LogDefault.MsgFoundError(exc_info.getReturnCode(), ESMCI_ERR_PASSTHRU, ESMC_CONTEXT, rc)) return;
+          }
           if (has_nest) {
             std::map<string, vector<string>*> attrs;
             attrs["InitializePhaseMap"] = &IPM;
@@ -1417,11 +1421,18 @@ namespace ESMCI {
             if (ESMC_LogDefault.MsgFoundError(localrc, ESMCI_ERR_PASSTHRU, ESMC_CONTEXT, rc)) return;
               for (std::pair<string, vector<string>*> element : attrs) {
                 string key = nest + "/" + element.first;
-                bool has_key = info->hasKey(key, localrc, true);
-                if (ESMC_LogDefault.MsgFoundError(localrc, ESMCI_ERR_PASSTHRU, ESMC_CONTEXT, rc)) return;
+                bool has_key;
+                try {
+                  has_key = info->hasKey(key, true);
+                } catch (ESMCI::esmf_info_error &exc_info) {
+                  if (ESMC_LogDefault.MsgFoundError(exc_info.getReturnCode(), ESMCI_ERR_PASSTHRU, ESMC_CONTEXT, rc)) return;
+                }
                 if (has_key) {
-                  *(element.second) = info->getvec<std::string>(key, localrc, true);
-                  if (ESMC_LogDefault.MsgFoundError(localrc, ESMCI_ERR_PASSTHRU, ESMC_CONTEXT, rc)) return;
+                  try {
+                    *(element.second) = info->getvec<std::string>(key, true);
+                  } catch (ESMCI::esmf_info_error &exc_info) {
+                    if (ESMC_LogDefault.MsgFoundError(exc_info.getReturnCode(), ESMCI_ERR_PASSTHRU, ESMC_CONTEXT, rc)) return;
+                  }
                 }
               }
           }

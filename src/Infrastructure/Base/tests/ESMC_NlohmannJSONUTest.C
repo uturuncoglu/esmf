@@ -111,7 +111,6 @@ int main(void) {
                   {"two",   2},
                   {"three", 2.9}};
   root["toClear"] = toClear;
-//  std::cout << root.dump(4) << std::endl;
   root.erase("toClear");
 
   ESMC_Test(true, name, failMsg, &result, __FILE__, __LINE__, 0);

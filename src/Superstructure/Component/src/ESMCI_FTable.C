@@ -1855,9 +1855,13 @@ std::cout << "calling out of case FT_VOIDP1INTP" << "\n";
             ESMC_CONTEXT, &rc)) return rc; // bail out
           ESMCI::Info *info = base->ESMC_BaseGetInfo();
           std::string key_cr = "ESMF_RUNTIME_COMPLIANCEICREGISTER";
-          bool presentFlag = info->hasKey(key_cr, localrc, false);
-          if (ESMC_LogDefault.MsgFoundError(localrc, ESMCI_ERR_PASSTHRU,
-            ESMC_CONTEXT, &rc)) return rc; // bail out
+          bool presentFlag;
+          try {
+            presentFlag = info->hasKey(key_cr, false);
+          } catch (ESMCI::esmf_info_error &exc_info) {
+            ESMC_LogDefault.MsgFoundError(exc_info.getReturnCode(), ESMCI_ERR_PASSTHRU, ESMC_CONTEXT, &rc);
+            return rc; // bail out
+          }
 
 //#ifdef ESMF_NO_DLFCN
           //if (presentFlag==ESMF_TRUE){
@@ -1872,7 +1876,13 @@ std::cout << "calling out of case FT_VOIDP1INTP" << "\n";
 
             // get the attribute value
             //tdk:?: does this use a default convention and purpose?
-            std::string value = info->get<std::string>(key_cr, localrc);
+            std::string value;
+            try {
+              value = info->get<std::string>(key_cr);
+            } catch (ESMCI::esmf_info_error &exc_info) {
+              ESMC_LogDefault.MsgFoundError(exc_info.getReturnCode(), ESMCI_ERR_PASSTHRU, ESMC_CONTEXT, &rc);
+              return rc; // bail out
+            }
 
             // convert routine name according to name mangeling mode
             //TODO: this would be a good Util method to have

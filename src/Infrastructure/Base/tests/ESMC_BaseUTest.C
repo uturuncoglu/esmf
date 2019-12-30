@@ -72,9 +72,9 @@ void testSerializeDeserialize(int& rc, char failMsg[]) {
 
     ESMCI::Info *info = base_src.ESMC_BaseGetInfo();
     try {
-      info->set<int>("key1", 44, false, rc);
-      info->set<double>("key123", 3.146789, false, rc);
-      info->set<std::string>("a-string-key", "some-data", false, rc);
+      info->set<int>("key1", 44, false);
+      info->set<double>("key123", 3.146789, false);
+      info->set<std::string>("a-string-key", "some-data", false);
     }
     ESMF_CATCH_INFO
 
@@ -114,7 +114,7 @@ void testSerializeDeserialize(int& rc, char failMsg[]) {
 
     ESMCI::Info *infod = base_dst.ESMC_BaseGetInfo();
     try {
-      std::string dump = infod->dump(rc);
+      std::string dump = infod->dump();
       if (arflag == ESMC_ATTRECONCILE_OFF) {
         if (dump != "{}") {
           return finalizeFailure(rc, failMsg, "if not reconciling info, then object should be empty");

@@ -78,7 +78,7 @@ void testOpenClose(int& rc, char failMsg[]) {
 
   IOHandle ioh2;
   json jmeta = createTestJSONMetadata(rc);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
 
   Metadata meta(move(jmeta));
   ioh2.setMetadata(move(meta));
@@ -88,19 +88,19 @@ void testOpenClose(int& rc, char failMsg[]) {
   ioh2.PIOArgs[PIOARG::MODE] = NC_WRITE;
 
   ioh2.open(rc);
-  ESMF_CHECKERR_STD("", rc, "Did not open", rc);
+  ESMF_CHECKERR_STD("", rc, "Did not open");
 
   ioh2.dodef(rc);
-  ESMF_CHECKERR_STD("", rc, "Did not dodef", rc);
+  ESMF_CHECKERR_STD("", rc, "Did not dodef");
 
   ioh2.enddef(rc);
-  ESMF_CHECKERR_STD("", rc, "Did not enddef", rc);
+  ESMF_CHECKERR_STD("", rc, "Did not enddef");
 
   ioh2.close(rc);
-  ESMF_CHECKERR_STD("", rc, "Did not close", rc);
+  ESMF_CHECKERR_STD("", rc, "Did not close");
 
   ioh2.finalize(rc);
-  ESMF_CHECKERR_STD("", rc, "Did not finalize", rc);
+  ESMF_CHECKERR_STD("", rc, "Did not finalize");
 
 //  cout<<ioh2.PIOArgs.dump(2)<<endl;
   if (ioh2.PIOArgs.size() != 2) {
@@ -108,7 +108,7 @@ void testOpenClose(int& rc, char failMsg[]) {
   }
 
   ESMCI::VM *vm = ESMCI::VM::getCurrent(&rc);
-  ESMF_CHECKERR_STD("", rc, "Did not get current VM", rc);
+  ESMF_CHECKERR_STD("", rc, "Did not get current VM");
 
   int localPet = vm->getLocalPet();
   if (DELETE_NCFILES && localPet == 0 && (remove(filename.c_str()) != 0)) {
@@ -125,7 +125,7 @@ void testWrite1DArray(int& rc, char failMsg[]) {
   rc = ESMF_FAILURE;
 
   ESMCI::VM *vm = ESMCI::VM::getCurrent(&rc);
-  ESMF_CHECKERR_STD("", rc, "Did not get current VM", rc);
+  ESMF_CHECKERR_STD("", rc, "Did not get current VM");
 
   int localPet = vm->getLocalPet();
   int petCount = vm->getPetCount();
@@ -136,14 +136,14 @@ void testWrite1DArray(int& rc, char failMsg[]) {
   json dgparms;
   dgparms[ESMFARG::DISTDIMS] = {"dim_lon"};
   DistGrid* distgrid = meta.createDistGrid(dgparms, rc);
-  ESMF_CHECKERR_STD("", rc, "DistGrid creation failed", rc);
+  ESMF_CHECKERR_STD("", rc, "DistGrid creation failed");
 
   json jsonParms;
   jsonParms[ESMFARG::DISTDIMS] = {"dim_lon"};
   jsonParms[ESMFARG::VARIABLENAME] = "the_xc";
 
   ESMCI::Array* arr = meta.createArray(*distgrid, jsonParms, rc);
-  ESMF_CHECKERR_STD("", rc, "Array creation failed", rc);
+  ESMF_CHECKERR_STD("", rc, "Array creation failed");
 
   ESMC_TypeKind_Flag tk = arr->getTypekind();
   LocalArray** larrayList = arr->getLocalarrayList();
@@ -152,14 +152,14 @@ void testWrite1DArray(int& rc, char failMsg[]) {
   ESMC_R8 data = std::numeric_limits<ESMC_R8>::min();
 
   rc = larrayList[0]->getData(index, &data);
-  ESMF_CHECKERR_STD("", rc, "Failure when getting data from local array", rc);
+  ESMF_CHECKERR_STD("", rc, "Failure when getting data from local array");
 
   if (data == std::numeric_limits<ESMC_R8>::min()) {
     return finalizeFailure(rc, failMsg, "Did not get value from local array");
   }
 
   vector<dimsize_t> arrshp = getArrayShape(*arr, ESMC_INDEX_DELOCAL, rc);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
 
   void** larrayBaseAddrList =  arr->getLarrayBaseAddrList();
   double* buffer = reinterpret_cast<double*>(larrayBaseAddrList[0]);
@@ -172,7 +172,7 @@ void testWrite1DArray(int& rc, char failMsg[]) {
   ioh.PIOArgs[PIOARG::FILENAME] = filename;
   const vector<string> dimnames = {"the_longitude"};
   ioh.meta.update(*arr, &dimnames, rc);
-  ESMF_CHECKERR_STD("", rc, "Metadata not updated", rc);
+  ESMF_CHECKERR_STD("", rc, "Metadata not updated");
 
   json& smeta = ioh.meta.getStorageRefWritable();
   smeta.at(K_VARS).at("the_xc").at(K_ATTRS)[K_AXIS] = "X";
@@ -180,29 +180,29 @@ void testWrite1DArray(int& rc, char failMsg[]) {
   //tdk:TODO: this test should only call "write" and all these methods should be intelligently called
 
   ioh.open(rc);
-  ESMF_CHECKERR_STD("", rc, "Did not open file", rc);
+  ESMF_CHECKERR_STD("", rc, "Did not open file");
 
   ioh.dodef(rc);
-  ESMF_CHECKERR_STD("", rc, "Did not define", rc);
+  ESMF_CHECKERR_STD("", rc, "Did not define");
 
   ioh.enddef(rc);
-  ESMF_CHECKERR_STD("", rc, "Did not enddef", rc);
+  ESMF_CHECKERR_STD("", rc, "Did not enddef");
 
   ioh.write(*arr, rc);
-  ESMF_CHECKERR_STD("", rc, "Did not write array", rc);
+  ESMF_CHECKERR_STD("", rc, "Did not write array");
 
   ioh.close(rc);
-  ESMF_CHECKERR_STD("", rc, "Did not close", rc);
+  ESMF_CHECKERR_STD("", rc, "Did not close");
 
   ioh.finalize(rc);
-  ESMF_CHECKERR_STD("", rc, "Did not finalize", rc);
+  ESMF_CHECKERR_STD("", rc, "Did not finalize");
 
   //tdk:TEST: structure of PIOArgs
 
   rc = ESMCI::Array::destroy(&arr);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
   rc = ESMCI::DistGrid::destroy(&distgrid);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
 
   if (DELETE_NCFILES && localPet == 0 && (remove(filename.c_str()) != 0)) {
     return finalizeFailure(rc, failMsg, "Test file not removed");
@@ -219,7 +219,7 @@ void testReadWrite1DArrayIsolated(int& rc, char failMsg[]) {
     rc = ESMF_FAILURE;
 
     ESMCI::VM *vm = ESMCI::VM::getCurrent(&rc);
-    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
 
     int localPet = vm->getLocalPet();
     int petCount = vm->getPetCount();
@@ -232,7 +232,7 @@ void testReadWrite1DArrayIsolated(int& rc, char failMsg[]) {
     json dgparms;
     dgparms[ESMFARG::DISTDIMS] = {"dim_lon"};
     DistGrid* distgrid = meta.createDistGrid(dgparms, rc);
-    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
 
     json jsonParms;
     jsonParms[ESMFARG::DISTDIMS] = {"dim_lon"};
@@ -240,16 +240,16 @@ void testReadWrite1DArrayIsolated(int& rc, char failMsg[]) {
 
     // Array to write
     ESMCI::Array* arr = meta.createArray(*distgrid, jsonParms, rc);
-    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
 
     // Array to read (fill)
     ESMCI::Array* arr2fill = meta.createArray(*distgrid, jsonParms, rc);
-    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
 
     // Fill data values =======================================================
 
     vector<dimsize_t> arrshp = getArrayShape(*arr, ESMC_INDEX_DELOCAL, rc);
-    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
 
     void** larrayBaseAddrList =  arr->getLarrayBaseAddrList();
     double* buffer = reinterpret_cast<double*>(larrayBaseAddrList[0]);
@@ -264,13 +264,13 @@ void testReadWrite1DArrayIsolated(int& rc, char failMsg[]) {
     ioh.PIOArgs[PIOARG::FILENAME] = filename;
     const vector<string> dimnames = {"the_longitude"};
     ioh.meta.update(*arr, &dimnames, rc);
-    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
 
     json& smeta = ioh.meta.getStorageRefWritable();
     smeta.at(K_VARS).at("the_xc").at(K_ATTRS)[K_AXIS] = "X";
 
     ioh.write(*arr, rc);
-    ESMF_CHECKERR_STD("", rc, "Did not write array", rc);
+    ESMF_CHECKERR_STD("", rc, "Did not write array");
 
     if (ioh.PIOArgs.size() != 1) {
       return finalizeFailure(rc, failMsg, "PIO args wrong size");
@@ -279,7 +279,7 @@ void testReadWrite1DArrayIsolated(int& rc, char failMsg[]) {
     // Fill the array that is identical to the write array ====================
 
     ioh.read(*arr2fill, rc);
-    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
 
     double* arr2fill_buffer = reinterpret_cast<double*>(arr2fill->getLarrayBaseAddrList()[0]);
     for (auto ii=0; ii<arrshp[0]; ii++) {
@@ -296,7 +296,7 @@ void testReadWrite1DArrayIsolated(int& rc, char failMsg[]) {
 
     rc = ESMCI::Array::destroy(&arr);
     rc = ESMCI::DistGrid::destroy(&distgrid);
-    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
 
     if (DELETE_NCFILES && localPet == 0 && (remove(filename.c_str()) != 0)) {
       return finalizeFailure(rc, failMsg, "Test file not removed");
@@ -312,10 +312,10 @@ void testReadWrite1DArrayIsolated(int& rc, char failMsg[]) {
     ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
   }
   catch (ESMCI::esmf_info_error &e) {
-    ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU, rc);
+    ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU);
   }
   catch (...) {
-    ESMF_CHECKERR_STD("", ESMF_FAILURE, "Unhandled throw", rc);
+    ESMF_CHECKERR_STD("", ESMF_FAILURE, "Unhandled throw");
   }
 }
 
@@ -332,35 +332,35 @@ void testReadWrite1DArrayZeroLength(int& rc, char failMsg[]) {
   Metadata meta;
 
   json& smalls_dims = meta.getOrCreateDimension("smalldim", rc);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
   const int size = 3;
   smalls_dims[K_SIZE] = size;
 
   json& smalls = meta.getOrCreateVariable("smalls", rc);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
   smalls[K_DIMS].push_back("smalldim");
   smalls[K_NCTYPE] = NC_INT;
 
   json jsonParms;
   jsonParms[ESMFARG::DISTDIMS] = {"smalldim"};
   ESMCI::DistGrid* distgrid = meta.createDistGrid(jsonParms, rc);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
 
   jsonParms[ESMFARG::VARIABLENAME] = "smalls";
   ESMCI::Array* arr = meta.createArray(*distgrid, jsonParms, rc);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
   ESMCI::Array* arr2fill = meta.createArray(*distgrid, jsonParms, rc);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
 
   // Confirm the created arrays have size 0 on the last PET
   ESMCI::VM *vm = ESMCI::VM::getCurrent(&rc);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
   int localPet = vm->getLocalPet();
   const vector<ESMCI::Array *> arrs = {arr, arr2fill};
   for (const auto &a: arrs) {
     const vector <dimsize_t> arrshp = getArrayShape(*a, ESMC_INDEX_DELOCAL,
                                                     rc);
-    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
     if ((localPet == 3) && (arrshp[0] != 0)) {
       return finalizeFailure(rc, failMsg, "Last PET should be empty");
     }
@@ -387,14 +387,14 @@ void testReadWrite1DArrayZeroLength(int& rc, char failMsg[]) {
   ioh.PIOArgs[PIOARG::FILENAME] = filename;
 
   ioh.write(*arr, rc);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
 
   if ((buffer[0] == buffer2fill[0]) && (localPet < size)) {
     return finalizeFailure(rc, failMsg, "Buffers should not be equal");
   }
 
   ioh.read(*arr2fill, rc);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
 
   if ((buffer[0] != buffer2fill[0]) && (localPet < size)) {
     return finalizeFailure(rc, failMsg, "Buffers should be equal after read");
@@ -403,9 +403,9 @@ void testReadWrite1DArrayZeroLength(int& rc, char failMsg[]) {
   // Clean-Up =================================================================
 
   rc = ESMCI::Array::destroy(&arr);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
   rc = ESMCI::DistGrid::destroy(&distgrid);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
 
   if (DELETE_NCFILES && localPet == 0 && (remove(filename.c_str()) != 0)) {
     return finalizeFailure(rc, failMsg, "Test file not removed");
@@ -420,7 +420,7 @@ void testWrite3DArray(int& rc, char failMsg[]) {
   rc = ESMF_FAILURE;
 
   ESMCI::VM *vm = ESMCI::VM::getCurrent(&rc);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
   int localPet = vm->getLocalPet();
   int petCount = vm->getPetCount();
 
@@ -453,7 +453,7 @@ void testWrite3DArray(int& rc, char failMsg[]) {
     json dgparms;
     dgparms[ESMFARG::DISTDIMS] = distdims;
     DistGrid *distgrid = meta.createDistGrid(dgparms, rc);
-    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
 
     // JSON Parameters for Array creation =====================================
 
@@ -464,16 +464,16 @@ void testWrite3DArray(int& rc, char failMsg[]) {
     // Create Array to fill from file =========================================
 
     ESMCI::Array *arr2fill = meta.createArray(*distgrid, jsonParms, rc);
-    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
 
     // Create Array to write ==================================================
 
     ESMCI::Array *arr = meta.createArray(*distgrid, jsonParms, rc);
-    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
 
     vector <dimsize_t> arrshp = getArrayShape(*arr, ESMC_INDEX_DELOCAL, rc);
 //  std::reverse(arrshp.begin(), arrshp.end());  // Reverse to Fortran order
-    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
 
     // Fill the buffer to write with some data
     void **larrayBaseAddrList = arr->getLarrayBaseAddrList();
@@ -502,7 +502,7 @@ void testWrite3DArray(int& rc, char failMsg[]) {
 
     // Add the Array-to-write to the output metadata
     ioh.meta.update(*arr, &dimnames, rc);
-    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
     // Add a custom attribute to the metadata for the outgoing array
     json &smeta = ioh.meta.getStorageRefWritable();
     smeta.at(K_VARS).at(varname).at(K_ATTRS)["context"] = "testWrite3DArray";
@@ -510,22 +510,22 @@ void testWrite3DArray(int& rc, char failMsg[]) {
     // Do a full write operation ==============================================
 
     ioh.open(rc);
-    ESMF_CHECKERR_STD("", rc, "Did not open file", rc);
+    ESMF_CHECKERR_STD("", rc, "Did not open file");
 
     ioh.dodef(rc);
-    ESMF_CHECKERR_STD("", rc, "Did not define", rc);
+    ESMF_CHECKERR_STD("", rc, "Did not define");
 
     ioh.enddef(rc);
-    ESMF_CHECKERR_STD("", rc, "Did not enddef", rc);
+    ESMF_CHECKERR_STD("", rc, "Did not enddef");
 
     ioh.write(*arr, rc);
-    ESMF_CHECKERR_STD("", rc, "Did not write array", rc);
+    ESMF_CHECKERR_STD("", rc, "Did not write array");
 
     ioh.close(rc);
-    ESMF_CHECKERR_STD("", rc, "Did not close", rc);
+    ESMF_CHECKERR_STD("", rc, "Did not close");
 
     ioh.finalize(rc);
-    ESMF_CHECKERR_STD("", rc, "Did not finalize", rc);
+    ESMF_CHECKERR_STD("", rc, "Did not finalize");
 
     // Confirm the user-provided arguments are all that is left after finalizing
     if (ioh.PIOArgs.size() != 2) {
@@ -535,7 +535,7 @@ void testWrite3DArray(int& rc, char failMsg[]) {
     // Read netCDF data back in ===============================================
 
     ioh.read(*arr2fill, rc);
-    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
     for (auto ii = 0; ii < arrsize; ++ii) {
       if (buffer[ii] != buffer2fill[ii]) {
         return finalizeFailure(rc, failMsg, "Buffers should be equal");
@@ -551,7 +551,7 @@ void testWrite3DArray(int& rc, char failMsg[]) {
     rc = ESMCI::Array::destroy(&arr);
     rc = ESMCI::Array::destroy(&arr2fill);
     rc = ESMCI::DistGrid::destroy(&distgrid);
-    ESMF_CHECKERR_STD("", rc, "Problem when destroying objects", rc);
+    ESMF_CHECKERR_STD("", rc, "Problem when destroying objects");
   }
 
   if (DELETE_NCFILES && localPet == 0 && (remove(filename.c_str()) != 0)) {
@@ -572,7 +572,7 @@ void testWriteUnlimDimArray(int& rc, char failMsg[]) {
   const vector<string> distdims = {"dim_lat", "dim_lon"};
 
   ESMCI::VM *vm = ESMCI::VM::getCurrent(&rc);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
   int localPet = vm->getLocalPet();
   int petCount = vm->getPetCount();
 
@@ -590,7 +590,7 @@ void testWriteUnlimDimArray(int& rc, char failMsg[]) {
   json dgparms;
   dgparms[ESMFARG::DISTDIMS] = distdims;
   DistGrid *distgrid = meta.createDistGrid(dgparms, rc);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
 
   // Create Array =============================================================
 
@@ -599,7 +599,7 @@ void testWriteUnlimDimArray(int& rc, char failMsg[]) {
   arrParms[ESMFARG::VARIABLENAME] = varname;
   //tdk:TODO: add option to always create for unlimited
   ESMCI::Array *arr = meta.createArray(*distgrid, arrParms, rc);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
   const int desired_rank = meta.getStorageRef()[K_VARS][varname][K_DIMS].size();
   if (arr->getRank() != (desired_rank - 1)) {
     return finalizeFailure(rc, failMsg, "Wrong rank: 2!="+to_string(arr->getRank()));
@@ -614,14 +614,14 @@ void testWriteUnlimDimArray(int& rc, char failMsg[]) {
   assert(!isIn("dim_time", dimnames));
   // Add Array-to-write to the metadata
   ioh.meta.update(*arr, &dimnames, rc);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
 
   // Add an arbitrary attribute to the output array
   json &smeta = ioh.meta.getStorageRefWritable();
   smeta.at(K_VARS).at(varname).at(K_ATTRS)["context"] = "testWriteUnlimitedDim";
   //tdk:TODO: need to configure unlimited dimensions during update call
   smeta.at(K_DIMS)["dim_time"] = createJSONPackage("ESMF:Metadata:Dimension", rc);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
   smeta.at(K_DIMS).at("dim_time").at(K_SIZE) = 0;
   smeta.at(K_DIMS).at("dim_time").at(K_UNLIM) = true;
   smeta.at(K_DIMS).at("dim_time").at(K_NAME) = "dim_time";
@@ -633,23 +633,23 @@ void testWriteUnlimDimArray(int& rc, char failMsg[]) {
   // Run the full IOHandle write system =======================================
 
   ioh.open(rc);
-  ESMF_CHECKERR_STD("", rc, "Did not open file", rc);
+  ESMF_CHECKERR_STD("", rc, "Did not open file");
 
   try {
     ioh.dodef(rc);
   }
   catch (esmf_info_error& e) {
-    ESMF_CHECKERR_STD("", e.getReturnCode(), "Did not define", rc);
+    ESMF_CHECKERR_STD("", e.getReturnCode(), "Did not define");
   }
 
   ioh.enddef(rc);
-  ESMF_CHECKERR_STD("", rc, "Did not enddef", rc);
+  ESMF_CHECKERR_STD("", rc, "Did not enddef");
 
   // Run the unlimited time write loop ========================================
 
   vector <dimsize_t> arrshp = getArrayShape(*arr, ESMC_INDEX_DELOCAL, rc);
 //  std::reverse(arrshp.begin(), arrshp.end());  // Reverse to Fortran order
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
   auto arrsize = sizeFromShape(arrshp);
   void **larrayBaseAddrList = arr->getLarrayBaseAddrList();
   double *buffer = reinterpret_cast<double *>(larrayBaseAddrList[0]);
@@ -660,14 +660,14 @@ void testWriteUnlimDimArray(int& rc, char failMsg[]) {
     }
     ioh.PIOArgs[PIOARG::FRAMES][varname] = ii;
     ioh.write(*arr, rc);
-    ESMF_CHECKERR_STD("", rc, "Did not write array", rc);
+    ESMF_CHECKERR_STD("", rc, "Did not write array");
   }
 
   ioh.close(rc);
-  ESMF_CHECKERR_STD("", rc, "Did not close", rc);
+  ESMF_CHECKERR_STD("", rc, "Did not close");
 
   ioh.finalize(rc);
-  ESMF_CHECKERR_STD("", rc, "Did not finalize", rc);
+  ESMF_CHECKERR_STD("", rc, "Did not finalize");
 
   //tdk:TEST: structure of PIOArgs
 
@@ -675,7 +675,7 @@ void testWriteUnlimDimArray(int& rc, char failMsg[]) {
 
   rc = ESMCI::Array::destroy(&arr);
   rc = ESMCI::DistGrid::destroy(&distgrid);
-  ESMF_CHECKERR_STD("", rc, "Problem when destroying objects", rc);
+  ESMF_CHECKERR_STD("", rc, "Problem when destroying objects");
 
   if (DELETE_NCFILES && localPet == 0 && (remove(filename.c_str()) != 0)) {
     return finalizeFailure(rc, failMsg, "Test file not removed");
@@ -695,7 +695,7 @@ void testWriteArrayBundle(int& rc, char failMsg[]) {
   const vector<string> distdims = {"dim_lat", "dim_lon"};
 
   ESMCI::VM *vm = ESMCI::VM::getCurrent(&rc);
-  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
 
   int localPet = vm->getLocalPet();
   int petCount = vm->getPetCount();
@@ -717,18 +717,18 @@ void testWriteArrayBundle(int& rc, char failMsg[]) {
 //  json dgparms;
 //  dgparms[ESMFARG::DISTDIMS] = distdims;
 //  DistGrid *distgrid = meta.createDistGrid(dgparms, rc);
-//  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+//  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
 //
 //  json arrParms;
 //  arrParms[ESMFARG::DISTDIMS] = distdims;
 //
 //  ESMCI::Array *arr = meta.createArray(*distgrid, arrParms, rc);
-//  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+//  ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
 //
 //  tdk:TODO: add destroys
 //  rc = ESMCI::Array::destroy(&arr);
 //  rc = ESMCI::DistGrid::destroy(&distgrid);
-//  ESMF_CHECKERR_STD("", rc, "Problem when destroying objects", rc);
+//  ESMF_CHECKERR_STD("", rc, "Problem when destroying objects");
 
   //tdk:UNCOMMENT
 //  if (localPet == 0 && remove(filename.c_str()) != 0) {
@@ -749,7 +749,7 @@ void testReadMetadata(int& rc, char failMsg[]) {
 
     IOHandle ioh_create;
     json jmeta = createTestJSONMetadata(rc);
-    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
     Metadata meta(move(jmeta));
     ioh_create.setMetadata(move(meta));
     ioh_create.PIOArgs[PIOARG::FILENAME] = filename;
@@ -758,12 +758,12 @@ void testReadMetadata(int& rc, char failMsg[]) {
     ioh_create.dodef(rc);
     ioh_create.enddef(rc);
     ioh_create.finalize(rc);
-    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
 
     IOHandle ioh;
     ioh.PIOArgs[PIOARG::FILENAME] = filename;
     ioh.readMetadata(rc);
-    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
 
     // Exclude some items from comparison. There is no URI when we write. The
     // unlimited dimension has zero size when writing and, hence, zero when
@@ -776,7 +776,7 @@ void testReadMetadata(int& rc, char failMsg[]) {
     }
 
     ESMCI::VM *vm = ESMCI::VM::getCurrent(&rc);
-    ESMF_CHECKERR_STD("", rc, "Did not get current VM", rc);
+    ESMF_CHECKERR_STD("", rc, "Did not get current VM");
     int localPet = vm->getLocalPet();
     if (DELETE_NCFILES && localPet == 0 && (remove(filename.c_str()) != 0)) {
       return finalizeFailure(rc, failMsg, "Test file not removed");
@@ -789,10 +789,10 @@ void testReadMetadata(int& rc, char failMsg[]) {
     ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD, rc);
   }
   catch (ESMCI::esmf_info_error &e) {
-    ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU, rc);
+    ESMF_CHECKERR_STD("", e.getReturnCode(), ESMCI_ERR_PASSTHRU);
   }
   catch (...) {
-    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU, rc);
+    ESMF_CHECKERR_STD("", rc, ESMCI_ERR_PASSTHRU);
   }
 
   rc = ESMF_SUCCESS;

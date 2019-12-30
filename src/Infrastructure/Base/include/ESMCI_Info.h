@@ -150,9 +150,9 @@ public:
   Info&operator=(const Info&) = delete; // Copy assignment
   Info&operator=(Info&&) = delete; // Move assignment
 
-  Info(const json& storage); // Copy constructor from JSON
-  Info(json&& storage); // Move constructor from JSON
-  Info(key_t& input, int &esmf_rc); // Parse JSON string constructor
+  explicit Info(const json& storage); // Copy constructor from JSON
+  explicit Info(json&& storage); // Move constructor from JSON
+  explicit Info(key_t& input); // Constructor from string
 
   std::string dump(void) const;
   std::string dump(int indent) const;

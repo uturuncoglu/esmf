@@ -96,12 +96,14 @@ extern "C" {
     ESMCI::Info *dimAttPack = nullptr;
     if (has_convpurp) {
       try {
-        if (grid_p->ESMC_BaseGetInfo()->hasKey(key, localrc, true, false)) {
+        if (grid_p->ESMC_BaseGetInfo()->hasKey(key, true, false)) {
           dimAttPack = new ESMCI::Info();
-          grid_p->ESMC_BaseGetInfo()->get(*dimAttPack, key, localrc);
+          grid_p->ESMC_BaseGetInfo()->get(*dimAttPack, key);
         }
+      } catch (ESMCI::esmf_info_error &exc_info) {
+        ESMC_LogDefault.MsgFoundError(exc_info.getReturnCode(), exc_info.what(), ESMC_CONTEXT, rc);
+        return;
       }
-      ESMF_CATCH_ISOCP
     }
 
     // If present, use Attributes at the Field level for variable attributes
@@ -109,12 +111,14 @@ extern "C" {
     ESMCI::Info *varAttPack = nullptr;
     if (has_convpurp) {
       try {
-        if (base_p->ESMC_BaseGetInfo()->hasKey(key, localrc, true, false)) {
+        if (base_p->ESMC_BaseGetInfo()->hasKey(key, true, false)) {
           varAttPack = new ESMCI::Info();
-          base_p->ESMC_BaseGetInfo()->get(*varAttPack, key, localrc);
+          base_p->ESMC_BaseGetInfo()->get(*varAttPack, key);
         }
+      } catch (ESMCI::esmf_info_error &exc_info) {
+        ESMC_LogDefault.MsgFoundError(exc_info.getReturnCode(), exc_info.what(), ESMC_CONTEXT, rc);
+        return;
       }
-      ESMF_CATCH_ISOCP
     }
 
     // If present, use Attributes at the FieldBundle level for global attributes
@@ -123,12 +127,14 @@ extern "C" {
       ESMC_Base *gblbase_p = *gblbase;
       if (has_convpurp) {
         try {
-          if (gblbase_p->ESMC_BaseGetInfo()->hasKey(key, localrc, true, false)) {
+          if (gblbase_p->ESMC_BaseGetInfo()->hasKey(key, true, false)) {
             gblAttPack = new ESMCI::Info();
-            gblbase_p->ESMC_BaseGetInfo()->get(*gblAttPack, key, localrc);
+            gblbase_p->ESMC_BaseGetInfo()->get(*gblAttPack, key);
           }
+        } catch (ESMCI::esmf_info_error &exc_info) {
+          ESMC_LogDefault.MsgFoundError(exc_info.getReturnCode(), exc_info.what(), ESMC_CONTEXT, rc);
+          return;
         }
-        ESMF_CATCH_ISOCP
       }
     }
 
