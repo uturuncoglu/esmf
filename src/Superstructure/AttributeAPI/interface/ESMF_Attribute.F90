@@ -23490,7 +23490,7 @@ subroutine ESMF_AttributeGetAttPackArrayR4List(target, name, attpack, valueList,
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -23561,7 +23561,7 @@ subroutine ESMF_AttributeGetObjArrayR4List(target, name, valueList, defaultvalue
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -23628,7 +23628,7 @@ subroutine ESMF_AttributeGetAttPackArrayR8List(target, name, attpack, valueList,
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -23699,7 +23699,7 @@ subroutine ESMF_AttributeGetObjArrayR8List(target, name, valueList, defaultvalue
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -23766,7 +23766,7 @@ subroutine ESMF_AttributeGetAttPackArrayI4List(target, name, attpack, valueList,
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -23837,7 +23837,7 @@ subroutine ESMF_AttributeGetObjArrayI4List(target, name, valueList, defaultvalue
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -23904,7 +23904,7 @@ subroutine ESMF_AttributeGetAttPackArrayI8List(target, name, attpack, valueList,
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -23975,7 +23975,7 @@ subroutine ESMF_AttributeGetObjArrayI8List(target, name, valueList, defaultvalue
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -24042,7 +24042,7 @@ subroutine ESMF_AttributeGetAttPackArrayCHList(target, name, attpack, valueList,
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -24113,7 +24113,7 @@ subroutine ESMF_AttributeGetObjArrayCHList(target, name, valueList, defaultvalue
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -24180,7 +24180,7 @@ subroutine ESMF_AttributeGetAttPackArrayLGList(target, name, attpack, valueList,
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -24251,7 +24251,7 @@ subroutine ESMF_AttributeGetObjArrayLGList(target, name, valueList, defaultvalue
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -24318,7 +24318,7 @@ subroutine ESMF_AttributeGetAttPackArrayBundleR4List(target, name, attpack, valu
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -24389,7 +24389,7 @@ subroutine ESMF_AttributeGetObjArrayBundleR4List(target, name, valueList, defaul
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -24456,7 +24456,7 @@ subroutine ESMF_AttributeGetAttPackArrayBundleR8List(target, name, attpack, valu
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -24527,7 +24527,7 @@ subroutine ESMF_AttributeGetObjArrayBundleR8List(target, name, valueList, defaul
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -24594,7 +24594,7 @@ subroutine ESMF_AttributeGetAttPackArrayBundleI4List(target, name, attpack, valu
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -24665,7 +24665,7 @@ subroutine ESMF_AttributeGetObjArrayBundleI4List(target, name, valueList, defaul
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -24732,7 +24732,7 @@ subroutine ESMF_AttributeGetAttPackArrayBundleI8List(target, name, attpack, valu
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -24803,7 +24803,7 @@ subroutine ESMF_AttributeGetObjArrayBundleI8List(target, name, valueList, defaul
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -24870,7 +24870,7 @@ subroutine ESMF_AttributeGetAttPackArrayBundleCHList(target, name, attpack, valu
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -24941,7 +24941,7 @@ subroutine ESMF_AttributeGetObjArrayBundleCHList(target, name, valueList, defaul
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -25008,7 +25008,7 @@ subroutine ESMF_AttributeGetAttPackArrayBundleLGList(target, name, attpack, valu
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -25079,7 +25079,7 @@ subroutine ESMF_AttributeGetObjArrayBundleLGList(target, name, valueList, defaul
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -25146,7 +25146,7 @@ subroutine ESMF_AttributeGetAttPackCplCompR4List(target, name, attpack, valueLis
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -25217,7 +25217,7 @@ subroutine ESMF_AttributeGetObjCplCompR4List(target, name, valueList, defaultval
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -25284,7 +25284,7 @@ subroutine ESMF_AttributeGetAttPackCplCompR8List(target, name, attpack, valueLis
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -25355,7 +25355,7 @@ subroutine ESMF_AttributeGetObjCplCompR8List(target, name, valueList, defaultval
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -25422,7 +25422,7 @@ subroutine ESMF_AttributeGetAttPackCplCompI4List(target, name, attpack, valueLis
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -25493,7 +25493,7 @@ subroutine ESMF_AttributeGetObjCplCompI4List(target, name, valueList, defaultval
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -25560,7 +25560,7 @@ subroutine ESMF_AttributeGetAttPackCplCompI8List(target, name, attpack, valueLis
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -25631,7 +25631,7 @@ subroutine ESMF_AttributeGetObjCplCompI8List(target, name, valueList, defaultval
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -25698,7 +25698,7 @@ subroutine ESMF_AttributeGetAttPackCplCompCHList(target, name, attpack, valueLis
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -25769,7 +25769,7 @@ subroutine ESMF_AttributeGetObjCplCompCHList(target, name, valueList, defaultval
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -25836,7 +25836,7 @@ subroutine ESMF_AttributeGetAttPackCplCompLGList(target, name, attpack, valueLis
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -25907,7 +25907,7 @@ subroutine ESMF_AttributeGetObjCplCompLGList(target, name, valueList, defaultval
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -25974,7 +25974,7 @@ subroutine ESMF_AttributeGetAttPackGridCompR4List(target, name, attpack, valueLi
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -26045,7 +26045,7 @@ subroutine ESMF_AttributeGetObjGridCompR4List(target, name, valueList, defaultva
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -26112,7 +26112,7 @@ subroutine ESMF_AttributeGetAttPackGridCompR8List(target, name, attpack, valueLi
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -26183,7 +26183,7 @@ subroutine ESMF_AttributeGetObjGridCompR8List(target, name, valueList, defaultva
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -26250,7 +26250,7 @@ subroutine ESMF_AttributeGetAttPackGridCompI4List(target, name, attpack, valueLi
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -26321,7 +26321,7 @@ subroutine ESMF_AttributeGetObjGridCompI4List(target, name, valueList, defaultva
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -26388,7 +26388,7 @@ subroutine ESMF_AttributeGetAttPackGridCompI8List(target, name, attpack, valueLi
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -26459,7 +26459,7 @@ subroutine ESMF_AttributeGetObjGridCompI8List(target, name, valueList, defaultva
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -26526,7 +26526,7 @@ subroutine ESMF_AttributeGetAttPackGridCompCHList(target, name, attpack, valueLi
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -26597,7 +26597,7 @@ subroutine ESMF_AttributeGetObjGridCompCHList(target, name, valueList, defaultva
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -26664,7 +26664,7 @@ subroutine ESMF_AttributeGetAttPackGridCompLGList(target, name, attpack, valueLi
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -26735,7 +26735,7 @@ subroutine ESMF_AttributeGetObjGridCompLGList(target, name, valueList, defaultva
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -26802,7 +26802,7 @@ subroutine ESMF_AttributeGetAttPackSciCompR4List(target, name, attpack, valueLis
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -26873,7 +26873,7 @@ subroutine ESMF_AttributeGetObjSciCompR4List(target, name, valueList, defaultval
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -26940,7 +26940,7 @@ subroutine ESMF_AttributeGetAttPackSciCompR8List(target, name, attpack, valueLis
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -27011,7 +27011,7 @@ subroutine ESMF_AttributeGetObjSciCompR8List(target, name, valueList, defaultval
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -27078,7 +27078,7 @@ subroutine ESMF_AttributeGetAttPackSciCompI4List(target, name, attpack, valueLis
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -27149,7 +27149,7 @@ subroutine ESMF_AttributeGetObjSciCompI4List(target, name, valueList, defaultval
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -27216,7 +27216,7 @@ subroutine ESMF_AttributeGetAttPackSciCompI8List(target, name, attpack, valueLis
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -27287,7 +27287,7 @@ subroutine ESMF_AttributeGetObjSciCompI8List(target, name, valueList, defaultval
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -27354,7 +27354,7 @@ subroutine ESMF_AttributeGetAttPackSciCompCHList(target, name, attpack, valueLis
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -27425,7 +27425,7 @@ subroutine ESMF_AttributeGetObjSciCompCHList(target, name, valueList, defaultval
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -27492,7 +27492,7 @@ subroutine ESMF_AttributeGetAttPackSciCompLGList(target, name, attpack, valueLis
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -27563,7 +27563,7 @@ subroutine ESMF_AttributeGetObjSciCompLGList(target, name, valueList, defaultval
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -27630,7 +27630,7 @@ subroutine ESMF_AttributeGetAttPackDistGridR4List(target, name, attpack, valueLi
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -27701,7 +27701,7 @@ subroutine ESMF_AttributeGetObjDistGridR4List(target, name, valueList, defaultva
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -27768,7 +27768,7 @@ subroutine ESMF_AttributeGetAttPackDistGridR8List(target, name, attpack, valueLi
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -27839,7 +27839,7 @@ subroutine ESMF_AttributeGetObjDistGridR8List(target, name, valueList, defaultva
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -27906,7 +27906,7 @@ subroutine ESMF_AttributeGetAttPackDistGridI4List(target, name, attpack, valueLi
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -27977,7 +27977,7 @@ subroutine ESMF_AttributeGetObjDistGridI4List(target, name, valueList, defaultva
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -28044,7 +28044,7 @@ subroutine ESMF_AttributeGetAttPackDistGridI8List(target, name, attpack, valueLi
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -28115,7 +28115,7 @@ subroutine ESMF_AttributeGetObjDistGridI8List(target, name, valueList, defaultva
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -28182,7 +28182,7 @@ subroutine ESMF_AttributeGetAttPackDistGridCHList(target, name, attpack, valueLi
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -28253,7 +28253,7 @@ subroutine ESMF_AttributeGetObjDistGridCHList(target, name, valueList, defaultva
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -28320,7 +28320,7 @@ subroutine ESMF_AttributeGetAttPackDistGridLGList(target, name, attpack, valueLi
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -28391,7 +28391,7 @@ subroutine ESMF_AttributeGetObjDistGridLGList(target, name, valueList, defaultva
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -28458,7 +28458,7 @@ subroutine ESMF_AttributeGetAttPackFieldR4List(target, name, attpack, valueList,
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -28529,7 +28529,7 @@ subroutine ESMF_AttributeGetObjFieldR4List(target, name, valueList, defaultvalue
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -28596,7 +28596,7 @@ subroutine ESMF_AttributeGetAttPackFieldR8List(target, name, attpack, valueList,
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -28667,7 +28667,7 @@ subroutine ESMF_AttributeGetObjFieldR8List(target, name, valueList, defaultvalue
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -28734,7 +28734,7 @@ subroutine ESMF_AttributeGetAttPackFieldI4List(target, name, attpack, valueList,
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -28805,7 +28805,7 @@ subroutine ESMF_AttributeGetObjFieldI4List(target, name, valueList, defaultvalue
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -28872,7 +28872,7 @@ subroutine ESMF_AttributeGetAttPackFieldI8List(target, name, attpack, valueList,
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -28943,7 +28943,7 @@ subroutine ESMF_AttributeGetObjFieldI8List(target, name, valueList, defaultvalue
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -29010,7 +29010,7 @@ subroutine ESMF_AttributeGetAttPackFieldCHList(target, name, attpack, valueList,
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -29081,7 +29081,7 @@ subroutine ESMF_AttributeGetObjFieldCHList(target, name, valueList, defaultvalue
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -29148,7 +29148,7 @@ subroutine ESMF_AttributeGetAttPackFieldLGList(target, name, attpack, valueList,
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -29219,7 +29219,7 @@ subroutine ESMF_AttributeGetObjFieldLGList(target, name, valueList, defaultvalue
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -29286,7 +29286,7 @@ subroutine ESMF_AttributeGetAttPackFieldBundleR4List(target, name, attpack, valu
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -29357,7 +29357,7 @@ subroutine ESMF_AttributeGetObjFieldBundleR4List(target, name, valueList, defaul
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -29424,7 +29424,7 @@ subroutine ESMF_AttributeGetAttPackFieldBundleR8List(target, name, attpack, valu
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -29495,7 +29495,7 @@ subroutine ESMF_AttributeGetObjFieldBundleR8List(target, name, valueList, defaul
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -29562,7 +29562,7 @@ subroutine ESMF_AttributeGetAttPackFieldBundleI4List(target, name, attpack, valu
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -29633,7 +29633,7 @@ subroutine ESMF_AttributeGetObjFieldBundleI4List(target, name, valueList, defaul
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -29700,7 +29700,7 @@ subroutine ESMF_AttributeGetAttPackFieldBundleI8List(target, name, attpack, valu
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -29771,7 +29771,7 @@ subroutine ESMF_AttributeGetObjFieldBundleI8List(target, name, valueList, defaul
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -29838,7 +29838,7 @@ subroutine ESMF_AttributeGetAttPackFieldBundleCHList(target, name, attpack, valu
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -29909,7 +29909,7 @@ subroutine ESMF_AttributeGetObjFieldBundleCHList(target, name, valueList, defaul
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -29976,7 +29976,7 @@ subroutine ESMF_AttributeGetAttPackFieldBundleLGList(target, name, attpack, valu
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -30047,7 +30047,7 @@ subroutine ESMF_AttributeGetObjFieldBundleLGList(target, name, valueList, defaul
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -30114,7 +30114,7 @@ subroutine ESMF_AttributeGetAttPackGridR4List(target, name, attpack, valueList, 
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -30185,7 +30185,7 @@ subroutine ESMF_AttributeGetObjGridR4List(target, name, valueList, defaultvalueL
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -30252,7 +30252,7 @@ subroutine ESMF_AttributeGetAttPackGridR8List(target, name, attpack, valueList, 
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -30323,7 +30323,7 @@ subroutine ESMF_AttributeGetObjGridR8List(target, name, valueList, defaultvalueL
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -30390,7 +30390,7 @@ subroutine ESMF_AttributeGetAttPackGridI4List(target, name, attpack, valueList, 
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -30461,7 +30461,7 @@ subroutine ESMF_AttributeGetObjGridI4List(target, name, valueList, defaultvalueL
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -30528,7 +30528,7 @@ subroutine ESMF_AttributeGetAttPackGridI8List(target, name, attpack, valueList, 
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -30599,7 +30599,7 @@ subroutine ESMF_AttributeGetObjGridI8List(target, name, valueList, defaultvalueL
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -30666,7 +30666,7 @@ subroutine ESMF_AttributeGetAttPackGridCHList(target, name, attpack, valueList, 
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -30737,7 +30737,7 @@ subroutine ESMF_AttributeGetObjGridCHList(target, name, valueList, defaultvalueL
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -30804,7 +30804,7 @@ subroutine ESMF_AttributeGetAttPackGridLGList(target, name, attpack, valueList, 
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -30875,7 +30875,7 @@ subroutine ESMF_AttributeGetObjGridLGList(target, name, valueList, defaultvalueL
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -30942,7 +30942,7 @@ subroutine ESMF_AttributeGetAttPackStateR4List(target, name, attpack, valueList,
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -31013,7 +31013,7 @@ subroutine ESMF_AttributeGetObjStateR4List(target, name, valueList, defaultvalue
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -31080,7 +31080,7 @@ subroutine ESMF_AttributeGetAttPackStateR8List(target, name, attpack, valueList,
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -31151,7 +31151,7 @@ subroutine ESMF_AttributeGetObjStateR8List(target, name, valueList, defaultvalue
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -31218,7 +31218,7 @@ subroutine ESMF_AttributeGetAttPackStateI4List(target, name, attpack, valueList,
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -31289,7 +31289,7 @@ subroutine ESMF_AttributeGetObjStateI4List(target, name, valueList, defaultvalue
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -31356,7 +31356,7 @@ subroutine ESMF_AttributeGetAttPackStateI8List(target, name, attpack, valueList,
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -31427,7 +31427,7 @@ subroutine ESMF_AttributeGetObjStateI8List(target, name, valueList, defaultvalue
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -31494,7 +31494,7 @@ subroutine ESMF_AttributeGetAttPackStateCHList(target, name, attpack, valueList,
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -31565,7 +31565,7 @@ subroutine ESMF_AttributeGetObjStateCHList(target, name, valueList, defaultvalue
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -31632,7 +31632,7 @@ subroutine ESMF_AttributeGetAttPackStateLGList(target, name, attpack, valueList,
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -31703,7 +31703,7 @@ subroutine ESMF_AttributeGetObjStateLGList(target, name, valueList, defaultvalue
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -31770,7 +31770,7 @@ subroutine ESMF_AttributeGetAttPackLocStreamR4List(target, name, attpack, valueL
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -31841,7 +31841,7 @@ subroutine ESMF_AttributeGetObjLocStreamR4List(target, name, valueList, defaultv
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -31908,7 +31908,7 @@ subroutine ESMF_AttributeGetAttPackLocStreamR8List(target, name, attpack, valueL
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -31979,7 +31979,7 @@ subroutine ESMF_AttributeGetObjLocStreamR8List(target, name, valueList, defaultv
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -32046,7 +32046,7 @@ subroutine ESMF_AttributeGetAttPackLocStreamI4List(target, name, attpack, valueL
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -32117,7 +32117,7 @@ subroutine ESMF_AttributeGetObjLocStreamI4List(target, name, valueList, defaultv
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -32184,7 +32184,7 @@ subroutine ESMF_AttributeGetAttPackLocStreamI8List(target, name, attpack, valueL
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -32255,7 +32255,7 @@ subroutine ESMF_AttributeGetObjLocStreamI8List(target, name, valueList, defaultv
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -32322,7 +32322,7 @@ subroutine ESMF_AttributeGetAttPackLocStreamCHList(target, name, attpack, valueL
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -32393,7 +32393,7 @@ subroutine ESMF_AttributeGetObjLocStreamCHList(target, name, valueList, defaultv
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -32460,7 +32460,7 @@ subroutine ESMF_AttributeGetAttPackLocStreamLGList(target, name, attpack, valueL
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(attpack%getPayload(), key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -32531,7 +32531,7 @@ subroutine ESMF_AttributeGetObjLocStreamLGList(target, name, valueList, defaultv
   endif
 
   if (local_isPresent) then
-    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, rc=localrc)
+    call ESMF_InfoGetListAllocated(info, key, valueList, itemcount=local_itemcount, attnestflag=local_attnestflag, scalarToArray=.true., rc=localrc)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     if (present(itemcount)) itemcount = local_itemcount
   else
@@ -36988,7 +36988,8 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   end if
 
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_AttributeGetAttPackLocStream!==============================================================================
+end subroutine ESMF_AttributeGetAttPackLocStream
+!==============================================================================
 ! ESMF_AttributeRemove ========================================================
 !==============================================================================
 #undef  ESMF_METHOD

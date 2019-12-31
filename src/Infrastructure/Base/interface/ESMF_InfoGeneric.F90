@@ -336,20 +336,26 @@ end subroutine ESMF_InfoGetLG
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_InfoGetArrayR4()"
-subroutine ESMF_InfoGetArrayR4(info, key, values, itemcount, attnestflag, rc)
+subroutine ESMF_InfoGetArrayR4(info, key, values, itemcount, attnestflag, scalarToArray, rc)
   type(ESMF_Info), intent(in) :: info
   character(len=*), intent(in) :: key
   real(ESMF_KIND_R4), dimension(:),  allocatable, intent(out) :: values
   integer, intent(out), optional :: itemcount
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
+  logical, intent(in), optional :: scalarToArray
   integer, intent(inout), optional :: rc
 
   integer :: localrc
   integer(C_INT) :: recursive, local_itemcount
+  logical :: local_scalarToArray
 
+  local_scalarToArray = .false.
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
   recursive = 0 !false
+  if (present(scalarToArray)) then
+    local_scalarToArray = scalarToArray
+  end if
 
   if (present(attnestflag)) then
     if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = 1 !true
@@ -377,20 +383,26 @@ end subroutine ESMF_InfoGetArrayR4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_InfoGetArrayR4Allocated()"
-subroutine ESMF_InfoGetArrayR4Allocated(info, key, values, itemcount, attnestflag, rc)
+subroutine ESMF_InfoGetArrayR4Allocated(info, key, values, itemcount, attnestflag, scalarToArray, rc)
   type(ESMF_Info), intent(in) :: info
   character(len=*), intent(in) :: key
   real(ESMF_KIND_R4), dimension(:), intent(out) :: values
   integer, intent(out), optional :: itemcount
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
+  logical, intent(in), optional :: scalarToArray
   integer, intent(inout), optional :: rc
 
   integer :: localrc
   integer(C_INT) :: recursive, local_itemcount
+  logical :: local_scalarToArray
 
+  local_scalarToArray = .false.
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
   recursive = 0 !false
+  if (present(scalarToArray)) then
+    local_scalarToArray = scalarToArray
+  end if
 
   if (present(attnestflag)) then
     if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = 1 !true
@@ -421,20 +433,26 @@ end subroutine ESMF_InfoGetArrayR4Allocated
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_InfoGetArrayR8()"
-subroutine ESMF_InfoGetArrayR8(info, key, values, itemcount, attnestflag, rc)
+subroutine ESMF_InfoGetArrayR8(info, key, values, itemcount, attnestflag, scalarToArray, rc)
   type(ESMF_Info), intent(in) :: info
   character(len=*), intent(in) :: key
   real(ESMF_KIND_R8), dimension(:),  allocatable, intent(out) :: values
   integer, intent(out), optional :: itemcount
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
+  logical, intent(in), optional :: scalarToArray
   integer, intent(inout), optional :: rc
 
   integer :: localrc
   integer(C_INT) :: recursive, local_itemcount
+  logical :: local_scalarToArray
 
+  local_scalarToArray = .false.
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
   recursive = 0 !false
+  if (present(scalarToArray)) then
+    local_scalarToArray = scalarToArray
+  end if
 
   if (present(attnestflag)) then
     if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = 1 !true
@@ -462,20 +480,26 @@ end subroutine ESMF_InfoGetArrayR8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_InfoGetArrayR8Allocated()"
-subroutine ESMF_InfoGetArrayR8Allocated(info, key, values, itemcount, attnestflag, rc)
+subroutine ESMF_InfoGetArrayR8Allocated(info, key, values, itemcount, attnestflag, scalarToArray, rc)
   type(ESMF_Info), intent(in) :: info
   character(len=*), intent(in) :: key
   real(ESMF_KIND_R8), dimension(:), intent(out) :: values
   integer, intent(out), optional :: itemcount
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
+  logical, intent(in), optional :: scalarToArray
   integer, intent(inout), optional :: rc
 
   integer :: localrc
   integer(C_INT) :: recursive, local_itemcount
+  logical :: local_scalarToArray
 
+  local_scalarToArray = .false.
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
   recursive = 0 !false
+  if (present(scalarToArray)) then
+    local_scalarToArray = scalarToArray
+  end if
 
   if (present(attnestflag)) then
     if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = 1 !true
@@ -506,20 +530,26 @@ end subroutine ESMF_InfoGetArrayR8Allocated
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_InfoGetArrayI4()"
-subroutine ESMF_InfoGetArrayI4(info, key, values, itemcount, attnestflag, rc)
+subroutine ESMF_InfoGetArrayI4(info, key, values, itemcount, attnestflag, scalarToArray, rc)
   type(ESMF_Info), intent(in) :: info
   character(len=*), intent(in) :: key
   integer(ESMF_KIND_I4), dimension(:),  allocatable, intent(out) :: values
   integer, intent(out), optional :: itemcount
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
+  logical, intent(in), optional :: scalarToArray
   integer, intent(inout), optional :: rc
 
   integer :: localrc
   integer(C_INT) :: recursive, local_itemcount
+  logical :: local_scalarToArray
 
+  local_scalarToArray = .false.
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
   recursive = 0 !false
+  if (present(scalarToArray)) then
+    local_scalarToArray = scalarToArray
+  end if
 
   if (present(attnestflag)) then
     if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = 1 !true
@@ -547,20 +577,26 @@ end subroutine ESMF_InfoGetArrayI4
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_InfoGetArrayI4Allocated()"
-subroutine ESMF_InfoGetArrayI4Allocated(info, key, values, itemcount, attnestflag, rc)
+subroutine ESMF_InfoGetArrayI4Allocated(info, key, values, itemcount, attnestflag, scalarToArray, rc)
   type(ESMF_Info), intent(in) :: info
   character(len=*), intent(in) :: key
   integer(ESMF_KIND_I4), dimension(:), intent(out) :: values
   integer, intent(out), optional :: itemcount
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
+  logical, intent(in), optional :: scalarToArray
   integer, intent(inout), optional :: rc
 
   integer :: localrc
   integer(C_INT) :: recursive, local_itemcount
+  logical :: local_scalarToArray
 
+  local_scalarToArray = .false.
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
   recursive = 0 !false
+  if (present(scalarToArray)) then
+    local_scalarToArray = scalarToArray
+  end if
 
   if (present(attnestflag)) then
     if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = 1 !true
@@ -591,20 +627,26 @@ end subroutine ESMF_InfoGetArrayI4Allocated
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_InfoGetArrayI8()"
-subroutine ESMF_InfoGetArrayI8(info, key, values, itemcount, attnestflag, rc)
+subroutine ESMF_InfoGetArrayI8(info, key, values, itemcount, attnestflag, scalarToArray, rc)
   type(ESMF_Info), intent(in) :: info
   character(len=*), intent(in) :: key
   integer(ESMF_KIND_I8), dimension(:),  allocatable, intent(out) :: values
   integer, intent(out), optional :: itemcount
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
+  logical, intent(in), optional :: scalarToArray
   integer, intent(inout), optional :: rc
 
   integer :: localrc
   integer(C_INT) :: recursive, local_itemcount
+  logical :: local_scalarToArray
 
+  local_scalarToArray = .false.
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
   recursive = 0 !false
+  if (present(scalarToArray)) then
+    local_scalarToArray = scalarToArray
+  end if
 
   if (present(attnestflag)) then
     if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = 1 !true
@@ -632,20 +674,26 @@ end subroutine ESMF_InfoGetArrayI8
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_InfoGetArrayI8Allocated()"
-subroutine ESMF_InfoGetArrayI8Allocated(info, key, values, itemcount, attnestflag, rc)
+subroutine ESMF_InfoGetArrayI8Allocated(info, key, values, itemcount, attnestflag, scalarToArray, rc)
   type(ESMF_Info), intent(in) :: info
   character(len=*), intent(in) :: key
   integer(ESMF_KIND_I8), dimension(:), intent(out) :: values
   integer, intent(out), optional :: itemcount
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
+  logical, intent(in), optional :: scalarToArray
   integer, intent(inout), optional :: rc
 
   integer :: localrc
   integer(C_INT) :: recursive, local_itemcount
+  logical :: local_scalarToArray
 
+  local_scalarToArray = .false.
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
   recursive = 0 !false
+  if (present(scalarToArray)) then
+    local_scalarToArray = scalarToArray
+  end if
 
   if (present(attnestflag)) then
     if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = 1 !true
@@ -676,22 +724,28 @@ end subroutine ESMF_InfoGetArrayI8Allocated
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_InfoGetArrayCH()"
-subroutine ESMF_InfoGetArrayCH(info, key, values, itemcount, attnestflag, rc)
+subroutine ESMF_InfoGetArrayCH(info, key, values, itemcount, attnestflag, scalarToArray, rc)
   type(ESMF_Info), intent(in) :: info
   character(len=*), intent(in) :: key
   character(len=*), dimension(:),  allocatable, intent(out) :: values
   integer, intent(out), optional :: itemcount
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
+  logical, intent(in), optional :: scalarToArray
   integer, intent(inout), optional :: rc
 
   integer :: localrc
   integer(C_INT) :: recursive, local_itemcount
   integer :: ii
   logical :: is_array
+  logical :: local_scalarToArray
 
+  local_scalarToArray = .false.
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
   recursive = 0 !false
+  if (present(scalarToArray)) then
+    local_scalarToArray = scalarToArray
+  end if
 
   if (present(attnestflag)) then
     if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = 1 !true
@@ -703,7 +757,7 @@ subroutine ESMF_InfoGetArrayCH(info, key, values, itemcount, attnestflag, rc)
     rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  if (.not. is_array) then
+  if (.not. is_array .and. .not. local_scalarToArray) then
     if (ESMF_LogFoundError(ESMF_RC_ATTR_WRONGTYPE, &
       msg="Array requested but type in JSON storage is not an array. Key is: "//TRIM(key), &
       ESMF_CONTEXT, rcToReturn=rc)) return
@@ -712,8 +766,11 @@ subroutine ESMF_InfoGetArrayCH(info, key, values, itemcount, attnestflag, rc)
   ! Allocate the outgoing storage array and call into C to fill the array
   allocate(values(local_itemcount))
   do ii=1,local_itemcount
-    call ESMF_InfoGetCH(info, key, values(ii), idx=ii, attnestflag=attnestflag, &
-      rc=localrc)
+    if (.not. is_array .and. local_scalarToArray) then
+      call ESMF_InfoGetCH(info, key, values(ii), attnestflag=attnestflag, rc=localrc)
+    else
+      call ESMF_InfoGetCH(info, key, values(ii), idx=ii, attnestflag=attnestflag, rc=localrc)
+    end if
   enddo
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -723,22 +780,28 @@ end subroutine ESMF_InfoGetArrayCH
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_InfoGetArrayCHAllocated()"
-subroutine ESMF_InfoGetArrayCHAllocated(info, key, values, itemcount, attnestflag, rc)
+subroutine ESMF_InfoGetArrayCHAllocated(info, key, values, itemcount, attnestflag, scalarToArray, rc)
   type(ESMF_Info), intent(in) :: info
   character(len=*), intent(in) :: key
   character(len=*), dimension(:), intent(out) :: values
   integer, intent(out), optional :: itemcount
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
+  logical, intent(in), optional :: scalarToArray
   integer, intent(inout), optional :: rc
 
   integer :: localrc
   integer(C_INT) :: recursive, local_itemcount
   integer :: ii
   logical :: is_array
+  logical :: local_scalarToArray
 
+  local_scalarToArray = .false.
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
   recursive = 0 !false
+  if (present(scalarToArray)) then
+    local_scalarToArray = scalarToArray
+  end if
 
   if (present(attnestflag)) then
     if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = 1 !true
@@ -750,7 +813,7 @@ subroutine ESMF_InfoGetArrayCHAllocated(info, key, values, itemcount, attnestfla
     rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  if (.not. is_array) then
+  if (.not. is_array .and. .not. local_scalarToArray) then
     if (ESMF_LogFoundError(ESMF_RC_ATTR_WRONGTYPE, &
       msg="Array requested but type in JSON storage is not an array. Key is: "//TRIM(key), &
       ESMF_CONTEXT, rcToReturn=rc)) return
@@ -762,8 +825,11 @@ subroutine ESMF_InfoGetArrayCHAllocated(info, key, values, itemcount, attnestfla
 
   ! Allocate the outgoing storage array and call into C to fill the array
   do ii=1,local_itemcount
-    call ESMF_InfoGetCH(info, key, values(ii), idx=ii, attnestflag=attnestflag, &
-      rc=localrc)
+    if (.not. is_array .and. local_scalarToArray) then
+      call ESMF_InfoGetCH(info, key, values(ii), attnestflag=attnestflag, rc=localrc)
+    else
+      call ESMF_InfoGetCH(info, key, values(ii), idx=ii, attnestflag=attnestflag, rc=localrc)
+    end if
   enddo
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -773,22 +839,28 @@ end subroutine ESMF_InfoGetArrayCHAllocated
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_InfoGetArrayLG()"
-subroutine ESMF_InfoGetArrayLG(info, key, values, itemcount, attnestflag, rc)
+subroutine ESMF_InfoGetArrayLG(info, key, values, itemcount, attnestflag, scalarToArray, rc)
   type(ESMF_Info), intent(in) :: info
   character(len=*), intent(in) :: key
   logical, dimension(:),  allocatable, intent(out) :: values
   integer, intent(out), optional :: itemcount
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
+  logical, intent(in), optional :: scalarToArray
   integer, intent(inout), optional :: rc
 
   integer :: localrc
   integer(C_INT) :: recursive, local_itemcount
   integer :: ii
   logical(C_BOOL), dimension(:), allocatable :: local_values
+  logical :: local_scalarToArray
 
+  local_scalarToArray = .false.
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
   recursive = 0 !false
+  if (present(scalarToArray)) then
+    local_scalarToArray = scalarToArray
+  end if
 
   if (present(attnestflag)) then
     if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = 1 !true
@@ -822,22 +894,28 @@ end subroutine ESMF_InfoGetArrayLG
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_InfoGetArrayLGAllocated()"
-subroutine ESMF_InfoGetArrayLGAllocated(info, key, values, itemcount, attnestflag, rc)
+subroutine ESMF_InfoGetArrayLGAllocated(info, key, values, itemcount, attnestflag, scalarToArray, rc)
   type(ESMF_Info), intent(in) :: info
   character(len=*), intent(in) :: key
   logical, dimension(:), intent(out) :: values
   integer, intent(out), optional :: itemcount
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
+  logical, intent(in), optional :: scalarToArray
   integer, intent(inout), optional :: rc
 
   integer :: localrc
   integer(C_INT) :: recursive, local_itemcount
   integer :: ii
   logical(C_BOOL), dimension(:), allocatable :: local_values
+  logical :: local_scalarToArray
 
+  local_scalarToArray = .false.
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
   recursive = 0 !false
+  if (present(scalarToArray)) then
+    local_scalarToArray = scalarToArray
+  end if
 
   if (present(attnestflag)) then
     if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = 1 !true

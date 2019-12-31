@@ -359,7 +359,7 @@ program ESMF_InfoArrayUTest
   call ESMF_InfoSet(info, "foo-is-scalar", .true., rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-  call ESMF_InfoGet(info, "foo-is-scalar", scalar_logical_test, rc=rc)
+  call ESMF_InfoGet(info, "foo-is-scalar", scalar_logical_test, scalarToArray=.false., rc=rc)
 
   call ESMF_Test(rc==ESMF_RC_ATTR_WRONGTYPE, name, failMsg, result, ESMF_SRCLINE)
   !----------------------------------------------------------------------------
@@ -374,7 +374,7 @@ program ESMF_InfoArrayUTest
   call ESMF_InfoSet(info, "foo-is-ch", "im a char yeah", rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
-  call ESMF_InfoGet(info, "foo-is-ch", scalar_char_test, rc=rc)
+  call ESMF_InfoGet(info, "foo-is-ch", scalar_char_test, scalarToArray=.false., rc=rc)
 
   call ESMF_Test(rc==ESMF_RC_ATTR_WRONGTYPE, name, failMsg, result, ESMF_SRCLINE)
   !----------------------------------------------------------------------------
