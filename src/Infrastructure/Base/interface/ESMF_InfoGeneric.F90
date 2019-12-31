@@ -1196,6 +1196,8 @@ subroutine ESMF_InfoSetArrayR4(info, key, values, force, pkey, rc)
     local_pkey = ""//C_NULL_CHAR
   end if
 
+  ! Call into C ----------------------------------------------------------------
+
   call c_info_set_array_R4(&
     info%ptr, &
     trim(key)//C_NULL_CHAR, &
@@ -1235,6 +1237,8 @@ subroutine ESMF_InfoSetArrayR8(info, key, values, force, pkey, rc)
   else
     local_pkey = ""//C_NULL_CHAR
   end if
+
+  ! Call into C ----------------------------------------------------------------
 
   call c_info_set_array_R8(&
     info%ptr, &
@@ -1276,6 +1280,8 @@ subroutine ESMF_InfoSetArrayI4(info, key, values, force, pkey, rc)
     local_pkey = ""//C_NULL_CHAR
   end if
 
+  ! Call into C ----------------------------------------------------------------
+
   call c_info_set_array_I4(&
     info%ptr, &
     trim(key)//C_NULL_CHAR, &
@@ -1316,6 +1322,8 @@ subroutine ESMF_InfoSetArrayI8(info, key, values, force, pkey, rc)
     local_pkey = ""//C_NULL_CHAR
   end if
 
+  ! Call into C ----------------------------------------------------------------
+
   call c_info_set_array_I8(&
     info%ptr, &
     trim(key)//C_NULL_CHAR, &
@@ -1328,6 +1336,52 @@ subroutine ESMF_InfoSetArrayI8(info, key, values, force, pkey, rc)
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_InfoSetArrayI8
+
+#undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_InfoSetArrayCH()"
+subroutine ESMF_InfoSetArrayCH(info, key, values, force, pkey, rc)
+  type(ESMF_Info), intent(inout) :: info
+  character(len=*), intent(in) :: key
+  character(len=*), dimension(:), intent(in) :: values
+  logical, intent(in), optional :: force
+  character(len=*), intent(in), optional :: pkey
+  integer, intent(inout), optional :: rc
+
+  integer :: localrc
+  logical(C_BOOL) :: local_force
+  integer :: ii
+  integer(C_INT) :: idx
+  character(:), allocatable :: local_pkey
+  localrc = ESMF_FAILURE
+  if (present(rc)) rc = ESMF_FAILURE
+
+  if (present(force)) then
+    local_force = force
+  else
+    local_force = .true.
+  end if
+  if (present(pkey)) then
+    local_pkey = TRIM(pkey)//C_NULL_CHAR
+  else
+    local_pkey = ""//C_NULL_CHAR
+  end if
+
+  ! Call into C ----------------------------------------------------------------
+
+  ! Allocate storage in C
+  call c_info_set_array_CH(info%ptr, trim(key)//C_NULL_CHAR, &
+    SIZE(values), local_force, localrc, local_pkey)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, &
+    rcToReturn=rc)) return
+
+  ! Set each character element in the underlying store
+  do ii=1,SIZE(values)
+    call ESMF_InfoSetCH(info, key, values(ii), idx=ii, pkey=local_pkey, rc=localrc)
+  enddo
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  if (present(rc)) rc = ESMF_SUCCESS
+end subroutine ESMF_InfoSetArrayCH
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_InfoSetArrayLG()"
@@ -1362,6 +1416,8 @@ subroutine ESMF_InfoSetArrayLG(info, key, values, force, pkey, rc)
   do ii=1,SIZE(values)
     local_values(ii) = values(ii)
   enddo
+
+  ! Call into C ----------------------------------------------------------------
 
   call c_info_set_array_LG(&
     info%ptr, &
