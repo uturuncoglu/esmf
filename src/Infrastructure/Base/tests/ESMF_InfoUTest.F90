@@ -198,8 +198,8 @@ program ESMF_InfoUTest
   def_key_char = "does not exist in attrs"
   call ESMF_InfoGet(attrs2, def_key_char, def_value_char, default=def_desired_char, &
     rc=rc)
-
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
   call ESMF_Test((def_value_char==def_desired_char), name, failMsg, result, ESMF_SRCLINE)
   !----------------------------------------------------------------------------
 
