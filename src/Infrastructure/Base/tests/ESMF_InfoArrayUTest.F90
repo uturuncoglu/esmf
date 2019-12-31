@@ -35,9 +35,9 @@ program ESMF_InfoArrayUTest
   type(ESMF_Info) :: info
   logical :: failed
   character(len=22), dimension(5) :: desired_char
-  character(len=22), dimension(:), allocatable :: actual_char
+  character(len=22), dimension(:), allocatable :: actual_char, scalar_char_test
   logical, dimension(5) :: desired_logical
-  logical, dimension(:), allocatable :: actual_logical
+  logical, dimension(:), allocatable :: actual_logical, scalar_logical_test
   real(ESMF_KIND_R4), dimension(3) :: arr_R4  ! Desired array values
   ! Actual array values retrieved from info
   real(ESMF_KIND_R4), dimension(:), allocatable :: arr_R4_get
@@ -347,6 +347,51 @@ program ESMF_InfoArrayUTest
   call ESMF_Test((rc==ESMC_RC_ARG_BAD), name, failMsg, result, ESMF_SRCLINE)
 
   !call ESMF_InfoPrint(info, rc=rc)
+  !----------------------------------------------------------------------------
+
+  !----------------------------------------------------------------------------
+  !NEX_UTest
+  write(name, *) "ESMF_Info Get Array when Storage is Scalar"
+  write(failMsg, *) "Did not handle array-to-scalar validation"
+  rc = ESMF_FAILURE
+  failed = .false.
+
+  call ESMF_InfoSet(info, "foo-is-scalar", .true., rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  call ESMF_InfoGet(info, "foo-is-scalar", scalar_logical_test, logical_count, rc=rc)
+
+  call ESMF_Test(rc==ESMF_RC_ATTR_WRONGTYPE, name, failMsg, result, ESMF_SRCLINE)
+  !----------------------------------------------------------------------------
+
+  !----------------------------------------------------------------------------
+  !NEX_UTest
+  write(name, *) "ESMF_Info Get Array when Storage is Scalar for Character"
+  write(failMsg, *) "Did not handle array-to-scalar validation for character"
+  rc = ESMF_FAILURE
+  failed = .false.
+
+  call ESMF_InfoSet(info, "foo-is-ch", "im a char yeah", rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  call ESMF_InfoGet(info, "foo-is-ch", scalar_char_test, logical_count, rc=rc)
+
+  call ESMF_Test(rc==ESMF_RC_ATTR_WRONGTYPE, name, failMsg, result, ESMF_SRCLINE)
+  !----------------------------------------------------------------------------
+
+  !----------------------------------------------------------------------------
+  !NEX_UTest
+  write(name, *) "ESMF_Info Get Array when Storage is NULL"
+  write(failMsg, *) "Did not handle array-to-null validation"
+  rc = ESMF_FAILURE
+  failed = .false.
+
+  call ESMF_InfoSetNULL(info, "foo-is-null", rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  call ESMF_InfoGet(info, "foo-is-null", scalar_logical_test, logical_count, rc=rc)
+
+  call ESMF_Test(rc==ESMF_RC_ATTR_WRONGTYPE, name, failMsg, result, ESMF_SRCLINE)
   !----------------------------------------------------------------------------
 
   ! Destroy the info object used by the array set/get tests

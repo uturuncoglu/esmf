@@ -124,6 +124,10 @@ void ESMC_InfoGetArrayR4(ESMCI::Info *info, char *key, float *value, int &count,
     std::string local_key(key);
     bool recursive = (fortran_bool_recursive == 1) ? true:false;
     const json *j = info->getPointer(local_key, recursive);
+    if (!j->is_array()) {
+      std::string msg = "Array requested but type in JSON storage is not an array. Key is: " + local_key;
+      ESMF_CHECKERR_STD("ESMF_RC_ATTR_WRONGTYPE", ESMF_RC_ATTR_WRONGTYPE, msg)
+    }
     const json::array_t *ap = j->get_ptr<const json::array_t *>();
 
     count = (int)ap->size();
@@ -148,6 +152,10 @@ void ESMC_InfoGetArrayR8(ESMCI::Info *info, char *key, double *value, int &count
     std::string local_key(key);
     bool recursive = (fortran_bool_recursive == 1) ? true:false;
     const json *j = info->getPointer(local_key, recursive);
+    if (!j->is_array()) {
+      std::string msg = "Array requested but type in JSON storage is not an array. Key is: " + local_key;
+      ESMF_CHECKERR_STD("ESMF_RC_ATTR_WRONGTYPE", ESMF_RC_ATTR_WRONGTYPE, msg)
+    }
     const json::array_t *ap = j->get_ptr<const json::array_t *>();
 
     count = (int)ap->size();
@@ -172,6 +180,10 @@ void ESMC_InfoGetArrayI4(ESMCI::Info *info, char *key, int *value, int &count, i
     std::string local_key(key);
     bool recursive = (fortran_bool_recursive == 1) ? true:false;
     const json *j = info->getPointer(local_key, recursive);
+    if (!j->is_array()) {
+      std::string msg = "Array requested but type in JSON storage is not an array. Key is: " + local_key;
+      ESMF_CHECKERR_STD("ESMF_RC_ATTR_WRONGTYPE", ESMF_RC_ATTR_WRONGTYPE, msg)
+    }
     const json::array_t *ap = j->get_ptr<const json::array_t *>();
 
     count = (int)ap->size();
@@ -196,6 +208,10 @@ void ESMC_InfoGetArrayI8(ESMCI::Info *info, char *key, long int *value, int &cou
     std::string local_key(key);
     bool recursive = (fortran_bool_recursive == 1) ? true:false;
     const json *j = info->getPointer(local_key, recursive);
+    if (!j->is_array()) {
+      std::string msg = "Array requested but type in JSON storage is not an array. Key is: " + local_key;
+      ESMF_CHECKERR_STD("ESMF_RC_ATTR_WRONGTYPE", ESMF_RC_ATTR_WRONGTYPE, msg)
+    }
     const json::array_t *ap = j->get_ptr<const json::array_t *>();
 
     count = (int)ap->size();
@@ -220,6 +236,10 @@ void ESMC_InfoGetArrayLG(ESMCI::Info *info, char *key, bool *value, int &count, 
     std::string local_key(key);
     bool recursive = (fortran_bool_recursive == 1) ? true:false;
     const json *j = info->getPointer(local_key, recursive);
+    if (!j->is_array()) {
+      std::string msg = "Array requested but type in JSON storage is not an array. Key is: " + local_key;
+      ESMF_CHECKERR_STD("ESMF_RC_ATTR_WRONGTYPE", ESMF_RC_ATTR_WRONGTYPE, msg)
+    }
     const json::array_t *ap = j->get_ptr<const json::array_t *>();
 
     count = (int)ap->size();
