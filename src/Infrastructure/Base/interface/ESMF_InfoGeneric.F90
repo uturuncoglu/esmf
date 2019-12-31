@@ -290,7 +290,7 @@ subroutine ESMF_InfoGetArrayR4(info, key, values, itemcount, attnestflag, rc)
   type(ESMF_Info), intent(in) :: info
   character(len=*), intent(in) :: key
   real(ESMF_KIND_R4), dimension(:),  allocatable, intent(out) :: values
-  integer, intent(out) :: itemcount !tdk:todo: make this optional
+  integer, intent(out), optional :: itemcount
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
@@ -329,7 +329,7 @@ subroutine ESMF_InfoGetArrayR4Allocated(info, key, values, itemcount, attnestfla
   type(ESMF_Info), intent(in) :: info
   character(len=*), intent(in) :: key
   real(ESMF_KIND_R4), dimension(:), intent(out) :: values
-  integer, intent(out) :: itemcount !tdk:todo: make this optional
+  integer, intent(out), optional :: itemcount
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
@@ -371,7 +371,7 @@ subroutine ESMF_InfoGetArrayR8(info, key, values, itemcount, attnestflag, rc)
   type(ESMF_Info), intent(in) :: info
   character(len=*), intent(in) :: key
   real(ESMF_KIND_R8), dimension(:),  allocatable, intent(out) :: values
-  integer, intent(out) :: itemcount !tdk:todo: make this optional
+  integer, intent(out), optional :: itemcount
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
@@ -410,7 +410,7 @@ subroutine ESMF_InfoGetArrayR8Allocated(info, key, values, itemcount, attnestfla
   type(ESMF_Info), intent(in) :: info
   character(len=*), intent(in) :: key
   real(ESMF_KIND_R8), dimension(:), intent(out) :: values
-  integer, intent(out) :: itemcount !tdk:todo: make this optional
+  integer, intent(out), optional :: itemcount
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
@@ -452,7 +452,7 @@ subroutine ESMF_InfoGetArrayI4(info, key, values, itemcount, attnestflag, rc)
   type(ESMF_Info), intent(in) :: info
   character(len=*), intent(in) :: key
   integer(ESMF_KIND_I4), dimension(:),  allocatable, intent(out) :: values
-  integer, intent(out) :: itemcount !tdk:todo: make this optional
+  integer, intent(out), optional :: itemcount
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
@@ -491,7 +491,7 @@ subroutine ESMF_InfoGetArrayI4Allocated(info, key, values, itemcount, attnestfla
   type(ESMF_Info), intent(in) :: info
   character(len=*), intent(in) :: key
   integer(ESMF_KIND_I4), dimension(:), intent(out) :: values
-  integer, intent(out) :: itemcount !tdk:todo: make this optional
+  integer, intent(out), optional :: itemcount
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
@@ -533,7 +533,7 @@ subroutine ESMF_InfoGetArrayI8(info, key, values, itemcount, attnestflag, rc)
   type(ESMF_Info), intent(in) :: info
   character(len=*), intent(in) :: key
   integer(ESMF_KIND_I8), dimension(:),  allocatable, intent(out) :: values
-  integer, intent(out) :: itemcount !tdk:todo: make this optional
+  integer, intent(out), optional :: itemcount
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
@@ -572,7 +572,7 @@ subroutine ESMF_InfoGetArrayI8Allocated(info, key, values, itemcount, attnestfla
   type(ESMF_Info), intent(in) :: info
   character(len=*), intent(in) :: key
   integer(ESMF_KIND_I8), dimension(:), intent(out) :: values
-  integer, intent(out) :: itemcount !tdk:todo: make this optional
+  integer, intent(out), optional :: itemcount
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
@@ -614,7 +614,7 @@ subroutine ESMF_InfoGetArrayLG(info, key, values, itemcount, attnestflag, rc)
   type(ESMF_Info), intent(in) :: info
   character(len=*), intent(in) :: key
   logical, dimension(:),  allocatable, intent(out) :: values
-  integer, intent(out) :: itemcount !tdk:todo: make this optional
+  integer, intent(out), optional :: itemcount
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
@@ -661,7 +661,7 @@ subroutine ESMF_InfoGetArrayLGAllocated(info, key, values, itemcount, attnestfla
   type(ESMF_Info), intent(in) :: info
   character(len=*), intent(in) :: key
   logical, dimension(:), intent(out) :: values
-  integer, intent(out) :: itemcount !tdk:todo: make this optional
+  integer, intent(out), optional :: itemcount
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 

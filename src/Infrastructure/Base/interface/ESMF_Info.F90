@@ -734,7 +734,7 @@ subroutine ESMF_InfoGetArrayCH(info, key, values, itemcount, attnestflag, rc)
   type(ESMF_Info), intent(in) :: info
   character(len=*), intent(in) :: key
   character(len=*), dimension(:), allocatable, intent(out) :: values
-  integer(C_INT), intent(out) :: itemcount
+  integer(C_INT), intent(out), optional :: itemcount
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
@@ -772,20 +772,27 @@ subroutine ESMF_InfoGetArrayCHAllocated(info, key, values, itemcount, attnestfla
   type(ESMF_Info), intent(in) :: info
   character(len=*), intent(in) :: key
   character(len=*), dimension(:), intent(out) :: values
-  integer(C_INT), intent(out) :: itemcount
+  integer(C_INT), intent(out), optional :: itemcount
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   integer, intent(inout), optional :: rc
 
   integer :: localrc, ii
   character(len=ESMF_MAXSTR) :: logmsg
+  logical :: is_array
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
 
   ! Get the array size from the attributes store
   call ESMF_InfoInquire(info, key=trim(key)//C_NULL_CHAR, size=itemcount, &
-    attnestflag=attnestflag, rc=localrc)
+    attnestflag=attnestflag, isArray=is_array, rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  if (.not. is_array) then
+      if (ESMF_LogFoundError(ESMF_RC_ATTR_WRONGTYPE, &
+        msg="Array requested but type in JSON storage is not an array. Key is: "//TRIM(key), &
+        ESMF_CONTEXT, rcToReturn=rc)) return
+  end if
 
   if (itemcount /= SIZE(values)) then
     write(logmsg, *) "itemcount=", itemcount
