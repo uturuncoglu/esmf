@@ -345,7 +345,7 @@ subroutine ESMF_InfoGetArrayR4(info, key, values, itemcount, attnestflag, rc)
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  integer(C_INT) :: recursive
+  integer(C_INT) :: recursive, local_itemcount
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
@@ -356,21 +356,22 @@ subroutine ESMF_InfoGetArrayR4(info, key, values, itemcount, attnestflag, rc)
   end if
 
   ! Get the array size from the info store
-  call ESMF_InfoInquire(info, key=key, size=itemcount, attnestflag=attnestflag, &
+  call ESMF_InfoInquire(info, key=key, size=local_itemcount, attnestflag=attnestflag, &
     rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   ! Allocate the outgoing storage array and call into C to fill the array
-  allocate(values(itemcount))
+  allocate(values(local_itemcount))
   call c_info_get_array_R4(&
     info%ptr, &
     trim(key)//C_NULL_CHAR, &
     values, &
-    itemcount, &
+    local_itemcount, &
     localrc, &
     recursive)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (present(itemcount)) itemcount = local_itemcount
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_InfoGetArrayR4
 
@@ -385,7 +386,7 @@ subroutine ESMF_InfoGetArrayR4Allocated(info, key, values, itemcount, attnestfla
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  integer(C_INT) :: recursive
+  integer(C_INT) :: recursive, local_itemcount
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
@@ -396,11 +397,11 @@ subroutine ESMF_InfoGetArrayR4Allocated(info, key, values, itemcount, attnestfla
   end if
 
   ! Get the array size from the info store
-  call ESMF_InfoInquire(info, key=key, size=itemcount, attnestflag=attnestflag, &
+  call ESMF_InfoInquire(info, key=key, size=local_itemcount, attnestflag=attnestflag, &
     rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  if (itemcount /= SIZE(values)) then
+  if (local_itemcount /= SIZE(values)) then
     if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="values allocation size does not match size in Info storage", ESMF_CONTEXT, rcToReturn=rc)) return
   end if
 
@@ -409,11 +410,12 @@ subroutine ESMF_InfoGetArrayR4Allocated(info, key, values, itemcount, attnestfla
     info%ptr, &
     trim(key)//C_NULL_CHAR, &
     values, &
-    itemcount, &
+    local_itemcount, &
     localrc, &
     recursive)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (present(itemcount)) itemcount = local_itemcount
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_InfoGetArrayR4Allocated
 
@@ -428,7 +430,7 @@ subroutine ESMF_InfoGetArrayR8(info, key, values, itemcount, attnestflag, rc)
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  integer(C_INT) :: recursive
+  integer(C_INT) :: recursive, local_itemcount
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
@@ -439,21 +441,22 @@ subroutine ESMF_InfoGetArrayR8(info, key, values, itemcount, attnestflag, rc)
   end if
 
   ! Get the array size from the info store
-  call ESMF_InfoInquire(info, key=key, size=itemcount, attnestflag=attnestflag, &
+  call ESMF_InfoInquire(info, key=key, size=local_itemcount, attnestflag=attnestflag, &
     rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   ! Allocate the outgoing storage array and call into C to fill the array
-  allocate(values(itemcount))
+  allocate(values(local_itemcount))
   call c_info_get_array_R8(&
     info%ptr, &
     trim(key)//C_NULL_CHAR, &
     values, &
-    itemcount, &
+    local_itemcount, &
     localrc, &
     recursive)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (present(itemcount)) itemcount = local_itemcount
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_InfoGetArrayR8
 
@@ -468,7 +471,7 @@ subroutine ESMF_InfoGetArrayR8Allocated(info, key, values, itemcount, attnestfla
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  integer(C_INT) :: recursive
+  integer(C_INT) :: recursive, local_itemcount
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
@@ -479,11 +482,11 @@ subroutine ESMF_InfoGetArrayR8Allocated(info, key, values, itemcount, attnestfla
   end if
 
   ! Get the array size from the info store
-  call ESMF_InfoInquire(info, key=key, size=itemcount, attnestflag=attnestflag, &
+  call ESMF_InfoInquire(info, key=key, size=local_itemcount, attnestflag=attnestflag, &
     rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  if (itemcount /= SIZE(values)) then
+  if (local_itemcount /= SIZE(values)) then
     if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="values allocation size does not match size in Info storage", ESMF_CONTEXT, rcToReturn=rc)) return
   end if
 
@@ -492,11 +495,12 @@ subroutine ESMF_InfoGetArrayR8Allocated(info, key, values, itemcount, attnestfla
     info%ptr, &
     trim(key)//C_NULL_CHAR, &
     values, &
-    itemcount, &
+    local_itemcount, &
     localrc, &
     recursive)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (present(itemcount)) itemcount = local_itemcount
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_InfoGetArrayR8Allocated
 
@@ -511,7 +515,7 @@ subroutine ESMF_InfoGetArrayI4(info, key, values, itemcount, attnestflag, rc)
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  integer(C_INT) :: recursive
+  integer(C_INT) :: recursive, local_itemcount
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
@@ -522,21 +526,22 @@ subroutine ESMF_InfoGetArrayI4(info, key, values, itemcount, attnestflag, rc)
   end if
 
   ! Get the array size from the info store
-  call ESMF_InfoInquire(info, key=key, size=itemcount, attnestflag=attnestflag, &
+  call ESMF_InfoInquire(info, key=key, size=local_itemcount, attnestflag=attnestflag, &
     rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   ! Allocate the outgoing storage array and call into C to fill the array
-  allocate(values(itemcount))
+  allocate(values(local_itemcount))
   call c_info_get_array_I4(&
     info%ptr, &
     trim(key)//C_NULL_CHAR, &
     values, &
-    itemcount, &
+    local_itemcount, &
     localrc, &
     recursive)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (present(itemcount)) itemcount = local_itemcount
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_InfoGetArrayI4
 
@@ -551,7 +556,7 @@ subroutine ESMF_InfoGetArrayI4Allocated(info, key, values, itemcount, attnestfla
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  integer(C_INT) :: recursive
+  integer(C_INT) :: recursive, local_itemcount
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
@@ -562,11 +567,11 @@ subroutine ESMF_InfoGetArrayI4Allocated(info, key, values, itemcount, attnestfla
   end if
 
   ! Get the array size from the info store
-  call ESMF_InfoInquire(info, key=key, size=itemcount, attnestflag=attnestflag, &
+  call ESMF_InfoInquire(info, key=key, size=local_itemcount, attnestflag=attnestflag, &
     rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  if (itemcount /= SIZE(values)) then
+  if (local_itemcount /= SIZE(values)) then
     if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="values allocation size does not match size in Info storage", ESMF_CONTEXT, rcToReturn=rc)) return
   end if
 
@@ -575,11 +580,12 @@ subroutine ESMF_InfoGetArrayI4Allocated(info, key, values, itemcount, attnestfla
     info%ptr, &
     trim(key)//C_NULL_CHAR, &
     values, &
-    itemcount, &
+    local_itemcount, &
     localrc, &
     recursive)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (present(itemcount)) itemcount = local_itemcount
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_InfoGetArrayI4Allocated
 
@@ -594,7 +600,7 @@ subroutine ESMF_InfoGetArrayI8(info, key, values, itemcount, attnestflag, rc)
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  integer(C_INT) :: recursive
+  integer(C_INT) :: recursive, local_itemcount
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
@@ -605,21 +611,22 @@ subroutine ESMF_InfoGetArrayI8(info, key, values, itemcount, attnestflag, rc)
   end if
 
   ! Get the array size from the info store
-  call ESMF_InfoInquire(info, key=key, size=itemcount, attnestflag=attnestflag, &
+  call ESMF_InfoInquire(info, key=key, size=local_itemcount, attnestflag=attnestflag, &
     rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   ! Allocate the outgoing storage array and call into C to fill the array
-  allocate(values(itemcount))
+  allocate(values(local_itemcount))
   call c_info_get_array_I8(&
     info%ptr, &
     trim(key)//C_NULL_CHAR, &
     values, &
-    itemcount, &
+    local_itemcount, &
     localrc, &
     recursive)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (present(itemcount)) itemcount = local_itemcount
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_InfoGetArrayI8
 
@@ -634,7 +641,7 @@ subroutine ESMF_InfoGetArrayI8Allocated(info, key, values, itemcount, attnestfla
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  integer(C_INT) :: recursive
+  integer(C_INT) :: recursive, local_itemcount
 
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
@@ -645,11 +652,11 @@ subroutine ESMF_InfoGetArrayI8Allocated(info, key, values, itemcount, attnestfla
   end if
 
   ! Get the array size from the info store
-  call ESMF_InfoInquire(info, key=key, size=itemcount, attnestflag=attnestflag, &
+  call ESMF_InfoInquire(info, key=key, size=local_itemcount, attnestflag=attnestflag, &
     rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  if (itemcount /= SIZE(values)) then
+  if (local_itemcount /= SIZE(values)) then
     if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="values allocation size does not match size in Info storage", ESMF_CONTEXT, rcToReturn=rc)) return
   end if
 
@@ -658,11 +665,12 @@ subroutine ESMF_InfoGetArrayI8Allocated(info, key, values, itemcount, attnestfla
     info%ptr, &
     trim(key)//C_NULL_CHAR, &
     values, &
-    itemcount, &
+    local_itemcount, &
     localrc, &
     recursive)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (present(itemcount)) itemcount = local_itemcount
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_InfoGetArrayI8Allocated
 
@@ -677,7 +685,7 @@ subroutine ESMF_InfoGetArrayCH(info, key, values, itemcount, attnestflag, rc)
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  integer(C_INT) :: recursive
+  integer(C_INT) :: recursive, local_itemcount
   integer :: ii
   logical :: is_array
 
@@ -690,7 +698,7 @@ subroutine ESMF_InfoGetArrayCH(info, key, values, itemcount, attnestflag, rc)
   end if
 
   ! Get the array size from the info store
-  call ESMF_InfoInquire(info, key=key, size=itemcount, attnestflag=attnestflag, &
+  call ESMF_InfoInquire(info, key=key, size=local_itemcount, attnestflag=attnestflag, &
     isArray=is_array, &
     rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -702,13 +710,14 @@ subroutine ESMF_InfoGetArrayCH(info, key, values, itemcount, attnestflag, rc)
   end if
 
   ! Allocate the outgoing storage array and call into C to fill the array
-  allocate(values(itemcount))
-  do ii=1,itemcount
+  allocate(values(local_itemcount))
+  do ii=1,local_itemcount
     call ESMF_InfoGetCH(info, key, values(ii), idx=ii, attnestflag=attnestflag, &
       rc=localrc)
   enddo
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (present(itemcount)) itemcount = local_itemcount
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_InfoGetArrayCH
 
@@ -723,7 +732,7 @@ subroutine ESMF_InfoGetArrayCHAllocated(info, key, values, itemcount, attnestfla
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  integer(C_INT) :: recursive
+  integer(C_INT) :: recursive, local_itemcount
   integer :: ii
   logical :: is_array
 
@@ -736,7 +745,7 @@ subroutine ESMF_InfoGetArrayCHAllocated(info, key, values, itemcount, attnestfla
   end if
 
   ! Get the array size from the info store
-  call ESMF_InfoInquire(info, key=key, size=itemcount, attnestflag=attnestflag, &
+  call ESMF_InfoInquire(info, key=key, size=local_itemcount, attnestflag=attnestflag, &
     isArray=is_array, &
     rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -747,17 +756,18 @@ subroutine ESMF_InfoGetArrayCHAllocated(info, key, values, itemcount, attnestfla
       ESMF_CONTEXT, rcToReturn=rc)) return
   end if
 
-  if (itemcount /= SIZE(values)) then
+  if (local_itemcount /= SIZE(values)) then
     if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="values allocation size does not match size in Info storage", ESMF_CONTEXT, rcToReturn=rc)) return
   end if
 
   ! Allocate the outgoing storage array and call into C to fill the array
-  do ii=1,itemcount
+  do ii=1,local_itemcount
     call ESMF_InfoGetCH(info, key, values(ii), idx=ii, attnestflag=attnestflag, &
       rc=localrc)
   enddo
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
+  if (present(itemcount)) itemcount = local_itemcount
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_InfoGetArrayCHAllocated
 
@@ -772,7 +782,7 @@ subroutine ESMF_InfoGetArrayLG(info, key, values, itemcount, attnestflag, rc)
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  integer(C_INT) :: recursive
+  integer(C_INT) :: recursive, local_itemcount
   integer :: ii
   logical(C_BOOL), dimension(:), allocatable :: local_values
 
@@ -785,18 +795,18 @@ subroutine ESMF_InfoGetArrayLG(info, key, values, itemcount, attnestflag, rc)
   end if
 
   ! Get the array size from the info store
-  call ESMF_InfoInquire(info, key=key, size=itemcount, attnestflag=attnestflag, &
+  call ESMF_InfoInquire(info, key=key, size=local_itemcount, attnestflag=attnestflag, &
     rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   ! Allocate the outgoing storage array and call into C to fill the array
-  allocate(values(itemcount))
-  allocate(local_values(itemcount))
+  allocate(values(local_itemcount))
+  allocate(local_values(local_itemcount))
   call c_info_get_array_LG(&
     info%ptr, &
     trim(key)//C_NULL_CHAR, &
     local_values, &
-    itemcount, &
+    local_itemcount, &
     localrc, &
     recursive)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -806,6 +816,7 @@ subroutine ESMF_InfoGetArrayLG(info, key, values, itemcount, attnestflag, rc)
   enddo
   deallocate(local_values)
 
+  if (present(itemcount)) itemcount = local_itemcount
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_InfoGetArrayLG
 
@@ -820,7 +831,7 @@ subroutine ESMF_InfoGetArrayLGAllocated(info, key, values, itemcount, attnestfla
   integer, intent(inout), optional :: rc
 
   integer :: localrc
-  integer(C_INT) :: recursive
+  integer(C_INT) :: recursive, local_itemcount
   integer :: ii
   logical(C_BOOL), dimension(:), allocatable :: local_values
 
@@ -833,21 +844,21 @@ subroutine ESMF_InfoGetArrayLGAllocated(info, key, values, itemcount, attnestfla
   end if
 
   ! Get the array size from the info store
-  call ESMF_InfoInquire(info, key=key, size=itemcount, attnestflag=attnestflag, &
+  call ESMF_InfoInquire(info, key=key, size=local_itemcount, attnestflag=attnestflag, &
     rc=localrc)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
-  if (itemcount /= SIZE(values)) then
+  if (local_itemcount /= SIZE(values)) then
     if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="values allocation size does not match size in Info storage", ESMF_CONTEXT, rcToReturn=rc)) return
   end if
 
   ! Allocate the outgoing storage array and call into C to fill the array
-  allocate(local_values(itemcount))
+  allocate(local_values(local_itemcount))
   call c_info_get_array_LG(&
     info%ptr, &
     trim(key)//C_NULL_CHAR, &
     local_values, &
-    itemcount, &
+    local_itemcount, &
     localrc, &
     recursive)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
@@ -857,6 +868,7 @@ subroutine ESMF_InfoGetArrayLGAllocated(info, key, values, itemcount, attnestfla
   enddo
   deallocate(local_values)
 
+  if (present(itemcount)) itemcount = local_itemcount
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_InfoGetArrayLGAllocated
 
