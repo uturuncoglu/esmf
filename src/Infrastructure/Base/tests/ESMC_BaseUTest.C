@@ -62,11 +62,18 @@ void testSerializeDeserialize(int& rc, char failMsg[]) {
   char *nullbuffer = nullptr;
   const std::vector<ESMC_AttReconcileFlag> arflags = {ESMC_ATTRECONCILE_OFF,
                                                       ESMC_ATTRECONCILE_ON};
-//  const std::vector<ESMC_AttReconcileFlag> arflags = {ESMC_ATTRECONCILE_OFF};
   for (const auto arflag : arflags) {
     logmsg = std::string(ESMC_METHOD) + ": arflag=" + std::to_string(arflag);
     lognprint(logmsg, TO_STDOUT);
 
+    ESMC_Base *base_src = new ESMC_Base(1);
+    ESMC_Base *base_dst = new ESMC_Base(-1);
+
+    int length = 0;
+    int offset = 0;
+
+    rc = base_src->ESMC_Serialize(nullbuffer, &length, &offset, arflag, ESMF_INQUIREONLY);
+    if (ESMC_LogDefault.MsgFoundError(rc, ESMCI_ERR_PASSTHRU, ESMC_CONTEXT, &rc)) return;
     ESMC_Base base_src(1);
     ESMC_Base base_dst(-1);
 
@@ -96,14 +103,19 @@ void testSerializeDeserialize(int& rc, char failMsg[]) {
     length = inquire_offset + shift;
     char buffer[length];
     offset = shift;
-    rc = base_src.ESMC_Serialize(buffer, &length, &offset, arflag,
-      ESMF_NOINQUIRE);
+    rc = base_src->ESMC_Serialize(buffer, &length, &offset, arflag, ESMF_NOINQUIRE);
     if (ESMC_LogDefault.MsgFoundError(rc, ESMCI_ERR_PASSTHRU, ESMC_CONTEXT, &rc)) return;
 
     logmsg = std::string(ESMC_METHOD) + ": offset=" + std::to_string(offset);
     ESMC_LogWrite(logmsg.c_str(), ESMC_LOGMSG_INFO);
 
     if (inquire_offset < offset) {
+      return finalizeFailure(rc, failMsg, "offset should be shorter than inquire");
+    }
+
+    offset = shift;
+    rc = base_dst->ESMC_Deserialize(buffer, &offset, arflag);
+    if (ESMC_LogDefault.MsgFoundError(rc, ESMCI_ERR_PASSTHRU, ESMC_CONTEXT, &rc)) return;
       return finalizeFailure(rc, failMsg,
                              "offset should be shorter than inquire");
     }

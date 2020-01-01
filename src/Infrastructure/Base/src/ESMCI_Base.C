@@ -645,7 +645,7 @@ void ESMC_Base::constructInfo(ESMC_Base& base) { // root_info_tdk
 
     int r=*offset%8;
     if (r!=0) *offset += 8-r;  // alignment
-    
+
     ip = (int *)(buffer + *offset);
     ID = *ip++;
     refCount = *ip++;  
@@ -669,15 +669,11 @@ void ESMC_Base::constructInfo(ESMC_Base& base) { // root_info_tdk
     cp += ESMF_MAXSTR;
     memcpy(className, cp, ESMF_MAXSTR);
     cp += ESMF_MAXSTR;
-    ip = (int *)cp;
-    cp = (char *)ip;
 
     // update offset to point to past the current obj
     *offset = (cp - buffer);
 
     // Update the offset
-    if (*offset%8 != 0)
-      *offset += 8 - *offset%8;
     localrc = vmID_remote->create();
     if (ESMC_LogDefault.MsgFoundError(localrc, ESMCI_ERR_PASSTHRU,
         ESMC_CONTEXT, &localrc)) return localrc;
@@ -759,9 +755,6 @@ void ESMC_Base::constructInfo(ESMC_Base& base) { // root_info_tdk
     objname = cp;
     cp += 3*ESMF_MAXSTR;
 
-    ip = (int*)cp;
-    cp = (char *)ip;
-
     offset_local = (cp - buffer);
 
 #if 1
@@ -772,8 +765,6 @@ void ESMC_Base::constructInfo(ESMC_Base& base) { // root_info_tdk
 #endif
 
     // Turn on full deserialize for inquiries.
-    if (offset_local%8 != 0)
-      offset_local += 8 - offset_local%8;
 // std::cout << ESMC_METHOD << ": calling vmID deserialize inquiry at offset: " << offset_local << std::endl;
     vmID->deserialize (buffer, &offset_local, false);
 
@@ -981,16 +972,11 @@ void ESMC_Base::constructInfo(ESMC_Base& base) { // root_info_tdk
       memcpy(cp, className, ESMF_MAXSTR);
       cp += ESMF_MAXSTR;
 
-      ip = (int *)cp;
-      cp = (char *)ip;
-
       // update the offset before calling vmID and Attribute serialize
       *offset = (cp - buffer);
     }
 
     // serialize vmID for inquiries when deserializing proxy objects
-    if (*offset%8 != 0)
-      *offset += 8 - *offset%8;
 // std::cout << ESMC_METHOD << ": serializing vmID at offset: " << *offset << std::endl;
     localrc = vmID->serialize (buffer, length, offset, inquireflag);
     if (ESMC_LogDefault.MsgFoundError(localrc, ESMCI_ERR_PASSTHRU,
@@ -1125,10 +1111,7 @@ void ESMC_Base::constructInfo(ESMC_Base& base) { // root_info_tdk
   // add object to list for automatic garbage collection
   ESMCI::VM::addObject(this, vmID);
 
-  // setup the root Attribute, passing the address of this
-//  root = new ESMCI::Attribute(ESMF_TRUE);
-//  root->setBase(this);
-//  rootalias = false;
+  // setup the root Info
   constructInfo(*this); // root_info_tdk
 
   baseStatus  = ESMF_STATUS_READY;
@@ -1272,9 +1255,6 @@ void ESMC_Base::constructInfo(ESMC_Base& base) { // root_info_tdk
   ESMCI::VM::addObject(this, vmID);
 
   // setup the root Attribute, passing the address of this
-//  root = new ESMCI::Attribute(ESMF_TRUE);
-//  root->setBase(this);
-//  rootalias = false;
   constructInfo(*this); // root_info_tdk
 
   baseStatus  = ESMF_STATUS_READY;
@@ -1334,8 +1314,6 @@ void ESMC_Base::constructInfo(ESMC_Base& base) { // root_info_tdk
 #endif
 
   // delete the root Attribute
-//  if (!rootalias)
-//    delete root;
   if (!infoalias)// root_info_tdk
     delete info;// root_info_tdk
 

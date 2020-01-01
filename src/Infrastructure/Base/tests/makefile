@@ -1,7 +1,7 @@
-# $Id$
+# $Id$ 
 
-ALL:  build_unit_tests
-run:  run_unit_tests
+ALL:      build_unit_tests
+run:      run_unit_tests
 run_uni:  run_unit_tests_uni
 
 LOCDIR	  = src/Infrastructure/Base/tests
@@ -39,7 +39,7 @@ include ${ESMF_DIR}/makefile
 
 DIRS        =
 
-CLEANDIRS   =
+CLEANDIRS   = 
 CLEANFILES  = $(TESTS_BUILD)
 CLOBBERDIRS =
 
