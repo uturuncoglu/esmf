@@ -62,6 +62,8 @@ void testSerializeDeserialize(int& rc, char failMsg[]) {
   char *nullbuffer = nullptr;
   const std::vector<ESMC_AttReconcileFlag> arflags = {ESMC_ATTRECONCILE_OFF,
                                                       ESMC_ATTRECONCILE_ON};
+
+  // Test with and without attribute (info) reconciliation
   for (const auto arflag : arflags) {
     logmsg = std::string(ESMC_METHOD) + ": arflag=" + std::to_string(arflag);
     lognprint(logmsg, TO_STDOUT);
@@ -72,12 +74,8 @@ void testSerializeDeserialize(int& rc, char failMsg[]) {
     int length = 0;
     int offset = 0;
 
-    rc = base_src->ESMC_Serialize(nullbuffer, &length, &offset, arflag, ESMF_INQUIREONLY);
-    if (ESMC_LogDefault.MsgFoundError(rc, ESMCI_ERR_PASSTHRU, ESMC_CONTEXT, &rc)) return;
-    ESMC_Base base_src(1);
-    ESMC_Base base_dst(-1);
-
-    ESMCI::Info *info = base_src.ESMC_BaseGetInfo();
+    // Add some attributes to the source base
+    ESMCI::Info *info = base_src->ESMC_BaseGetInfo();
     try {
       info->set<int>("key1", 44, false);
       info->set<double>("key123", 3.146789, false);
@@ -85,13 +83,8 @@ void testSerializeDeserialize(int& rc, char failMsg[]) {
     }
     ESMF_CATCH_INFO
 
-    int length = 0;
-    int offset = 0;
-
-    rc = base_src.ESMC_Serialize(nullbuffer, &length, &offset, arflag, ESMF_INQUIREONLY);
-    if (ESMC_LogDefault.MsgFoundError(rc, ESMCI_ERR_PASSTHRU, ESMC_CONTEXT,
-                                      &rc))
-      return;
+    rc = base_src->ESMC_Serialize(nullbuffer, &length, &offset, arflag, ESMF_INQUIREONLY);
+    if (ESMC_LogDefault.MsgFoundError(rc, ESMCI_ERR_PASSTHRU, ESMC_CONTEXT, &rc)) return;
 
     int inquire_offset = offset;
 
@@ -116,15 +109,8 @@ void testSerializeDeserialize(int& rc, char failMsg[]) {
     offset = shift;
     rc = base_dst->ESMC_Deserialize(buffer, &offset, arflag);
     if (ESMC_LogDefault.MsgFoundError(rc, ESMCI_ERR_PASSTHRU, ESMC_CONTEXT, &rc)) return;
-      return finalizeFailure(rc, failMsg,
-                             "offset should be shorter than inquire");
-    }
 
-    offset = shift;
-    rc = base_dst.ESMC_Deserialize(buffer, &offset, arflag);
-    if (ESMC_LogDefault.MsgFoundError(rc, ESMCI_ERR_PASSTHRU, ESMC_CONTEXT, &rc)) return;
-
-    ESMCI::Info *infod = base_dst.ESMC_BaseGetInfo();
+    ESMCI::Info *infod = base_dst->ESMC_BaseGetInfo();
     try {
       std::string dump = infod->dump();
       if (arflag == ESMC_ATTRECONCILE_OFF) {
