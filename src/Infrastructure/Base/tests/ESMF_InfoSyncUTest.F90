@@ -10,7 +10,7 @@
 !
 !==============================================================================
 
-#define FILENAME "src/Infrastructure/Base/test/ESMF_InfoSyncUTest.F90"
+#define FILENAME "src/Infrastructure/Base/tests/ESMF_InfoSyncUTest.F90"
 
 #include "ESMF_Macros.inc"
 #include "ESMF.h"
@@ -18,7 +18,7 @@
 !==============================================================================
 !==============================================================================
 !==============================================================================
-
+!tdk:move: to InfoAPI tests directory
 program ESMF_InfoSyncUTest
 
   !============================================================================

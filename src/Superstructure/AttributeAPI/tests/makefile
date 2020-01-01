@@ -62,8 +62,7 @@ TESTS_BUILD = \
           $(ESMF_TESTDIR)/ESMF_AttributeUpdateMultiReconcileUTest \
           $(ESMF_TESTDIR)/ESMF_AttributeUpdateRemoveOnlyUTest \
           $(ESMF_TESTDIR)/ESMF_AttributeUpdateReconcileUTest \
-          $(ESMF_TESTDIR)/ESMF_AttributeUtilUTest \
-          $(ESMF_TESTDIR)/ESMF_ArrayInfoUTest
+          $(ESMF_TESTDIR)/ESMF_AttributeUtilUTest
 
 TESTS_RUN = \
           RUN_ESMF_AttPackABundleUTest \
@@ -94,8 +93,7 @@ TESTS_RUN = \
           RUN_ESMF_AttributeUpdateMultiReconcileUTest \
           RUN_ESMF_AttributeUpdateReconcileUTest \
           RUN_ESMF_AttributeUpdateRemoveOnlyUTest \
-          RUN_ESMF_AttributeUtilUTest \
-          RUN_ESMF_ArrayInfoUTest
+          RUN_ESMF_AttributeUtilUTest
 
 TESTS_RUN_UNI = \
           RUN_ESMF_AttPackArrayUTestUNI \
@@ -120,8 +118,7 @@ TESTS_RUN_UNI = \
           RUN_ESMF_AttributeLocStreamUTestUNI \
           RUN_ESMF_AttributeSciCompUTestUNI \
           RUN_ESMF_AttributeStateUTestUNI \
-          RUN_ESMF_AttributeUtilUTestUNI \
-          RUN_ESMF_ArrayInfoUTestUNI
+          RUN_ESMF_AttributeUtilUTestUNI
 
 include ${ESMF_DIR}/makefile
 
@@ -135,12 +132,6 @@ CLOBBERDIRS =
 #
 #  Attribute class
 #
-
-RUN_ESMF_ArrayInfoUTest:
-	$(MAKE) TNAME=ArrayInfo NP=4 ftest
-
-RUN_ESMF_ArrayInfoUTestUNI:
-	$(MAKE) TNAME=ArrayInfo NP=1 ftest
 
 # --- AttPackArray
 

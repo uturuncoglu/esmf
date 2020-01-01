@@ -4,7 +4,7 @@ ALL: build_here
 
 AUTOGEN	  =
 SOURCEC	  =
-SOURCEF	  = ESMF_Attribute.F90
+SOURCEF	  = ESMF_InfoSync.F90
 SOURCEH	  = 
 TEXFILES  = $(addsuffix _fapi.tex, $(basename $(AUTOGEN)))
 
@@ -12,7 +12,7 @@ OBJSC     = $(addsuffix .o, $(basename $(SOURCEC)))
 OBJSF     = $(addsuffix .o, $(basename $(SOURCEF)))
 
 LIBBASE	  = libesmf
-LOCDIR	  = src/Superstructure/AttributeAPI/interface
+LOCDIR	  = src/Superstructure/InfoAPI/interface
 
 CLEANDIRS   =
 CLEANFILES  =

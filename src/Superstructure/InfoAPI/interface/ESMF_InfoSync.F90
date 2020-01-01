@@ -10,7 +10,7 @@
 !
 !==============================================================================
 
-#define FILENAME "src/Superstructure/AttributeAPI/interface/ESMF_InfoSync.F90"
+#define FILENAME "src/Superstructure/InfoAPI/interface/ESMF_InfoSync.F90"
 !tdk:todo: public types
 
 #include "ESMF_Macros.inc"
