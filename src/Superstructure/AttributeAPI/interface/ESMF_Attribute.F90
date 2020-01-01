@@ -1,4 +1,3 @@
-
 ! $Id$
 !
 ! Earth System Modeling Framework
