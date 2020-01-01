@@ -34,6 +34,8 @@ program ESMF_InfoArrayUTest
   real(ESMF_KIND_R4), parameter :: tol = 1e-16  ! Tolerance for real tests
   type(ESMF_Info) :: info
   logical :: failed
+  logical, dimension(1) :: desired_logical_scalar_array
+  character(len=ESMF_MAXSTR), dimension(1) :: desired_char_scalar_array
   character(len=22), dimension(5) :: desired_char
   character(len=22), dimension(:), allocatable :: actual_char, scalar_char_test
   logical, dimension(5) :: desired_logical
@@ -392,6 +394,38 @@ program ESMF_InfoArrayUTest
   call ESMF_InfoGet(info, "foo-is-null", scalar_logical_test, rc=rc)
 
   call ESMF_Test(rc==ESMF_RC_ATTR_WRONGTYPE, name, failMsg, result, ESMF_SRCLINE)
+  !----------------------------------------------------------------------------
+
+  !----------------------------------------------------------------------------
+  !NEX_UTest
+  write(name, *) "ESMF_Info Get Array with Scalar Conversion Character"
+  write(failMsg, *) "Did not handle array-to-scalar conversion character"
+  rc = ESMF_FAILURE
+  failed = .false.
+
+  call ESMF_InfoSet(info, "foo-array-to-scalar-ch", "char scalar value1", rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  call ESMF_InfoGetListAllocated(info, "foo-array-to-scalar-ch", desired_char_scalar_array, scalarToArray=.true., rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  call ESMF_Test(trim(desired_char_scalar_array(1))=="char scalar value1", name, failMsg, result, ESMF_SRCLINE)
+  !----------------------------------------------------------------------------
+
+  !----------------------------------------------------------------------------
+  !NEX_UTest
+  write(name, *) "ESMF_Info Get Array with Scalar Conversion Logical"
+  write(failMsg, *) "Did not handle array-to-scalar conversion logical"
+  rc = ESMF_FAILURE
+  failed = .false.
+
+  call ESMF_InfoSet(info, "foo-array-to-scalar-lg", .true., rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  call ESMF_InfoGetListAllocated(info, "foo-array-to-scalar-lg", desired_logical_scalar_array, scalarToArray=.true., rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  call ESMF_Test(desired_logical_scalar_array(1), name, failMsg, result, ESMF_SRCLINE)
   !----------------------------------------------------------------------------
 
   ! Destroy the info object used by the array set/get tests

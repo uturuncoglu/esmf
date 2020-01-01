@@ -71,7 +71,7 @@ interface
     integer(C_INT), intent(in) :: recursive
   end subroutine c_info_get_LG
 
-  subroutine c_info_get_array_R4(info, key, value, itemcount, rc, recursive) bind(C, name="ESMC_InfoGetArrayR4")
+  subroutine c_info_get_array_R4(info, key, value, itemcount, rc, recursive, local_scalarToArray_forC) bind(C, name="ESMC_InfoGetArrayR4")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: info
@@ -80,9 +80,10 @@ interface
     integer(C_INT), intent(out) :: itemcount
     integer(C_INT), intent(inout) :: rc
     integer(C_INT), intent(in) :: recursive
+    integer(C_INT), intent(in) :: local_scalarToArray_forC
   end subroutine c_info_get_array_R4
 
-  subroutine c_info_get_array_R8(info, key, value, itemcount, rc, recursive) bind(C, name="ESMC_InfoGetArrayR8")
+  subroutine c_info_get_array_R8(info, key, value, itemcount, rc, recursive, local_scalarToArray_forC) bind(C, name="ESMC_InfoGetArrayR8")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: info
@@ -91,9 +92,10 @@ interface
     integer(C_INT), intent(out) :: itemcount
     integer(C_INT), intent(inout) :: rc
     integer(C_INT), intent(in) :: recursive
+    integer(C_INT), intent(in) :: local_scalarToArray_forC
   end subroutine c_info_get_array_R8
 
-  subroutine c_info_get_array_I4(info, key, value, itemcount, rc, recursive) bind(C, name="ESMC_InfoGetArrayI4")
+  subroutine c_info_get_array_I4(info, key, value, itemcount, rc, recursive, local_scalarToArray_forC) bind(C, name="ESMC_InfoGetArrayI4")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: info
@@ -102,9 +104,10 @@ interface
     integer(C_INT), intent(out) :: itemcount
     integer(C_INT), intent(inout) :: rc
     integer(C_INT), intent(in) :: recursive
+    integer(C_INT), intent(in) :: local_scalarToArray_forC
   end subroutine c_info_get_array_I4
 
-  subroutine c_info_get_array_I8(info, key, value, itemcount, rc, recursive) bind(C, name="ESMC_InfoGetArrayI8")
+  subroutine c_info_get_array_I8(info, key, value, itemcount, rc, recursive, local_scalarToArray_forC) bind(C, name="ESMC_InfoGetArrayI8")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: info
@@ -113,9 +116,10 @@ interface
     integer(C_INT), intent(out) :: itemcount
     integer(C_INT), intent(inout) :: rc
     integer(C_INT), intent(in) :: recursive
+    integer(C_INT), intent(in) :: local_scalarToArray_forC
   end subroutine c_info_get_array_I8
 
-  subroutine c_info_get_array_LG(info, key, value, itemcount, rc, recursive) bind(C, name="ESMC_InfoGetArrayLG")
+  subroutine c_info_get_array_LG(info, key, value, itemcount, rc, recursive, local_scalarToArray_forC) bind(C, name="ESMC_InfoGetArrayLG")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: info
@@ -124,6 +128,7 @@ interface
     integer(C_INT), intent(out) :: itemcount
     integer(C_INT), intent(inout) :: rc
     integer(C_INT), intent(in) :: recursive
+    integer(C_INT), intent(in) :: local_scalarToArray_forC
   end subroutine c_info_get_array_LG
 
 !===============================================================================
