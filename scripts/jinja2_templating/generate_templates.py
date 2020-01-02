@@ -188,3 +188,4 @@ class Runner(TestCase):
         tf = os.path.join(TEMPLATEFOLDER, "Attribute")
         ret = self.do_render('ESMF_Attribute.jinja2', template_folder=tf)
         self.do_write("Superstructure/AttributeAPI/interface/ESMF_Attribute.F90", ret)
+
