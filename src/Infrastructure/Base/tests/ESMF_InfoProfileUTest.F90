@@ -62,7 +62,7 @@ program ESMF_InfoProfileUTest
   !----------------------------------------------------------------------------
 
   !----------------------------------------------------------------------------
-  !NEX_UTest
+  !EX_UTest
   ! Test setting and getting a bunch of attributes.
 
   rc = ESMF_FAILURE
@@ -125,7 +125,7 @@ program ESMF_InfoProfileUTest
   !----------------------------------------------------------------------------
 
   !----------------------------------------------------------------------------
-  !NEX_UTest
+  !EX_UTest
 
   ! Profile checking for attribute presence.
 
