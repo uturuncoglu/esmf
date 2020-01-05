@@ -202,7 +202,7 @@ interface
 
   !=============================================================================
 
-  subroutine c_info_get_CH(info, key, value, vlen, rc, default, idx, recursive) bind(C, name="ESMC_InfoGetCH")
+  subroutine c_info_get_CH(info, key, value, vlen, rc, default, idx, recursive, strlen_only) bind(C, name="ESMC_InfoGetCH")
     use iso_c_binding
     implicit none
     type(C_PTR), value :: info
@@ -212,6 +212,7 @@ interface
     integer(C_INT), intent(inout) :: rc
     type(C_PTR), value :: default, idx
     integer(C_INT), intent(in) :: recursive
+    integer(C_INT), intent(in) :: strlen_only
   end subroutine c_info_get_CH
 
   !=============================================================================

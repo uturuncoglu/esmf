@@ -125,17 +125,28 @@ contains  !====================================================================
 ! Get (Scalar) ----------------------------------------------------------------
 !------------------------------------------------------------------------------
 
-{% for t in ts %}
+{% for t in ts %}{% for do_charalloc in [False, True] %}
+{% if t.ctype != "std::string" and do_charalloc%}
+{#pass#}
+{% else %}
+{% set method_name = "ESMF_InfoGet"~t.esmf_suffix %}
+{% if do_charalloc %}
+{% set method_name = method_name~"Allocatable" %}
+{% endif %}
 #undef  ESMF_METHOD
-#define ESMF_METHOD "ESMF_InfoGet{{ t.esmf_suffix }}()"
-subroutine ESMF_InfoGet{{ t.esmf_suffix }}(info, key, value, default, idx, attnestflag, rc)
+#define ESMF_METHOD "{{ method_name }}()"
+subroutine {{ method_name }}(info, key, value, default, idx, attnestflag, rc)
   type(ESMF_Info), intent(in) :: info
   character(len=*), intent(in) :: key
 {% if t.ctype == "bool" %}
   {{ t.ftype }}, intent(inout) :: value
   {{ t.ftype }}, intent(in), optional :: default
 {% elif t.ctype == "std::string" %}
+  {% if do_charalloc %}
+  {{ t.ftype }}(:), allocatable, intent(out) :: value
+  {% else %}
   {{ t.ftype }}(len=*), intent(out) :: value
+  {% endif %}
   {{ t.ftype }}(len=*), intent(in), optional :: default
 {% else %}
   {{ t.ftype }}({{ t.esmf_type }}), intent(out) :: value
@@ -156,12 +167,13 @@ subroutine ESMF_InfoGet{{ t.esmf_suffix }}(info, key, value, default, idx, attne
 {% endif %}
   integer(C_INT), target :: local_idx
   type(C_PTR) :: local_default_ptr, local_idx_ptr
-  integer(C_INT) :: recursive
+  integer(C_INT) :: recursive, strlen_only
 
   ! Set up local return code
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
   recursive = 0 !false
+  strlen_only = 0 !false
 
   ! Handle optional arguments for C ###########################################
 
@@ -202,9 +214,18 @@ subroutine ESMF_InfoGet{{ t.esmf_suffix }}(info, key, value, default, idx, attne
     local_idx_ptr, &
     recursive)
 {% else %}
-  vlen = LEN(value)
+  {% if do_charalloc %}
+    strlen_only = 1 !true
+    call c_info_get_CH(info%ptr, trim(key)//C_NULL_CHAR, value, vlen, &
+      localrc, local_default_ptr, local_idx_ptr, recursive, strlen_only)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    strlen_only = 0 !false
+    allocate(character(len=vlen) :: value)
+  {% else %}
+    vlen = LEN(value)
+  {% endif %}
   call c_info_get_CH(info%ptr, trim(key)//C_NULL_CHAR, value, vlen, &
-    localrc, local_default_ptr, local_idx_ptr, recursive)
+    localrc, local_default_ptr, local_idx_ptr, recursive, strlen_only)
 {% endif %}
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
@@ -213,9 +234,9 @@ subroutine ESMF_InfoGet{{ t.esmf_suffix }}(info, key, value, default, idx, attne
 
 {% endif %}
   if (present(rc)) rc = ESMF_SUCCESS
-end subroutine ESMF_InfoGet{{ t.esmf_suffix }}
+end subroutine {{ method_name }}
 
-{% endfor %}
+{% endif %}{% endfor %}{% endfor %}
 !------------------------------------------------------------------------------
 ! GetArray --------------------------------------------------------------------
 !------------------------------------------------------------------------------

@@ -417,7 +417,8 @@ void ESMC_InfoWriteJSON(ESMCI::Info *info, char *filename, int &esmf_rc) {
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_InfoGetCH()"
 void ESMC_InfoGetCH(ESMCI::Info* info, char *key, char *value,
-  int &vlen, int &esmf_rc, char *def, int *index, int &fortran_bool_recursive) {
+  int &vlen, int &esmf_rc, char *def, int *index, int &fortran_bool_recursive,
+  int &fortran_bool_strlen_only) {
   esmf_rc = ESMF_FAILURE;
   // String pointer used to define the default value if present
   std::string *def_str_ptr;
@@ -425,6 +426,7 @@ void ESMC_InfoGetCH(ESMCI::Info* info, char *key, char *value,
   std::string def_str;
   // Convert from Fortran integer to bool
   bool recursive = (fortran_bool_recursive == 1) ? true:false;
+  bool strlen_only = (fortran_bool_strlen_only == 1) ? true:false;
   try {
     if (def) {
       // Set the default pointer to the string object created from the char
@@ -440,12 +442,17 @@ void ESMC_InfoGetCH(ESMCI::Info* info, char *key, char *value,
 
     // Transfer the string characters into the Fortran character array using
     // spaces to fill the Fortran array if we are past the max string length.
-    for (int ii = 0; ii < vlen; ++ii) {
-      if (ii < (int) as_str.size()) {
-        value[ii] = as_str[ii];
-      } else {
-        value[ii] = ' ';
+    if (not strlen_only) {
+      for (int ii = 0; ii < vlen; ++ii) {
+        if (ii < (int) as_str.size()) {
+          value[ii] = as_str[ii];
+        } else {
+          value[ii] = ' ';
+        }
       }
+    } else {
+      // If value is nullptr, only the stored string length is requested
+      vlen = (int)as_str.size();
     }
     esmf_rc = ESMF_SUCCESS;
   }

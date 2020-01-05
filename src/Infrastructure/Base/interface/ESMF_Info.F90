@@ -138,12 +138,13 @@ subroutine ESMF_InfoGetR4(info, key, value, default, idx, attnestflag, rc)
   real(C_FLOAT), target :: local_default
   integer(C_INT), target :: local_idx
   type(C_PTR) :: local_default_ptr, local_idx_ptr
-  integer(C_INT) :: recursive
+  integer(C_INT) :: recursive, strlen_only
 
   ! Set up local return code
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
   recursive = 0 !false
+  strlen_only = 0 !false
 
   ! Handle optional arguments for C ###########################################
 
@@ -193,12 +194,13 @@ subroutine ESMF_InfoGetR8(info, key, value, default, idx, attnestflag, rc)
   real(C_DOUBLE), target :: local_default
   integer(C_INT), target :: local_idx
   type(C_PTR) :: local_default_ptr, local_idx_ptr
-  integer(C_INT) :: recursive
+  integer(C_INT) :: recursive, strlen_only
 
   ! Set up local return code
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
   recursive = 0 !false
+  strlen_only = 0 !false
 
   ! Handle optional arguments for C ###########################################
 
@@ -248,12 +250,13 @@ subroutine ESMF_InfoGetI4(info, key, value, default, idx, attnestflag, rc)
   integer(C_INT), target :: local_default
   integer(C_INT), target :: local_idx
   type(C_PTR) :: local_default_ptr, local_idx_ptr
-  integer(C_INT) :: recursive
+  integer(C_INT) :: recursive, strlen_only
 
   ! Set up local return code
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
   recursive = 0 !false
+  strlen_only = 0 !false
 
   ! Handle optional arguments for C ###########################################
 
@@ -303,12 +306,13 @@ subroutine ESMF_InfoGetI8(info, key, value, default, idx, attnestflag, rc)
   integer(C_LONG), target :: local_default
   integer(C_INT), target :: local_idx
   type(C_PTR) :: local_default_ptr, local_idx_ptr
-  integer(C_INT) :: recursive
+  integer(C_INT) :: recursive, strlen_only
 
   ! Set up local return code
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
   recursive = 0 !false
+  strlen_only = 0 !false
 
   ! Handle optional arguments for C ###########################################
 
@@ -358,12 +362,13 @@ subroutine ESMF_InfoGetCH(info, key, value, default, idx, attnestflag, rc)
   character(:), allocatable, target :: local_default
   integer(C_INT), target :: local_idx
   type(C_PTR) :: local_default_ptr, local_idx_ptr
-  integer(C_INT) :: recursive
+  integer(C_INT) :: recursive, strlen_only
 
   ! Set up local return code
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
   recursive = 0 !false
+  strlen_only = 0 !false
 
   ! Handle optional arguments for C ###########################################
 
@@ -385,13 +390,69 @@ subroutine ESMF_InfoGetCH(info, key, value, default, idx, attnestflag, rc)
 
   ! Call C ####################################################################
 
-  vlen = LEN(value)
+    vlen = LEN(value)
   call c_info_get_CH(info%ptr, trim(key)//C_NULL_CHAR, value, vlen, &
-    localrc, local_default_ptr, local_idx_ptr, recursive)
+    localrc, local_default_ptr, local_idx_ptr, recursive, strlen_only)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_InfoGetCH
+
+#undef  ESMF_METHOD
+#define ESMF_METHOD "ESMF_InfoGetCHAllocatable()"
+subroutine ESMF_InfoGetCHAllocatable(info, key, value, default, idx, attnestflag, rc)
+  type(ESMF_Info), intent(in) :: info
+  character(len=*), intent(in) :: key
+  character(:), allocatable, intent(out) :: value
+  character(len=*), intent(in), optional :: default
+  integer, intent(in), optional :: idx
+  type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
+  integer, intent(inout), optional :: rc
+
+  integer :: localrc, vlen
+  character(:), allocatable, target :: local_default
+  integer(C_INT), target :: local_idx
+  type(C_PTR) :: local_default_ptr, local_idx_ptr
+  integer(C_INT) :: recursive, strlen_only
+
+  ! Set up local return code
+  localrc = ESMF_FAILURE
+  if (present(rc)) rc = ESMF_FAILURE
+  recursive = 0 !false
+  strlen_only = 0 !false
+
+  ! Handle optional arguments for C ###########################################
+
+  if (present(default)) then
+    local_default = trim(default)//C_NULL_CHAR
+    local_default_ptr = C_LOC(local_default)
+  else
+    local_default_ptr = C_NULL_PTR
+  end if
+  if (present(idx)) then
+    local_idx = idx - 1  ! Shift to C (zero-based) indexing
+    local_idx_ptr = C_LOC(local_idx)
+  else
+    local_idx_ptr = C_NULL_PTR
+  end if
+  if (present(attnestflag)) then
+    if (attnestflag%value==ESMF_ATTNEST_ON%value) recursive = 1 !true
+  end if
+
+  ! Call C ####################################################################
+
+    strlen_only = 1 !true
+    call c_info_get_CH(info%ptr, trim(key)//C_NULL_CHAR, value, vlen, &
+      localrc, local_default_ptr, local_idx_ptr, recursive, strlen_only)
+    if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+    strlen_only = 0 !false
+    allocate(character(len=vlen) :: value)
+  call c_info_get_CH(info%ptr, trim(key)//C_NULL_CHAR, value, vlen, &
+    localrc, local_default_ptr, local_idx_ptr, recursive, strlen_only)
+  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
+
+  if (present(rc)) rc = ESMF_SUCCESS
+end subroutine ESMF_InfoGetCHAllocatable
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_InfoGetLG()"
@@ -409,12 +470,13 @@ subroutine ESMF_InfoGetLG(info, key, value, default, idx, attnestflag, rc)
   logical(C_BOOL) :: local_value
   integer(C_INT), target :: local_idx
   type(C_PTR) :: local_default_ptr, local_idx_ptr
-  integer(C_INT) :: recursive
+  integer(C_INT) :: recursive, strlen_only
 
   ! Set up local return code
   localrc = ESMF_FAILURE
   if (present(rc)) rc = ESMF_FAILURE
   recursive = 0 !false
+  strlen_only = 0 !false
 
   ! Handle optional arguments for C ###########################################
 

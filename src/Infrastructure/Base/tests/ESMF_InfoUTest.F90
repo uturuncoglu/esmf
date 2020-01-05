@@ -51,6 +51,7 @@ program ESMF_InfoUTest
   character(len=22) :: key_empty_char
   character(len=2) :: desired_empty_char, empty_value_char
   character(ESMF_MAXSTR) :: to_parse
+  character(:), allocatable :: actual_charalloc
   integer               :: rc, petCount, i
   integer, allocatable  :: petList(:)
   type(ESMF_VM)         :: vm
@@ -72,7 +73,7 @@ program ESMF_InfoUTest
                            attrs_types, attrs_obj_dst, attrs_obj_src, &
                            attrs_obj_new, attrs_parse, attrs_update_lhs, &
                            attrs_update_rhs, attrs_inq, attrs_eq_lhs, &
-                           attrs_eq_rhs, irecurse, ipkey
+                           attrs_eq_rhs, irecurse, ipkey, info_charalloc
 
   logical :: is_present, failed, is_set, is_present_copy_test, actual_logical, &
              desired_logical, isArray, isDirty
@@ -782,6 +783,28 @@ program ESMF_InfoUTest
   call ESMF_Test(trim(actual_char)=="foo-value", name, failMsg, result, ESMF_SRCLINE)
 
   call ESMF_InfoDestroy(ipkey, rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+  !----------------------------------------------------------------------------
+
+  !----------------------------------------------------------------------------
+  !NEX_UTest
+  write(name, *) "ESMF_InfoGet Character Allocatable"
+  write(failMsg, *) "Did not get character allocatable"
+  rc = ESMF_FAILURE
+  failed = .false.
+
+  info_charalloc = ESMF_InfoCreate(rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  call ESMF_InfoSet(info_charalloc, "ca", "ca-value", rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  call ESMF_InfoGetCHAllocatable(info_charalloc, "ca", actual_charalloc, rc=rc)
+  if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+
+  call ESMF_Test(actual_charalloc=="ca-value", name, failMsg, result, ESMF_SRCLINE)
+
+  call ESMF_InfoDestroy(info_charalloc, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
   !----------------------------------------------------------------------------
 
