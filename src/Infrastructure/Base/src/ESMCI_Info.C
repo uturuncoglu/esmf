@@ -659,7 +659,18 @@ T Info::get(key_t &key, const T *def, const int *index, bool recursive, std::str
         if (jp->is_null() && def) {
           ret = *def;
         } else {
-          ret = *jp;
+          try {
+            ret = *jp;
+          } catch (json::type_error &e) {
+
+#if 0
+            std::string emsg2 = std::string(__FILE__) + ":" + std::to_string(__LINE__) + " " + ESMC_METHOD + ": JSON dump: " + this->dump();
+            ESMC_LogWrite(emsg2.c_str(), ESMC_LOGMSG_ERROR);
+#endif
+            std::string emsg = std::string(__FILE__) + ":" + std::to_string(__LINE__) + " " + ESMC_METHOD + ": Failed type check (JSON trace will follow): " + key;
+            ESMC_LogWrite(emsg.c_str(), ESMC_LOGMSG_ERROR);
+            ESMF_THROW_JSON(e, "ESMF_RC_ATTR_WRONGTYPE", ESMF_RC_ATTR_WRONGTYPE)
+          }
         }
       }
     } catch (json::out_of_range &e) {
