@@ -121,3 +121,5 @@ src/Infrastructure/Trace/preload/wrappers.o
 src/Infrastructure/Trace/preload/wrappers_io.o
 src/Infrastructure/Trace/preload/wrappers_mpi.o
 
+/.idea/
+/src/addon/ESMPy/.idea/
