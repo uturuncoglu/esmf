@@ -48,7 +48,6 @@ implicit none
 ! !PUBLIC MEMBER FUNCTIONS:
 !
 
- !tdk:implement AttributeGetInit?
 public ESMF_AttPackStreamJSON
 public ESMF_AttributeAdd
 public ESMF_AttributeCopy
@@ -60,7 +59,7 @@ public ESMF_AttributeRemove
 public ESMF_AttributeUpdate
 public ESMF_AttributeWrite
 
-public format_key !tdk:todo: implement as ESMF_InfoFormatKey
+public ESMF_InfoFormatKey
 
 !------------------------------------------------------------------------------
 ! !PUBLIC TYPES:
@@ -886,8 +885,8 @@ subroutine parse_json_pointer(jptr, keyParent, keyChild)
 end subroutine
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "format_key()"
-subroutine format_key(key, name, rc, convention, purpose)
+#define ESMF_METHOD "ESMF_InfoFormatKey()"
+subroutine ESMF_InfoFormatKey(key, name, rc, convention, purpose)
   character(:), allocatable, intent(out) :: key
   character(len=*), intent(in) :: name
   integer, intent(inout) :: rc
@@ -922,7 +921,7 @@ subroutine format_key(key, name, rc, convention, purpose)
   endif
 
   rc = ESMF_SUCCESS
-end subroutine format_key
+end subroutine ESMF_InfoFormatKey
 
 !==============================================================================
 ! ESMF_AttributeAdd ===========================================================
@@ -948,7 +947,16 @@ subroutine ESMF_AttributeAddAttPackStdInfo(info, convention, purpose, attrList, 
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   localrc = ESMF_FAILURE
 
-  !tdk:todo: test for reasonable presence. need nestPurpose if nestConvention for example
+  if (present(nestConvention)) then
+    if (.not. present(nestPurpose)) then
+      if (ESMF_LogFoundError(ESMF_FAILURE, msg="nestPurpose required", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+  if (present(nestPurpose)) then
+    if (.not. present(nestConvention)) then
+      if (ESMF_LogFoundError(ESMF_FAILURE, msg="nestConvention required", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
 
   key = "/"//TRIM(convention)//"/"//TRIM(purpose)
   if (present(nestConvention)) then
@@ -1413,7 +1421,7 @@ subroutine ESMF_AttributeSetObjArrayR4(target, name, value, convention, purpose,
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -1427,7 +1435,7 @@ subroutine ESMF_AttributeSetObjArrayR4(target, name, value, convention, purpose,
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -1531,7 +1539,7 @@ subroutine ESMF_AttributeSetObjArrayR4List(target, name, valueList, convention, 
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -1545,7 +1553,7 @@ subroutine ESMF_AttributeSetObjArrayR4List(target, name, valueList, convention, 
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -1649,7 +1657,7 @@ subroutine ESMF_AttributeSetObjArrayR8(target, name, value, convention, purpose,
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -1663,7 +1671,7 @@ subroutine ESMF_AttributeSetObjArrayR8(target, name, value, convention, purpose,
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -1767,7 +1775,7 @@ subroutine ESMF_AttributeSetObjArrayR8List(target, name, valueList, convention, 
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -1781,7 +1789,7 @@ subroutine ESMF_AttributeSetObjArrayR8List(target, name, valueList, convention, 
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -1885,7 +1893,7 @@ subroutine ESMF_AttributeSetObjArrayI4(target, name, value, convention, purpose,
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -1899,7 +1907,7 @@ subroutine ESMF_AttributeSetObjArrayI4(target, name, value, convention, purpose,
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -2003,7 +2011,7 @@ subroutine ESMF_AttributeSetObjArrayI4List(target, name, valueList, convention, 
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -2017,7 +2025,7 @@ subroutine ESMF_AttributeSetObjArrayI4List(target, name, valueList, convention, 
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -2121,7 +2129,7 @@ subroutine ESMF_AttributeSetObjArrayI8(target, name, value, convention, purpose,
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -2135,7 +2143,7 @@ subroutine ESMF_AttributeSetObjArrayI8(target, name, value, convention, purpose,
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -2239,7 +2247,7 @@ subroutine ESMF_AttributeSetObjArrayI8List(target, name, valueList, convention, 
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -2253,7 +2261,7 @@ subroutine ESMF_AttributeSetObjArrayI8List(target, name, valueList, convention, 
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -2357,7 +2365,7 @@ subroutine ESMF_AttributeSetObjArrayCH(target, name, value, convention, purpose,
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -2371,7 +2379,7 @@ subroutine ESMF_AttributeSetObjArrayCH(target, name, value, convention, purpose,
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -2475,7 +2483,7 @@ subroutine ESMF_AttributeSetObjArrayCHList(target, name, valueList, convention, 
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -2489,7 +2497,7 @@ subroutine ESMF_AttributeSetObjArrayCHList(target, name, valueList, convention, 
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -2593,7 +2601,7 @@ subroutine ESMF_AttributeSetObjArrayLG(target, name, value, convention, purpose,
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -2607,7 +2615,7 @@ subroutine ESMF_AttributeSetObjArrayLG(target, name, value, convention, purpose,
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -2711,7 +2719,7 @@ subroutine ESMF_AttributeSetObjArrayLGList(target, name, valueList, convention, 
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -2725,7 +2733,7 @@ subroutine ESMF_AttributeSetObjArrayLGList(target, name, valueList, convention, 
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -2829,7 +2837,7 @@ subroutine ESMF_AttributeSetObjArrayBundleR4(target, name, value, convention, pu
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -2843,7 +2851,7 @@ subroutine ESMF_AttributeSetObjArrayBundleR4(target, name, value, convention, pu
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -2947,7 +2955,7 @@ subroutine ESMF_AttributeSetObjArrayBundleR4List(target, name, valueList, conven
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -2961,7 +2969,7 @@ subroutine ESMF_AttributeSetObjArrayBundleR4List(target, name, valueList, conven
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -3065,7 +3073,7 @@ subroutine ESMF_AttributeSetObjArrayBundleR8(target, name, value, convention, pu
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -3079,7 +3087,7 @@ subroutine ESMF_AttributeSetObjArrayBundleR8(target, name, value, convention, pu
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -3183,7 +3191,7 @@ subroutine ESMF_AttributeSetObjArrayBundleR8List(target, name, valueList, conven
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -3197,7 +3205,7 @@ subroutine ESMF_AttributeSetObjArrayBundleR8List(target, name, valueList, conven
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -3301,7 +3309,7 @@ subroutine ESMF_AttributeSetObjArrayBundleI4(target, name, value, convention, pu
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -3315,7 +3323,7 @@ subroutine ESMF_AttributeSetObjArrayBundleI4(target, name, value, convention, pu
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -3419,7 +3427,7 @@ subroutine ESMF_AttributeSetObjArrayBundleI4List(target, name, valueList, conven
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -3433,7 +3441,7 @@ subroutine ESMF_AttributeSetObjArrayBundleI4List(target, name, valueList, conven
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -3537,7 +3545,7 @@ subroutine ESMF_AttributeSetObjArrayBundleI8(target, name, value, convention, pu
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -3551,7 +3559,7 @@ subroutine ESMF_AttributeSetObjArrayBundleI8(target, name, value, convention, pu
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -3655,7 +3663,7 @@ subroutine ESMF_AttributeSetObjArrayBundleI8List(target, name, valueList, conven
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -3669,7 +3677,7 @@ subroutine ESMF_AttributeSetObjArrayBundleI8List(target, name, valueList, conven
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -3773,7 +3781,7 @@ subroutine ESMF_AttributeSetObjArrayBundleCH(target, name, value, convention, pu
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -3787,7 +3795,7 @@ subroutine ESMF_AttributeSetObjArrayBundleCH(target, name, value, convention, pu
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -3891,7 +3899,7 @@ subroutine ESMF_AttributeSetObjArrayBundleCHList(target, name, valueList, conven
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -3905,7 +3913,7 @@ subroutine ESMF_AttributeSetObjArrayBundleCHList(target, name, valueList, conven
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -4009,7 +4017,7 @@ subroutine ESMF_AttributeSetObjArrayBundleLG(target, name, value, convention, pu
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -4023,7 +4031,7 @@ subroutine ESMF_AttributeSetObjArrayBundleLG(target, name, value, convention, pu
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -4127,7 +4135,7 @@ subroutine ESMF_AttributeSetObjArrayBundleLGList(target, name, valueList, conven
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -4141,7 +4149,7 @@ subroutine ESMF_AttributeSetObjArrayBundleLGList(target, name, valueList, conven
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -4245,7 +4253,7 @@ subroutine ESMF_AttributeSetObjCplCompR4(target, name, value, convention, purpos
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -4259,7 +4267,7 @@ subroutine ESMF_AttributeSetObjCplCompR4(target, name, value, convention, purpos
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -4363,7 +4371,7 @@ subroutine ESMF_AttributeSetObjCplCompR4List(target, name, valueList, convention
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -4377,7 +4385,7 @@ subroutine ESMF_AttributeSetObjCplCompR4List(target, name, valueList, convention
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -4481,7 +4489,7 @@ subroutine ESMF_AttributeSetObjCplCompR8(target, name, value, convention, purpos
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -4495,7 +4503,7 @@ subroutine ESMF_AttributeSetObjCplCompR8(target, name, value, convention, purpos
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -4599,7 +4607,7 @@ subroutine ESMF_AttributeSetObjCplCompR8List(target, name, valueList, convention
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -4613,7 +4621,7 @@ subroutine ESMF_AttributeSetObjCplCompR8List(target, name, valueList, convention
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -4717,7 +4725,7 @@ subroutine ESMF_AttributeSetObjCplCompI4(target, name, value, convention, purpos
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -4731,7 +4739,7 @@ subroutine ESMF_AttributeSetObjCplCompI4(target, name, value, convention, purpos
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -4835,7 +4843,7 @@ subroutine ESMF_AttributeSetObjCplCompI4List(target, name, valueList, convention
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -4849,7 +4857,7 @@ subroutine ESMF_AttributeSetObjCplCompI4List(target, name, valueList, convention
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -4953,7 +4961,7 @@ subroutine ESMF_AttributeSetObjCplCompI8(target, name, value, convention, purpos
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -4967,7 +4975,7 @@ subroutine ESMF_AttributeSetObjCplCompI8(target, name, value, convention, purpos
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -5071,7 +5079,7 @@ subroutine ESMF_AttributeSetObjCplCompI8List(target, name, valueList, convention
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -5085,7 +5093,7 @@ subroutine ESMF_AttributeSetObjCplCompI8List(target, name, valueList, convention
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -5189,7 +5197,7 @@ subroutine ESMF_AttributeSetObjCplCompCH(target, name, value, convention, purpos
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -5203,7 +5211,7 @@ subroutine ESMF_AttributeSetObjCplCompCH(target, name, value, convention, purpos
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -5307,7 +5315,7 @@ subroutine ESMF_AttributeSetObjCplCompCHList(target, name, valueList, convention
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -5321,7 +5329,7 @@ subroutine ESMF_AttributeSetObjCplCompCHList(target, name, valueList, convention
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -5425,7 +5433,7 @@ subroutine ESMF_AttributeSetObjCplCompLG(target, name, value, convention, purpos
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -5439,7 +5447,7 @@ subroutine ESMF_AttributeSetObjCplCompLG(target, name, value, convention, purpos
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -5543,7 +5551,7 @@ subroutine ESMF_AttributeSetObjCplCompLGList(target, name, valueList, convention
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -5557,7 +5565,7 @@ subroutine ESMF_AttributeSetObjCplCompLGList(target, name, valueList, convention
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -5661,7 +5669,7 @@ subroutine ESMF_AttributeSetObjGridCompR4(target, name, value, convention, purpo
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -5675,7 +5683,7 @@ subroutine ESMF_AttributeSetObjGridCompR4(target, name, value, convention, purpo
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -5779,7 +5787,7 @@ subroutine ESMF_AttributeSetObjGridCompR4List(target, name, valueList, conventio
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -5793,7 +5801,7 @@ subroutine ESMF_AttributeSetObjGridCompR4List(target, name, valueList, conventio
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -5897,7 +5905,7 @@ subroutine ESMF_AttributeSetObjGridCompR8(target, name, value, convention, purpo
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -5911,7 +5919,7 @@ subroutine ESMF_AttributeSetObjGridCompR8(target, name, value, convention, purpo
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -6015,7 +6023,7 @@ subroutine ESMF_AttributeSetObjGridCompR8List(target, name, valueList, conventio
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -6029,7 +6037,7 @@ subroutine ESMF_AttributeSetObjGridCompR8List(target, name, valueList, conventio
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -6133,7 +6141,7 @@ subroutine ESMF_AttributeSetObjGridCompI4(target, name, value, convention, purpo
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -6147,7 +6155,7 @@ subroutine ESMF_AttributeSetObjGridCompI4(target, name, value, convention, purpo
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -6251,7 +6259,7 @@ subroutine ESMF_AttributeSetObjGridCompI4List(target, name, valueList, conventio
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -6265,7 +6273,7 @@ subroutine ESMF_AttributeSetObjGridCompI4List(target, name, valueList, conventio
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -6369,7 +6377,7 @@ subroutine ESMF_AttributeSetObjGridCompI8(target, name, value, convention, purpo
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -6383,7 +6391,7 @@ subroutine ESMF_AttributeSetObjGridCompI8(target, name, value, convention, purpo
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -6487,7 +6495,7 @@ subroutine ESMF_AttributeSetObjGridCompI8List(target, name, valueList, conventio
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -6501,7 +6509,7 @@ subroutine ESMF_AttributeSetObjGridCompI8List(target, name, valueList, conventio
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -6605,7 +6613,7 @@ subroutine ESMF_AttributeSetObjGridCompCH(target, name, value, convention, purpo
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -6619,7 +6627,7 @@ subroutine ESMF_AttributeSetObjGridCompCH(target, name, value, convention, purpo
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -6723,7 +6731,7 @@ subroutine ESMF_AttributeSetObjGridCompCHList(target, name, valueList, conventio
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -6737,7 +6745,7 @@ subroutine ESMF_AttributeSetObjGridCompCHList(target, name, valueList, conventio
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -6841,7 +6849,7 @@ subroutine ESMF_AttributeSetObjGridCompLG(target, name, value, convention, purpo
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -6855,7 +6863,7 @@ subroutine ESMF_AttributeSetObjGridCompLG(target, name, value, convention, purpo
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -6959,7 +6967,7 @@ subroutine ESMF_AttributeSetObjGridCompLGList(target, name, valueList, conventio
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -6973,7 +6981,7 @@ subroutine ESMF_AttributeSetObjGridCompLGList(target, name, valueList, conventio
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -7077,7 +7085,7 @@ subroutine ESMF_AttributeSetObjSciCompR4(target, name, value, convention, purpos
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -7091,7 +7099,7 @@ subroutine ESMF_AttributeSetObjSciCompR4(target, name, value, convention, purpos
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -7195,7 +7203,7 @@ subroutine ESMF_AttributeSetObjSciCompR4List(target, name, valueList, convention
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -7209,7 +7217,7 @@ subroutine ESMF_AttributeSetObjSciCompR4List(target, name, valueList, convention
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -7313,7 +7321,7 @@ subroutine ESMF_AttributeSetObjSciCompR8(target, name, value, convention, purpos
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -7327,7 +7335,7 @@ subroutine ESMF_AttributeSetObjSciCompR8(target, name, value, convention, purpos
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -7431,7 +7439,7 @@ subroutine ESMF_AttributeSetObjSciCompR8List(target, name, valueList, convention
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -7445,7 +7453,7 @@ subroutine ESMF_AttributeSetObjSciCompR8List(target, name, valueList, convention
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -7549,7 +7557,7 @@ subroutine ESMF_AttributeSetObjSciCompI4(target, name, value, convention, purpos
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -7563,7 +7571,7 @@ subroutine ESMF_AttributeSetObjSciCompI4(target, name, value, convention, purpos
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -7667,7 +7675,7 @@ subroutine ESMF_AttributeSetObjSciCompI4List(target, name, valueList, convention
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -7681,7 +7689,7 @@ subroutine ESMF_AttributeSetObjSciCompI4List(target, name, valueList, convention
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -7785,7 +7793,7 @@ subroutine ESMF_AttributeSetObjSciCompI8(target, name, value, convention, purpos
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -7799,7 +7807,7 @@ subroutine ESMF_AttributeSetObjSciCompI8(target, name, value, convention, purpos
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -7903,7 +7911,7 @@ subroutine ESMF_AttributeSetObjSciCompI8List(target, name, valueList, convention
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -7917,7 +7925,7 @@ subroutine ESMF_AttributeSetObjSciCompI8List(target, name, valueList, convention
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -8021,7 +8029,7 @@ subroutine ESMF_AttributeSetObjSciCompCH(target, name, value, convention, purpos
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -8035,7 +8043,7 @@ subroutine ESMF_AttributeSetObjSciCompCH(target, name, value, convention, purpos
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -8139,7 +8147,7 @@ subroutine ESMF_AttributeSetObjSciCompCHList(target, name, valueList, convention
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -8153,7 +8161,7 @@ subroutine ESMF_AttributeSetObjSciCompCHList(target, name, valueList, convention
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -8257,7 +8265,7 @@ subroutine ESMF_AttributeSetObjSciCompLG(target, name, value, convention, purpos
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -8271,7 +8279,7 @@ subroutine ESMF_AttributeSetObjSciCompLG(target, name, value, convention, purpos
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -8375,7 +8383,7 @@ subroutine ESMF_AttributeSetObjSciCompLGList(target, name, valueList, convention
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -8389,7 +8397,7 @@ subroutine ESMF_AttributeSetObjSciCompLGList(target, name, valueList, convention
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -8493,7 +8501,7 @@ subroutine ESMF_AttributeSetObjDistGridR4(target, name, value, convention, purpo
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -8507,7 +8515,7 @@ subroutine ESMF_AttributeSetObjDistGridR4(target, name, value, convention, purpo
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -8611,7 +8619,7 @@ subroutine ESMF_AttributeSetObjDistGridR4List(target, name, valueList, conventio
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -8625,7 +8633,7 @@ subroutine ESMF_AttributeSetObjDistGridR4List(target, name, valueList, conventio
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -8729,7 +8737,7 @@ subroutine ESMF_AttributeSetObjDistGridR8(target, name, value, convention, purpo
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -8743,7 +8751,7 @@ subroutine ESMF_AttributeSetObjDistGridR8(target, name, value, convention, purpo
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -8847,7 +8855,7 @@ subroutine ESMF_AttributeSetObjDistGridR8List(target, name, valueList, conventio
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -8861,7 +8869,7 @@ subroutine ESMF_AttributeSetObjDistGridR8List(target, name, valueList, conventio
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -8965,7 +8973,7 @@ subroutine ESMF_AttributeSetObjDistGridI4(target, name, value, convention, purpo
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -8979,7 +8987,7 @@ subroutine ESMF_AttributeSetObjDistGridI4(target, name, value, convention, purpo
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -9083,7 +9091,7 @@ subroutine ESMF_AttributeSetObjDistGridI4List(target, name, valueList, conventio
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -9097,7 +9105,7 @@ subroutine ESMF_AttributeSetObjDistGridI4List(target, name, valueList, conventio
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -9201,7 +9209,7 @@ subroutine ESMF_AttributeSetObjDistGridI8(target, name, value, convention, purpo
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -9215,7 +9223,7 @@ subroutine ESMF_AttributeSetObjDistGridI8(target, name, value, convention, purpo
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -9319,7 +9327,7 @@ subroutine ESMF_AttributeSetObjDistGridI8List(target, name, valueList, conventio
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -9333,7 +9341,7 @@ subroutine ESMF_AttributeSetObjDistGridI8List(target, name, valueList, conventio
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -9437,7 +9445,7 @@ subroutine ESMF_AttributeSetObjDistGridCH(target, name, value, convention, purpo
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -9451,7 +9459,7 @@ subroutine ESMF_AttributeSetObjDistGridCH(target, name, value, convention, purpo
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -9555,7 +9563,7 @@ subroutine ESMF_AttributeSetObjDistGridCHList(target, name, valueList, conventio
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -9569,7 +9577,7 @@ subroutine ESMF_AttributeSetObjDistGridCHList(target, name, valueList, conventio
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -9673,7 +9681,7 @@ subroutine ESMF_AttributeSetObjDistGridLG(target, name, value, convention, purpo
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -9687,7 +9695,7 @@ subroutine ESMF_AttributeSetObjDistGridLG(target, name, value, convention, purpo
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -9791,7 +9799,7 @@ subroutine ESMF_AttributeSetObjDistGridLGList(target, name, valueList, conventio
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -9805,7 +9813,7 @@ subroutine ESMF_AttributeSetObjDistGridLGList(target, name, valueList, conventio
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -9909,7 +9917,7 @@ subroutine ESMF_AttributeSetObjFieldR4(target, name, value, convention, purpose,
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -9923,7 +9931,7 @@ subroutine ESMF_AttributeSetObjFieldR4(target, name, value, convention, purpose,
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -10027,7 +10035,7 @@ subroutine ESMF_AttributeSetObjFieldR4List(target, name, valueList, convention, 
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -10041,7 +10049,7 @@ subroutine ESMF_AttributeSetObjFieldR4List(target, name, valueList, convention, 
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -10145,7 +10153,7 @@ subroutine ESMF_AttributeSetObjFieldR8(target, name, value, convention, purpose,
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -10159,7 +10167,7 @@ subroutine ESMF_AttributeSetObjFieldR8(target, name, value, convention, purpose,
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -10263,7 +10271,7 @@ subroutine ESMF_AttributeSetObjFieldR8List(target, name, valueList, convention, 
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -10277,7 +10285,7 @@ subroutine ESMF_AttributeSetObjFieldR8List(target, name, valueList, convention, 
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -10381,7 +10389,7 @@ subroutine ESMF_AttributeSetObjFieldI4(target, name, value, convention, purpose,
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -10395,7 +10403,7 @@ subroutine ESMF_AttributeSetObjFieldI4(target, name, value, convention, purpose,
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -10499,7 +10507,7 @@ subroutine ESMF_AttributeSetObjFieldI4List(target, name, valueList, convention, 
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -10513,7 +10521,7 @@ subroutine ESMF_AttributeSetObjFieldI4List(target, name, valueList, convention, 
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -10617,7 +10625,7 @@ subroutine ESMF_AttributeSetObjFieldI8(target, name, value, convention, purpose,
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -10631,7 +10639,7 @@ subroutine ESMF_AttributeSetObjFieldI8(target, name, value, convention, purpose,
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -10735,7 +10743,7 @@ subroutine ESMF_AttributeSetObjFieldI8List(target, name, valueList, convention, 
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -10749,7 +10757,7 @@ subroutine ESMF_AttributeSetObjFieldI8List(target, name, valueList, convention, 
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -10853,7 +10861,7 @@ subroutine ESMF_AttributeSetObjFieldCH(target, name, value, convention, purpose,
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -10867,7 +10875,7 @@ subroutine ESMF_AttributeSetObjFieldCH(target, name, value, convention, purpose,
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -10971,7 +10979,7 @@ subroutine ESMF_AttributeSetObjFieldCHList(target, name, valueList, convention, 
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -10985,7 +10993,7 @@ subroutine ESMF_AttributeSetObjFieldCHList(target, name, valueList, convention, 
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -11089,7 +11097,7 @@ subroutine ESMF_AttributeSetObjFieldLG(target, name, value, convention, purpose,
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -11103,7 +11111,7 @@ subroutine ESMF_AttributeSetObjFieldLG(target, name, value, convention, purpose,
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -11207,7 +11215,7 @@ subroutine ESMF_AttributeSetObjFieldLGList(target, name, valueList, convention, 
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -11221,7 +11229,7 @@ subroutine ESMF_AttributeSetObjFieldLGList(target, name, valueList, convention, 
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -11325,7 +11333,7 @@ subroutine ESMF_AttributeSetObjFieldBundleR4(target, name, value, convention, pu
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -11339,7 +11347,7 @@ subroutine ESMF_AttributeSetObjFieldBundleR4(target, name, value, convention, pu
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -11443,7 +11451,7 @@ subroutine ESMF_AttributeSetObjFieldBundleR4List(target, name, valueList, conven
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -11457,7 +11465,7 @@ subroutine ESMF_AttributeSetObjFieldBundleR4List(target, name, valueList, conven
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -11561,7 +11569,7 @@ subroutine ESMF_AttributeSetObjFieldBundleR8(target, name, value, convention, pu
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -11575,7 +11583,7 @@ subroutine ESMF_AttributeSetObjFieldBundleR8(target, name, value, convention, pu
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -11679,7 +11687,7 @@ subroutine ESMF_AttributeSetObjFieldBundleR8List(target, name, valueList, conven
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -11693,7 +11701,7 @@ subroutine ESMF_AttributeSetObjFieldBundleR8List(target, name, valueList, conven
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -11797,7 +11805,7 @@ subroutine ESMF_AttributeSetObjFieldBundleI4(target, name, value, convention, pu
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -11811,7 +11819,7 @@ subroutine ESMF_AttributeSetObjFieldBundleI4(target, name, value, convention, pu
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -11915,7 +11923,7 @@ subroutine ESMF_AttributeSetObjFieldBundleI4List(target, name, valueList, conven
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -11929,7 +11937,7 @@ subroutine ESMF_AttributeSetObjFieldBundleI4List(target, name, valueList, conven
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -12033,7 +12041,7 @@ subroutine ESMF_AttributeSetObjFieldBundleI8(target, name, value, convention, pu
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -12047,7 +12055,7 @@ subroutine ESMF_AttributeSetObjFieldBundleI8(target, name, value, convention, pu
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -12151,7 +12159,7 @@ subroutine ESMF_AttributeSetObjFieldBundleI8List(target, name, valueList, conven
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -12165,7 +12173,7 @@ subroutine ESMF_AttributeSetObjFieldBundleI8List(target, name, valueList, conven
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -12269,7 +12277,7 @@ subroutine ESMF_AttributeSetObjFieldBundleCH(target, name, value, convention, pu
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -12283,7 +12291,7 @@ subroutine ESMF_AttributeSetObjFieldBundleCH(target, name, value, convention, pu
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -12387,7 +12395,7 @@ subroutine ESMF_AttributeSetObjFieldBundleCHList(target, name, valueList, conven
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -12401,7 +12409,7 @@ subroutine ESMF_AttributeSetObjFieldBundleCHList(target, name, valueList, conven
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -12505,7 +12513,7 @@ subroutine ESMF_AttributeSetObjFieldBundleLG(target, name, value, convention, pu
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -12519,7 +12527,7 @@ subroutine ESMF_AttributeSetObjFieldBundleLG(target, name, value, convention, pu
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -12623,7 +12631,7 @@ subroutine ESMF_AttributeSetObjFieldBundleLGList(target, name, valueList, conven
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -12637,7 +12645,7 @@ subroutine ESMF_AttributeSetObjFieldBundleLGList(target, name, valueList, conven
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -12741,7 +12749,7 @@ subroutine ESMF_AttributeSetObjGridR4(target, name, value, convention, purpose, 
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -12755,7 +12763,7 @@ subroutine ESMF_AttributeSetObjGridR4(target, name, value, convention, purpose, 
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -12859,7 +12867,7 @@ subroutine ESMF_AttributeSetObjGridR4List(target, name, valueList, convention, p
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -12873,7 +12881,7 @@ subroutine ESMF_AttributeSetObjGridR4List(target, name, valueList, convention, p
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -12977,7 +12985,7 @@ subroutine ESMF_AttributeSetObjGridR8(target, name, value, convention, purpose, 
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -12991,7 +12999,7 @@ subroutine ESMF_AttributeSetObjGridR8(target, name, value, convention, purpose, 
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -13095,7 +13103,7 @@ subroutine ESMF_AttributeSetObjGridR8List(target, name, valueList, convention, p
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -13109,7 +13117,7 @@ subroutine ESMF_AttributeSetObjGridR8List(target, name, valueList, convention, p
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -13213,7 +13221,7 @@ subroutine ESMF_AttributeSetObjGridI4(target, name, value, convention, purpose, 
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -13227,7 +13235,7 @@ subroutine ESMF_AttributeSetObjGridI4(target, name, value, convention, purpose, 
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -13331,7 +13339,7 @@ subroutine ESMF_AttributeSetObjGridI4List(target, name, valueList, convention, p
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -13345,7 +13353,7 @@ subroutine ESMF_AttributeSetObjGridI4List(target, name, valueList, convention, p
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -13449,7 +13457,7 @@ subroutine ESMF_AttributeSetObjGridI8(target, name, value, convention, purpose, 
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -13463,7 +13471,7 @@ subroutine ESMF_AttributeSetObjGridI8(target, name, value, convention, purpose, 
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -13567,7 +13575,7 @@ subroutine ESMF_AttributeSetObjGridI8List(target, name, valueList, convention, p
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -13581,7 +13589,7 @@ subroutine ESMF_AttributeSetObjGridI8List(target, name, valueList, convention, p
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -13685,7 +13693,7 @@ subroutine ESMF_AttributeSetObjGridCH(target, name, value, convention, purpose, 
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -13699,7 +13707,7 @@ subroutine ESMF_AttributeSetObjGridCH(target, name, value, convention, purpose, 
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -13803,7 +13811,7 @@ subroutine ESMF_AttributeSetObjGridCHList(target, name, valueList, convention, p
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -13817,7 +13825,7 @@ subroutine ESMF_AttributeSetObjGridCHList(target, name, valueList, convention, p
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -13921,7 +13929,7 @@ subroutine ESMF_AttributeSetObjGridLG(target, name, value, convention, purpose, 
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -13935,7 +13943,7 @@ subroutine ESMF_AttributeSetObjGridLG(target, name, value, convention, purpose, 
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -14039,7 +14047,7 @@ subroutine ESMF_AttributeSetObjGridLGList(target, name, valueList, convention, p
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -14053,7 +14061,7 @@ subroutine ESMF_AttributeSetObjGridLGList(target, name, valueList, convention, p
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -14157,7 +14165,7 @@ subroutine ESMF_AttributeSetObjStateR4(target, name, value, convention, purpose,
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -14171,7 +14179,7 @@ subroutine ESMF_AttributeSetObjStateR4(target, name, value, convention, purpose,
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -14275,7 +14283,7 @@ subroutine ESMF_AttributeSetObjStateR4List(target, name, valueList, convention, 
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -14289,7 +14297,7 @@ subroutine ESMF_AttributeSetObjStateR4List(target, name, valueList, convention, 
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -14393,7 +14401,7 @@ subroutine ESMF_AttributeSetObjStateR8(target, name, value, convention, purpose,
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -14407,7 +14415,7 @@ subroutine ESMF_AttributeSetObjStateR8(target, name, value, convention, purpose,
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -14511,7 +14519,7 @@ subroutine ESMF_AttributeSetObjStateR8List(target, name, valueList, convention, 
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -14525,7 +14533,7 @@ subroutine ESMF_AttributeSetObjStateR8List(target, name, valueList, convention, 
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -14629,7 +14637,7 @@ subroutine ESMF_AttributeSetObjStateI4(target, name, value, convention, purpose,
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -14643,7 +14651,7 @@ subroutine ESMF_AttributeSetObjStateI4(target, name, value, convention, purpose,
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -14747,7 +14755,7 @@ subroutine ESMF_AttributeSetObjStateI4List(target, name, valueList, convention, 
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -14761,7 +14769,7 @@ subroutine ESMF_AttributeSetObjStateI4List(target, name, valueList, convention, 
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -14865,7 +14873,7 @@ subroutine ESMF_AttributeSetObjStateI8(target, name, value, convention, purpose,
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -14879,7 +14887,7 @@ subroutine ESMF_AttributeSetObjStateI8(target, name, value, convention, purpose,
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -14983,7 +14991,7 @@ subroutine ESMF_AttributeSetObjStateI8List(target, name, valueList, convention, 
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -14997,7 +15005,7 @@ subroutine ESMF_AttributeSetObjStateI8List(target, name, valueList, convention, 
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -15101,7 +15109,7 @@ subroutine ESMF_AttributeSetObjStateCH(target, name, value, convention, purpose,
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -15115,7 +15123,7 @@ subroutine ESMF_AttributeSetObjStateCH(target, name, value, convention, purpose,
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -15219,7 +15227,7 @@ subroutine ESMF_AttributeSetObjStateCHList(target, name, valueList, convention, 
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -15233,7 +15241,7 @@ subroutine ESMF_AttributeSetObjStateCHList(target, name, valueList, convention, 
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -15337,7 +15345,7 @@ subroutine ESMF_AttributeSetObjStateLG(target, name, value, convention, purpose,
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -15351,7 +15359,7 @@ subroutine ESMF_AttributeSetObjStateLG(target, name, value, convention, purpose,
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -15455,7 +15463,7 @@ subroutine ESMF_AttributeSetObjStateLGList(target, name, valueList, convention, 
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -15469,7 +15477,7 @@ subroutine ESMF_AttributeSetObjStateLGList(target, name, valueList, convention, 
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -15573,7 +15581,7 @@ subroutine ESMF_AttributeSetObjLocStreamR4(target, name, value, convention, purp
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -15587,7 +15595,7 @@ subroutine ESMF_AttributeSetObjLocStreamR4(target, name, value, convention, purp
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -15691,7 +15699,7 @@ subroutine ESMF_AttributeSetObjLocStreamR4List(target, name, valueList, conventi
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -15705,7 +15713,7 @@ subroutine ESMF_AttributeSetObjLocStreamR4List(target, name, valueList, conventi
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -15809,7 +15817,7 @@ subroutine ESMF_AttributeSetObjLocStreamR8(target, name, value, convention, purp
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -15823,7 +15831,7 @@ subroutine ESMF_AttributeSetObjLocStreamR8(target, name, value, convention, purp
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -15927,7 +15935,7 @@ subroutine ESMF_AttributeSetObjLocStreamR8List(target, name, valueList, conventi
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -15941,7 +15949,7 @@ subroutine ESMF_AttributeSetObjLocStreamR8List(target, name, valueList, conventi
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -16045,7 +16053,7 @@ subroutine ESMF_AttributeSetObjLocStreamI4(target, name, value, convention, purp
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -16059,7 +16067,7 @@ subroutine ESMF_AttributeSetObjLocStreamI4(target, name, value, convention, purp
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -16163,7 +16171,7 @@ subroutine ESMF_AttributeSetObjLocStreamI4List(target, name, valueList, conventi
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -16177,7 +16185,7 @@ subroutine ESMF_AttributeSetObjLocStreamI4List(target, name, valueList, conventi
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -16281,7 +16289,7 @@ subroutine ESMF_AttributeSetObjLocStreamI8(target, name, value, convention, purp
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -16295,7 +16303,7 @@ subroutine ESMF_AttributeSetObjLocStreamI8(target, name, value, convention, purp
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -16399,7 +16407,7 @@ subroutine ESMF_AttributeSetObjLocStreamI8List(target, name, valueList, conventi
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -16413,7 +16421,7 @@ subroutine ESMF_AttributeSetObjLocStreamI8List(target, name, valueList, conventi
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -16517,7 +16525,7 @@ subroutine ESMF_AttributeSetObjLocStreamCH(target, name, value, convention, purp
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -16531,7 +16539,7 @@ subroutine ESMF_AttributeSetObjLocStreamCH(target, name, value, convention, purp
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -16635,7 +16643,7 @@ subroutine ESMF_AttributeSetObjLocStreamCHList(target, name, valueList, conventi
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -16649,7 +16657,7 @@ subroutine ESMF_AttributeSetObjLocStreamCHList(target, name, valueList, conventi
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -16753,7 +16761,7 @@ subroutine ESMF_AttributeSetObjLocStreamLG(target, name, value, convention, purp
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -16767,7 +16775,7 @@ subroutine ESMF_AttributeSetObjLocStreamLG(target, name, value, convention, purp
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -16871,7 +16879,7 @@ subroutine ESMF_AttributeSetObjLocStreamLGList(target, name, valueList, conventi
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -16885,7 +16893,7 @@ subroutine ESMF_AttributeSetObjLocStreamLGList(target, name, valueList, conventi
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -16987,7 +16995,7 @@ subroutine ESMF_AttributeGetObjArrayR4(target, name, value, defaultvalue, conven
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -17086,7 +17094,7 @@ subroutine ESMF_AttributeGetObjArrayR8(target, name, value, defaultvalue, conven
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -17185,7 +17193,7 @@ subroutine ESMF_AttributeGetObjArrayI4(target, name, value, defaultvalue, conven
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -17284,7 +17292,7 @@ subroutine ESMF_AttributeGetObjArrayI8(target, name, value, defaultvalue, conven
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -17383,7 +17391,7 @@ subroutine ESMF_AttributeGetObjArrayCH(target, name, value, defaultvalue, conven
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -17482,7 +17490,7 @@ subroutine ESMF_AttributeGetObjArrayLG(target, name, value, defaultvalue, conven
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -17581,7 +17589,7 @@ subroutine ESMF_AttributeGetObjArrayBundleR4(target, name, value, defaultvalue, 
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -17680,7 +17688,7 @@ subroutine ESMF_AttributeGetObjArrayBundleR8(target, name, value, defaultvalue, 
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -17779,7 +17787,7 @@ subroutine ESMF_AttributeGetObjArrayBundleI4(target, name, value, defaultvalue, 
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -17878,7 +17886,7 @@ subroutine ESMF_AttributeGetObjArrayBundleI8(target, name, value, defaultvalue, 
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -17977,7 +17985,7 @@ subroutine ESMF_AttributeGetObjArrayBundleCH(target, name, value, defaultvalue, 
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -18076,7 +18084,7 @@ subroutine ESMF_AttributeGetObjArrayBundleLG(target, name, value, defaultvalue, 
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -18175,7 +18183,7 @@ subroutine ESMF_AttributeGetObjCplCompR4(target, name, value, defaultvalue, conv
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -18274,7 +18282,7 @@ subroutine ESMF_AttributeGetObjCplCompR8(target, name, value, defaultvalue, conv
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -18373,7 +18381,7 @@ subroutine ESMF_AttributeGetObjCplCompI4(target, name, value, defaultvalue, conv
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -18472,7 +18480,7 @@ subroutine ESMF_AttributeGetObjCplCompI8(target, name, value, defaultvalue, conv
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -18571,7 +18579,7 @@ subroutine ESMF_AttributeGetObjCplCompCH(target, name, value, defaultvalue, conv
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -18670,7 +18678,7 @@ subroutine ESMF_AttributeGetObjCplCompLG(target, name, value, defaultvalue, conv
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -18769,7 +18777,7 @@ subroutine ESMF_AttributeGetObjGridCompR4(target, name, value, defaultvalue, con
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -18868,7 +18876,7 @@ subroutine ESMF_AttributeGetObjGridCompR8(target, name, value, defaultvalue, con
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -18967,7 +18975,7 @@ subroutine ESMF_AttributeGetObjGridCompI4(target, name, value, defaultvalue, con
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -19066,7 +19074,7 @@ subroutine ESMF_AttributeGetObjGridCompI8(target, name, value, defaultvalue, con
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -19165,7 +19173,7 @@ subroutine ESMF_AttributeGetObjGridCompCH(target, name, value, defaultvalue, con
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -19264,7 +19272,7 @@ subroutine ESMF_AttributeGetObjGridCompLG(target, name, value, defaultvalue, con
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -19363,7 +19371,7 @@ subroutine ESMF_AttributeGetObjSciCompR4(target, name, value, defaultvalue, conv
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -19462,7 +19470,7 @@ subroutine ESMF_AttributeGetObjSciCompR8(target, name, value, defaultvalue, conv
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -19561,7 +19569,7 @@ subroutine ESMF_AttributeGetObjSciCompI4(target, name, value, defaultvalue, conv
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -19660,7 +19668,7 @@ subroutine ESMF_AttributeGetObjSciCompI8(target, name, value, defaultvalue, conv
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -19759,7 +19767,7 @@ subroutine ESMF_AttributeGetObjSciCompCH(target, name, value, defaultvalue, conv
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -19858,7 +19866,7 @@ subroutine ESMF_AttributeGetObjSciCompLG(target, name, value, defaultvalue, conv
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -19957,7 +19965,7 @@ subroutine ESMF_AttributeGetObjDistGridR4(target, name, value, defaultvalue, con
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -20056,7 +20064,7 @@ subroutine ESMF_AttributeGetObjDistGridR8(target, name, value, defaultvalue, con
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -20155,7 +20163,7 @@ subroutine ESMF_AttributeGetObjDistGridI4(target, name, value, defaultvalue, con
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -20254,7 +20262,7 @@ subroutine ESMF_AttributeGetObjDistGridI8(target, name, value, defaultvalue, con
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -20353,7 +20361,7 @@ subroutine ESMF_AttributeGetObjDistGridCH(target, name, value, defaultvalue, con
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -20452,7 +20460,7 @@ subroutine ESMF_AttributeGetObjDistGridLG(target, name, value, defaultvalue, con
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -20551,7 +20559,7 @@ subroutine ESMF_AttributeGetObjFieldR4(target, name, value, defaultvalue, conven
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -20650,7 +20658,7 @@ subroutine ESMF_AttributeGetObjFieldR8(target, name, value, defaultvalue, conven
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -20749,7 +20757,7 @@ subroutine ESMF_AttributeGetObjFieldI4(target, name, value, defaultvalue, conven
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -20848,7 +20856,7 @@ subroutine ESMF_AttributeGetObjFieldI8(target, name, value, defaultvalue, conven
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -20947,7 +20955,7 @@ subroutine ESMF_AttributeGetObjFieldCH(target, name, value, defaultvalue, conven
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -21046,7 +21054,7 @@ subroutine ESMF_AttributeGetObjFieldLG(target, name, value, defaultvalue, conven
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -21145,7 +21153,7 @@ subroutine ESMF_AttributeGetObjFieldBundleR4(target, name, value, defaultvalue, 
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -21244,7 +21252,7 @@ subroutine ESMF_AttributeGetObjFieldBundleR8(target, name, value, defaultvalue, 
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -21343,7 +21351,7 @@ subroutine ESMF_AttributeGetObjFieldBundleI4(target, name, value, defaultvalue, 
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -21442,7 +21450,7 @@ subroutine ESMF_AttributeGetObjFieldBundleI8(target, name, value, defaultvalue, 
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -21541,7 +21549,7 @@ subroutine ESMF_AttributeGetObjFieldBundleCH(target, name, value, defaultvalue, 
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -21640,7 +21648,7 @@ subroutine ESMF_AttributeGetObjFieldBundleLG(target, name, value, defaultvalue, 
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -21739,7 +21747,7 @@ subroutine ESMF_AttributeGetObjGridR4(target, name, value, defaultvalue, convent
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -21838,7 +21846,7 @@ subroutine ESMF_AttributeGetObjGridR8(target, name, value, defaultvalue, convent
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -21937,7 +21945,7 @@ subroutine ESMF_AttributeGetObjGridI4(target, name, value, defaultvalue, convent
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -22036,7 +22044,7 @@ subroutine ESMF_AttributeGetObjGridI8(target, name, value, defaultvalue, convent
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -22135,7 +22143,7 @@ subroutine ESMF_AttributeGetObjGridCH(target, name, value, defaultvalue, convent
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -22234,7 +22242,7 @@ subroutine ESMF_AttributeGetObjGridLG(target, name, value, defaultvalue, convent
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -22333,7 +22341,7 @@ subroutine ESMF_AttributeGetObjStateR4(target, name, value, defaultvalue, conven
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -22432,7 +22440,7 @@ subroutine ESMF_AttributeGetObjStateR8(target, name, value, defaultvalue, conven
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -22531,7 +22539,7 @@ subroutine ESMF_AttributeGetObjStateI4(target, name, value, defaultvalue, conven
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -22630,7 +22638,7 @@ subroutine ESMF_AttributeGetObjStateI8(target, name, value, defaultvalue, conven
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -22729,7 +22737,7 @@ subroutine ESMF_AttributeGetObjStateCH(target, name, value, defaultvalue, conven
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -22828,7 +22836,7 @@ subroutine ESMF_AttributeGetObjStateLG(target, name, value, defaultvalue, conven
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -22927,7 +22935,7 @@ subroutine ESMF_AttributeGetObjLocStreamR4(target, name, value, defaultvalue, co
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -23026,7 +23034,7 @@ subroutine ESMF_AttributeGetObjLocStreamR8(target, name, value, defaultvalue, co
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -23125,7 +23133,7 @@ subroutine ESMF_AttributeGetObjLocStreamI4(target, name, value, defaultvalue, co
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -23224,7 +23232,7 @@ subroutine ESMF_AttributeGetObjLocStreamI8(target, name, value, defaultvalue, co
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -23323,7 +23331,7 @@ subroutine ESMF_AttributeGetObjLocStreamCH(target, name, value, defaultvalue, co
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -23422,7 +23430,7 @@ subroutine ESMF_AttributeGetObjLocStreamLG(target, name, value, defaultvalue, co
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -23542,7 +23550,7 @@ subroutine ESMF_AttributeGetObjArrayR4List(target, name, valueList, defaultvalue
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -23680,7 +23688,7 @@ subroutine ESMF_AttributeGetObjArrayR8List(target, name, valueList, defaultvalue
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -23818,7 +23826,7 @@ subroutine ESMF_AttributeGetObjArrayI4List(target, name, valueList, defaultvalue
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -23956,7 +23964,7 @@ subroutine ESMF_AttributeGetObjArrayI8List(target, name, valueList, defaultvalue
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -24094,7 +24102,7 @@ subroutine ESMF_AttributeGetObjArrayCHList(target, name, valueList, defaultvalue
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -24232,7 +24240,7 @@ subroutine ESMF_AttributeGetObjArrayLGList(target, name, valueList, defaultvalue
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -24370,7 +24378,7 @@ subroutine ESMF_AttributeGetObjArrayBundleR4List(target, name, valueList, defaul
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -24508,7 +24516,7 @@ subroutine ESMF_AttributeGetObjArrayBundleR8List(target, name, valueList, defaul
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -24646,7 +24654,7 @@ subroutine ESMF_AttributeGetObjArrayBundleI4List(target, name, valueList, defaul
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -24784,7 +24792,7 @@ subroutine ESMF_AttributeGetObjArrayBundleI8List(target, name, valueList, defaul
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -24922,7 +24930,7 @@ subroutine ESMF_AttributeGetObjArrayBundleCHList(target, name, valueList, defaul
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -25060,7 +25068,7 @@ subroutine ESMF_AttributeGetObjArrayBundleLGList(target, name, valueList, defaul
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -25198,7 +25206,7 @@ subroutine ESMF_AttributeGetObjCplCompR4List(target, name, valueList, defaultval
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -25336,7 +25344,7 @@ subroutine ESMF_AttributeGetObjCplCompR8List(target, name, valueList, defaultval
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -25474,7 +25482,7 @@ subroutine ESMF_AttributeGetObjCplCompI4List(target, name, valueList, defaultval
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -25612,7 +25620,7 @@ subroutine ESMF_AttributeGetObjCplCompI8List(target, name, valueList, defaultval
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -25750,7 +25758,7 @@ subroutine ESMF_AttributeGetObjCplCompCHList(target, name, valueList, defaultval
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -25888,7 +25896,7 @@ subroutine ESMF_AttributeGetObjCplCompLGList(target, name, valueList, defaultval
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -26026,7 +26034,7 @@ subroutine ESMF_AttributeGetObjGridCompR4List(target, name, valueList, defaultva
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -26164,7 +26172,7 @@ subroutine ESMF_AttributeGetObjGridCompR8List(target, name, valueList, defaultva
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -26302,7 +26310,7 @@ subroutine ESMF_AttributeGetObjGridCompI4List(target, name, valueList, defaultva
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -26440,7 +26448,7 @@ subroutine ESMF_AttributeGetObjGridCompI8List(target, name, valueList, defaultva
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -26578,7 +26586,7 @@ subroutine ESMF_AttributeGetObjGridCompCHList(target, name, valueList, defaultva
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -26716,7 +26724,7 @@ subroutine ESMF_AttributeGetObjGridCompLGList(target, name, valueList, defaultva
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -26854,7 +26862,7 @@ subroutine ESMF_AttributeGetObjSciCompR4List(target, name, valueList, defaultval
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -26992,7 +27000,7 @@ subroutine ESMF_AttributeGetObjSciCompR8List(target, name, valueList, defaultval
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -27130,7 +27138,7 @@ subroutine ESMF_AttributeGetObjSciCompI4List(target, name, valueList, defaultval
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -27268,7 +27276,7 @@ subroutine ESMF_AttributeGetObjSciCompI8List(target, name, valueList, defaultval
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -27406,7 +27414,7 @@ subroutine ESMF_AttributeGetObjSciCompCHList(target, name, valueList, defaultval
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -27544,7 +27552,7 @@ subroutine ESMF_AttributeGetObjSciCompLGList(target, name, valueList, defaultval
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -27682,7 +27690,7 @@ subroutine ESMF_AttributeGetObjDistGridR4List(target, name, valueList, defaultva
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -27820,7 +27828,7 @@ subroutine ESMF_AttributeGetObjDistGridR8List(target, name, valueList, defaultva
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -27958,7 +27966,7 @@ subroutine ESMF_AttributeGetObjDistGridI4List(target, name, valueList, defaultva
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -28096,7 +28104,7 @@ subroutine ESMF_AttributeGetObjDistGridI8List(target, name, valueList, defaultva
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -28234,7 +28242,7 @@ subroutine ESMF_AttributeGetObjDistGridCHList(target, name, valueList, defaultva
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -28372,7 +28380,7 @@ subroutine ESMF_AttributeGetObjDistGridLGList(target, name, valueList, defaultva
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -28510,7 +28518,7 @@ subroutine ESMF_AttributeGetObjFieldR4List(target, name, valueList, defaultvalue
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -28648,7 +28656,7 @@ subroutine ESMF_AttributeGetObjFieldR8List(target, name, valueList, defaultvalue
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -28786,7 +28794,7 @@ subroutine ESMF_AttributeGetObjFieldI4List(target, name, valueList, defaultvalue
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -28924,7 +28932,7 @@ subroutine ESMF_AttributeGetObjFieldI8List(target, name, valueList, defaultvalue
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -29062,7 +29070,7 @@ subroutine ESMF_AttributeGetObjFieldCHList(target, name, valueList, defaultvalue
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -29200,7 +29208,7 @@ subroutine ESMF_AttributeGetObjFieldLGList(target, name, valueList, defaultvalue
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -29338,7 +29346,7 @@ subroutine ESMF_AttributeGetObjFieldBundleR4List(target, name, valueList, defaul
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -29476,7 +29484,7 @@ subroutine ESMF_AttributeGetObjFieldBundleR8List(target, name, valueList, defaul
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -29614,7 +29622,7 @@ subroutine ESMF_AttributeGetObjFieldBundleI4List(target, name, valueList, defaul
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -29752,7 +29760,7 @@ subroutine ESMF_AttributeGetObjFieldBundleI8List(target, name, valueList, defaul
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -29890,7 +29898,7 @@ subroutine ESMF_AttributeGetObjFieldBundleCHList(target, name, valueList, defaul
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -30028,7 +30036,7 @@ subroutine ESMF_AttributeGetObjFieldBundleLGList(target, name, valueList, defaul
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -30166,7 +30174,7 @@ subroutine ESMF_AttributeGetObjGridR4List(target, name, valueList, defaultvalueL
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -30304,7 +30312,7 @@ subroutine ESMF_AttributeGetObjGridR8List(target, name, valueList, defaultvalueL
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -30442,7 +30450,7 @@ subroutine ESMF_AttributeGetObjGridI4List(target, name, valueList, defaultvalueL
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -30580,7 +30588,7 @@ subroutine ESMF_AttributeGetObjGridI8List(target, name, valueList, defaultvalueL
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -30718,7 +30726,7 @@ subroutine ESMF_AttributeGetObjGridCHList(target, name, valueList, defaultvalueL
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -30856,7 +30864,7 @@ subroutine ESMF_AttributeGetObjGridLGList(target, name, valueList, defaultvalueL
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -30994,7 +31002,7 @@ subroutine ESMF_AttributeGetObjStateR4List(target, name, valueList, defaultvalue
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -31132,7 +31140,7 @@ subroutine ESMF_AttributeGetObjStateR8List(target, name, valueList, defaultvalue
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -31270,7 +31278,7 @@ subroutine ESMF_AttributeGetObjStateI4List(target, name, valueList, defaultvalue
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -31408,7 +31416,7 @@ subroutine ESMF_AttributeGetObjStateI8List(target, name, valueList, defaultvalue
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -31546,7 +31554,7 @@ subroutine ESMF_AttributeGetObjStateCHList(target, name, valueList, defaultvalue
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -31684,7 +31692,7 @@ subroutine ESMF_AttributeGetObjStateLGList(target, name, valueList, defaultvalue
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -31822,7 +31830,7 @@ subroutine ESMF_AttributeGetObjLocStreamR4List(target, name, valueList, defaultv
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -31960,7 +31968,7 @@ subroutine ESMF_AttributeGetObjLocStreamR8List(target, name, valueList, defaultv
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -32098,7 +32106,7 @@ subroutine ESMF_AttributeGetObjLocStreamI4List(target, name, valueList, defaultv
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -32236,7 +32244,7 @@ subroutine ESMF_AttributeGetObjLocStreamI8List(target, name, valueList, defaultv
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -32374,7 +32382,7 @@ subroutine ESMF_AttributeGetObjLocStreamCHList(target, name, valueList, defaultv
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -32512,7 +32520,7 @@ subroutine ESMF_AttributeGetObjLocStreamLGList(target, name, valueList, defaultv
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -32593,7 +32601,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   end if
 
   if (present(convention)) then
-    call format_key(key, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   else
     key = ""
@@ -32780,7 +32788,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (.not. present(typekind) .and. .not. present(itemCount) .and. .not. present(isPresent)) then
@@ -32851,7 +32859,7 @@ subroutine ESMF_AttributeGetInfoByNumArray(target, attributeIndex, name, convent
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, "", localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, "", localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -32880,13 +32888,12 @@ end subroutine ESMF_AttributeGetInfoByNumArray
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetAttPackArray()"
-subroutine ESMF_AttributeGetAttPackArray(target, convention, purpose, keywordEnforcer, attPackInstanceName, attpack, attnestflag, isPresent, rc)
+subroutine ESMF_AttributeGetAttPackArray(target, convention, purpose, keywordEnforcer, attpack, attnestflag, isPresent, rc)
   ! 39.11.21
   type(ESMF_Array), intent(in) :: target
   character(len=*), intent(in) :: convention
   character(len=*), intent(in) :: purpose
 type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  character (len = *), intent(in), optional :: attPackInstanceName  !tdk: noop, no support for attpackinstancename
   type(ESMF_AttPack), intent(inout), optional :: attpack
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   logical, intent(out), optional :: isPresent
@@ -32996,7 +33003,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   end if
 
   if (present(convention)) then
-    call format_key(key, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   else
     key = ""
@@ -33183,7 +33190,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (.not. present(typekind) .and. .not. present(itemCount) .and. .not. present(isPresent)) then
@@ -33254,7 +33261,7 @@ subroutine ESMF_AttributeGetInfoByNumArrayBundle(target, attributeIndex, name, c
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, "", localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, "", localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -33283,13 +33290,12 @@ end subroutine ESMF_AttributeGetInfoByNumArrayBundle
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetAttPackArrayBundle()"
-subroutine ESMF_AttributeGetAttPackArrayBundle(target, convention, purpose, keywordEnforcer, attPackInstanceName, attpack, attnestflag, isPresent, rc)
+subroutine ESMF_AttributeGetAttPackArrayBundle(target, convention, purpose, keywordEnforcer, attpack, attnestflag, isPresent, rc)
   ! 39.11.21
   type(ESMF_ArrayBundle), intent(in) :: target
   character(len=*), intent(in) :: convention
   character(len=*), intent(in) :: purpose
 type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  character (len = *), intent(in), optional :: attPackInstanceName  !tdk: noop, no support for attpackinstancename
   type(ESMF_AttPack), intent(inout), optional :: attpack
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   logical, intent(out), optional :: isPresent
@@ -33399,7 +33405,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   end if
 
   if (present(convention)) then
-    call format_key(key, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   else
     key = ""
@@ -33586,7 +33592,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (.not. present(typekind) .and. .not. present(itemCount) .and. .not. present(isPresent)) then
@@ -33657,7 +33663,7 @@ subroutine ESMF_AttributeGetInfoByNumCplComp(target, attributeIndex, name, conve
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, "", localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, "", localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -33686,13 +33692,12 @@ end subroutine ESMF_AttributeGetInfoByNumCplComp
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetAttPackCplComp()"
-subroutine ESMF_AttributeGetAttPackCplComp(target, convention, purpose, keywordEnforcer, attPackInstanceName, attpack, attnestflag, isPresent, rc)
+subroutine ESMF_AttributeGetAttPackCplComp(target, convention, purpose, keywordEnforcer, attpack, attnestflag, isPresent, rc)
   ! 39.11.21
   type(ESMF_CplComp), intent(in) :: target
   character(len=*), intent(in) :: convention
   character(len=*), intent(in) :: purpose
 type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  character (len = *), intent(in), optional :: attPackInstanceName  !tdk: noop, no support for attpackinstancename
   type(ESMF_AttPack), intent(inout), optional :: attpack
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   logical, intent(out), optional :: isPresent
@@ -33802,7 +33807,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   end if
 
   if (present(convention)) then
-    call format_key(key, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   else
     key = ""
@@ -33989,7 +33994,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (.not. present(typekind) .and. .not. present(itemCount) .and. .not. present(isPresent)) then
@@ -34060,7 +34065,7 @@ subroutine ESMF_AttributeGetInfoByNumGridComp(target, attributeIndex, name, conv
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, "", localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, "", localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -34089,13 +34094,12 @@ end subroutine ESMF_AttributeGetInfoByNumGridComp
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetAttPackGridComp()"
-subroutine ESMF_AttributeGetAttPackGridComp(target, convention, purpose, keywordEnforcer, attPackInstanceName, attpack, attnestflag, isPresent, rc)
+subroutine ESMF_AttributeGetAttPackGridComp(target, convention, purpose, keywordEnforcer, attpack, attnestflag, isPresent, rc)
   ! 39.11.21
   type(ESMF_GridComp), intent(in) :: target
   character(len=*), intent(in) :: convention
   character(len=*), intent(in) :: purpose
 type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  character (len = *), intent(in), optional :: attPackInstanceName  !tdk: noop, no support for attpackinstancename
   type(ESMF_AttPack), intent(inout), optional :: attpack
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   logical, intent(out), optional :: isPresent
@@ -34205,7 +34209,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   end if
 
   if (present(convention)) then
-    call format_key(key, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   else
     key = ""
@@ -34392,7 +34396,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (.not. present(typekind) .and. .not. present(itemCount) .and. .not. present(isPresent)) then
@@ -34463,7 +34467,7 @@ subroutine ESMF_AttributeGetInfoByNumSciComp(target, attributeIndex, name, conve
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, "", localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, "", localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -34492,13 +34496,12 @@ end subroutine ESMF_AttributeGetInfoByNumSciComp
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetAttPackSciComp()"
-subroutine ESMF_AttributeGetAttPackSciComp(target, convention, purpose, keywordEnforcer, attPackInstanceName, attpack, attnestflag, isPresent, rc)
+subroutine ESMF_AttributeGetAttPackSciComp(target, convention, purpose, keywordEnforcer, attpack, attnestflag, isPresent, rc)
   ! 39.11.21
   type(ESMF_SciComp), intent(in) :: target
   character(len=*), intent(in) :: convention
   character(len=*), intent(in) :: purpose
 type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  character (len = *), intent(in), optional :: attPackInstanceName  !tdk: noop, no support for attpackinstancename
   type(ESMF_AttPack), intent(inout), optional :: attpack
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   logical, intent(out), optional :: isPresent
@@ -34608,7 +34611,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   end if
 
   if (present(convention)) then
-    call format_key(key, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   else
     key = ""
@@ -34795,7 +34798,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (.not. present(typekind) .and. .not. present(itemCount) .and. .not. present(isPresent)) then
@@ -34866,7 +34869,7 @@ subroutine ESMF_AttributeGetInfoByNumDistGrid(target, attributeIndex, name, conv
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, "", localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, "", localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -34895,13 +34898,12 @@ end subroutine ESMF_AttributeGetInfoByNumDistGrid
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetAttPackDistGrid()"
-subroutine ESMF_AttributeGetAttPackDistGrid(target, convention, purpose, keywordEnforcer, attPackInstanceName, attpack, attnestflag, isPresent, rc)
+subroutine ESMF_AttributeGetAttPackDistGrid(target, convention, purpose, keywordEnforcer, attpack, attnestflag, isPresent, rc)
   ! 39.11.21
   type(ESMF_DistGrid), intent(in) :: target
   character(len=*), intent(in) :: convention
   character(len=*), intent(in) :: purpose
 type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  character (len = *), intent(in), optional :: attPackInstanceName  !tdk: noop, no support for attpackinstancename
   type(ESMF_AttPack), intent(inout), optional :: attpack
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   logical, intent(out), optional :: isPresent
@@ -35011,7 +35013,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   end if
 
   if (present(convention)) then
-    call format_key(key, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   else
     key = ""
@@ -35198,7 +35200,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (.not. present(typekind) .and. .not. present(itemCount) .and. .not. present(isPresent)) then
@@ -35269,7 +35271,7 @@ subroutine ESMF_AttributeGetInfoByNumField(target, attributeIndex, name, convent
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, "", localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, "", localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -35298,13 +35300,12 @@ end subroutine ESMF_AttributeGetInfoByNumField
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetAttPackField()"
-subroutine ESMF_AttributeGetAttPackField(target, convention, purpose, keywordEnforcer, attPackInstanceName, attpack, attnestflag, isPresent, rc)
+subroutine ESMF_AttributeGetAttPackField(target, convention, purpose, keywordEnforcer, attpack, attnestflag, isPresent, rc)
   ! 39.11.21
   type(ESMF_Field), intent(in) :: target
   character(len=*), intent(in) :: convention
   character(len=*), intent(in) :: purpose
 type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  character (len = *), intent(in), optional :: attPackInstanceName  !tdk: noop, no support for attpackinstancename
   type(ESMF_AttPack), intent(inout), optional :: attpack
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   logical, intent(out), optional :: isPresent
@@ -35414,7 +35415,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   end if
 
   if (present(convention)) then
-    call format_key(key, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   else
     key = ""
@@ -35601,7 +35602,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (.not. present(typekind) .and. .not. present(itemCount) .and. .not. present(isPresent)) then
@@ -35672,7 +35673,7 @@ subroutine ESMF_AttributeGetInfoByNumFieldBundle(target, attributeIndex, name, c
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, "", localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, "", localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -35701,13 +35702,12 @@ end subroutine ESMF_AttributeGetInfoByNumFieldBundle
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetAttPackFieldBundle()"
-subroutine ESMF_AttributeGetAttPackFieldBundle(target, convention, purpose, keywordEnforcer, attPackInstanceName, attpack, attnestflag, isPresent, rc)
+subroutine ESMF_AttributeGetAttPackFieldBundle(target, convention, purpose, keywordEnforcer, attpack, attnestflag, isPresent, rc)
   ! 39.11.21
   type(ESMF_FieldBundle), intent(in) :: target
   character(len=*), intent(in) :: convention
   character(len=*), intent(in) :: purpose
 type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  character (len = *), intent(in), optional :: attPackInstanceName  !tdk: noop, no support for attpackinstancename
   type(ESMF_AttPack), intent(inout), optional :: attpack
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   logical, intent(out), optional :: isPresent
@@ -35817,7 +35817,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   end if
 
   if (present(convention)) then
-    call format_key(key, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   else
     key = ""
@@ -36004,7 +36004,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (.not. present(typekind) .and. .not. present(itemCount) .and. .not. present(isPresent)) then
@@ -36075,7 +36075,7 @@ subroutine ESMF_AttributeGetInfoByNumGrid(target, attributeIndex, name, conventi
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, "", localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, "", localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -36104,13 +36104,12 @@ end subroutine ESMF_AttributeGetInfoByNumGrid
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetAttPackGrid()"
-subroutine ESMF_AttributeGetAttPackGrid(target, convention, purpose, keywordEnforcer, attPackInstanceName, attpack, attnestflag, isPresent, rc)
+subroutine ESMF_AttributeGetAttPackGrid(target, convention, purpose, keywordEnforcer, attpack, attnestflag, isPresent, rc)
   ! 39.11.21
   type(ESMF_Grid), intent(in) :: target
   character(len=*), intent(in) :: convention
   character(len=*), intent(in) :: purpose
 type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  character (len = *), intent(in), optional :: attPackInstanceName  !tdk: noop, no support for attpackinstancename
   type(ESMF_AttPack), intent(inout), optional :: attpack
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   logical, intent(out), optional :: isPresent
@@ -36220,7 +36219,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   end if
 
   if (present(convention)) then
-    call format_key(key, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   else
     key = ""
@@ -36407,7 +36406,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (.not. present(typekind) .and. .not. present(itemCount) .and. .not. present(isPresent)) then
@@ -36478,7 +36477,7 @@ subroutine ESMF_AttributeGetInfoByNumState(target, attributeIndex, name, convent
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, "", localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, "", localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -36507,13 +36506,12 @@ end subroutine ESMF_AttributeGetInfoByNumState
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetAttPackState()"
-subroutine ESMF_AttributeGetAttPackState(target, convention, purpose, keywordEnforcer, attPackInstanceName, attpack, attnestflag, isPresent, rc)
+subroutine ESMF_AttributeGetAttPackState(target, convention, purpose, keywordEnforcer, attpack, attnestflag, isPresent, rc)
   ! 39.11.21
   type(ESMF_State), intent(in) :: target
   character(len=*), intent(in) :: convention
   character(len=*), intent(in) :: purpose
 type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  character (len = *), intent(in), optional :: attPackInstanceName  !tdk: noop, no support for attpackinstancename
   type(ESMF_AttPack), intent(inout), optional :: attpack
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   logical, intent(out), optional :: isPresent
@@ -36623,7 +36621,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   end if
 
   if (present(convention)) then
-    call format_key(key, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   else
     key = ""
@@ -36810,7 +36808,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (.not. present(typekind) .and. .not. present(itemCount) .and. .not. present(isPresent)) then
@@ -36881,7 +36879,7 @@ subroutine ESMF_AttributeGetInfoByNumLocStream(target, attributeIndex, name, con
     local_attnestflag = ESMF_ATTR_DEFAULT_ATTNEST
   end if
 
-  call format_key(key, "", localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, "", localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -36910,13 +36908,12 @@ end subroutine ESMF_AttributeGetInfoByNumLocStream
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeGetAttPackLocStream()"
-subroutine ESMF_AttributeGetAttPackLocStream(target, convention, purpose, keywordEnforcer, attPackInstanceName, attpack, attnestflag, isPresent, rc)
+subroutine ESMF_AttributeGetAttPackLocStream(target, convention, purpose, keywordEnforcer, attpack, attnestflag, isPresent, rc)
   ! 39.11.21
   type(ESMF_LocStream), intent(in) :: target
   character(len=*), intent(in) :: convention
   character(len=*), intent(in) :: purpose
 type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  character (len = *), intent(in), optional :: attPackInstanceName  !tdk: noop, no support for attpackinstancename
   type(ESMF_AttPack), intent(inout), optional :: attpack
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   logical, intent(out), optional :: isPresent
@@ -37046,7 +37043,7 @@ subroutine ESMF_AttributeRemoveAttPackArray(target, name, attpack, convention, p
       keyParent = attpack%formatKey(rc=localrc)
       if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     else
-      call format_key(keyParent, "", localrc, convention=convention, purpose=purpose)
+      call ESMF_InfoFormatKey(keyParent, "", localrc, convention=convention, purpose=purpose)
       if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     end if
 
@@ -37152,7 +37149,7 @@ subroutine ESMF_AttributeRemoveAttPackArrayBundle(target, name, attpack, convent
       keyParent = attpack%formatKey(rc=localrc)
       if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     else
-      call format_key(keyParent, "", localrc, convention=convention, purpose=purpose)
+      call ESMF_InfoFormatKey(keyParent, "", localrc, convention=convention, purpose=purpose)
       if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     end if
 
@@ -37258,7 +37255,7 @@ subroutine ESMF_AttributeRemoveAttPackCplComp(target, name, attpack, convention,
       keyParent = attpack%formatKey(rc=localrc)
       if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     else
-      call format_key(keyParent, "", localrc, convention=convention, purpose=purpose)
+      call ESMF_InfoFormatKey(keyParent, "", localrc, convention=convention, purpose=purpose)
       if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     end if
 
@@ -37364,7 +37361,7 @@ subroutine ESMF_AttributeRemoveAttPackGridComp(target, name, attpack, convention
       keyParent = attpack%formatKey(rc=localrc)
       if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     else
-      call format_key(keyParent, "", localrc, convention=convention, purpose=purpose)
+      call ESMF_InfoFormatKey(keyParent, "", localrc, convention=convention, purpose=purpose)
       if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     end if
 
@@ -37470,7 +37467,7 @@ subroutine ESMF_AttributeRemoveAttPackSciComp(target, name, attpack, convention,
       keyParent = attpack%formatKey(rc=localrc)
       if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     else
-      call format_key(keyParent, "", localrc, convention=convention, purpose=purpose)
+      call ESMF_InfoFormatKey(keyParent, "", localrc, convention=convention, purpose=purpose)
       if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     end if
 
@@ -37576,7 +37573,7 @@ subroutine ESMF_AttributeRemoveAttPackDistGrid(target, name, attpack, convention
       keyParent = attpack%formatKey(rc=localrc)
       if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     else
-      call format_key(keyParent, "", localrc, convention=convention, purpose=purpose)
+      call ESMF_InfoFormatKey(keyParent, "", localrc, convention=convention, purpose=purpose)
       if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     end if
 
@@ -37682,7 +37679,7 @@ subroutine ESMF_AttributeRemoveAttPackField(target, name, attpack, convention, p
       keyParent = attpack%formatKey(rc=localrc)
       if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     else
-      call format_key(keyParent, "", localrc, convention=convention, purpose=purpose)
+      call ESMF_InfoFormatKey(keyParent, "", localrc, convention=convention, purpose=purpose)
       if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     end if
 
@@ -37788,7 +37785,7 @@ subroutine ESMF_AttributeRemoveAttPackFieldBundle(target, name, attpack, convent
       keyParent = attpack%formatKey(rc=localrc)
       if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     else
-      call format_key(keyParent, "", localrc, convention=convention, purpose=purpose)
+      call ESMF_InfoFormatKey(keyParent, "", localrc, convention=convention, purpose=purpose)
       if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     end if
 
@@ -37894,7 +37891,7 @@ subroutine ESMF_AttributeRemoveAttPackGrid(target, name, attpack, convention, pu
       keyParent = attpack%formatKey(rc=localrc)
       if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     else
-      call format_key(keyParent, "", localrc, convention=convention, purpose=purpose)
+      call ESMF_InfoFormatKey(keyParent, "", localrc, convention=convention, purpose=purpose)
       if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     end if
 
@@ -38000,7 +37997,7 @@ subroutine ESMF_AttributeRemoveAttPackState(target, name, attpack, convention, p
       keyParent = attpack%formatKey(rc=localrc)
       if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     else
-      call format_key(keyParent, "", localrc, convention=convention, purpose=purpose)
+      call ESMF_InfoFormatKey(keyParent, "", localrc, convention=convention, purpose=purpose)
       if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     end if
 
@@ -38106,7 +38103,7 @@ subroutine ESMF_AttributeRemoveAttPackLocStream(target, name, attpack, conventio
       keyParent = attpack%formatKey(rc=localrc)
       if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     else
-      call format_key(keyParent, "", localrc, convention=convention, purpose=purpose)
+      call ESMF_InfoFormatKey(keyParent, "", localrc, convention=convention, purpose=purpose)
       if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     end if
 
@@ -38849,15 +38846,13 @@ end subroutine ESMF_AttributeReadLocStream
 !==============================================================================
 ! ESMF_AttributeUpdate ========================================================
 !==============================================================================
-!tdk:question: reconcile is NOOP; removed petList
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeUpdateCplComp"
-subroutine ESMF_AttributeUpdateCplComp(target, vm, rootList, reconcile, rc)
+subroutine ESMF_AttributeUpdateCplComp(target, vm, rootList, rc)
   type(ESMF_CplComp), intent(inout) :: target
   type(ESMF_VM), intent(in) :: vm
   integer, dimension(:), intent(in) :: rootList
-  logical, intent(in), optional :: reconcile
   integer, intent(out), optional :: rc
 
   integer :: localrc
@@ -38875,11 +38870,10 @@ end subroutine ESMF_AttributeUpdateCplComp
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeUpdateGridComp"
-subroutine ESMF_AttributeUpdateGridComp(target, vm, rootList, reconcile, rc)
+subroutine ESMF_AttributeUpdateGridComp(target, vm, rootList, rc)
   type(ESMF_GridComp), intent(inout) :: target
   type(ESMF_VM), intent(in) :: vm
   integer, dimension(:), intent(in) :: rootList
-  logical, intent(in), optional :: reconcile
   integer, intent(out), optional :: rc
 
   integer :: localrc
@@ -38897,11 +38891,10 @@ end subroutine ESMF_AttributeUpdateGridComp
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeUpdateSciComp"
-subroutine ESMF_AttributeUpdateSciComp(target, vm, rootList, reconcile, rc)
+subroutine ESMF_AttributeUpdateSciComp(target, vm, rootList, rc)
   type(ESMF_SciComp), intent(inout) :: target
   type(ESMF_VM), intent(in) :: vm
   integer, dimension(:), intent(in) :: rootList
-  logical, intent(in), optional :: reconcile
   integer, intent(out), optional :: rc
 
   integer :: localrc
@@ -38919,11 +38912,10 @@ end subroutine ESMF_AttributeUpdateSciComp
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeUpdateField"
-subroutine ESMF_AttributeUpdateField(target, vm, rootList, reconcile, rc)
+subroutine ESMF_AttributeUpdateField(target, vm, rootList, rc)
   type(ESMF_Field), intent(inout) :: target
   type(ESMF_VM), intent(in) :: vm
   integer, dimension(:), intent(in) :: rootList
-  logical, intent(in), optional :: reconcile
   integer, intent(out), optional :: rc
 
   integer :: localrc
@@ -38941,11 +38933,10 @@ end subroutine ESMF_AttributeUpdateField
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeUpdateFieldBundle"
-subroutine ESMF_AttributeUpdateFieldBundle(target, vm, rootList, reconcile, rc)
+subroutine ESMF_AttributeUpdateFieldBundle(target, vm, rootList, rc)
   type(ESMF_FieldBundle), intent(inout) :: target
   type(ESMF_VM), intent(in) :: vm
   integer, dimension(:), intent(in) :: rootList
-  logical, intent(in), optional :: reconcile
   integer, intent(out), optional :: rc
 
   integer :: localrc
@@ -38963,11 +38954,10 @@ end subroutine ESMF_AttributeUpdateFieldBundle
 
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeUpdateState"
-subroutine ESMF_AttributeUpdateState(target, vm, rootList, reconcile, rc)
+subroutine ESMF_AttributeUpdateState(target, vm, rootList, rc)
   type(ESMF_State), intent(inout) :: target
   type(ESMF_VM), intent(in) :: vm
   integer, dimension(:), intent(in) :: rootList
-  logical, intent(in), optional :: reconcile
   integer, intent(out), optional :: rc
 
   integer :: localrc
@@ -39013,7 +39003,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(convention)) then
-    call format_key(key, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
     info = ESMF_InfoCreate(isrc, key, rc=localrc)
@@ -39060,7 +39050,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(convention)) then
-    call format_key(key, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
     info = ESMF_InfoCreate(isrc, key, rc=localrc)
@@ -39107,7 +39097,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(convention)) then
-    call format_key(key, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
     info = ESMF_InfoCreate(isrc, key, rc=localrc)
@@ -39154,7 +39144,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(convention)) then
-    call format_key(key, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
     info = ESMF_InfoCreate(isrc, key, rc=localrc)
@@ -39201,7 +39191,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(convention)) then
-    call format_key(key, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
     info = ESMF_InfoCreate(isrc, key, rc=localrc)
@@ -39248,7 +39238,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(convention)) then
-    call format_key(key, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
     info = ESMF_InfoCreate(isrc, key, rc=localrc)
@@ -39295,7 +39285,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(convention)) then
-    call format_key(key, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
     info = ESMF_InfoCreate(isrc, key, rc=localrc)
@@ -39342,7 +39332,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(convention)) then
-    call format_key(key, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
     info = ESMF_InfoCreate(isrc, key, rc=localrc)
@@ -39389,7 +39379,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(convention)) then
-    call format_key(key, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
     info = ESMF_InfoCreate(isrc, key, rc=localrc)
@@ -39436,7 +39426,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(convention)) then
-    call format_key(key, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
     info = ESMF_InfoCreate(isrc, key, rc=localrc)
@@ -39483,7 +39473,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(convention)) then
-    call format_key(key, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
     info = ESMF_InfoCreate(isrc, key, rc=localrc)
@@ -39504,13 +39494,9 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   if (present(rc)) rc = ESMF_SUCCESS
 end subroutine ESMF_AttributeWriteLocStream
 
-subroutine ESMF_AttPackStreamJSON(attpack, output, flattenPackList, includeUnset, includeLinks, rc)
-  !tdk:question: flattenPackList, includeUnset, includeLinks NOOP. is this okay?
+subroutine ESMF_AttPackStreamJSON(attpack, output, rc)
   type(ESMF_AttPack), intent(in) :: attpack
   character(len=*), intent(out), optional :: output
-  logical, intent(in) :: flattenPackList
-  logical, intent(in) :: includeUnset
-  logical, intent(in) :: includeLinks
   integer, intent(inout), optional :: rc
 
   integer :: localrc

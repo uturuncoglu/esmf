@@ -31,7 +31,7 @@ program ESMF_AttributeUtilUTest
 ! !USES:
   use ESMF_TestMod ! test methods
   use ESMF
-  use ESMF_AttributeMod, only : format_key
+  use ESMF_AttributeMod, only : ESMF_InfoFormatKey
 
   implicit none
 
@@ -67,11 +67,11 @@ program ESMF_AttributeUtilUTest
 
   !------------------------------------------------------------------------
   !NEX_UTest
-  write(name, *) "Attribute format_key w/ name"
+  write(name, *) "Attribute ESMF_InfoFormatKey w/ name"
   write(failMsg, *) "Did not return ESMF_SUCCESS"
 
   name_key = "AttributeName"
-  call format_key(key, name_key, rc)
+  call ESMF_InfoFormatKey(key, name_key, rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
 
   call ESMF_Test((rc .eq. ESMF_SUCCESS .and. &

@@ -1305,14 +1305,13 @@ module NUOPC_Driver
             ! need to update the Component attributes across all PETs
             if (associated(is%wrap%modelPetLists(i)%ptr)) then
               call ESMF_AttributeUpdate(is%wrap%modelComp(i), vm, &
-                rootList=is%wrap%modelPetLists(i)%ptr(1:1), reconcile=.true., &
-                rc=rc)
+                rootList=is%wrap%modelPetLists(i)%ptr(1:1), rc=rc)
               if (ESMF_LogFoundError(rcToCheck=rc, msg=ESMF_LOGERR_PASSTHRU, &
                 line=__LINE__, file=trim(name)//":"//FILENAME, rcToReturn=rc)) &
                 return  ! bail out
             else
               call ESMF_AttributeUpdate(is%wrap%modelComp(i), vm, &
-                rootList=(/0/), reconcile=.true., rc=rc)
+                rootList=(/0/), rc=rc)
               if (ESMF_LogFoundError(rcToCheck=rc, msg=ESMF_LOGERR_PASSTHRU, &
                 line=__LINE__, file=trim(name)//":"//FILENAME, rcToReturn=rc)) &
                 return  ! bail out
@@ -1383,14 +1382,13 @@ module NUOPC_Driver
               ! need to update the Component attributes across all PETs
               if (associated(is%wrap%connectorPetLists(i,j)%ptr)) then
                 call ESMF_AttributeUpdate(is%wrap%connectorComp(i,j), vm, &
-                  rootList=is%wrap%connectorPetLists(i,j)%ptr(1:1), &
-                  reconcile=.true., rc=rc)
+                  rootList=is%wrap%connectorPetLists(i,j)%ptr(1:1), rc=rc)
                 if (ESMF_LogFoundError(rcToCheck=rc, msg=ESMF_LOGERR_PASSTHRU, &
                   line=__LINE__, file=trim(name)//":"//FILENAME, rcToReturn=rc))&
                   return  ! bail out
               else
                 call ESMF_AttributeUpdate(is%wrap%connectorComp(i,j), vm, &
-                  rootList=(/0/), reconcile=.true., rc=rc)
+                  rootList=(/0/), rc=rc)
                 if (ESMF_LogFoundError(rcToCheck=rc, msg=ESMF_LOGERR_PASSTHRU, &
                   line=__LINE__, file=trim(name)//":"//FILENAME, rcToReturn=rc))&
                   return  ! bail out
@@ -2243,15 +2241,14 @@ module NUOPC_Driver
             ! Note (bekozi): petList is not supported in the Info backend for
             ! AttributeUpdate since collective communication is used.
             call ESMF_AttributeUpdate(is%wrap%modelComp(i), vm, &
-              rootList=is%wrap%modelPetLists(i)%ptr(1:1), reconcile=.true., &
-              rc=rc)
+              rootList=is%wrap%modelPetLists(i)%ptr(1:1), rc=rc)
             if (ESMF_LogFoundError(rcToCheck=rc, msg=ESMF_LOGERR_PASSTHRU, &
               line=__LINE__, file=trim(name)//":"//FILENAME, rcToReturn=rc)) &
               return  ! bail out
           else
             ! no petList was specified -> update across all PETs
             call ESMF_AttributeUpdate(is%wrap%modelComp(i), vm, &
-              rootList=(/0/), reconcile=.true., rc=rc)
+              rootList=(/0/), rc=rc)
             if (ESMF_LogFoundError(rcToCheck=rc, msg=ESMF_LOGERR_PASSTHRU, &
               line=__LINE__, file=trim(name)//":"//FILENAME, rcToReturn=rc)) &
               return  ! bail out
@@ -4205,14 +4202,13 @@ module NUOPC_Driver
         return  ! bail out
       if (associated(is%wrap%connectorPetLists(src,dst)%ptr)) then
         call ESMF_AttributeUpdate(is%wrap%connectorComp(src,dst), vm, &
-          rootList=is%wrap%connectorPetLists(src,dst)%ptr(1:1), &
-          reconcile=.true., rc=localrc)
+          rootList=is%wrap%connectorPetLists(src,dst)%ptr(1:1), rc=localrc)
         if (ESMF_LogFoundError(rcToCheck=localrc, msg=ESMF_LOGERR_PASSTHRU, &
           line=__LINE__, file=trim(name)//":"//FILENAME, rcToReturn=rc))&
           return  ! bail out
       else
         call ESMF_AttributeUpdate(is%wrap%connectorComp(src,dst), vm, &
-          rootList=(/0/), reconcile=.true., rc=localrc)
+          rootList=(/0/), rc=localrc)
         if (ESMF_LogFoundError(rcToCheck=localrc, msg=ESMF_LOGERR_PASSTHRU, &
           line=__LINE__, file=trim(name)//":"//FILENAME, rcToReturn=rc))&
           return  ! bail out

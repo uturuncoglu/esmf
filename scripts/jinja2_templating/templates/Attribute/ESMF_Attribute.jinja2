@@ -37,7 +37,6 @@ implicit none
 ! !PUBLIC MEMBER FUNCTIONS:
 !
 
-{#public ESMF_AttributeGetInit#} !tdk:implement AttributeGetInit?
 public ESMF_AttPackStreamJSON
 public ESMF_AttributeAdd
 public ESMF_AttributeCopy
@@ -49,7 +48,7 @@ public ESMF_AttributeRemove
 public ESMF_AttributeUpdate
 public ESMF_AttributeWrite
 
-public format_key !tdk:todo: implement as ESMF_InfoFormatKey
+public ESMF_InfoFormatKey
 
 !------------------------------------------------------------------------------
 ! !PUBLIC TYPES:
@@ -266,8 +265,8 @@ subroutine parse_json_pointer(jptr, keyParent, keyChild)
 end subroutine
 
 #undef  ESMF_METHOD
-#define ESMF_METHOD "format_key()"
-subroutine format_key(key, name, rc, convention, purpose)
+#define ESMF_METHOD "ESMF_InfoFormatKey()"
+subroutine ESMF_InfoFormatKey(key, name, rc, convention, purpose)
   character(:), allocatable, intent(out) :: key
   character(len=*), intent(in) :: name
   integer, intent(inout) :: rc
@@ -302,7 +301,7 @@ subroutine format_key(key, name, rc, convention, purpose)
   endif
 
   rc = ESMF_SUCCESS
-end subroutine format_key
+end subroutine ESMF_InfoFormatKey
 
 !==============================================================================
 ! ESMF_AttributeAdd ===========================================================
@@ -328,7 +327,16 @@ subroutine ESMF_AttributeAddAttPackStdInfo(info, convention, purpose, attrList, 
   if (present(rc)) rc = ESMF_RC_NOT_IMPL
   localrc = ESMF_FAILURE
 
-  !tdk:todo: test for reasonable presence. need nestPurpose if nestConvention for example
+  if (present(nestConvention)) then
+    if (.not. present(nestPurpose)) then
+      if (ESMF_LogFoundError(ESMF_FAILURE, msg="nestPurpose required", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
+  if (present(nestPurpose)) then
+    if (.not. present(nestConvention)) then
+      if (ESMF_LogFoundError(ESMF_FAILURE, msg="nestConvention required", ESMF_CONTEXT, rcToReturn=rc)) return
+    endif
+  endif
 
   key = "/"//TRIM(convention)//"/"//TRIM(purpose)
   if (present(nestConvention)) then
@@ -510,7 +518,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (local_attnestflag%value == ESMF_ATTNEST_ON%value) then
-    call format_key(pkey, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(pkey, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, TRIM(pkey)//"/"//TRIM(name), attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -524,7 +532,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
       if (ESMF_LogFoundError(ESMF_RC_ATTR_ITEMSOFF, msg="Attribute must be added before it is set", ESMF_CONTEXT, rcToReturn=rc)) return
     endif
   else
-    call format_key(key, name, localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
 !    is_present = ESMF_InfoIsPresent(info, key, attnestflag=local_attnestflag, isPointer=.true., rc=localrc)
@@ -614,7 +622,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
 {% include "ESMF_Attribute-HandleAttNest.jinja2" %}{{ "" }}
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -722,7 +730,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
 {% include "ESMF_Attribute-HandleAttNest.jinja2" %}{{ "" }}
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -800,7 +808,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   end if
 
   if (present(convention)) then
-    call format_key(key, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
   else
     key = ""
@@ -967,7 +975,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
 {% include "ESMF_Attribute-HandleAttNest.jinja2" %}{{ "" }}
 
-  call format_key(key, name, localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, name, localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (.not. present(typekind) .and. .not. present(itemCount) .and. .not. present(isPresent)) then
@@ -1031,7 +1039,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
 {% include "ESMF_Attribute-HandleAttNest.jinja2" %}{{ "" }}
 
-  call format_key(key, "", localrc, convention=convention, purpose=purpose)
+  call ESMF_InfoFormatKey(key, "", localrc, convention=convention, purpose=purpose)
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   info = einq%GetInfo(target, rc=localrc)
@@ -1059,14 +1067,13 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 
 {% set set_or_get = "Get" %}
 {% set proc_suffix = "AttPack" %}
-{% set arglist = "(target, convention, purpose, keywordEnforcer, attPackInstanceName, attpack, attnestflag, isPresent, rc)" %}
+{% set arglist = "(target, convention, purpose, keywordEnforcer, attpack, attnestflag, isPresent, rc)" %}
 {% include "ESMF_Attribute-ProcHeader.jinja2" %}{{ "" }}
   ! 39.11.21
   type(ESMF_{{ et }}), intent(in) :: target
   character(len=*), intent(in) :: convention
   character(len=*), intent(in) :: purpose
 type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords below
-  character (len = *), intent(in), optional :: attPackInstanceName  !tdk: noop, no support for attpackinstancename
   type(ESMF_AttPack), intent(inout), optional :: attpack
   type(ESMF_AttNest_Flag), intent(in), optional :: attnestflag
   logical, intent(out), optional :: isPresent
@@ -1185,7 +1192,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
       keyParent = attpack%formatKey(rc=localrc)
       if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     else
-      call format_key(keyParent, "", localrc, convention=convention, purpose=purpose)
+      call ESMF_InfoFormatKey(keyParent, "", localrc, convention=convention, purpose=purpose)
       if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
     end if
 
@@ -1261,7 +1268,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 {#    l_name = ""#}
 {#  endif#}
 {##}
-{#  call format_key(key, l_name, localrc, convention=convention, purpose=purpose)#}
+{#  call ESMF_InfoFormatKey(key, l_name, localrc, convention=convention, purpose=purpose)#}
 {#  if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return#}
 {##}
 {#  info = einq%GetInfo(target, rc=localrc)#}
@@ -1321,18 +1328,16 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 !==============================================================================
 ! ESMF_AttributeUpdate ========================================================
 !==============================================================================
-!tdk:question: reconcile is NOOP; removed petList
 {% set set_or_get = "Update" %}
 {% for update_esmf_type in update_esmf_types %}
 
 {% set et = update_esmf_type %}
 #undef  ESMF_METHOD
 #define ESMF_METHOD "ESMF_AttributeUpdate{{ update_esmf_type }}"
-subroutine ESMF_AttributeUpdate{{ update_esmf_type }}(target, vm, rootList, reconcile, rc)
+subroutine ESMF_AttributeUpdate{{ update_esmf_type }}(target, vm, rootList, rc)
   type(ESMF_{{ update_esmf_type }}), intent(inout) :: target
   type(ESMF_VM), intent(in) :: vm
   integer, dimension(:), intent(in) :: rootList
-  logical, intent(in), optional :: reconcile
   integer, intent(out), optional :: rc
 
   integer :: localrc
@@ -1375,7 +1380,7 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
   if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
   if (present(convention)) then
-    call format_key(key, "", localrc, convention=convention, purpose=purpose)
+    call ESMF_InfoFormatKey(key, "", localrc, convention=convention, purpose=purpose)
     if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, ESMF_CONTEXT, rcToReturn=rc)) return
 
     info = ESMF_InfoCreate(isrc, key, rc=localrc)
@@ -1396,13 +1401,9 @@ type(ESMF_KeywordEnforcer), optional :: keywordEnforcer ! must use keywords belo
 {% include "ESMF_Attribute-ProcFinalize.jinja2" %}{{ "" }}
 {% endfor %}
 
-subroutine ESMF_AttPackStreamJSON(attpack, output, flattenPackList, includeUnset, includeLinks, rc)
-  !tdk:question: flattenPackList, includeUnset, includeLinks NOOP. is this okay?
+subroutine ESMF_AttPackStreamJSON(attpack, output, rc)
   type(ESMF_AttPack), intent(in) :: attpack
   character(len=*), intent(out), optional :: output
-  logical, intent(in) :: flattenPackList
-  logical, intent(in) :: includeUnset
-  logical, intent(in) :: includeLinks
   integer, intent(inout), optional :: rc
 
   integer :: localrc
