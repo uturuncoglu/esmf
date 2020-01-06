@@ -73,7 +73,8 @@ program ESMF_InfoUTest
                            attrs_types, attrs_obj_dst, attrs_obj_src, &
                            attrs_obj_new, attrs_parse, attrs_update_lhs, &
                            attrs_update_rhs, attrs_inq, attrs_eq_lhs, &
-                           attrs_eq_rhs, irecurse, ipkey, info_charalloc
+                           attrs_eq_rhs, irecurse, ipkey, info_charalloc, &
+                           info_uninit
 
   logical :: is_present, failed, is_set, is_present_copy_test, actual_logical, &
              desired_logical, isArray, isDirty
@@ -806,6 +807,18 @@ program ESMF_InfoUTest
 
   call ESMF_InfoDestroy(info_charalloc, rc=rc)
   if (rc /= ESMF_SUCCESS) call ESMF_Finalize(endflag=ESMF_END_ABORT)
+  !----------------------------------------------------------------------------
+
+  !----------------------------------------------------------------------------
+  !NEX_UTest
+  write(name, *) "ESMF_Info Check Initialization"
+  write(failMsg, *) "Did not handle uninitialized object"
+  rc = ESMF_FAILURE
+  failed = .false.
+
+  call ESMF_InfoSet(info_uninit, "not-init", "empty-value", rc=rc)
+
+  call ESMF_Test(rc==ESMF_RC_OBJ_NOT_CREATED, name, failMsg, result, ESMF_SRCLINE)
   !----------------------------------------------------------------------------
 
   !----------------------------------------------------------------------------

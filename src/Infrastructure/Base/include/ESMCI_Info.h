@@ -74,6 +74,11 @@ using json = nlohmann::json;  // Convenience rename for JSON namespace.
   catch (json::type_error &e) {\
     ESMF_THROW_JSON(e, "ESMC_RC_ARG_BAD", ESMC_RC_ARG_BAD);}
 
+#define ESMF_INFO_CHECKINIT(info_to_check, esmf_rc_to_return) \
+  if (!info_to_check) { \
+    ESMC_LogDefault.MsgFoundError(ESMF_RC_OBJ_NOT_CREATED, "Info pointer is null. Object has not been created appropriately. Was ESMF_InfoCreate used?", ESMC_CONTEXT, &esmf_rc_to_return); \
+    return;}
+
 //-----------------------------------------------------------------------------
 //BOP
 // !CLASS:  Info

@@ -1,4 +1,3 @@
-
 // $Id$
 //
 // Earth System Modeling Framework
@@ -54,6 +53,7 @@ extern "C" {
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_InfoGetR4()"
 void ESMC_InfoGetR4(ESMCI::Info *info, char *key, float &value, int &esmf_rc, float *def, int *index, int &fortran_bool_recursive) {
+  ESMF_INFO_CHECKINIT(info, esmf_rc)
   esmf_rc = ESMF_FAILURE;
   try {
     std::string local_key(key);
@@ -67,6 +67,7 @@ void ESMC_InfoGetR4(ESMCI::Info *info, char *key, float &value, int &esmf_rc, fl
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_InfoGetR8()"
 void ESMC_InfoGetR8(ESMCI::Info *info, char *key, double &value, int &esmf_rc, double *def, int *index, int &fortran_bool_recursive) {
+  ESMF_INFO_CHECKINIT(info, esmf_rc)
   esmf_rc = ESMF_FAILURE;
   try {
     std::string local_key(key);
@@ -80,6 +81,7 @@ void ESMC_InfoGetR8(ESMCI::Info *info, char *key, double &value, int &esmf_rc, d
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_InfoGetI4()"
 void ESMC_InfoGetI4(ESMCI::Info *info, char *key, int &value, int &esmf_rc, int *def, int *index, int &fortran_bool_recursive) {
+  ESMF_INFO_CHECKINIT(info, esmf_rc)
   esmf_rc = ESMF_FAILURE;
   try {
     std::string local_key(key);
@@ -93,6 +95,7 @@ void ESMC_InfoGetI4(ESMCI::Info *info, char *key, int &value, int &esmf_rc, int 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_InfoGetI8()"
 void ESMC_InfoGetI8(ESMCI::Info *info, char *key, long int &value, int &esmf_rc, long int *def, int *index, int &fortran_bool_recursive) {
+  ESMF_INFO_CHECKINIT(info, esmf_rc)
   esmf_rc = ESMF_FAILURE;
   try {
     std::string local_key(key);
@@ -106,6 +109,7 @@ void ESMC_InfoGetI8(ESMCI::Info *info, char *key, long int &value, int &esmf_rc,
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_InfoGetLG()"
 void ESMC_InfoGetLG(ESMCI::Info *info, char *key, bool &value, int &esmf_rc, bool *def, int *index, int &fortran_bool_recursive) {
+  ESMF_INFO_CHECKINIT(info, esmf_rc)
   esmf_rc = ESMF_FAILURE;
   try {
     std::string local_key(key);
@@ -119,6 +123,7 @@ void ESMC_InfoGetLG(ESMCI::Info *info, char *key, bool &value, int &esmf_rc, boo
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_InfoGetArrayR4()"
 void ESMC_InfoGetArrayR4(ESMCI::Info *info, char *key, float *value, int &count, int &esmf_rc, int &fortran_bool_recursive, bool &fortran_bool_scalarToArray) {
+  ESMF_INFO_CHECKINIT(info, esmf_rc)
   esmf_rc = ESMF_FAILURE;
   try {
     std::string local_key(key);
@@ -151,6 +156,7 @@ void ESMC_InfoGetArrayR4(ESMCI::Info *info, char *key, float *value, int &count,
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_InfoGetArrayR8()"
 void ESMC_InfoGetArrayR8(ESMCI::Info *info, char *key, double *value, int &count, int &esmf_rc, int &fortran_bool_recursive, bool &fortran_bool_scalarToArray) {
+  ESMF_INFO_CHECKINIT(info, esmf_rc)
   esmf_rc = ESMF_FAILURE;
   try {
     std::string local_key(key);
@@ -183,6 +189,7 @@ void ESMC_InfoGetArrayR8(ESMCI::Info *info, char *key, double *value, int &count
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_InfoGetArrayI4()"
 void ESMC_InfoGetArrayI4(ESMCI::Info *info, char *key, int *value, int &count, int &esmf_rc, int &fortran_bool_recursive, bool &fortran_bool_scalarToArray) {
+  ESMF_INFO_CHECKINIT(info, esmf_rc)
   esmf_rc = ESMF_FAILURE;
   try {
     std::string local_key(key);
@@ -215,6 +222,7 @@ void ESMC_InfoGetArrayI4(ESMCI::Info *info, char *key, int *value, int &count, i
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_InfoGetArrayI8()"
 void ESMC_InfoGetArrayI8(ESMCI::Info *info, char *key, long int *value, int &count, int &esmf_rc, int &fortran_bool_recursive, bool &fortran_bool_scalarToArray) {
+  ESMF_INFO_CHECKINIT(info, esmf_rc)
   esmf_rc = ESMF_FAILURE;
   try {
     std::string local_key(key);
@@ -247,6 +255,7 @@ void ESMC_InfoGetArrayI8(ESMCI::Info *info, char *key, long int *value, int &cou
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_InfoGetArrayLG()"
 void ESMC_InfoGetArrayLG(ESMCI::Info *info, char *key, bool *value, int &count, int &esmf_rc, int &fortran_bool_recursive, bool &fortran_bool_scalarToArray) {
+  ESMF_INFO_CHECKINIT(info, esmf_rc)
   esmf_rc = ESMF_FAILURE;
   try {
     std::string local_key(key);
@@ -283,6 +292,7 @@ void ESMC_InfoGetArrayLG(ESMCI::Info *info, char *key, bool *value, int &count, 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_InfoSetR4()"
 void ESMC_InfoSetR4(ESMCI::Info *info, char *key, float &value, bool &force, int &esmf_rc, int *index, char *pkey) {
+  ESMF_INFO_CHECKINIT(info, esmf_rc)
   esmf_rc = ESMF_FAILURE;
   try {
     std::string local_key(key);
@@ -298,6 +308,7 @@ void ESMC_InfoSetR4(ESMCI::Info *info, char *key, float &value, bool &force, int
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_InfoSetR8()"
 void ESMC_InfoSetR8(ESMCI::Info *info, char *key, double &value, bool &force, int &esmf_rc, int *index, char *pkey) {
+  ESMF_INFO_CHECKINIT(info, esmf_rc)
   esmf_rc = ESMF_FAILURE;
   try {
     std::string local_key(key);
@@ -313,6 +324,7 @@ void ESMC_InfoSetR8(ESMCI::Info *info, char *key, double &value, bool &force, in
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_InfoSetI4()"
 void ESMC_InfoSetI4(ESMCI::Info *info, char *key, int &value, bool &force, int &esmf_rc, int *index, char *pkey) {
+  ESMF_INFO_CHECKINIT(info, esmf_rc)
   esmf_rc = ESMF_FAILURE;
   try {
     std::string local_key(key);
@@ -328,6 +340,7 @@ void ESMC_InfoSetI4(ESMCI::Info *info, char *key, int &value, bool &force, int &
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_InfoSetI8()"
 void ESMC_InfoSetI8(ESMCI::Info *info, char *key, long int &value, bool &force, int &esmf_rc, int *index, char *pkey) {
+  ESMF_INFO_CHECKINIT(info, esmf_rc)
   esmf_rc = ESMF_FAILURE;
   try {
     std::string local_key(key);
@@ -343,6 +356,7 @@ void ESMC_InfoSetI8(ESMCI::Info *info, char *key, long int &value, bool &force, 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_InfoSetLG()"
 void ESMC_InfoSetLG(ESMCI::Info *info, char *key, bool &value, bool &force, int &esmf_rc, int *index, char *pkey) {
+  ESMF_INFO_CHECKINIT(info, esmf_rc)
   esmf_rc = ESMF_FAILURE;
   try {
     std::string local_key(key);
@@ -358,6 +372,7 @@ void ESMC_InfoSetLG(ESMCI::Info *info, char *key, bool &value, bool &force, int 
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_InfoSetArrayR4()"
 void ESMC_InfoSetArrayR4(ESMCI::Info *info, char *key, float *value, int &count, bool &force, int &esmf_rc, char *pkey) {
+  ESMF_INFO_CHECKINIT(info, esmf_rc)
   esmf_rc = ESMF_FAILURE;
   try {
     std::string local_key(key);
@@ -373,6 +388,7 @@ void ESMC_InfoSetArrayR4(ESMCI::Info *info, char *key, float *value, int &count,
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_InfoSetArrayR8()"
 void ESMC_InfoSetArrayR8(ESMCI::Info *info, char *key, double *value, int &count, bool &force, int &esmf_rc, char *pkey) {
+  ESMF_INFO_CHECKINIT(info, esmf_rc)
   esmf_rc = ESMF_FAILURE;
   try {
     std::string local_key(key);
@@ -388,6 +404,7 @@ void ESMC_InfoSetArrayR8(ESMCI::Info *info, char *key, double *value, int &count
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_InfoSetArrayI4()"
 void ESMC_InfoSetArrayI4(ESMCI::Info *info, char *key, int *value, int &count, bool &force, int &esmf_rc, char *pkey) {
+  ESMF_INFO_CHECKINIT(info, esmf_rc)
   esmf_rc = ESMF_FAILURE;
   try {
     std::string local_key(key);
@@ -403,6 +420,7 @@ void ESMC_InfoSetArrayI4(ESMCI::Info *info, char *key, int *value, int &count, b
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_InfoSetArrayI8()"
 void ESMC_InfoSetArrayI8(ESMCI::Info *info, char *key, long int *value, int &count, bool &force, int &esmf_rc, char *pkey) {
+  ESMF_INFO_CHECKINIT(info, esmf_rc)
   esmf_rc = ESMF_FAILURE;
   try {
     std::string local_key(key);
@@ -418,6 +436,7 @@ void ESMC_InfoSetArrayI8(ESMCI::Info *info, char *key, long int *value, int &cou
 #undef  ESMC_METHOD
 #define ESMC_METHOD "ESMC_InfoSetArrayLG()"
 void ESMC_InfoSetArrayLG(ESMCI::Info *info, char *key, bool *value, int &count, bool &force, int &esmf_rc, char *pkey) {
+  ESMF_INFO_CHECKINIT(info, esmf_rc)
   esmf_rc = ESMF_FAILURE;
   try {
     std::string local_key(key);
