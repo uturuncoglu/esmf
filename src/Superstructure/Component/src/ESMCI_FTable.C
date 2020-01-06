@@ -1875,7 +1875,6 @@ std::cout << "calling out of case FT_VOIDP1INTP" << "\n";
           if (presentFlag){
 
             // get the attribute value
-            //tdk:?: does this use a default convention and purpose?
             std::string value;
             try {
               value = info->get<std::string>(key_cr);

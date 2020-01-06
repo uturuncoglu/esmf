@@ -35,8 +35,6 @@ using namespace std;
 //EOP
 //-----------------------------------------------------------------------------
 
-void break_here() {} //tdk:rm
-
 void finalizeFailure(int& rc, char failMsg[], string msg) {
   rc = ESMF_FAILURE;
   strcpy(failMsg, msg.c_str());

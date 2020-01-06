@@ -49,8 +49,6 @@ namespace ESMCI {
 // Helper Functions -----------------------------------------------------------
 //-----------------------------------------------------------------------------
 
-void break_here() {} //tdk:rm last
-
 #undef  ESMC_METHOD
 #define ESMC_METHOD "alignOffset()"
 void alignOffset(int &offset) {
