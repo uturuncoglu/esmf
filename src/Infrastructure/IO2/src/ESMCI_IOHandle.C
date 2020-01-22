@@ -332,7 +332,7 @@ void readPIOAttributes(json& var_meta, int natts, int ncid, int varid, int &rc) 
 #define ESMC_METHOD "writePIOAttributes()"
 void writePIOAttributes(const json& attrs, int ncid, int varid, int& rc) {
   rc = ESMF_FAILURE;
-
+  //tdk:todo: do not write attributes starting with "_esmf_*"
   try {
     int pio_rc;
     for (json::const_iterator it_attrs=attrs.cbegin(); it_attrs!=attrs.cend(); it_attrs++) {
