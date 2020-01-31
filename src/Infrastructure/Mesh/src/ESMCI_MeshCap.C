@@ -1503,6 +1503,7 @@ MeshCap *MeshCap::meshcreate_easy_elems(int *pdim,
                                         int *has_elemCoords,
                                         double *elemCoords,
                                         ESMC_CoordSys_Flag *coordSys,
+                                        double *connectTol, 
                                         bool _is_esmf_mesh, int *rc) {
 #undef ESMC_METHOD
 #define ESMC_METHOD "MeshCap::meshcreate_easy_elems()"
@@ -1520,7 +1521,7 @@ MeshCap *MeshCap::meshcreate_easy_elems(int *pdim,
                                 num_elemCorners, elemCornerCoords,
                                 has_elemArea, elemArea,
                                 has_elemCoords, elemCoords,
-                                coordSys, &localrc);
+                                coordSys, connectTol, &localrc);
     if (ESMC_LogDefault.MsgFoundError(localrc, ESMCI_ERR_PASSTHRU,
                                        ESMC_CONTEXT, rc)) return NULL;
   } else {

@@ -222,6 +222,8 @@ void ESMCI_meshcreate_easy_elems(Mesh **meshpp,
                                  double *elemArea,
                                  int *has_elemCoords,
                                  double *elemCoords,
-                                 ESMC_CoordSys_Flag *coordSys, int *rc);
+                                 ESMC_CoordSys_Flag *coordSys, 
+                                 double *connectTol, 
+                                 int *rc);
 
 #endif // ESMCI_Mesh_Glue_h

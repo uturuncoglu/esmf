@@ -3447,10 +3447,10 @@ end function ESMF_MeshCreateDual
     function  ESMF_MeshCreateEasyElems1Type(parametricDim, coordSys, &
                    elementIds, elementType, elementCornerCoords, &
                    elementMask, elementArea, elementCoords, &
-                   elementDistgrid, rc)
+                   elementDistgrid, connectTol, rc)
 !
 !
-! !RETURN VALUE:
+! !Return VALUE:
     type(ESMF_Mesh)                           :: ESMF_MeshCreateEasyElems1Type
 ! !ARGUMENTS:
     integer,            intent(in)            :: parametricDim
@@ -3461,7 +3461,8 @@ end function ESMF_MeshCreateDual
     integer,            intent(in),  optional :: elementMask(:)
     real(ESMF_KIND_R8), intent(in),  optional :: elementArea(:)
     real(ESMF_KIND_R8), intent(in),  optional :: elementCoords(:,:)
-    type(ESMF_DistGrid), intent(in),  optional :: elementDistgrid
+    type(ESMF_DistGrid), intent(in), optional :: elementDistgrid
+    real(ESMF_KIND_R8), intent(in),  optional :: connectTol
     integer,            intent(out), optional :: rc
 !
 ! !DESCRIPTION:
@@ -3542,6 +3543,10 @@ end function ESMF_MeshCreateDual
 !          However, specifying an externally created Distgrid gives the user more control over aspects of
 !          the Distgrid containing those sequence indices (e.g. how they are broken into DEs).
 !          If not present, a 1D Distgrid will be created internally consisting of one DE per PET.
+!   \item [{[connectTol]}]
+!         The tolerance used when connecting together the corners of the elements. If specified, then corners within the tolerance 
+!         of each other are merged together to form one node in the resulting Mesh. This forms a connection between the elements which own those corners.
+!         If not specified, then no attempt is made to form connections between elements. 
 !   \item [{[rc]}]
 !         Return code; equals {\tt ESMF\_SUCCESS} if there are no errors.
 !   \end{description}
@@ -3574,7 +3579,7 @@ end function ESMF_MeshCreateDual
                    elementIds, elementTypes, &
                    reshape(elementCornerCoords,(/spatialDim,num_elemCorners*num_elems/)), &
                    elementMask, elementArea, elementCoords, &
-                   elementDistgrid, rc)
+                   elementDistgrid, connectTol, rc)
 
     ! deallocate array
     deallocate(elementTypes)
@@ -3592,7 +3597,7 @@ end function ESMF_MeshCreateDual
     function  ESMF_MeshCreateEasyElemsGen(parametricDim, coordSys, &
                    elementIds, elementTypes, elementCornerCoords, &
                    elementMask, elementArea, elementCoords, &
-                   elementDistgrid, rc)
+                   elementDistgrid, connectTol, rc)
 !
 !
 ! !RETURN VALUE:
@@ -3606,7 +3611,8 @@ end function ESMF_MeshCreateDual
     integer,            intent(in),  optional :: elementMask(:)
     real(ESMF_KIND_R8), intent(in),  optional :: elementArea(:)
     real(ESMF_KIND_R8), intent(in),  optional :: elementCoords(:,:)
-    type(ESMF_DistGrid), intent(in),  optional :: elementDistgrid
+    type(ESMF_DistGrid), intent(in), optional :: elementDistgrid
+    real(ESMF_KIND_R8), intent(in),  optional :: connectTol
     integer,            intent(out), optional :: rc
 !
 ! !DESCRIPTION:
@@ -3691,6 +3697,10 @@ end function ESMF_MeshCreateDual
 !          However, specifying an externally created Distgrid gives the user more control over aspects of
 !          the Distgrid containing those sequence indices (e.g. how they are broken into DEs).
 !          If not present, a 1D Distgrid will be created internally consisting of one DE per PET.
+!   \item [{[connectTol]}]
+!         The tolerance used when connecting together the corners of the elements. If specified, then corners within the tolerance 
+!         of each other are merged together to form one node in the resulting Mesh. This forms a connection between the elements which own those corners.
+!         If not specified, then no attempt is made to form connections between elements. 
 !   \item [{[rc]}]
 !         Return code; equals {\tt ESMF\_SUCCESS} if there are no errors.
 !   \end{description}
@@ -3768,10 +3778,10 @@ end function ESMF_MeshCreateDual
                num_elemCorners,elementCornerCoords, &
                areaPresent, elementArea, &
                coordsPresent, elementCoords, &
-               coordSysLocal, localrc)
+               coordSysLocal, connectTol, localrc)
           if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, &
                ESMF_CONTEXT, rcToReturn=rc)) return
-       else
+       else 
           areaPresent=0
           coordsPresent=1
           call C_ESMC_MeshCreateEasyElems(ESMF_MeshCreateEasyElemsGen%this, &
@@ -3781,7 +3791,7 @@ end function ESMF_MeshCreateDual
                num_elemCorners,elementCornerCoords, &
                areaPresent, tmpArea, &
                coordsPresent, elementCoords, &
-               coordSysLocal, localrc)
+               coordSysLocal, connectTol, localrc)
           if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, &
                ESMF_CONTEXT, rcToReturn=rc)) return
        endif
@@ -3796,7 +3806,7 @@ end function ESMF_MeshCreateDual
                num_elemCorners,elementCornerCoords, &
                areaPresent, elementArea, &
                coordsPresent, tmpCoords, &
-               coordSysLocal, localrc)
+               coordSysLocal, connectTol, localrc)
           if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, &
                ESMF_CONTEXT, rcToReturn=rc)) return
        else
@@ -3809,7 +3819,7 @@ end function ESMF_MeshCreateDual
                num_elemCorners,elementCornerCoords, &
                areaPresent, tmpArea, &
                coordsPresent, tmpCoords, &
-               coordSysLocal, localrc)
+               coordSysLocal, connectTol, localrc)
           if (ESMF_LogFoundError(localrc, ESMF_ERR_PASSTHRU, &
                ESMF_CONTEXT, rcToReturn=rc)) return
        endif

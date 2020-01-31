@@ -463,6 +463,7 @@ extern "C" void FTN_X(c_esmc_meshfitonvm)(MeshCap **meshpp, VM **vm, int *rc) {
   (*meshpp)->fit_on_vm(vm,rc);
 }
 
+
 extern "C" void FTN_X(c_esmc_meshcreateeasyelems)(MeshCap **meshpp,
                                                   int *pdim,
                                                   int *sdim,
@@ -476,7 +477,9 @@ extern "C" void FTN_X(c_esmc_meshcreateeasyelems)(MeshCap **meshpp,
                                                   double *elemArea,
                                                   int *has_elemCoords,
                                                   double *elemCoords,
-                                                  ESMC_CoordSys_Flag *coordSys, int *rc)
+                                                  ESMC_CoordSys_Flag *coordSys, 
+                                                  double *connectTol,
+                                                  int *rc)
 {
 #undef  ESMC_METHOD
 #define ESMC_METHOD "c_esmc_meshcreateeasyelems()"
@@ -484,18 +487,22 @@ extern "C" void FTN_X(c_esmc_meshcreateeasyelems)(MeshCap **meshpp,
   // Create Mesh depending on whether MOAB or not
   if (Moab_on) {
     *meshpp=MeshCap::meshcreate_easy_elems(pdim, sdim,
-                                num_elems, elemIdsII, elemTypes, elemMaskII,
-                                num_elemCorners, elemCornerCoords,
-                                has_elemArea, elemArea,
-                                has_elemCoords, elemCoords,
-                                coordSys,false,rc);
+                                           num_elems, elemIdsII, elemTypes, elemMaskII,
+                                           num_elemCorners, elemCornerCoords,
+                                           has_elemArea, elemArea,
+                                           has_elemCoords, elemCoords,
+                                           coordSys,
+                                           ESMC_NOT_PRESENT_FILTER(connectTol),
+                                           false,rc);
   } else {
     *meshpp=MeshCap::meshcreate_easy_elems(pdim, sdim,
-                                num_elems, elemIdsII, elemTypes, elemMaskII,
-                                num_elemCorners, elemCornerCoords,
-                                has_elemArea, elemArea,
-                                has_elemCoords, elemCoords,
-                                coordSys,true,rc);
+                                           num_elems, elemIdsII, elemTypes, elemMaskII,
+                                           num_elemCorners, elemCornerCoords,
+                                           has_elemArea, elemArea,
+                                           has_elemCoords, elemCoords,
+                                           coordSys,
+                                           ESMC_NOT_PRESENT_FILTER(connectTol),
+                                           true,rc);
   }
 
 } // meshcreate
