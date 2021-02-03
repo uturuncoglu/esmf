@@ -119,8 +119,8 @@ ESMF_CXXLINKRPATHS      =
 ############################################################
 # Special libs to link against
 #
-ESMF_F90LINKLIBS += -lpgas-dmapp
-ESMF_CXXLINKLIBS += -lpgas-dmapp
+ESMF_F90LINKLIBS += 
+ESMF_CXXLINKLIBS += 
 
 ############################################################
 # Blank out shared library options
