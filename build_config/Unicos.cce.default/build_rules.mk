@@ -7,7 +7,6 @@
 # Default compiler setting.
 #
 ESMF_F90DEFAULT         = ftn
-ESMF_F90LINKERDEFAULT   = CC
 ESMF_CXXDEFAULT         = CC
 
 ############################################################
@@ -49,51 +48,45 @@ ESMF_F90COMPILER_VERSION    = ${ESMF_F90COMPILER} -V
 ESMF_CXXCOMPILER_VERSION    = ${ESMF_CXXCOMPILER} --version
 
 ############################################################
-# on XT with CCE optimization level must be set explicitely
-#
-#ESMF_OPTLEVELDEFAULT  = 2
-
-############################################################
-# XT compute nodes do not have support for POSIX IPC (memory mapped files)
+# Disable POSIX IPC (memory mapped files) support on Cray XC
 #
 ESMF_CXXCOMPILECPPFLAGS += -DESMF_NO_POSIXIPC
 
 ############################################################
-# XT compute nodes do not have support for POSIX dynamic linking
+# Disable POSIX dynamic linking support on Cray XC
 #
 ESMF_CXXCOMPILECPPFLAGS += -DESMF_NO_DLFCN
 
 ############################################################
-# XT compute nodes do not have support for "gethostid()"
+# Disable "gethostid()" support on Cray XC
 #
 ESMF_CXXCOMPILECPPFLAGS += -DESMF_NO_GETHOSTID
 
 ############################################################
-# XT compute nodes do not have support for signals
+# Disable signals support on Cray XC
 #
 ESMF_CXXCOMPILECPPFLAGS += -DESMF_NO_SIGNALS
 
 ############################################################
-# XT compute nodes do not have support for system call
+# Disable system call support on Cray XC
 #
 ESMF_CXXCOMPILECPPFLAGS += -DESMF_NO_SYSTEMCALL
 
 ############################################################
-# XT compute nodes do not have support for Pthreads
+# Disable Pthreads support on Cray XC
 #
 ESMF_PTHREADS := OFF
 
 ############################################################
-# XT compute nodes do not have support for OpenMP
+# OpenMP compiler and linker flags
 #
-ESMF_OPENMP := OFF
-ESMF_F90COMPILEOPTS += -h noomp
-ESMF_CXXCOMPILEOPTS += -h noomp
+ESMF_F90COMPILEOPTS += -homp
+ESMF_CXXCOMPILEOPTS += -fopenmp
 
 ############################################################
 # How to specify module directories
 #
-ESMF_F90IMOD        = -em -J
+ESMF_F90IMOD        = -I
 
 ############################################################
 # Help ftn to understand Fortran suffices
