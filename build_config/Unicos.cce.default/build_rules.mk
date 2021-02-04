@@ -116,11 +116,6 @@ ESMF_F90LINKLIBS +=
 ESMF_CXXLINKLIBS += 
 
 ############################################################
-# Blank out shared library options
-#
-ESMF_SL_LIBS_TO_MAKE  =
-
-############################################################
 # Disable WebService testing for now
 #
 # TODO: Remove this variable and associated infrastructure as soon as
@@ -132,3 +127,18 @@ ESMF_NOWEBSERVTESTING = TRUE
 # Override default C preprocessor on this platform
 #
 ESMF_CPPDEFAULT       = gcc -E -P -x c
+
+############################################################
+# Shared library options
+#
+ESMF_SL_LIBOPTS  += -shared
+
+############################################################
+# Shared object options
+#
+ESMF_SO_F90COMPILEOPTS  = -fPIC
+ESMF_SO_F90LINKOPTS     = -shared
+ESMF_SO_F90LINKOPTSEXE  = -Wl,-export-dynamic
+ESMF_SO_CXXCOMPILEOPTS  = -fPIC
+ESMF_SO_CXXLINKOPTS     = -shared
+ESMF_SO_CXXLINKOPTSEXE  = -Wl,-export-dynamic
