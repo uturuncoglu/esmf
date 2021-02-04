@@ -48,6 +48,11 @@ ESMF_F90COMPILER_VERSION    = ${ESMF_F90COMPILER} -V
 ESMF_CXXCOMPILER_VERSION    = ${ESMF_CXXCOMPILER} --version
 
 ############################################################
+# Cray Fortran compiler still needs a numerical opt level default
+#
+ESMF_OPTLEVELDEFAULT  = 2
+
+############################################################
 # Disable POSIX IPC (memory mapped files) support on Cray XC
 #
 ESMF_CXXCOMPILECPPFLAGS += -DESMF_NO_POSIXIPC
@@ -100,7 +105,7 @@ ESMF_F90COMPILEFIXNOCPP  = -f fixed -N 132
 # Conditionally switch to C++11 standard
 #
 ifneq ($(ESMF_CXXSTD),default)
-ESMF_CXXSTDFLAG         = -hstd=c++$(ESMF_CXXSTD)
+ESMF_CXXSTDFLAG         = -std=c++$(ESMF_CXXSTD)
 endif
 
 ############################################################
