@@ -30,7 +30,7 @@ ifeq ($(ESMF_COMM),mpi)
 # Vendor MPI -----------------------------------------------
 ESMF_F90LINKLIBS       += 
 ESMF_CXXLINKLIBS       += 
-ESMF_MPIRUNDEFAULT      = mpirun.srun
+ESMF_MPIRUNDEFAULT      = mpiexec
 ESMF_MPIMPMDRUNDEFAULT  =
 else
 ifeq ($(ESMF_COMM),user)
@@ -100,13 +100,6 @@ ESMF_F90COMPILEFREECPP   = -f free -N 255 -F
 ESMF_F90COMPILEFREENOCPP = -f free -N 255
 ESMF_F90COMPILEFIXCPP    = -f fixed -N 132 -F
 ESMF_F90COMPILEFIXNOCPP  = -f fixed -N 132
-
-############################################################
-# Conditionally switch to C++11 standard
-#
-ifneq ($(ESMF_CXXSTD),default)
-ESMF_CXXSTDFLAG         = -std=c++$(ESMF_CXXSTD)
-endif
 
 ############################################################
 # Blank out variables to prevent rpath encoding
