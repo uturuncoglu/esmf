@@ -102,36 +102,10 @@ ESMF_F90COMPILEFIXCPP    = -f fixed -N 132 -F
 ESMF_F90COMPILEFIXNOCPP  = -f fixed -N 132
 
 ############################################################
-# Conditionally switch to C++11 standard
+# Set rpath syntax
 #
-ifneq ($(ESMF_CXXSTD),default)
-ESMF_CXXSTDFLAG         = -std=c++$(ESMF_CXXSTD)
-endif
-
-############################################################
-# Blank out variables to prevent rpath encoding
-#
-ESMF_F90LINKRPATHS      =
-ESMF_CXXLINKRPATHS      =
-
-############################################################
-# Special libs to link against
-#
-ESMF_F90LINKLIBS += 
-ESMF_CXXLINKLIBS += 
-
-############################################################
-# Disable WebService testing for now
-#
-# TODO: Remove this variable and associated infrastructure as soon as
-# TODO: WebService testing is robust enough to work on all systems.
-#
-ESMF_NOWEBSERVTESTING = TRUE
-
-############################################################
-# Override default C preprocessor on this platform
-#
-ESMF_CPPDEFAULT       = gcc -E -P -x c
+ESMF_F90RPATHPREFIX         = -Wl,-rpath,
+ESMF_CXXRPATHPREFIX         = -Wl,-rpath,
 
 ############################################################
 # Shared library options
@@ -147,3 +121,16 @@ ESMF_SO_F90LINKOPTSEXE  = -Wl,-export-dynamic
 ESMF_SO_CXXCOMPILEOPTS  = -fPIC
 ESMF_SO_CXXLINKOPTS     = -shared
 ESMF_SO_CXXLINKOPTSEXE  = -Wl,-export-dynamic
+
+############################################################
+# Disable WebService testing for now
+#
+# TODO: Remove this variable and associated infrastructure as soon as
+# TODO: WebService testing is robust enough to work on all systems.
+#
+ESMF_NOWEBSERVTESTING = TRUE
+
+############################################################
+# Override default C preprocessor on this platform
+#
+ESMF_CPPDEFAULT       = gcc -E -P -x c
