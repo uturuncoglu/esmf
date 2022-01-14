@@ -4455,7 +4455,7 @@ call ESMF_PointerLog(gridListE%keyGrid%this, prefix="about to destroy Grid: ", &
     do while (associated(meshList))
       meshListE=>meshList
       meshList=>meshList%prev
-#define CLEAN_OUT_OLD_ACCEPTOR_MESH
+#define CLEAN_OUT_OLD_ACCEPTOR_MESH_off
 #ifdef CLEAN_OUT_OLD_ACCEPTOR_MESH
 call ESMF_PointerLog(meshListE%keyMesh%this, prefix="about to destroy Mesh: ", &
   logMsgFlag=ESMF_LOGMSG_DEBUG, rc=rc)
