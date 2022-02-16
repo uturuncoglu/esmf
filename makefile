@@ -88,9 +88,13 @@ endif
 	-@echo "--------------------------------------------------------------"
 	-@echo "Make version:"; $(MAKE) -v; echo ""
 	-@echo "--------------------------------------------------------------"
+	-@echo "CMake version:"; cmake --version; echo ""
+	-@echo "--------------------------------------------------------------"
 	-@echo "Fortran Compiler version:"; $(ESMF_F90COMPILER_VERSION); echo ""
 	-@echo "--------------------------------------------------------------"
 	-@echo "C++ Compiler version:"; $(ESMF_CXXCOMPILER_VERSION); echo "" 
+	-@echo "--------------------------------------------------------------"
+	-@echo "C Compiler version:"; $(ESMF_CCOMPILER_VERSION); echo "" 
 	-@echo "--------------------------------------------------------------"
 	-@echo "Preprocessor version:"
 	@$(ESMF_CPP) --version $(ESMF_DIR)/scripts/empty.C
@@ -326,6 +330,8 @@ info:   script_info
 	-@echo "Location of the Fortran linker:   " `which $(word 1, $(ESMF_F90LINKER))`
 	-@echo "Location of the C++ compiler:     " `which $(word 1, $(ESMF_CXXCOMPILER))`
 	-@echo "Location of the C++ linker:       " `which $(word 1, $(ESMF_CXXLINKER))`
+	-@echo "Location of the C compiler:       " `which $(word 1, $(ESMF_CCOMPILER))`
+	-@echo "Location of the C linker:         " `which $(word 1, $(ESMF_CLINKER))`
 	-@echo ""
 	-@echo "Fortran compiler flags:"
 	-@echo "ESMF_F90COMPILER: $(ESMF_F90COMPILER)"
@@ -356,6 +362,19 @@ info:   script_info
 	-@echo "ESMF_CXXLINKRPATHS: $(ESMF_CXXLINKRPATHS)"
 	-@echo "ESMF_CXXLINKLIBS: $(ESMF_CXXLINKLIBS)"
 	-@echo "ESMF_CXXESMFLINKLIBS: $(ESMF_CXXESMFLINKLIBS)"
+	-@echo ""
+	-@echo "C compiler flags:"
+	-@echo "ESMF_CCOMPILER: $(ESMF_CCOMPILER)"
+	-@echo "ESMF_CCOMPILEOPTS: $(ESMF_CCOMPILEOPTS)"
+	-@echo "ESMF_CCOMPILEPATHS: $(ESMF_CCOMPILEPATHS)"
+	-@echo "ESMF_CCOMPILECPPFLAGS: $(ESMF_CCOMPILECPPFLAGS)"
+	-@echo ""
+	-@echo "C linker flags:"
+	-@echo "ESMF_CLINKOPTS: $(ESMF_CLINKOPTS)"
+	-@echo "ESMF_CLINKPATHS: $(ESMF_CLINKPATHS)"
+	-@echo "ESMF_CLINKRPATHS: $(ESMF_CLINKRPATHS)"
+	-@echo "ESMF_CLINKLIBS: $(ESMF_CLINKLIBS)"
+	-@echo "ESMF_CESMFLINKLIBS: $(ESMF_CESMFLINKLIBS)"
 	-@echo ""
 ifneq ($(strip $(ESMF_SL_LIBS_TO_MAKE)),)
 	-@echo "Shared library build:"
@@ -677,6 +696,9 @@ install:
 	cp -f $(ESMF_MODDIR)/*.mod $(ESMF_INSTALL_MODDIR_ABSPATH)
 	mkdir -p $(ESMF_INSTALL_LIBDIR_ABSPATH)
 	cp -f $(ESMF_LIBDIR)/libesmf*.* $(ESMF_INSTALL_LIBDIR_ABSPATH)
+ifeq ($(ESMF_PIO),internal)
+	cp -f $(ESMF_LIBDIR)/libpioc.* $(ESMF_INSTALL_LIBDIR_ABSPATH)
+endif
 	@for lib in $(wildcard $(ESMF_INSTALL_LIBDIR_ABSPATH)/libesmf*.dylib) foo ; do \
 	  if [ $$lib != "foo" ]; then \
 	    install_name_tool -id "$$lib" $$lib ; \
