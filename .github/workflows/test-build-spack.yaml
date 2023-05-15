@@ -16,8 +16,10 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
-        compiler: [gcc@11.3.0]
-        esmf: [esmf@8.4.2+external-parallelio, esmf@8.4.2~external-parallelio]
+        #compiler: [gcc@11.3.0]
+        #esmf: [esmf@8.4.2+external-parallelio, esmf@8.4.2~external-parallelio]
+        compiler: [oneapi@2023.0.0]
+        esmf: [esmf@8.4.2+external-parallelio]
 
     steps:
     # check out base repo
@@ -59,6 +61,9 @@ jobs:
           -d ${{ matrix.esmf }} \
           -i ~/.spack-ci \
           -r ${{ github.workspace }} 
+
+    - name: Setup tmate session
+      uses: mxschmitt/action-tmate@v3
 
     # install test environment
     - name: Install ESMF with Spack 
