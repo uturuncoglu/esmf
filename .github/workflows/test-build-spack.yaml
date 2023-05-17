@@ -62,8 +62,8 @@ jobs:
           -i ~/.spack-ci \
           -r ${{ github.workspace }} 
 
-    #- name: Setup tmate session
-    #  uses: mxschmitt/action-tmate@v3
+    - name: Setup tmate session
+      uses: mxschmitt/action-tmate@v3
 
     # install test environment
     #- name: Install ESMF with Spack 
