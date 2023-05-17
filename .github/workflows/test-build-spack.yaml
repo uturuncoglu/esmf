@@ -35,21 +35,21 @@ jobs:
         sudo apt-get -qq install python3-dev
 
     # restore Intel oneAPI compiler installation from cache
-    #- name: Restore Intel oneAPI Compiler Installation
-    #  uses: actions/cache@v3
-    #  if: ${{ startsWith(matrix.compiler, 'oneapi') }}
-    #  with:
-    #    path: /opt/intel/oneapi
-    #    key: intel-${{ runner.os }}-${{ matrix.compiler }}
-    #    restore-keys: |
-    #      intel-${{ runner.os }}-${{ matrix.compiler }}
+    - name: Restore Intel oneAPI Compiler Installation
+      uses: actions/cache@v3
+      if: ${{ startsWith(matrix.compiler, 'oneapi') }}
+      with:
+        path: /opt/intel/oneapi
+        key: intel-${{ runner.os }}-${{ matrix.compiler }}
+        restore-keys: |
+          intel-${{ runner.os }}-${{ matrix.compiler }}
 
     # install compiler
-    #- name: Install Intel oneAPI Compiler
-    #  if: ${{ startsWith(matrix.compiler, 'oneapi') }}
-    #  run: |
-    #    cd ${{ github.workspace }}/.github/workflows
-    #    scripts/install_oneapi.sh -c ${{ matrix.compiler }}
+    - name: Install Intel oneAPI Compiler
+      if: ${{ startsWith(matrix.compiler, 'oneapi') }}
+      run: |
+        cd ${{ github.workspace }}/.github/workflows
+        scripts/install_oneapi.sh -c ${{ matrix.compiler }}
 
     # concretize test environment 
     - name: Concretize Spack Environment Using YAML Specification
@@ -62,30 +62,30 @@ jobs:
           -i ~/.spack-ci \
           -r ${{ github.workspace }} 
 
-    - name: Setup tmate session
-      uses: mxschmitt/action-tmate@v3
+    #- name: Setup tmate session
+    #  uses: mxschmitt/action-tmate@v3
 
     # install test environment
-    - name: Install ESMF with Spack 
-      if: ${{ success() }}
-      run: |
-        ${{ github.workspace }}/.github/workflows/scripts/spack_install.sh \
-          -r ${{ github.workspace }}
+    #- name: Install ESMF with Spack 
+    #  if: ${{ success() }}
+    #  run: |
+    #    ${{ github.workspace }}/.github/workflows/scripts/spack_install.sh \
+    #      -r ${{ github.workspace }}
 
     # checkout NUOPC app prototypes
-    - name: Checkout NUOPC app prototypes
-      uses: actions/checkout@v3
-      if: ${{ success() }}
-      with:
-        repository: esmf-org/nuopc-app-prototypes
-        path: ${{ github.workspace }}/nuopc-app-prototypes
-        ref: develop
+    #- name: Checkout NUOPC app prototypes
+    #  uses: actions/checkout@v3
+    #  if: ${{ success() }}
+    #  with:
+    #    repository: esmf-org/nuopc-app-prototypes
+    #    path: ${{ github.workspace }}/nuopc-app-prototypes
+    #    ref: develop
 
     # test installation using NUOPC app prototypes
-    - name: Run NUOPC app prototypes
-      if: ${{ success() }}
-      run: |
-        ${{ github.workspace }}/.github/workflows/scripts/run_nuopc_app_proto.sh \
-          -c ${{ matrix.compiler }} \
-          -r ${{ github.workspace }}/nuopc-app-prototypes \
-          -s ~/.spack-ci
+    #- name: Run NUOPC app prototypes
+    #  if: ${{ success() }}
+    #  run: |
+    #    ${{ github.workspace }}/.github/workflows/scripts/run_nuopc_app_proto.sh \
+    #      -c ${{ matrix.compiler }} \
+    #      -r ${{ github.workspace }}/nuopc-app-prototypes \
+    #      -s ~/.spack-ci
