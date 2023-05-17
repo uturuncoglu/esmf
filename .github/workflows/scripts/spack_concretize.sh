@@ -111,28 +111,17 @@ echo "  connect_timeout: 60" >> ~/.spack/config.yaml
 cat ~/.spack/config.yaml
 echo "::endgroup::"
 
-# add Intel MPI to spack
-if [[ "$comp" == *"oneapi"* ]]; then
-  echo "::group::Create packages.yaml"
-  #echo "packages:" > ~/.spack/packages.yaml 
-  #echo "  mpi:" >> ~/.spack/packages.yaml
-  #echo "    buildable: false" >> ~/.spack/packages.yaml
-  #echo "    require:" >> ~/.spack/packages.yaml
-  #echo "    - one_of: [${mpi}%${comp}]" >> ~/.spack/packages.yaml
-  #echo "  oneapi-mpi:" >> ~/.spack/packages.yaml
-  #echo "    externals:" >> ~/.spack/packages.yaml
-  #echo "    - spec: ${mpi}%${comp}" >> ~/.spack/packages.yaml
-  #echo "      prefix: /opt/intel/oneapi/mpi/$mpi_version" >> ~/.spack/packages.yaml
-  #echo "    buildable: false" >> ~/.spack/packages.yaml
-  echo "packages:" >> ~/.spack/packages.yaml
-  echo "  intel-oneapi-mpi:" >> ~/.spack/packages.yaml
-  echo "    externals:" >> ~/.spack/packages.yaml
-  echo "    - spec: intel-${mpi}" >> ~/.spack/packages.yaml
-  echo "      prefix: /opt/intel/oneapi/" >> ~/.spack/packages.yaml
-  echo "    buildable: false" >> ~/.spack/packages.yaml
-  cat ~/.spack/packages.yaml
-  echo "::endgroup::"
-fi
+# add Intel MPI to spack external tools
+#if [[ "$comp" == *"oneapi"* ]]; then
+#  echo "::group::Create packages.yaml"
+#  echo "  intel-oneapi-mpi:" >> ~/.spack/packages.yaml
+#  echo "    externals:" >> ~/.spack/packages.yaml
+#  echo "    - spec: intel-${mpi}" >> ~/.spack/packages.yaml
+#  echo "      prefix: /opt/intel/oneapi/" >> ~/.spack/packages.yaml
+#  echo "    buildable: false" >> ~/.spack/packages.yaml
+#  cat ~/.spack/packages.yaml
+#  echo "::endgroup::"
+#fi
 
 # create spack.yaml
 echo "::group::Create spack.yaml"
@@ -164,7 +153,7 @@ echo "    misc_cache: $install_dir/misc_cache" >> spack.yaml
 echo "    test_cache: $install_dir/test_cache" >> spack.yaml
 echo "    install_tree:" >> spack.yaml
 echo "      root: $install_dir/opt" >> spack.yaml
-#echo "    install_missing_compilers: true" >> spack.yaml
+echo "    install_missing_compilers: true" >> spack.yaml
 cat spack.yaml
 echo "::endgroup::"
 
