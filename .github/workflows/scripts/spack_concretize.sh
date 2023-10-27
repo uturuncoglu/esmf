@@ -51,7 +51,7 @@ echo "Compiler: $comp"
 echo "Dependencies: $deps"
 echo "Install Directory: $install_dir"
 echo "Run Directory: $run_dir"
-echo "Spack Version: $
+echo "Spack Version: $spack_ver"
 
 # go to directory
 cd $run_dir
