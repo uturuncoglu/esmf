@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # get arguments
-while getopts a:c:d:i:r: flag
+while getopts a:c:d:i:r:s: flag
 do
   case "${flag}" in
     a) arch=${OPTARG};;
@@ -9,6 +9,7 @@ do
     d) deps=${OPTARG};;
     i) install_dir=${OPTARG};;
     r) run_dir=${OPTARG};;
+    s) spack_ver=${OPTARG};;
   esac
 done
 
@@ -40,12 +41,17 @@ if [[ -z "$comp" || ! -z `echo $comp | grep '^-'` ]]; then
   comp="gcc@11.3.0"
 fi
 
+if [[ -z "$spack_ver" || ! -z `echo $spack_ver | grep '^-'` ]]; then
+  spack_ver="develop"
+fi
+
 # print out arguments
 echo "Target Architecture: $arch"
 echo "Compiler: $comp"
 echo "Dependencies: $deps"
 echo "Install Directory: $install_dir"
 echo "Run Directory: $run_dir"
+echo "Spack Version: $
 
 # go to directory
 cd $run_dir
@@ -53,6 +59,9 @@ cd $run_dir
 # checkout spack
 echo "::group::Checkout Spack"
 git clone https://github.com/spack/spack.git
+cd spack
+git checkout $spack_ver
+cd -
 echo "::endgroup::"
 
 # find available compilers
