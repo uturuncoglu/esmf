@@ -72,7 +72,7 @@ jobs:
         echo "matrix=${str0}${str1}${str2}"
 
         # output for next step
-        echo "matrix=${str1}${str2}" >> $GITHUB_OUTPUT
+        echo "matrix==${str0}${str1}${str2}" >> $GITHUB_OUTPUT
 
   build:
     needs: set-matrix
