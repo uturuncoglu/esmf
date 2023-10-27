@@ -56,9 +56,9 @@ jobs:
           str0="{\"spack_version\": [\"${{ inputs.spack_version }}\"],"
         fi
         if [ -z "${{ inputs.compiler }}" ]; then
-          str1="{\"compiler\": [\"${{ env.compiler }}\"],"
+          str1="\"compiler\": [\"${{ env.compiler }}\"],"
         else
-          str1="{\"compiler\": [\"${{ inputs.compiler }}\"],"  
+          str1="\"compiler\": [\"${{ inputs.compiler }}\"],"  
         fi
         if [ -z "${{ inputs.esmf_version }}" ]; then
           str2="\"esmf\": [\"${{ env.esmf_version }}+external-parallelio\", \"${{ env.esmf_version }}~external-parallelio\"]}"
