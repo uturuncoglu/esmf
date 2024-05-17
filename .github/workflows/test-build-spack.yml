@@ -80,7 +80,10 @@ jobs:
     - name: Install Core Development Tools
       run: |
         sudo apt-get -qq update
-        sudo add-apt-repository ppa:ubuntu-toolchain-r/test
+        #sudo add-apt-repository ppa:ubuntu-toolchain-r/test
+        #sudo add-apt-repository "https://salsa.debian.org/toolchain-team/gcc/tree/gcc-13-debian $(lsb_release -cs) main"
+        echo "deb http://cz.archive.ubuntu.com/ubuntu $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/temporary-repository.list
+        sudo apt-get -qq update
         sudo apt-get -qq install tar unzip file curl gringo
         sudo apt-get -qq install build-essential binutils-dev gfortran gdb
         sudo apt-get -qq install gfortran-12 g++-13 gfortran-13
