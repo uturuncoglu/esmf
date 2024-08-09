@@ -1,0 +1,34 @@
+name: Check ESMF Against Valgrind
+
+on: workflow_dispatch
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+
+    steps:
+    # check out base repo
+    - name: Checkout Base Repository
+      uses: actions/checkout@v3
+
+    # prepare core environment
+    - name: Install Core Development Tools
+      run: |
+        sudo apt-get -qq update
+        sudo apt-get -qq install tar unzip file curl gringo
+        sudo apt-get -qq install build-essential binutils-dev gfortran gdb
+        sudo apt-get -qq install gfortran-12 gfortran-13
+        sudo apt-get -qq install libnetcdf-dev libnetcdff-dev
+        sudo apt-get -qq valgrind
+
+    # install ESMF
+    - name: Install ESMF
+      uses: esmf-org/install-esmf-action@v1
+      env:
+        ESMF_NETCDF: nc-config
+
+    # check installation
+    - name: Print ESMF Info
+      run: |
+        cat ${ESMFMKFILE}
+      
