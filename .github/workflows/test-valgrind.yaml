@@ -19,7 +19,7 @@ jobs:
         sudo apt-get -qq install build-essential binutils-dev gfortran gdb
         sudo apt-get -qq install gfortran-12 gfortran-13
         sudo apt-get -qq install libnetcdf-dev libnetcdff-dev
-        sudo apt-get -qq valgrind
+        sudo apt-get -qq install valgrind
 
     # install ESMF
     - name: Install ESMF
